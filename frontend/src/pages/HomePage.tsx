@@ -3,20 +3,36 @@ import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
+import { useTyped } from "../components/useTyped";
 import ChoiceQuestion, { type ChoiceState } from "../lesson/ChoiceQuestion";
 import { useTheme } from "../theme";
 
-const TRACKS: { id: string; title: string }[] = [
-  { id: "languages", title: "Programming languages" },
-  { id: "frameworks", title: "Frameworks" },
-  { id: "databases", title: "Databases" },
-  { id: "devops", title: "DevOps" },
-  { id: "system-design", title: "System design" },
-  { id: "ai", title: "AI engineering" },
-  { id: "interview", title: "Interview prep" },
+const TRACKS: { id: string; title: string; blurb: string }[] = [
+  { id: "languages", title: "Programming languages", blurb: "Python, Java, Go, JavaScript, SQL" },
+  { id: "frameworks", title: "Frameworks", blurb: "FastAPI, Spring Boot, Express" },
+  { id: "databases", title: "Databases", blurb: "Postgres, Redis, real incidents" },
+  { id: "devops", title: "DevOps", blurb: "Linux, Git, Docker, Kubernetes" },
+  { id: "system-design", title: "System design", blurb: "Build it, then load test it" },
+  { id: "ai", title: "AI engineering", blurb: "Tokens to RAG to agents" },
+  { id: "interview", title: "Interview prep", blurb: "Traps, bugs and drills" },
 ];
 
-const LIVE_SHOWN = 6; // lab titles listed under the track chips; the rest become "and N more"
+const LIVE_SHOWN = 6; // lab titles listed under the tracks; the rest become "and N more"
+const LABS_SHOWN = 6; // lab cards in the "pick a lab" grid
+
+// Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
+const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
+
+// The hero terminal: a real incident lab, start to finish.
+const INCIDENT = [
+  "! PAGER  checkout is slow: p99 4.2 s",
+  "$ psql -c 'EXPLAIN SELECT * FROM orders WHERE customer_id = 42'",
+  "Seq Scan on orders  (rows=1000000)",
+  "$ psql -c 'CREATE INDEX ON orders (customer_id)'",
+  "CREATE INDEX",
+  "$ check",
+  "✓ 1 of 1 passed   p99 38 ms   +325 XP",
+];
 
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
 const DEMO = {
@@ -26,121 +42,96 @@ const DEMO = {
   explain: "Multiplying a string by a number repeats it. Every lab has a few small surprises like this.",
 };
 
-/** The window frame used by the hero preview and every showcase below it. */
-function Frame({ label, children, className = "" }: { label?: string; children: ReactNode; className?: string }) {
+function TermLine({ text }: { text: string }) {
+  if (text.startsWith("$ ")) return <div><span className="h-prompt">$</span> {text.slice(2)}</div>;
+  if (text.startsWith("! ")) return <div className="h-alert">{text.slice(2)}</div>;
+  return <div className={text.startsWith("✓") ? "h-ok" : "h-out"}>{text}</div>;
+}
+
+function IncidentTerminal() {
+  const { shown, typing } = useTyped(INCIDENT, 5000);
   return (
-    <div className={`preview frame ${className}`} role={label ? "img" : undefined} aria-label={label}>
-      <div className="preview-chrome" aria-hidden="true">
-        <span /><span /><span />
+    <div className="h-term" role="img" aria-label="A lab terminal: a slow checkout alert, the learner adds an index, and the check passes with 325 XP">
+      <div className="h-term-bar" aria-hidden="true">
+        <span className="h-dots"><i /><i /><i /></span>
+        <span className="h-live">● INCIDENT</span>
+        <span className="h-timer">14:52</span>
       </div>
-      <div aria-hidden={label ? true : undefined}>{children}</div>
+      <div className="h-term-body" aria-hidden="true">
+        {shown.map((l, i) => <TermLine key={i} text={l} />)}
+        {typing && <TermLine text={typing} />}
+        <span className="h-cursor" />
+      </div>
     </div>
   );
 }
 
-function LabPreview() {
+function Panel({ n, title, text, className = "", children }: { n: string; title: string; text: string; className?: string; children: ReactNode }) {
   return (
-    <Frame label="A LabBox lab: a lesson card on the left, code and a terminal on the right, and all checks passed">
-      <div className="preview-body">
-        <div className="preview-lesson">
-          <span className="step-kind">Story</span>
-          <div className="preview-title">Lunch orders at Dabba Express</div>
-          <div className="preview-line w90" />
-          <div className="preview-line w75" />
-          <div className="preview-mission">🎯 Mission: greet every customer</div>
-        </div>
-        <div className="preview-work">
-          <pre className="preview-code">
-            <span className="tk-kw">def</span> <span className="tk-fn">greet</span>(name):{"\n"}
-            {"    "}<span className="tk-kw">return</span> <span className="tk-str">f"Hello, {"{name}"}!"</span>
-          </pre>
-          <pre className="preview-term">
-            <span className="tk-prompt">learner</span>:/workspace$ python3 greet.py{"\n"}Hello, Asha!
-          </pre>
-        </div>
-      </div>
-      <div className="preview-pass">3 of 3 passed 🎉</div>
-    </Frame>
+    <article className={`h-panel ${className}`}>
+      <header>
+        <span className="h-num">{n}</span>
+        <h3>{title}</h3>
+        <p>{text}</p>
+      </header>
+      <div className="h-panel-body">{children}</div>
+    </article>
   );
 }
 
-function CheckShowcase() {
+function CheckDemo() {
   return (
-    <Frame label="A check result: 1 of 3 passed, with the expected and actual value side by side">
-      <div className="sc-pad">
-        <div className="sc-check-title fail">1 of 3 passed</div>
-        <div className="sc-result sc-fail">
-          <div className="sc-result-head"><span className="fail">✗</span> <strong>greet.py: return a greeting</strong></div>
-          <p>greet('Asha') returned None</p>
-          <div className="sc-eg">
-            <div><span>Expected</span><code>'Hello, Asha!'</code></div>
-            <div><span>Got</span><code>None</code></div>
-          </div>
+    <div className="h-mini" aria-label="A check result: 1 of 3 passed, with the expected and actual value side by side" role="img">
+      <div className="h-mini-title"><span className="h-bad">1 of 3 passed</span></div>
+      <div className="h-res h-res-bad">
+        <strong><span className="h-bad">✗</span> greet.py: return a greeting</strong>
+        <div className="h-eg">
+          <div><span>Expected</span><code>'Hello, Asha!'</code></div>
+          <div><span>Got</span><code>None</code></div>
         </div>
-        <div className="sc-result"><span className="pass">✓</span> <strong>math_utils.py: add two numbers</strong></div>
       </div>
-    </Frame>
+      <div className="h-res"><strong><span className="h-good">✓</span> math_utils.py: add two numbers</strong></div>
+    </div>
   );
 }
 
-function HintShowcase() {
+function HintDemo() {
   return (
-    <Frame label="A task with two hints revealed: a nudge and a direction, and one hint left">
-      <div className="sc-pad">
-        <div className="sc-task-head">
-          <strong>Longest word in a shop name</strong>
-          <span className="xp-chip">12 XP</span>
-        </div>
-        <ol className="hint-list">
-          <li><span className="hint-rung">Nudge</span>An empty sentence must give 0. What do you return before looking at any word?</li>
-          <li><span className="hint-rung">Direction</span>Split the sentence on spaces, then look at each word's length.</li>
-        </ol>
-        <span className="sc-btn">💡 Hint (1 left)</span>
-      </div>
-    </Frame>
+    <div className="h-mini" role="img" aria-label="Two hints revealed: a nudge and a direction, one hint left">
+      <ol className="h-hints">
+        <li><span>Nudge</span>An empty sentence must give 0. What do you return first?</li>
+        <li><span>Direction</span>Split on spaces, then look at each word's length.</li>
+      </ol>
+      <span className="h-chip">💡 1 hint left</span>
+    </div>
   );
 }
 
-function HabitShowcase() {
-  const nodes = [
-    { t: "Python functions", s: "done" },
-    { t: "Lists and dicts", s: "available" },
-    { t: "Python traps", s: "soon" },
-  ];
+function HabitDemo() {
+  const days = [1, 1, 1, 0, 1, 1, 1];
   return (
-    <Frame label="Progress: a 4 day streak, 330 XP, level 3, and a skill map with one skill done">
-      <div className="sc-pad">
-        <div className="sc-stats">
-          <div><strong>🔥 4</strong><span>day streak</span></div>
-          <div><strong>⭐ 330</strong><span>XP</span></div>
-          <div><strong>Lv 3</strong><span>520 at level 4</span></div>
-        </div>
-        <div className="sc-map">
-          {nodes.map((n, i) => (
-            <div key={n.t} className="sc-map-step">
-              {i > 0 && <span className={`sc-edge ${nodes[i - 1].s === "done" ? "on" : ""}`} />}
-              <div className={`sc-node sc-${n.s}`}>
-                <strong>{n.t}</strong>
-                <span>{n.s === "done" ? "✓ Done" : n.s === "available" ? "Start" : "Soon"}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="h-mini" role="img" aria-label="A 6 day streak, 330 XP and level 3">
+      <div className="h-big-stats">
+        <div><strong>🔥 6</strong><span>day streak</span></div>
+        <div><strong>330</strong><span>XP</span></div>
+        <div><strong>Lv 3</strong><span>next at 520</span></div>
       </div>
-    </Frame>
+      <div className="h-week">
+        {days.map((d, i) => <i key={i} className={d ? "on" : ""}>{"MTWTFSS"[i]}</i>)}
+      </div>
+    </div>
   );
 }
 
-function Showcase({ eyebrow, title, text, flip, children }: { eyebrow: string; title: string; text: string; flip?: boolean; children: ReactNode }) {
+function LabTile({ lab, to }: { lab: CatalogLab; to: string }) {
   return (
-    <section className={`showcase ${flip ? "flip" : ""}`}>
-      <div className="showcase-text">
-        <p className="eyebrow">{eyebrow}</p>
-        <h2>{title}</h2>
-        <p className="lede">{text}</p>
+    <Link to={to} className="h-lab">
+      <div className="h-lab-img">{lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : null}</div>
+      <div className="h-lab-text">
+        <strong>{lab.title}</strong>
+        <span>{TRACKS.find((t) => t.id === lab.track)?.title ?? lab.track} · {lab.estimated_minutes} min</span>
       </div>
-      <div className="showcase-visual">{children}</div>
-    </section>
+    </Link>
   );
 }
 
@@ -160,78 +151,113 @@ export default function HomePage() {
   }
 
   const cta = user ? (
-    <Link className="btn btn-primary btn-big" to="/labs">Continue learning →</Link>
+    <Link className="h-btn h-btn-red" to="/labs">Continue learning →</Link>
   ) : (
-    <Link className="btn btn-primary btn-big" to="/login?signup=1">Start free →</Link>
+    <Link className="h-btn h-btn-red" to="/login?signup=1">Start free →</Link>
   );
   const live = catalog ?? [];
+  const labLink = (lab: CatalogLab) => (user ? `/labs/${lab.id}` : "/login?signup=1");
 
   return (
     <div className="home">
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#try">How it works</a>
+          <a href="#how">How it works</a>
+          <a href="#labs">Labs</a>
           <a href="#tracks">Tracks</a>
         </nav>
         <span className="spacer" />
-        <button className="btn btn-small btn-ghost" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
+        <button className="h-icon" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
           {theme === "dark" ? "☀" : "☾"}
         </button>
         {user ? (
-          <Link className="btn btn-small btn-primary" to="/labs">Continue learning →</Link>
+          <Link className="h-btn h-btn-red h-btn-sm" to="/labs">Continue learning →</Link>
         ) : (
           <>
-            <Link className="btn btn-small btn-ghost" to="/login">Log in</Link>
-            <Link className="btn btn-small btn-primary" to="/login?signup=1">Start free</Link>
+            <Link className="h-btn h-btn-ghost h-btn-sm" to="/login">Log in</Link>
+            <Link className="h-btn h-btn-red h-btn-sm" to="/login?signup=1">Start free</Link>
           </>
         )}
       </header>
 
       <main>
         <section className="hero" aria-labelledby="hero-title">
+          <div className="h-hero-bg" aria-hidden="true" />
           <div className="hero-text">
-            <h1 id="hero-title">Learn tech by doing, not watching.</h1>
+            <p className="h-pill">
+              <span className="h-pulse" aria-hidden="true" />
+              {catalog === null ? "Labs are live" : `${live.length} lab${live.length === 1 ? "" : "s"} live now`}
+            </p>
+            <h1 id="hero-title">
+              Learn tech by <span className="h-red-word">doing<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span>, not <span className="h-strike">watching</span>.
+            </h1>
             <p className="hero-sub">Real machines, real code, small steps, instant feedback. Every few minutes you read a little, guess, try, and win.</p>
             <div className="hero-cta">
               {cta}
-              <a className="btn btn-big btn-ghost" href="#try">Try a question</a>
+              <a className="h-btn h-btn-ghost" href="#how">Try a question</a>
             </div>
           </div>
-          <LabPreview />
+          <IncidentTerminal />
         </section>
 
-        <div id="try" className="showcases">
-          <Showcase eyebrow="Predict" title="Guess first. Then see why." text="Every lesson starts with a small surprise. Being wrong for a second is how it sticks. Go on, try this one.">
-            <Frame className="try-card">
-              <div className="sc-pad">
-                <ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} />
-              </div>
-            </Frame>
-          </Showcase>
+        <section className="h-strip" aria-label="Technologies you practise on">
+          <div className="h-strip-track">
+            {[...STRIP, ...STRIP].map((n, i) => (
+              <span key={i} className="h-strip-logo" aria-hidden={i >= STRIP.length || undefined}>
+                <img src={`/logos/${n}.svg`} alt={i < STRIP.length ? n : ""} />
+              </span>
+            ))}
+          </div>
+        </section>
 
-          <Showcase flip eyebrow="Check" title="Fails that tell you why." text="Hidden tests run on a clean machine and show what they expected next to what you gave them.">
-            <CheckShowcase />
-          </Showcase>
+        <section className="h-stats" aria-label="LabBox in numbers">
+          <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
+          <div><strong>~60 s</strong><span>to a real machine</span></div>
+          <div><strong>0</strong><span>videos to sit through</span></div>
+          <div><strong>7</strong><span>tracks</span></div>
+        </section>
 
-          <Showcase eyebrow="Hints" title="Hints, not answers." text="A nudge, then a direction, then almost there. You still write the code, so you still own it.">
-            <HintShowcase />
-          </Showcase>
+        <section id="how" className="h-section" aria-labelledby="how-title">
+          <p className="h-kicker">How a lab works</p>
+          <h2 id="how-title">Guess. Try. Break it. <span className="h-yellow">Fix it.</span></h2>
+          <div className="h-bento">
+            <Panel n="01" title="Predict first" text="Every lesson opens with a small surprise. Go on, try this one." className="h-panel-wide">
+              <div className="try-card"><ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} /></div>
+            </Panel>
+            <Panel n="02" title="Checks that explain" text="Hidden tests on a clean machine show what they expected next to what you gave.">
+              <CheckDemo />
+            </Panel>
+            <Panel n="03" title="Hints, not answers" text="A nudge, then a direction. You still write the code.">
+              <HintDemo />
+            </Panel>
+            <Panel n="04" title="A habit that sticks" text="XP for every win and a streak that survives a busy day.">
+              <HabitDemo />
+            </Panel>
+          </div>
+        </section>
 
-          <Showcase flip eyebrow="Habit" title="Five minutes a day adds up." text="XP for every win, a streak that survives a busy day, and a skill map that lights up as you go.">
-            <HabitShowcase />
-          </Showcase>
-        </div>
+        {live.length > 0 && (
+          <section id="labs" className="h-section" aria-labelledby="labs-title">
+            <p className="h-kicker">Live now</p>
+            <h2 id="labs-title">Pick a lab. <span className="h-red">Start in a minute.</span></h2>
+            <div className="h-labs">
+              {live.slice(0, LABS_SHOWN).map((lab) => <LabTile key={lab.id} lab={lab} to={labLink(lab)} />)}
+            </div>
+          </section>
+        )}
 
-        <section className="home-tracks" id="tracks" aria-labelledby="tracks-title">
-          <h2 id="tracks-title">Seven tracks. Real tools in every one.</h2>
-          <ul className="track-chips">
-            {TRACKS.map((t) => {
+        <section className="home-tracks h-section" id="tracks" aria-labelledby="tracks-title">
+          <p className="h-kicker">Seven tracks</p>
+          <h2 id="tracks-title">Real tools in every one.</h2>
+          <ul className="track-list">
+            {TRACKS.map((t, i) => {
               const n = live.filter((l) => l.track === t.id).length;
               return (
                 <li key={t.id} className={`track-chip ${n ? "is-live" : ""}`}>
-                  {t.title}
-                  <span>{catalog === null ? "" : n ? `${n} lab${n === 1 ? "" : "s"}` : "Soon"}</span>
+                  <span className="t-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="t-name">{t.title}<small>{t.blurb}</small></span>
+                  <span className="t-count">{catalog === null ? "" : n ? `${n} lab${n === 1 ? "" : "s"}` : "Soon"}</span>
                 </li>
               );
             })}
@@ -245,9 +271,14 @@ export default function HomePage() {
         </section>
 
         <section className="home-final" aria-labelledby="final-title">
+          <span className="h-sticker" aria-hidden="true">FREE</span>
           <h2 id="final-title">Your first win is about three minutes away.</h2>
-          <p className="lede">Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
-          {cta}
+          <p>Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
+          {user ? (
+            <Link className="h-btn h-btn-black" to="/labs">Continue learning →</Link>
+          ) : (
+            <Link className="h-btn h-btn-black" to="/login?signup=1">Start free →</Link>
+          )}
         </section>
       </main>
 

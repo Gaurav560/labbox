@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
+import { useTyped } from "../components/useTyped";
 
 // Real technology logos floating on the showcase side (devicon, MIT: /logos/LICENSE-devicon).
 // [logo, left %, top %, size px, float delay s]
@@ -26,29 +27,6 @@ const SCRIPT = [
   "$ check",
   "✓ 3 of 3 passed  +60 XP  🔥 5 day streak",
 ];
-
-function useTyped(lines: string[]): { shown: string[]; typing: string } {
-  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const [line, setLine] = useState(reduce ? lines.length : 0);
-  const [chars, setChars] = useState(0);
-
-  useEffect(() => {
-    if (reduce) return;
-    let t: number;
-    if (line >= lines.length) {
-      t = window.setTimeout(() => { setLine(0); setChars(0); }, 4000); // pause, then play again
-    } else if (!lines[line].startsWith("$ ")) {
-      t = window.setTimeout(() => { setLine(line + 1); setChars(0); }, 450);
-    } else if (chars < lines[line].length) {
-      t = window.setTimeout(() => setChars(chars + 1), chars < 2 ? 0 : 38 + Math.random() * 40);
-    } else {
-      t = window.setTimeout(() => { setLine(line + 1); setChars(0); }, 380);
-    }
-    return () => window.clearTimeout(t);
-  }, [line, chars, lines, reduce]);
-
-  return { shown: lines.slice(0, line), typing: line < lines.length ? lines[line].slice(0, chars) : "" };
-}
 
 function TermLine({ text }: { text: string }) {
   if (text.startsWith("$ ")) {

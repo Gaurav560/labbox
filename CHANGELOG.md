@@ -1,5 +1,17 @@
 # Changelog
 
+## Home page redesign (red, black, grey, white, a little yellow)
+
+- New palette for the home page only: black and greys, a cool crimson red for actions, white text and
+  a touch of lemon yellow for numbers and wins; a matching light theme.
+- Hero: the same headline, with "doing" in red and a yellow underline that draws itself, "watching"
+  struck through, a live "N labs live now" pill, and a terminal that types out a real incident (slow
+  checkout, add an index, check passes, +325 XP).
+- Below: a moving strip of real technology logos, big numbers, a bento grid with the four lesson
+  moments (the predict question still works), the live labs as cards with their logo covers, the
+  tracks as numbered rows, and a red closing panel with a yellow FREE sticker.
+- Login page: the floating logos now dance (hop, squash, sway) and spin when hovered.
+
 ## Login page redesign
 
 - Split screen: a showcase side with real technology logos floating over a soft glow and a terminal
