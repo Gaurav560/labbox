@@ -1,9 +1,9 @@
 """Lab covers from the real technology logos, on the technology's own brand colours.
 
 The logos are devicon's "original" SVGs (MIT, see logos/LICENSE-devicon), copied into tools/logos/.
-A cover is one SVG, 1200 x 800 (the 3:2 card shape): the brand colour as the background, the main
-logo on a white tile, an optional second logo as a small badge (FastAPI on Python, Spring on Java),
-and a faint oversized copy of the main logo behind. A pattern seeded from the lab id keeps two labs
+A cover is one SVG, 1200 x 800 (the 3:2 card shape): the brand colour as the background and the
+main logo as the picture, big and in its own colours on a soft light, plus an optional second logo
+as a small badge (Python on FastAPI, Java on Spring). A pattern seeded from the lab id keeps two labs
 on the same technology from looking identical. Logos are trademarks of their owners; they are used
 here only to say what a lab teaches.
 """
@@ -63,7 +63,6 @@ def build_cover(logos: list[str], seed: str) -> str:
     r = random.Random(int(hashlib.sha256(seed.encode()).hexdigest()[:12], 16))
     bg, dark, accent = BRANDS[logos[0]]
     angle = r.randint(20, 70)
-    wm_x, wm_y, wm_rot = r.randint(-260, -140), r.randint(260, 380), r.randint(-18, -6)
     glow_x = r.randint(760, 1000)
 
     defs = [
@@ -73,35 +72,32 @@ def build_cover(logos: list[str], seed: str) -> str:
         '<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>',
         '<pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">'
         '<circle cx="2" cy="2" r="1.6" fill="#fff" fill-opacity=".16"/></pattern>',
-        '<filter id="mono"><feFlood flood-color="#fff"/><feComposite in2="SourceAlpha" operator="in"/></filter>',
+        '<radialGradient id="spot"><stop offset="0" stop-color="#fff" stop-opacity=".92"/>'
+        '<stop offset=".55" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>',
         '<filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">'
-        '<feDropShadow dx="0" dy="26" stdDeviation="30" flood-color="#000" flood-opacity=".38"/></filter>',
+        '<feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000" flood-opacity=".28"/></filter>',
     ]
     view0, main = _logo(logos[0], "m-")
-    _, watermark = _logo(logos[0], "w-")
+    cx, cy, size = 600, 400, 540  # the logo is the picture: big, in the middle, in its own colours
     body = [
         f'<rect width="{W}" height="{H}" fill="url(#bg)"/>',
         f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
-        f'<circle cx="{glow_x}" cy="60" r="520" fill="url(#glow)"/>',
-        f'<g opacity=".1" filter="url(#mono)" transform="rotate({wm_rot} {wm_x + 330} {wm_y + 330})">'
-        f'<svg x="{wm_x}" y="{wm_y}" width="660" height="660" viewBox="{view0}">{watermark}</svg></g>',
+        f'<circle cx="{glow_x}" cy="40" r="520" fill="url(#glow)"/>',
+        # a soft light behind the logo, so a red logo still stands out on a red card
+        f'<circle cx="{cx}" cy="{cy}" r="400" fill="url(#spot)"/>',
     ]
-    cx, cy, tile = 600, 390, 320
-    for i, rad in enumerate((250, 330)):
-        body.append(f'<circle cx="{cx}" cy="{cy}" r="{rad}" fill="none" stroke="#fff" stroke-opacity="{.18 - i * .07:.2f}" stroke-width="2"/>')
-    for _ in range(5):  # small accent dots on the orbits
-        rad, a = r.choice((250, 330)), r.uniform(0, 6.283)
+    for i, rad in enumerate((350, 430)):
+        body.append(f'<circle cx="{cx}" cy="{cy}" r="{rad}" fill="none" stroke="#fff" stroke-opacity="{.22 - i * .09:.2f}" stroke-width="2"/>')
+    for _ in range(6):  # small accent dots on the rings
+        rad, a = r.choice((350, 430)), r.uniform(0, 6.283)
         body.append(f'<circle cx="{cx + rad * math.cos(a):.0f}" cy="{cy + rad * math.sin(a):.0f}" r="{r.randint(5, 9)}" fill="{accent}" fill-opacity=".9"/>')
-    x, y = cx - tile // 2, cy - tile // 2
-    body.append(f'<rect x="{x}" y="{y}" width="{tile}" height="{tile}" rx="72" fill="#fff" filter="url(#shadow)"/>')
-    pad = 56
-    body.append(f'<svg x="{x + pad}" y="{y + pad}" width="{tile - 2 * pad}" height="{tile - 2 * pad}" viewBox="{view0}">{main}</svg>')
+    body.append(f'<g filter="url(#shadow)"><svg x="{cx - size // 2}" y="{cy - size // 2}" width="{size}" height="{size}" viewBox="{view0}">{main}</svg></g>')
     if len(logos) == 2:
         view1, badge = _logo(logos[1], "b-")
-        b = 150
-        bx, by = x + tile - b + 46, y + tile - b + 46
-        body.append(f'<rect x="{bx}" y="{by}" width="{b}" height="{b}" rx="38" fill="#fff" stroke="{dark}" stroke-width="6" filter="url(#shadow)"/>')
-        body.append(f'<svg x="{bx + 26}" y="{by + 26}" width="{b - 52}" height="{b - 52}" viewBox="{view1}">{badge}</svg>')
+        b = 170
+        bx, by = cx + size // 2 - b + 40, cy + size // 2 - b + 10
+        body.append(f'<rect x="{bx}" y="{by}" width="{b}" height="{b}" rx="44" fill="#fff" stroke="{dark}" stroke-width="6" filter="url(#shadow)"/>')
+        body.append(f'<svg x="{bx + 30}" y="{by + 30}" width="{b - 60}" height="{b - 60}" viewBox="{view1}">{badge}</svg>')
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'viewBox="0 0 {W} {H}" width="{W}" height="{H}">'
