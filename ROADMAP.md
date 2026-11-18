@@ -38,7 +38,7 @@ indexing incident), linux-on-call, rag-from-zero (E), build-your-own-gpt, rate-l
 docker-start-to-ship (F). Each flagship should reach 8 to 12 chapters; today's labs have 1 or 2.
 
 Every lab: spec in `specs/` -> `new-lab --from-spec` -> content -> `validate --strict` ->
-`test-lab` -> AI cover (about $0.12 per lab for 3 candidates).
+`test-lab` -> logo cover (`labbox cover <lab> --logo <tech>`, free).
 
 ## 2. Phases not started
 

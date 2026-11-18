@@ -281,7 +281,7 @@ def test_cover_route(client: TestClient):
     lab = labs.get_lab("python-basics")
     assert lab.cover  # the lab ships its own cover
     r = client.get("/api/labs/python-basics/cover")  # public, no login
-    assert r.status_code == 200 and r.headers["content-type"] == "image/webp"
+    assert r.status_code == 200 and r.headers["content-type"].startswith("image/svg+xml")
     assert "sandbox" in r.headers["content-security-policy"] and r.headers["x-content-type-options"] == "nosniff"
     by_id = {x["id"]: x for x in client.get("/api/catalog").json()}
     assert by_id["python-basics"]["cover_url"] == "/api/labs/python-basics/cover"

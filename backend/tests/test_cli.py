@@ -1,6 +1,7 @@
 """tools/labbox_cli.py: validate, new-lab and test-lab."""
 import importlib.util
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
@@ -212,6 +213,29 @@ def test_generate_with_openai(labs_dir: Path, tmp_path: Path, monkeypatch):
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "python-basics", "--pick", "1"]) == 0
     lab = cli.load_lab(labs_dir / "python-basics")
     assert lab.cover == "cover.webp" and lab.cover_credit.by == "Generated with OpenAI"
+
+
+def test_logo_cover(labs_dir: Path, capsys):
+    import xml.etree.ElementTree as ET
+
+    folder = labs_dir / "fastapi-first-api"
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--logo", "fastapi,python"]) == 0
+    svg = (folder / "cover.svg").read_text()
+    ET.fromstring(svg)  # valid XML, or the browser shows a broken image
+    assert "#009688" in svg and "<script" not in svg  # FastAPI's brand teal, no scripts
+    assert not any((folder / f"cover.{x}").exists() for x in ("webp", "jpg", "png"))
+    lab = cli.load_lab(folder)
+    assert lab.cover == "cover.svg" and lab.cover_credit.source == "devicon (MIT)"
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--logo", "cobol"]) == 2
+    assert "Use one or two of" in capsys.readouterr().out
+
+
+def test_every_logo_makes_a_valid_cover():
+    sys.path.insert(0, str(ROOT / "tools"))
+    import logo_cover
+
+    for name in logo_cover.known_logos():
+        logo_cover.build_cover([name, "python"], name)
 
 
 def test_generate_needs_a_key(capsys, monkeypatch):

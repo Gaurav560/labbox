@@ -11,8 +11,8 @@ tags:
 - node
 level: intermediate
 estimated_minutes: 30
-cover: cover.webp
-cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+cover: cover.svg
+cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
 image: labbox/javascript-inside-out:v1
 resources:
   cpus: 0.5

@@ -19,8 +19,8 @@ story:
   pitch: Meera wants answers from the order database, and the analyst just quit.
 cover_scene: 'Tapri Counter''s data room: a tiny library where glowing filing drawers of chai orders slide open,
   little lantern-lit tables of rows and columns floating above a reading desk.'
-cover: cover.webp
-cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+cover: cover.svg
+cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
 image: labbox/sql-from-zero:v1
 resources: s
 workspace:

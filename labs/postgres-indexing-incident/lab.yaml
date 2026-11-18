@@ -13,8 +13,8 @@ story:
   character: { name: Meera, role: "CTO, Tapri Counter" }
   pitch: "Tapri Counter's checkout falls over every lunch rush. You are the new backend engineer."
 cover_scene: "Tapri Counter at lunch rush: a tiny busy cafe checkout counter with a long queue of tiny people, a huge glowing database cylinder behind the counter with a red rotating alarm light on top, a pager on the counter flashing red."
-cover: cover.webp
-cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+cover: cover.svg
+cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
 image: labbox/postgres-indexing-incident:v1
 resources: s
 workspace:

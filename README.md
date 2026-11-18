@@ -247,7 +247,19 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `pitch`), `cover` (an image in the lab folder: svg, png, jpg or webp, up to 512 KB), and per chapter
 `minutes`. Tasks take `xp` (default 20) and `hints`.
 
-AI cover art uses OpenAI (`OPENAI_API_KEY` in `backend/.env`, `gpt-image-2`, about $0.041 per image at
+Covers show the real technology logos on their brand colours (Redis red, Python blue, Spring green),
+built as one small SVG from devicon's original logos (MIT, `tools/logos/`). Main logo first, an
+optional second one becomes a badge. Free, no API key:
+
+```bash
+scripts/labbox cover fastapi-first-api --logo fastapi,python   # writes cover.svg and the credit
+```
+
+To add a technology, copy its devicon `*-original.svg` into `tools/logos/` and its colours into
+`BRANDS` in `tools/logo_cover.py`. Logos are trademarks of their owners, used only to say what a lab
+teaches.
+
+AI cover art (no longer the default) uses OpenAI (`OPENAI_API_KEY` in `backend/.env`, `gpt-image-2`, about $0.041 per image at
 medium quality, $0.165 at `--quality high`) or Gemini (`GEMINI_API_KEY`), in one house style
 (neon isometric dioramas, colours per track). Each lab describes its scene in one line:
 

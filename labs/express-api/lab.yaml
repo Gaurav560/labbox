@@ -19,8 +19,8 @@ story:
   pitch: Offices keep calling to ask where their tiffins are. Priya wants an API for it.
 cover_scene: 'Dabba Express dispatch at night: a tiny glowing control tower above a street of delivery bicycles,
   light trails connecting each tiffin to floating order status cards.'
-cover: cover.webp
-cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+cover: cover.svg
+cover_credit: { by: "Logos: express,nodejs", source: "devicon (MIT)" }
 image: labbox/express-api:v1
 resources: xs
 workspace:

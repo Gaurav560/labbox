@@ -1,5 +1,15 @@
 # Changelog
 
+## Lab covers: real logos on brand colours
+
+- Every lab card now shows the real technology logo on its brand colour: Python blue, Java orange,
+  Postgres blue, Go cyan, JavaScript yellow, FastAPI teal, Spring green, Express black, Redis red.
+  Framework labs add the language as a badge (FastAPI + Python, Spring + Java, Express + Node).
+- `scripts/labbox cover <lab> --logo <tech>[,<tech>]` builds the cover as one SVG (3 to 19 KB) from
+  devicon's original logos (MIT, vendored in `tools/logos/` with 18 technologies ready). Free, no API.
+- The AI covers (`cover.webp`) are replaced; `--generate` still works if wanted.
+- Every cover is checked to be valid XML (the Go logo needed a namespace the first version dropped).
+
 ## Labs batch 1: six new labs (11 in total)
 
 - `python-collections` (lists, dicts, sets, sorting; Dabba Express), `java-collections` (records, List,

@@ -10,8 +10,8 @@ tags:
 - go
 level: beginner
 estimated_minutes: 30
-cover: cover.webp
-cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+cover: cover.svg
+cover_credit: { by: "Logos: go", source: "devicon (MIT)" }
 image: labbox/go-basics:v1
 resources:
   cpus: 0.5

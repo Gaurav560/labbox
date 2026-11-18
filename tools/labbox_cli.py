@@ -4,6 +4,7 @@
     scripts/labbox validate [lab_id] [--no-docker]
     scripts/labbox test-lab <lab_id> [--no-build]
     scripts/labbox preview <lab_id>
+    scripts/labbox cover <lab_id> --logo redis[,python]   (real logos on brand colours)
     scripts/labbox cover <lab_id> --generate              (AI art, then --pick N)
     scripts/labbox cover <lab_id> --query "chai stall"   (stock photo, then --pick N)
 
@@ -112,7 +113,7 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
         if f.is_file() and AUTHOR_TODO in f.read_text(encoding="utf-8"):
             warnings.append(f"{f.relative_to(folder)}: still has {AUTHOR_TODO} markers")
     if not lab.cover:
-        warnings.append("no cover image yet (scripts/labbox cover <lab> --generate)")
+        warnings.append("no cover image yet (scripts/labbox cover <lab> --logo <tech>)")
     if (folder / "AUTHORING.md").exists():
         warnings.append("AUTHORING.md is still there (delete it when the lab is finished)")
     return errors, warnings
@@ -392,7 +393,7 @@ def new_lab_from_spec(spec_path: Path, labs_dir: Path) -> Path:
         f"2. Replace the template's example task ({', '.join(template_task_ids)}) in `starter/`, `solution/` and `tests/` "
         "with this lab's tasks: " + ", ".join(t.id for c in spec.chapters for t in c.tasks) + ".\n"
         "3. `scripts/labbox validate " + spec.id + " --strict` and `scripts/labbox test-lab " + spec.id + "`.\n"
-        "4. `scripts/labbox cover " + spec.id + " --generate`, then `--pick N`.\n"
+        "4. `scripts/labbox cover " + spec.id + " --logo <tech>[,<tech>]` (see tools/logo_cover.py for the list).\n"
         "5. Delete this file.\n",
         encoding="utf-8",
     )
@@ -686,6 +687,25 @@ def _yaml_set_cover(lab_yaml: Path, credit: dict, filename: str = "cover.jpg") -
     lab_yaml.write_text("\n".join(keep[:at] + new + keep[at:]) + "\n", encoding="utf-8")
 
 
+def _logo_cover(folder: Path, lab_id: str, logos: str) -> int:
+    """The real technology logos on their brand colours (free, no API). Replaces any other cover."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import logo_cover
+
+    try:
+        svg = logo_cover.build_cover([n.strip() for n in logos.split(",") if n.strip()], lab_id)
+    except ValueError as e:
+        print(e)
+        return 2
+    for old in ("cover.jpg", "cover.webp", "cover.png"):
+        (folder / old).unlink(missing_ok=True)
+    (folder / "cover.svg").write_text(svg, encoding="utf-8")
+    _yaml_set_cover(folder / "lab.yaml", {"by": f"Logos: {logos}", "source": "devicon (MIT)"}, "cover.svg")
+    load_lab(folder)
+    print(f"✓ {folder / 'cover.svg'} ({len(svg) // 1024} KB)")
+    return 0
+
+
 def cmd_cover(args: argparse.Namespace) -> int:
     """Stock photo covers from Pexels (free for commercial use). Search, look, then pick."""
     import httpx
@@ -693,6 +713,8 @@ def cmd_cover(args: argparse.Namespace) -> int:
     from app.config import get_settings
 
     folder = _lab_folders(args.labs_dir, args.lab_id)[0]
+    if args.logo:
+        return _logo_cover(folder, args.lab_id, args.logo)
     out = COVERS_DIR / args.lab_id
     settings = get_settings()
     if args.generate:
@@ -813,8 +835,9 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument("--no-browser", action="store_true")
     pv.set_defaults(fn=cmd_preview)
 
-    c = sub.add_parser("cover", help="find a stock photo for the lab card (Pexels), then pick one")
+    c = sub.add_parser("cover", help="lab card cover: real logos (--logo), AI art (--generate) or a stock photo")
     c.add_argument("lab_id")
+    c.add_argument("--logo", help="real technology logos on brand colours, main first: redis or fastapi,python")
     c.add_argument("--query", help="what the photo should show")
     c.add_argument("--generate", action="store_true", help="AI cover art in the house style (OpenAI or Gemini, paid per image)")
     c.add_argument("--quality", choices=["low", "medium", "high"], default="medium", help="OpenAI image quality (cost goes up)")
