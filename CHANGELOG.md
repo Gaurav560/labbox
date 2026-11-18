@@ -1,9 +1,14 @@
 # Changelog
 
-## Home page on GitHub charcoal
+## Home page on GitHub charcoal, calmer red, grid pattern
 
 - The home page background is now the same charcoal as the login page (#111512) instead of pure
-  black, with black panels and cards and green-grey borders and text. Red and yellow stay.
+  black, with black panels and cards and green-grey borders and text.
+- A calmer red: #e5484d (light mode #d13438) instead of the neon #ff2e4d, used flat with no glows;
+  the yellow is a touch softer (#f0d659).
+- The whole page sits on a faint 32 px tile grid, like the login page.
+- The closing panel is black with the grid and a faint red tint at the bottom instead of a solid red
+  block; red is left for the button.
 
 ## LabBox by Telusko, FAQs and legal pages
 

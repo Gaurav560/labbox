@@ -610,19 +610,25 @@ select { padding: 3px 8px; }
 /* ---------- home page ---------- */
 /* Its own palette: black and greys, a cool crimson red, a little white, a touch of lemon yellow. */
 .home {
-  --red: #ff2e4d; --red-deep: #d9143a; --yellow: #f5df4d; --ink: #0a0a0a;
+  --red: #e5484d; --red-deep: #d13d42; --yellow: #f0d659; --ink: #0a0a0a;
   /* GitHub-style charcoal (#111512) with black panels, like the login page */
   --bg: #111512; --panel: #000000; --card: #0b0d0c; --text: #f0f3f1; --muted: #9ba39d; --border: #2c322e;
   --accent: var(--red); --danger: var(--red); --success: var(--yellow); --chip: #1f2421; --hover: #181d1a;
-  --tint-accent: #ff2e4d1f; --tint-danger: #ff2e4d1f; --tint-success: #f5df4d1a; --on-accent: #fff;
-  min-height: 100%; display: flex; flex-direction: column; background: var(--bg); color: var(--text);
+  --tint-accent: #e5484d1f; --tint-danger: #e5484d1a; --tint-success: #f0d6591a; --on-accent: #fff;
+  --grid: #191e1b;
+  min-height: 100%; display: flex; flex-direction: column; color: var(--text);
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
   font-size: var(--text-size); line-height: var(--text-line); overflow-x: clip;
 }
+
 :root[data-theme="light"] .home {
-  --red: #e0102f; --red-deep: #b80d27; --yellow: #f2d630;
+  --grid: #e4e2dc;
+  --red: #d13438; --red-deep: #b42a2e; --yellow: #e8c93a;
   --bg: #f5f4f1; --panel: #ffffff; --card: #ffffff; --text: #0a0a0a; --muted: #56565c; --border: #e2e0db;
   --success: #7a6600; --chip: #efede8; --hover: #efede8;
-  --tint-accent: #e0102f14; --tint-danger: #e0102f12; --tint-success: #f2d63040;
+  --tint-accent: #d1343814; --tint-danger: #d1343812; --tint-success: #f2d63040;
 }
 .home main { flex: 1; }
 .home .logo-mark rect:first-child { fill: var(--red); }
@@ -645,8 +651,8 @@ select { padding: 3px 8px; }
 }
 .h-btn:hover { text-decoration: none; transform: translateY(-1px); }
 .h-btn-sm { height: 38px; padding: 0 16px; font-size: 14px; border-radius: 10px; }
-.h-btn-red { background: var(--red); color: #fff; box-shadow: 0 8px 28px #ff2e4d40; }
-.h-btn-red:hover { background: var(--red-deep); box-shadow: 0 12px 34px #ff2e4d59; }
+.h-btn-red { background: var(--red); color: #fff; }
+.h-btn-red:hover { background: var(--red-deep); }
 .h-btn-ghost { color: var(--text); border-color: var(--border); }
 .h-btn-ghost:hover { border-color: var(--text); }
 .h-btn-black { background: var(--ink); color: #fff; }
@@ -658,21 +664,16 @@ select { padding: 3px 8px; }
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: center;
 }
 .h-hero-bg { position: absolute; inset: -60px -40vw 0; z-index: -1; pointer-events: none; }
-.h-hero-bg::before {
-  content: ""; position: absolute; inset: 0;
-  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 56px 56px; opacity: 0.45;
-  mask-image: radial-gradient(ellipse 60% 70% at 50% 40%, #000 20%, transparent 75%);
-}
 .h-hero-bg::after {
-  content: ""; position: absolute; width: 640px; height: 640px; right: 38vw; top: -120px; border-radius: 50%;
-  background: radial-gradient(closest-side, #ff2e4d33, transparent); filter: blur(20px);
+  /* a faint neutral light behind the hero, no colour */
+  content: ""; position: absolute; width: 900px; height: 600px; left: 50%; top: -80px; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(closest-side, #ffffff0a, transparent);
 }
 .h-pill {
   display: inline-flex; align-items: center; gap: 10px; margin: 0 0 var(--space-6); padding: 6px 14px 6px 10px;
   border-radius: 999px; border: 1px solid var(--border); background: var(--panel); font: 600 13px var(--font-code); color: var(--muted);
 }
-.h-pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 #ff2e4d99; animation: h-pulse 1.8s infinite; }
+.h-pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 #e5484d80; animation: h-pulse 1.8s infinite; }
 .hero h1 { font-size: clamp(40px, 6vw, 76px); line-height: 1.02; letter-spacing: -0.045em; margin: 0 0 var(--space-6); font-weight: 800; }
 .h-red-word { position: relative; color: var(--red); white-space: nowrap; }
 .h-red-word svg { position: absolute; left: 0; right: 0; bottom: -0.12em; width: 100%; height: 0.28em; overflow: visible; }
@@ -682,18 +683,18 @@ select { padding: 3px 8px; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* the incident terminal (dark in both themes) */
-.h-term { border-radius: 16px; background: #0c0c0d; border: 1px solid #2c2c30; box-shadow: 0 40px 90px #0000008c, 0 0 0 1px #ff2e4d1a; overflow: hidden; color: #e9e9ea; }
+.h-term { border-radius: 16px; background: #000; border: 1px solid #2c322e; box-shadow: 0 30px 70px #00000080; overflow: hidden; color: #e9e9ea; }
 .h-term-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #222226; font: 700 12px var(--font-code); }
 .h-dots { display: flex; gap: 7px; }
 .h-dots i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3f; }
-.h-live { color: #ff2e4d; letter-spacing: 0.08em; animation: h-blink 1.2s steps(1) infinite; }
-.h-timer { margin-left: auto; color: #f5df4d; }
+.h-live { color: #e5484d; letter-spacing: 0.08em; animation: h-blink 1.2s steps(1) infinite; }
+.h-timer { margin-left: auto; color: #f0d659; }
 .h-term-body { padding: 18px 20px 22px; min-height: 260px; font: 13.5px/1.8 var(--font-code); overflow: hidden; }
 .h-term-body > div { white-space: pre-wrap; word-break: break-word; }
-.h-prompt { color: #ff2e4d; font-weight: 700; }
-.h-alert { color: #0a0a0a; background: #ff2e4d; display: inline-block; padding: 0 8px; border-radius: 4px; font-weight: 700; margin-bottom: 6px; }
+.h-prompt { color: #e5484d; font-weight: 700; }
+.h-alert { color: #fff; background: #e5484d; display: inline-block; padding: 0 8px; border-radius: 4px; font-weight: 700; margin-bottom: 6px; }
 .h-out { color: #8e8e93; }
-.h-ok { color: #f5df4d; font-weight: 700; }
+.h-ok { color: #f0d659; font-weight: 700; }
 .h-cursor { display: inline-block; width: 8px; height: 16px; vertical-align: -3px; background: #e9e9ea; animation: h-blink 1s steps(1) infinite; }
 
 /* logo strip */
@@ -760,7 +761,7 @@ select { padding: 3px 8px; }
 /* lab tiles */
 .h-labs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 .h-lab { display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; background: var(--panel); border: 1px solid var(--border); color: var(--text); transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast); }
-.h-lab:hover { text-decoration: none; transform: translateY(-4px); border-color: var(--red); box-shadow: 0 18px 40px #0000004d; }
+.h-lab:hover { text-decoration: none; transform: translateY(-4px); border-color: #3d4540; box-shadow: 0 18px 40px #0000004d; }
 .h-lab-img { aspect-ratio: 3 / 2; background: var(--card); }
 .h-lab-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .h-lab-text { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 16px; }
@@ -781,25 +782,27 @@ select { padding: 3px 8px; }
 
 /* final call (red in both themes) */
 .home-final {
-  position: relative; margin: 48px var(--space-6) 72px; padding: 96px var(--space-6); border-radius: 28px; overflow: hidden;
-  text-align: center; color: #0a0a0a; background: radial-gradient(120% 140% at 20% 0%, #ff5a70, #ff2e4d 45%, #c40f30);
+  position: relative; margin: 48px var(--space-6) 72px; padding: 96px var(--space-6); border-radius: 24px; overflow: hidden;
+  text-align: center; color: var(--text); border: 1px solid var(--border);
+  background-color: var(--panel);
+  background-image:
+    radial-gradient(70% 90% at 50% 120%, var(--tint-accent), transparent 70%),
+    linear-gradient(#1f2421 1px, transparent 1px), linear-gradient(90deg, #1f2421 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
 }
-.home-final::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.18;
-  background-image: radial-gradient(#0a0a0a 1.2px, transparent 1.2px); background-size: 22px 22px;
-}
+:root[data-theme="light"] .home-final { background-image: radial-gradient(70% 90% at 50% 120%, var(--tint-accent), transparent 70%), linear-gradient(#ebe9e4 1px, transparent 1px), linear-gradient(90deg, #ebe9e4 1px, transparent 1px); }
 .home-final > * { position: relative; }
-.home-final h2 { font-size: clamp(34px, 5.4vw, 68px); line-height: 1.02; letter-spacing: -0.045em; font-weight: 800; max-width: 14em; margin: 0 auto var(--space-4); }
-.home-final p { font-size: 19px; max-width: 30em; margin: 0 auto var(--space-8); color: #1a0508; opacity: 0.85; }
+.home-final h2 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -0.045em; font-weight: 800; max-width: 14em; margin: 0 auto var(--space-4); }
+.home-final p { font-size: 19px; max-width: 30em; margin: 0 auto var(--space-8); color: var(--muted); }
 .h-sticker {
   position: absolute; top: 28px; right: 40px; padding: 10px 16px; border-radius: 12px; transform: rotate(8deg);
-  background: #f5df4d; color: #0a0a0a; font: 800 18px var(--font-code); letter-spacing: 0.08em; box-shadow: 0 10px 24px #0000004d;
+  background: var(--yellow); color: #0a0a0a; font: 800 18px var(--font-code); letter-spacing: 0.08em; box-shadow: 0 10px 24px #0000004d;
 }
 .home-footer { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-8); align-items: center; justify-content: space-between; padding: var(--space-8) var(--space-6); border-top: 1px solid var(--border); }
 .home-footer-brand { display: flex; flex-direction: column; gap: 6px; }
 .home-footer .site-links a:hover { color: var(--red); }
 
-@keyframes h-pulse { 70% { box-shadow: 0 0 0 10px #ff2e4d00; } 100% { box-shadow: 0 0 0 0 #ff2e4d00; } }
+@keyframes h-pulse { 70% { box-shadow: 0 0 0 8px #e5484d00; } 100% { box-shadow: 0 0 0 0 #e5484d00; } }
 @keyframes h-draw { to { stroke-dashoffset: 0; } }
 @keyframes h-blink { 50% { opacity: 0; } }
 @keyframes h-marquee { to { transform: translateX(-50%); } }
