@@ -610,25 +610,27 @@ select { padding: 3px 8px; }
 /* ---------- home page ---------- */
 /* Its own palette: black and greys, a cool crimson red, a little white, a touch of lemon yellow. */
 .home {
-  --red: #e5484d; --red-deep: #d13d42; --yellow: #f0d659; --ink: #0a0a0a;
+  --red: #d1605a; --red-deep: #b9514c; --yellow: #e9d36b; --ink: #0a0a0a;
   /* GitHub-style charcoal (#111512) with black panels, like the login page */
   --bg: #111512; --panel: #000000; --card: #0b0d0c; --text: #f0f3f1; --muted: #9ba39d; --border: #2c322e;
   --accent: var(--red); --danger: var(--red); --success: var(--yellow); --chip: #1f2421; --hover: #181d1a;
-  --tint-accent: #e5484d1f; --tint-danger: #e5484d1a; --tint-success: #f0d6591a; --on-accent: #fff;
-  --grid: #191e1b;
-  min-height: 100%; display: flex; flex-direction: column; color: var(--text);
-  background-color: var(--bg);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px;
+  --tint-accent: #d1605a24; --tint-danger: #d1605a1a; --tint-success: #e9d36b1a; --on-accent: #fff;
+  --topo: #ffffff12;
+  min-height: 100%; display: flex; flex-direction: column; color: var(--text); background: var(--bg); isolation: isolate;
   font-size: var(--text-size); line-height: var(--text-line); overflow-x: clip;
 }
 
+/* topographic contour lines (tools/make_topo.py), fixed behind the page so they never look tiled */
+.home::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--topo);
+  -webkit-mask: url(/patterns/topo.svg) center / cover no-repeat; mask: url(/patterns/topo.svg) center / cover no-repeat;
+}
 :root[data-theme="light"] .home {
-  --grid: #e4e2dc;
-  --red: #d13438; --red-deep: #b42a2e; --yellow: #e8c93a;
+  --topo: #0000001a;
+  --red: #b8463f; --red-deep: #9e3a34; --yellow: #e2c54a;
   --bg: #f5f4f1; --panel: #ffffff; --card: #ffffff; --text: #0a0a0a; --muted: #56565c; --border: #e2e0db;
   --success: #7a6600; --chip: #efede8; --hover: #efede8;
-  --tint-accent: #d1343814; --tint-danger: #d1343812; --tint-success: #f2d63040;
+  --tint-accent: #b8463f14; --tint-danger: #b8463f12; --tint-success: #f2d63040;
 }
 .home main { flex: 1; }
 .home .logo-mark rect:first-child { fill: var(--red); }
@@ -651,8 +653,10 @@ select { padding: 3px 8px; }
 }
 .h-btn:hover { text-decoration: none; transform: translateY(-1px); }
 .h-btn-sm { height: 38px; padding: 0 16px; font-size: 14px; border-radius: 10px; }
-.h-btn-red { background: var(--red); color: #fff; }
-.h-btn-red:hover { background: var(--red-deep); }
+.h-btn-primary { background: #f0f3f1; color: #0a0a0a; }
+.h-btn-primary:hover { background: #ffffff; }
+:root[data-theme="light"] .h-btn-primary { background: #111512; color: #f0f3f1; }
+:root[data-theme="light"] .h-btn-primary:hover { background: #000; }
 .h-btn-ghost { color: var(--text); border-color: var(--border); }
 .h-btn-ghost:hover { border-color: var(--text); }
 .h-btn-black { background: var(--ink); color: #fff; }
@@ -673,7 +677,7 @@ select { padding: 3px 8px; }
   display: inline-flex; align-items: center; gap: 10px; margin: 0 0 var(--space-6); padding: 6px 14px 6px 10px;
   border-radius: 999px; border: 1px solid var(--border); background: var(--panel); font: 600 13px var(--font-code); color: var(--muted);
 }
-.h-pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 #e5484d80; animation: h-pulse 1.8s infinite; }
+.h-pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 #d1605a80; animation: h-pulse 1.8s infinite; }
 .hero h1 { font-size: clamp(40px, 6vw, 76px); line-height: 1.02; letter-spacing: -0.045em; margin: 0 0 var(--space-6); font-weight: 800; }
 .h-red-word { position: relative; color: var(--red); white-space: nowrap; }
 .h-red-word svg { position: absolute; left: 0; right: 0; bottom: -0.12em; width: 100%; height: 0.28em; overflow: visible; }
@@ -687,14 +691,14 @@ select { padding: 3px 8px; }
 .h-term-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #222226; font: 700 12px var(--font-code); }
 .h-dots { display: flex; gap: 7px; }
 .h-dots i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3f; }
-.h-live { color: #e5484d; letter-spacing: 0.08em; animation: h-blink 1.2s steps(1) infinite; }
-.h-timer { margin-left: auto; color: #f0d659; }
+.h-live { color: #d1605a; letter-spacing: 0.08em; animation: h-blink 1.2s steps(1) infinite; }
+.h-timer { margin-left: auto; color: #e9d36b; }
 .h-term-body { padding: 18px 20px 22px; min-height: 260px; font: 13.5px/1.8 var(--font-code); overflow: hidden; }
 .h-term-body > div { white-space: pre-wrap; word-break: break-word; }
-.h-prompt { color: #e5484d; font-weight: 700; }
-.h-alert { color: #fff; background: #e5484d; display: inline-block; padding: 0 8px; border-radius: 4px; font-weight: 700; margin-bottom: 6px; }
+.h-prompt { color: #d1605a; font-weight: 700; }
+.h-alert { color: #f2b3ad; background: #d1605a2e; border: 1px solid #d1605a59; display: inline-block; padding: 0 8px; border-radius: 4px; font-weight: 700; margin-bottom: 6px; }
 .h-out { color: #8e8e93; }
-.h-ok { color: #f0d659; font-weight: 700; }
+.h-ok { color: #e9d36b; font-weight: 700; }
 .h-cursor { display: inline-block; width: 8px; height: 16px; vertical-align: -3px; background: #e9e9ea; animation: h-blink 1s steps(1) infinite; }
 
 /* logo strip */
@@ -717,6 +721,7 @@ select { padding: 3px 8px; }
 .h-kicker { margin: 0 0 var(--space-3); font: 700 13px var(--font-code); letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
 .h-section h2 { font-size: clamp(32px, 4.4vw, 56px); line-height: 1.05; letter-spacing: -0.04em; margin: 0 0 var(--space-8); font-weight: 800; max-width: 18em; }
 .h-red { color: var(--red); }
+.h-soft { color: var(--muted); }
 .h-yellow { color: var(--yellow); }
 :root[data-theme="light"] .h-yellow { color: var(--text); background: linear-gradient(transparent 62%, var(--yellow) 62%); }
 
@@ -756,7 +761,7 @@ select { padding: 3px 8px; }
 .h-big-stats span { font-size: 12px; color: var(--muted); }
 .h-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 4px; }
 .h-week i { font-style: normal; display: grid; place-items: center; height: 34px; border-radius: 8px; font: 700 12px var(--font-code); background: var(--card); border: 1px dashed var(--border); color: var(--muted); }
-.h-week i.on { background: var(--red); border: 0; color: #fff; }
+.h-week i.on { background: var(--tint-accent); border: 1px solid color-mix(in srgb, var(--red) 45%, transparent); color: var(--text); }
 
 /* lab tiles */
 .h-labs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
@@ -783,14 +788,8 @@ select { padding: 3px 8px; }
 /* final call (red in both themes) */
 .home-final {
   position: relative; margin: 48px var(--space-6) 72px; padding: 96px var(--space-6); border-radius: 24px; overflow: hidden;
-  text-align: center; color: var(--text); border: 1px solid var(--border);
-  background-color: var(--panel);
-  background-image:
-    radial-gradient(70% 90% at 50% 120%, var(--tint-accent), transparent 70%),
-    linear-gradient(#1f2421 1px, transparent 1px), linear-gradient(90deg, #1f2421 1px, transparent 1px);
-  background-size: auto, 32px 32px, 32px 32px;
+  text-align: center; color: var(--text); border: 1px solid var(--border); background: var(--panel);
 }
-:root[data-theme="light"] .home-final { background-image: radial-gradient(70% 90% at 50% 120%, var(--tint-accent), transparent 70%), linear-gradient(#ebe9e4 1px, transparent 1px), linear-gradient(90deg, #ebe9e4 1px, transparent 1px); }
 .home-final > * { position: relative; }
 .home-final h2 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -0.045em; font-weight: 800; max-width: 14em; margin: 0 auto var(--space-4); }
 .home-final p { font-size: 19px; max-width: 30em; margin: 0 auto var(--space-8); color: var(--muted); }
@@ -802,7 +801,7 @@ select { padding: 3px 8px; }
 .home-footer-brand { display: flex; flex-direction: column; gap: 6px; }
 .home-footer .site-links a:hover { color: var(--red); }
 
-@keyframes h-pulse { 70% { box-shadow: 0 0 0 8px #e5484d00; } 100% { box-shadow: 0 0 0 0 #e5484d00; } }
+@keyframes h-pulse { 70% { box-shadow: 0 0 0 8px #d1605a00; } 100% { box-shadow: 0 0 0 0 #d1605a00; } }
 @keyframes h-draw { to { stroke-dashoffset: 0; } }
 @keyframes h-blink { 50% { opacity: 0; } }
 @keyframes h-marquee { to { transform: translateX(-50%); } }

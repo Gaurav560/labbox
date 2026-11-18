@@ -152,9 +152,9 @@ export default function HomePage() {
   }
 
   const cta = user ? (
-    <Link className="h-btn h-btn-red" to="/labs">Continue learning →</Link>
+    <Link className="h-btn h-btn-primary" to="/labs">Continue learning →</Link>
   ) : (
-    <Link className="h-btn h-btn-red" to="/login?signup=1">Start free →</Link>
+    <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
   const live = catalog ?? [];
   const labLink = (lab: CatalogLab) => (user ? `/labs/${lab.id}` : "/login?signup=1");
@@ -173,11 +173,11 @@ export default function HomePage() {
           {theme === "dark" ? "☀" : "☾"}
         </button>
         {user ? (
-          <Link className="h-btn h-btn-red h-btn-sm" to="/labs">Continue learning →</Link>
+          <Link className="h-btn h-btn-primary h-btn-sm" to="/labs">Continue learning →</Link>
         ) : (
           <>
             <Link className="h-btn h-btn-ghost h-btn-sm" to="/login">Log in</Link>
-            <Link className="h-btn h-btn-red h-btn-sm" to="/login?signup=1">Start free</Link>
+            <Link className="h-btn h-btn-primary h-btn-sm" to="/login?signup=1">Start free</Link>
           </>
         )}
       </header>
@@ -241,7 +241,7 @@ export default function HomePage() {
         {live.length > 0 && (
           <section id="labs" className="h-section" aria-labelledby="labs-title">
             <p className="h-kicker">Live now</p>
-            <h2 id="labs-title">Pick a lab. <span className="h-red">Start in a minute.</span></h2>
+            <h2 id="labs-title">Pick a lab. <span className="h-soft">Start in a minute.</span></h2>
             <div className="h-labs">
               {live.slice(0, LABS_SHOWN).map((lab) => <LabTile key={lab.id} lab={lab} to={labLink(lab)} />)}
             </div>
@@ -276,9 +276,9 @@ export default function HomePage() {
           <h2 id="final-title">Your first win is about three minutes away.</h2>
           <p>Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
           {user ? (
-            <Link className="h-btn h-btn-red" to="/labs">Continue learning →</Link>
+            <Link className="h-btn h-btn-primary" to="/labs">Continue learning →</Link>
           ) : (
-            <Link className="h-btn h-btn-red" to="/login?signup=1">Start free →</Link>
+            <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
           )}
         </section>
       </main>

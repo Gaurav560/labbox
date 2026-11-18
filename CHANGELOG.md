@@ -1,14 +1,14 @@
 # Changelog
 
-## Home page on GitHub charcoal, calmer red, grid pattern
+## Home page: GitHub charcoal, white buttons, muted red, contour lines
 
-- The home page background is now the same charcoal as the login page (#111512) instead of pure
-  black, with black panels and cards and green-grey borders and text.
-- A calmer red: #e5484d (light mode #d13438) instead of the neon #ff2e4d, used flat with no glows;
-  the yellow is a touch softer (#f0d659).
-- The whole page sits on a faint 32 px tile grid, like the login page.
-- The closing panel is black with the grid and a faint red tint at the bottom instead of a solid red
-  block; red is left for the button.
+- Background: the same charcoal as the login page (#111512), black panels and cards, green-grey
+  borders and text.
+- Buttons are white with black text, like GitHub (black with white text in light mode).
+- Red is a muted brick (#d1605a, light mode #b8463f) used only for small accents: "doing", the live
+  dot, section labels, the stats lines. No glows, no red blocks; the yellow is softer too.
+- Pattern: topographic contour lines (`tools/make_topo.py` writes `frontend/public/patterns/topo.svg`),
+  fixed behind the page so it never looks tiled. The closing panel is plain black.
 
 ## LabBox by Telusko, FAQs and legal pages
 
