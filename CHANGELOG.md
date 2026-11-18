@@ -15,6 +15,9 @@
 - Lighthouse on the production build: performance, accessibility, best practices and SEO all 100, in
   dark and light. New browser test for the home page.
 - No prices, testimonials or user numbers on the page (none of them exist yet).
+- Redesign below the hero: no boxed cards. Big headlines with a small accent label, a split layout for
+  the demo question, thin numbered steps on a hairline, a two-column "why" list, track rows with a live
+  status on the right, and a soft glow behind the final call to action.
 
 ## v2 Phase C: XP, streaks, levels, onboarding, skill map, daily drill
 

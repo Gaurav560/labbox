@@ -23,10 +23,10 @@ const STEPS = [
 ];
 
 const WHY = [
-  { icon: "🖥️", title: "A real machine for every lab", text: "Not a simulation. Install things, run servers, break them and fix them." },
-  { icon: "📖", title: "A story to pull you forward", text: "Help Priya get Dabba Express through the lunch rush, one function at a time." },
-  { icon: "💡", title: "Hints, not answers", text: "A nudge, then a direction, then almost there. You still write the code." },
-  { icon: "🔥", title: "A habit you can keep", text: "XP, streaks and a two minute daily drill for the busy days." },
+  { title: "A real machine for every lab", text: "Not a simulation. Install things, run servers, break them and fix them." },
+  { title: "A story to pull you forward", text: "Help Priya get Dabba Express through the lunch rush, one function at a time." },
+  { title: "Hints, not answers", text: "A nudge, then a direction, then almost there. You still write the code." },
+  { title: "A habit you can keep", text: "XP, streaks and a two minute daily drill for the busy days." },
 ];
 
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
@@ -122,76 +122,85 @@ export default function HomePage() {
           <LabPreview />
         </section>
 
-        <section className="home-section home-try" id="try" aria-labelledby="try-title">
-          <h2 id="try-title">Try it right here</h2>
-          <p className="muted">This is how every lesson starts: guess first, then see why.</p>
+        <section className="home-section split" id="try" aria-labelledby="try-title">
+          <div className="split-intro">
+            <p className="eyebrow">Try it</p>
+            <h2 id="try-title">Guess first. Then see why.</h2>
+            <p className="lede">Every lesson works like this. A small surprise, a quick guess, and the idea sticks.</p>
+          </div>
           <div className="try-card">
             <ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} />
           </div>
         </section>
 
         <section className="home-section" id="how" aria-labelledby="how-title">
-          <h2 id="how-title">How it works</h2>
-          <ol className="how-grid">
+          <p className="eyebrow">How it works</p>
+          <h2 id="how-title">Four steps, a few minutes each.</h2>
+          <ol className="steps">
             {STEPS.map((s) => (
-              <li key={s.n} className="how-card">
-                <span className="how-n" aria-hidden="true">{s.n}</span>
+              <li key={s.n} className="step">
+                <span className="step-n" aria-hidden="true">{String(s.n).padStart(2, "0")}</span>
                 <h3>{s.title}</h3>
-                <p className="muted">{s.text}</p>
+                <p>{s.text}</p>
               </li>
             ))}
           </ol>
         </section>
 
-        <section className="home-section" aria-labelledby="why-title">
-          <h2 id="why-title">Why it sticks</h2>
-          <div className="why-grid">
+        <section className="home-section split" aria-labelledby="why-title">
+          <div className="split-intro">
+            <p className="eyebrow">Why it sticks</p>
+            <h2 id="why-title">Built for doing, not watching.</h2>
+          </div>
+          <dl className="why-list">
             {WHY.map((w) => (
-              <div key={w.title} className="why-card">
-                <span className="why-icon" aria-hidden="true">{w.icon}</span>
-                <h3>{w.title}</h3>
-                <p className="muted">{w.text}</p>
+              <div key={w.title} className="why-item">
+                <dt>{w.title}</dt>
+                <dd>{w.text}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         <section className="home-section" id="tracks" aria-labelledby="tracks-title">
-          <h2 id="tracks-title">Tracks</h2>
-          <p className="muted">Pick a direction. New labs land in these tracks as they are built.</p>
-          <div className="track-grid">
+          <p className="eyebrow">Tracks</p>
+          <h2 id="tracks-title">Pick a direction.</h2>
+          <p className="lede">New labs land in these tracks as they are built.</p>
+          <ul className="track-rows">
             {TRACKS.map((t) => {
               const labs = catalog?.filter((l) => l.track === t.id) ?? [];
               return (
-                <article key={t.id} className={`track-card ${labs.length ? "track-live" : ""}`}>
-                  <div className="row">
+                <li key={t.id} className={`track-card ${labs.length ? "track-live" : ""}`}>
+                  <div className="track-main-col">
                     <h3>{t.title}</h3>
-                    {catalog && !labs.length && <span className="meta-chip">Coming soon</span>}
+                    <p>{t.blurb}</p>
+                    {labs.length > 0 && (
+                      <ul className="track-labs">
+                        {labs.map((l) => (
+                          <li key={l.id}>
+                            <strong>{l.title}</strong>
+                            <span>
+                              {[l.level && l.level[0].toUpperCase() + l.level.slice(1), l.estimated_minutes && `${l.estimated_minutes} min`]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <p className="muted">{t.blurb}</p>
-                  {labs.length > 0 && (
-                    <ul className="track-labs">
-                      {labs.map((l) => (
-                        <li key={l.id}>
-                          <strong>{l.title}</strong>
-                          <span className="muted small-text">
-                            {[l.level && l.level[0].toUpperCase() + l.level.slice(1), l.estimated_minutes && `${l.estimated_minutes} min`, `${l.chapter_count} chapter${l.chapter_count === 1 ? "" : "s"}`]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </article>
+                  <span className={`track-status ${labs.length ? "is-live" : ""}`}>
+                    {catalog === null ? "" : labs.length ? `${labs.length} lab${labs.length === 1 ? "" : "s"} live` : "Coming soon"}
+                  </span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </section>
 
-        <section className="home-section home-final" aria-labelledby="final-title">
+        <section className="home-final" aria-labelledby="final-title">
           <h2 id="final-title">Your first win is about three minutes away.</h2>
-          <p className="muted">Sign up, pick a goal, and you are writing code in a real machine within a minute.</p>
+          <p className="lede">Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
           {cta}
         </section>
       </main>
