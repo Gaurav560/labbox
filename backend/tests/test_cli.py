@@ -1,0 +1,111 @@
+"""tools/labbox_cli.py: validate, new-lab and test-lab."""
+import importlib.util
+import shutil
+from pathlib import Path
+
+import pytest
+import yaml
+
+ROOT = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("labbox_cli", ROOT / "tools" / "labbox_cli.py")
+assert _spec and _spec.loader
+cli = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(cli)
+
+LABS_DIR = ROOT / "labs"
+
+
+@pytest.fixture
+def labs_dir(tmp_path: Path) -> Path:
+    for name in ("python-basics", "java-basics"):
+        shutil.copytree(LABS_DIR / name, tmp_path / name)
+    return tmp_path
+
+
+def errors(folder: Path) -> list[str]:
+    return cli.validate_lab(folder, check_image=False).errors
+
+
+def test_real_labs_are_valid():
+    assert cli.main(["validate", "--no-docker"]) == 0
+    for name in ("python-basics", "java-basics"):
+        rep = cli.validate_lab(LABS_DIR / name, check_image=False)
+        assert rep.errors == [] and rep.warnings == []
+
+
+def test_missing_solution(labs_dir: Path):
+    shutil.rmtree(labs_dir / "python-basics" / "solution")
+    assert any("solution/" in e for e in errors(labs_dir / "python-basics"))
+
+
+def test_too_few_hints(labs_dir: Path):
+    path = labs_dir / "python-basics" / "lab.yaml"
+    data = yaml.safe_load(path.read_text())
+    data["chapters"][0]["tasks"][1]["hints"] = data["chapters"][0]["tasks"][1]["hints"][:2]
+    path.write_text(yaml.safe_dump(data))
+    assert errors(labs_dir / "python-basics") == ["chapter 01-functions: task 'add' has 2 hints, needs 3"]
+
+
+def test_em_dash(labs_dir: Path):
+    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    ch.write_text(ch.read_text() + "\nOne more thing \u2014 really.\n")
+    assert any("01-methods.md:" in e and "em dash" in e for e in errors(labs_dir / "java-basics"))
+
+
+def test_task_without_step(labs_dir: Path):
+    ch = labs_dir / "python-basics" / "chapters" / "01-functions.md"
+    ch.write_text(ch.read_text().replace(":::step{type=task task=add ", ":::step{type=concept "))
+    assert any("'add' has no task step" in e for e in errors(labs_dir / "python-basics"))
+
+
+def test_schema_errors_are_reported(labs_dir: Path):
+    path = labs_dir / "python-basics" / "lab.yaml"
+    path.write_text(path.read_text() + "services:\n  - {name: db, image: postgres:16}\n")
+    assert any("services needs Phase D" in e for e in errors(labs_dir / "python-basics"))
+    assert cli.main(["--labs-dir", str(labs_dir), "validate", "--no-docker"]) == 1
+
+
+def test_unknown_prerequisite_warns(labs_dir: Path):
+    path = labs_dir / "java-basics" / "lab.yaml"
+    path.write_text(path.read_text() + "prerequisites: [core-java]\n")
+    rep = cli.validate_lab(labs_dir / "java-basics", check_image=False, known_labs={"java-basics", "python-basics"})
+    assert rep.errors == [] and any("core-java" in w for w in rep.warnings)
+
+
+@pytest.mark.parametrize("template", ["python", "java"])
+def test_new_lab_is_valid(tmp_path: Path, template: str):
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", f"my-{template}", "--template", template, "--track", "languages"]) == 0
+    rep = cli.validate_lab(tmp_path / f"my-{template}", check_image=False)
+    assert rep.errors == [], rep.errors
+    assert "{{" not in (tmp_path / f"my-{template}" / "lab.yaml").read_text()
+
+
+def test_new_lab_refuses(tmp_path: Path):
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "rag", "--template", "ai"]) == 2
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "Bad_Id"]) == 2
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 0
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 2  # exists
+
+
+@pytest.mark.docker
+@pytest.mark.parametrize("lab", ["python-basics", "java-basics"])
+def test_test_lab(lab: str, capsys):
+    """Starter fails every task, solution passes every task (image must be built)."""
+    from tests.test_e2e_docker import _docker_ready
+
+    if not _docker_ready():
+        pytest.skip("Docker or lab images not available")
+    assert cli.main(["test-lab", lab, "--no-build"]) == 0
+    assert "starter fails every task, solution passes every task" in capsys.readouterr().out
+
+
+@pytest.mark.docker
+def test_test_lab_catches_a_wrong_solution(labs_dir: Path, capsys):
+    from tests.test_e2e_docker import _docker_ready
+
+    if not _docker_ready():
+        pytest.skip("Docker or lab images not available")
+    (labs_dir / "python-basics" / "solution" / "math_utils.py").write_text("def add(a, b):\n    return a - b\n")
+    assert cli.main(["--labs-dir", str(labs_dir), "test-lab", "python-basics", "--no-build"]) == 1
+    out = capsys.readouterr().out
+    assert "add: should PASS on solution" in out and "is_even: should PASS on solution" in out

@@ -9,7 +9,8 @@ from sqlmodel import SQLModel
 from app import models  # noqa: F401
 from app.db import init_db
 
-NEW_TABLES = {"chapter_progress", "task_progress"}
+NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer"}
+HEAD = "0003"
 
 # The schema exactly as the POC's SQLModel.metadata.create_all() made it.
 POC_SCHEMA = """
@@ -44,9 +45,9 @@ def test_fresh_database(tmp_path: Path):
     engine = _engine(tmp_path / "fresh.db")
     init_db(engine)
     assert {"user", "workspace", "checkrun", *NEW_TABLES} <= set(inspect(engine).get_table_names())
-    assert _version(engine) == "0002"
+    assert _version(engine) == HEAD
     init_db(engine)  # running again is a no-op
-    assert _version(engine) == "0002"
+    assert _version(engine) == HEAD
 
 
 def test_poc_database_is_stamped_and_keeps_data(tmp_path: Path):
@@ -63,7 +64,7 @@ def test_poc_database_is_stamped_and_keeps_data(tmp_path: Path):
             )
         )
     init_db(engine)
-    assert _version(engine) == "0002"
+    assert _version(engine) == HEAD
     assert NEW_TABLES <= set(inspect(engine).get_table_names())
     with engine.connect() as c:
         assert c.execute(text("SELECT username FROM user")).scalar_one() == "asha"

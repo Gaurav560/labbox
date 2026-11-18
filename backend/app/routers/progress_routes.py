@@ -15,6 +15,12 @@ class ChapterProgressOut(BaseModel):
     current_step: int
     step_count: int
     hints: dict[str, list[str]]  # task id -> hints revealed so far
+    predicts: dict[int, progress.PredictState] = {}  # step index -> attempts so far
+
+
+class PredictBody(BaseModel):
+    step: int = Field(ge=0)
+    choice: int = Field(ge=0)
 
 
 class StepBody(BaseModel):
@@ -36,6 +42,7 @@ def _out(session: Session, user_id: int, lab: LabConfig, chapter_id: str) -> Cha
         current_step=row.current_step,
         step_count=len(lab.chapter_steps(chapter_id)),
         hints={t.id: t.hints[: used.get(t.id, 0)] for t in tasks if used.get(t.id, 0)},
+        predicts=progress.predict_states(session, user_id, lab, chapter_id),
     )
 
 
@@ -78,3 +85,18 @@ def hint(
         hints_left=len(task.hints) - row.hints_used,
         xp=progress.task_xp(task.xp, row.hints_used),
     )
+
+
+@router.post("/predict", response_model=progress.PredictState)
+def predict(
+    lab_id: str,
+    chapter_id: str,
+    body: PredictBody,
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+) -> progress.PredictState:
+    """Check a predict answer. The right answer and explanation come back only once it is right."""
+    assert user.id is not None
+    lab = get_lab(lab_id)
+    lab.chapter(chapter_id)
+    return progress.answer_predict(session, user.id, lab, chapter_id, body.step, body.choice)

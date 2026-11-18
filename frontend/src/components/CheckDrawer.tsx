@@ -30,6 +30,24 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
         )}
         <button className="btn btn-small btn-ghost" onClick={onClose} aria-label="Close results">✕</button>
       </div>
+      {result && !running && !!result.metrics?.length && (
+        <ul className="metrics" aria-label="Metrics">
+          {result.metrics.map((m) => {
+            const met = m.target == null || m.better == null ? null : m.better === "lower" ? m.value <= m.target : m.value >= m.target;
+            return (
+              <li key={m.name} className={met === null ? "" : met ? "metric-met" : "metric-missed"}>
+                <span className="metric-name">{m.name}</span>
+                <strong className="metric-value">{m.value}</strong>
+                {m.target != null && (
+                  <span className="muted small-text">
+                    target {m.better === "higher" ? "≥" : m.better === "lower" ? "≤" : ""} {m.target}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       {result && !running && (
         <ul className="drawer-list">
           {result.results.map((r) => (

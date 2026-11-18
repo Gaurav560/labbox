@@ -1,7 +1,17 @@
 id: java-basics
+version: 2
 title: Java Basics
+subtitle: Write your first Java methods and check them against real tests.
 description: Write your first Java methods and check them against real tests.
 language: java
+track: languages
+tags: [java]
+level: beginner
+estimated_minutes: 15
+story:
+  company: PaySetu
+  character: { name: Kabir, role: "Lead engineer, PaySetu" }
+  pitch: "PaySetu signs up 600 UPI merchants a day and needs two small Java methods it can trust."
 image: labbox/java-basics:v1
 resources:
   cpus: 0.5
@@ -19,6 +29,7 @@ chapters:
   - id: 01-methods
     title: Your first methods
     file: chapters/01-methods.md
+    minutes: 15
     tasks:
       - id: greet
         title: "Greeter.greet: return a greeting"

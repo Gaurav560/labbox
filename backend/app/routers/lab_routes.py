@@ -9,8 +9,8 @@ from .. import containers, progress
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
-from ..labs import all_labs, get_lab
-from ..lessons import Step
+from ..labs import LabConfig, all_labs, get_lab
+from ..lessons import PublicStep, StepType, public_step, redact_markdown
 from ..models import User
 
 router = APIRouter(prefix="/api/labs", tags=["labs"])
@@ -21,7 +21,17 @@ class Progress(BaseModel):
     total_tasks: int
 
 
-class LabSummary(BaseModel):
+class LabInfo(BaseModel):
+    """v2 catalog fields (defaults for v1 labs)."""
+
+    subtitle: str = ""
+    track: str = "languages"
+    tags: list[str] = []
+    level: str | None = None
+    estimated_minutes: int | None = None
+
+
+class LabSummary(LabInfo):
     id: str
     title: str
     description: str
@@ -43,9 +53,10 @@ class ChapterOut(BaseModel):
     id: str
     title: str
     tasks: list[TaskOut]
+    minutes: int | None = None
 
 
-class LabDetail(BaseModel):
+class LabDetail(LabInfo):
     id: str
     title: str
     description: str
@@ -57,8 +68,28 @@ class LabDetail(BaseModel):
 class ChapterContent(BaseModel):
     id: str
     title: str
-    markdown: str
-    steps: list[Step]
+    markdown: str  # predict answers redacted
+    steps: list[PublicStep]
+
+
+class OutlineStep(BaseModel):
+    type: StepType
+    title: str | None = None
+    task: str | None = None
+
+
+class Outline(BaseModel):
+    steps: list[OutlineStep]
+
+
+def _info(lab: LabConfig) -> dict:
+    return dict(
+        subtitle=lab.subtitle,
+        track=lab.track,
+        tags=lab.tags,
+        level=lab.level,
+        estimated_minutes=lab.estimated_minutes,
+    )
 
 
 @router.get("", response_model=list[LabSummary])
@@ -69,6 +100,7 @@ def list_labs(user: User = Depends(get_current_user), session: Session = Depends
         states = task_states(session, user.id, lab)
         out.append(
             LabSummary(
+                **_info(lab),
                 id=lab.id,
                 title=lab.title,
                 description=lab.description,
@@ -87,6 +119,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
     states = task_states(session, user.id, lab)
     used = progress.hints_used(session, user.id, lab.id)
     return LabDetail(
+        **_info(lab),
         id=lab.id,
         title=lab.title,
         description=lab.description,
@@ -95,6 +128,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
             ChapterOut(
                 id=c.id,
                 title=c.title,
+                minutes=c.minutes,
                 tasks=[
                     TaskOut(
                         id=t.id,
@@ -117,7 +151,19 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
 def chapter(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)) -> ChapterContent:
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
-    return ChapterContent(id=ch.id, title=ch.title, markdown=lab.chapter_markdown(chapter_id), steps=lab.chapter_steps(chapter_id))
+    return ChapterContent(
+        id=ch.id,
+        title=ch.title,
+        markdown=redact_markdown(lab.chapter_markdown(chapter_id)),
+        steps=[public_step(s) for s in lab.chapter_steps(chapter_id)],
+    )
+
+
+@router.get("/{lab_id}/chapters/{chapter_id}/outline", response_model=Outline)
+def outline(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)) -> Outline:
+    lab = get_lab(lab_id)
+    lab.chapter(chapter_id)
+    return Outline(steps=[OutlineStep(type=s.type, title=s.title, task=s.task) for s in lab.chapter_steps(chapter_id)])
 
 
 class WorkspaceStatus(BaseModel):

@@ -108,6 +108,24 @@ Keep comments in `.env` on their own lines: systemd's `EnvironmentFile` does not
 
 ## 2. How to add a new lab
 
+The quick way is the authoring CLI (`scripts/labbox`, it uses the backend's virtualenv):
+
+```bash
+scripts/labbox new-lab my-lab --track languages --template python   # or --template java
+scripts/labbox validate my-lab            # schema, steps, 3 hints per task, no em dashes, solution/, image built
+scripts/labbox test-lab my-lab            # builds the image; starter must FAIL every task, solution must PASS
+scripts/labbox preview my-lab             # prints a dev login (fresh password each run) and opens the browser
+```
+
+`validate` with no lab id checks every lab; add `--no-docker` to skip the image check. Both `validate` and
+`test-lab` exit non-zero on problems, so they can run in CI. Templates for node, go, multi-service,
+incident, ai and system-design arrive with the phases that build their engines.
+
+Every lab has a `solution/` folder with working code. It is used only by `test-lab`: it is never copied
+into a workspace, never served by any route, and `.dockerignore` keeps it (and `tests/`) out of images.
+
+By hand:
+
 1. Copy a lab folder: `cp -r labs/python-basics labs/my-lab`.
 2. Edit `labs/my-lab/lab.yaml`:
    - `id` must equal the folder name (lowercase, digits and dashes).
@@ -197,7 +215,27 @@ Make `greet(name)` return `"Hello, <name>!"`.
   `deep-dive`, `incident{minutes}`. Close each with `:::`.
 - A code fence with `run` (` ```bash run `) gets a **Run in terminal** button. It pastes the command
   without pressing Enter.
-- A predict step needs a `:::question`, at least 2 options and exactly one `- [x]`.
+- A predict step needs a `:::question`, at least 2 options and exactly one `- [x]`. The right answer
+  and the `:::explain` text stay on the server: the browser gets them only after a correct answer
+  (`POST /api/labs/{lab}/chapters/{ch}/predict`), and the raw markdown it receives has them removed.
+
+### `lab.yaml` v2 fields
+
+All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (`languages`,
+`frameworks`, `databases`, `devops`, `system-design`, `ai`, `interview`; default `languages`), `tags`,
+`level` (`beginner`, `intermediate`, `advanced`), `estimated_minutes`, `free_chapters` (default 2),
+`prerequisites` (lab ids, a recommendation only), `story` (`company`, `character: {name, role}`,
+`pitch`), and per chapter `minutes`. Tasks take `xp` (default 20) and `hints`.
+
+Fields whose engine is not built yet are refused at start-up with a message naming the phase that adds
+them, so a lab never silently loses a feature: `services`, `preview`, `workspace.network: lab`,
+`check.mode: live`, chapter `setup` and resource tiers (Phase D), `llm` (Phase E), `runtime` and
+`workspace.sudo` (Phase F), `resources.disk_mb` (Phase H).
+
+### Check output
+
+Besides `@@RESULT`, a check may print `@@METRIC {"name": "p95_ms", "value": 180, "target": 200,
+"better": "lower"}`. Metrics are shown in the results drawer (gauges come later).
 
 ## 3. AWS deploy (single EC2 host)
 
@@ -260,8 +298,8 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 
 - User and check containers run as uid 1000 with `cap_drop=ALL`, `no-new-privileges`, pids, memory
   (no swap) and CPU limits. Nothing is privileged and the Docker socket is never mounted.
-- Check containers have no network and get the tests read-only. Hidden tests are never copied into a
-  workspace or served by the API.
+- Check containers have no network and get the tests read-only. Hidden tests and `solution/` are never
+  copied into a workspace or an image, or served by the API. Predict answers are checked on the server.
 - Every route takes the user id from the JWT only. The terminal WebSocket requires a valid JWT.
 - The file API rejects absolute paths, `..` escapes and symlinks that leave the workspace.
   Delete and rename act on a symlink itself, never on its target.
@@ -277,8 +315,6 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 - SQLite: fine for a POC, not for many concurrent writers.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file
   to see the new content.
-- Predict answers are checked in the browser for now, so the right answer is in the page data
-  (checked on the server from Phase B).
 - A determined user can still fake a passing check from inside their own process (for example by
   printing a `@@RESULT` line and exiting before the real checks run). Graders that must be
   tamper-proof should run user code in a separate process from the reporter.

@@ -46,6 +46,12 @@ class Step(BaseModel):
     predict: Predict | None = None
 
 
+def _closes_fence(line: str, fence: str) -> bool:
+    """A closing code fence: the same character, at least as long, nothing else on the line."""
+    t = line.strip()
+    return t.startswith(fence) and t.strip(fence[0]) == ""
+
+
 def parse_attrs(raw: str | None) -> dict[str, str]:
     if not raw:
         return {}
@@ -65,7 +71,7 @@ def _blocks(lines: list[str]) -> list[tuple[str, dict[str, str] | None, list[str
         if fence is not None:
             # Inside a code block nothing is a directive.
             (body if depth else text).append(line)
-            if line.strip().startswith(fence[0] * len(fence)) and line.strip().strip(fence[0]) == "":
+            if _closes_fence(line, fence):
                 fence = None
             continue
         m = _FENCE_RE.match(line)
@@ -175,3 +181,67 @@ def parse_steps(markdown: str) -> list[Step]:
             )
         )
     return steps
+
+
+# ---------- what the browser may see ----------
+# Predict answers and explanations stay on the server until the learner answers correctly.
+
+
+class PublicPredict(BaseModel):
+    question: str
+    options: list[PredictOption]
+
+
+class PublicStep(BaseModel):
+    type: StepType
+    title: str | None = None
+    task: str | None = None
+    minutes: int | None = None
+    markdown: str
+    predict: PublicPredict | None = None
+
+
+def public_step(step: Step) -> PublicStep:
+    return PublicStep(
+        type=step.type,
+        title=step.title,
+        task=step.task,
+        minutes=step.minutes,
+        markdown=step.markdown,
+        predict=PublicPredict(question=step.predict.question, options=step.predict.options) if step.predict else None,
+    )
+
+
+_CORRECT_RE = re.compile(r"^(\s{0,3}[-*] )\[[xX]\]")
+
+
+def redact_markdown(markdown: str) -> str:
+    """The raw chapter with predict answers hidden: every option unticked, :::explain blocks removed."""
+    out: list[str] = []
+    fence: str | None = None
+    skip_depth = 0  # > 0 while inside an :::explain block
+    for line in markdown.splitlines():
+        if fence is not None:
+            if _closes_fence(line, fence):
+                fence = None
+            if not skip_depth:
+                out.append(line)
+            continue
+        m = _FENCE_RE.match(line)
+        if m:
+            fence = m.group(1)
+            if not skip_depth:
+                out.append(line)
+            continue
+        opened = _OPEN_RE.match(line)
+        if skip_depth:
+            if opened:
+                skip_depth += 1
+            elif _CLOSE_RE.match(line):
+                skip_depth -= 1
+            continue
+        if opened and opened.group(2) == "explain":
+            skip_depth = 1
+            continue
+        out.append(_CORRECT_RE.sub(r"\1[ ]", line))
+    return "\n".join(out) + ("\n" if markdown.endswith("\n") else "")

@@ -1,7 +1,17 @@
 id: python-basics
+version: 2
 title: Python Basics
+subtitle: Write your first Python functions and see real tests pass.
 description: Write your first Python functions and see real tests pass.
 language: python
+track: languages
+tags: [python]
+level: beginner
+estimated_minutes: 15
+story:
+  company: Dabba Express
+  character: { name: Priya, role: "Founder, Dabba Express" }
+  pitch: "Dabba Express delivers 300 tiffins a day across Pune and needs a few small helpers in Python."
 image: labbox/python-basics:v1
 resources:
   cpus: 0.5
@@ -19,6 +29,7 @@ chapters:
   - id: 01-functions
     title: Your first functions
     file: chapters/01-functions.md
+    minutes: 15
     tasks:
       - id: greet
         title: "greet.py: return a greeting"

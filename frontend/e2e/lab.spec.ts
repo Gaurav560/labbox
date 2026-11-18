@@ -42,8 +42,14 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   const auth = { Authorization: `Bearer ${await token(page)}` };
   userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;
 
+  const chapterResponse = page.waitForResponse((r) => r.url().endsWith("/api/labs/python-basics/chapters/01-functions"));
   await page.goto("/labs/python-basics");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
+  // The predict answer is checked on the server: it is not in what the page received.
+  const chapterJson = await (await chapterResponse).text();
+  expect(chapterJson).not.toContain("[x]");
+  expect(chapterJson).not.toContain('"answer"');
+  expect(chapterJson).not.toContain("way of saying");
   await expect(stepCount(page)).toHaveText("Step 1 of 9");
   await expect(page.locator(".step-kind")).toHaveText("Story");
   await expect(page.locator(".mission")).toContainText("Write three small Python functions");
@@ -55,6 +61,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(page.locator(".step-kind")).toHaveText("Predict");
 
   // Predict: a wrong guess first, then the right one reveals the explanation.
+  expect(await page.content()).not.toContain("way of saying");
   await page.locator(".predict-option", { hasText: "An error" }).click();
   await expect(page.getByText("Not quite. Have another go.")).toBeVisible();
   await page.locator(".predict-option", { hasText: "None" }).click();
@@ -128,6 +135,10 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(stepCount(page)).toHaveText("Step 9 of 9");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
+  // The answered predict is still answered (it comes from the server).
+  await page.getByRole("button", { name: "Step 3: Guess first" }).click();
+  await expect(page.locator(".predict-explain")).toContainText("way of saying");
+  await expect(page.locator(".predict-option.is-wrong")).toContainText("An error");
 
   // Double prompt bug: after Stop and Start the terminal shows exactly one prompt.
   await page.getByRole("button", { name: "Stop machine" }).click();

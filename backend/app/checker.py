@@ -9,6 +9,7 @@ import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
 from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
@@ -22,6 +23,8 @@ from .models import CheckRun, User, Workspace
 log = logging.getLogger(__name__)
 
 RESULT_PREFIX = "@@RESULT "
+METRIC_PREFIX = "@@METRIC "
+MAX_METRICS = 20
 OUTPUT_TAIL_CHARS = 4000
 MAX_COPY_BYTES = 20 * 1024 * 1024
 CHECK_PIDS_LIMIT = 128
@@ -37,12 +40,23 @@ class TaskResult(BaseModel):
     actual: str | None = None
 
 
+class Metric(BaseModel):
+    """Optional v2 line, e.g. latency for performance labs: @@METRIC {"name": "p95_ms", "value": 180}."""
+
+    name: str
+    value: float
+    target: float | None = None
+    better: Literal["lower", "higher"] | None = None
+
+
 class CheckResponse(BaseModel):
     passed_count: int
     total_count: int
     results: list[TaskResult]
     output: str
     duration_ms: int
+    metrics: list[Metric] = []
+    timed_out: bool = False
 
 
 class _RawResult(BaseModel):
@@ -138,6 +152,22 @@ def parse_results(logs: str, lab: LabConfig, chapter_id: str) -> list[TaskResult
     return results
 
 
+def parse_metrics(logs: str) -> list[Metric]:
+    """@@METRIC lines; a name reported twice keeps its last value."""
+    found: dict[str, Metric] = {}
+    for line in logs.splitlines():
+        if not line.startswith(METRIC_PREFIX):
+            continue
+        try:
+            m = Metric.model_validate_json(line[len(METRIC_PREFIX):])
+        except ValidationError:
+            continue
+        m.name = m.name[:64]
+        if m.name in found or len(found) < MAX_METRICS:
+            found[m.name] = m
+    return list(found.values())
+
+
 # ---------- running ----------
 
 
@@ -176,19 +206,20 @@ def _run_container(lab: LabConfig, user_id: int, tmp: Path) -> tuple[str, bool]:
     return logs, timed_out
 
 
-def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> CheckResponse:
-    assert user.id is not None
+def check_folder(lab: LabConfig, chapter_id: str, folder: Path, user_id: int) -> CheckResponse:
+    """Run the chapter's hidden tests against a copy of `folder` in a throwaway container.
+
+    Used for every Check (folder = the user's workspace) and by `labbox test-lab`
+    (folder = starter/ or solution/), so both always grade the same way.
+    """
     chapter = lab.chapter(chapter_id)  # 404 if unknown
-    ws: Workspace = containers.get_workspace(session, user, lab)
-    containers.touch(session, ws)
-    settings = get_settings()
-    tmp = settings.CHECKS_DIR / uuid.uuid4().hex
+    tmp = get_settings().CHECKS_DIR / uuid.uuid4().hex
     started = time.monotonic()
     try:
-        copy_workspace(Path(ws.volume_path), tmp / "workspace")
+        copy_workspace(folder, tmp / "workspace")
         shutil.copytree(lab.tests_dir, tmp / "tests", symlinks=True)
         workspace_files.chown_tree(tmp)
-        logs, timed_out = _run_container(lab, user.id, tmp)
+        logs, timed_out = _run_container(lab, user_id, tmp)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     duration_ms = int((time.monotonic() - started) * 1000)
@@ -198,28 +229,43 @@ def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
         results = [TaskResult(task=t.id, title=t.title, passed=False, message=msg) for t in chapter.tasks]
     else:
         results = parse_results(logs, lab, chapter_id)
-    passed = sum(r.passed for r in results)
-    output = logs[-OUTPUT_TAIL_CHARS:]
+    return CheckResponse(
+        passed_count=sum(r.passed for r in results),
+        total_count=len(results),
+        results=results,
+        output=logs[-OUTPUT_TAIL_CHARS:],
+        duration_ms=duration_ms,
+        metrics=[] if timed_out else parse_metrics(logs),
+        timed_out=timed_out,
+    )
+
+
+def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> CheckResponse:
+    assert user.id is not None
+    lab.chapter(chapter_id)  # 404 if unknown
+    ws: Workspace = containers.get_workspace(session, user, lab)
+    containers.touch(session, ws)
+    res = check_folder(lab, chapter_id, Path(ws.volume_path), user.id)
 
     session.add(
         CheckRun(
             user_id=user.id,
             lab_id=lab.id,
             chapter_id=chapter_id,
-            passed_count=passed,
-            total_count=len(results),
-            results_json=json.dumps([r.model_dump(exclude={"title"}, exclude_none=True) for r in results]),
-            output_tail=output,
-            duration_ms=duration_ms,
+            passed_count=res.passed_count,
+            total_count=res.total_count,
+            results_json=json.dumps([r.model_dump(exclude={"title"}, exclude_none=True) for r in res.results]),
+            output_tail=res.output,
+            duration_ms=res.duration_ms,
         )
     )
     session.commit()
-    progress.record_check(session, user.id, lab.id, chapter_id, {r.task: r.passed for r in results})
+    progress.record_check(session, user.id, lab.id, chapter_id, {r.task: r.passed for r in res.results})
     log.info(
         "Check user=%s lab=%s chapter=%s: %d/%d passed in %d ms%s",
-        user.id, lab.id, chapter_id, passed, len(results), duration_ms, " (timed out)" if timed_out else "",
+        user.id, lab.id, chapter_id, res.passed_count, res.total_count, res.duration_ms, " (timed out)" if res.timed_out else "",
     )
-    return CheckResponse(passed_count=passed, total_count=len(results), results=results, output=output, duration_ms=duration_ms)
+    return res
 
 
 # ---------- history and progress ----------

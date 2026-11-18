@@ -433,3 +433,14 @@ select { padding: 3px 8px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---------- v2 catalog chips and check metrics ---------- */
+.lab-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta-chip { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--chip); border-radius: 999px; padding: 1px 10px; }
+.meta-chip-cap { text-transform: capitalize; }
+.metrics { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4) 0; }
+.metrics li { display: flex; align-items: baseline; gap: var(--space-2); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--space-2) var(--space-3); }
+.metrics li.metric-met { border-color: var(--success); }
+.metrics li.metric-missed { border-color: var(--danger); }
+.metric-name { font-family: var(--font-code); font-size: 13px; color: var(--muted); }
+.metric-value { font-size: 18px; }

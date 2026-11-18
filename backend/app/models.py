@@ -67,3 +67,17 @@ class TaskProgress(SQLModel, table=True):
     passed: bool = False
     hints_used: int = 0
     first_passed_at: datetime | None = None
+
+
+class PredictAnswer(SQLModel, table=True):
+    # one row per attempt, so "right first time" can be worked out later
+    __tablename__ = "predict_answer"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    lab_id: str
+    chapter_id: str
+    step_index: int
+    choice: int
+    correct: bool
+    created_at: datetime = Field(default_factory=utcnow)

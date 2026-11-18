@@ -2,11 +2,14 @@
 from collections.abc import Callable
 from typing import TypeVar
 
+from fastapi import HTTPException
+from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, SQLModel, select
+from sqlmodel import Session, SQLModel, col, select
 
 from .labs import LabConfig
-from .models import ChapterProgress, TaskProgress, utcnow
+from .lessons import Step
+from .models import ChapterProgress, PredictAnswer, TaskProgress, utcnow
 
 # XP share kept after 0, 1, 2 and 3 revealed hints (section 2.4 of the v2 spec).
 HINT_XP_FACTORS = (1.0, 0.8, 0.6, 0.4)
@@ -80,3 +83,63 @@ def record_check(session: Session, user_id: int, lab_id: str, chapter_id: str, p
             row.first_passed_at = utcnow()
         session.add(row)
     session.commit()
+
+
+# ---------- predict steps (answers are checked here, never in the browser) ----------
+
+
+class PredictState(BaseModel):
+    wrong: list[int] = []  # wrong choices, in the order they were picked
+    solved: bool = False
+    answer: int | None = None  # only once solved
+    explain: str | None = None  # only once solved
+
+
+def predict_step(lab: LabConfig, chapter_id: str, step_index: int) -> Step:
+    steps = lab.chapter_steps(chapter_id)
+    if not 0 <= step_index < len(steps) or steps[step_index].predict is None:
+        raise HTTPException(404, f"Step {step_index} is not a predict step")
+    return steps[step_index]
+
+
+def answer_predict(session: Session, user_id: int, lab: LabConfig, chapter_id: str, step_index: int, choice: int) -> PredictState:
+    step = predict_step(lab, chapter_id, step_index)
+    assert step.predict is not None
+    if not 0 <= choice < len(step.predict.options):
+        raise HTTPException(422, f"Choice must be between 0 and {len(step.predict.options) - 1}")
+    session.add(
+        PredictAnswer(
+            user_id=user_id,
+            lab_id=lab.id,
+            chapter_id=chapter_id,
+            step_index=step_index,
+            choice=choice,
+            correct=choice == step.predict.answer,
+        )
+    )
+    session.commit()
+    return predict_states(session, user_id, lab, chapter_id)[step_index]
+
+
+def predict_states(session: Session, user_id: int, lab: LabConfig, chapter_id: str) -> dict[int, PredictState]:
+    """Every predict step the user has tried in this chapter, keyed by step index."""
+    rows = session.exec(
+        select(PredictAnswer)
+        .where(PredictAnswer.user_id == user_id, PredictAnswer.lab_id == lab.id, PredictAnswer.chapter_id == chapter_id)
+        .order_by(col(PredictAnswer.id))
+    ).all()
+    steps = lab.chapter_steps(chapter_id)
+    states: dict[int, PredictState] = {}
+    for r in rows:
+        if not (0 <= r.step_index < len(steps) and steps[r.step_index].predict):
+            continue  # the chapter changed since this answer
+        st = states.setdefault(r.step_index, PredictState())
+        if st.solved:
+            continue
+        if r.correct:
+            pr = steps[r.step_index].predict
+            assert pr is not None
+            st.solved, st.answer, st.explain = True, pr.answer, pr.explain
+        elif r.choice not in st.wrong:
+            st.wrong.append(r.choice)
+    return states

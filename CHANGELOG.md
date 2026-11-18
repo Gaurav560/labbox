@@ -1,5 +1,38 @@
 # Changelog
 
+## v2 Phase B: content format v2, authoring CLI, solutions
+
+**Content format**
+- `lab.yaml` v2 fields (all optional, v1 files unchanged): `version`, `subtitle`, `track`, `tags`, `level`,
+  `estimated_minutes`, `free_chapters`, `prerequisites`, `story`, chapter `minutes`. The labs page shows
+  track, level and minutes.
+- Engine fields from the v2 spec (`services`, `preview`, `llm`, `runtime`, live checks, chapter `setup`,
+  `network: lab`, `sudo`, tiers, `disk_mb`) are part of the schema but refused with a clear "needs
+  Phase X" message until that phase is built.
+- Both labs upgraded to v2 metadata (track, level, minutes, story).
+- `@@METRIC` lines are parsed into `metrics` on the check response and listed in the results drawer.
+  `@@RESULT` is unchanged.
+
+**Predict answers on the server**
+- The chapter response no longer contains predict answers or explanations, in `steps` or in the raw
+  `markdown` (answers unticked, `:::explain` removed).
+- New `POST /api/labs/{lab}/chapters/{ch}/predict` checks an answer and returns the explanation once it
+  is right. Every attempt is stored (`predict_answer` table, migration `0003`), and the progress route
+  returns them, so answered predicts stay answered after a reload.
+- New `GET /api/labs/{lab}/chapters/{ch}/outline` returns `{steps: [{type, title, task}]}`.
+
+**Authoring CLI** (`scripts/labbox`, code in `tools/labbox_cli.py`)
+- `new-lab` (python and java templates), `validate`, `test-lab`, `preview`.
+- `test-lab` grades `starter/` and `solution/` with the same function every Check uses
+  (`checker.check_folder`, split out of `run_check`).
+- Both labs have a `solution/` folder; `.dockerignore` keeps `solution/` and `tests/` out of images.
+
+**Tests**
+- 36 new backend tests (v2 schema, refused features, redaction, predict and outline routes, metrics,
+  solution privacy, CLI validate and new-lab, test-lab on both labs and on a wrong solution).
+- The browser test also checks the page has no predict answer before answering, and that an answered
+  predict survives a reload.
+
 ## v2 Phase A: lesson experience redesign
 
 Lessons are now shown one step at a time instead of one long page.

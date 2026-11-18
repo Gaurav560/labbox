@@ -29,6 +29,7 @@ class Resources(_Strict):
     cpus: float = Field(gt=0, le=8)
     memory: str
     pids_limit: int = Field(gt=0, le=4096)
+    disk_mb: int | None = Field(default=None, gt=0)  # v2, needs disk quotas (Phase H)
 
     @field_validator("memory")
     @classmethod
@@ -41,13 +42,57 @@ class Resources(_Strict):
 class WorkspaceConfig(_Strict):
     mount_path: str = "/workspace"
     shell: str = "/bin/bash"
-    network: Literal["bridge", "none"] = "bridge"
+    network: Literal["bridge", "none", "lab"] = "bridge"  # "lab": private per-user network (Phase D)
+    network_egress: bool = False  # v2, Phase D
+    sudo: bool = False  # v2, Phase F
 
 
 class CheckConfig(_Strict):
     command: list[str] = Field(min_length=1)
     timeout_seconds: int = Field(default=30, gt=0, le=300)
     network: Literal["none"] = "none"
+    mode: Literal["fresh", "live"] = "fresh"  # v2: "live" checks the running system (Phase D)
+    mount_workspace: Literal["ro"] | None = None  # v2, live mode only (Phase D)
+
+
+# ---------- v2 lab fields (all optional) ----------
+
+Track = Literal["languages", "frameworks", "databases", "devops", "system-design", "ai", "interview"]
+
+
+class Character(_Strict):
+    name: str
+    role: str = ""
+    avatar: str | None = None
+
+
+class Story(_Strict):
+    company: str = ""
+    character: Character | None = None
+    pitch: str = ""
+
+
+class ServiceResources(_Strict):
+    cpus: float = Field(default=0.5, gt=0, le=8)
+    memory: str = "256m"
+
+
+class Service(_Strict):
+    name: str
+    image: str
+    env: dict[str, str] = {}
+    resources: ServiceResources | None = None
+    user: str | None = None
+
+
+class PreviewPort(_Strict):
+    name: str
+    port: int = Field(gt=0, lt=65536)
+    path: str = "/"
+
+
+class LLMConfig(_Strict):
+    enabled: bool = False
 
 
 class Task(_Strict):
@@ -70,18 +115,36 @@ class Chapter(_Strict):
     title: str
     file: str
     tasks: list[Task] = Field(min_length=1)
+    minutes: int | None = Field(default=None, gt=0)
+    setup: list[str] | None = None  # v2: failure injection script (Phase D)
+    setup_target: str | None = None
 
 
 class LabConfig(_Strict):
     id: str
     title: str
-    description: str
-    language: str
+    description: str = ""  # v1 required it; v2 labs may use subtitle instead
+    language: str = ""
     image: str = Field(min_length=1)
-    resources: Resources
+    resources: Resources | Literal["xs", "s", "m", "l"]  # v2: a tier name (Phase D)
     workspace: WorkspaceConfig = WorkspaceConfig()
     check: CheckConfig
     chapters: list[Chapter] = Field(min_length=1)
+
+    # v2 fields. Defaults keep v1 files working unchanged.
+    version: Literal[1, 2] = 1
+    subtitle: str = ""
+    track: Track = "languages"
+    tags: list[str] = []
+    level: Literal["beginner", "intermediate", "advanced"] | None = None
+    estimated_minutes: int | None = Field(default=None, gt=0)
+    free_chapters: int = Field(default=2, ge=0)
+    prerequisites: list[str] = []  # other lab ids, a recommendation only
+    story: Story | None = None
+    runtime: Literal["default", "gvisor", "sysbox"] = "default"
+    services: list[Service] = []
+    preview: list[PreviewPort] = []
+    llm: LLMConfig = LLMConfig()
 
     # Set by the loader, not read from YAML.
     root: Path = Field(default=Path("."), exclude=True)
@@ -92,6 +155,14 @@ class LabConfig(_Strict):
         if not ID_RE.match(v):
             raise ValueError(f"bad lab id {v!r}: lowercase a-z, 0-9 and dashes only")
         return v
+
+    @model_validator(mode="after")
+    def fill_v1_fields(self) -> "LabConfig":
+        if not self.description:
+            self.description = self.subtitle
+        if not self.language and self.tags:
+            self.language = self.tags[0]
+        return self
 
     @model_validator(mode="after")
     def unique_ids(self) -> "LabConfig":
@@ -135,6 +206,32 @@ class LabConfig(_Strict):
         raise HTTPException(404, f"Task {task_id!r} not found in chapter {chapter_id!r}")
 
 
+def unsupported_features(lab: LabConfig) -> list[str]:
+    """v2 fields whose engine is not built yet. Refusing them beats silently ignoring them."""
+    found: list[tuple[str, str]] = []
+    if isinstance(lab.resources, str):
+        found.append(("resources tiers (xs, s, m, l)", "D"))
+    elif lab.resources.disk_mb is not None:
+        found.append(("resources.disk_mb", "H"))
+    if lab.workspace.network == "lab" or lab.workspace.network_egress:
+        found.append(("workspace.network: lab", "D"))
+    if lab.workspace.sudo:
+        found.append(("workspace.sudo", "F"))
+    if lab.check.mode == "live" or lab.check.mount_workspace:
+        found.append(("check.mode: live", "D"))
+    if lab.services:
+        found.append(("services", "D"))
+    if lab.preview:
+        found.append(("preview", "D"))
+    if lab.llm.enabled:
+        found.append(("llm", "E"))
+    if lab.runtime != "default":
+        found.append((f"runtime: {lab.runtime}", "F"))
+    if any(c.setup or c.setup_target for c in lab.chapters):
+        found.append(("chapter setup", "D"))
+    return [f"{name} needs Phase {phase} (not built yet)" for name, phase in found]
+
+
 def load_lab(folder: Path) -> LabConfig:
     yaml_path = folder / "lab.yaml"
     try:
@@ -150,6 +247,9 @@ def load_lab(folder: Path) -> LabConfig:
 
     if lab.id != folder.name:
         raise LabError(f"{yaml_path}: id {lab.id!r} must equal folder name {folder.name!r}")
+    missing = unsupported_features(lab)
+    if missing:
+        raise LabError(f"{yaml_path}: uses features this LabBox does not have yet: {'; '.join(missing)}")
     root = folder.resolve()
     for ch in lab.chapters:
         chapter_file = (root / ch.file).resolve()

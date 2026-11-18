@@ -1,11 +1,8 @@
-import type { Step, Task } from "../api";
+import type { PredictState, Step, Task } from "../api";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
 
-export interface PredictState {
-  wrong: number[]; // options picked wrongly, in order
-  solved: boolean;
-}
+export const NO_PREDICT: PredictState = { wrong: [], solved: false, answer: null, explain: null };
 
 const TYPE_LABEL: Record<Step["type"], string> = {
   story: "Story",
@@ -25,6 +22,7 @@ interface Props {
   hints: string[];
   hintBusy: boolean;
   predict: PredictState;
+  predictBusy: boolean;
   checking: boolean;
   chapterDone: boolean;
   tasksLeft: number;
@@ -60,7 +58,7 @@ export default function StepCard(p: Props) {
         body
       )}
 
-      {step.predict && <PredictBox step={step} state={p.predict} onPick={p.onPredict} onRun={p.onRun} />}
+      {step.predict && <PredictBox step={step} state={p.predict} busy={p.predictBusy} onPick={p.onPredict} onRun={p.onRun} />}
 
       {(step.type === "task" || step.type === "incident") && p.task && (
         <TaskBox task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} onHint={p.onHint} onCheck={p.onCheck} />
@@ -82,7 +80,15 @@ export default function StepCard(p: Props) {
   );
 }
 
-function PredictBox({ step, state, onPick, onRun }: { step: Step; state: PredictState; onPick: (i: number) => void; onRun: (c: string) => void }) {
+interface PredictBoxProps {
+  step: Step;
+  state: PredictState;
+  busy: boolean;
+  onPick: (i: number) => void;
+  onRun: (c: string) => void;
+}
+
+function PredictBox({ step, state, busy, onPick, onRun }: PredictBoxProps) {
   const pr = step.predict!;
   const done = state.solved;
   return (
@@ -93,13 +99,13 @@ function PredictBox({ step, state, onPick, onRun }: { step: Step; state: Predict
       <div className="predict-options" role="group" aria-labelledby="predict-q">
         {pr.options.map((o, i) => {
           const wrong = state.wrong.includes(i);
-          const right = done && i === pr.answer;
+          const right = done && i === state.answer;
           return (
             <button
               key={i}
               className={`predict-option ${wrong ? "is-wrong" : ""} ${right ? "is-right" : ""}`}
               onClick={() => onPick(i)}
-              disabled={done || wrong}
+              disabled={done || wrong || busy}
               aria-pressed={wrong || right}
             >
               <span className="predict-mark" aria-hidden="true">{right ? "✓" : wrong ? "✗" : String.fromCharCode(65 + i)}</span>
@@ -113,7 +119,7 @@ function PredictBox({ step, state, onPick, onRun }: { step: Step; state: Predict
         {done && (
           <div className="predict-explain">
             <p className="pass"><strong>{state.wrong.length === 0 ? "Right first time!" : "That's it."}</strong></p>
-            {pr.explain && <LessonMarkdown markdown={pr.explain} onRun={onRun} />}
+            {state.explain && <LessonMarkdown markdown={state.explain} onRun={onRun} />}
           </div>
         )}
       </div>

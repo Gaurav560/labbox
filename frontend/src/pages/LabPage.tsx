@@ -1,7 +1,7 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type Step } from "../api";
+import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type PredictState, type Step } from "../api";
 import { useAuth } from "../auth";
 import ChapterPanel from "../components/ChapterPanel";
 import CheckDrawer from "../components/CheckDrawer";
@@ -13,7 +13,7 @@ import TaskList from "../components/TaskList";
 import TerminalPane, { type TerminalHandle } from "../components/TerminalPane";
 import { useToast } from "../components/Toasts";
 import LessonPanel from "../lesson/LessonPanel";
-import StepCard, { type PredictState } from "../lesson/StepCard";
+import StepCard, { NO_PREDICT } from "../lesson/StepCard";
 import { MODEL_PREFIX, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 
@@ -21,7 +21,6 @@ const AUTOSAVE_MS = 800;
 const TREE_POLL_MS = 5000;
 const STATUS_POLL_MS = 10000;
 const STEP_SAVE_MS = 400;
-const NO_PREDICT: PredictState = { wrong: [], solved: false };
 
 const isTyping = (t: EventTarget | null) =>
   t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName));
@@ -48,6 +47,7 @@ export default function LabPage() {
   const [hints, setHints] = useState<Record<string, string[]>>({});
   const [hintBusy, setHintBusy] = useState(false);
   const [predicts, setPredicts] = useState<Record<number, PredictState>>({});
+  const [predictBusy, setPredictBusy] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bottomTab, setBottomTab] = useState<"terminal" | "output">("terminal");
   const [status, setStatus] = useState<UiStatus>("starting");
@@ -126,6 +126,7 @@ export default function LabPage() {
         setStep(at);
         setVisited(at);
         setHints(p.hints);
+        setPredicts(Object.fromEntries(Object.entries(p.predicts).map(([k, v]) => [Number(k), v])));
       })
       .catch((e) => toast(errMsg(e)));
   }, [labId, chapterId, toast]);
@@ -162,14 +163,18 @@ export default function LabPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [goStep, step]);
 
-  function pickPredict(index: number, option: number) {
-    const s = steps?.[index].predict;
-    if (!s) return;
-    setPredicts((all) => {
-      const cur = all[index] ?? NO_PREDICT;
-      if (cur.solved) return all;
-      return { ...all, [index]: option === s.answer ? { ...cur, solved: true } : { ...cur, wrong: [...cur.wrong, option] } };
-    });
+  // Answers are checked on the server; the right one and its explanation come back once you get it.
+  async function pickPredict(index: number, option: number) {
+    if (predicts[index]?.solved) return;
+    setPredictBusy(true);
+    try {
+      const state = await api.predict(labId, chapterId, index, option);
+      setPredicts((all) => ({ ...all, [index]: state }));
+    } catch (e) {
+      toast(errMsg(e));
+    } finally {
+      setPredictBusy(false);
+    }
   }
 
   async function revealHint(taskId: string) {
@@ -471,6 +476,7 @@ export default function LabPage() {
                   hints={current.task ? hints[current.task] ?? [] : []}
                   hintBusy={hintBusy}
                   predict={predicts[step] ?? NO_PREDICT}
+                  predictBusy={predictBusy}
                   checking={checking}
                   chapterDone={tasks.length > 0 && tasks.every((t) => t.passed)}
                   tasksLeft={tasks.filter((t) => !t.passed).length}

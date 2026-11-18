@@ -4,6 +4,16 @@ import { api, type LabSummary } from "../api";
 import { useAuth } from "../auth";
 import { useToast } from "../components/Toasts";
 
+const TRACK_LABEL: Record<string, string> = {
+  languages: "Languages",
+  frameworks: "Frameworks",
+  databases: "Databases",
+  devops: "DevOps",
+  "system-design": "System design",
+  ai: "AI",
+  interview: "Interview",
+};
+
 export default function LabsPage() {
   const { user, logout } = useAuth();
   const toast = useToast();
@@ -33,7 +43,12 @@ export default function LabsPage() {
                   <h3>{lab.title}</h3>
                   <span className={`badge badge-${lab.language}`}>{lab.language}</span>
                 </div>
-                <p className="muted">{lab.description}</p>
+                <p className="muted">{lab.subtitle || lab.description}</p>
+                <div className="lab-meta">
+                  <span className="meta-chip">{TRACK_LABEL[lab.track] ?? lab.track}</span>
+                  {lab.level && <span className="meta-chip meta-chip-cap">{lab.level}</span>}
+                  {lab.estimated_minutes && <span className="meta-chip">{lab.estimated_minutes} min</span>}
+                </div>
                 <div className="progress" title={`${lab.progress.passed_tasks} of ${lab.progress.total_tasks} tasks`}>
                   <div className="progress-fill" style={{ width: `${pct}%` }} />
                 </div>

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Lab authoring CLI (tools/labbox_cli.py) with the backend's virtualenv.
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+exec "$ROOT/backend/.venv/bin/python" "$ROOT/tools/labbox_cli.py" "$@"
