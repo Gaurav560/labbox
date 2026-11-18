@@ -7,8 +7,9 @@
 - Buttons are white with black text, like GitHub (black with white text in light mode).
 - Red is a muted brick (#d1605a, light mode #b8463f) used only for small accents: "doing", the live
   dot, section labels, the stats lines. No glows, no red blocks; the yellow is softer too.
-- Background texture: a barely visible film grain (SVG noise, 7% in dark, 5% in light), fixed behind
-  the page. A grid and topographic lines were tried first and dropped. The closing panel is plain black.
+- Background: the GitHub tile grid (32 px). Film grain and topographic lines were tried and dropped.
+- The closing panel is red again, in calmer brick shades (#e07a72 to #a9443e) with a fine dot
+  texture, dark text and a black button.
 
 ## LabBox by Telusko, FAQs and legal pages
 

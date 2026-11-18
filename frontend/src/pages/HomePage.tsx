@@ -276,9 +276,9 @@ export default function HomePage() {
           <h2 id="final-title">Your first win is about three minutes away.</h2>
           <p>Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
           {user ? (
-            <Link className="h-btn h-btn-primary" to="/labs">Continue learning →</Link>
+            <Link className="h-btn h-btn-black" to="/labs">Continue learning →</Link>
           ) : (
-            <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
+            <Link className="h-btn h-btn-black" to="/login?signup=1">Start free →</Link>
           )}
         </section>
       </main>
