@@ -11,7 +11,8 @@
 - The language badge next to the card title is gone (the cover shows the tags).
 - `scripts/labbox cover <lab> --generate` then `--pick N`: AI cover art (OpenAI `gpt-image-2` or Gemini) in one house style,
   neon isometric dioramas with colours per track, from a one-line `cover_scene` per lab; saved as a
-  1200 px WebP. All five labs have a scene.
+  1200 px WebP. All five labs have a scene and an AI cover (gpt-image-2, picked from 3 candidates each);
+  cards show covers at 3:2 so the whole diorama is visible.
 - `scripts/labbox cover <lab> --query ...` then `--pick N`: stock photos from Pexels saved as the lab's
   cover with a `cover_credit` (photographer and link), shown as a small credit on the card.
 

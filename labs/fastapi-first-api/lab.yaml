@@ -13,6 +13,8 @@ story:
   character: { name: Ravi, role: "Owner, Ravi's Tapri" }
   pitch: "Ravi wants his WhatsApp bot to read the menu and prices from an API instead of a photo."
 cover_scene: "Ravi's Tapri: a tiny roadside chai stall at night, a big brass kettle steaming, small glass cups of chai on the counter, glowing translucent menu cards floating above the stall connected by thin lines of light to a smartphone."
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
 image: labbox/fastapi-first-api:v1
 resources: xs
 workspace:

@@ -13,6 +13,8 @@ story:
   character: { name: Kabir, role: "Lead engineer, PaySetu" }
   pitch: "PaySetu signs up 600 UPI merchants a day and needs two small Java methods it can trust."
 cover_scene: "PaySetu: a tiny Indian kirana shop open late at night, a glowing payment QR stand on the counter, a steaming cup of coffee beside a small glowing terminal screen, shelves of colourful packets, a row of tiny shopfronts behind."
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
 image: labbox/java-basics:v1
 resources:
   cpus: 0.5

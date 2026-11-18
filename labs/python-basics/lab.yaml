@@ -13,6 +13,8 @@ story:
   character: { name: Priya, role: "Founder, Dabba Express" }
   pitch: "Dabba Express delivers 300 tiffins a day across Pune and needs a few small helpers in Python."
 cover_scene: "Dabba Express in Pune: a tiny street corner with a delivery bicycle stacked high with shiny steel tiffin boxes, each tiffin glowing softly from inside with lines of light like code, a little laptop on a wooden crate beside it, warm street lamp light."
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
 image: labbox/python-basics:v1
 resources:
   cpus: 0.5
