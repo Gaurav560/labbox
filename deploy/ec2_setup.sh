@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time host setup for LabBox on Ubuntu 24.04 (x86_64). Safe to run more than once.
+# One-time host setup for Telusko on Ubuntu 24.04 (x86_64). Safe to run more than once.
 # Usage: sudo bash deploy/ec2_setup.sh
 set -euo pipefail
 

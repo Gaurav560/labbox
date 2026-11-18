@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
+import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
 import LabsPage from "./pages/LabsPage";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -22,6 +23,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/faq" element={<FaqPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
       <Route path="/labs" element={<RequireAuth><LabsPage /></RequireAuth>} />
       <Route
         path="/labs/:labId"

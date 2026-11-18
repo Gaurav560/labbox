@@ -8,9 +8,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
 
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn tech by doing, not watching.");
-  await expect(page).toHaveTitle(/LabBox/);
+  await expect(page).toHaveTitle(/Telusko/);
   // The logo, as a link home and as the favicon.
-  await expect(page.locator(".home-header").getByRole("link", { name: "LabBox home" })).toBeVisible();
+  await expect(page.locator(".home-header").getByRole("link", { name: "Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
@@ -48,4 +48,18 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator(".home-header").getByRole("link", { name: "Start free" })).toBeVisible();
   expect(errors.filter((e) => !e.includes("401"))).toEqual([]);
+});
+
+test("FAQ, privacy policy and terms are public and linked from the footer", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".home-footer").getByRole("link", { name: "FAQs" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("FAQs");
+  await page.getByText("Is it free?").click();
+  await expect(page.getByText("every lab is free")).toBeVisible();
+  await page.locator(".info-footer").getByRole("link", { name: "Privacy policy" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Privacy policy");
+  await expect(page).toHaveTitle("Privacy policy · Telusko");
+  await page.goto("/login");
+  await page.locator(".auth-legal").getByRole("link", { name: "Terms of Service" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Terms of Service");
 });

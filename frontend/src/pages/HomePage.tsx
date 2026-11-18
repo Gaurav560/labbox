@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
+import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { useTyped } from "../components/useTyped";
 import ChoiceQuestion, { type ChoiceState } from "../lesson/ChoiceQuestion";
 import { useTheme } from "../theme";
@@ -142,7 +143,7 @@ export default function HomePage() {
   const [demo, setDemo] = useState<ChoiceState>({ wrong: [], solved: false, answer: null, explain: null });
 
   useEffect(() => {
-    document.title = "LabBox: learn tech by doing";
+    document.title = "Telusko: learn tech by doing";
     api.catalog().then(setCatalog).catch(() => setCatalog([]));
   }, []);
 
@@ -211,7 +212,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="h-stats" aria-label="LabBox in numbers">
+        <section className="h-stats" aria-label="Telusko in numbers">
           <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
           <div><strong>~60 s</strong><span>to a real machine</span></div>
           <div><strong>0</strong><span>videos to sit through</span></div>
@@ -283,8 +284,12 @@ export default function HomePage() {
       </main>
 
       <footer className="home-footer">
-        <Logo />
-        <span className="muted small-text">Hands-on labs for programming, databases, DevOps, system design and AI.</span>
+        <div className="home-footer-brand">
+          <Logo />
+          <span className="muted small-text">Hands-on labs for programming, databases, DevOps, system design and AI.</span>
+        </div>
+        <SiteLinks />
+        <Copyright />
       </footer>
     </div>
   );

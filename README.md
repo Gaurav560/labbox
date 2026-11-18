@@ -1,6 +1,6 @@
-# LabBox POC
+# Telusko labs (codename LabBox)
 
-LabBox is a small "hands-on coding labs" platform. Each user gets their own Docker container per lab,
+Telusko is a "hands-on coding labs" platform (the code and tools still use the codename `labbox`). Each user gets their own Docker container per lab,
 with a Monaco editor, a real terminal (xterm.js) and a Check button that grades their code with hidden
 tests in a fresh, network-less container. Lessons are shown one step at a time (story, concept, predict,
 try, task, recap), with a hint ladder per task. Learners earn XP, keep a daily streak, climb levels,
@@ -459,7 +459,7 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 - The file API rejects absolute paths, `..` escapes and symlinks that leave the workspace.
   Delete and rename act on a symlink itself, never on its target.
 - On EC2: gVisor (`CONTAINER_RUNTIME=runsc`) and the metadata-service block.
-- The backend talks to Docker, which is root-equivalent: keep the host for LabBox only.
+- The backend talks to Docker, which is root-equivalent: keep the host for Telusko only.
 
 ## 6. Known POC limits
 

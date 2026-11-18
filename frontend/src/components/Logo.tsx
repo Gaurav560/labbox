@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import { SITE } from "../site";
 
-// The LabBox mark: a rounded box with a shell prompt inside ("a box with a machine in it").
+// The Telusko mark: a rounded box with a shell prompt inside ("a box with a machine in it").
 export function LogoMark({ size = 28 }: { size?: number }) {
   return (
     <svg className="logo-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -17,11 +18,11 @@ export default function Logo({ to, size = 28 }: { to?: string; size?: number }) 
   const inner = (
     <>
       <LogoMark size={size} />
-      <span className="logo-word">LabBox</span>
+      <span className="logo-word">{SITE.name}</span>
     </>
   );
   return to ? (
-    <Link to={to} className="logo" aria-label="LabBox home">{inner}</Link>
+    <Link to={to} className="logo" aria-label={`${SITE.name} home`}>{inner}</Link>
   ) : (
     <span className="logo">{inner}</span>
   );

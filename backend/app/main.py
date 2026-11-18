@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await preview.close_client()
 
 
-app = FastAPI(title="LabBox", lifespan=lifespan)
+app = FastAPI(title="Telusko", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_settings().cors_origins,

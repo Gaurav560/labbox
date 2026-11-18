@@ -805,7 +805,7 @@ def cmd_cover(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox labs")
+    p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for Telusko labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
     sub = p.add_subparsers(dest="cmd", required=True)
 

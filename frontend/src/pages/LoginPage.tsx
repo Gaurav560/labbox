@@ -114,13 +114,16 @@ export default function LoginPage() {
             {busy ? "One moment…" : signupMode ? "Sign up" : "Log in"}
           </button>
           <p className="auth-switch muted">
-            {signupMode ? "Already have an account?" : "New to LabBox?"}{" "}
+            {signupMode ? "Already have an account?" : "New to Telusko?"}{" "}
             <button type="button" className="auth-link" disabled={!ready} onClick={() => submit(other)}>
               {signupMode ? "Log in" : "Sign up"}
             </button>
           </p>
           <p className="muted small auth-rules">Usernames: 3 to 32 letters, digits, dot, dash or underscore. Passwords: at least 6 characters.</p>
         </form>
+        <p className="auth-legal small">
+          By continuing you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy policy</Link>. Questions? Read the <Link to="/faq">FAQs</Link>.
+        </p>
       </main>
     </div>
   );

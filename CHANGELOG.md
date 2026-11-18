@@ -1,5 +1,15 @@
 # Changelog
 
+## Telusko name, FAQs and legal pages
+
+- The product is now called Telusko everywhere people see it: logo, page titles, login page, API
+  title, docs. The name lives in `frontend/src/site.ts`. Technical names (`labbox` CLI, Docker labels
+  and images, browser storage keys) stay as they are so nobody is logged out and no lab is lost.
+- New public pages: `/faq` (10 questions), `/privacy` and `/terms`, written to match what the app
+  really does with data today. Linked from the home footer and under the login card. The support
+  address is a placeholder (`support@telusko.example`) to set in `site.ts` before launch.
+- Login page in light mode: the card is dark slate instead of near white.
+
 ## Home page redesign (red, black, grey, white, a little yellow)
 
 - New palette for the home page only: black and greys, a cool crimson red for actions, white text and

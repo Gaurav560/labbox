@@ -77,7 +77,7 @@ export default function TrackPage() {
   return (
     <div className="track-page">
       <header className="topbar">
-        <Link to="/" className="logo" aria-label="LabBox home"><LogoMark size={24} /></Link>
+        <Link to="/" className="logo" aria-label="Telusko home"><LogoMark size={24} /></Link>
         <Link to="/labs" className="link">← Labs</Link>
         <span className="brand">{map?.title ?? track}</span>
         {map && <span className="muted small-text">{done} of {map.nodes.length} skills</span>}

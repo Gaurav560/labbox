@@ -1,5 +1,5 @@
 [Unit]
-Description=LabBox backend (FastAPI)
+Description=Telusko backend (FastAPI)
 After=network-online.target docker.service
 Wants=network-online.target
 Requires=docker.service
