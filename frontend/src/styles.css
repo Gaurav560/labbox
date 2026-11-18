@@ -611,8 +611,9 @@ select { padding: 3px 8px; }
 /* Its own palette: black and greys, a cool crimson red, a little white, a touch of lemon yellow. */
 .home {
   --red: #ff2e4d; --red-deep: #d9143a; --yellow: #f5df4d; --ink: #0a0a0a;
-  --bg: #0a0a0a; --panel: #121213; --card: #18181a; --text: #f5f5f4; --muted: #a1a1a6; --border: #29292d;
-  --accent: var(--red); --danger: var(--red); --success: var(--yellow); --chip: #222225; --hover: #1d1d20;
+  /* GitHub-style charcoal (#111512) with black panels, like the login page */
+  --bg: #111512; --panel: #000000; --card: #0b0d0c; --text: #f0f3f1; --muted: #9ba39d; --border: #2c322e;
+  --accent: var(--red); --danger: var(--red); --success: var(--yellow); --chip: #1f2421; --hover: #181d1a;
   --tint-accent: #ff2e4d1f; --tint-danger: #ff2e4d1f; --tint-success: #f5df4d1a; --on-accent: #fff;
   min-height: 100%; display: flex; flex-direction: column; background: var(--bg); color: var(--text);
   font-size: var(--text-size); line-height: var(--text-line); overflow-x: clip;

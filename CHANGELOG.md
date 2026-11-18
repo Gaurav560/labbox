@@ -1,5 +1,10 @@
 # Changelog
 
+## Home page on GitHub charcoal
+
+- The home page background is now the same charcoal as the login page (#111512) instead of pure
+  black, with black panels and cards and green-grey borders and text. Red and yellow stay.
+
 ## LabBox by Telusko, FAQs and legal pages
 
 - Naming: LabBox is the product and Telusko the parent company. The logo shows "LabBox" with a small
