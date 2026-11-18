@@ -278,15 +278,16 @@ def test_cover_validation(lab_copy: Path):
 
 
 def test_cover_route(client: TestClient):
-    assert client.get("/api/labs/python-basics/cover").status_code == 404  # generated in the UI instead
     lab = labs.get_lab("python-basics")
-    (lab.root / "cover-test.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>')
+    assert lab.cover  # the lab ships its own cover
+    r = client.get("/api/labs/python-basics/cover")  # public, no login
+    assert r.status_code == 200 and r.headers["content-type"] == "image/webp"
+    assert "sandbox" in r.headers["content-security-policy"] and r.headers["x-content-type-options"] == "nosniff"
+    by_id = {x["id"]: x for x in client.get("/api/catalog").json()}
+    assert by_id["python-basics"]["cover_url"] == "/api/labs/python-basics/cover"
+    saved = lab.cover
     try:
-        lab.cover = "cover-test.svg"
-        r = client.get("/api/labs/python-basics/cover")  # public, no login
-        assert r.status_code == 200 and r.headers["content-type"] == "image/svg+xml"
-        assert "sandbox" in r.headers["content-security-policy"] and r.headers["x-content-type-options"] == "nosniff"
-        assert client.get("/api/catalog").json()[[x["id"] for x in client.get("/api/catalog").json()].index("python-basics")]["cover_url"] == "/api/labs/python-basics/cover"
+        lab.cover = None  # a lab without its own image: no route, the UI draws a cover
+        assert client.get("/api/labs/python-basics/cover").status_code == 404
     finally:
-        lab.cover = None
-        (lab.root / "cover-test.svg").unlink()
+        lab.cover = saved
