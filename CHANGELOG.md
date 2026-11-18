@@ -7,8 +7,8 @@
 - Buttons are white with black text, like GitHub (black with white text in light mode).
 - Red is a muted brick (#d1605a, light mode #b8463f) used only for small accents: "doing", the live
   dot, section labels, the stats lines. No glows, no red blocks; the yellow is softer too.
-- Pattern: topographic contour lines (`tools/make_topo.py` writes `frontend/public/patterns/topo.svg`),
-  fixed behind the page so it never looks tiled. The closing panel is plain black.
+- No background pattern for now (a grid and topographic lines were both tried and dropped); the
+  closing panel is plain black.
 
 ## LabBox by Telusko, FAQs and legal pages
 
