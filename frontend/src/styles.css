@@ -156,6 +156,13 @@ select { padding: 3px 8px; }
 
 /* ---------- login ---------- */
 .auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); background: var(--bg); }
+:root[data-theme="light"] .auth {
+  /* softer than pure white next to the dark showcase */
+  --bg: #e6e8ef; --panel: #f4f5f9; --text: #232734; --border: #d6d9e2; --chip: #e4e6ee;
+}
+:root[data-theme="light"] .auth-field input { background: #eceef4; }
+:root[data-theme="light"] .auth-field input:focus { background: #f7f8fb; }
+:root[data-theme="light"] .auth-card { box-shadow: 0 20px 50px #1b1f2a1f; }
 .auth-show {
   position: relative; overflow: hidden; color: #fff; padding: 56px;
   display: flex; align-items: center; justify-content: center;

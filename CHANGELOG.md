@@ -11,7 +11,8 @@
   moments (the predict question still works), the live labs as cards with their logo covers, the
   tracks as numbered rows, and a red closing panel with a yellow FREE sticker.
 - Login page: the floating logos are gone (first they danced, then floated; the page is calmer without
-  them: the headline and the typing terminal carry the showcase side).
+  them: the headline and the typing terminal carry the showcase side). In light mode the card and the
+  page around it are soft grey-white instead of pure white, easier on the eyes.
 
 ## Login page redesign
 
