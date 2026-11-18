@@ -1,0 +1,36 @@
+id: {{lab_id}}
+version: 2
+title: "{{title}}"
+subtitle: "One line that says what the learner builds"
+description: "One line that says what the learner builds"
+language: go
+track: {{track}}
+tags: [go]
+level: beginner
+estimated_minutes: 15
+image: labbox/{{lab_id}}:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+chapters:
+  - id: 01-first-steps
+    title: First steps
+    file: chapters/01-first-steps.md
+    minutes: 15
+    tasks:
+      - id: double
+        title: "solution.go: Double a number"
+        xp: 20
+        hints:
+          - "Look at what double returns right now."
+          - "Doubling is the same as multiplying by 2."
+          - "Return n multiplied by 2."

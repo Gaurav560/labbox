@@ -221,3 +221,63 @@ def test_generate_needs_a_key(capsys, monkeypatch):
     monkeypatch.setattr(get_settings(), "GEMINI_API_KEY", "")
     assert cli.main(["cover", "python-basics", "--generate"]) == 2
     assert "OPENAI_API_KEY" in capsys.readouterr().out
+
+
+SPEC = """
+id: demo-spec-lab
+template: node
+title: "Demo spec lab"
+subtitle: A lab made from a spec.
+track: languages
+tags: [javascript]
+story:
+  company: Dabba Express
+  character: { name: Priya, role: Founder }
+  pitch: Priya needs help.
+cover_scene: "A tiny tiffin bicycle at night."
+chapters:
+  - id: 01-first
+    title: First chapter
+    minutes: 15
+    goal: Make the first function work.
+    tasks:
+      - id: sum_bill
+        title: "bill.js: add up a bill"
+        hints: ["Look at the function.", "Loop over the items.", "Keep a running total."]
+  - id: 02-second
+    title: Second chapter
+    tasks:
+      - id: split_bill
+        title: "bill.js: split it"
+        hints: ["One.", "Two.", "Three."]
+"""
+
+
+def test_new_lab_from_spec(tmp_path: Path):
+    spec = tmp_path / "demo.yaml"
+    spec.write_text(SPEC)
+    labs = tmp_path / "labs"
+    labs.mkdir()
+    assert cli.main(["--labs-dir", str(labs), "new-lab", "--from-spec", str(spec)]) == 0
+    folder = labs / "demo-spec-lab"
+    lab = cli.load_lab(folder)  # loads: schema, chapters and task steps all line up
+    assert [c.id for c in lab.chapters] == ["01-first", "02-second"]
+    assert lab.track == "languages" and lab.image == "labbox/demo-spec-lab:v1" and lab.cover_scene
+    assert [s.type for s in lab.chapter_steps("01-first")] == ["story", "concept", "predict", "try", "task", "recap"]
+    rep = cli.validate_lab(folder, check_image=False)
+    assert any("TODO(author)" in w for w in rep.warnings) and any("AUTHORING.md" in w for w in rep.warnings)
+    strict = cli.validate_lab(folder, check_image=False, strict=True)
+    assert strict.errors  # not finished, so the CI gate refuses it
+    assert "sum_bill" in (folder / "AUTHORING.md").read_text()
+
+
+def test_hint_that_gives_away_the_answer_is_an_error(labs_dir: Path):
+    path = labs_dir / "python-basics" / "lab.yaml"
+    path.write_text(path.read_text().replace("Python adds numbers with the + operator.", "Write: return a + b"))
+    errors = cli.validate_lab(labs_dir / "python-basics", check_image=False).errors
+    assert any("contains a solution line" in e and "return a + b" in e for e in errors)
+
+
+def test_real_labs_pass_the_strict_gate():
+    for folder in sorted(p for p in LABS_DIR.iterdir() if (p / "lab.yaml").is_file()):
+        assert cli.validate_lab(folder, check_image=False, strict=True).errors == [], folder.name

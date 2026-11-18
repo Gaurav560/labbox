@@ -3,7 +3,7 @@
 # using the image tag from its lab.yaml.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-for base in base python java checker; do
+for base in base python java node go checker; do
   echo "==> Building labbox/$base:v1"
   docker build -t "labbox/$base:v1" "$ROOT/images/$base"
 done

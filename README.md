@@ -122,9 +122,23 @@ scripts/labbox test-lab my-lab            # builds the image; starter must FAIL 
 scripts/labbox preview my-lab             # prints a dev login (fresh password each run) and opens the browser
 ```
 
-`validate` with no lab id checks every lab; add `--no-docker` to skip the image check. Both `validate` and
-`test-lab` exit non-zero on problems, so they can run in CI. Templates for node, go, multi-service,
-incident, ai and system-design arrive with the phases that build their engines.
+`validate` with no lab id checks every lab; add `--no-docker` to skip the image check, and `--strict` to
+turn every warning into an error (CI does). Besides the schema it checks the content standard: a story
+first, a predict and a recap in every chapter, concept steps under 120 words, chapters of 10 to 20 minutes,
+a cover, no `TODO(author)` left, and that no hint contains a line of the solution.
+
+Templates: `python`, `java`, `node`, `go` (code exercises), `service-incident` (Postgres service, injected
+failure, live check) and `preview-app` (FastAPI in the Preview tab). `ai` and `system-design` arrive with
+Phases E and G.
+
+**Writing labs at scale.** Describe a lab in a spec (`specs/README.md` has the format: story, chapters,
+tasks, hints, cover scene), then `scripts/labbox new-lab --from-spec specs/<lab>.yaml`. It creates the lab
+from its template with a chapter skeleton per chapter and an `AUTHORING.md` checklist. The lab is done
+when `validate --strict` and `test-lab` pass and it has a cover.
+
+**CI** (`.github/workflows/labs.yml`): backend tests and `validate --strict` on every push, the frontend
+build, and `scripts/ci_changed_labs.sh`, which builds the base images and runs `test-lab` on every lab
+that changed (all labs when images, templates or the checker change).
 
 Every lab has a `solution/` folder with working code. It is used only by `test-lab`: it is never copied
 into a workspace, never served by any route, and `.dockerignore` keeps it (and `tests/`) out of images.

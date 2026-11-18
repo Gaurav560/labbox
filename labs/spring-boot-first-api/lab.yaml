@@ -37,7 +37,7 @@ chapters:
         title: "GET /hello: a plain text greeting"
         hints:
           - "MerchantController has no methods yet, so every URL returns 404."
-          - "A method with @GetMapping(\"/hello\") inside a @RestController answers GET /hello."
+          - "Add a method to MerchantController with a mapping annotation for the /hello path, like the status example in the lesson."
           - "Return the String \"Hello from PaySetu!\" from that method; Spring sends it as plain text."
       - id: merchants
         title: "GET /merchants: names A to Z, as JSON"

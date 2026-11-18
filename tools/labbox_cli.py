@@ -34,11 +34,11 @@ from app.labs import ID_RE, LabConfig, LabError, Track, load_lab  # noqa: E402
 
 EM_DASH = "\u2014"
 TRACKS: tuple[str, ...] = Track.__args__  # type: ignore[attr-defined]
+# python, java, node, go: code exercises with fresh checks.
+# service-incident: a Postgres service, an injected failure and a live check.
+# preview-app: a FastAPI app shown in the Preview tab.
+TEMPLATES_READY = ["python", "java", "node", "go", "service-incident", "preview-app"]
 TEMPLATE_LATER = {
-    "node": "a later phase (needs the labbox/node base image)",
-    "go": "a later phase (needs the labbox/go base image)",
-    "multi-service": "Phase D (services)",
-    "incident": "Phase D (failure injection and live checks)",
     "ai": "Phase E (LLM gateway)",
     "system-design": "Phase G (k6 load tests)",
 }
@@ -50,6 +50,72 @@ class Report:
     lab: str
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+
+
+AUTHOR_TODO = "TODO(author)"
+CONCEPT_MAX_WORDS = 120
+_CODE_BLOCK_RE = re.compile(r"```.*?```", re.S)
+_DIRECTIVE_LINE_RE = re.compile(r"^\s*:::.*$", re.M)
+
+
+def _words(markdown: str) -> int:
+    text = _DIRECTIVE_LINE_RE.sub(" ", _CODE_BLOCK_RE.sub(" ", markdown))
+    return len(re.findall(r"[A-Za-z0-9`'_-]+", text))
+
+
+def _solution_lines(folder: Path) -> set[str]:
+    """Meaningful lines of the solution that differ from the starter (what a hint must not give away)."""
+    sol, starter = folder / "solution", folder / "starter"
+    lines: set[str] = set()
+    for f in sol.rglob("*") if sol.is_dir() else []:
+        if not f.is_file() or f.suffix in {".xml", ".mod", ".md", ".json"}:
+            continue
+        try:
+            text = f.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        old = (starter / f.relative_to(sol))
+        before = set(old.read_text(encoding="utf-8").splitlines()) if old.is_file() else set()
+        for ln in text.splitlines():
+            s = ln.strip()
+            if len(s) >= 10 and ln not in before and not s.startswith(("#", "//", "--", "import ", "package ", "from ")):
+                lines.add(s)
+    return lines
+
+
+def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
+    """The content standard (v2 spec section 9), as far as a machine can check it. (errors, warnings)."""
+    errors: list[str] = []
+    warnings: list[str] = []
+    answers = _solution_lines(folder)
+    for ch in lab.chapters:
+        for t in ch.tasks:
+            for h in t.hints:
+                leaked = [a for a in answers if a in h]
+                if leaked:
+                    errors.append(f"chapter {ch.id}: a hint for {t.id!r} contains a solution line: {leaked[0]!r}")
+        steps = lab.chapter_steps(ch.id)
+        if len(steps) == 1:
+            continue
+        types = [s.type for s in steps]
+        if types[0] != "story":
+            warnings.append(f"{ch.file}: the first step should be a story (it is {types[0]})")
+        for needed in ("predict", "recap"):
+            if needed not in types:
+                warnings.append(f"{ch.file}: no {needed} step")
+        for i, s in enumerate(steps, 1):
+            if s.type in ("concept", "example") and _words(s.markdown) > CONCEPT_MAX_WORDS:
+                warnings.append(f"{ch.file}: step {i} ({s.type}) has {_words(s.markdown)} words of text, keep it under {CONCEPT_MAX_WORDS}")
+        if ch.minutes is None or not 8 <= ch.minutes <= 25:
+            warnings.append(f"chapter {ch.id}: minutes should be 10 to 20 (is {ch.minutes})")
+    for f in [folder / "lab.yaml", *sorted((folder / "chapters").rglob("*.md"))]:
+        if f.is_file() and AUTHOR_TODO in f.read_text(encoding="utf-8"):
+            warnings.append(f"{f.relative_to(folder)}: still has {AUTHOR_TODO} markers")
+    if not lab.cover:
+        warnings.append("no cover image yet (scripts/labbox cover <lab> --generate)")
+    if (folder / "AUTHORING.md").exists():
+        warnings.append("AUTHORING.md is still there (delete it when the lab is finished)")
+    return errors, warnings
 
 
 def _em_dashes(folder: Path) -> list[str]:
@@ -76,7 +142,7 @@ def _image_exists(image: str) -> bool | None:
     return r.returncode == 0
 
 
-def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | None = None) -> Report:
+def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | None = None, strict: bool = False) -> Report:
     rep = Report(folder.name)
     try:
         lab = load_lab(folder)  # schema, chapter files, step parsing, task references, unbuilt features
@@ -119,12 +185,19 @@ def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | 
         if known_labs is not None and pre not in known_labs:
             rep.warnings.append(f"prerequisite {pre!r} is not a lab in this repo")
 
+    lint_errors, lint_warnings = content_lint(lab, folder)
+    rep.errors += lint_errors
+    rep.warnings += lint_warnings
+
     if check_image:
         exists = _image_exists(lab.image)
         if exists is None:
             rep.warnings.append("Docker is not reachable: image not checked")
         elif not exists:
             rep.errors.append(f"image {lab.image} is not built (bash scripts/build_lab_images.sh)")
+    if strict:  # the CI quality gate: every warning must be fixed
+        rep.errors += rep.warnings
+        rep.warnings = []
     return rep
 
 
@@ -171,7 +244,7 @@ def validate_content(labs_dir: Path) -> Report:
 def cmd_validate(args: argparse.Namespace) -> int:
     folders = _lab_folders(args.labs_dir, args.lab_id)
     known = {p.name for p in _lab_folders(args.labs_dir, None)}
-    reports = [validate_lab(f, check_image=not args.no_docker, known_labs=known) for f in folders]
+    reports = [validate_lab(f, check_image=not args.no_docker, known_labs=known, strict=args.strict) for f in folders]
     for r in reports:
         _print_report(r)
     bad = sum(bool(r.errors) for r in reports)
@@ -183,9 +256,159 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 1 if bad else 0
 
 
+# ---------- lab specs ----------
+# specs/<lab>.yaml is the short form of a lab: story, chapters, tasks, hints, cover scene.
+# `labbox new-lab --from-spec specs/<lab>.yaml` turns it into a lab folder from its template.
+
+
+def _spec_models():
+    from pydantic import BaseModel, ConfigDict, Field
+
+    from app.labs import Story, Track
+
+    class _S(BaseModel):
+        model_config = ConfigDict(extra="forbid")
+
+    class SpecTask(_S):
+        id: str
+        title: str
+        xp: int = 20
+        hints: list[str] = Field(min_length=3, max_length=3)
+
+    class SpecChapter(_S):
+        id: str
+        title: str
+        minutes: int = 15
+        goal: str = ""  # one line: what the learner can do after this chapter
+        tasks: list[SpecTask] = Field(min_length=1)
+
+    class LabSpec(_S):
+        id: str
+        template: str
+        title: str
+        subtitle: str
+        track: Track
+        tags: list[str] = Field(min_length=1)
+        level: str = "beginner"
+        estimated_minutes: int | None = None
+        story: Story
+        cover_scene: str
+        chapters: list[SpecChapter] = Field(min_length=1)
+
+    return LabSpec
+
+
+def _chapter_skeleton(spec, ch) -> str:
+    who = spec.story.character
+    name, role = (who.name, who.role) if who else ("TODO(author)", "")
+    parts = [
+        f':::step{{type=story title="{ch.title}"}}',
+        f':::character{{name="{name}" role="{role}"}}',
+        "TODO(author): two to four lines from the character. A real problem, today.",
+        ":::",
+        "",
+        ":::mission",
+        f"{ch.goal or 'TODO(author): one line, what the learner will make work.'}",
+        ":::",
+        ":::",
+        "",
+        ':::step{type=concept title="TODO(author)"}',
+        "TODO(author): one idea, under 120 words, with a short code example.",
+        ":::",
+        "",
+        ':::step{type=predict title="Guess first"}',
+        ":::question",
+        "TODO(author): a question whose answer surprises a little.",
+        ":::",
+        "- [ ] TODO(author)",
+        "- [x] TODO(author)",
+        "- [ ] TODO(author)",
+        ":::explain",
+        "TODO(author): why.",
+        ":::",
+        ":::",
+        "",
+        ':::step{type=try title="Try it"}',
+        "TODO(author): a command to run and what to look for.",
+        "",
+        "```bash run",
+        "echo TODO",
+        "```",
+        ":::",
+        "",
+    ]
+    for t in ch.tasks:
+        parts += [f':::step{{type=task task={t.id} title="{t.title}"}}',
+                  "TODO(author): the goal in plain words, with one example input and output.", ":::", ""]
+    parts += [":::step{type=recap}", "- TODO(author)", "- TODO(author)", "- TODO(author)", ":::", ""]
+    return "\n".join(parts)
+
+
+def new_lab_from_spec(spec_path: Path, labs_dir: Path) -> Path:
+    import yaml
+
+    LabSpec = _spec_models()
+    spec = LabSpec.model_validate(yaml.safe_load(spec_path.read_text(encoding="utf-8")))
+    if spec.template not in TEMPLATES_READY:
+        raise SystemExit(f"Unknown template {spec.template!r}: use one of {', '.join(TEMPLATES_READY)}")
+    if not ID_RE.match(spec.id):
+        raise SystemExit(f"Bad lab id {spec.id!r}")
+    dst = labs_dir / spec.id
+    if dst.exists():
+        raise SystemExit(f"{dst} already exists")
+    shutil.copytree(TEMPLATES / spec.template, dst)
+    for p in dst.rglob("*"):
+        if p.is_file():
+            text = p.read_text(encoding="utf-8")
+            p.write_text(text.replace("{{lab_id}}", spec.id).replace("{{title}}", spec.title).replace("{{track}}", spec.track), encoding="utf-8")
+
+    data = yaml.safe_load((dst / "lab.yaml").read_text(encoding="utf-8"))
+    template_task_ids = [t["id"] for c in data["chapters"] for t in c["tasks"]]
+    for old in (dst / "chapters").glob("*.md"):
+        old.unlink()
+    data.update(
+        version=2, title=spec.title, subtitle=spec.subtitle, description=spec.subtitle, track=spec.track,
+        tags=spec.tags, language=spec.tags[0], level=spec.level,
+        estimated_minutes=spec.estimated_minutes or sum(c.minutes for c in spec.chapters),
+        story=spec.story.model_dump(exclude_none=True), cover_scene=spec.cover_scene,
+    )
+    data["chapters"] = []
+    for ch in spec.chapters:
+        chapter = {"id": ch.id, "title": ch.title, "file": f"chapters/{ch.id}.md", "minutes": ch.minutes,
+                   "tasks": [t.model_dump() for t in ch.tasks]}
+        data["chapters"].append(chapter)
+        (dst / "chapters" / f"{ch.id}.md").write_text(_chapter_skeleton(spec, ch), encoding="utf-8")
+    (dst / "lab.yaml").write_text(
+        "# Generated from " + spec_path.name + ". Edit freely; the spec is only the starting point.\n"
+        + yaml.safe_dump(data, sort_keys=False, allow_unicode=True, width=110),
+        encoding="utf-8",
+    )
+    # The template's example task (and setup) belong to the template's own story: say so loudly.
+    note = dst / "AUTHORING.md"
+    note.write_text(
+        f"# {spec.title}: still to write\n\n"
+        f"Made from the `{spec.template}` template. Before this lab is done:\n\n"
+        "1. Fill every TODO(author) in `chapters/`.\n"
+        f"2. Replace the template's example task ({', '.join(template_task_ids)}) in `starter/`, `solution/` and `tests/` "
+        "with this lab's tasks: " + ", ".join(t.id for c in spec.chapters for t in c.tasks) + ".\n"
+        "3. `scripts/labbox validate " + spec.id + " --strict` and `scripts/labbox test-lab " + spec.id + "`.\n"
+        "4. `scripts/labbox cover " + spec.id + " --generate`, then `--pick N`.\n"
+        "5. Delete this file.\n",
+        encoding="utf-8",
+    )
+    return dst
+
+
 def cmd_new_lab(args: argparse.Namespace) -> int:
+    if args.from_spec:
+        dst = new_lab_from_spec(Path(args.from_spec), args.labs_dir)
+        print(f"Created {dst} from {args.from_spec}. Next steps are in {dst / 'AUTHORING.md'}")
+        return 0
+    if not args.lab_id:
+        print("Give a lab id, or --from-spec specs/<lab>.yaml")
+        return 2
     if args.template in TEMPLATE_LATER:
-        print(f"The {args.template!r} template arrives with {TEMPLATE_LATER[args.template]}. Use python or java for now.")
+        print(f"The {args.template!r} template arrives with {TEMPLATE_LATER[args.template]}. Use one of: {', '.join(TEMPLATES_READY)}.")
         return 2
     if not ID_RE.match(args.lab_id):
         print(f"Bad lab id {args.lab_id!r}: lowercase a-z, 0-9 and dashes only")
@@ -564,16 +787,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    n = sub.add_parser("new-lab", help="scaffold a new lab from a template")
-    n.add_argument("lab_id")
+    n = sub.add_parser("new-lab", help="scaffold a new lab from a template or a spec")
+    n.add_argument("lab_id", nargs="?")
+    n.add_argument("--from-spec", help="specs/<lab>.yaml: story, chapters, tasks and hints")
     n.add_argument("--track", choices=TRACKS, default="languages")
-    n.add_argument("--template", choices=["python", "java", *TEMPLATE_LATER], default="python")
+    n.add_argument("--template", choices=[*TEMPLATES_READY, *TEMPLATE_LATER], default="python")
     n.add_argument("--title")
     n.set_defaults(fn=cmd_new_lab)
 
     v = sub.add_parser("validate", help="check lab.yaml, chapters, hints, solution and image")
     v.add_argument("lab_id", nargs="?")
     v.add_argument("--no-docker", action="store_true", help="skip the image check")
+    v.add_argument("--strict", action="store_true", help="treat every warning as an error (CI)")
     v.set_defaults(fn=cmd_validate)
 
     t = sub.add_parser("test-lab", help="build the image; starter must fail every task, solution must pass")

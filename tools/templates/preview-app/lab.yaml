@@ -1,0 +1,45 @@
+id: {{lab_id}}
+version: 2
+title: "{{title}}"
+subtitle: Build a real menu API for a chai stall and watch it answer in the Preview tab.
+description: Build a real menu API for a chai stall and watch it answer in the Preview tab.
+language: python
+track: {{track}}
+tags: [python, fastapi]
+level: beginner
+estimated_minutes: 15
+story:
+  company: Ravi's Tapri
+  character: { name: Ravi, role: "Owner, Ravi's Tapri" }
+  pitch: "Ravi wants his WhatsApp bot to read the menu and prices from an API instead of a photo."
+cover_scene: "TODO(author): one line, what the cover diorama shows"
+image: labbox/{{lab_id}}:v1
+resources: xs
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+preview:
+  - { name: "Menu API", port: 8000, path: "/" }
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+chapters:
+  - id: 01-menu-api
+    title: A menu that answers
+    file: chapters/01-menu-api.md
+    minutes: 15
+    tasks:
+      - id: menu
+        title: "GET /menu: list every item"
+        hints:
+          - "Look at the second TODO in main.py: there is no /menu route yet."
+          - "A route is a function with a decorator like @app.get(\"/menu\") above it. Return a dict."
+          - "sorted() on a dict gives a list of its keys, A to Z. Return that list under the key items."
+      - id: price
+        title: "GET /menu/{item}: one item's price"
+        hints:
+          - "The item name comes from the URL path, like /menu/masala chai."
+          - "Write @app.get(\"/menu/{item}\") and give the function a parameter called item."
+          - "If item is not in MENU, raise HTTPException(status_code=404). Otherwise return the item and MENU[item]."

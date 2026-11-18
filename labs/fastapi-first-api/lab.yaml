@@ -37,11 +37,11 @@ chapters:
         title: "GET /menu: list every item"
         hints:
           - "Look at the second TODO in main.py: there is no /menu route yet."
-          - "A route is a function with a decorator like @app.get(\"/menu\") above it. Return a dict."
+          - "A route is a function with a decorator above it, just like home(), but for the /menu path. Return a dict."
           - "sorted() on a dict gives a list of its keys, A to Z. Return that list under the key items."
       - id: price
         title: "GET /menu/{item}: one item's price"
         hints:
           - "The item name comes from the URL path, like /menu/masala chai."
-          - "Write @app.get(\"/menu/{item}\") and give the function a parameter called item."
+          - "Put the item name in the path inside curly braces, and give the function a parameter with the same name."
           - "If item is not in MENU, raise HTTPException(status_code=404). Otherwise return the item and MENU[item]."

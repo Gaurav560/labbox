@@ -1,5 +1,20 @@
 # Changelog
 
+## Lab production pipeline
+
+- Base images `labbox/node` (Node 22.23.5) and `labbox/go` (Go 1.27.4, with a pre-warmed build cache:
+  Go checks went from 28 s to under 1 s).
+- Templates: `node`, `go`, `service-incident` and `preview-app` next to `python` and `java`; each passes
+  `test-lab` (starter fails, solution passes).
+- Lab specs (`specs/<lab>.yaml`) and `labbox new-lab --from-spec`: a lab folder from its template with
+  chapter skeletons, `TODO(author)` markers and an `AUTHORING.md` checklist.
+- `labbox validate` checks the content standard (story first, predict and recap per chapter, concept
+  steps under 120 words, chapter length, cover, no `TODO(author)`) and refuses hints that contain a line
+  of the solution. `--strict` makes every warning an error. It found three such hints in the existing
+  labs, now rewritten.
+- CI: GitHub Actions workflow (backend tests, strict validate, frontend build, `test-lab` on changed labs
+  via `scripts/ci_changed_labs.sh`).
+
 ## Lab cover art
 
 - Every lab card has a cover. Without its own image, a cover is drawn per lab: one of three colour pairs
