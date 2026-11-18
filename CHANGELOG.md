@@ -10,7 +10,8 @@
 - Below: a moving strip of real technology logos, big numbers, a bento grid with the four lesson
   moments (the predict question still works), the live labs as cards with their logo covers, the
   tracks as numbered rows, and a red closing panel with a yellow FREE sticker.
-- Login page: the floating logos now dance (hop, squash, sway) and spin when hovered.
+- Login page: the floating logos drift slowly by a few pixels, each on its own timing (the short-lived
+  dancing version was too much).
 
 ## Login page redesign
 
