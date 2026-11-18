@@ -4,20 +4,6 @@ import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { useTyped } from "../components/useTyped";
 
-// Real technology logos floating on the showcase side (devicon, MIT: /logos/LICENSE-devicon).
-// [logo, left %, top %, size px, float delay s]
-const FLOATING: [string, number, number, number, number][] = [
-  ["python", 8, 10, 64, 0],
-  ["java", 74, 7, 58, 1.2],
-  ["redis", 80, 32, 52, 2.4],
-  ["go", 6, 46, 50, 0.6],
-  ["postgresql", 86, 58, 56, 1.8],
-  ["docker", 18, 76, 56, 3],
-  ["kubernetes", 86, 82, 46, 0.9],
-  ["javascript", 44, 4, 44, 2.1],
-  ["spring", 40, 88, 44, 1.5],
-];
-
 // A lab run, typed out in the showcase terminal. "$ " lines are typed, the rest appear at once.
 const SCRIPT = [
   "$ labbox start redis-in-practice",
@@ -42,11 +28,6 @@ function Showcase() {
       <div className="auth-glow auth-glow-a" />
       <div className="auth-glow auth-glow-b" />
       <div className="auth-grid" />
-      {FLOATING.map(([name, x, y, size, delay]) => (
-        <span key={name} className="auth-float" style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, animationDelay: `${delay}s` }}>
-          <img src={`/logos/${name}.svg`} alt="" />
-        </span>
-      ))}
       <div className="auth-pitch">
         <p className="auth-eyebrow">Real machines. Real code.</p>
         <h2>Break it. Fix it.<br />Actually learn it.</h2>
