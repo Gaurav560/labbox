@@ -11,7 +11,7 @@ tags:
 level: beginner
 estimated_minutes: 30
 cover: cover.svg
-cover_credit: { by: "Logos: java", source: "devicon (MIT)" }
+cover_credit: { by: "Logos: duke-thumbsup,java", source: "devicon (MIT), Duke (BSD)" }
 image: labbox/java-collections:v1
 resources:
   cpus: 0.5

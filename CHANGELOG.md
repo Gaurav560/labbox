@@ -1,5 +1,13 @@
 # Changelog
 
+## Duke on the Java covers
+
+- Java basics shows Duke, the Java mascot, waving on Java orange; Java collections shows Duke giving a
+  thumbs up on Java navy. Both keep a small Java logo badge.
+- Duke artwork: Sun Microsystems released Duke under the BSD license; the SVGs come from Wikimedia
+  Commons (`tools/logos/LICENSE-duke` has the sources). Use `--logo duke-waving,java` or
+  `--logo duke-thumbsup,java`; the credit then names both sources.
+
 ## Cleaner covers and closing panel, new Java cover, softer grid
 
 - Lab covers: the dot pattern and the small dots on the rings are gone (logo, rings and light only).

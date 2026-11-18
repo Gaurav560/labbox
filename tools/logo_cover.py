@@ -1,6 +1,7 @@
 """Lab covers from the real technology logos, on the technology's own brand colours.
 
-The logos are devicon's "original" SVGs (MIT, see logos/LICENSE-devicon), copied into tools/logos/.
+The logos are devicon's "original" SVGs (MIT, see logos/LICENSE-devicon) plus Duke, the Java mascot
+(BSD, see logos/LICENSE-duke), copied into tools/logos/.
 A cover is one SVG, 1200 x 800 (the 3:2 card shape): the brand colour as the background and the
 main logo as the picture, big and in its own colours on a soft light, plus an optional second logo
 as a small badge (Python on FastAPI, Java on Spring). A pattern seeded from the lab id keeps two labs
@@ -21,6 +22,8 @@ W, H = 1200, 800
 BRANDS: dict[str, tuple[str, str, str]] = {
     "python": ("#3776AB", "#163a5f", "#FFD43B"),
     "java": ("#1b4f80", "#08172b", "#f89820"),  # Java blue: the red flame and blue cup both stand out
+    "duke-waving": ("#f89820", "#b3460a", "#ffffff"),  # Duke, the Java mascot (BSD, see logos/LICENSE-duke)
+    "duke-thumbsup": ("#1b4f80", "#08172b", "#f89820"),
     "fastapi": ("#009688", "#003f3a", "#ffffff"),
     "spring": ("#6DB33F", "#24501a", "#ffffff"),
     "postgresql": ("#336791", "#14304a", "#ffffff"),

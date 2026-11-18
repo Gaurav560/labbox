@@ -700,7 +700,8 @@ def _logo_cover(folder: Path, lab_id: str, logos: str) -> int:
     for old in ("cover.jpg", "cover.webp", "cover.png"):
         (folder / old).unlink(missing_ok=True)
     (folder / "cover.svg").write_text(svg, encoding="utf-8")
-    _yaml_set_cover(folder / "lab.yaml", {"by": f"Logos: {logos}", "source": "devicon (MIT)"}, "cover.svg")
+    source = "devicon (MIT), Duke (BSD)" if "duke" in logos else "devicon (MIT)"
+    _yaml_set_cover(folder / "lab.yaml", {"by": f"Logos: {logos}", "source": source}, "cover.svg")
     load_lab(folder)
     print(f"✓ {folder / 'cover.svg'} ({len(svg) // 1024} KB)")
     return 0
