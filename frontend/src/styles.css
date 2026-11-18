@@ -160,16 +160,20 @@ select { padding: 3px 8px; }
   /* a muted dusk tint from the showcase colours, never plain white */
   --bg: #d4d7ea; --panel: #e7e8f2; --text: #1f2333; --muted: #4f5568; --border: #c5c9dc; --chip: #d6d9e8;
 }
-/* the right side: a neutral charcoal grey in both themes, a shade lighter than the card */
-.auth-main { background: linear-gradient(180deg, #2a2b30, #222327); }
-.auth-legal { --muted: #9aa1bb; --text: #e6e8f2; }
-:root[data-theme="light"] .auth-card {
-  /* the card stays dark slate in both themes: no bright surface next to the dark showcase */
-  --bg: #0f1220; --panel: #171a2b; --text: #e8eaf2; --muted: #a3a9bd; --border: #2b3048; --chip: #262b42;
-  --accent: #8ea6ff; --tint-accent: #7c9cff2b; --danger: #ff7b7b;
-  color: var(--text); box-shadow: 0 24px 60px #1a1d3a4d;
+/* the right side: GitHub's charcoal (#111512) with a faint grid, in both themes */
+.auth-main {
+  background-color: #111512;
+  background-image: linear-gradient(#1f2421 1px, transparent 1px), linear-gradient(90deg, #1f2421 1px, transparent 1px);
+  background-size: 32px 32px;
 }
-:root[data-theme="light"] .auth-card .link { color: var(--accent); }
+.auth-legal { --muted: #9ba39d; --text: #f0f3f1; }
+.auth-card {
+  /* GitHub-style greys: a black card on a green-tinted charcoal, in both themes */
+  --bg: #0b0d0c; --panel: #000000; --text: #f0f3f1; --muted: #9ba39d; --border: #2c322e; --chip: #1f2421;
+  --accent: #8ea6ff; --tint-accent: #7c9cff2b; --danger: #ff7b7b;
+  color: var(--text); box-shadow: 0 24px 60px #00000080;
+}
+.auth-card .link { color: var(--accent); }
 .auth-main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
 .auth-legal { margin: 0; max-width: 400px; text-align: center; color: var(--muted); }
 .auth-legal a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
