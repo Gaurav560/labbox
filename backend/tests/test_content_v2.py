@@ -284,7 +284,9 @@ def test_cover_route(client: TestClient):
     assert r.status_code == 200 and r.headers["content-type"].startswith("image/svg+xml")
     assert "sandbox" in r.headers["content-security-policy"] and r.headers["x-content-type-options"] == "nosniff"
     by_id = {x["id"]: x for x in client.get("/api/catalog").json()}
-    assert by_id["python-basics"]["cover_url"] == "/api/labs/python-basics/cover"
+    url = by_id["python-basics"]["cover_url"]
+    assert url.startswith("/api/labs/python-basics/cover?v=")  # versioned: a new cover skips the browser cache
+    assert client.get(url).status_code == 200
     saved = lab.cover
     try:
         lab.cover = None  # a lab without its own image: no route, the UI draws a cover

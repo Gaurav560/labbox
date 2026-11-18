@@ -89,6 +89,14 @@ class Outline(BaseModel):
     steps: list[OutlineStep]
 
 
+def _cover_url(lab: LabConfig) -> str | None:
+    """The cover route plus a version from the file, so a new cover is never hidden by the browser cache."""
+    if not lab.cover:
+        return None
+    st = (lab.root / lab.cover).stat()
+    return f"/api/labs/{lab.id}/cover?v={st.st_mtime_ns:x}{st.st_size:x}"
+
+
 def _info(lab: LabConfig) -> dict:
     return dict(
         subtitle=lab.subtitle,
@@ -96,7 +104,7 @@ def _info(lab: LabConfig) -> dict:
         tags=lab.tags,
         level=lab.level,
         estimated_minutes=lab.estimated_minutes,
-        cover_url=f"/api/labs/{lab.id}/cover" if lab.cover else None,
+        cover_url=_cover_url(lab),
         cover_credit=lab.cover_credit.model_dump() if lab.cover_credit else None,
     )
 
