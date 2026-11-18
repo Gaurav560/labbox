@@ -25,12 +25,10 @@ function Showcase() {
   const { shown, typing } = useTyped(SCRIPT);
   return (
     <aside className="auth-show" aria-hidden="true">
-      <div className="auth-glow auth-glow-a" />
-      <div className="auth-glow auth-glow-b" />
       <div className="auth-grid" />
       <div className="auth-pitch">
         <p className="auth-eyebrow">Real machines. Real code.</p>
-        <h2>Break it. Fix it.<br />Actually learn it.</h2>
+        <h2>Break it. Fix it.<br />Actually <span className="auth-red">learn it.</span></h2>
         <div className="auth-term">
           <div className="auth-term-bar"><span /><span /><span /></div>
           <div className="auth-term-body">
