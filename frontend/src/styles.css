@@ -157,12 +157,13 @@ select { padding: 3px 8px; }
 /* ---------- login ---------- */
 .auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); background: var(--bg); }
 :root[data-theme="light"] .auth {
-  /* softer than pure white next to the dark showcase */
-  --bg: #e6e8ef; --panel: #f4f5f9; --text: #232734; --border: #d6d9e2; --chip: #e4e6ee;
+  /* a muted dusk tint from the showcase colours, never plain white */
+  --bg: #d4d7ea; --panel: #e7e8f2; --text: #1f2333; --muted: #4f5568; --border: #c5c9dc; --chip: #d6d9e8;
 }
-:root[data-theme="light"] .auth-field input { background: #eceef4; }
-:root[data-theme="light"] .auth-field input:focus { background: #f7f8fb; }
-:root[data-theme="light"] .auth-card { box-shadow: 0 20px 50px #1b1f2a1f; }
+:root[data-theme="light"] .auth-main { background: linear-gradient(160deg, #cfd4ec, #dcd3ea 60%, #d6cfe6); }
+:root[data-theme="light"] .auth-field input { background: #dcdfec; }
+:root[data-theme="light"] .auth-field input:focus { background: #e9eaf3; }
+:root[data-theme="light"] .auth-card { box-shadow: 0 20px 50px #2a2f5a24; }
 .auth-show {
   position: relative; overflow: hidden; color: #fff; padding: 56px;
   display: flex; align-items: center; justify-content: center;
