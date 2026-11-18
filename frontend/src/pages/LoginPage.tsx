@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth";
+import Logo from "../components/Logo";
 
 export default function LoginPage() {
   const { user, login, signup } = useAuth();
@@ -31,7 +32,8 @@ export default function LoginPage() {
     <div className="center-screen">
       <form className="login-card" onSubmit={(e) => submit(signupMode ? "signup" : "login", e)}>
         <Link to="/" className="link small">← Home</Link>
-        <h1>{signupMode ? "Create your account" : "LabBox"}</h1>
+        <Logo />
+        <h1>{signupMode ? "Create your account" : "Welcome back"}</h1>
         <p className="muted">Hands-on coding labs in your browser</p>
         <label>
           Username

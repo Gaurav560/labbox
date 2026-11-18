@@ -1,32 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
+import Logo from "../components/Logo";
 import ChoiceQuestion, { type ChoiceState } from "../lesson/ChoiceQuestion";
 import { useTheme } from "../theme";
 
-const TRACKS: { id: string; title: string; blurb: string }[] = [
-  { id: "languages", title: "Programming languages", blurb: "Python, Java, JavaScript, Go, Rust and SQL, from first function to the traps." },
-  { id: "frameworks", title: "Frameworks", blurb: "Spring Boot, FastAPI, Express and React, the way real teams use them." },
-  { id: "databases", title: "Databases", blurb: "Postgres in depth, Redis in practice, and the incidents that wake people up." },
-  { id: "devops", title: "DevOps", blurb: "Linux, Docker, Kubernetes, Nginx and CI/CD on machines you can break." },
-  { id: "system-design", title: "System design", blurb: "Run a small distributed system and make it hit real targets under load." },
-  { id: "ai", title: "AI engineering", blurb: "Tokenizers to transformers, then RAG, agents and evals, built for real." },
-  { id: "interview", title: "Interview prep", blurb: "Bug hunts, language traps and design drills that feel like the real thing." },
-];
-
-const STEPS = [
-  { n: 1, title: "Read a little", text: "One idea at a time, in a short card. Never a wall of text." },
-  { n: 2, title: "Predict", text: "Guess what happens before you see it. Being wrong is where it sticks." },
-  { n: 3, title: "Try it for real", text: "Your own Linux machine, an editor and a terminal, right in the browser." },
-  { n: 4, title: "Check and win", text: "Hidden tests run on a clean machine and tell you exactly what is off." },
-];
-
-const WHY = [
-  { title: "A real machine for every lab", text: "Not a simulation. Install things, run servers, break them and fix them." },
-  { title: "A story to pull you forward", text: "Help Priya get Dabba Express through the lunch rush, one function at a time." },
-  { title: "Hints, not answers", text: "A nudge, then a direction, then almost there. You still write the code." },
-  { title: "A habit you can keep", text: "XP, streaks and a two minute daily drill for the busy days." },
+const TRACKS: { id: string; title: string }[] = [
+  { id: "languages", title: "Programming languages" },
+  { id: "frameworks", title: "Frameworks" },
+  { id: "databases", title: "Databases" },
+  { id: "devops", title: "DevOps" },
+  { id: "system-design", title: "System design" },
+  { id: "ai", title: "AI engineering" },
+  { id: "interview", title: "Interview prep" },
 ];
 
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
@@ -34,16 +21,25 @@ const DEMO = {
   question: 'What does this print?\n\n```python\nprint("chai" * 2)\n```',
   options: ["`chai2`", "`chaichai`", "An error"],
   answer: 1,
-  explain: "Multiplying a string by a number repeats it. Python is full of small surprises like this, and every lab has a few.",
+  explain: "Multiplying a string by a number repeats it. Every lab has a few small surprises like this.",
 };
 
-function LabPreview() {
+/** The window frame used by the hero preview and every showcase below it. */
+function Frame({ label, children, className = "" }: { label?: string; children: ReactNode; className?: string }) {
   return (
-    <div className="preview" role="img" aria-label="A LabBox lab: a lesson card on the left, code and a terminal on the right, and all checks passed">
+    <div className={`preview frame ${className}`} role={label ? "img" : undefined} aria-label={label}>
       <div className="preview-chrome" aria-hidden="true">
         <span /><span /><span />
       </div>
-      <div className="preview-body" aria-hidden="true">
+      <div aria-hidden={label ? true : undefined}>{children}</div>
+    </div>
+  );
+}
+
+function LabPreview() {
+  return (
+    <Frame label="A LabBox lab: a lesson card on the left, code and a terminal on the right, and all checks passed">
+      <div className="preview-body">
         <div className="preview-lesson">
           <span className="step-kind">Story</span>
           <div className="preview-title">Lunch orders at Dabba Express</div>
@@ -61,8 +57,88 @@ function LabPreview() {
           </pre>
         </div>
       </div>
-      <div className="preview-pass" aria-hidden="true">3 of 3 passed 🎉</div>
-    </div>
+      <div className="preview-pass">3 of 3 passed 🎉</div>
+    </Frame>
+  );
+}
+
+function CheckShowcase() {
+  return (
+    <Frame label="A check result: 1 of 3 passed, with the expected and actual value side by side">
+      <div className="sc-pad">
+        <div className="sc-check-title fail">1 of 3 passed</div>
+        <div className="sc-result sc-fail">
+          <div className="sc-result-head"><span className="fail">✗</span> <strong>greet.py: return a greeting</strong></div>
+          <p>greet('Asha') returned None</p>
+          <div className="sc-eg">
+            <div><span>Expected</span><code>'Hello, Asha!'</code></div>
+            <div><span>Got</span><code>None</code></div>
+          </div>
+        </div>
+        <div className="sc-result"><span className="pass">✓</span> <strong>math_utils.py: add two numbers</strong></div>
+      </div>
+    </Frame>
+  );
+}
+
+function HintShowcase() {
+  return (
+    <Frame label="A task with two hints revealed: a nudge and a direction, and one hint left">
+      <div className="sc-pad">
+        <div className="sc-task-head">
+          <strong>Longest word in a shop name</strong>
+          <span className="xp-chip">12 XP</span>
+        </div>
+        <ol className="hint-list">
+          <li><span className="hint-rung">Nudge</span>An empty sentence must give 0. What do you return before looking at any word?</li>
+          <li><span className="hint-rung">Direction</span>Split the sentence on spaces, then look at each word's length.</li>
+        </ol>
+        <span className="sc-btn">💡 Hint (1 left)</span>
+      </div>
+    </Frame>
+  );
+}
+
+function HabitShowcase() {
+  const nodes = [
+    { t: "Python functions", s: "done" },
+    { t: "Lists and dicts", s: "available" },
+    { t: "Python traps", s: "soon" },
+  ];
+  return (
+    <Frame label="Progress: a 4 day streak, 330 XP, level 3, and a skill map with one skill done">
+      <div className="sc-pad">
+        <div className="sc-stats">
+          <div><strong>🔥 4</strong><span>day streak</span></div>
+          <div><strong>⭐ 330</strong><span>XP</span></div>
+          <div><strong>Lv 3</strong><span>520 at level 4</span></div>
+        </div>
+        <div className="sc-map">
+          {nodes.map((n, i) => (
+            <div key={n.t} className="sc-map-step">
+              {i > 0 && <span className={`sc-edge ${nodes[i - 1].s === "done" ? "on" : ""}`} />}
+              <div className={`sc-node sc-${n.s}`}>
+                <strong>{n.t}</strong>
+                <span>{n.s === "done" ? "✓ Done" : n.s === "available" ? "Start" : "Soon"}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
+function Showcase({ eyebrow, title, text, flip, children }: { eyebrow: string; title: string; text: string; flip?: boolean; children: ReactNode }) {
+  return (
+    <section className={`showcase ${flip ? "flip" : ""}`}>
+      <div className="showcase-text">
+        <p className="eyebrow">{eyebrow}</p>
+        <h2>{title}</h2>
+        <p className="lede">{text}</p>
+      </div>
+      <div className="showcase-visual">{children}</div>
+    </section>
   );
 }
 
@@ -86,13 +162,14 @@ export default function HomePage() {
   ) : (
     <Link className="btn btn-primary btn-big" to="/login?signup=1">Start free →</Link>
   );
+  const live = catalog ?? [];
 
   return (
     <div className="home">
       <header className="home-header">
-        <Link to="/" className="brand home-brand">LabBox</Link>
+        <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#how">How it works</a>
+          <a href="#try">How it works</a>
           <a href="#tracks">Tracks</a>
         </nav>
         <span className="spacer" />
@@ -122,80 +199,46 @@ export default function HomePage() {
           <LabPreview />
         </section>
 
-        <section className="home-section split" id="try" aria-labelledby="try-title">
-          <div className="split-intro">
-            <p className="eyebrow">Try it</p>
-            <h2 id="try-title">Guess first. Then see why.</h2>
-            <p className="lede">Every lesson works like this. A small surprise, a quick guess, and the idea sticks.</p>
-          </div>
-          <div className="try-card">
-            <ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} />
-          </div>
-        </section>
-
-        <section className="home-section" id="how" aria-labelledby="how-title">
-          <p className="eyebrow">How it works</p>
-          <h2 id="how-title">Four steps, a few minutes each.</h2>
-          <ol className="steps">
-            {STEPS.map((s) => (
-              <li key={s.n} className="step">
-                <span className="step-n" aria-hidden="true">{String(s.n).padStart(2, "0")}</span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="home-section split" aria-labelledby="why-title">
-          <div className="split-intro">
-            <p className="eyebrow">Why it sticks</p>
-            <h2 id="why-title">Built for doing, not watching.</h2>
-          </div>
-          <dl className="why-list">
-            {WHY.map((w) => (
-              <div key={w.title} className="why-item">
-                <dt>{w.title}</dt>
-                <dd>{w.text}</dd>
+        <div id="try" className="showcases">
+          <Showcase eyebrow="Predict" title="Guess first. Then see why." text="Every lesson starts with a small surprise. Being wrong for a second is how it sticks. Go on, try this one.">
+            <Frame className="try-card">
+              <div className="sc-pad">
+                <ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} />
               </div>
-            ))}
-          </dl>
-        </section>
+            </Frame>
+          </Showcase>
 
-        <section className="home-section" id="tracks" aria-labelledby="tracks-title">
-          <p className="eyebrow">Tracks</p>
-          <h2 id="tracks-title">Pick a direction.</h2>
-          <p className="lede">New labs land in these tracks as they are built.</p>
-          <ul className="track-rows">
+          <Showcase flip eyebrow="Check" title="Fails that tell you why." text="Hidden tests run on a clean machine and show what they expected next to what you gave them.">
+            <CheckShowcase />
+          </Showcase>
+
+          <Showcase eyebrow="Hints" title="Hints, not answers." text="A nudge, then a direction, then almost there. You still write the code, so you still own it.">
+            <HintShowcase />
+          </Showcase>
+
+          <Showcase flip eyebrow="Habit" title="Five minutes a day adds up." text="XP for every win, a streak that survives a busy day, and a skill map that lights up as you go.">
+            <HabitShowcase />
+          </Showcase>
+        </div>
+
+        <section className="home-tracks" id="tracks" aria-labelledby="tracks-title">
+          <h2 id="tracks-title">Seven tracks. Real tools in every one.</h2>
+          <ul className="track-chips">
             {TRACKS.map((t) => {
-              const labs = catalog?.filter((l) => l.track === t.id) ?? [];
+              const n = live.filter((l) => l.track === t.id).length;
               return (
-                <li key={t.id} className={`track-card ${labs.length ? "track-live" : ""}`}>
-                  <div className="track-main-col">
-                    <h3>{t.title}</h3>
-                    <p>{t.blurb}</p>
-                    {labs.length > 0 && (
-                      <ul className="track-labs">
-                        {labs.map((l) => (
-                          <li key={l.id}>
-                            <strong>{l.title}</strong>
-                            <span>
-                              {[l.level && l.level[0].toUpperCase() + l.level.slice(1), l.estimated_minutes && `${l.estimated_minutes} min`]
-                                .filter(Boolean)
-                                .join(" · ")}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <span className={`track-status ${labs.length ? "is-live" : ""}`}>
-                    {catalog === null ? "" : labs.length ? `${labs.length} lab${labs.length === 1 ? "" : "s"} live` : "Coming soon"}
-                  </span>
+                <li key={t.id} className={`track-chip ${n ? "is-live" : ""}`}>
+                  {t.title}
+                  <span>{catalog === null ? "" : n ? `${n} lab${n === 1 ? "" : "s"}` : "Soon"}</span>
                 </li>
               );
             })}
           </ul>
+          {live.length > 0 && (
+            <p className="muted live-labs">
+              Live now: {live.map((l) => l.title).join(" · ")}
+            </p>
+          )}
         </section>
 
         <section className="home-final" aria-labelledby="final-title">
@@ -206,7 +249,7 @@ export default function HomePage() {
       </main>
 
       <footer className="home-footer">
-        <span>LabBox</span>
+        <Logo />
         <span className="muted small-text">Hands-on labs for programming, databases, DevOps, system design and AI.</span>
       </footer>
     </div>

@@ -4,6 +4,7 @@ import { api, type LabSummary, type TrackSummary } from "../api";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
 import StatsBadges from "../components/StatsBadges";
+import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import { useStats } from "../stats";
 
@@ -38,7 +39,7 @@ export default function LabsPage() {
   return (
     <div className="labs-page">
       <header className="topbar">
-        <span className="brand">LabBox</span>
+        <Logo to="/" />
         <span className="spacer" />
         <StatsBadges username={user?.username ?? ""} />
         <button className="btn btn-small" onClick={logout}>Log out</button>

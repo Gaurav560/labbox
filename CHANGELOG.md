@@ -15,9 +15,11 @@
 - Lighthouse on the production build: performance, accessibility, best practices and SEO all 100, in
   dark and light. New browser test for the home page.
 - No prices, testimonials or user numbers on the page (none of them exist yet).
-- Redesign below the hero: no boxed cards. Big headlines with a small accent label, a split layout for
-  the demo question, thin numbered steps on a hairline, a two-column "why" list, track rows with a live
-  status on the right, and a soft glow behind the final call to action.
+- Below the hero: a product showcase in the hero's window frames, alternating sides. Predict (the demo
+  question, live), Check (Expected vs Got), Hints (the ladder) and Habit (streak, XP, level and a mini
+  skill map). Then the tracks as chips with a live count, and the final call to action.
+- Logo: a rounded accent box with a shell prompt (`>_`) plus the LabBox wordmark, in every top bar, on
+  the login page and as `favicon.svg`.
 
 ## v2 Phase C: XP, streaks, levels, onboarding, skill map, daily drill
 

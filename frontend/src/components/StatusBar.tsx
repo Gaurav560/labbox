@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Chapter, Progress } from "../api";
 import { useTheme } from "../theme";
+import { LogoMark } from "./Logo";
 import StatsBadges from "./StatsBadges";
 
 export type UiStatus = "starting" | "running" | "stopped" | "error";
@@ -27,6 +28,7 @@ export default function StatusBar(p: Props) {
   const pct = p.progress && p.progress.total_tasks ? Math.round((100 * p.progress.passed_tasks) / p.progress.total_tasks) : 0;
   return (
     <header className="topbar">
+      <Link to="/" className="logo" aria-label="LabBox home"><LogoMark size={24} /></Link>
       <Link to="/labs" className="link">← Labs</Link>
       <span className="brand">{p.title}</span>
       <span className="muted" aria-hidden="true">›</span>

@@ -9,11 +9,13 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn tech by doing, not watching.");
   await expect(page).toHaveTitle(/LabBox/);
+  // The logo, as a link home and as the favicon.
+  await expect(page.locator(".home-header").getByRole("link", { name: "LabBox home" })).toBeVisible();
+  expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
-  const languages = page.locator(".track-card", { hasText: "Programming languages" });
-  await expect(languages.locator(".track-labs li")).toHaveCount(2);
-  await expect(languages).toContainText("Python Basics");
-  await expect(page.locator(".track-card", { hasText: "DevOps" })).toContainText("Coming soon");
+  await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText("2 labs");
+  await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText("Soon");
+  await expect(page.locator(".live-labs")).toHaveText("Live now: Java Basics · Python Basics");
 
   // The demo question works in the browser.
   const demo = page.locator(".try-card");

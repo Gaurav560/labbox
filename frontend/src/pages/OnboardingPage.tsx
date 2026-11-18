@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, type Onboarding, type OnboardingResult } from "../api";
+import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import LessonMarkdown from "../lesson/LessonMarkdown";
 import { useStats } from "../stats";
@@ -50,7 +51,7 @@ export default function OnboardingPage() {
   return (
     <div className="onboarding">
       <header className="topbar">
-        <span className="brand">LabBox</span>
+        <Logo to="/" />
         <span className="spacer" />
         <span className="muted small-text">Step {step} of 3</span>
         {!result && <button className="btn btn-small btn-ghost" onClick={skip}>Skip</button>}

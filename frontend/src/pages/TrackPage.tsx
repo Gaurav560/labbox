@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api, type SkillMap, type SkillNode } from "../api";
 import { useAuth } from "../auth";
+import { LogoMark } from "../components/Logo";
 import StatsBadges from "../components/StatsBadges";
 import { useToast } from "../components/Toasts";
 import { useTheme } from "../theme";
@@ -76,6 +77,7 @@ export default function TrackPage() {
   return (
     <div className="track-page">
       <header className="topbar">
+        <Link to="/" className="logo" aria-label="LabBox home"><LogoMark size={24} /></Link>
         <Link to="/labs" className="link">← Labs</Link>
         <span className="brand">{map?.title ?? track}</span>
         {map && <span className="muted small-text">{done} of {map.nodes.length} skills</span>}
