@@ -1,0 +1,28 @@
+id: python-basics
+title: Python Basics
+description: Write your first Python functions and see real tests pass.
+language: python
+image: labbox/python-basics:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+chapters:
+  - id: 01-functions
+    title: Your first functions
+    file: chapters/01-functions.md
+    tasks:
+      - id: greet
+        title: "greet.py: return a greeting"
+      - id: add
+        title: "math_utils.py: add two numbers"
+      - id: is_even
+        title: "math_utils.py: check if a number is even"

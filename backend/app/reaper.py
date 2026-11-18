@@ -1,0 +1,42 @@
+"""Background task: stop idle workspace containers and clean up check leftovers."""
+import asyncio
+import logging
+import shutil
+import time
+from datetime import timedelta
+
+from sqlmodel import Session
+
+from . import containers
+from .config import get_settings
+from .db import engine
+from .models import utcnow
+
+log = logging.getLogger(__name__)
+
+CHECK_LEFTOVER_SECONDS = 5 * 60
+
+
+def reap_once() -> None:
+    settings = get_settings()
+    cutoff = utcnow() - timedelta(minutes=settings.IDLE_STOP_MINUTES)
+    with Session(engine) as session:
+        for name in containers.stop_idle(session, cutoff):
+            log.info("Reaper stopped idle container %s", name)
+    for name in containers.remove_old_check_containers(CHECK_LEFTOVER_SECONDS):
+        log.info("Reaper removed leftover check container %s", name)
+    for d in settings.CHECKS_DIR.iterdir():
+        if d.is_dir() and time.time() - d.stat().st_mtime > CHECK_LEFTOVER_SECONDS:
+            shutil.rmtree(d, ignore_errors=True)
+            log.info("Reaper removed leftover check folder %s", d)
+
+
+async def reaper_loop() -> None:
+    interval = get_settings().REAPER_INTERVAL_SECONDS
+    log.info("Reaper started: every %ss, idle limit %s min", interval, get_settings().IDLE_STOP_MINUTES)
+    while True:
+        try:
+            await asyncio.to_thread(reap_once)
+        except Exception:
+            log.exception("Reaper pass failed")
+        await asyncio.sleep(interval)

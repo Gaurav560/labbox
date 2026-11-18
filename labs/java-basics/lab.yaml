@@ -1,0 +1,26 @@
+id: java-basics
+title: Java Basics
+description: Write your first Java methods and check them against real tests.
+language: java
+image: labbox/java-basics:v1
+resources:
+  cpus: 0.5
+  memory: 768m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+chapters:
+  - id: 01-methods
+    title: Your first methods
+    file: chapters/01-methods.md
+    tasks:
+      - id: greet
+        title: "Greeter.greet: return a greeting"
+      - id: longest_word
+        title: "Greeter.longestWord: length of the longest word"
