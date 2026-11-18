@@ -15,7 +15,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, col, select
 
-from . import containers, progress, workspace_files
+from . import containers, engagement, progress, workspace_files
 from .config import get_settings
 from .labs import LabConfig
 from .models import CheckRun, User, Workspace
@@ -57,6 +57,7 @@ class CheckResponse(BaseModel):
     duration_ms: int
     metrics: list[Metric] = []
     timed_out: bool = False
+    xp_awarded: list[engagement.XpAward] = []
 
 
 class _RawResult(BaseModel):
@@ -260,7 +261,9 @@ def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
         )
     )
     session.commit()
-    progress.record_check(session, user.id, lab.id, chapter_id, {r.task: r.passed for r in res.results})
+    passed = {r.task: r.passed for r in res.results}
+    progress.record_check(session, user.id, lab.id, chapter_id, passed)
+    res.xp_awarded = engagement.award_for_check(session, user.id, lab, chapter_id, passed)
     log.info(
         "Check user=%s lab=%s chapter=%s: %d/%d passed in %d ms%s",
         user.id, lab.id, chapter_id, res.passed_count, res.total_count, res.duration_ms, " (timed out)" if res.timed_out else "",

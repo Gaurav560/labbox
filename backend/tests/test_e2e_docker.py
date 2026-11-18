@@ -242,3 +242,14 @@ def test_check_v2_fields_and_task_progress(client: TestClient):
     check(client, h, "java-basics", "01-methods")
     with Session(engine) as s:
         assert s.get(TaskProgress, {"user_id": uid, "lab_id": "java-basics", "task_id": "greet"}).first_passed_at == first
+
+
+def test_real_check_awards_xp_once(client: TestClient):
+    h, uid = signup(client, "xp")
+    client.post("/api/labs/python-basics/workspace/start", headers=h)
+    for path, content in PY_SOLVED.items():
+        write(client, h, "python-basics", path, content)
+    first = check(client, h, "python-basics", "01-functions")
+    assert sorted(a["kind"] for a in first["xp_awarded"]) == ["chapter", "lab", "task", "task", "task"]
+    assert check(client, h, "python-basics", "01-functions")["xp_awarded"] == []
+    assert client.get("/api/me/stats", headers=h).json()["xp_total"] == 3 * 20 + 50 + 200

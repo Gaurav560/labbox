@@ -9,8 +9,8 @@ from sqlmodel import SQLModel
 from app import models  # noqa: F401
 from app.db import init_db
 
-NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer"}
-HEAD = "0003"
+NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer", "user_profile", "xp_event", "drill_answer"}
+HEAD = "0004"
 
 # The schema exactly as the POC's SQLModel.metadata.create_all() made it.
 POC_SCHEMA = """
@@ -69,6 +69,9 @@ def test_poc_database_is_stamped_and_keeps_data(tmp_path: Path):
     with engine.connect() as c:
         assert c.execute(text("SELECT username FROM user")).scalar_one() == "asha"
         assert c.execute(text("SELECT count(*) FROM checkrun")).scalar_one() == 1
+        # Existing users get a profile: onboarded already, earlier progress not yet turned into XP.
+        row = c.execute(text("SELECT user_id, onboarded_at, backfilled_at FROM user_profile")).one()
+        assert row[0] == 1 and row[1] is not None and row[2] is None
 
 
 def test_models_match_migrations(tmp_path: Path):

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Chapter, Progress } from "../api";
 import { useTheme } from "../theme";
+import StatsBadges from "./StatsBadges";
 
 export type UiStatus = "starting" | "running" | "stopped" | "error";
 
@@ -60,7 +61,7 @@ export default function StatusBar(p: Props) {
       <button className="btn btn-small btn-ghost" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title="Theme">
         {theme === "dark" ? "☀" : "☾"}
       </button>
-      <span className="muted small-text">{p.username}</span>
+      <StatsBadges username={p.username} />
     </header>
   );
 }

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api, type LabSummary } from "../api";
+import { Link, useNavigate } from "react-router-dom";
+import { api, type LabSummary, type TrackSummary } from "../api";
 import { useAuth } from "../auth";
+import DrillCard from "../components/DrillCard";
+import StatsBadges from "../components/StatsBadges";
 import { useToast } from "../components/Toasts";
+import { useStats } from "../stats";
 
 const TRACK_LABEL: Record<string, string> = {
   languages: "Languages",
@@ -17,21 +20,57 @@ const TRACK_LABEL: Record<string, string> = {
 export default function LabsPage() {
   const { user, logout } = useAuth();
   const toast = useToast();
+  const { stats } = useStats();
+  const navigate = useNavigate();
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
+  const [tracks, setTracks] = useState<TrackSummary[]>([]);
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
+    api.tracks().then(setTracks).catch(() => {});
   }, [toast]);
+
+  // Brand new learners start with the 60 second onboarding.
+  useEffect(() => {
+    if (stats?.needs_onboarding) navigate("/welcome", { replace: true });
+  }, [stats, navigate]);
 
   return (
     <div className="labs-page">
       <header className="topbar">
         <span className="brand">LabBox</span>
         <span className="spacer" />
-        <span className="muted">{user?.username}</span>
+        <StatsBadges username={user?.username ?? ""} />
         <button className="btn btn-small" onClick={logout}>Log out</button>
       </header>
       <main className="labs-main">
+        {stats && (
+          <section className="progress-strip" aria-label="Your progress">
+            <div>
+              <div className="muted small-text">Level {stats.level}</div>
+              <div className="progress level-progress" role="progressbar" aria-label="Progress to the next level"
+                aria-valuenow={stats.xp_total - stats.level_xp} aria-valuemin={0} aria-valuemax={stats.next_level_xp - stats.level_xp}>
+                <span className="progress-fill" style={{ width: `${(100 * (stats.xp_total - stats.level_xp)) / Math.max(1, stats.next_level_xp - stats.level_xp)}%` }} />
+              </div>
+              <div className="muted small-text">{stats.next_level_xp - stats.xp_total} XP to level {stats.level + 1}</div>
+            </div>
+            <div>
+              <div className="big-number">🔥 {stats.streak_current}</div>
+              <div className="muted small-text">day streak · best {stats.streak_best}</div>
+            </div>
+            <div>
+              <div className="big-number">{Math.min(stats.today_xp, stats.streak_min_xp)}/{stats.streak_min_xp}</div>
+              <div className="muted small-text">XP today for the streak</div>
+            </div>
+            {tracks.map((t) => (
+              <Link key={t.track} to={`/tracks/${t.track}`} className="track-link">
+                <span className="big-number">{t.done}/{t.nodes}</span>
+                <span className="muted small-text">{t.title} skill map →</span>
+              </Link>
+            ))}
+          </section>
+        )}
+        <DrillCard />
         <h2>Your labs</h2>
         {!labs && <p className="muted">Loading...</p>}
         <div className="lab-grid">

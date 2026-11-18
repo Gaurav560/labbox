@@ -48,7 +48,7 @@ def test_step_position(client: TestClient):
     h = auth(client)
     url = f"/api/labs/{LAB}/chapters/{CH}/progress"
     first = client.get(url, headers=h).json()
-    assert first == {"current_step": 0, "step_count": 9, "hints": {}, "predicts": {}}
+    assert first == {"current_step": 0, "step_count": 9, "hints": {}, "predicts": {}, "xp_earned": 0}
     assert client.put(url, json={"current_step": 4}, headers=h).json()["current_step"] == 4
     assert client.get(url, headers=h).json()["current_step"] == 4
     # Past the end is clamped to the last step; negative is rejected.

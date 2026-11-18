@@ -1,5 +1,45 @@
 # Changelog
 
+## v2 Phase C: XP, streaks, levels, onboarding, skill map, daily drill
+
+**Learner-facing**
+- XP for first passes (lowered by hints), first-try predicts, completed chapters and labs, and the daily
+  drill. A "+N XP" toast after each award.
+- Levels (level 2 at 100 XP, level 3 at 283, then `100 * (N - 1)^1.5`), shown as a badge next to the
+  username. 🔥 streak and ⭐ XP in every top bar.
+- Streaks counted in the learner's own timezone: a day counts at 20 XP, today never breaks it, one
+  freeze per week covers a single missed day.
+- Onboarding for new accounts: pick a goal, answer 3 placement questions, then land in the first lab
+  with the editor open on its starter file. Goals without labs yet say so and start from Python Basics.
+- Daily drill on the labs page: one multiple choice question per day, checked on the server, +20 XP,
+  enough to keep the streak on a busy day.
+- Skill map page (`/tracks/languages`, React Flow): nodes light up when their chapters are complete.
+- The labs page shows level progress, streak, today's XP and the skill map; the recap card shows the XP
+  from the chapter, the streak and the level.
+- The lab page opens the first file by itself.
+
+**Backend**
+- Migration `0004`: `user_profile`, the `xp_event` ledger (unique per user and ref), `drill_answer`.
+  Every existing user gets a profile marked as onboarded; their earlier progress becomes XP once.
+- `app/engagement.py` (rules as pure functions plus the ledger), `app/drills.py`, `app/content.py`
+  (skill maps, drills and onboarding, validated at start-up), `routers/engagement_routes.py`.
+- Check and predict responses include `xp_awarded`; chapter progress includes `xp_earned`.
+- `labbox validate` also checks tracks, drills and onboarding.
+
+**Content**
+- `tracks/languages.yaml` (7 skills), 14 drills in `drills/`, `onboarding/onboarding.yaml`.
+
+**Tests**
+- 27 new backend tests, including fixed-clock streak and timezone tests (midnight in India against UTC,
+  timezone changes, freezes per week), no double payouts, backfill, drill, skill map, onboarding and
+  broken content. A real Docker Check awards XP once.
+- New browser test: onboarding to an open editor, drill to streak 1, chapter to a lit skill node.
+- Lighthouse accessibility 100 on the labs page, the lab page and the skill map.
+
+**Not built (as agreed)**
+- The share card image and public profile page (section 5.5), the incident timer bonus (needs Phase D),
+  leagues and events (section 5.6).
+
 ## v2 Phase B: content format v2, authoring CLI, solutions
 
 **Content format**

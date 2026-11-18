@@ -1,4 +1,6 @@
 import type { PredictState, Step, Task } from "../api";
+import { useStats } from "../stats";
+import ChoiceQuestion from "./ChoiceQuestion";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
 
@@ -27,6 +29,7 @@ interface Props {
   chapterDone: boolean;
   tasksLeft: number;
   hasNextChapter: boolean;
+  chapterXp: number;
   onPredict: (option: number) => void;
   onHint: (taskId: string) => void;
   onRun: (command: string) => void;
@@ -36,6 +39,7 @@ interface Props {
 
 export default function StepCard(p: Props) {
   const { step } = p;
+  const { stats } = useStats();
   const body = <LessonMarkdown markdown={step.markdown} onRun={p.onRun} />;
   const title = step.title ?? (step.type === "recap" ? "Chapter recap" : null);
 
@@ -58,7 +62,16 @@ export default function StepCard(p: Props) {
         body
       )}
 
-      {step.predict && <PredictBox step={step} state={p.predict} busy={p.predictBusy} onPick={p.onPredict} onRun={p.onRun} />}
+      {step.predict && (
+        <ChoiceQuestion
+          question={step.predict.question}
+          options={step.predict.options.map((o) => o.text)}
+          state={p.predict}
+          busy={p.predictBusy}
+          onPick={p.onPredict}
+          onRun={p.onRun}
+        />
+      )}
 
       {(step.type === "task" || step.type === "incident") && p.task && (
         <TaskBox task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} onHint={p.onHint} onCheck={p.onCheck} />
@@ -66,6 +79,11 @@ export default function StepCard(p: Props) {
 
       {step.type === "recap" && (
         <div className="recap-status">
+          <div className="recap-stats">
+            <div><span className="big-number">⭐ {p.chapterXp}</span><span className="muted small-text">XP from this chapter</span></div>
+            {stats && <div><span className="big-number">🔥 {stats.streak_current}</span><span className="muted small-text">day streak</span></div>}
+            {stats && <div><span className="big-number">Lv {stats.level}</span><span className="muted small-text">{stats.next_level_xp - stats.xp_total} XP to the next level</span></div>}
+          </div>
           {p.chapterDone ? (
             <p className="pass"><strong>Chapter complete. Every task passes. 🎉</strong></p>
           ) : (
@@ -77,53 +95,6 @@ export default function StepCard(p: Props) {
         </div>
       )}
     </article>
-  );
-}
-
-interface PredictBoxProps {
-  step: Step;
-  state: PredictState;
-  busy: boolean;
-  onPick: (i: number) => void;
-  onRun: (c: string) => void;
-}
-
-function PredictBox({ step, state, busy, onPick, onRun }: PredictBoxProps) {
-  const pr = step.predict!;
-  const done = state.solved;
-  return (
-    <div className="predict">
-      <div className="predict-question" id="predict-q">
-        <LessonMarkdown markdown={pr.question} onRun={onRun} />
-      </div>
-      <div className="predict-options" role="group" aria-labelledby="predict-q">
-        {pr.options.map((o, i) => {
-          const wrong = state.wrong.includes(i);
-          const right = done && i === state.answer;
-          return (
-            <button
-              key={i}
-              className={`predict-option ${wrong ? "is-wrong" : ""} ${right ? "is-right" : ""}`}
-              onClick={() => onPick(i)}
-              disabled={done || wrong || busy}
-              aria-pressed={wrong || right}
-            >
-              <span className="predict-mark" aria-hidden="true">{right ? "✓" : wrong ? "✗" : String.fromCharCode(65 + i)}</span>
-              <LessonMarkdown markdown={o.text} inline />
-            </button>
-          );
-        })}
-      </div>
-      <div aria-live="polite">
-        {!done && state.wrong.length > 0 && <p className="fail">Not quite. Have another go.</p>}
-        {done && (
-          <div className="predict-explain">
-            <p className="pass"><strong>{state.wrong.length === 0 ? "Right first time!" : "That's it."}</strong></p>
-            {state.explain && <LessonMarkdown markdown={state.explain} onRun={onRun} />}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 

@@ -146,6 +146,25 @@ def _print_report(rep: Report) -> None:
 # ---------- commands ----------
 
 
+def validate_content(labs_dir: Path) -> Report:
+    """Skill maps, drills and onboarding next to the labs folder (they refer to labs and chapters)."""
+    from app.content import load_content
+    from app.labs import init_labs
+
+    rep = Report("tracks, drills, onboarding")
+    try:
+        init_labs(labs_dir)
+        load_content(labs_dir.parent)
+    except LabError as e:
+        rep.errors.append(str(e))
+    for f in [*sorted((labs_dir.parent / "tracks").glob("*.yaml")), *sorted((labs_dir.parent / "drills").glob("*.yaml")),
+              *sorted((labs_dir.parent / "onboarding").glob("*.yaml"))]:
+        for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            if EM_DASH in line:
+                rep.errors.append(f"{f.relative_to(labs_dir.parent)}:{n}: em dash (use a comma, colon or full stop instead)")
+    return rep
+
+
 def cmd_validate(args: argparse.Namespace) -> int:
     folders = _lab_folders(args.labs_dir, args.lab_id)
     known = {p.name for p in _lab_folders(args.labs_dir, None)}
@@ -154,6 +173,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
         _print_report(r)
     bad = sum(bool(r.errors) for r in reports)
     print(f"\n{len(reports) - bad} of {len(reports)} labs valid")
+    if args.lab_id is None and not bad:
+        content = validate_content(args.labs_dir)
+        _print_report(content)
+        bad += bool(content.errors)
     return 1 if bad else 0
 
 

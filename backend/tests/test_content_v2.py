@@ -165,7 +165,7 @@ def test_predict_flow(client: TestClient):
     h = auth(client)
     url = f"/api/labs/{LAB}/chapters/{CH}/predict"
     wrong = client.post(url, json={"step": PREDICT_STEP, "choice": 3}, headers=h).json()
-    assert wrong == {"wrong": [3], "solved": False, "answer": None, "explain": None}
+    assert wrong == {"wrong": [3], "solved": False, "answer": None, "explain": None, "xp_awarded": []}
     right = client.post(url, json={"step": PREDICT_STEP, "choice": 2}, headers=h).json()
     assert right["solved"] and right["answer"] == 2 and EXPLAIN_TEXT in right["explain"] and right["wrong"] == [3]
     # Remembered for a reload, and only for this user.

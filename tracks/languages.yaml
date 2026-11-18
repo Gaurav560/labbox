@@ -1,0 +1,26 @@
+# Skill map for the languages track. A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: languages
+title: Programming languages
+nodes:
+  - id: py-functions
+    title: Python functions
+    chapters: [python-basics/01-functions]
+  - id: java-methods
+    title: Java methods
+    chapters: [java-basics/01-methods]
+  - id: py-collections
+    title: Lists and dicts
+    requires: [py-functions]
+  - id: py-traps
+    title: Python traps
+    requires: [py-collections]
+  - id: java-collections
+    title: Java collections
+    requires: [java-methods]
+  - id: java-concurrency
+    title: Concurrency traps
+    requires: [java-collections]
+  - id: sql-basics
+    title: SQL from zero
+    requires: [py-functions, java-methods]

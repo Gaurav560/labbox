@@ -10,9 +10,10 @@ from pydantic import BaseModel
 from . import containers
 from .config import get_settings
 from .db import init_db
+from .content import init_content
 from .labs import init_labs
 from .reaper import reaper_loop
-from .routers import auth_routes, check_routes, file_routes, lab_routes, progress_routes, terminal_routes
+from .routers import auth_routes, check_routes, engagement_routes, file_routes, lab_routes, progress_routes, terminal_routes
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("labbox")
@@ -22,6 +23,7 @@ log = logging.getLogger("labbox")
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     init_labs(settings.LABS_DIR)  # raises (and stops startup) if any lab is invalid
+    init_content(settings.LABS_DIR.parent)  # skill maps, drills, onboarding next to labs/; same rule
     init_db()
     settings.VOLUMES_DIR.mkdir(parents=True, exist_ok=True)
     settings.CHECKS_DIR.mkdir(parents=True, exist_ok=True)
@@ -44,6 +46,7 @@ app.include_router(file_routes.router)
 app.include_router(check_routes.router)
 app.include_router(terminal_routes.router)
 app.include_router(progress_routes.router)
+app.include_router(engagement_routes.router)
 
 
 class Health(BaseModel):

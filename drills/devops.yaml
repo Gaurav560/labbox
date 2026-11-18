@@ -1,0 +1,30 @@
+track: devops
+drills:
+  - id: sh-ls-la
+    kind: command
+    question: |
+      What does `ls -la` show that plain `ls` does not?
+    options: ["Only folders", "Hidden files and details like permissions and size", "Files sorted by date"]
+    answer: 1
+    explain: "`-a` includes hidden files (names starting with a dot) and `-l` shows the long format with permissions, owner and size."
+  - id: sh-grep-r
+    kind: command
+    question: |
+      What does `grep -rn "TODO" .` do?
+    options: ["Deletes every TODO", "Lists files named TODO", "Finds TODO in every file under this folder, with line numbers"]
+    answer: 2
+    explain: "`-r` searches folders recursively and `-n` prints the line number of each match."
+  - id: sh-chmod-x
+    kind: command
+    question: |
+      After `chmod +x deploy.sh`, what can you do that you could not before?
+    options: ["Run it as ./deploy.sh", "Edit it", "Delete it"]
+    answer: 0
+    explain: "`+x` adds the execute permission, so the shell can run the file directly."
+  - id: sh-pipe-wc
+    kind: command
+    question: |
+      What does `cat orders.log | wc -l` print?
+    options: ["The size of the file", "The number of lines in the file", "The last line"]
+    answer: 1
+    explain: "The pipe sends the file to `wc`, and `-l` counts lines."

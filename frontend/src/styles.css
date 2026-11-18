@@ -444,3 +444,66 @@ select { padding: 3px 8px; }
 .metrics li.metric-missed { border-color: var(--danger); }
 .metric-name { font-family: var(--font-code); font-size: 13px; color: var(--muted); }
 .metric-value { font-size: 18px; }
+
+/* ---------- engagement: badges, progress strip, drill ---------- */
+.stats-badges { display: inline-flex; align-items: center; gap: var(--space-3); white-space: nowrap; }
+.stat { font-weight: 700; font-size: 14px; }
+.stat-streak { color: var(--muted); }
+.stat-streak.stat-today-done { color: var(--warn); }
+.user-chip { display: inline-flex; align-items: center; gap: 6px; }
+.level-badge { font-size: 12px; font-weight: 700; color: var(--on-accent); background: var(--accent); border-radius: 999px; padding: 1px 8px; }
+.big-number { display: block; font-size: 22px; font-weight: 700; line-height: 1.2; }
+
+.progress-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4);
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: var(--space-4); margin-bottom: var(--space-4);
+}
+.level-progress { margin: 6px 0; }
+.track-link { display: flex; flex-direction: column; color: var(--text); border-radius: 8px; }
+.track-link:hover { text-decoration: none; background: var(--hover); }
+
+.drill-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-6); }
+.drill-head { display: flex; align-items: center; gap: var(--space-2); }
+.drill-head h2 { margin: 0 var(--space-2) 0 0; font-size: var(--h2); }
+.drill-card .predict { max-width: var(--measure); }
+.drill-card :not(pre) > code { background: var(--chip); padding: 0.1em 0.35em; border-radius: 5px; font-size: 0.92em; }
+
+.recap-stats { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-4); }
+.recap-stats > div { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--space-2) var(--space-4); }
+
+/* ---------- onboarding ---------- */
+.onboarding { min-height: 100%; display: flex; flex-direction: column; }
+.onboarding-main { max-width: 760px; width: 100%; margin: 0 auto; padding: var(--space-8) var(--space-4); font-size: var(--text-size); line-height: var(--text-line); }
+.onboarding-main h1 { font-size: var(--h1); }
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3); margin-top: var(--space-4); }
+.goal-card {
+  display: flex; flex-direction: column; gap: var(--space-1); text-align: left;
+  background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: var(--space-4); font: inherit; cursor: pointer; transition: border-color var(--t-fast), transform var(--t-fast);
+}
+.goal-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.placement-q { margin: var(--space-6) 0; }
+.predict-option.is-picked { border-color: var(--accent); background: var(--tint-accent); }
+.is-picked .predict-mark { background: var(--accent); color: var(--on-accent); }
+.start-card { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); background: var(--panel); border: 1px solid var(--accent); border-radius: var(--radius); padding: var(--space-4) var(--space-6); margin-top: var(--space-4); }
+.start-title { font-size: var(--h2); }
+.onboarding-main pre, .onboarding-main .code-card pre { margin: 0; }
+
+/* ---------- skill map ---------- */
+.track-page { height: 100%; display: flex; flex-direction: column; }
+.track-main { flex: 1; min-height: 0; background: var(--bg); }
+.track-main .react-flow { --xy-background-color: var(--bg); --xy-edge-stroke: var(--border); --xy-edge-stroke-width: 2; }
+.react-flow__node.skill-node {
+  width: 180px; padding: var(--space-3); border-radius: var(--radius); font: 14px/1.4 var(--font-text);
+  background: var(--panel); color: var(--text); border: 2px solid var(--border); cursor: pointer; text-align: left;
+}
+.skill-title { font-weight: 700; }
+.skill-state { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.react-flow__node.skill-done { border-color: var(--success); background: var(--tint-success); }
+.react-flow__node.skill-done .skill-state { color: var(--success); font-weight: 700; }
+.react-flow__node.skill-available { border-color: var(--accent); }
+.react-flow__node.skill-available .skill-state { color: var(--accent); font-weight: 700; }
+.react-flow__node.skill-locked, .react-flow__node.skill-coming_soon { cursor: default; opacity: 0.75; border-style: dashed; }
+.react-flow__edge.edge-done path { stroke: var(--success); }
+.skill-node .react-flow__handle { opacity: 0; pointer-events: none; }

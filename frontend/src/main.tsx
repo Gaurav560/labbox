@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./auth";
+import { StatsProvider } from "./stats";
 import { ToastProvider } from "./components/Toasts";
 import { ThemeProvider } from "./theme";
 // Fonts are bundled with the app (no font CDN at runtime).
@@ -20,7 +21,9 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider>
         <ToastProvider>
           <AuthProvider>
-            <App />
+            <StatsProvider>
+              <App />
+            </StatsProvider>
           </AuthProvider>
         </ToastProvider>
       </ThemeProvider>

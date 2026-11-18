@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import progress
+from .. import engagement, progress
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import LabConfig, get_lab
@@ -16,6 +16,7 @@ class ChapterProgressOut(BaseModel):
     step_count: int
     hints: dict[str, list[str]]  # task id -> hints revealed so far
     predicts: dict[int, progress.PredictState] = {}  # step index -> attempts so far
+    xp_earned: int = 0  # in this chapter, for the recap card
 
 
 class PredictBody(BaseModel):
@@ -43,6 +44,7 @@ def _out(session: Session, user_id: int, lab: LabConfig, chapter_id: str) -> Cha
         step_count=len(lab.chapter_steps(chapter_id)),
         hints={t.id: t.hints[: used.get(t.id, 0)] for t in tasks if used.get(t.id, 0)},
         predicts=progress.predict_states(session, user_id, lab, chapter_id),
+        xp_earned=engagement.chapter_xp(session, user_id, lab.id, chapter_id),
     )
 
 

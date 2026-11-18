@@ -58,7 +58,8 @@ export interface LabDetail extends LabInfo { id: string; title: string; descript
 export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive";
 // The answer and explanation are not sent with the chapter; they come back once answered correctly.
 export interface Predict { question: string; options: { text: string }[] }
-export interface PredictState { wrong: number[]; solved: boolean; answer: number | null; explain: string | null }
+export interface XpAward { kind: string; amount: number; label: string }
+export interface PredictState { wrong: number[]; solved: boolean; answer: number | null; explain: string | null; xp_awarded?: XpAward[] }
 export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null }
 export interface ChapterContent { id: string; title: string; markdown: string; steps: Step[] }
 export interface ChapterProgress {
@@ -66,6 +67,7 @@ export interface ChapterProgress {
   step_count: number;
   hints: Record<string, string[]>;
   predicts: Record<string, PredictState>; // keyed by step index
+  xp_earned: number;
 }
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
@@ -80,6 +82,54 @@ export interface CheckResponse {
   output: string;
   duration_ms: number;
   metrics?: Metric[];
+  xp_awarded?: XpAward[];
+}
+
+// ---------- engagement ----------
+
+export interface Stats {
+  xp_total: number;
+  level: number;
+  level_xp: number;
+  next_level_xp: number;
+  streak_current: number;
+  streak_best: number;
+  freeze_available: boolean;
+  today_xp: number;
+  streak_min_xp: number;
+  timezone: string | null;
+  goal: string | null;
+  needs_onboarding: boolean;
+}
+export interface Profile { display_name: string | null; timezone: string | null; goal: string | null; placement_level: string | null }
+export interface Drill { id: string; kind: "predict" | "bug" | "command"; track: string; question: string; options: string[] }
+export interface DrillState {
+  day: string;
+  drill: Drill | null;
+  wrong: number[];
+  solved: boolean;
+  answer: number | null;
+  explain: string | null;
+  xp: number;
+  xp_awarded: XpAward[];
+}
+export type NodeState = "done" | "available" | "locked" | "coming_soon";
+export interface SkillNode {
+  id: string;
+  title: string;
+  requires: string[];
+  chapters: { lab_id: string; chapter_id: string; title: string; done: boolean }[];
+  state: NodeState;
+}
+export interface SkillMap { track: string; title: string; nodes: SkillNode[] }
+export interface TrackSummary { track: string; title: string; nodes: number; done: number }
+export interface Onboarding { goals: { id: string; title: string; blurb: string }[]; placement: { question: string; options: string[] }[] }
+export interface OnboardingResult {
+  score: number;
+  level: "beginner" | "intermediate" | "advanced";
+  results: { correct: boolean; answer: number; explain: string }[];
+  start: { lab_id: string; title: string };
+  note: string | null;
 }
 
 // ---------- calls ----------
@@ -112,6 +162,16 @@ export const api = {
   newEntry: (labId: string, path: string, type: "file" | "dir") => request<{ created: boolean }>("POST", `/api/labs/${q(labId)}/files/new`, { path, type }),
   rename: (labId: string, from: string, to: string) => request<{ renamed: boolean }>("POST", `/api/labs/${q(labId)}/files/rename`, { from, to }),
   deleteEntry: (labId: string, path: string) => request<{ deleted: boolean }>("DELETE", `/api/labs/${q(labId)}/files?path=${q(path)}`),
+
+  stats: () => request<Stats>("GET", "/api/me/stats"),
+  saveProfile: (p: Partial<Pick<Profile, "display_name" | "timezone" | "goal">>) => request<Profile>("PUT", "/api/me/profile", p),
+  drillToday: () => request<DrillState>("GET", "/api/drill/today"),
+  answerDrill: (choice: number) => request<DrillState>("POST", "/api/drill/today/answer", { choice }),
+  tracks: () => request<TrackSummary[]>("GET", "/api/tracks"),
+  skills: (track: string) => request<SkillMap>("GET", `/api/tracks/${q(track)}/skills`),
+  onboarding: () => request<Onboarding>("GET", "/api/onboarding"),
+  finishOnboarding: (goal: string, answers: number[]) => request<OnboardingResult>("POST", "/api/onboarding", { goal, answers }),
+  skipOnboarding: () => request<Stats>("POST", "/api/onboarding/skip"),
 
   check: (labId: string, chapterId: string) => request<CheckResponse>("POST", `/api/labs/${q(labId)}/check`, { chapter_id: chapterId }),
 };

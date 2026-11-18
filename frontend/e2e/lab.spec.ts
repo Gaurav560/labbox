@@ -38,6 +38,8 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill("secret123");
   await page.getByRole("button", { name: "Sign up" }).click();
+  // New accounts start with onboarding (covered in engagement.spec.ts); skip it here.
+  await page.getByRole("button", { name: "Skip" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
   const auth = { Authorization: `Bearer ${await token(page)}` };
   userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;

@@ -1,0 +1,92 @@
+# Daily drills: five-minute multiple choice questions. Checked on the server.
+# kind: predict (what does this print), bug (which line is wrong), command (what does this do)
+track: languages
+drills:
+  - id: py-list-append
+    kind: predict
+    question: |
+      What does this print?
+      ```python
+      orders = ["idli", "dosa"]
+      orders.append("vada")
+      print(len(orders))
+      ```
+    options: ["2", "3", "An error"]
+    answer: 1
+    explain: "`append` adds one item to the end of the list, so there are 3 orders."
+  - id: py-int-division
+    kind: predict
+    question: |
+      What does `7 // 2` give in Python?
+    options: ["3.5", "3", "4"]
+    answer: 1
+    explain: "`//` is floor division: it drops the fraction. `7 / 2` would give `3.5`."
+  - id: py-string-slice
+    kind: predict
+    question: |
+      What does `"chaiwala"[0:4]` give?
+    options: ['"chai"', '"chaiw"', '"wala"']
+    answer: 0
+    explain: "A slice includes the start index and stops just before the end index: characters 0, 1, 2 and 3."
+  - id: py-default-none
+    kind: bug
+    question: |
+      This should print the total bill, but it prints `None`. Which line is the bug?
+      ```python
+      def total(prices):        # line 1
+          s = sum(prices)       # line 2
+          print(s)              # line 3
+      bill = total([40, 60])    # line 4
+      print(bill)               # line 5
+      ```
+    options: ["Line 2", "Line 3: it should return s", "Line 5"]
+    answer: 1
+    explain: "`total` prints the sum but never returns it, so `bill` is `None`."
+  - id: py-dict-get
+    kind: predict
+    question: |
+      `stock = {"samosa": 12}`. What does `stock.get("vada", 0)` give?
+    options: ["An error", "None", "0"]
+    answer: 2
+    explain: "`get` returns the default you pass (here `0`) when the key is missing, instead of raising `KeyError`."
+  - id: py-range
+    kind: predict
+    question: |
+      How many numbers does `range(1, 5)` produce?
+    options: ["4", "5", "6"]
+    answer: 0
+    explain: "`range(1, 5)` is 1, 2, 3, 4. The end value is never included."
+  - id: py-is-vs-eq
+    kind: predict
+    question: |
+      Which comparison is the safe way to check two strings have the same text?
+    options: ["a is b", "a == b", "a.equals(b)"]
+    answer: 1
+    explain: "`==` compares values. `is` checks if both names point to the very same object, which is not what you want for text."
+  - id: java-string-eq
+    kind: bug
+    question: |
+      This sometimes says "different" for two equal names. Which line is the bug?
+      ```java
+      String a = readName();          // line 1
+      String b = readName();          // line 2
+      if (a == b) print("same");      // line 3
+      else print("different");        // line 4
+      ```
+    options: ["Line 1", "Line 3: use a.equals(b)", "Line 4"]
+    answer: 1
+    explain: "In Java, `==` on objects compares references. Use `a.equals(b)` to compare the text."
+  - id: java-int-division
+    kind: predict
+    question: |
+      What does `System.out.println(5 / 2);` print in Java?
+    options: ["2.5", "2", "3"]
+    answer: 1
+    explain: "Both values are `int`, so Java does integer division and drops the fraction."
+  - id: java-array-length
+    kind: predict
+    question: |
+      `int[] runs = {4, 6, 1, 0};` What is `runs.length`?
+    options: ["3", "4", "11"]
+    answer: 1
+    explain: "`length` is the number of items in the array, not their sum."

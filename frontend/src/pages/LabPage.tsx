@@ -16,16 +16,28 @@ import LessonPanel from "../lesson/LessonPanel";
 import StepCard, { NO_PREDICT } from "../lesson/StepCard";
 import { MODEL_PREFIX, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
+import { useStats } from "../stats";
 
 const AUTOSAVE_MS = 800;
 const TREE_POLL_MS = 5000;
 const STATUS_POLL_MS = 10000;
 const STEP_SAVE_MS = 400;
 
+function firstFile(nodes: FileNode[]): string | null {
+  for (const n of nodes) {
+    if (n.type === "file") return n.path;
+  }
+  for (const n of nodes) {
+    const inner = n.type === "dir" && n.children ? firstFile(n.children) : null;
+    if (inner) return inner;
+  }
+  return null;
+}
+
 const isTyping = (t: EventTarget | null) =>
   t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName));
 
-function celebrate() {
+function confettiBurst() {
   // Small and once; canvas-confetti skips it entirely for prefers-reduced-motion.
   confetti({ particleCount: 90, spread: 70, origin: { x: 0.2, y: 0.7 }, disableForReducedMotion: true });
 }
@@ -37,6 +49,7 @@ export default function LabPage() {
   const { labId = "" } = useParams();
   const { user } = useAuth();
   const toast = useToast();
+  const { celebrate } = useStats();
 
   const [lab, setLab] = useState<LabDetail | null>(null);
   const [chapterId, setChapterId] = useState("");
@@ -50,6 +63,8 @@ export default function LabPage() {
   const [predictBusy, setPredictBusy] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bottomTab, setBottomTab] = useState<"terminal" | "output">("terminal");
+  const [chapterXp, setChapterXp] = useState(0);
+  const autoOpened = useRef(false);
   const [status, setStatus] = useState<UiStatus>("starting");
   const [tree, setTree] = useState<FileNode[]>([]);
   const [tabs, setTabs] = useState<Tab[]>([]);
@@ -126,6 +141,7 @@ export default function LabPage() {
         setStep(at);
         setVisited(at);
         setHints(p.hints);
+        setChapterXp(p.xp_earned);
         setPredicts(Object.fromEntries(Object.entries(p.predicts).map(([k, v]) => [Number(k), v])));
       })
       .catch((e) => toast(errMsg(e)));
@@ -170,6 +186,10 @@ export default function LabPage() {
     try {
       const state = await api.predict(labId, chapterId, index, option);
       setPredicts((all) => ({ ...all, [index]: state }));
+      if (state.xp_awarded?.length) {
+        celebrate(state.xp_awarded);
+        setChapterXp((x) => x + state.xp_awarded!.reduce((n, a) => n + a.amount, 0));
+      }
     } catch (e) {
       toast(errMsg(e));
     } finally {
@@ -225,6 +245,15 @@ export default function LabPage() {
     }, STATUS_POLL_MS);
     return () => window.clearInterval(id);
   }, [labId]);
+
+  // Open the first file once, so a new learner lands with code in front of them.
+  useEffect(() => {
+    if (autoOpened.current || tree.length === 0) return;
+    autoOpened.current = true;
+    const first = firstFile(tree);
+    if (first && tabsRef.current.length === 0) openFile(first);
+    // Only tree is a dependency on purpose: this runs once per page, when the files first arrive.
+  }, [tree]);
 
   // Free Monaco models of closed tabs so reopening a file shows fresh content.
   useEffect(() => {
@@ -404,11 +433,16 @@ export default function LabPage() {
     setDrawerOpen(true);
     try {
       await saveAll();
-      setResult(await api.check(labId, chapterId));
+      const res = await api.check(labId, chapterId);
+      setResult(res);
+      celebrate(res.xp_awarded);
+      if (res.xp_awarded?.length) {
+        api.chapterProgress(labId, chapterId).then((p) => setChapterXp(p.xp_earned)).catch(() => {});
+      }
       const detail = await loadLab();
       const now = detail.chapters.find((c) => c.id === chapterId);
       if (!wasDone && now?.tasks.every((t) => t.passed)) {
-        celebrate();
+        confettiBurst();
         const recap = steps?.findIndex((s) => s.type === "recap") ?? -1;
         if (recap >= 0) goStep(recap);
       }
@@ -481,6 +515,7 @@ export default function LabPage() {
                   chapterDone={tasks.length > 0 && tasks.every((t) => t.passed)}
                   tasksLeft={tasks.filter((t) => !t.passed).length}
                   hasNextChapter={!!nextChapter}
+                  chapterXp={chapterXp}
                   onPredict={(o) => pickPredict(step, o)}
                   onHint={revealHint}
                   onRun={runInTerminal}

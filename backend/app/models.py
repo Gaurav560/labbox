@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, SQLModel
@@ -78,6 +78,55 @@ class PredictAnswer(SQLModel, table=True):
     lab_id: str
     chapter_id: str
     step_index: int
+    choice: int
+    correct: bool
+    created_at: datetime = Field(default_factory=utcnow)
+
+
+class UserProfile(SQLModel, table=True):
+    # Totals here are a cache: they are always recalculated from the xp_event ledger.
+    __tablename__ = "user_profile"
+
+    user_id: int = Field(foreign_key="user.id", primary_key=True)
+    display_name: str | None = None
+    timezone: str | None = None  # IANA name, e.g. Asia/Kolkata; None until the browser sends it
+    goal: str | None = None
+    placement_level: str | None = None
+    onboarded_at: datetime | None = None
+    level: int = 1
+    xp_total: int = 0
+    streak_current: int = 0
+    streak_best: int = 0
+    last_active_day: date | None = None
+    # Set once progress made before the ledger existed has been turned into XP.
+    backfilled_at: datetime | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+
+
+class XpEvent(SQLModel, table=True):
+    # Append-only ledger. ref makes every award happen at most once per user.
+    __tablename__ = "xp_event"
+    __table_args__ = (UniqueConstraint("user_id", "ref"),)
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    kind: str  # task | predict | chapter | lab | drill
+    amount: int
+    ref: str  # e.g. task:python-basics:greet
+    day: date  # the learner's local day when it was earned (streaks use this)
+    lab_id: str | None = None
+    chapter_id: str | None = None
+    task_id: str | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+
+
+class DrillAnswer(SQLModel, table=True):
+    __tablename__ = "drill_answer"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    day: date
+    drill_id: str
     choice: int
     correct: bool
     created_at: datetime = Field(default_factory=utcnow)

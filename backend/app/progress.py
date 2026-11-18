@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, SQLModel, col, select
 
+from . import engagement
 from .labs import LabConfig
 from .lessons import Step
 from .models import ChapterProgress, PredictAnswer, TaskProgress, utcnow
@@ -93,6 +94,7 @@ class PredictState(BaseModel):
     solved: bool = False
     answer: int | None = None  # only once solved
     explain: str | None = None  # only once solved
+    xp_awarded: list[engagement.XpAward] = []  # set on the answer that earned XP
 
 
 def predict_step(lab: LabConfig, chapter_id: str, step_index: int) -> Step:
@@ -118,7 +120,10 @@ def answer_predict(session: Session, user_id: int, lab: LabConfig, chapter_id: s
         )
     )
     session.commit()
-    return predict_states(session, user_id, lab, chapter_id)[step_index]
+    state = predict_states(session, user_id, lab, chapter_id)[step_index]
+    if state.solved:
+        state.xp_awarded = engagement.award_for_predict(session, user_id, lab.id, chapter_id, step_index)
+    return state
 
 
 def predict_states(session: Session, user_id: int, lab: LabConfig, chapter_id: str) -> dict[int, PredictState]:

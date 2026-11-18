@@ -1,0 +1,49 @@
+# First-run flow: pick a goal, answer 3 quick questions, start the first lab.
+goals:
+  - id: backend-job
+    title: Get a backend job
+    blurb: APIs, databases and the code real teams ship.
+    track: frameworks
+    start: [java-basics, python-basics]
+  - id: devops
+    title: Learn DevOps
+    blurb: Linux, Docker, Kubernetes and keeping things running.
+    track: devops
+    start: [python-basics]
+  - id: ai
+    title: Learn AI engineering
+    blurb: LLM apps, RAG, agents and evals, built for real.
+    track: ai
+    start: [python-basics]
+  - id: interview
+    title: Crack interviews
+    blurb: Bug hunts, traps and system design drills.
+    track: interview
+    start: [java-basics, python-basics]
+  - id: new-language
+    title: Learn a new language
+    blurb: Pick up Python or Java by writing real code.
+    track: languages
+    start: [python-basics, java-basics]
+
+# Score 0 or 1 is beginner, 2 is intermediate, 3 is advanced.
+placement:
+  - question: |
+      What does this print?
+      ```python
+      x = [1, 2, 3]
+      print(x[1])
+      ```
+    options: ["1", "2", "An error"]
+    answer: 1
+    explain: "Lists count from 0, so `x[1]` is the second item."
+  - question: |
+      A function has no `return` statement. What does calling it give back in Python?
+    options: ["0", "None", "It does not run"]
+    answer: 1
+    explain: "Without `return`, a Python function gives back `None`."
+  - question: |
+      You call an API 1000 times in a loop and it is slow. What usually helps most?
+    options: ["A faster laptop", "Fetching in one batch request instead of 1000 calls", "Printing less"]
+    answer: 1
+    explain: "Each network call has a fixed cost. One batch request pays it once instead of 1000 times."
