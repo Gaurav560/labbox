@@ -42,6 +42,7 @@ app.add_middleware(
 )
 app.include_router(auth_routes.router)
 app.include_router(lab_routes.router)
+app.include_router(lab_routes.public_router)
 app.include_router(file_routes.router)
 app.include_router(check_routes.router)
 app.include_router(terminal_routes.router)

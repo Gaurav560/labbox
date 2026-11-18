@@ -1,0 +1,7 @@
+# The home and login pages are public; everything else needs an account.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /labs
+Disallow: /tracks
+Disallow: /welcome

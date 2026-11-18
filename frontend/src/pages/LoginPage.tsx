@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth";
 
 export default function LoginPage() {
   const { user, login, signup } = useAuth();
   const navigate = useNavigate();
+  const signupMode = useSearchParams()[0].get("signup") === "1"; // from "Start free" on the home page
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,8 +29,9 @@ export default function LoginPage() {
 
   return (
     <div className="center-screen">
-      <form className="login-card" onSubmit={(e) => submit("login", e)}>
-        <h1>LabBox</h1>
+      <form className="login-card" onSubmit={(e) => submit(signupMode ? "signup" : "login", e)}>
+        <Link to="/" className="link small">← Home</Link>
+        <h1>{signupMode ? "Create your account" : "LabBox"}</h1>
         <p className="muted">Hands-on coding labs in your browser</p>
         <label>
           Username
@@ -37,12 +39,26 @@ export default function LoginPage() {
         </label>
         <label>
           Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete={signupMode ? "new-password" : "current-password"}
+          />
         </label>
         {error && <div className="form-error">{error}</div>}
         <div className="row">
-          <button type="submit" className="btn btn-primary" disabled={busy || !username || !password}>Log in</button>
-          <button type="button" className="btn" disabled={busy || !username || !password} onClick={() => submit("signup")}>Sign up</button>
+          {signupMode ? (
+            <>
+              <button type="submit" className="btn btn-primary" disabled={busy || !username || !password}>Sign up</button>
+              <button type="button" className="btn" disabled={busy || !username || !password} onClick={() => submit("login")}>Log in</button>
+            </>
+          ) : (
+            <>
+              <button type="submit" className="btn btn-primary" disabled={busy || !username || !password}>Log in</button>
+              <button type="button" className="btn" disabled={busy || !username || !password} onClick={() => submit("signup")}>Sign up</button>
+            </>
+          )}
         </div>
         <p className="muted small">Usernames: 3 to 32 letters, digits, dot, dash or underscore. Passwords: at least 6 characters.</p>
       </form>

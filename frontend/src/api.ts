@@ -29,7 +29,9 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   } catch {
     throw new ApiError(0, "Cannot reach the server");
   }
-  if (res.status === 401 && !path.startsWith("/api/auth/")) {
+  // An expired login sends you to the login page, except the start-up "who am I" check
+  // (public pages like the home page must still load; auth.tsx clears the token itself).
+  if (res.status === 401 && !path.startsWith("/api/auth/") && path !== "/api/me") {
     setToken(null);
     window.location.assign("/login");
     throw new ApiError(401, "Session expired, please log in again");
@@ -122,6 +124,7 @@ export interface SkillNode {
   state: NodeState;
 }
 export interface SkillMap { track: string; title: string; nodes: SkillNode[] }
+export interface CatalogLab extends LabInfo { id: string; title: string; chapter_count: number }
 export interface TrackSummary { track: string; title: string; nodes: number; done: number }
 export interface Onboarding { goals: { id: string; title: string; blurb: string }[]; placement: { question: string; options: string[] }[] }
 export interface OnboardingResult {
@@ -163,6 +166,7 @@ export const api = {
   rename: (labId: string, from: string, to: string) => request<{ renamed: boolean }>("POST", `/api/labs/${q(labId)}/files/rename`, { from, to }),
   deleteEntry: (labId: string, path: string) => request<{ deleted: boolean }>("DELETE", `/api/labs/${q(labId)}/files?path=${q(path)}`),
 
+  catalog: () => request<CatalogLab[]>("GET", "/api/catalog"), // public, no login
   stats: () => request<Stats>("GET", "/api/me/stats"),
   saveProfile: (p: Partial<Pick<Profile, "display_name" | "timezone" | "goal">>) => request<Profile>("PUT", "/api/me/profile", p),
   drillToday: () => request<DrillState>("GET", "/api/drill/today"),

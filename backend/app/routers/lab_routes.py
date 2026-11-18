@@ -200,3 +200,20 @@ async def workspace_status(lab_id: str, user: User = Depends(get_current_user)) 
     assert user.id is not None
     name = containers.container_name(user.id, get_lab(lab_id).id)
     return WorkspaceStatus(status=await asyncio.to_thread(containers.container_status, name), container=name)
+
+
+# ---------- public catalog (home page, no login) ----------
+# Only what a visitor may see: titles and catalog fields. Never chapters, tests, hints or solutions.
+
+public_router = APIRouter(prefix="/api", tags=["public"])
+
+
+class CatalogLab(LabInfo):
+    id: str
+    title: str
+    chapter_count: int
+
+
+@public_router.get("/catalog", response_model=list[CatalogLab])
+def catalog() -> list[CatalogLab]:
+    return [CatalogLab(**_info(lab), id=lab.id, title=lab.title, chapter_count=len(lab.chapters)) for lab in all_labs()]

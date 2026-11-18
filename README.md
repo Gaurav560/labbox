@@ -56,7 +56,10 @@ npm ci
 npm run dev                     # http://localhost:5173
 ```
 
-Open http://localhost:5173, sign up, and open a lab. Vite proxies `/api` and `/ws` to the backend.
+Open http://localhost:5173 for the public home page, then **Start free** to sign up. Vite proxies `/api`
+and `/ws` to the backend. The only routes that work without logging in are sign up, log in, health and
+`GET /api/catalog` (lab titles and catalog fields for the home page, never chapters, tests, hints or
+solutions).
 
 `scripts/create_user.py <username> [password]` creates a user from the command line (useful when
 `ALLOW_SIGNUP=false`).

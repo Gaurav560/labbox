@@ -1,5 +1,21 @@
 # Changelog
 
+## Home page
+
+- New public home page at `/`: hero with a hand-built preview of the lab page, a demo predict question,
+  how it works, why it sticks, the 7 tracks (live labs from the server, the rest marked coming soon) and
+  a final call to action. Works in both themes and down to phone width.
+- Logged-in visitors see **Continue learning** instead of Log in / Start free. An expired login no
+  longer sends visitors of public pages to the login screen.
+- **Start free** opens the login page in sign-up mode (Enter signs up, "Create your account"); the login
+  page links back home.
+- New public `GET /api/catalog` (titles and catalog fields only), with a test that nothing hidden leaks.
+- Page description and sharing tags in `index.html`, and a `robots.txt` that keeps private pages out of
+  search engines.
+- Lighthouse on the production build: performance, accessibility, best practices and SEO all 100, in
+  dark and light. New browser test for the home page.
+- No prices, testimonials or user numbers on the page (none of them exist yet).
+
 ## v2 Phase C: XP, streaks, levels, onboarding, skill map, daily drill
 
 **Learner-facing**

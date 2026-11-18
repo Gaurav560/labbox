@@ -212,3 +212,16 @@ def test_no_route_serves_solution_files(client: TestClient):
     solution_text = (lab.root / "solution" / "greet.py").read_text().strip().splitlines()[-1].strip()
     for path in ["", "/chapters/01-functions", "/chapters/01-functions/outline", "/chapters/01-functions/progress"]:
         assert solution_text not in client.get(f"/api/labs/{LAB}{path}", headers=h).text
+
+
+def test_public_catalog_needs_no_login_and_leaks_nothing(client: TestClient):
+    r = client.get("/api/catalog")
+    assert r.status_code == 200
+    by_id = {lab["id"]: lab for lab in r.json()}
+    assert set(by_id) == {"python-basics", "java-basics"}
+    assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count"}
+    lab = labs.get_lab("python-basics")
+    hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints]
+    hidden += [(lab.root / "solution" / "greet.py").read_text().strip().splitlines()[-1].strip(), "chapters/", "@@RESULT"]
+    for text in hidden:
+        assert text not in r.text
