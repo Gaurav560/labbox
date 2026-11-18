@@ -222,7 +222,8 @@ def test_skill_map_lights_up(client: TestClient):
     h, uid = signup(client)
     nodes = {n["id"]: n for n in client.get("/api/tracks/languages/skills", headers=h).json()["nodes"]}
     assert nodes["py-functions"]["state"] == "available"
-    assert nodes["py-collections"]["state"] == "coming_soon"
+    assert nodes["py-collections"]["state"] == "locked"  # needs py-functions first
+    assert nodes["py-traps"]["state"] == "coming_soon"
     assert nodes["py-functions"]["chapters"][0]["title"] == "Your first functions"
     with Session(engine) as s:
         s.add(ChapterProgress(user_id=uid, lab_id="python-basics", chapter_id="01-functions"))
@@ -231,7 +232,8 @@ def test_skill_map_lights_up(client: TestClient):
         assert s.get(ChapterProgress, {"user_id": uid, "lab_id": "python-basics", "chapter_id": "01-functions"}).completed_at
     nodes = {n["id"]: n for n in client.get("/api/tracks/languages/skills", headers=h).json()["nodes"]}
     assert nodes["py-functions"]["state"] == "done" and nodes["java-methods"]["state"] == "available"
-    assert client.get("/api/tracks", headers=h).json() == [{"track": "languages", "title": "Programming languages", "nodes": 7, "done": 1}]
+    assert nodes["py-collections"]["state"] == "available"  # unlocked by finishing Python functions
+    assert client.get("/api/tracks", headers=h).json() == [{"track": "languages", "title": "Programming languages", "nodes": 11, "done": 1}]
     assert client.get("/api/tracks/cooking/skills", headers=h).status_code == 404
 
 

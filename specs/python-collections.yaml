@@ -1,0 +1,47 @@
+id: python-collections
+template: python
+title: "Python collections"
+subtitle: Lists, dicts, sets and sorting, on a real tiffin delivery day.
+track: languages
+tags: [python]
+level: beginner
+story:
+  company: Dabba Express
+  character: { name: Priya, role: "Founder, Dabba Express" }
+  pitch: "Dabba Express now delivers 900 tiffins a day, and the order sheet needs real data structures."
+cover_scene: "Dabba Express sorting hub at dawn: a tiny warehouse with conveyor belts of stacked steel tiffins sorted into glowing colour-coded lanes, delivery bicycles waiting at the gate."
+chapters:
+  - id: 01-lists-and-dicts
+    title: Bills and best sellers
+    minutes: 15
+    goal: Add up a bill with a price dict, and find the best-selling dishes.
+    tasks:
+      - id: total_bill
+        title: "orders.py: total_bill(items, prices)"
+        hints:
+          - "Every item in the list has its price in the prices dict."
+          - "Loop over the items and look each one up with prices[item]."
+          - "Start a total at 0 and add the price of each item; items that repeat count every time."
+      - id: top_dishes
+        title: "orders.py: top_dishes(orders, n)"
+        hints:
+          - "First count how many times each dish was ordered."
+          - "A dict from dish to count works; collections.Counter does the counting for you."
+          - "Sort the (dish, count) pairs by count from high to low, then by name, and keep the first n names."
+  - id: 02-sets-and-sorting
+    title: Areas and routes
+    minutes: 15
+    goal: Remove duplicates with a set and sort a delivery route with a key.
+    tasks:
+      - id: unique_areas
+        title: "orders.py: unique_areas(orders)"
+        hints:
+          - "The same area shows up in many orders. Which collection never holds a value twice?"
+          - "Collect the areas in a set, then turn it into a sorted list."
+          - "sorted() takes any collection and gives back a new list, A to Z."
+      - id: route_order
+        title: "orders.py: route_order(stops)"
+        hints:
+          - "Each stop is a tuple of (area, distance_km). Sort by the distance first."
+          - "sorted() accepts key=, a function that says what to sort by."
+          - "Use a key that returns (distance, area), so equal distances fall back to A to Z, then keep only the area names."

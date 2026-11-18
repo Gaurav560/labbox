@@ -1,0 +1,47 @@
+id: sql-from-zero
+template: service-incident
+title: "SQL from zero"
+subtitle: Ask a real Postgres questions about a chai chain's orders, one query at a time.
+track: databases
+tags: [sql, postgres]
+level: beginner
+story:
+  company: Tapri Counter
+  character: { name: Meera, role: "CTO, Tapri Counter" }
+  pitch: "Meera wants answers from the order database, and the analyst just quit."
+cover_scene: "Tapri Counter's data room: a tiny library where glowing filing drawers of chai orders slide open, little lantern-lit tables of rows and columns floating above a reading desk."
+chapters:
+  - id: 01-select-and-where
+    title: Asking for rows
+    minutes: 15
+    goal: Pick columns and filter rows with WHERE, ORDER BY and COUNT.
+    tasks:
+      - id: q_paid_chai
+        title: "q1.sql: paid masala chai orders at outlet 3"
+        hints:
+          - "You need two columns, id and qty, from the orders table."
+          - "WHERE can combine conditions with AND: the item, the status and the outlet_id."
+          - "Filter item = 'masala chai' AND status = 'paid' AND outlet_id = 3, and sort by id."
+      - id: q_count_refunds
+        title: "q2.sql: how many orders were refunded"
+        hints:
+          - "The answer is one number, not a list of rows."
+          - "COUNT(*) counts the rows that are left after WHERE."
+          - "Count the rows whose status is 'refunded', and name the column refunds with AS."
+  - id: 02-group-by
+    title: Totals per outlet
+    minutes: 15
+    goal: Join two tables and add up rows per group with GROUP BY.
+    tasks:
+      - id: q_revenue_by_outlet
+        title: "q3.sql: paid revenue per outlet"
+        hints:
+          - "Outlet names live in the outlets table; amounts live in orders. Connect them with outlet_id."
+          - "JOIN the tables, keep only paid orders, then GROUP BY the outlet name."
+          - "SELECT the name and SUM(amount_paise) AS revenue_paise, grouped by name, biggest first."
+      - id: q_top_item
+        title: "q4.sql: the best-selling item"
+        hints:
+          - "Best-selling means the most cups or plates, so add up qty, not the number of rows."
+          - "Group the rows by item, add up qty per group, and sort by that total from high to low."
+          - "Keep paid orders only, and use LIMIT 1 to return just the top row (item and qty)."

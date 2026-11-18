@@ -1,0 +1,77 @@
+# Generated from javascript-inside-out.yaml. Edit freely; the spec is only the starting point.
+id: javascript-inside-out
+version: 2
+title: JavaScript inside out
+subtitle: The equality traps, closures and promises behind every Node app.
+description: The equality traps, closures and promises behind every Node app.
+language: javascript
+track: languages
+tags:
+- javascript
+- node
+level: intermediate
+estimated_minutes: 30
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+image: labbox/javascript-inside-out:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-values-and-equality
+  title: Two plus two is twenty-two
+  file: chapters/01-values-and-equality.md
+  minutes: 15
+  tasks:
+  - id: parse_quantity
+    title: 'bot.js: parseQuantity(text)'
+    xp: 20
+    hints:
+    - 'Messages arrive as text: "2" is a string, not a number.'
+    - Number(text) converts, and Number.isInteger tells you if the result is a whole number.
+    - Trim the text, convert it, and return 0 unless the result is a whole number from 1 to 20.
+  - id: same_items
+    title: 'bot.js: sameItems(a, b)'
+    xp: 20
+    hints:
+    - === on two arrays asks whether they are the same array, not whether they hold the same items.
+    - Two arrays hold the same items when they have the same length and each position matches.
+    - Check the lengths, then use every() with an index to compare a[i] and b[i].
+- id: 02-closures-and-promises
+  title: Tokens and slow suppliers
+  file: chapters/02-closures-and-promises.md
+  minutes: 15
+  tasks:
+  - id: make_counter
+    title: 'bot.js: makeTokenCounter(prefix)'
+    xp: 20
+    hints:
+    - Each counter must remember its own number between calls.
+    - Declare a variable inside makeTokenCounter and return a function that changes it.
+    - Increase the variable inside the returned function, then return the prefix followed by the number.
+  - id: fetch_all
+    title: 'bot.js: fetchAllPrices(items, fetchPrice)'
+    xp: 20
+    hints:
+    - fetchPrice returns a promise. Calling it in a loop with await waits for each one in turn.
+    - Start every fetch first, then wait for all of them together.
+    - Map the items to promises and await Promise.all of that array.
+story:
+  company: Ravi's Tapri
+  character:
+    name: Ravi
+    role: Owner, Ravi's Tapri
+  pitch: Ravi's WhatsApp ordering bot is in JavaScript, and it keeps getting the small things wrong.
+cover_scene: 'Ravi''s Tapri at night: a tiny chai stall where a glowing chat bubble robot pours chai, little glowing
+  curly braces and arrows floating up with the steam.'

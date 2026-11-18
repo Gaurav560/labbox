@@ -1,0 +1,60 @@
+# Generated from express-api.yaml. Edit freely; the spec is only the starting point.
+id: express-api
+version: 2
+title: 'Express: an order tracking API'
+subtitle: Build Dabba Express's order API in Node and watch it answer in the Preview tab.
+description: Build Dabba Express's order API in Node and watch it answer in the Preview tab.
+language: javascript
+track: frameworks
+tags:
+- javascript
+- express
+level: beginner
+estimated_minutes: 20
+story:
+  company: Dabba Express
+  character:
+    name: Priya
+    role: Founder, Dabba Express
+  pitch: Offices keep calling to ask where their tiffins are. Priya wants an API for it.
+cover_scene: 'Dabba Express dispatch at night: a tiny glowing control tower above a street of delivery bicycles,
+  light trails connecting each tiffin to floating order status cards.'
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+image: labbox/express-api:v1
+resources: xs
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+preview:
+- name: Order API
+  port: 3000
+  path: /orders/1
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-orders-api
+  title: Where is my tiffin?
+  file: chapters/01-orders-api.md
+  minutes: 20
+  tasks:
+  - id: get_order
+    title: 'GET /orders/:id: one order, or 404'
+    xp: 20
+    hints:
+    - The orders live in the ORDERS map in server.js, keyed by id.
+    - Express puts the :id part of the path in req.params.id, as a string.
+    - Look the id up in ORDERS; send 404 with an error message when it is missing, otherwise send the order as JSON.
+  - id: create_order
+    title: 'POST /orders: validate, then 201'
+    xp: 20
+    hints:
+    - The JSON body is in req.body because express.json() is already set up.
+    - A valid order has a non-empty items array of strings and an area string.
+    - Answer 400 with an error for anything else; otherwise store a new order with the next id and status preparing,
+      and answer 201.

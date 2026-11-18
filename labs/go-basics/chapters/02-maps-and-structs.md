@@ -1,0 +1,65 @@
+:::step{type=story title="What sells at the counter"}
+:::character{name="Meera" role="CTO, Tapri Counter"}
+Every evening each outlet sends me its till lines. I want to see how much of each item sold, and
+the one best seller, so the kitchen knows what to prep tomorrow.
+:::
+
+:::mission
+Count orders per item, and pick the best seller fairly.
+:::
+:::
+
+:::step{type=concept title="Structs and maps"}
+A **struct** groups fields: `Order{Item: "chai", Qty: 2}`. A **map** finds a value by key:
+
+```go
+counts := make(map[string]int)
+counts["chai"] += 2
+counts["chai"]      // 2
+counts["poha"]      // 0: a missing key reads as the zero value
+```
+
+Use `make` before writing: writing to a nil map panics.
+:::
+
+:::step{type=predict title="Guess first"}
+:::question
+You loop over the same map twice with `range`. Do you get the keys in the same order?
+:::
+- [ ] Yes, insertion order
+- [ ] Yes, sorted order
+- [x] Not necessarily: Go randomises map order
+:::explain
+Go deliberately randomises map iteration, so code that depends on the order breaks early instead of
+in production. When order matters (like ties), add an explicit rule.
+:::
+:::
+
+:::step{type=try title="See it random"}
+Print the same map a few times:
+
+```bash run
+cat > /tmp/m.go <<'G'
+package main
+import "fmt"
+func main() { m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}; for i := 0; i < 3; i++ { for k := range m { fmt.Print(k) }; fmt.Println() } }
+G
+go run /tmp/m.go
+```
+:::
+
+:::step{type=task task=count_by_item title="Count per item"}
+Make `CountByItem(orders)` return a map from each item to its total quantity.
+No orders give an empty map, not `nil`.
+:::
+
+:::step{type=task task=busiest title="The best seller"}
+Make `Busiest(orders)` return the item with the biggest total quantity. On a tie, the name that sorts
+first wins. No orders give `""`.
+:::
+
+:::step{type=recap}
+- Structs group fields; maps find values by key and read missing keys as zero.
+- `make` a map before writing to it.
+- Map order is random on purpose: write tie-breaking rules explicitly.
+:::

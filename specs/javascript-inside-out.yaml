@@ -1,0 +1,47 @@
+id: javascript-inside-out
+template: node
+title: "JavaScript inside out"
+subtitle: The equality traps, closures and promises behind every Node app.
+track: languages
+tags: [javascript, node]
+level: intermediate
+story:
+  company: Ravi's Tapri
+  character: { name: Ravi, role: "Owner, Ravi's Tapri" }
+  pitch: "Ravi's WhatsApp ordering bot is in JavaScript, and it keeps getting the small things wrong."
+cover_scene: "Ravi's Tapri at night: a tiny chai stall where a glowing chat bubble robot pours chai, little glowing curly braces and arrows floating up with the steam."
+chapters:
+  - id: 01-values-and-equality
+    title: Two plus two is twenty-two
+    minutes: 15
+    goal: Turn text into numbers safely and compare arrays by value.
+    tasks:
+      - id: parse_quantity
+        title: "bot.js: parseQuantity(text)"
+        hints:
+          - "Messages arrive as text: \"2\" is a string, not a number."
+          - "Number(text) converts, and Number.isInteger tells you if the result is a whole number."
+          - "Trim the text, convert it, and return 0 unless the result is a whole number from 1 to 20."
+      - id: same_items
+        title: "bot.js: sameItems(a, b)"
+        hints:
+          - "=== on two arrays asks whether they are the same array, not whether they hold the same items."
+          - "Two arrays hold the same items when they have the same length and each position matches."
+          - "Check the lengths, then use every() with an index to compare a[i] and b[i]."
+  - id: 02-closures-and-promises
+    title: Tokens and slow suppliers
+    minutes: 15
+    goal: Keep private state in a closure and wait for many promises at once.
+    tasks:
+      - id: make_counter
+        title: "bot.js: makeTokenCounter(prefix)"
+        hints:
+          - "Each counter must remember its own number between calls."
+          - "Declare a variable inside makeTokenCounter and return a function that changes it."
+          - "Increase the variable inside the returned function, then return the prefix followed by the number."
+      - id: fetch_all
+        title: "bot.js: fetchAllPrices(items, fetchPrice)"
+        hints:
+          - "fetchPrice returns a promise. Calling it in a loop with await waits for each one in turn."
+          - "Start every fetch first, then wait for all of them together."
+          - "Map the items to promises and await Promise.all of that array."

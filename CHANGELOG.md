@@ -1,5 +1,18 @@
 # Changelog
 
+## Labs batch 1: six new labs (11 in total)
+
+- `python-collections` (lists, dicts, sets, sorting; Dabba Express), `java-collections` (records, List,
+  Map, TreeSet, Comparator; PaySetu settlement), `javascript-inside-out` (type traps, equality,
+  closures, Promise.all; Ravi's bot), `go-basics` (slices, errors, maps, structs; Tapri Counter tills),
+  `sql-from-zero` (SELECT, WHERE, COUNT, JOIN, GROUP BY on a live Postgres; the learner's queries run
+  read-only with a 5 s limit and are compared with reference results), `express-api` (GET and POST with
+  validation and status codes; Dabba Express order tracking, live in the Preview tab).
+- Each made from a spec in `specs/`, passing `validate --strict` and `test-lab`, with an AI cover picked
+  from three candidates. The gate caught two hints that quoted solution lines; reworded.
+- The languages skill map now links Python, Java, JavaScript, Go and SQL chapters (11 skills).
+- Fixes: "1 tasks" on lab cards; browser tests no longer assume a fixed number of labs.
+
 ## Lab production pipeline
 
 - Base images `labbox/node` (Node 22.23.5) and `labbox/go` (Go 1.27.4, with a pre-warmed build cache:

@@ -1,0 +1,6 @@
+# Only the Dockerfile needs the build context. Hidden tests and the solution never go near an image.
+solution/
+tests/
+starter/
+chapters/
+cover.*

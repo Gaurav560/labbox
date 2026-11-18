@@ -9,18 +9,35 @@ nodes:
   - id: java-methods
     title: Java methods
     chapters: [java-basics/01-methods]
+  - id: js-values
+    title: JavaScript values
+    chapters: [javascript-inside-out/01-values-and-equality]
+  - id: go-slices
+    title: Go slices and errors
+    chapters: [go-basics/01-slices-and-errors]
   - id: py-collections
     title: Lists and dicts
     requires: [py-functions]
-  - id: py-traps
-    title: Python traps
-    requires: [py-collections]
+    chapters: [python-collections/01-lists-and-dicts, python-collections/02-sets-and-sorting]
   - id: java-collections
     title: Java collections
     requires: [java-methods]
-  - id: java-concurrency
-    title: Concurrency traps
-    requires: [java-collections]
+    chapters: [java-collections/01-lists-and-maps, java-collections/02-sets-and-sorting]
+  - id: js-async
+    title: Closures and promises
+    requires: [js-values]
+    chapters: [javascript-inside-out/02-closures-and-promises]
+  - id: go-maps
+    title: Go maps and structs
+    requires: [go-slices]
+    chapters: [go-basics/02-maps-and-structs]
   - id: sql-basics
     title: SQL from zero
     requires: [py-functions, java-methods]
+    chapters: [sql-from-zero/01-select-and-where, sql-from-zero/02-group-by]
+  - id: py-traps
+    title: Python traps
+    requires: [py-collections]
+  - id: java-concurrency
+    title: Concurrency traps
+    requires: [java-collections]

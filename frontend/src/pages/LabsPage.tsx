@@ -94,7 +94,7 @@ export default function LabsPage() {
                   </div>
                   <div className="row">
                     <span className="muted small">
-                      {lab.progress.passed_tasks} / {lab.progress.total_tasks} tasks · {lab.chapter_count} chapter{lab.chapter_count === 1 ? "" : "s"}
+                      {lab.progress.passed_tasks} / {lab.progress.total_tasks} task{lab.progress.total_tasks === 1 ? "" : "s"} · {lab.chapter_count} chapter{lab.chapter_count === 1 ? "" : "s"}
                     </span>
                     <Link className="btn btn-primary" to={`/labs/${lab.id}`}>Open</Link>
                   </div>

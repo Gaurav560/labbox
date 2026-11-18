@@ -1,0 +1,76 @@
+# Generated from java-collections.yaml. Edit freely; the spec is only the starting point.
+id: java-collections
+version: 2
+title: Java collections
+subtitle: Lists, Maps and Sets on a day of real UPI payments.
+description: Lists, Maps and Sets on a day of real UPI payments.
+language: java
+track: languages
+tags:
+- java
+level: beginner
+estimated_minutes: 30
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+image: labbox/java-collections:v1
+resources:
+  cpus: 0.5
+  memory: 768m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-lists-and-maps
+  title: The midnight settlement
+  file: chapters/01-lists-and-maps.md
+  minutes: 15
+  tasks:
+  - id: total_paise
+    title: 'Payments.totalPaise: everything paid today'
+    xp: 20
+    hints:
+    - Each Payment has an amountPaise(). You need the sum of all of them.
+    - Loop over the list with a for-each loop and keep a running total.
+    - Use a long for the total and add p.amountPaise() for every payment p.
+  - id: totals_by_merchant
+    title: 'Payments.totalsByMerchant: one total per shop'
+    xp: 20
+    hints:
+    - The result maps a merchant name to its total, so it is a Map<String, Long>.
+    - Map.merge(key, value, Long::sum) adds to the existing value or starts a new one.
+    - Make a new HashMap, merge every payment's amount under its merchant, and return the map.
+- id: 02-sets-and-sorting
+  title: Who to pay first
+  file: chapters/02-sets-and-sorting.md
+  minutes: 15
+  tasks:
+  - id: unique_merchants
+    title: 'Payments.uniqueMerchants: each shop once, A to Z'
+    xp: 20
+    hints:
+    - The same merchant appears in many payments. Which collection never holds a value twice?
+    - A TreeSet keeps its values sorted as well as unique.
+    - Add every merchant name to a TreeSet, then copy it into a new ArrayList.
+  - id: top_merchants
+    title: 'Payments.topMerchants: the n biggest shops'
+    xp: 20
+    hints:
+    - 'Start from totalsByMerchant: the ranking is by those totals.'
+    - 'Sort the map''s entries with a Comparator: biggest total first, then name A to Z.'
+    - Comparator.comparing on the value, reversed, thenComparing on the key; then keep the first n keys.
+story:
+  company: PaySetu
+  character:
+    name: Kabir
+    role: Lead engineer, PaySetu
+  pitch: PaySetu settles every merchant at midnight, and the settlement code needs real collections.
+cover_scene: 'PaySetu at midnight: a tiny glowing control room where streams of light-coins flow from small shop
+  counters into neat stacked ledgers sorted by merchant.'

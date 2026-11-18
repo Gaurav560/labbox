@@ -1,0 +1,76 @@
+# Generated from python-collections.yaml. Edit freely; the spec is only the starting point.
+id: python-collections
+version: 2
+title: Python collections
+subtitle: Lists, dicts, sets and sorting, on a real tiffin delivery day.
+description: Lists, dicts, sets and sorting, on a real tiffin delivery day.
+language: python
+track: languages
+tags:
+- python
+level: beginner
+estimated_minutes: 30
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+image: labbox/python-collections:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-lists-and-dicts
+  title: Bills and best sellers
+  file: chapters/01-lists-and-dicts.md
+  minutes: 15
+  tasks:
+  - id: total_bill
+    title: 'orders.py: total_bill(items, prices)'
+    xp: 20
+    hints:
+    - Every item in the list has its price in the prices dict.
+    - Loop over the items and look each one up with prices[item].
+    - Start a total at 0 and add the price of each item; items that repeat count every time.
+  - id: top_dishes
+    title: 'orders.py: top_dishes(orders, n)'
+    xp: 20
+    hints:
+    - First count how many times each dish was ordered.
+    - A dict from dish to count works; collections.Counter does the counting for you.
+    - Sort the (dish, count) pairs by count from high to low, then by name, and keep the first n names.
+- id: 02-sets-and-sorting
+  title: Areas and routes
+  file: chapters/02-sets-and-sorting.md
+  minutes: 15
+  tasks:
+  - id: unique_areas
+    title: 'orders.py: unique_areas(orders)'
+    xp: 20
+    hints:
+    - The same area shows up in many orders. Which collection never holds a value twice?
+    - Collect the areas in a set, then turn it into a sorted list.
+    - sorted() takes any collection and gives back a new list, A to Z.
+  - id: route_order
+    title: 'orders.py: route_order(stops)'
+    xp: 20
+    hints:
+    - Each stop is a tuple of (area, distance_km). Sort by the distance first.
+    - sorted() accepts key=, a function that says what to sort by.
+    - Use a key that returns (distance, area), so equal distances fall back to A to Z, then keep only the area names.
+story:
+  company: Dabba Express
+  character:
+    name: Priya
+    role: Founder, Dabba Express
+  pitch: Dabba Express now delivers 900 tiffins a day, and the order sheet needs real data structures.
+cover_scene: 'Dabba Express sorting hub at dawn: a tiny warehouse with conveyor belts of stacked steel tiffins sorted
+  into glowing colour-coded lanes, delivery bicycles waiting at the gate.'

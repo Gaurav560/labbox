@@ -1,0 +1,78 @@
+# Generated from go-basics.yaml. Edit freely; the spec is only the starting point.
+id: go-basics
+version: 2
+title: Go basics
+subtitle: Slices, errors, maps and structs, in the service that runs Tapri Counter's tills.
+description: Slices, errors, maps and structs, in the service that runs Tapri Counter's tills.
+language: go
+track: languages
+tags:
+- go
+level: beginner
+estimated_minutes: 30
+cover: cover.webp
+cover_credit: { by: "Generated with OpenAI", source: "gpt-image-2" }
+image: labbox/go-basics:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-slices-and-errors
+  title: Rupees, paise and bad input
+  file: chapters/01-slices-and-errors.md
+  minutes: 15
+  tasks:
+  - id: total
+    title: 'till.go: Total(prices)'
+    xp: 20
+    hints:
+    - prices is a slice of ints in paise. You need their sum.
+    - range over the slice and add each value to a total.
+    - Start a running total at zero, add every price inside a for range loop, then return the total.
+  - id: parse_amount
+    title: 'till.go: ParseAmount(text)'
+    xp: 20
+    hints:
+    - '"12.50" means 12 rupees and 50 paise, so 1250 paise. Bad text must give an error, not a panic.'
+    - strings.Cut splits on the dot; strconv.Atoi turns each part into an int and returns an error when it cannot.
+    - Allow no dot or exactly two digits after it, return 0 and an error for anything else, otherwise rupees*100
+      plus paise.
+- id: 02-maps-and-structs
+  title: What sells at the counter
+  file: chapters/02-maps-and-structs.md
+  minutes: 15
+  tasks:
+  - id: count_by_item
+    title: 'till.go: CountByItem(orders)'
+    xp: 20
+    hints:
+    - Each Order has an Item and a Qty. Add up Qty per Item.
+    - A map[string]int is the counter; a missing key reads as 0, so you can add to it directly.
+    - Make the map with make, loop over orders and add o.Qty to the entry for o.Item.
+  - id: busiest
+    title: 'till.go: Busiest(orders)'
+    xp: 20
+    hints:
+    - 'Start from CountByItem: the best seller is the item with the biggest count.'
+    - 'Map order is random in Go, so ties need a rule: the name that sorts first wins.'
+    - Loop over the counts and keep the best item, replacing it when a count is bigger, or equal with a smaller
+      name.
+story:
+  company: Tapri Counter
+  character:
+    name: Meera
+    role: CTO, Tapri Counter
+  pitch: Tapri Counter is rewriting its till service in Go, and the first pieces are yours.
+cover_scene: 'Tapri Counter''s till room: a tiny glowing kitchen counter where small gopher-like delivery robots
+  carry chai cups along neat glowing conveyor lines between cash tills.'
