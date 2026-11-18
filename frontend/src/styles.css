@@ -160,12 +160,8 @@ select { padding: 3px 8px; }
   /* a muted dusk tint from the showcase colours, never plain white */
   --bg: #d4d7ea; --panel: #e7e8f2; --text: #1f2333; --muted: #4f5568; --border: #c5c9dc; --chip: #d6d9e8;
 }
-/* the right side: deep navy in both themes, a soft light behind the card */
-.auth-main {
-  background:
-    radial-gradient(60% 50% at 50% 45%, #2a3266 0%, transparent 70%),
-    linear-gradient(180deg, #0f1226, #0b0d1a);
-}
+/* the right side: a neutral charcoal grey in both themes, a shade lighter than the card */
+.auth-main { background: linear-gradient(180deg, #2a2b30, #222327); }
 .auth-legal { --muted: #9aa1bb; --text: #e6e8f2; }
 :root[data-theme="light"] .auth-card {
   /* the card stays dark slate in both themes: no bright surface next to the dark showcase */

@@ -8,7 +8,7 @@
   in `frontend/src/site.ts`.
 - New public pages: `/faq` (10 questions), `/privacy` and `/terms`, written to match what the app
   really does with data today. Linked from the home footer and under the login card.
-- Login page: the right side is deep navy in both themes (matching the showcase), and the card is
+- Login page: the right side is a neutral charcoal grey in both themes, and the card is
   dark slate.
 
 ## Home page redesign (red, black, grey, white, a little yellow)
