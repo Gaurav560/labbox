@@ -25,7 +25,7 @@ export default function TaskList({ tasks, activeId, onSelect }: Props) {
               className={`task-chip ${t.id === activeId ? "task-chip-active" : ""}`}
               onClick={() => onSelect?.(t.id)}
               title={t.title}
-              aria-label={`${t.title}: ${STATE(t.passed)}`}
+              aria-label={`${t.id}: ${t.title}, ${STATE(t.passed)}`}
             >
               {t.id === activeId && !t.passed ? <span className="task-icon accent">▶</span> : icon(t.passed)}
               <span>{t.id}</span>

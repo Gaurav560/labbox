@@ -1,8 +1,10 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import engagement, progress
+from .. import engagement, lab_setup, progress
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import LabConfig, get_lab
@@ -102,3 +104,13 @@ def predict(
     lab = get_lab(lab_id)
     lab.chapter(chapter_id)
     return progress.answer_predict(session, user.id, lab, chapter_id, body.step, body.choice)
+
+
+@router.post("/setup", response_model=lab_setup.SetupResult)
+async def setup(
+    lab_id: str, chapter_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> lab_setup.SetupResult:
+    """Called when a chapter opens: starts the machine if needed and runs the chapter's setup once."""
+    lab = get_lab(lab_id)
+    lab.chapter(chapter_id)
+    return await asyncio.to_thread(lab_setup.run_setup, session, user, lab, chapter_id)

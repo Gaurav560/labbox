@@ -1,5 +1,46 @@
 # Changelog
 
+## v2 Phase D: services, preview, live checks, incidents
+
+**Engine**
+- Labs with services: a private network per learner and lab (`labnet-u{id}-{lab}`, no internet unless
+  the lab opts in), service containers reachable by name (`db:5432`) with the same limits as workspaces
+  (uid 1000, no capabilities), readiness commands, data kept next to the workspace folder. Start, Stop
+  machine, the idle reaper and Reset lab all treat the group as one unit. Service states show next to
+  the machine status.
+- Web preview: `/preview/{lab}/{port}/{path}` for HTTP and WebSocket, authenticated by a scoped,
+  short-lived HttpOnly cookie; only the cookie owner's machine and only listed ports. A "waiting for your
+  app" page retries by itself while the app starts. Preview tab with a path bar, reload and open in a new
+  tab. nginx config includes `/preview/` (document: separate origin in production).
+- Live checks (`check.mode: live`) in `labbox/checker:v1` on the lab network: learner code never runs
+  in the checker, so fake results do nothing.
+- Chapter setup: a root script from `/lab/setup/` runs once per learner per chapter (`POST
+  .../chapters/{ch}/setup`, called by the lab page with a "setting up" banner). Migration `0005` adds
+  `chapter_progress.started_at`; incident timers count from it and fixing inside the timer gives +25 XP.
+- Resource tiers (`xs`, `s`, `m`, `l`). Layered base images: `labbox/base`, `python`, `java`,
+  `checker`; both existing labs now build on them.
+- `labbox test-lab` supports live labs (throwaway group, setup, fail, apply the solution, pass, clean up).
+
+**New labs**
+- `postgres-indexing-incident` (databases): a real Postgres with a million orders, an injected missing
+  index, a 15 minute incident and a live check on the query plan and time (`@@METRIC lookup_ms`).
+- `fastapi-first-api` (frameworks): a menu API for a chai stall, live in the Preview tab on port 8000.
+- `spring-boot-first-api` (frameworks): a merchant API in Spring Boot, live on port 8080; Maven
+  dependencies are baked into the image so builds work offline (checks have no network).
+
+**Fixes found on the way**
+- Postgres in a 512 MB container was killed by the kernel while building an index (default buffers plus
+  parallel index workers). The lab tunes Postgres for small containers and gives it 768 MB.
+- In live labs the task box and the check spinner no longer talk about "a clean machine".
+
+**Tests**
+- 9 new Docker tests (network and security of services, no internet, setup once, setup script hidden,
+  fake result ignored, live pass after the fix, incident bonus and its timer, reaper and stop route stop
+  the group with data kept, reset wipes data, preview auth, ports, isolation between users, WebSocket)
+  plus schema tests and `test-lab` on all five labs. Old tests that listed exactly two labs now check
+  that those two are among the labs.
+- New browser test: FastAPI and Spring Boot in the Preview tab, the Postgres incident end to end.
+
 ## Home page
 
 - New public home page at `/`: hero with a hand-built preview of the lab page, a demo predict question,

@@ -7,13 +7,22 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from . import containers
+from . import containers, preview
 from .config import get_settings
 from .db import init_db
 from .content import init_content
 from .labs import init_labs
 from .reaper import reaper_loop
-from .routers import auth_routes, check_routes, engagement_routes, file_routes, lab_routes, progress_routes, terminal_routes
+from .routers import (
+    auth_routes,
+    check_routes,
+    engagement_routes,
+    file_routes,
+    lab_routes,
+    preview_routes,
+    progress_routes,
+    terminal_routes,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("labbox")
@@ -30,6 +39,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     reaper = asyncio.create_task(reaper_loop())
     yield
     reaper.cancel()
+    await preview.close_client()
 
 
 app = FastAPI(title="LabBox", lifespan=lifespan)
@@ -48,6 +58,7 @@ app.include_router(check_routes.router)
 app.include_router(terminal_routes.router)
 app.include_router(progress_routes.router)
 app.include_router(engagement_routes.router)
+app.include_router(preview_routes.router)
 
 
 class Health(BaseModel):

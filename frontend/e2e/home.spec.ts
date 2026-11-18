@@ -15,7 +15,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText("2 labs");
   await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText("Soon");
-  await expect(page.locator(".live-labs")).toHaveText("Live now: Java Basics · Python Basics");
+  await expect(page.locator(".live-labs")).toContainText("Python Basics");
+  await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText("1 lab");
 
   // The demo question works in the browser.
   const demo = page.locator(".try-card");

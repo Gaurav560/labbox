@@ -39,20 +39,39 @@ class Resources(_Strict):
         return v
 
 
+# Named resource tiers (v2 spec 4.6). A lab may say `resources: s` instead of numbers.
+TIERS: dict[str, dict] = {
+    "xs": {"cpus": 0.5, "memory": "512m", "pids_limit": 256},
+    "s": {"cpus": 1, "memory": "1g", "pids_limit": 512},
+    "m": {"cpus": 2, "memory": "2g", "pids_limit": 1024},
+    "l": {"cpus": 2, "memory": "4g", "pids_limit": 1024},
+}
+SERVICE_NAME_RE = re.compile(r"^[a-z][a-z0-9-]{0,30}$")
+RESERVED_SERVICE_NAMES = {"workspace", "gateway", "checker"}
+# Extra capabilities a service may ask for (only when it runs as the image's own user).
+SERVICE_CAPS = {"CHOWN", "SETUID", "SETGID", "FOWNER", "DAC_OVERRIDE"}
+CHECKER_IMAGE = "labbox/checker:v1"
+
+
 class WorkspaceConfig(_Strict):
     mount_path: str = "/workspace"
     shell: str = "/bin/bash"
-    network: Literal["bridge", "none", "lab"] = "bridge"  # "lab": private per-user network (Phase D)
-    network_egress: bool = False  # v2, Phase D
+    # bridge: normal Docker network with internet. lab: only the private per-user network.
+    network: Literal["bridge", "none", "lab"] = "bridge"
+    network_egress: bool = False  # with network: lab, also allow the internet
+    env: dict[str, str] = {}  # extra environment for the workspace (e.g. PGHOST=db)
     sudo: bool = False  # v2, Phase F
 
 
 class CheckConfig(_Strict):
     command: list[str] = Field(min_length=1)
     timeout_seconds: int = Field(default=30, gt=0, le=300)
-    network: Literal["none"] = "none"
-    mode: Literal["fresh", "live"] = "fresh"  # v2: "live" checks the running system (Phase D)
-    mount_workspace: Literal["ro"] | None = None  # v2, live mode only (Phase D)
+    network: Literal["none"] = "none"  # never the internet
+    # fresh: tests run on a copy of the learner's files. live: a checker container inspects the
+    # running system on the lab network, and never runs the learner's code.
+    mode: Literal["fresh", "live"] = "fresh"
+    image: str | None = None  # live mode: checker image (default labbox/checker:v1)
+    mount_workspace: Literal["ro"] | None = None  # live mode: also mount the learner's files read-only
 
 
 # ---------- v2 lab fields (all optional) ----------
@@ -75,14 +94,46 @@ class Story(_Strict):
 class ServiceResources(_Strict):
     cpus: float = Field(default=0.5, gt=0, le=8)
     memory: str = "256m"
+    pids_limit: int = Field(default=256, gt=0, le=4096)
+
+    @field_validator("memory")
+    @classmethod
+    def memory_format(cls, v: str) -> str:
+        if not MEMORY_RE.match(v):
+            raise ValueError("memory must look like 512m or 1g")
+        return v
 
 
 class Service(_Strict):
+    """An extra container in the lab (a database, a cache...), reachable from the workspace by name."""
+
     name: str
     image: str
     env: dict[str, str] = {}
-    resources: ServiceResources | None = None
-    user: str | None = None
+    resources: ServiceResources = ServiceResources()
+    # "1000:1000" (default) runs as the learner's uid with no capabilities at all.
+    # "default" keeps the image's own user; only then may cap_add list a few capabilities.
+    user: str = "1000:1000"
+    cap_add: list[str] = []
+    command: list[str] | None = None
+    data: str | None = None  # path inside the service kept across restarts (e.g. /var/lib/postgresql/data)
+    ready: list[str] | None = None  # command that exits 0 once the service accepts connections
+
+    @field_validator("name")
+    @classmethod
+    def name_format(cls, v: str) -> str:
+        if not SERVICE_NAME_RE.match(v) or v in RESERVED_SERVICE_NAMES:
+            raise ValueError(f"bad service name {v!r}: lowercase, digits and dashes, not {sorted(RESERVED_SERVICE_NAMES)}")
+        return v
+
+    @model_validator(mode="after")
+    def caps_only_for_image_user(self) -> "Service":
+        bad = set(self.cap_add) - SERVICE_CAPS
+        if bad:
+            raise ValueError(f"cap_add may only use {sorted(SERVICE_CAPS)}, not {sorted(bad)}")
+        if self.cap_add and self.user != "default":
+            raise ValueError("cap_add is only allowed with user: default")
+        return self
 
 
 class PreviewPort(_Strict):
@@ -116,8 +167,10 @@ class Chapter(_Strict):
     file: str
     tasks: list[Task] = Field(min_length=1)
     minutes: int | None = Field(default=None, gt=0)
-    setup: list[str] | None = None  # v2: failure injection script (Phase D)
-    setup_target: str | None = None
+    # Runs once, as root, when a learner first opens the chapter (failure injection, seed data).
+    # The script lives in the image under /lab/setup/, never in /workspace.
+    setup: list[str] | None = None
+    setup_target: str = "workspace"  # or a service name
 
 
 class LabConfig(_Strict):
@@ -126,7 +179,7 @@ class LabConfig(_Strict):
     description: str = ""  # v1 required it; v2 labs may use subtitle instead
     language: str = ""
     image: str = Field(min_length=1)
-    resources: Resources | Literal["xs", "s", "m", "l"]  # v2: a tier name (Phase D)
+    resources: Resources  # numbers, or a tier name (xs, s, m, l) turned into numbers on load
     workspace: WorkspaceConfig = WorkspaceConfig()
     check: CheckConfig
     chapters: list[Chapter] = Field(min_length=1)
@@ -155,6 +208,38 @@ class LabConfig(_Strict):
         if not ID_RE.match(v):
             raise ValueError(f"bad lab id {v!r}: lowercase a-z, 0-9 and dashes only")
         return v
+
+    @field_validator("resources", mode="before")
+    @classmethod
+    def tier_to_numbers(cls, v):
+        if isinstance(v, str):
+            if v not in TIERS:
+                raise ValueError(f"unknown tier {v!r}: use one of {', '.join(TIERS)}")
+            return TIERS[v]
+        return v
+
+    @model_validator(mode="after")
+    def lab_network_rules(self) -> "LabConfig":
+        names = [s.name for s in self.services]
+        if len(names) != len(set(names)):
+            raise ValueError("duplicate service names")
+        if self.check.mode == "live" and not self.uses_lab_network:
+            raise ValueError("check.mode: live needs services or workspace.network: lab")
+        if self.check.mount_workspace and self.check.mode != "live":
+            raise ValueError("check.mount_workspace is only for check.mode: live")
+        if self.workspace.network_egress and self.workspace.network != "lab":
+            raise ValueError("workspace.network_egress only applies to workspace.network: lab")
+        if self.preview and self.workspace.network == "none" and not self.uses_lab_network:
+            raise ValueError("preview needs a network (workspace.network: bridge or lab)")
+        for c in self.chapters:
+            if c.setup and c.setup_target != "workspace" and c.setup_target not in names:
+                raise ValueError(f"chapter {c.id}: setup_target {c.setup_target!r} is not a service")
+        return self
+
+    @property
+    def uses_lab_network(self) -> bool:
+        """A private per-user network: for services, network: lab, and live checks."""
+        return bool(self.services) or self.workspace.network == "lab"
 
     @model_validator(mode="after")
     def fill_v1_fields(self) -> "LabConfig":
@@ -209,26 +294,14 @@ class LabConfig(_Strict):
 def unsupported_features(lab: LabConfig) -> list[str]:
     """v2 fields whose engine is not built yet. Refusing them beats silently ignoring them."""
     found: list[tuple[str, str]] = []
-    if isinstance(lab.resources, str):
-        found.append(("resources tiers (xs, s, m, l)", "D"))
-    elif lab.resources.disk_mb is not None:
+    if lab.resources.disk_mb is not None:
         found.append(("resources.disk_mb", "H"))
-    if lab.workspace.network == "lab" or lab.workspace.network_egress:
-        found.append(("workspace.network: lab", "D"))
     if lab.workspace.sudo:
         found.append(("workspace.sudo", "F"))
-    if lab.check.mode == "live" or lab.check.mount_workspace:
-        found.append(("check.mode: live", "D"))
-    if lab.services:
-        found.append(("services", "D"))
-    if lab.preview:
-        found.append(("preview", "D"))
     if lab.llm.enabled:
         found.append(("llm", "E"))
     if lab.runtime != "default":
         found.append((f"runtime: {lab.runtime}", "F"))
-    if any(c.setup or c.setup_target for c in lab.chapters):
-        found.append(("chapter setup", "D"))
     return [f"{name} needs Phase {phase} (not built yet)" for name, phase in found]
 
 

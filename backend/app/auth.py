@@ -29,12 +29,23 @@ def create_token(user: User) -> str:
     return jwt.encode({"sub": str(user.id), "exp": expire}, settings.JWT_SECRET, algorithm=ALGORITHM)
 
 
-def user_from_token(token: str, session: Session) -> User | None:
-    """Return the user for a valid token, else None. Used by HTTP and WebSocket auth."""
+def create_scoped_token(user: User, scope: str, minutes: int) -> str:
+    """A short-lived token for one purpose only (e.g. the preview cookie). Never valid as a login."""
+    expire = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+    return jwt.encode({"sub": str(user.id), "scope": scope, "exp": expire}, get_settings().JWT_SECRET, algorithm=ALGORITHM)
+
+
+def user_from_token(token: str, session: Session, scope: str | None = None) -> User | None:
+    """Return the user for a valid token, else None. Used by HTTP and WebSocket auth.
+
+    A login token has no scope; a scoped token is only accepted where that exact scope is asked for.
+    """
     try:
         payload = jwt.decode(token, get_settings().JWT_SECRET, algorithms=[ALGORITHM])
         user_id = int(payload["sub"])
     except (JWTError, KeyError, ValueError, TypeError):
+        return None
+    if payload.get("scope") != scope:
         return None
     return session.get(User, user_id)
 

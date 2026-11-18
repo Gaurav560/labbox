@@ -1,0 +1,50 @@
+id: postgres-indexing-incident
+version: 2
+title: "Postgres: the slow checkout"
+subtitle: Find and fix a slow query on a real Postgres with a million orders.
+description: Find and fix a slow query on a real Postgres with a million orders.
+language: sql
+track: databases
+tags: [postgres, sql, indexes]
+level: intermediate
+estimated_minutes: 20
+story:
+  company: Tapri Counter
+  character: { name: Meera, role: "CTO, Tapri Counter" }
+  pitch: "Tapri Counter's checkout falls over every lunch rush. You are the new backend engineer."
+image: labbox/postgres-indexing-incident:v1
+resources: s
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: tapri }
+services:
+  - name: db
+    image: postgres:16
+    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: tapri }
+    resources: { cpus: 1, memory: 768m, pids_limit: 256 }
+    # Sized for a small container: no parallel index builds, modest buffers (defaults get OOM-killed).
+    command: [postgres, -c, shared_buffers=64MB, -c, maintenance_work_mem=64MB, -c, work_mem=8MB,
+              -c, max_parallel_maintenance_workers=0, -c, max_parallel_workers_per_gather=1]
+    data: /var/lib/postgresql/data
+    ready: [pg_isready, -h, 127.0.0.1, -U, postgres]
+check:
+  mode: live
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 60
+  network: none
+chapters:
+  - id: 01-slow-checkout
+    title: Checkout is crawling
+    file: chapters/01-slow-checkout.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/01.sh"]
+    tasks:
+      - id: add_index
+        title: "Make a customer's order lookup fast"
+        xp: 50
+        hints:
+          - "Run EXPLAIN ANALYZE on the query in checkout.sql. Which kind of scan does Postgres use?"
+          - "Postgres can only jump straight to the right rows when there is an index on the column you filter by."
+          - "CREATE INDEX on the orders table for the customer_id column, then run EXPLAIN ANALYZE again."

@@ -55,8 +55,9 @@ export interface Progress { passed_tasks: number; total_tasks: number }
 export interface LabInfo { subtitle: string; track: string; tags: string[]; level: string | null; estimated_minutes: number | null }
 export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number }
-export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null }
-export interface LabDetail extends LabInfo { id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
+export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; has_setup: boolean }
+export interface PreviewPort { name: string; port: number; path: string }
+export interface LabDetail extends LabInfo { preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
 export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive";
 // The answer and explanation are not sent with the chapter; they come back once answered correctly.
 export interface Predict { question: string; options: { text: string }[] }
@@ -73,7 +74,9 @@ export interface ChapterProgress {
 }
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
-export interface WorkspaceStatus { status: MachineStatus; container?: string }
+export interface ServiceStatus { name: string; status: "running" | "starting" | "stopped" | "missing" }
+export interface WorkspaceStatus { status: MachineStatus; container?: string; services?: ServiceStatus[] }
+export interface SetupResult { ran: boolean; setup_done: boolean; started_at: string | null }
 export interface FileNode { path: string; name: string; type: "file" | "dir"; children?: FileNode[] }
 export interface TaskResult { task: string; title: string; passed: boolean; message: string; expected?: string | null; actual?: string | null }
 export interface Metric { name: string; value: number; target: number | null; better: "lower" | "higher" | null }
@@ -151,6 +154,9 @@ export const api = {
     request<ChapterProgress>("PUT", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/progress`, { current_step: step }),
   predict: (labId: string, chapterId: string, step: number, choice: number) =>
     request<PredictState>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/predict`, { step, choice }),
+  chapterSetup: (labId: string, chapterId: string) =>
+    request<SetupResult>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/setup`),
+  previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),
   hint: (labId: string, chapterId: string, taskId: string) =>
     request<HintResponse>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/hint`),
 

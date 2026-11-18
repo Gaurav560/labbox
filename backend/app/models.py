@@ -52,6 +52,7 @@ class ChapterProgress(SQLModel, table=True):
     chapter_id: str = Field(primary_key=True)
     current_step: int = 0
     setup_done: bool = False
+    started_at: datetime | None = None  # first opened on a running machine; incident timers count from here
     completed_at: datetime | None = None
     updated_at: datetime = Field(default_factory=utcnow)
 

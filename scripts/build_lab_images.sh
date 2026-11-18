@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Build the Docker image for every lab in labs/*/ using the image tag from its lab.yaml.
+# Build the shared base images (images/*, in dependency order), then every lab in labs/*/
+# using the image tag from its lab.yaml.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+for base in base python java checker; do
+  echo "==> Building labbox/$base:v1"
+  docker build -t "labbox/$base:v1" "$ROOT/images/$base"
+done
 for dir in "$ROOT"/labs/*/; do
   [ -f "$dir/Dockerfile" ] || continue
   image="$(grep -E '^image:' "$dir/lab.yaml" | awk '{print $2}')"
@@ -11,4 +16,4 @@ for dir in "$ROOT"/labs/*/; do
   echo "==> Building $image from $dir"
   docker build -t "$image" "$dir"
 done
-echo "All lab images built."
+echo "All images built."

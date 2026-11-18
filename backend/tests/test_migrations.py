@@ -10,7 +10,7 @@ from app import models  # noqa: F401
 from app.db import init_db
 
 NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer", "user_profile", "xp_event", "drill_answer"}
-HEAD = "0004"
+HEAD = "0005"
 
 # The schema exactly as the POC's SQLModel.metadata.create_all() made it.
 POC_SCHEMA = """

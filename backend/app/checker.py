@@ -15,9 +15,9 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, col, select
 
-from . import containers, engagement, progress, workspace_files
+from . import containers, engagement, progress, services, workspace_files
 from .config import get_settings
-from .labs import LabConfig
+from .labs import CHECKER_IMAGE, LabConfig
 from .models import CheckRun, User, Workspace
 
 log = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ METRIC_PREFIX = "@@METRIC "
 MAX_METRICS = 20
 OUTPUT_TAIL_CHARS = 4000
 MAX_COPY_BYTES = 20 * 1024 * 1024
-CHECK_PIDS_LIMIT = 128
+CHECK_PIDS_LIMIT = 1024  # upper bound; a check gets min(this, the lab's own pids_limit)
 NO_RESULT = "No result reported (did your code crash?)"
 
 
@@ -172,23 +172,36 @@ def parse_metrics(logs: str) -> list[Metric]:
 # ---------- running ----------
 
 
-def _run_container(lab: LabConfig, user_id: int, tmp: Path) -> tuple[str, bool]:
-    """Returns (logs, timed_out)."""
+def _run_container(lab: LabConfig, user_id: int, tmp: Path, live_ws: Workspace | None = None) -> tuple[str, bool]:
+    """Returns (logs, timed_out).
+
+    fresh: the lab image, the copied files in /check/workspace, no network at all.
+    live: the checker image on the learner's lab network, tests only (the learner's files only
+    read-only and only if the lab asks). No learner code ever runs in it, so it cannot be faked.
+    """
     short = uuid.uuid4().hex[:8]
+    volumes = {str(tmp / "tests"): {"bind": "/check/tests", "mode": "ro"}}
+    if live_ws is None:
+        volumes[str(tmp / "workspace")] = {"bind": "/check/workspace", "mode": "rw"}
+        where = dict(image=lab.image, working_dir="/check/workspace", network_mode="none")
+    else:
+        if lab.check.mount_workspace:
+            volumes[live_ws.volume_path] = {"bind": "/check/workspace", "mode": "ro"}
+        where = dict(
+            image=lab.check.image or CHECKER_IMAGE,
+            working_dir="/check",
+            network=services.network_name(live_ws),
+            networking_config=services.networking_config(live_ws, "checker"),
+        )
     c = containers.client().containers.run(
-        image=lab.image,
         name=f"check-u{user_id}-{lab.id}-{short}",
         command=lab.check.command,
         detach=True,
         labels=containers.labels("check", user_id, lab.id),
-        working_dir="/check/workspace",
-        volumes={
-            str(tmp / "workspace"): {"bind": "/check/workspace", "mode": "rw"},
-            str(tmp / "tests"): {"bind": "/check/tests", "mode": "ro"},
-        },
-        network_mode="none",
-        pids_limit=CHECK_PIDS_LIMIT,
+        volumes=volumes,
+        pids_limit=min(lab.resources.pids_limit, CHECK_PIDS_LIMIT),
         environment={"HOME": "/tmp", "PYTHONDONTWRITEBYTECODE": "1"},
+        **where,
         **containers.security_options(lab),
     )
     timed_out = False
@@ -207,26 +220,22 @@ def _run_container(lab: LabConfig, user_id: int, tmp: Path) -> tuple[str, bool]:
     return logs, timed_out
 
 
-def check_folder(lab: LabConfig, chapter_id: str, folder: Path, user_id: int) -> CheckResponse:
-    """Run the chapter's hidden tests against a copy of `folder` in a throwaway container.
-
-    Used for every Check (folder = the user's workspace) and by `labbox test-lab`
-    (folder = starter/ or solution/), so both always grade the same way.
-    """
+def _grade(lab: LabConfig, chapter_id: str, user_id: int, folder: Path | None = None, live_ws: Workspace | None = None) -> CheckResponse:
     chapter = lab.chapter(chapter_id)  # 404 if unknown
     tmp = get_settings().CHECKS_DIR / uuid.uuid4().hex
     started = time.monotonic()
     try:
-        copy_workspace(folder, tmp / "workspace")
+        if folder is not None:
+            copy_workspace(folder, tmp / "workspace")
         shutil.copytree(lab.tests_dir, tmp / "tests", symlinks=True)
         workspace_files.chown_tree(tmp)
-        logs, timed_out = _run_container(lab, user_id, tmp)
+        logs, timed_out = _run_container(lab, user_id, tmp, live_ws)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     duration_ms = int((time.monotonic() - started) * 1000)
 
     if timed_out:
-        msg = f"Timed out after {lab.check.timeout_seconds} seconds (infinite loop?)"
+        msg = f"Timed out after {lab.check.timeout_seconds} seconds" + ("" if live_ws else " (infinite loop?)")
         results = [TaskResult(task=t.id, title=t.title, passed=False, message=msg) for t in chapter.tasks]
     else:
         results = parse_results(logs, lab, chapter_id)
@@ -241,12 +250,30 @@ def check_folder(lab: LabConfig, chapter_id: str, folder: Path, user_id: int) ->
     )
 
 
+def check_folder(lab: LabConfig, chapter_id: str, folder: Path, user_id: int) -> CheckResponse:
+    """fresh mode: run the chapter's hidden tests against a copy of `folder` in a throwaway container.
+
+    Used for every Check (folder = the user's workspace) and by `labbox test-lab`
+    (folder = starter/ or solution/), so both always grade the same way.
+    """
+    return _grade(lab, chapter_id, user_id, folder=folder)
+
+
+def check_live(lab: LabConfig, chapter_id: str, ws: Workspace) -> CheckResponse:
+    """live mode: a checker container inspects the learner's running group (services must be up)."""
+    return _grade(lab, chapter_id, ws.user_id, live_ws=ws)
+
+
 def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> CheckResponse:
     assert user.id is not None
     lab.chapter(chapter_id)  # 404 if unknown
-    ws: Workspace = containers.get_workspace(session, user, lab)
-    containers.touch(session, ws)
-    res = check_folder(lab, chapter_id, Path(ws.volume_path), user.id)
+    if lab.check.mode == "live":
+        ws = containers.ensure_workspace(session, user, lab)  # the system must be running to be checked
+        res = check_live(lab, chapter_id, ws)
+    else:
+        ws = containers.get_workspace(session, user, lab)
+        containers.touch(session, ws)
+        res = check_folder(lab, chapter_id, Path(ws.volume_path), user.id)
 
     session.add(
         CheckRun(
@@ -265,8 +292,9 @@ def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
     progress.record_check(session, user.id, lab.id, chapter_id, passed)
     res.xp_awarded = engagement.award_for_check(session, user.id, lab, chapter_id, passed)
     log.info(
-        "Check user=%s lab=%s chapter=%s: %d/%d passed in %d ms%s",
-        user.id, lab.id, chapter_id, res.passed_count, res.total_count, res.duration_ms, " (timed out)" if res.timed_out else "",
+        "Check user=%s lab=%s chapter=%s (%s): %d/%d passed in %d ms%s",
+        user.id, lab.id, chapter_id, lab.check.mode, res.passed_count, res.total_count, res.duration_ms,
+        " (timed out)" if res.timed_out else "",
     )
     return res
 

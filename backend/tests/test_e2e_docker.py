@@ -99,7 +99,7 @@ def test_health_and_auth(client: TestClient, user):
     assert client.get("/api/labs").status_code == 401
     h, uid = user
     assert client.get("/api/me", headers=h).json()["id"] == uid
-    assert {lab["id"] for lab in client.get("/api/labs", headers=h).json()} == {"python-basics", "java-basics"}
+    assert {"python-basics", "java-basics"} <= {lab["id"] for lab in client.get("/api/labs", headers=h).json()}
 
 
 def test_start_workspace(client: TestClient, user):

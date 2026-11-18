@@ -1,0 +1,44 @@
+id: spring-boot-first-api
+version: 2
+title: "Spring Boot: your first API"
+subtitle: Build a merchant API with Spring Boot and see it live in the Preview tab.
+description: Build a merchant API with Spring Boot and see it live in the Preview tab.
+language: java
+track: frameworks
+tags: [java, spring-boot]
+level: beginner
+estimated_minutes: 20
+story:
+  company: PaySetu
+  character: { name: Kabir, role: "Lead engineer, PaySetu" }
+  pitch: "PaySetu's merchant dashboard needs its first real backend endpoint."
+image: labbox/spring-boot-first-api:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+preview:
+  - { name: "Merchant API", port: 8080, path: "/hello" }
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+  - id: 01-first-endpoints
+    title: Your first endpoints
+    file: chapters/01-first-endpoints.md
+    minutes: 20
+    tasks:
+      - id: hello
+        title: "GET /hello: a plain text greeting"
+        hints:
+          - "MerchantController has no methods yet, so every URL returns 404."
+          - "A method with @GetMapping(\"/hello\") inside a @RestController answers GET /hello."
+          - "Return the String \"Hello from PaySetu!\" from that method; Spring sends it as plain text."
+      - id: merchants
+        title: "GET /merchants: names A to Z, as JSON"
+        hints:
+          - "MERCHANTS is already there, but it is not in A to Z order."
+          - "Return a List<String> from a @GetMapping method: Spring turns it into a JSON array."
+          - "Copy the list and sort it (for example with stream().sorted().toList()) before returning it."

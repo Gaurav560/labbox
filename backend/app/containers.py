@@ -18,10 +18,10 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from . import workspace_files
+from . import services, workspace_files
 from .config import get_settings
-from .labs import LabConfig
-from .models import User, Workspace, utcnow
+from .labs import LabConfig, get_lab
+from .models import ChapterProgress, User, Workspace, utcnow
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def container_name(user_id: int, lab_id: str) -> str:
     return f"lab-u{user_id}-{lab_id}"
 
 
-def labels(kind: Literal["workspace", "check"], user_id: int, lab_id: str) -> dict[str, str]:
+def labels(kind: Literal["workspace", "check", "service", "network"], user_id: int, lab_id: str) -> dict[str, str]:
     return {"labbox": "true", "labbox.kind": kind, "labbox.user": str(user_id), "labbox.lab": lab_id}
 
 
@@ -134,6 +134,14 @@ def container_status(name: str) -> Status:
     return "running" if c.status == "running" else "stopped"
 
 
+def _network_args(lab: LabConfig, ws: Workspace) -> dict:
+    """network: lab (or none with services) joins only the private lab network; bridge keeps the
+    normal Docker network and gets the lab network added after start (see _create)."""
+    if lab.uses_lab_network and lab.workspace.network in ("lab", "none"):
+        return dict(network=services.network_name(ws), networking_config=services.networking_config(ws, services.WORKSPACE_ALIAS))
+    return dict(network_mode=lab.workspace.network)
+
+
 def _create(lab: LabConfig, ws: Workspace) -> Container:
     mount = lab.workspace.mount_path
     c = client().containers.run(
@@ -145,14 +153,16 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
         working_dir=mount,
         volumes={ws.volume_path: {"bind": mount, "mode": "rw"}},
         pids_limit=lab.resources.pids_limit,  # stops fork bombs
-        network_mode=lab.workspace.network,
+        **_network_args(lab, ws),
         tty=True,
         stdin_open=True,
         command=["sleep", "infinity"],
         init=True,  # tini as PID 1: stops in milliseconds (sleep ignores SIGTERM as PID 1) and reaps zombies
-        environment={"HOME": "/home/learner", "TERM": "xterm-256color"},
+        environment={**lab.workspace.env, "HOME": "/home/learner", "TERM": "xterm-256color"},
         **security_options(lab),
     )
+    if lab.uses_lab_network and lab.workspace.network == "bridge":
+        services.attach(c, ws, services.WORKSPACE_ALIAS)
     log.info("Created container %s from %s", ws.container_name, lab.image)
     return c
 
@@ -165,6 +175,9 @@ def ensure_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
         touch(session, ws)
         c = _get(ws.container_name)
         try:
+            # Services first, so the database already answers when the learner's code starts.
+            if lab.uses_lab_network:
+                services.ensure_services(lab, ws)
             if c is None:
                 _create(lab, ws)
             elif c.status != "running":
@@ -185,6 +198,15 @@ def stop_workspace(name: str) -> None:
         log.info("Stopped container %s", name)
 
 
+def stop_group(session: Session, user: User, lab: LabConfig) -> str:
+    """Stop the workspace and its services together. Returns the workspace container name."""
+    ws = get_workspace(session, user, lab)
+    with _locks[ws.container_name]:
+        stop_workspace(ws.container_name)
+        services.stop_services(lab, ws)
+    return ws.container_name
+
+
 def reset_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
     """Delete the container and all files, re-seed starter files, start a new container."""
     ws = get_workspace(session, user, lab)
@@ -193,9 +215,14 @@ def reset_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
         if c is not None:
             c.remove(force=True)
             log.info("Removed container %s for reset", ws.container_name)
+        services.remove_services(lab, ws, wipe_data=True)
         workspace_files.clear_dir(Path(ws.volume_path))
         ws.seeded = False
         session.add(ws)
+        # Chapter setup (seed data, injected failures) runs again on the fresh machine.
+        for cp in session.exec(select(ChapterProgress).where(ChapterProgress.user_id == ws.user_id, ChapterProgress.lab_id == lab.id)).all():
+            cp.setup_done, cp.started_at = False, None
+            session.add(cp)
         session.commit()
     return ensure_workspace(session, user, lab)
 
@@ -225,6 +252,10 @@ def stop_idle(session: Session, older_than: datetime) -> list[str]:
                 stopped.append(ws.container_name)
             except NotFound:
                 pass
+            try:
+                services.stop_services(get_lab(ws.lab_id), ws)  # the group stops as one unit
+            except HTTPException:
+                pass  # the lab no longer exists
     return stopped
 
 

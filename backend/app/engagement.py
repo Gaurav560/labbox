@@ -19,6 +19,7 @@ XP_PREDICT_FIRST_TRY = 10
 XP_CHAPTER = 50
 XP_LAB = 200
 XP_DRILL = 20
+XP_INCIDENT_IN_TIME = 25  # fixing an incident before its (cosmetic) timer runs out
 DEFAULT_TZ = "UTC"
 
 
@@ -267,12 +268,21 @@ def award_for_check(session: Session, user_id: int, lab: LabConfig, chapter_id: 
                   lab_id=lab.id, chapter_id=chapter_id, task_id=t.id, label=t.title, refresh=False)
         if a:
             out.append(a)
+    cp = session.get(ChapterProgress, {"user_id": user_id, "lab_id": lab.id, "chapter_id": chapter_id})
+    for step in lab.chapter_steps(chapter_id):
+        if step.type != "incident" or not step.task or not step.minutes or not passed.get(step.task):
+            continue
+        if cp is None or cp.started_at is None or utcnow() - cp.started_at > timedelta(minutes=step.minutes):
+            continue
+        a = award(session, user_id, "incident", XP_INCIDENT_IN_TIME, f"incident:{lab.id}:{chapter_id}:{step.task}",
+                  lab_id=lab.id, chapter_id=chapter_id, task_id=step.task, label="Fixed inside the timer", refresh=False)
+        if a:
+            out.append(a)
     if chapter.tasks and all(passed.get(t.id) for t in chapter.tasks):
         a = award(session, user_id, "chapter", XP_CHAPTER, f"chapter:{lab.id}:{chapter_id}",
                   lab_id=lab.id, chapter_id=chapter_id, label=f"Chapter complete: {chapter.title}", refresh=False)
         if a:
             out.append(a)
-            cp = session.get(ChapterProgress, {"user_id": user_id, "lab_id": lab.id, "chapter_id": chapter_id})
             if cp is not None and cp.completed_at is None:
                 cp.completed_at = utcnow()
                 session.add(cp)

@@ -11,7 +11,7 @@ LABS_DIR = Path(__file__).resolve().parents[2] / "labs"
 
 def test_real_labs_load():
     labs = load_labs(LABS_DIR)
-    assert set(labs) == {"python-basics", "java-basics"}
+    assert {"python-basics", "java-basics"} <= set(labs)  # more labs are added all the time
     py = labs["python-basics"]
     assert py.image == "labbox/python-basics:v1"
     assert [t.id for t in py.chapters[0].tasks] == ["greet", "add", "is_even"]

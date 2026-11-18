@@ -210,6 +210,60 @@ def _build(lab: LabConfig) -> bool:
     return subprocess.run(["docker", "build", "-q", "-t", lab.image, str(lab.root)]).returncode == 0
 
 
+def _test_live(lab: LabConfig, folder: Path) -> bool:
+    """live labs: a throwaway group (workspace + services) for a test user, then
+    setup -> check must FAIL -> apply the solution -> check must PASS -> remove everything."""
+    import tempfile
+    import uuid
+
+    from app import checker, containers, lab_setup, services, workspace_files
+    from app.models import Workspace
+
+    short = uuid.uuid4().hex[:6]
+    tmp = Path(tempfile.mkdtemp(prefix=f"labbox-test-{lab.id}-"))
+    vol = tmp / "workspace"
+    vol.mkdir()
+    workspace_files.chown(vol)
+    ws = Workspace(user_id=0, lab_id=f"{lab.id}", container_name=f"labtest-{short}-{lab.id}", volume_path=str(vol))
+    ok = True
+    try:
+        containers.seed(lab, vol)
+        services.ensure_services(lab, ws)
+        containers._create(lab, ws)
+        for ch in lab.chapters:
+            if ch.setup:
+                lab_setup.exec_setup(lab, ws, ch)
+        for label in ("starter", "solution"):
+            if label == "solution":
+                shutil.copytree(folder / "solution", vol, dirs_exist_ok=True)
+                workspace_files.chown_tree(vol)
+                if (vol / "apply.sh").is_file():
+                    r = containers.client().containers.get(ws.container_name).exec_run(
+                        ["bash", f"{lab.workspace.mount_path}/apply.sh"], user=containers.LEARNER_USER)
+                    if r.exit_code != 0:
+                        print(f"    ✗ solution/apply.sh failed: {r.output.decode(errors='replace')[-500:]}")
+                        return False
+            want = label == "solution"
+            for ch in lab.chapters:
+                res = checker.check_live(lab, ch.id, ws)
+                print(f"  {ch.id} {label:8} {res.passed_count}/{res.total_count} passed ({res.duration_ms} ms, live)")
+                for r in res.results:
+                    if r.passed != want:
+                        ok = False
+                        print(f"    ✗ {r.task}: should {'PASS' if want else 'FAIL'} on {label}: {r.message}")
+        return ok
+    finally:
+        for c in containers.client().containers.list(all=True, filters={"name": ws.container_name}):
+            c.remove(force=True)
+        services.remove_services(lab, ws, wipe_data=True)
+        try:
+            containers.client().networks.get(services.network_name(ws)).remove()
+        except Exception:
+            pass
+        shutil.rmtree(tmp, ignore_errors=True)
+        shutil.rmtree(f"{vol}.services", ignore_errors=True)
+
+
 def cmd_test_lab(args: argparse.Namespace) -> int:
     from app import checker
     from app.config import get_settings
@@ -224,6 +278,11 @@ def cmd_test_lab(args: argparse.Namespace) -> int:
         print("Image build failed")
         return 1
     get_settings().CHECKS_DIR.mkdir(parents=True, exist_ok=True)
+
+    if lab.check.mode == "live":
+        ok = _test_live(lab, folder)
+        print(f"✓ {lab.id}: starter fails every task, solution passes every task" if ok else f"✗ {lab.id}")
+        return 0 if ok else 1
 
     ok = True
     for ch in lab.chapters:

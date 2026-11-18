@@ -1,0 +1,5 @@
+# Only the Dockerfile and warm/ (a copy of the starter pom, to pre-fetch dependencies) go to the build.
+solution/
+tests/
+starter/
+chapters/

@@ -84,21 +84,49 @@ def test_bad_track(lab_copy: Path):
 @pytest.mark.parametrize(
     "change, phase",
     [
-        (lambda d: d.update(services=[{"name": "db", "image": "postgres:16"}]), "services needs Phase D"),
-        (lambda d: d.update(preview=[{"name": "App", "port": 8080}]), "preview needs Phase D"),
         (lambda d: d.update(llm={"enabled": True}), "llm needs Phase E"),
         (lambda d: d.update(runtime="sysbox"), "runtime: sysbox needs Phase F"),
-        (lambda d: d.update(resources="m"), "tiers"),
         (lambda d: d["resources"].update(disk_mb=1024), "disk_mb needs Phase H"),
-        (lambda d: d["workspace"].update(network="lab"), "network: lab needs Phase D"),
         (lambda d: d["workspace"].update(sudo=True), "sudo needs Phase F"),
-        (lambda d: d["check"].update(mode="live"), "live needs Phase D"),
-        (lambda d: d["chapters"][0].update(setup=["bash", "/lab/setup/01.sh"]), "setup needs Phase D"),
     ],
 )
 def test_unbuilt_features_are_refused(lab_copy: Path, change, phase: str):
     edit(lab_copy, change)
     with pytest.raises(LabError, match=phase):
+        load_lab(lab_copy)
+
+
+def test_phase_d_features_load(lab_copy: Path):
+    def d(data):
+        data["resources"] = "m"
+        data["services"] = [{"name": "db", "image": "postgres:16", "ready": ["pg_isready"], "data": "/var/lib/postgresql/data"}]
+        data["preview"] = [{"name": "App", "port": 8000}]
+        data["workspace"].update(network="lab", env={"PGHOST": "db"})
+        data["check"].update(mode="live")
+        data["chapters"][0].update(setup=["bash", "/lab/setup/01.sh"])
+
+    edit(lab_copy, d)
+    lab = load_lab(lab_copy)
+    assert (lab.resources.cpus, lab.resources.memory, lab.resources.pids_limit) == (2, "2g", 1024)
+    assert lab.uses_lab_network and lab.services[0].user == "1000:1000"
+
+
+@pytest.mark.parametrize(
+    "change, match",
+    [
+        (lambda d: d.update(resources="xxl"), "unknown tier"),
+        (lambda d: d.update(services=[{"name": "workspace", "image": "redis:7"}]), "bad service name"),
+        (lambda d: d.update(services=[{"name": "db", "image": "x"}, {"name": "db", "image": "y"}]), "duplicate service"),
+        (lambda d: d.update(services=[{"name": "db", "image": "x", "cap_add": ["SYS_ADMIN"]}]), "cap_add may only"),
+        (lambda d: d.update(services=[{"name": "db", "image": "x", "cap_add": ["CHOWN"]}]), "only allowed with user: default"),
+        (lambda d: d["check"].update(mode="live"), "live needs services"),
+        (lambda d: d["workspace"].update(network_egress=True), "network_egress only applies"),
+        (lambda d: d["chapters"][0].update(setup=["x"], setup_target="db"), "is not a service"),
+    ],
+)
+def test_bad_phase_d_config(lab_copy: Path, change, match: str):
+    edit(lab_copy, change)
+    with pytest.raises(LabError, match=match):
         load_lab(lab_copy)
 
 
@@ -195,9 +223,14 @@ def test_solution_is_never_seeded(tmp_path: Path):
         containers.seed(lab, folder)
         seeded = {p.relative_to(folder) for p in folder.rglob("*")}
         assert seeded == {p.relative_to(lab.starter_dir) for p in lab.starter_dir.rglob("*")}
+        # Solution files that differ from the starter (the actual answers) never reach a workspace.
         for f in (lab.root / "solution").rglob("*"):
-            if f.is_file() and (folder / f.name).is_file():
-                assert (folder / f.name).read_bytes() != f.read_bytes(), f"{lab.id}: solution file {f.name} seeded"
+            rel = f.relative_to(lab.root / "solution")
+            starter = lab.starter_dir / rel
+            if not f.is_file() or (starter.is_file() and starter.read_bytes() == f.read_bytes()):
+                continue
+            seeded_file = folder / rel
+            assert not seeded_file.is_file() or seeded_file.read_bytes() != f.read_bytes(), f"{lab.id}: solution {rel} seeded"
 
 
 def test_solution_and_tests_stay_out_of_images():
@@ -218,7 +251,7 @@ def test_public_catalog_needs_no_login_and_leaks_nothing(client: TestClient):
     r = client.get("/api/catalog")
     assert r.status_code == 200
     by_id = {lab["id"]: lab for lab in r.json()}
-    assert set(by_id) == {"python-basics", "java-basics"}
+    assert {"python-basics", "java-basics", "postgres-indexing-incident"} <= set(by_id)
     assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count"}
     lab = labs.get_lab("python-basics")
     hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints]

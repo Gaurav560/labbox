@@ -16,6 +16,8 @@ const TRACKS: { id: string; title: string }[] = [
   { id: "interview", title: "Interview prep" },
 ];
 
+const LIVE_SHOWN = 6; // lab titles listed under the track chips; the rest become "and N more"
+
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
 const DEMO = {
   question: 'What does this print?\n\n```python\nprint("chai" * 2)\n```',
@@ -236,7 +238,8 @@ export default function HomePage() {
           </ul>
           {live.length > 0 && (
             <p className="muted live-labs">
-              Live now: {live.map((l) => l.title).join(" · ")}
+              Live now: {live.slice(0, LIVE_SHOWN).map((l) => l.title).join(" · ")}
+              {live.length > LIVE_SHOWN && ` and ${live.length - LIVE_SHOWN} more`}
             </p>
           )}
         </section>

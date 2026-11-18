@@ -60,8 +60,8 @@ def test_task_without_step(labs_dir: Path):
 
 def test_schema_errors_are_reported(labs_dir: Path):
     path = labs_dir / "python-basics" / "lab.yaml"
-    path.write_text(path.read_text() + "services:\n  - {name: db, image: postgres:16}\n")
-    assert any("services needs Phase D" in e for e in errors(labs_dir / "python-basics"))
+    path.write_text(path.read_text() + "llm: {enabled: true}\n")
+    assert any("llm needs Phase E" in e for e in errors(labs_dir / "python-basics"))
     assert cli.main(["--labs-dir", str(labs_dir), "validate", "--no-docker"]) == 1
 
 
@@ -88,7 +88,7 @@ def test_new_lab_refuses(tmp_path: Path):
 
 
 @pytest.mark.docker
-@pytest.mark.parametrize("lab", ["python-basics", "java-basics"])
+@pytest.mark.parametrize("lab", ["python-basics", "java-basics", "fastapi-first-api", "spring-boot-first-api", "postgres-indexing-incident"])
 def test_test_lab(lab: str, capsys):
     """Starter fails every task, solution passes every task (image must be built)."""
     from tests.test_e2e_docker import _docker_ready

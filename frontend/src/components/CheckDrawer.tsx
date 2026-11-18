@@ -15,7 +15,7 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
     <section className={`check-drawer ${allPass ? "drawer-pass" : ""}`} aria-label="Check results" aria-live="polite">
       <div className="drawer-head">
         {running || !result ? (
-          <span className="drawer-title"><span className="spinner" /> Running hidden tests on a clean machine...</span>
+          <span className="drawer-title"><span className="spinner" /> Running the hidden checks...</span>
         ) : (
           <>
             <span className={`drawer-title ${allPass ? "pass" : "fail"}`}>

@@ -233,9 +233,63 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `pitch`), and per chapter `minutes`. Tasks take `xp` (default 20) and `hints`.
 
 Fields whose engine is not built yet are refused at start-up with a message naming the phase that adds
-them, so a lab never silently loses a feature: `services`, `preview`, `workspace.network: lab`,
-`check.mode: live`, chapter `setup` and resource tiers (Phase D), `llm` (Phase E), `runtime` and
-`workspace.sudo` (Phase F), `resources.disk_mb` (Phase H).
+them, so a lab never silently loses a feature: `llm` (Phase E), `runtime` and `workspace.sudo`
+(Phase F), `resources.disk_mb` (Phase H).
+
+### Labs with services, previews, live checks and incidents
+
+`labs/postgres-indexing-incident` shows all of it; `fastapi-first-api` and `spring-boot-first-api` show
+previews.
+
+```yaml
+resources: s                      # a tier (xs, s, m, l) or cpus / memory / pids_limit
+workspace:
+  network: lab                    # only the private per-user network (add network_egress: true for internet)
+  env: { PGHOST: db, PGPASSWORD: labpass }
+services:                         # extra containers, reachable from the workspace by name (db:5432)
+  - name: db
+    image: postgres:16
+    env: { POSTGRES_PASSWORD: labpass }
+    resources: { cpus: 1, memory: 768m, pids_limit: 256 }
+    data: /var/lib/postgresql/data          # kept across restarts, wiped by Reset lab
+    ready: [pg_isready, -h, 127.0.0.1]      # the lab counts as started once this exits 0
+preview:
+  - { name: "App", port: 8000, path: "/" }  # shown in the Preview tab
+check:
+  mode: live                      # a checker container inspects the running system
+chapters:
+  - id: 01-incident
+    setup: [bash, /lab/setup/01.sh]         # runs once, as root, when the chapter is first opened
+```
+
+- **Services** run as uid 1000 with no capabilities, like the workspace (Postgres and Redis images
+  support that). `user: default` keeps the image's own user and only then allows a few `cap_add`
+  entries. Service data lives next to the workspace folder (`VOLUMES_DIR/u{id}/{lab}.services/`), never
+  inside `/workspace`. Services start before the workspace, stop with it (Stop machine and the idle
+  reaper treat the group as one unit), and Reset lab wipes their data.
+- **Previews** go through `/preview/{lab}/{port}/{path}` (HTTP and WebSocket). The lab page sets a
+  short-lived HttpOnly cookie (SameSite=Strict, path `/preview`) that is only valid for previews, never
+  as a login. The URL has no user id: it always reaches the cookie owner's own machine, and only the
+  listed ports. Learner apps must listen on `0.0.0.0`. **In production, serve `/preview` from its own
+  origin** (for example `preview.labs.example.com`, a second server block in `deploy/nginx.conf` with the
+  same `/preview/` location), so JavaScript written by learners cannot reach the main app's storage.
+- **Live checks** run in `labbox/checker:v1` (Python with requests, psycopg and redis, plus psql,
+  redis-cli and curl) on the learner's lab network, with `tests/` read-only and (only with
+  `check.mount_workspace: ro`) the learner's files read-only. No learner code runs in it, so printing a
+  fake `@@RESULT` has no effect.
+- **Chapter setup** scripts live in the image under `/lab/setup/` (make them unreadable for the learner:
+  `chmod -R go-rwx /lab`). `setup_target` runs them in a service instead of the workspace. The time a
+  chapter is first opened starts its incident timer: fixing an `incident` step inside `minutes` gives
+  +25 XP.
+- **`labbox test-lab`** on a live lab starts a throwaway group, runs setup, expects every task to FAIL,
+  copies `solution/` in and runs `solution/apply.sh` if there is one, expects every task to PASS, then
+  removes everything.
+
+### Base images
+
+`scripts/build_lab_images.sh` builds `images/base` (Ubuntu 24.04, learner uid 1000), then
+`images/python` (Python 3.12, pytest), `images/java` (Temurin 21, Maven) and `images/checker`, then
+every lab. Lab Dockerfiles start `FROM labbox/python:v1` or `FROM labbox/java:v1` and add a few lines.
 
 ### Check output
 
@@ -345,6 +399,8 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
   (no swap) and CPU limits. Nothing is privileged and the Docker socket is never mounted.
 - Check containers have no network and get the tests read-only. Hidden tests and `solution/` are never
   copied into a workspace or an image, or served by the API. Predict answers are checked on the server.
+- Service containers get the same limits; lab networks are internal (no internet) unless a lab opts in.
+  Live checkers never run learner code. Preview cookies are scoped to previews and to the owner's machine.
 - Every route takes the user id from the JWT only. The terminal WebSocket requires a valid JWT.
 - The file API rejects absolute paths, `..` escapes and symlinks that leave the workspace.
   Delete and rename act on a symlink itself, never on its target.
@@ -360,6 +416,8 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 - SQLite: fine for a POC, not for many concurrent writers.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file
   to see the new content.
-- A determined user can still fake a passing check from inside their own process (for example by
-  printing a `@@RESULT` line and exiting before the real checks run). Graders that must be
-  tamper-proof should run user code in a separate process from the reporter.
+- In `fresh` labs a determined user can still fake a passing check from inside their own process (for
+  example by printing a `@@RESULT` line and exiting before the real checks run). `live` labs are not
+  affected; graders that must be tamper-proof should use live mode or run user code in a separate
+  process from the reporter.
+- Previews share the main origin in development (see above for production).

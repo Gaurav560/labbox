@@ -1,6 +1,7 @@
 import type { PredictState, Step, Task } from "../api";
 import { useStats } from "../stats";
 import ChoiceQuestion from "./ChoiceQuestion";
+import Countdown from "./Countdown";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
 
@@ -30,6 +31,8 @@ interface Props {
   tasksLeft: number;
   hasNextChapter: boolean;
   chapterXp: number;
+  startedAt: string | null; // when the chapter was first opened; incident timers count from here
+  checkMode: "fresh" | "live";
   onPredict: (option: number) => void;
   onHint: (taskId: string) => void;
   onRun: (command: string) => void;
@@ -55,8 +58,12 @@ export default function StepCard(p: Props) {
         </details>
       ) : step.type === "incident" ? (
         <div className="incident" role="alert">
-          <div className="incident-head">🚨 Incident</div>
+          <div className="incident-head">
+            <span>🚨 Incident</span>
+            {step.minutes ? <Countdown minutes={step.minutes} startedAt={p.startedAt} /> : null}
+          </div>
           {body}
+          {step.minutes ? <p className="muted small-text">Fix it before the timer runs out for +25 bonus XP.</p> : null}
         </div>
       ) : (
         body
@@ -74,7 +81,7 @@ export default function StepCard(p: Props) {
       )}
 
       {(step.type === "task" || step.type === "incident") && p.task && (
-        <TaskBox task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} onHint={p.onHint} onCheck={p.onCheck} />
+        <TaskBox task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} live={p.checkMode === "live"} onHint={p.onHint} onCheck={p.onCheck} />
       )}
 
       {step.type === "recap" && (
@@ -98,7 +105,7 @@ export default function StepCard(p: Props) {
   );
 }
 
-function TaskBox(p: { task: Task; hints: string[]; hintBusy: boolean; checking: boolean; onHint: (id: string) => void; onCheck: () => void }) {
+function TaskBox(p: { task: Task; hints: string[]; hintBusy: boolean; checking: boolean; live: boolean; onHint: (id: string) => void; onCheck: () => void }) {
   const { task } = p;
   return (
     <div className={`task-box ${task.passed ? "task-done" : ""}`}>
@@ -111,7 +118,11 @@ function TaskBox(p: { task: Task; hints: string[]; hintBusy: boolean; checking: 
         <span className="xp-chip" title="Each hint you reveal lowers the XP for this task">{task.xp} XP</span>
       </div>
       <p className="muted small-text">
-        {task.passed ? "Passed. Nice work." : "Edit your files, then press Check to run the hidden tests on a clean machine."}
+        {task.passed
+          ? "Passed. Nice work."
+          : p.live
+            ? "Fix the running system, then press Check: a checker inspects it live."
+            : "Edit your files, then press Check to run the hidden tests on a clean machine."}
       </p>
       <HintLadder task={task} hints={p.hints} busy={p.hintBusy} onReveal={() => p.onHint(task.id)} />
       {!task.passed && (

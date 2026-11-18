@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { Chapter, Progress } from "../api";
+import type { Chapter, Progress, ServiceStatus } from "../api";
 import { useTheme } from "../theme";
 import { LogoMark } from "./Logo";
 import StatsBadges from "./StatsBadges";
@@ -13,6 +13,7 @@ interface Props {
   onChapter: (id: string) => void;
   progress: Progress | null;
   status: UiStatus;
+  services?: ServiceStatus[];
   username: string;
   focus: boolean;
   onFocus: () => void;
@@ -50,6 +51,17 @@ export default function StatusBar(p: Props) {
       <span className="machine">
         <span className={`status-dot status-${p.status}`} aria-hidden="true" />
         <span className="status-label">{LABEL[p.status]}</span>
+        {!!p.services?.length && (
+          <span className="service-dots" aria-label="Services">
+            {p.services.map((s) => (
+              <span key={s.name} className="service-dot" title={`${s.name}: ${s.status}`}>
+                <span className={`status-dot status-${s.status === "running" ? "running" : s.status === "starting" ? "starting" : "stopped"}`} aria-hidden="true" />
+                <span className="small-text">{s.name}</span>
+                <span className="sr-only">{s.status}</span>
+              </span>
+            ))}
+          </span>
+        )}
       </span>
       {p.status === "stopped" || p.status === "error" ? (
         <button className="btn btn-small" onClick={p.onStart}>Start machine</button>

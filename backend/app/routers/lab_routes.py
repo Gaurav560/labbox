@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from .. import containers, progress
+from .. import containers, progress, services
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
-from ..labs import LabConfig, all_labs, get_lab
+from ..labs import LabConfig, PreviewPort, all_labs, get_lab
 from ..lessons import PublicStep, StepType, public_step, redact_markdown
 from ..models import User
 
@@ -54,9 +54,13 @@ class ChapterOut(BaseModel):
     title: str
     tasks: list[TaskOut]
     minutes: int | None = None
+    has_setup: bool = False  # the lab page calls .../setup when the chapter opens
 
 
 class LabDetail(LabInfo):
+    preview: list[PreviewPort] = []
+    services: list[str] = []
+    check_mode: str = "fresh"
     id: str
     title: str
     description: str
@@ -120,6 +124,9 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
     used = progress.hints_used(session, user.id, lab.id)
     return LabDetail(
         **_info(lab),
+        preview=lab.preview,
+        services=[s.name for s in lab.services],
+        check_mode=lab.check.mode,
         id=lab.id,
         title=lab.title,
         description=lab.description,
@@ -129,6 +136,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
                 id=c.id,
                 title=c.title,
                 minutes=c.minutes,
+                has_setup=bool(c.setup),
                 tasks=[
                     TaskOut(
                         id=t.id,
@@ -166,12 +174,18 @@ def outline(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)
     return Outline(steps=[OutlineStep(type=s.type, title=s.title, task=s.task) for s in lab.chapter_steps(chapter_id)])
 
 
+class ServiceStatus(BaseModel):
+    name: str
+    status: Literal["running", "starting", "stopped", "missing"]
+
+
 class WorkspaceStatus(BaseModel):
     status: Literal["running", "stopped", "missing"]
     container: str | None = None
+    services: list[ServiceStatus] | None = None  # only for labs with services
 
 
-@router.post("/{lab_id}/workspace/start", response_model=WorkspaceStatus)
+@router.post("/{lab_id}/workspace/start", response_model=WorkspaceStatus, response_model_exclude_none=True)
 async def workspace_start(
     lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
 ) -> WorkspaceStatus:
@@ -179,15 +193,15 @@ async def workspace_start(
     return WorkspaceStatus(status="running", container=ws.container_name)
 
 
-@router.post("/{lab_id}/workspace/stop", response_model=WorkspaceStatus)
-async def workspace_stop(lab_id: str, user: User = Depends(get_current_user)) -> WorkspaceStatus:
-    assert user.id is not None
-    name = containers.container_name(user.id, get_lab(lab_id).id)
-    await asyncio.to_thread(containers.stop_workspace, name)
+@router.post("/{lab_id}/workspace/stop", response_model=WorkspaceStatus, response_model_exclude_none=True)
+async def workspace_stop(
+    lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> WorkspaceStatus:
+    name = await asyncio.to_thread(containers.stop_group, session, user, get_lab(lab_id))
     return WorkspaceStatus(status="stopped", container=name)
 
 
-@router.post("/{lab_id}/workspace/reset", response_model=WorkspaceStatus)
+@router.post("/{lab_id}/workspace/reset", response_model=WorkspaceStatus, response_model_exclude_none=True)
 async def workspace_reset(
     lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
 ) -> WorkspaceStatus:
@@ -195,11 +209,19 @@ async def workspace_reset(
     return WorkspaceStatus(status="running", container=ws.container_name)
 
 
-@router.get("/{lab_id}/workspace/status", response_model=WorkspaceStatus)
-async def workspace_status(lab_id: str, user: User = Depends(get_current_user)) -> WorkspaceStatus:
+@router.get("/{lab_id}/workspace/status", response_model=WorkspaceStatus, response_model_exclude_none=True)
+async def workspace_status(
+    lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> WorkspaceStatus:
     assert user.id is not None
-    name = containers.container_name(user.id, get_lab(lab_id).id)
-    return WorkspaceStatus(status=await asyncio.to_thread(containers.container_status, name), container=name)
+    lab = get_lab(lab_id)
+    name = containers.container_name(user.id, lab.id)
+    status = await asyncio.to_thread(containers.container_status, name)
+    svc: list[ServiceStatus] | None = None
+    if lab.services:
+        ws = containers.get_workspace(session, user, lab)
+        svc = [ServiceStatus(**s) for s in await asyncio.to_thread(services.service_states, lab, ws)]
+    return WorkspaceStatus(status=status, container=name, services=svc)
 
 
 # ---------- public catalog (home page, no login) ----------

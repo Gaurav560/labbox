@@ -1,12 +1,13 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type PredictState, type Step } from "../api";
+import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
 import ChapterPanel from "../components/ChapterPanel";
 import CheckDrawer from "../components/CheckDrawer";
 import EditorPane, { type Tab } from "../components/EditorPane";
 import FileTree from "../components/FileTree";
+import PreviewPane from "../components/PreviewPane";
 import Splitter from "../components/Splitter";
 import StatusBar, { type UiStatus } from "../components/StatusBar";
 import TaskList from "../components/TaskList";
@@ -62,7 +63,10 @@ export default function LabPage() {
   const [predicts, setPredicts] = useState<Record<number, PredictState>>({});
   const [predictBusy, setPredictBusy] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [bottomTab, setBottomTab] = useState<"terminal" | "output">("terminal");
+  const [bottomTab, setBottomTab] = useState<"terminal" | "preview" | "output">("terminal");
+  const [services, setServices] = useState<ServiceStatus[] | undefined>(undefined);
+  const [setupState, setSetupState] = useState<"idle" | "running" | "error">("idle");
+  const [startedAt, setStartedAt] = useState<string | null>(null);
   const [chapterXp, setChapterXp] = useState(0);
   const autoOpened = useRef(false);
   const [status, setStatus] = useState<UiStatus>("starting");
@@ -146,6 +150,32 @@ export default function LabPage() {
       })
       .catch((e) => toast(errMsg(e)));
   }, [labId, chapterId, toast]);
+
+  // Chapter setup: seed data or an injected incident, once per learner. Also starts the incident timer.
+  const chapterMeta = lab?.chapters.find((c) => c.id === chapterId);
+  const needsSetup = !!chapterMeta && (chapterMeta.has_setup || !!steps?.some((s) => s.type === "incident"));
+  useEffect(() => {
+    if (!needsSetup || status !== "running") return;
+    let cancelled = false;
+    setSetupState("running");
+    api
+      .chapterSetup(labId, chapterId)
+      .then((r) => {
+        if (cancelled) return;
+        setStartedAt(r.started_at);
+        setSetupState("idle");
+        if (r.ran) toast("This chapter's machine is ready", "info");
+        api.workspaceStatus(labId).then((s) => !cancelled && setServices(s.services)).catch(() => {});
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setSetupState("error");
+        toast(`Could not set up this chapter: ${errMsg(e)}`);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [needsSetup, status, labId, chapterId, toast]);
 
   // ---------- steps ----------
 
@@ -239,6 +269,7 @@ export default function LabPage() {
       try {
         const s = await api.workspaceStatus(labId);
         setStatus((cur) => (cur === "running" && s.status !== "running" ? "stopped" : cur));
+        setServices(s.services);
       } catch {
         /* toast-worthy errors surface elsewhere */
       }
@@ -490,6 +521,7 @@ export default function LabPage() {
         onChapter={setChapterId}
         progress={lab?.progress ?? null}
         status={status}
+        services={services}
         username={user?.username ?? ""}
         focus={focus}
         onFocus={() => setFocus((f) => !f)}
@@ -499,6 +531,11 @@ export default function LabPage() {
       />
       <main className="lab-body">
         <aside className="left-panel" style={{ width: leftW }}>
+          {setupState === "running" && (
+            <div className="setup-banner" role="status">
+              <span className="spinner" /> Setting up this chapter on your machine. This can take a few seconds.
+            </div>
+          )}
           {steps && current ? (
             <LessonPanel steps={steps} current={step} visited={visited} onGo={goStep}>
               {steps.length === 1 ? (
@@ -516,6 +553,8 @@ export default function LabPage() {
                   tasksLeft={tasks.filter((t) => !t.passed).length}
                   hasNextChapter={!!nextChapter}
                   chapterXp={chapterXp}
+                  startedAt={startedAt}
+                  checkMode={lab?.check_mode ?? "fresh"}
                   onPredict={(o) => pickPredict(step, o)}
                   onHint={revealHint}
                   onRun={runInTerminal}
@@ -539,7 +578,7 @@ export default function LabPage() {
               />
             )}
             <div className="footer-actions">
-              <button className="btn btn-primary btn-check" onClick={runCheck} disabled={checking || !chapterId}>
+              <button className="btn btn-primary btn-check" onClick={runCheck} disabled={checking || !chapterId || setupState === "running"}>
                 {checking ? <><span className="spinner" /> Checking...</> : "Check"}
               </button>
               {activeTask && activeTask.hint_count > 0 && !activeTask.passed && (
@@ -577,6 +616,11 @@ export default function LabPage() {
               <button role="tab" aria-selected={bottomTab === "terminal"} className="bottom-tab" onClick={() => setBottomTab("terminal")}>
                 Terminal
               </button>
+              {!!lab?.preview.length && (
+                <button role="tab" aria-selected={bottomTab === "preview"} className="bottom-tab" onClick={() => setBottomTab("preview")}>
+                  Preview
+                </button>
+              )}
               <button role="tab" aria-selected={bottomTab === "output"} className="bottom-tab" onClick={() => setBottomTab("output")}>
                 Output
               </button>
@@ -590,6 +634,11 @@ export default function LabPage() {
                 onConnected={() => setStatus("running")}
               />
             </div>
+            {!!lab?.preview.length && (
+              <div className="bottom-body" hidden={bottomTab !== "preview"}>
+                <PreviewPane labId={labId} ports={lab.preview} visible={bottomTab === "preview"} />
+              </div>
+            )}
             <div className="bottom-body" hidden={bottomTab !== "output"}>
               <pre className="output" tabIndex={0}>
                 {result ? result.output || "(the check printed nothing)" : "Press Check to see the raw output of the hidden tests here."}

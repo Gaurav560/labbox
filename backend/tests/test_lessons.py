@@ -131,8 +131,9 @@ def test_real_chapters_are_v2():
         for ch in lab.chapters:
             types = [s.type for s in lab.chapter_steps(ch.id)]
             assert 6 <= len(types) <= 9, (lab.id, types)
-            for needed in ("story", "predict", "task", "recap"):
+            for needed in ("story", "predict", "recap"):
                 assert needed in types, (lab.id, needed)
+            assert "task" in types or "incident" in types, (lab.id, "task or incident")  # content standard, section 9
             assert {s.task for s in lab.chapter_steps(ch.id) if s.task} == {t.id for t in ch.tasks}
             assert all(len(t.hints) == 3 for t in ch.tasks)
 
