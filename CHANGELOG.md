@@ -1,5 +1,14 @@
 # Changelog
 
+## Login page redesign
+
+- Split screen: a showcase side with real technology logos floating over a soft glow and a terminal
+  that types out a lab run (still when the browser asks for reduced motion), and the form on the right
+  with a gradient border, large fields, a Show/Hide toggle for the password and one big primary button.
+- Same fields, button names and behaviour as before (Enter submits; the other action stays one click
+  away). On phones the showcase shrinks to a short band above the form.
+- Logos for the page are in `frontend/public/logos/` (devicon, MIT).
+
 ## Lab covers: real logos on brand colours
 
 - Every lab card now shows the real technology logo on its brand colour: Python blue, Java orange,
