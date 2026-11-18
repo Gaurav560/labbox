@@ -22,8 +22,14 @@ public class CheckGreeter {
     }
 
     static void report(String task, boolean passed, String message) {
+        report(task, passed, message, null, null);
+    }
+
+    /** expected and actual are optional v2 fields; the UI shows them side by side. */
+    static void report(String task, boolean passed, String message, String expected, String actual) {
+        String extra = expected == null ? "" : ", \"expected\": \"" + esc(expected) + "\", \"actual\": \"" + esc(actual) + "\"";
         System.out.println("@@RESULT {\"task\": \"" + esc(task) + "\", \"passed\": " + passed
-                + ", \"message\": \"" + esc(message) + "\"}");
+                + ", \"message\": \"" + esc(message) + "\"" + extra + "}");
         System.out.flush();
     }
 
@@ -44,7 +50,8 @@ public class CheckGreeter {
             for (String[] c : cases) {
                 Object got = m.invoke(null, c[0]);
                 if (!c[1].equals(got)) {
-                    report("greet", false, "greet(\"" + c[0] + "\") returned " + show(got) + ", expected " + show(c[1]));
+                    report("greet", false, "greet(\"" + c[0] + "\") returned " + show(got) + ", expected " + show(c[1]),
+                            show(c[1]), show(got));
                     return;
                 }
             }
@@ -69,7 +76,8 @@ public class CheckGreeter {
             for (Object[] c : cases) {
                 Object got = m.invoke(null, c[0]);
                 if (!c[1].equals(got)) {
-                    report("longest_word", false, "longestWord(\"" + c[0] + "\") returned " + show(got) + ", expected " + c[1]);
+                    report("longest_word", false, "longestWord(\"" + c[0] + "\") returned " + show(got) + ", expected " + c[1],
+                            show(c[1]), show(got));
                     return;
                 }
             }

@@ -14,7 +14,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, col, select
 
-from . import containers, workspace_files
+from . import containers, progress, workspace_files
 from .config import get_settings
 from .labs import LabConfig
 from .models import CheckRun, User, Workspace
@@ -33,6 +33,8 @@ class TaskResult(BaseModel):
     title: str = ""
     passed: bool
     message: str
+    expected: str | None = None
+    actual: str | None = None
 
 
 class CheckResponse(BaseModel):
@@ -47,6 +49,8 @@ class _RawResult(BaseModel):
     task: str
     passed: bool
     message: str = ""
+    expected: str | int | float | None = None
+    actual: str | int | float | None = None
 
 
 # ---------- one check per user at a time ----------
@@ -121,7 +125,16 @@ def parse_results(logs: str, lab: LabConfig, chapter_id: str) -> list[TaskResult
         if r is None:
             results.append(TaskResult(task=task.id, title=task.title, passed=False, message=NO_RESULT))
         else:
-            results.append(TaskResult(task=task.id, title=task.title, passed=r.passed, message=r.message[:500]))
+            results.append(
+                TaskResult(
+                    task=task.id,
+                    title=task.title,
+                    passed=r.passed,
+                    message=r.message[:500],
+                    expected=None if r.expected is None else str(r.expected)[:500],
+                    actual=None if r.actual is None else str(r.actual)[:500],
+                )
+            )
     return results
 
 
@@ -195,12 +208,13 @@ def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
             chapter_id=chapter_id,
             passed_count=passed,
             total_count=len(results),
-            results_json=json.dumps([r.model_dump(exclude={"title"}) for r in results]),
+            results_json=json.dumps([r.model_dump(exclude={"title"}, exclude_none=True) for r in results]),
             output_tail=output,
             duration_ms=duration_ms,
         )
     )
     session.commit()
+    progress.record_check(session, user.id, lab.id, chapter_id, {r.task: r.passed for r in results})
     log.info(
         "Check user=%s lab=%s chapter=%s: %d/%d passed in %d ms%s",
         user.id, lab.id, chapter_id, passed, len(results), duration_ms, " (timed out)" if timed_out else "",

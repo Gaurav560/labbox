@@ -41,3 +41,29 @@ class CheckRun(SQLModel, table=True):
     output_tail: str
     duration_ms: int
     created_at: datetime = Field(default_factory=utcnow)
+
+
+class ChapterProgress(SQLModel, table=True):
+    # one row per (user, lab, chapter)
+    __tablename__ = "chapter_progress"
+
+    user_id: int = Field(foreign_key="user.id", primary_key=True)
+    lab_id: str = Field(primary_key=True)
+    chapter_id: str = Field(primary_key=True)
+    current_step: int = 0
+    setup_done: bool = False
+    completed_at: datetime | None = None
+    updated_at: datetime = Field(default_factory=utcnow)
+
+
+class TaskProgress(SQLModel, table=True):
+    # one row per (user, lab, task); task ids are unique within a lab
+    __tablename__ = "task_progress"
+
+    user_id: int = Field(foreign_key="user.id", primary_key=True)
+    lab_id: str = Field(primary_key=True)
+    task_id: str = Field(primary_key=True)
+    chapter_id: str
+    passed: bool = False
+    hints_used: int = 0
+    first_passed_at: datetime | None = None

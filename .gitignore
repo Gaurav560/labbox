@@ -20,3 +20,7 @@ frontend/dist/
 .env
 *.pem
 *.egg-info/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/

@@ -2,7 +2,8 @@
 
 LabBox is a small "hands-on coding labs" platform. Each user gets their own Docker container per lab,
 with a Monaco editor, a real terminal (xterm.js) and a Check button that grades their code with hidden
-tests in a fresh, network-less container.
+tests in a fresh, network-less container. Lessons are shown one step at a time (story, concept, predict,
+try, task, recap), with a hint ladder per task. See `CHANGELOG.md` for what changed in each phase.
 
 ```
 Browser (React: Monaco + xterm)
@@ -63,9 +64,29 @@ Open http://localhost:5173, sign up, and open a lab. Vite proxies `/api` and `/w
 
 ```bash
 cd backend
-.venv/bin/pytest -m "not docker"   # fast: path safety and lab.yaml validation
+.venv/bin/pytest -m "not docker"   # fast: path safety, lab.yaml, lesson steps, migrations, progress API
 .venv/bin/pytest -m docker         # end to end: needs Docker running and the lab images built
+
+cd frontend
+npm run test:e2e                   # browser flow in your installed Chrome; needs the backend, Vite and Docker running
 ```
+
+The browser test signs up a fresh user, walks a lab with the keyboard, answers a predict, reveals a hint,
+passes Check and checks that step, panel sizes and theme survive a reload. It removes the containers it
+created when it finishes.
+
+### Database migrations
+
+The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself
+at start-up; a POC database (made before migrations existed) is recognised and stamped first, so no data
+is touched. Migrations only ever add tables or columns, and downgrades are disabled on purpose.
+
+```bash
+cd backend
+.venv/bin/alembic revision --autogenerate -m "add something"   # after changing app/models.py
+```
+
+`tests/test_migrations.py` fails if a model changes without a matching migration.
 
 ### Configuration (`backend/.env`)
 
@@ -95,7 +116,7 @@ Keep comments in `.env` on their own lines: systemd's `EnvironmentFile` does not
 3. Write the `Dockerfile`. The container must work as **uid 1000** and keep running with
    `sleep infinity`. Install everything the checks need: check containers have **no network**.
 4. Put starter files in `starter/` (copied once into each new workspace) and chapter text in
-   `chapters/*.md`.
+   `chapters/*.md` (format below).
 5. Put hidden tests in `tests/`. The check command (usually `bash /check/tests/run_checks.sh`) runs
    with the user's files copied to `/check/workspace` (the working dir) and `tests/` mounted read-only
    at `/check/tests`. It must print one line per task:
@@ -106,8 +127,77 @@ Keep comments in `.env` on their own lines: systemd's `EnvironmentFile` does not
 
    Missing tasks count as failed. Messages should describe what went wrong without revealing the
    solution. Catch errors per task so one broken file does not hide the other results.
-6. `bash scripts/build_lab_images.sh`, then restart the backend. An invalid `lab.yaml` stops the backend
-   at start-up with a clear error.
+   Optional extra fields `expected` and `actual` are shown side by side in the results drawer:
+
+   ```
+   @@RESULT {"task": "greet", "passed": false, "message": "greet('Asha') returned None",
+             "expected": "'Hello, Asha!'", "actual": "None"}
+   ```
+6. Give each task up to 3 `hints` (a nudge, a direction, then almost there, never the full solution)
+   and optionally `xp` (default 20). Each revealed hint lowers the task's XP to 80%, 60%, then 40%.
+
+   ```yaml
+   tasks:
+     - id: greet
+       title: "greet.py: return a greeting"
+       xp: 20
+       hints:
+         - "Look at the last line of greet.py."
+         - "An f-string puts a variable inside text."
+         - "Return an f-string with name between the two pieces of text."
+   ```
+7. `bash scripts/build_lab_images.sh`, then restart the backend. An invalid `lab.yaml` or chapter stops
+   the backend at start-up with a clear error.
+
+### Chapter format (steps)
+
+A chapter is a list of steps. Each step is one card on screen; the learner moves with Continue / Back,
+the arrow keys, or the dots. A chapter with no `:::step` markers still works and is shown as one step.
+
+```markdown
+:::step{type=story title="Lunch orders at Dabba Express"}
+:::character{name="Priya" role="Founder"}
+Every morning we deliver 300 tiffins across Pune.
+:::
+:::mission
+Write three small Python functions before the lunch rush.
+:::
+:::
+
+:::step{type=predict}
+:::question
+What does a function without `return` give back?
+:::
+- [ ] `0`
+- [x] `None`
+:::explain
+Without `return`, Python gives back `None`.
+:::
+:::
+
+:::step{type=try}
+```bash run
+python3 -c "from greet import greet; print(greet('Asha'))"
+```
+:::
+
+:::step{type=task task=greet title="Greet a customer"}
+Make `greet(name)` return `"Hello, <name>!"`.
+:::
+
+:::step{type=recap}
+- `def` defines a function; `return` sends a value back.
+:::
+```
+
+- Step types: `story`, `concept`, `example`, `predict`, `try`, `task`, `incident`, `recap`, `deep-dive`.
+  `task` and `incident` steps need `task=<task id>` (a task of that chapter); `incident` can take `minutes=15`
+  for a (cosmetic) countdown.
+- Directives inside steps: `character{name role}`, `mission`, `tip`, `warning`, `why`, `mistake`,
+  `deep-dive`, `incident{minutes}`. Close each with `:::`.
+- A code fence with `run` (` ```bash run `) gets a **Run in terminal** button. It pastes the command
+  without pressing Enter.
+- A predict step needs a `:::question`, at least 2 options and exactly one `- [x]`.
 
 ## 3. AWS deploy (single EC2 host)
 
@@ -187,6 +277,8 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 - SQLite: fine for a POC, not for many concurrent writers.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file
   to see the new content.
+- Predict answers are checked in the browser for now, so the right answer is in the page data
+  (checked on the server from Phase B).
 - A determined user can still fake a passing check from inside their own process (for example by
   printing a `@@RESULT` line and exiting before the real checks run). Graders that must be
   tamper-proof should run user code in a separate process from the reporter.

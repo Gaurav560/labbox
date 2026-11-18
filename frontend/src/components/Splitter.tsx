@@ -3,9 +3,10 @@ import type { PointerEvent } from "react";
 interface Props {
   direction: "vertical" | "horizontal"; // vertical = a bar you drag left/right
   onDrag: (delta: number) => void;
+  label?: string;
 }
 
-export default function Splitter({ direction, onDrag }: Props) {
+export default function Splitter({ direction, onDrag, label }: Props) {
   function onPointerDown(e: PointerEvent<HTMLDivElement>) {
     e.preventDefault();
     const el = e.currentTarget;
@@ -25,5 +26,13 @@ export default function Splitter({ direction, onDrag }: Props) {
     el.addEventListener("pointerup", up);
     document.body.classList.add("dragging");
   }
-  return <div className={`splitter splitter-${direction}`} onPointerDown={onPointerDown} />;
+  return (
+    <div
+      className={`splitter splitter-${direction}`}
+      onPointerDown={onPointerDown}
+      role="separator"
+      aria-orientation={direction}
+      aria-label={label}
+    />
+  );
 }

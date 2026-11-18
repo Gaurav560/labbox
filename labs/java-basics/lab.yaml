@@ -22,5 +22,13 @@ chapters:
     tasks:
       - id: greet
         title: "Greeter.greet: return a greeting"
+        hints:
+          - "Look at the return statement in greet: it returns null right now."
+          - "Join Strings with +, putting the name between two pieces of fixed text."
+          - "Return \"Hello, \" joined with name, joined with \"!\"."
       - id: longest_word
         title: "Greeter.longestWord: length of the longest word"
+        hints:
+          - "An empty sentence must give 0. What does your method return before it looks at any word?"
+          - "Split the sentence on spaces, then look at the length of each word."
+          - "Keep a variable for the best length so far. In the loop, update it whenever a word is longer."

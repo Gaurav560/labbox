@@ -1,6 +1,7 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
 import { useRef } from "react";
 import { languageFor, modelUri, monaco } from "../monaco";
+import { useTheme } from "../theme";
 
 export interface Tab {
   path: string;
@@ -27,6 +28,7 @@ function saveLabel(tab: Tab | undefined): string {
 }
 
 export default function EditorPane({ tabs, activePath, onSelect, onClose, onChange, onSave }: Props) {
+  const { theme } = useTheme();
   const active = tabs.find((t) => t.path === activePath);
   // The editor command is registered once, so it reads the latest values through refs.
   const activeRef = useRef(activePath);
@@ -49,6 +51,7 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
             {t.content !== t.saved && <span className="dirty-dot">●</span>}
             <button
               className="tab-close"
+              aria-label={`Close ${t.path}`}
               onClick={(e) => {
                 e.stopPropagation();
                 onClose(t.path);
@@ -67,10 +70,17 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
             path={modelUri(active.path)}
             defaultValue={active.content}
             language={languageFor(active.path)}
-            theme="vs-dark"
+            theme={theme === "dark" ? "vs-dark" : "vs"}
             onMount={onMount}
             onChange={(v) => onChange(active.path, v ?? "")}
-            options={{ automaticLayout: true, fontSize: 14, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4 }}
+            options={{
+              automaticLayout: true,
+              fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+              fontSize: 14,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              tabSize: 4,
+            }}
           />
         ) : (
           <div className="center-fill muted">Open a file from the tree</div>

@@ -8,8 +8,12 @@ sys.path.insert(0, "/check/workspace")
 sys.dont_write_bytecode = True
 
 
-def report(task: str, passed: bool, message: str) -> None:
-    print("@@RESULT " + json.dumps({"task": task, "passed": passed, "message": message}), flush=True)
+def report(task: str, passed: bool, message: str, expected=None, actual=None) -> None:
+    result = {"task": task, "passed": passed, "message": message}
+    if expected is not None:
+        # Optional v2 fields: the UI shows them side by side.
+        result["expected"], result["actual"] = expected, actual
+    print("@@RESULT " + json.dumps(result), flush=True)
 
 
 def load(module_name: str):
@@ -47,7 +51,7 @@ def run_cases(task: str, fn, err, cases) -> None:
             got = fn(*args)
             if got != expected or type(got) is not type(expected):
                 call = f"{fn.__name__}({', '.join(repr(a) for a in args)})"
-                report(task, False, f"{call} returned {got!r}, expected {expected!r}")
+                report(task, False, f"{call} returned {got!r}, expected {expected!r}", repr(expected), repr(got))
                 return
         report(task, True, "ok")
     except Exception as e:

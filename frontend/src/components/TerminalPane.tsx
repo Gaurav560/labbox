@@ -1,7 +1,8 @@
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { terminalUrl } from "../api";
+import { TERMINAL_THEMES, useTheme } from "../theme";
 
 interface Props {
   labId: string;
@@ -12,7 +13,13 @@ interface Props {
 
 type ConnState = "connecting" | "connected" | "disconnected";
 
-export default function TerminalPane({ labId, enabled, connectKey, onConnected }: Props) {
+export interface TerminalHandle {
+  /** Type text at the prompt without pressing Enter (the learner stays in control). */
+  paste: (text: string) => boolean;
+}
+
+const TerminalPane = forwardRef<TerminalHandle, Props>(function TerminalPane({ labId, enabled, connectKey, onConnected }, ref) {
+  const { theme } = useTheme();
   const hostRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
@@ -22,13 +29,24 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
   const onConnectedRef = useRef(onConnected);
   onConnectedRef.current = onConnected;
 
+  useImperativeHandle(ref, () => ({
+    paste(text: string) {
+      const term = termRef.current;
+      if (!term || wsRef.current?.readyState !== WebSocket.OPEN) return false;
+      // xterm wraps this in bracketed paste, so even a multi-line command waits for Enter.
+      term.paste(text.replace(/\n+$/, ""));
+      term.focus();
+      return true;
+    },
+  }));
+
   // Create the xterm instance once.
   useEffect(() => {
     const term = new Terminal({
       cursorBlink: true,
-      fontFamily: "JetBrains Mono, Menlo, monospace",
+      fontFamily: '"JetBrains Mono", ui-monospace, Menlo, monospace',
       fontSize: 14,
-      theme: { background: "#0d1117", foreground: "#e6edf3", cursor: "#e6edf3" },
+      theme: TERMINAL_THEMES[theme],
       scrollback: 5000,
     });
     const fit = new FitAddon();
@@ -36,6 +54,12 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
     term.open(hostRef.current!);
     termRef.current = term;
     fitRef.current = fit;
+    // The bundled font may finish loading after xterm measured its cells: measure again.
+    document.fonts?.ready.then(() => {
+      if (termRef.current !== term) return;
+      term.options.fontFamily = '"JetBrains Mono", monospace'; // a changed value makes xterm re-measure
+      fit.fit();
+    });
 
     const sendResize = () => {
       try {
@@ -64,7 +88,12 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
       term.dispose();
       termRef.current = null;
     };
+    // Created once on purpose; theme changes are applied by the next effect.
   }, []);
+
+  useEffect(() => {
+    if (termRef.current) termRef.current.options.theme = TERMINAL_THEMES[theme];
+  }, [theme]);
 
   // (Re)connect the WebSocket.
   useEffect(() => {
@@ -97,10 +126,13 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
         }
         const msg = JSON.parse(ev.data);
         if (msg.type === "status" && msg.message === "connected") {
+          // Every connection is a brand new shell. Clear what the previous one left on screen,
+          // otherwise its last prompt stays there and the new prompt lands next to it.
+          term.reset();
           setState("connected");
           retried = false;
           onConnectedRef.current();
-          term.focus();
+          // No auto focus: the lesson keeps the keyboard (arrow keys move between steps).
         } else if (msg.type === "exit") {
           shellExited = true;
         } else if (msg.type === "error") {
@@ -132,12 +164,8 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
 
   return (
     <div className="terminal-pane">
-      <div className="pane-header">
-        <span>Terminal</span>
-        <span className="spacer" />
-        {state === "connecting" && <span className="muted small">Connecting...</span>}
-      </div>
       <div className="terminal-body">
+        {state === "connecting" && enabled && <span className="terminal-connecting muted small">Connecting...</span>}
         <div ref={hostRef} className="terminal-host" />
         {state === "disconnected" && (
           <div className="terminal-overlay">
@@ -154,4 +182,6 @@ export default function TerminalPane({ labId, enabled, connectKey, onConnected }
       </div>
     </div>
   );
-}
+});
+
+export default TerminalPane;

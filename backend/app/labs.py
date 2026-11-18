@@ -8,6 +8,8 @@ import yaml
 from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
+from .lessons import LessonError, Step, parse_steps
+
 log = logging.getLogger(__name__)
 
 ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -51,6 +53,9 @@ class CheckConfig(_Strict):
 class Task(_Strict):
     id: str
     title: str
+    xp: int = Field(default=20, ge=0, le=1000)
+    # Hint ladder: a nudge, a direction, then almost there (never the full solution).
+    hints: list[str] = Field(default=[], max_length=3)
 
     @field_validator("id")
     @classmethod
@@ -120,6 +125,15 @@ class LabConfig(_Strict):
     def chapter_markdown(self, chapter_id: str) -> str:
         return (self.root / self.chapter(chapter_id).file).read_text(encoding="utf-8")
 
+    def chapter_steps(self, chapter_id: str) -> list[Step]:
+        return parse_steps(self.chapter_markdown(chapter_id))
+
+    def task(self, chapter_id: str, task_id: str) -> Task:
+        for t in self.chapter(chapter_id).tasks:
+            if t.id == task_id:
+                return t
+        raise HTTPException(404, f"Task {task_id!r} not found in chapter {chapter_id!r}")
+
 
 def load_lab(folder: Path) -> LabConfig:
     yaml_path = folder / "lab.yaml"
@@ -141,6 +155,14 @@ def load_lab(folder: Path) -> LabConfig:
         chapter_file = (root / ch.file).resolve()
         if root not in chapter_file.parents or not chapter_file.is_file():
             raise LabError(f"{yaml_path}: chapter file missing: {ch.file}")
+        try:
+            steps = parse_steps(chapter_file.read_text(encoding="utf-8"))
+        except LessonError as e:
+            raise LabError(f"{ch.file}: {e}") from e
+        task_ids = {t.id for t in ch.tasks}
+        for s in steps:
+            if s.task and s.task not in task_ids:
+                raise LabError(f"{ch.file}: step refers to task {s.task!r}, which is not a task of chapter {ch.id!r}")
     if not (root / "tests").is_dir():
         raise LabError(f"{yaml_path}: tests/ folder missing")
     lab.root = root

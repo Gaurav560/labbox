@@ -1,9 +1,18 @@
+import logging
 from collections.abc import Iterator
 from pathlib import Path
 
-from sqlmodel import Session, SQLModel, create_engine
+from alembic import command
+from alembic.config import Config
+from sqlalchemy import Engine, inspect
+from sqlmodel import Session, create_engine
 
-from .config import get_settings
+from .config import BACKEND_DIR, get_settings
+
+log = logging.getLogger(__name__)
+
+# The last revision whose tables the POC created with SQLModel.metadata.create_all().
+POC_BASELINE = "0001"
 
 _url = get_settings().DATABASE_URL
 if _url.startswith("sqlite:///"):
@@ -12,10 +21,24 @@ if _url.startswith("sqlite:///"):
 engine = create_engine(_url, connect_args={"check_same_thread": False} if _url.startswith("sqlite") else {})
 
 
-def init_db() -> None:
-    from . import models  # noqa: F401  (registers tables)
+def alembic_config() -> Config:
+    cfg = Config(str(BACKEND_DIR / "alembic.ini"))
+    cfg.attributes["from_app"] = True
+    return cfg
 
-    SQLModel.metadata.create_all(engine)
+
+def init_db(bind: Engine | None = None) -> None:
+    """Bring the database schema up to date with Alembic migrations (additive only)."""
+    bind = bind or engine
+    cfg = alembic_config()
+    with bind.begin() as connection:
+        cfg.attributes["connection"] = connection
+        tables = set(inspect(connection).get_table_names())
+        if "alembic_version" not in tables and "user" in tables:
+            # A POC database: its tables already exist, so record them instead of creating them again.
+            log.info("Existing POC database found, stamping it at revision %s", POC_BASELINE)
+            command.stamp(cfg, POC_BASELINE)
+        command.upgrade(cfg, "head")
 
 
 def get_session() -> Iterator[Session]:

@@ -12,7 +12,7 @@ from .config import get_settings
 from .db import init_db
 from .labs import init_labs
 from .reaper import reaper_loop
-from .routers import auth_routes, check_routes, file_routes, lab_routes, terminal_routes
+from .routers import auth_routes, check_routes, file_routes, lab_routes, progress_routes, terminal_routes
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("labbox")
@@ -43,6 +43,7 @@ app.include_router(lab_routes.router)
 app.include_router(file_routes.router)
 app.include_router(check_routes.router)
 app.include_router(terminal_routes.router)
+app.include_router(progress_routes.router)
 
 
 class Health(BaseModel):

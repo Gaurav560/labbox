@@ -5,11 +5,12 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from .. import containers
+from .. import containers, progress
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
 from ..labs import all_labs, get_lab
+from ..lessons import Step
 from ..models import User
 
 router = APIRouter(prefix="/api/labs", tags=["labs"])
@@ -33,6 +34,9 @@ class TaskOut(BaseModel):
     id: str
     title: str
     passed: bool | None  # None = never checked
+    xp: int = 20  # what the task is worth now (hints reduce it)
+    hint_count: int = 0
+    hints_used: int = 0
 
 
 class ChapterOut(BaseModel):
@@ -54,6 +58,7 @@ class ChapterContent(BaseModel):
     id: str
     title: str
     markdown: str
+    steps: list[Step]
 
 
 @router.get("", response_model=list[LabSummary])
@@ -80,13 +85,28 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
     assert user.id is not None
     lab = get_lab(lab_id)
     states = task_states(session, user.id, lab)
+    used = progress.hints_used(session, user.id, lab.id)
     return LabDetail(
         id=lab.id,
         title=lab.title,
         description=lab.description,
         language=lab.language,
         chapters=[
-            ChapterOut(id=c.id, title=c.title, tasks=[TaskOut(id=t.id, title=t.title, passed=states.get(t.id)) for t in c.tasks])
+            ChapterOut(
+                id=c.id,
+                title=c.title,
+                tasks=[
+                    TaskOut(
+                        id=t.id,
+                        title=t.title,
+                        passed=states.get(t.id),
+                        xp=progress.task_xp(t.xp, used.get(t.id, 0)),
+                        hint_count=len(t.hints),
+                        hints_used=used.get(t.id, 0),
+                    )
+                    for t in c.tasks
+                ],
+            )
             for c in lab.chapters
         ],
         progress=Progress(passed_tasks=sum(states.values()), total_tasks=lab.task_count),
@@ -97,7 +117,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
 def chapter(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)) -> ChapterContent:
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
-    return ChapterContent(id=ch.id, title=ch.title, markdown=lab.chapter_markdown(chapter_id))
+    return ChapterContent(id=ch.id, title=ch.title, markdown=lab.chapter_markdown(chapter_id), steps=lab.chapter_steps(chapter_id))
 
 
 class WorkspaceStatus(BaseModel):

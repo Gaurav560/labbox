@@ -22,7 +22,19 @@ chapters:
     tasks:
       - id: greet
         title: "greet.py: return a greeting"
+        hints:
+          - "Look at the last line of greet.py: \"pass\" means the function does nothing yet."
+          - "An f-string puts a variable inside text: f\"...{name}...\"."
+          - "Return an f-string with name between \"Hello, \" and \"!\". Check the comma and the space after it."
       - id: add
         title: "math_utils.py: add two numbers"
+        hints:
+          - "The function receives two inputs, a and b. What should come back?"
+          - "Python adds numbers with the + operator."
+          - "Replace pass with a single return statement that adds the two inputs."
       - id: is_even
         title: "math_utils.py: check if a number is even"
+        hints:
+          - "A number is even when dividing it by 2 leaves nothing over."
+          - "n % 2 gives the remainder after dividing n by 2."
+          - "Compare that remainder with 0 using == and return the result of the comparison."

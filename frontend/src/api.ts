@@ -51,14 +51,19 @@ export interface User { id: number; username: string }
 export interface AuthResponse { token: string; user: User }
 export interface Progress { passed_tasks: number; total_tasks: number }
 export interface LabSummary { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
-export interface Task { id: string; title: string; passed: boolean | null }
+export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number }
 export interface Chapter { id: string; title: string; tasks: Task[] }
 export interface LabDetail { id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
-export interface ChapterContent { id: string; title: string; markdown: string }
+export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive";
+export interface Predict { question: string; options: { text: string }[]; answer: number; explain: string }
+export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null }
+export interface ChapterContent { id: string; title: string; markdown: string; steps: Step[] }
+export interface ChapterProgress { current_step: number; step_count: number; hints: Record<string, string[]> }
+export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
 export interface WorkspaceStatus { status: MachineStatus; container?: string }
 export interface FileNode { path: string; name: string; type: "file" | "dir"; children?: FileNode[] }
-export interface TaskResult { task: string; title: string; passed: boolean; message: string }
+export interface TaskResult { task: string; title: string; passed: boolean; message: string; expected?: string | null; actual?: string | null }
 export interface CheckResponse { passed_count: number; total_count: number; results: TaskResult[]; output: string; duration_ms: number }
 
 // ---------- calls ----------
@@ -71,6 +76,12 @@ export const api = {
   labs: () => request<LabSummary[]>("GET", "/api/labs"),
   lab: (labId: string) => request<LabDetail>("GET", `/api/labs/${q(labId)}`),
   chapter: (labId: string, chapterId: string) => request<ChapterContent>("GET", `/api/labs/${q(labId)}/chapters/${q(chapterId)}`),
+  chapterProgress: (labId: string, chapterId: string) =>
+    request<ChapterProgress>("GET", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/progress`),
+  saveStep: (labId: string, chapterId: string, step: number) =>
+    request<ChapterProgress>("PUT", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/progress`, { current_step: step }),
+  hint: (labId: string, chapterId: string, taskId: string) =>
+    request<HintResponse>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/hint`),
 
   startWorkspace: (labId: string) => request<WorkspaceStatus>("POST", `/api/labs/${q(labId)}/workspace/start`),
   stopWorkspace: (labId: string) => request<WorkspaceStatus>("POST", `/api/labs/${q(labId)}/workspace/stop`),

@@ -220,3 +220,25 @@ def test_stop_and_restart_keeps_files(client: TestClient, user):
     assert client.get("/api/labs/python-basics/workspace/status", headers=h).json()["status"] == "stopped"
     client.post("/api/labs/python-basics/workspace/start", headers=h)
     assert docker_cli("exec", f"lab-u{uid}-python-basics", "cat", "/workspace/keep.txt") == "still here"
+
+
+def test_check_v2_fields_and_task_progress(client: TestClient):
+    """Failed tasks carry expected/actual; a pass is recorded in task_progress once."""
+    from app.models import TaskProgress
+
+    h, uid = signup(client, "v2check")
+    client.post("/api/labs/java-basics/workspace/start", headers=h)
+    res = check(client, h, "java-basics", "01-methods")
+    greet = next(r for r in res["results"] if r["task"] == "greet")
+    assert greet["passed"] is False
+    assert (greet["expected"], greet["actual"]) == ('"Hello, Asha!"', "null")
+
+    write(client, h, "java-basics", "Greeter.java", JAVA_SOLVED)
+    assert check(client, h, "java-basics", "01-methods")["passed_count"] == 2
+    with Session(engine) as s:
+        row = s.get(TaskProgress, {"user_id": uid, "lab_id": "java-basics", "task_id": "greet"})
+        assert row is not None and row.passed and row.first_passed_at is not None
+        first = row.first_passed_at
+    check(client, h, "java-basics", "01-methods")
+    with Session(engine) as s:
+        assert s.get(TaskProgress, {"user_id": uid, "lab_id": "java-basics", "task_id": "greet"}).first_passed_at == first

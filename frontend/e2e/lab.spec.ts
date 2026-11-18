@@ -1,0 +1,157 @@
+/*
+ * Phase A acceptance: open a lab, step through every step with the keyboard, answer a predict,
+ * reveal a hint, run a command from the lesson, pass Check, see the recap, and keep step,
+ * panel size and theme across a reload. Also checks the terminal shows one prompt after a restart.
+ */
+import { execFileSync } from "node:child_process";
+import { expect, test, type Page } from "@playwright/test";
+
+const PY_SOLVED: Record<string, string> = {
+  "greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
+  "math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
+};
+
+const username = `e2e${Date.now() % 1_000_000_000}`;
+let userId: number | null = null;
+const errors: string[] = [];
+
+const termText = (page: Page) => page.locator(".xterm-rows").innerText();
+const stepCount = (page: Page) => page.locator(".step-count");
+
+async function token(page: Page): Promise<string> {
+  return page.evaluate(() => localStorage.getItem("labbox.token") ?? "");
+}
+
+test.afterAll(() => {
+  // Remove only the containers this test created.
+  if (userId === null) return;
+  const ids = execFileSync("docker", ["ps", "-aq", "--filter", `label=labbox.user=${userId}`]).toString().split(/\s+/).filter(Boolean);
+  if (ids.length) execFileSync("docker", ["rm", "-f", ...ids]);
+});
+
+test("lesson flow: steps, predict, hint, run, check, recap, persistence", async ({ page }) => {
+  page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+
+  // Sign up and open the lab.
+  await page.goto("/login");
+  await page.getByLabel("Username").fill(username);
+  await page.getByLabel("Password").fill("secret123");
+  await page.getByRole("button", { name: "Sign up" }).click();
+  await expect(page.getByText("Your labs")).toBeVisible();
+  const auth = { Authorization: `Bearer ${await token(page)}` };
+  userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;
+
+  await page.goto("/labs/python-basics");
+  await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
+  await expect(stepCount(page)).toHaveText("Step 1 of 9");
+  await expect(page.locator(".step-kind")).toHaveText("Story");
+  await expect(page.locator(".mission")).toContainText("Write three small Python functions");
+
+  // Keyboard: right arrow to the predict step.
+  await page.keyboard.press("ArrowRight");
+  await expect(stepCount(page)).toHaveText("Step 2 of 9");
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".step-kind")).toHaveText("Predict");
+
+  // Predict: a wrong guess first, then the right one reveals the explanation.
+  await page.locator(".predict-option", { hasText: "An error" }).click();
+  await expect(page.getByText("Not quite. Have another go.")).toBeVisible();
+  await page.locator(".predict-option", { hasText: "None" }).click();
+  await expect(page.locator(".predict-explain")).toContainText("A function without a");
+
+  // Try step: Run in terminal pastes the command but does not press Enter.
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator(".step-kind")).toHaveText("Try it");
+  await expect(termText(page)).resolves.toMatch(/learner@python-basics/);
+  await page.getByRole("button", { name: /Run in terminal/ }).click();
+  await expect.poll(() => termText(page)).toContain("print(greet('Asha'))");
+  await page.waitForTimeout(800);
+  expect((await termText(page)).match(/^None$/m)).toBeNull(); // not run yet
+  await page.keyboard.press("Enter"); // the terminal has focus now
+  await expect.poll(() => termText(page)).toMatch(/^None\s*$/m);
+
+  // Step through everything else to the recap with the keyboard (focus back on the page first).
+  await page.locator(".step-card").click();
+  for (let i = 5; i <= 9; i++) {
+    await page.keyboard.press("ArrowRight");
+    await expect(stepCount(page)).toHaveText(`Step ${i} of 9`);
+  }
+  await expect(page.locator(".step-kind")).toHaveText("Recap");
+  await expect(page.locator(".recap-status")).toContainText("3 tasks still need to pass");
+  await page.keyboard.press("ArrowLeft");
+  await expect(stepCount(page)).toHaveText("Step 8 of 9");
+
+  // Hint ladder on the greet task (task chip jumps to its step).
+  await page.locator(".task-chip", { hasText: "greet" }).click();
+  await expect(page.locator(".step-card h2")).toHaveText("Greet a customer");
+  await expect(page.locator(".xp-chip")).toHaveText("20 XP");
+  await page.locator(".task-box").getByRole("button", { name: "💡 Hint (3 left)" }).click();
+  await expect(page.locator(".hint-list li")).toHaveCount(1);
+  await expect(page.locator(".hint-list li").first()).toContainText("Nudge");
+  await expect(page.locator(".task-box").getByRole("button", { name: "💡 Hint (2 left)" })).toBeVisible();
+  await expect(page.locator(".xp-chip")).toHaveText("16 XP");
+
+  // Check the starter code: the drawer shows failures with Expected vs Got.
+  await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
+  await expect(page.locator(".drawer-title")).toHaveText("0 of 3 passed", { timeout: 60_000 });
+  await expect(page.locator(".expected-got").first()).toContainText("'Hello, Asha!'");
+  await expect(page.locator(".expected-got").first()).toContainText("None");
+
+  // Solve it (through the files API, like saving from the editor) and Check again.
+  for (const [path, content] of Object.entries(PY_SOLVED)) {
+    const r = await page.request.put("/api/labs/python-basics/files/content", { headers: auth, data: { path, content } });
+    expect(r.ok()).toBeTruthy();
+  }
+  await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
+  await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
+  // A fully passed chapter jumps to the recap.
+  await expect(stepCount(page)).toHaveText("Step 9 of 9");
+  await expect(page.locator(".recap-status")).toContainText("Chapter complete");
+  await page.getByRole("button", { name: "Close results" }).click();
+
+  // Theme and panel size, then reload: everything is remembered.
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  const panel = page.locator(".left-panel");
+  const before = (await panel.boundingBox())!.width;
+  const bar = (await page.getByRole("separator", { name: "Resize lesson panel" }).boundingBox())!;
+  await page.mouse.move(bar.x + 2, bar.y + 200);
+  await page.mouse.down();
+  await page.mouse.move(bar.x + 82, bar.y + 200, { steps: 5 });
+  await page.mouse.up();
+  const after = (await panel.boundingBox())!.width;
+  expect(Math.round(after - before)).toBe(80);
+  await page.waitForTimeout(600); // the step position is saved shortly after the last move
+
+  await page.reload();
+  await expect(stepCount(page)).toHaveText("Step 9 of 9");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
+
+  // Double prompt bug: after Stop and Start the terminal shows exactly one prompt.
+  await page.getByRole("button", { name: "Stop machine" }).click();
+  await expect(page.locator(".status-label")).toHaveText("Stopped", { timeout: 30_000 });
+  await page.getByRole("button", { name: "Start machine" }).click();
+  await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 30_000 });
+  await expect.poll(() => termText(page)).toMatch(/learner@python-basics/);
+  await page.waitForTimeout(1000);
+  expect((await termText(page)).match(/learner@python-basics/g)).toHaveLength(1);
+
+  expect(errors).toEqual([]);
+});
+
+test("java lab renders its v2 steps", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Username").fill(username);
+  await page.getByLabel("Password").fill("secret123");
+  await page.getByRole("button", { name: "Log in" }).click();
+  await expect(page.getByText("Your labs")).toBeVisible();
+  await page.goto("/labs/java-basics");
+  await expect(stepCount(page)).toHaveText("Step 1 of 8", { timeout: 60_000 });
+  await expect(page.locator(".character")).toContainText("Kabir");
+  await page.locator(".dot").nth(2).click(); // dots jump straight to a step
+  await expect(page.locator(".step-kind")).toHaveText("Predict");
+  await page.locator(".predict-option", { hasText: "null" }).click();
+  await expect(page.getByText("Right first time!")).toBeVisible();
+});
