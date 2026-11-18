@@ -59,6 +59,7 @@ export interface LabInfo {
   level: string | null;
   estimated_minutes: number | null;
   cover_url: string | null; // the lab's own cover; otherwise LabCover draws one
+  cover_credit: { by: string; url: string; source: string } | null;
 }
 export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number }

@@ -9,6 +9,8 @@
 - Optional `cover:` in `lab.yaml` (svg, png, jpg or webp in the lab folder, up to 512 KB) for real
   artwork; served publicly at `GET /api/labs/{lab}/cover` with a sandbox CSP and nosniff.
 - The language badge next to the card title is gone (the cover shows the tags).
+- `scripts/labbox cover <lab> --query ...` then `--pick N`: stock photos from Pexels saved as the lab's
+  cover with a `cover_credit` (photographer and link), shown as a small credit on the card.
 
 ## v2 Phase D: services, preview, live checks, incidents
 

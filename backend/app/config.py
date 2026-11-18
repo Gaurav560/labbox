@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     MAX_FILE_BYTES: int = 1_000_000
     CORS_ORIGINS: str = "http://localhost:5173"
     ALLOW_SIGNUP: bool = True
+    PEXELS_API_KEY: str = ""  # only for `labbox cover` (stock photos for lab cards); free at pexels.com/api
 
     @field_validator("JWT_SECRET")
     @classmethod

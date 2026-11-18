@@ -80,7 +80,7 @@ export default function LabsPage() {
             const pct = lab.progress.total_tasks ? (100 * lab.progress.passed_tasks) / lab.progress.total_tasks : 0;
             return (
               <div key={lab.id} className="lab-card">
-                <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={lab.cover_url} />
+                <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={lab.cover_url} credit={lab.cover_credit} />
                 <div className="lab-card-body">
                   <h3>{lab.title}</h3>
                   <p className="muted">{lab.subtitle || lab.description}</p>

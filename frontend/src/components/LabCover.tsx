@@ -10,6 +10,7 @@ interface Props {
   track: string;
   tags: string[];
   coverUrl?: string | null;
+  credit?: { by: string; url: string; source: string } | null;
 }
 
 // Three colour pairs per track; each lab picks one, so labs in the same track still differ.
@@ -155,10 +156,19 @@ function motif(track: string, r: () => number): ReactNode {
   }
 }
 
-export default function LabCover({ id, title, track, tags, coverUrl }: Props) {
+export default function LabCover({ id, title, track, tags, coverUrl, credit }: Props) {
   const uid = useId().replace(/:/g, "");
   if (coverUrl) {
-    return <img className="lab-cover" src={coverUrl} alt="" loading="lazy" decoding="async" />;
+    return (
+      <div className="lab-cover-photo">
+        <img className="lab-cover" src={coverUrl} alt="" loading="lazy" decoding="async" />
+        {credit && (
+          <a className="cover-credit" href={credit.url} target="_blank" rel="noreferrer noopener">
+            Photo: {credit.by} / {credit.source}
+          </a>
+        )}
+      </div>
+    );
   }
   const r = rng(hash(id));
   const options = PALETTES[track] ?? PALETTES.languages;

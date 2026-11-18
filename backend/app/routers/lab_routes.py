@@ -31,6 +31,7 @@ class LabInfo(BaseModel):
     level: str | None = None
     estimated_minutes: int | None = None
     cover_url: str | None = None  # set when the lab ships its own cover; otherwise the UI draws one
+    cover_credit: dict | None = None  # {by, url, source} for a stock photo
 
 
 class LabSummary(LabInfo):
@@ -96,6 +97,7 @@ def _info(lab: LabConfig) -> dict:
         level=lab.level,
         estimated_minutes=lab.estimated_minutes,
         cover_url=f"/api/labs/{lab.id}/cover" if lab.cover else None,
+        cover_credit=lab.cover_credit.model_dump() if lab.cover_credit else None,
     )
 
 

@@ -93,6 +93,14 @@ class Story(_Strict):
     pitch: str = ""
 
 
+class CoverCredit(_Strict):
+    """Who took the cover photo (stock photo licenses do not require it, but we credit anyway)."""
+
+    by: str
+    url: str
+    source: str = "Pexels"
+
+
 class ServiceResources(_Strict):
     cpus: float = Field(default=0.5, gt=0, le=8)
     memory: str = "256m"
@@ -197,6 +205,7 @@ class LabConfig(_Strict):
     prerequisites: list[str] = []  # other lab ids, a recommendation only
     story: Story | None = None
     cover: str | None = None  # optional cover image in the lab folder; otherwise the UI draws one
+    cover_credit: CoverCredit | None = None
     runtime: Literal["default", "gvisor", "sysbox"] = "default"
     services: list[Service] = []
     preview: list[PreviewPort] = []

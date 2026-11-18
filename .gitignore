@@ -24,3 +24,6 @@ frontend/dist/
 # Playwright
 frontend/test-results/
 frontend/playwright-report/
+
+# Cover photo candidates (labbox cover)
+tools/.covers/

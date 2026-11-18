@@ -4,11 +4,13 @@
     scripts/labbox validate [lab_id] [--no-docker]
     scripts/labbox test-lab <lab_id> [--no-build]
     scripts/labbox preview <lab_id>
+    scripts/labbox cover <lab_id> --query "chai stall"   (then --pick N)
 
 Runs with the backend's virtualenv and reuses the backend's own lab loader and checker,
 so a lab that passes here behaves the same in the app.
 """
 import argparse
+import json
 import os
 import re
 import secrets
@@ -328,6 +330,73 @@ def cmd_preview(args: argparse.Namespace) -> int:
     return 0
 
 
+COVERS_DIR = Path(__file__).resolve().parent / ".covers"  # candidates for review, not committed
+PEXELS_SEARCH = "https://api.pexels.com/v1/search"
+
+
+def _yaml_set_cover(lab_yaml: Path, credit: dict) -> None:
+    """Set cover and cover_credit in lab.yaml as text, so comments and layout stay as they are."""
+    lines = lab_yaml.read_text(encoding="utf-8").splitlines()
+    keep = [ln for ln in lines if not re.match(r"^cover(_credit)?:", ln)]
+    flow = ", ".join(f"{k}: {json.dumps(v)}" for k, v in credit.items())
+    new = ["cover: cover.jpg", f"cover_credit: {{ {flow} }}"]
+    at = next((i for i, ln in enumerate(keep) if ln.startswith("image:")), len(keep))
+    lab_yaml.write_text("\n".join(keep[:at] + new + keep[at:]) + "\n", encoding="utf-8")
+
+
+def cmd_cover(args: argparse.Namespace) -> int:
+    """Stock photo covers from Pexels (free for commercial use). Search, look, then pick."""
+    import httpx
+
+    from app.config import get_settings
+
+    folder = _lab_folders(args.labs_dir, args.lab_id)[0]
+    out = COVERS_DIR / args.lab_id
+    if args.pick is None:
+        key = get_settings().PEXELS_API_KEY
+        if not key:
+            print("Set PEXELS_API_KEY in backend/.env (free key: https://www.pexels.com/api/)")
+            return 2
+        if not args.query:
+            print("Say what the photo should show, for example --query \"chai stall street india\"")
+            return 2
+        r = httpx.get(PEXELS_SEARCH, params={"query": args.query, "orientation": "landscape", "per_page": args.count},
+                      headers={"Authorization": key}, timeout=20)
+        if r.status_code != 200:
+            print(f"Pexels answered {r.status_code}: {r.text[:200]}")
+            return 1
+        photos = r.json().get("photos", [])
+        if not photos:
+            print("No photos found; try other words.")
+            return 1
+        shutil.rmtree(out, ignore_errors=True)
+        out.mkdir(parents=True)
+        (out / "search.json").write_text(json.dumps({"query": args.query, "photos": photos}, indent=1), encoding="utf-8")
+        for i, p in enumerate(photos, 1):
+            (out / f"{i}.jpg").write_bytes(httpx.get(p["src"]["medium"], timeout=30, follow_redirects=True).content)
+            print(f"  {i}. {out / f'{i}.jpg'}  by {p['photographer']}: {p.get('alt') or ''}")
+        print(f"Look at them, then: scripts/labbox cover {args.lab_id} --pick N")
+        return 0
+
+    found = out / "search.json"
+    if not found.is_file():
+        print(f"Search first: scripts/labbox cover {args.lab_id} --query \"...\"")
+        return 2
+    photos = json.loads(found.read_text(encoding="utf-8"))["photos"]
+    if not 1 <= args.pick <= len(photos):
+        print(f"Pick a number from 1 to {len(photos)}")
+        return 2
+    p = photos[args.pick - 1]
+    data = httpx.get(p["src"]["landscape"], timeout=30, follow_redirects=True).content  # 1200 x 627 crop
+    if len(data) > 512 * 1024:
+        data = httpx.get(p["src"]["large"], timeout=30, follow_redirects=True).content
+    (folder / "cover.jpg").write_bytes(data)
+    _yaml_set_cover(folder / "lab.yaml", {"by": p["photographer"], "url": p["url"], "source": "Pexels"})
+    load_lab(folder)  # fails loudly if anything is off
+    print(f"✓ {folder / 'cover.jpg'} ({len(data) // 1024} KB), photo by {p['photographer']} on Pexels")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
@@ -356,6 +425,13 @@ def main(argv: list[str] | None = None) -> int:
     pv.add_argument("--url", default="http://localhost:5173")
     pv.add_argument("--no-browser", action="store_true")
     pv.set_defaults(fn=cmd_preview)
+
+    c = sub.add_parser("cover", help="find a stock photo for the lab card (Pexels), then pick one")
+    c.add_argument("lab_id")
+    c.add_argument("--query", help="what the photo should show")
+    c.add_argument("--pick", type=int, help="save candidate N as the cover")
+    c.add_argument("--count", type=int, default=6)
+    c.set_defaults(fn=cmd_cover)
 
     args = p.parse_args(argv)
     args.labs_dir = args.labs_dir.resolve()

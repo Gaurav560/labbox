@@ -233,6 +233,16 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `pitch`), `cover` (an image in the lab folder: svg, png, jpg or webp, up to 512 KB), and per chapter
 `minutes`. Tasks take `xp` (default 20) and `hints`.
 
+Stock photo covers come from Pexels (free for commercial use; put a free `PEXELS_API_KEY` in
+`backend/.env`):
+
+```bash
+scripts/labbox cover fastapi-first-api --query "chai stall india"   # downloads 6 candidates to tools/.covers/
+scripts/labbox cover fastapi-first-api --pick 3                     # saves cover.jpg and the credit in lab.yaml
+```
+
+The card shows a small "Photo: name / Pexels" credit linking to the photo.
+
 Without a `cover`, the lab card draws one: the track picks the colours and the illustration, and a
 pattern seeded from the lab id makes each lab look different. Covers are public
 (`GET /api/labs/{lab}/cover`, served with a sandbox CSP so an SVG can never run scripts).

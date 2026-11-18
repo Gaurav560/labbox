@@ -664,3 +664,10 @@ select { padding: 3px 8px; }
 .lab-cover { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
 .lab-card-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .lab-card-body .row:last-child { margin-top: auto; }
+.lab-cover-photo { position: relative; }
+.cover-credit {
+  position: absolute; right: 8px; bottom: 8px; max-width: calc(100% - 16px);
+  font-size: 11px; color: #fff; background: rgba(0, 0, 0, 0.55); border-radius: 999px; padding: 2px 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cover-credit:hover { text-decoration: underline; color: #fff; }
