@@ -52,7 +52,14 @@ const q = encodeURIComponent;
 export interface User { id: number; username: string }
 export interface AuthResponse { token: string; user: User }
 export interface Progress { passed_tasks: number; total_tasks: number }
-export interface LabInfo { subtitle: string; track: string; tags: string[]; level: string | null; estimated_minutes: number | null }
+export interface LabInfo {
+  subtitle: string;
+  track: string;
+  tags: string[];
+  level: string | null;
+  estimated_minutes: number | null;
+  cover_url: string | null; // the lab's own cover; otherwise LabCover draws one
+}
 export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number }
 export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; has_setup: boolean }

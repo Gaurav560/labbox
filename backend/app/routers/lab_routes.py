@@ -1,7 +1,8 @@
 import asyncio
 from typing import Literal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlmodel import Session
 
@@ -9,7 +10,7 @@ from .. import containers, progress, services
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
-from ..labs import LabConfig, PreviewPort, all_labs, get_lab
+from ..labs import COVER_TYPES, LabConfig, PreviewPort, all_labs, get_lab
 from ..lessons import PublicStep, StepType, public_step, redact_markdown
 from ..models import User
 
@@ -29,6 +30,7 @@ class LabInfo(BaseModel):
     tags: list[str] = []
     level: str | None = None
     estimated_minutes: int | None = None
+    cover_url: str | None = None  # set when the lab ships its own cover; otherwise the UI draws one
 
 
 class LabSummary(LabInfo):
@@ -93,6 +95,7 @@ def _info(lab: LabConfig) -> dict:
         tags=lab.tags,
         level=lab.level,
         estimated_minutes=lab.estimated_minutes,
+        cover_url=f"/api/labs/{lab.id}/cover" if lab.cover else None,
     )
 
 
@@ -239,3 +242,22 @@ class CatalogLab(LabInfo):
 @public_router.get("/catalog", response_model=list[CatalogLab])
 def catalog() -> list[CatalogLab]:
     return [CatalogLab(**_info(lab), id=lab.id, title=lab.title, chapter_count=len(lab.chapters)) for lab in all_labs()]
+
+
+@public_router.get("/labs/{lab_id}/cover", include_in_schema=False)
+def cover(lab_id: str) -> FileResponse:
+    """A lab's own cover image (public: it is shown on the home page and in the catalog)."""
+    lab = get_lab(lab_id)
+    if not lab.cover:
+        raise HTTPException(404, "This lab has no cover image")
+    path = lab.root / lab.cover
+    return FileResponse(
+        path,
+        media_type=COVER_TYPES[path.suffix.lower()],
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "X-Content-Type-Options": "nosniff",
+            # An SVG opened directly must not run scripts on our origin.
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+        },
+    )

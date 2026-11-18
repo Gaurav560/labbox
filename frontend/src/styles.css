@@ -657,3 +657,10 @@ select { padding: 3px 8px; }
 .preview-path { flex: 1; min-width: 80px; font-family: var(--font-code); }
 .preview-origin { font-family: var(--font-code); }
 .preview-frame { flex: 1; width: 100%; border: 0; background: #fff; }
+
+/* ---------- lab cover art ---------- */
+.lab-card { padding: 0; overflow: hidden; gap: 0; transition: transform var(--t-fast), border-color var(--t-fast); }
+.lab-card:hover { transform: translateY(-2px); border-color: var(--muted); }
+.lab-cover { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+.lab-card-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.lab-card-body .row:last-child { margin-top: auto; }

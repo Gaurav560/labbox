@@ -1,5 +1,15 @@
 # Changelog
 
+## Lab cover art
+
+- Every lab card has a cover. Without its own image, a cover is drawn per lab: one of three colour pairs
+  per track, an illustration per track (code window, stacked layers, database, containers, node graph,
+  neural net, target) and a pattern seeded from the lab id, plus the lab's first tags. Works for any
+  number of labs.
+- Optional `cover:` in `lab.yaml` (svg, png, jpg or webp in the lab folder, up to 512 KB) for real
+  artwork; served publicly at `GET /api/labs/{lab}/cover` with a sandbox CSP and nosniff.
+- The language badge next to the card title is gone (the cover shows the tags).
+
 ## v2 Phase D: services, preview, live checks, incidents
 
 **Engine**

@@ -51,6 +51,8 @@ RESERVED_SERVICE_NAMES = {"workspace", "gateway", "checker"}
 # Extra capabilities a service may ask for (only when it runs as the image's own user).
 SERVICE_CAPS = {"CHOWN", "SETUID", "SETGID", "FOWNER", "DAC_OVERRIDE"}
 CHECKER_IMAGE = "labbox/checker:v1"
+COVER_TYPES = {".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}
+COVER_MAX_BYTES = 512 * 1024
 
 
 class WorkspaceConfig(_Strict):
@@ -194,6 +196,7 @@ class LabConfig(_Strict):
     free_chapters: int = Field(default=2, ge=0)
     prerequisites: list[str] = []  # other lab ids, a recommendation only
     story: Story | None = None
+    cover: str | None = None  # optional cover image in the lab folder; otherwise the UI draws one
     runtime: Literal["default", "gvisor", "sysbox"] = "default"
     services: list[Service] = []
     preview: list[PreviewPort] = []
@@ -336,6 +339,14 @@ def load_lab(folder: Path) -> LabConfig:
         for s in steps:
             if s.task and s.task not in task_ids:
                 raise LabError(f"{ch.file}: step refers to task {s.task!r}, which is not a task of chapter {ch.id!r}")
+    if lab.cover:
+        cover = (root / lab.cover).resolve()
+        if root not in cover.parents or not cover.is_file():
+            raise LabError(f"{yaml_path}: cover image missing: {lab.cover}")
+        if cover.suffix.lower() not in COVER_TYPES:
+            raise LabError(f"{yaml_path}: cover must be one of {', '.join(sorted(COVER_TYPES))}")
+        if cover.stat().st_size > COVER_MAX_BYTES:
+            raise LabError(f"{yaml_path}: cover is larger than {COVER_MAX_BYTES // 1024} KB")
     if not (root / "tests").is_dir():
         raise LabError(f"{yaml_path}: tests/ folder missing")
     lab.root = root

@@ -252,9 +252,41 @@ def test_public_catalog_needs_no_login_and_leaks_nothing(client: TestClient):
     assert r.status_code == 200
     by_id = {lab["id"]: lab for lab in r.json()}
     assert {"python-basics", "java-basics", "postgres-indexing-incident"} <= set(by_id)
-    assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count"}
+    assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count", "cover_url"}
     lab = labs.get_lab("python-basics")
     hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints]
     hidden += [(lab.root / "solution" / "greet.py").read_text().strip().splitlines()[-1].strip(), "chapters/", "@@RESULT"]
     for text in hidden:
         assert text not in r.text
+
+
+# ---------- cover images ----------
+
+
+def test_cover_validation(lab_copy: Path):
+    (lab_copy / "cover.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
+    edit(lab_copy, lambda d: d.update(cover="cover.svg"))
+    assert load_lab(lab_copy).cover == "cover.svg"
+    for bad, match in [("nope.png", "cover image missing"), ("../../etc/passwd", "cover image missing"), ("lab.yaml", "cover must be")]:
+        edit(lab_copy, lambda d: d.update(cover=bad))
+        with pytest.raises(LabError, match=match):
+            load_lab(lab_copy)
+    (lab_copy / "big.png").write_bytes(b"x" * (600 * 1024))
+    edit(lab_copy, lambda d: d.update(cover="big.png"))
+    with pytest.raises(LabError, match="larger than"):
+        load_lab(lab_copy)
+
+
+def test_cover_route(client: TestClient):
+    assert client.get("/api/labs/python-basics/cover").status_code == 404  # generated in the UI instead
+    lab = labs.get_lab("python-basics")
+    (lab.root / "cover-test.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>')
+    try:
+        lab.cover = "cover-test.svg"
+        r = client.get("/api/labs/python-basics/cover")  # public, no login
+        assert r.status_code == 200 and r.headers["content-type"] == "image/svg+xml"
+        assert "sandbox" in r.headers["content-security-policy"] and r.headers["x-content-type-options"] == "nosniff"
+        assert client.get("/api/catalog").json()[[x["id"] for x in client.get("/api/catalog").json()].index("python-basics")]["cover_url"] == "/api/labs/python-basics/cover"
+    finally:
+        lab.cover = None
+        (lab.root / "cover-test.svg").unlink()

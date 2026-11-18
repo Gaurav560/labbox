@@ -230,7 +230,12 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `frameworks`, `databases`, `devops`, `system-design`, `ai`, `interview`; default `languages`), `tags`,
 `level` (`beginner`, `intermediate`, `advanced`), `estimated_minutes`, `free_chapters` (default 2),
 `prerequisites` (lab ids, a recommendation only), `story` (`company`, `character: {name, role}`,
-`pitch`), and per chapter `minutes`. Tasks take `xp` (default 20) and `hints`.
+`pitch`), `cover` (an image in the lab folder: svg, png, jpg or webp, up to 512 KB), and per chapter
+`minutes`. Tasks take `xp` (default 20) and `hints`.
+
+Without a `cover`, the lab card draws one: the track picks the colours and the illustration, and a
+pattern seeded from the lab id makes each lab look different. Covers are public
+(`GET /api/labs/{lab}/cover`, served with a sandbox CSP so an SVG can never run scripts).
 
 Fields whose engine is not built yet are refused at start-up with a message naming the phase that adds
 them, so a lab never silently loses a feature: `llm` (Phase E), `runtime` and `workspace.sudo`

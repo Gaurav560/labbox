@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api, type LabSummary, type TrackSummary } from "../api";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
+import LabCover from "../components/LabCover";
 import StatsBadges from "../components/StatsBadges";
 import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
@@ -79,24 +80,24 @@ export default function LabsPage() {
             const pct = lab.progress.total_tasks ? (100 * lab.progress.passed_tasks) / lab.progress.total_tasks : 0;
             return (
               <div key={lab.id} className="lab-card">
-                <div className="row">
+                <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={lab.cover_url} />
+                <div className="lab-card-body">
                   <h3>{lab.title}</h3>
-                  <span className={`badge badge-${lab.language}`}>{lab.language}</span>
-                </div>
-                <p className="muted">{lab.subtitle || lab.description}</p>
-                <div className="lab-meta">
-                  <span className="meta-chip">{TRACK_LABEL[lab.track] ?? lab.track}</span>
-                  {lab.level && <span className="meta-chip meta-chip-cap">{lab.level}</span>}
-                  {lab.estimated_minutes && <span className="meta-chip">{lab.estimated_minutes} min</span>}
-                </div>
-                <div className="progress" title={`${lab.progress.passed_tasks} of ${lab.progress.total_tasks} tasks`}>
-                  <div className="progress-fill" style={{ width: `${pct}%` }} />
-                </div>
-                <div className="row">
-                  <span className="muted small">
-                    {lab.progress.passed_tasks} / {lab.progress.total_tasks} tasks · {lab.chapter_count} chapter{lab.chapter_count === 1 ? "" : "s"}
-                  </span>
-                  <Link className="btn btn-primary" to={`/labs/${lab.id}`}>Open</Link>
+                  <p className="muted">{lab.subtitle || lab.description}</p>
+                  <div className="lab-meta">
+                    <span className="meta-chip">{TRACK_LABEL[lab.track] ?? lab.track}</span>
+                    {lab.level && <span className="meta-chip meta-chip-cap">{lab.level}</span>}
+                    {lab.estimated_minutes && <span className="meta-chip">{lab.estimated_minutes} min</span>}
+                  </div>
+                  <div className="progress" title={`${lab.progress.passed_tasks} of ${lab.progress.total_tasks} tasks`}>
+                    <div className="progress-fill" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="row">
+                    <span className="muted small">
+                      {lab.progress.passed_tasks} / {lab.progress.total_tasks} tasks · {lab.chapter_count} chapter{lab.chapter_count === 1 ? "" : "s"}
+                    </span>
+                    <Link className="btn btn-primary" to={`/labs/${lab.id}`}>Open</Link>
+                  </div>
                 </div>
               </div>
             );
