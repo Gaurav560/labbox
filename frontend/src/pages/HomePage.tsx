@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
@@ -24,16 +24,116 @@ const LABS_SHOWN = 6; // lab cards in the "pick a lab" grid
 // Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
 const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
 
-// The hero terminal: a real incident lab, start to finish.
-const INCIDENT = [
-  "! PAGER  checkout is slow: p99 4.2 s",
-  "$ psql -c 'EXPLAIN SELECT * FROM orders WHERE customer_id = 42'",
-  "Seq Scan on orders  (rows=1000000)",
-  "$ psql -c 'CREATE INDEX ON orders (customer_id)'",
-  "CREATE INDEX",
-  "$ check",
-  "✓ 1 of 1 passed   p99 38 ms   +325 XP",
+// The hero terminal: short sessions from the real labs. Each visitor starts on a random one, then
+// they play one after another in a shuffled order. "$ " lines are typed, "! " is a pager alert.
+interface Session { lab: string; incident?: boolean; lines: string[] }
+const SESSIONS: Session[] = [
+  {
+    lab: "postgres-indexing-incident", incident: true,
+    lines: [
+      "! PAGER  checkout is slow: p99 4.2 s",
+      "$ psql -c 'EXPLAIN SELECT * FROM orders WHERE customer_id = 42'",
+      "Seq Scan on orders  (rows=1000000)",
+      "$ psql -c 'CREATE INDEX ON orders (customer_id)'",
+      "CREATE INDEX",
+      "$ check",
+      "✓ 1 of 1 passed   p99 38 ms   +325 XP",
+    ],
+  },
+  {
+    lab: "python-basics",
+    lines: ["$ python3 greet.py", "Hello, Asha!", "$ python3 -c 'from math_utils import add; print(add(2, 3))'", "5", "$ check", "✓ 3 of 3 passed   +60 XP"],
+  },
+  {
+    lab: "fastapi-first-api",
+    lines: [
+      "$ uvicorn main:app --host 0.0.0.0",
+      "Uvicorn running on http://0.0.0.0:8000",
+      "$ curl localhost:8000/menu/vada%20pav",
+      '{"item":"vada pav","price":25}',
+      "$ check",
+      "✓ 2 of 2 passed   +40 XP",
+    ],
+  },
+  {
+    lab: "spring-boot-first-api",
+    lines: [
+      "$ mvn -q package && java -jar target/merchant-api.jar",
+      "Started MerchantApiApplication in 2.4 seconds",
+      "$ curl localhost:8080/merchants",
+      '["Annapurna Mess","Chai Point","Kirana King"]',
+      "$ check",
+      "✓ 2 of 2 passed   +40 XP",
+    ],
+  },
+  {
+    lab: "javascript-inside-out",
+    lines: ["$ node -e 'console.log(\"2\" + 2, \"2\" - 2)'", "22 0", "$ node -e 'console.log(0.1 + 0.2 === 0.3)'", "false", "$ check", "✓ 4 of 4 passed   +80 XP"],
+  },
+  {
+    lab: "go-basics",
+    lines: ["$ go run ./cmd", "3500", "1250 <nil>", "map[chai:3 vada pav:1] chai", "$ check", "✓ 4 of 4 passed   +80 XP"],
+  },
+  {
+    lab: "sql-from-zero",
+    lines: [
+      "$ psql -f q3.sql",
+      " name           | revenue_paise",
+      " Koramangala    |       1849200",
+      " Andheri        |       1512650",
+      "$ check",
+      "✓ q3.sql matches the expected rows   +20 XP",
+    ],
+  },
+  {
+    lab: "express-api",
+    lines: [
+      "$ node server.js",
+      "Dabba Express API on http://0.0.0.0:3000",
+      "$ curl -s -X POST localhost:3000/orders",
+      '{"error":"Send items (a list of dishes) and area"}',
+      "$ check",
+      "✓ 2 of 2 passed   +40 XP",
+    ],
+  },
+  {
+    lab: "java-basics",
+    lines: ["$ java Greeter.java", "Hello, Asha!", "$ check", "✗ 1 of 2 passed: longestWord(\"\") should be 0", "$ check", "✓ 2 of 2 passed   +40 XP"],
+  },
+  {
+    lab: "java-collections",
+    lines: [
+      "$ java Payments.java",
+      "20000",
+      "{Chai Point=5000, Kirana King=15000}",
+      "[Chai Point, Kirana King]",
+      "[Kirana King]",
+      "$ check",
+      "✓ 4 of 4 passed   +80 XP",
+    ],
+  },
+  {
+    lab: "python-collections",
+    lines: [
+      "$ python3 orders.py",
+      "330",
+      "['dal rice']",
+      "['Aundh', 'Baner']",
+      "$ check",
+      "✓ 4 of 4 passed   +80 XP   🔥 5 day streak",
+    ],
+  },
 ];
+
+/** A shuffled order of all sessions, different for every visitor. */
+function shuffled(n: number): number[] {
+  const order = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
 
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
 const DEMO = {
@@ -46,17 +146,22 @@ const DEMO = {
 function TermLine({ text }: { text: string }) {
   if (text.startsWith("$ ")) return <div><span className="h-prompt">$</span> {text.slice(2)}</div>;
   if (text.startsWith("! ")) return <div className="h-alert">{text.slice(2)}</div>;
+  if (text.startsWith("✗")) return <div className="h-bad-line">{text}</div>;
   return <div className={text.startsWith("✓") ? "h-ok" : "h-out"}>{text}</div>;
 }
 
-function IncidentTerminal() {
-  const { shown, typing } = useTyped(INCIDENT, 5000);
+function LabTerminal() {
+  const [order] = useState(() => shuffled(SESSIONS.length));
+  const [at, setAt] = useState(0);
+  const session = SESSIONS[order[at]];
+  const next = useCallback(() => setAt((i) => (i + 1) % order.length), [order.length]);
+  const { shown, typing } = useTyped(session.lines, 3500, next);
   return (
-    <div className="h-term" role="img" aria-label="A lab terminal: a slow checkout alert, the learner adds an index, and the check passes with 325 XP">
+    <div className="h-term" role="img" aria-label="A lab terminal: a learner runs real commands in a lab and the check passes">
       <div className="h-term-bar" aria-hidden="true">
         <span className="h-dots"><i /><i /><i /></span>
-        <span className="h-live">● INCIDENT</span>
-        <span className="h-timer">14:52</span>
+        {session.incident ? <span className="h-live">● INCIDENT</span> : <span className="h-lab-name">● {session.lab}</span>}
+        {session.incident && <span className="h-timer">14:52</span>}
       </div>
       <div className="h-term-body" aria-hidden="true">
         {shown.map((l, i) => <TermLine key={i} text={l} />)}
@@ -199,7 +304,7 @@ export default function HomePage() {
               <a className="h-btn h-btn-ghost" href="#how">Try a question</a>
             </div>
           </div>
-          <IncidentTerminal />
+          <LabTerminal />
         </section>
 
         <section className="h-strip" aria-label="Technologies you practise on">

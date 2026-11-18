@@ -1,5 +1,13 @@
 # Changelog
 
+## Home page: the hero terminal shows 11 different labs
+
+- The hero terminal plays short sessions from all 11 live labs (Postgres incident, Python, FastAPI,
+  Spring Boot, JavaScript, Go, SQL, Express, Java basics, Java collections, Python collections), using
+  each lab's real files, commands and outputs. Every visitor starts on a random one, then they follow
+  in a shuffled order. The header shows the lab name (the incident keeps its red INCIDENT and timer).
+- The technology logos in the strip are in colour by default.
+
 ## Home page: GitHub charcoal, white buttons, muted red, contour lines
 
 - Background: the same charcoal as the login page (#111512), black panels and cards, green-grey

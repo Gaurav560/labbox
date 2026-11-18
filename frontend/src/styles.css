@@ -691,6 +691,8 @@ select { padding: 3px 8px; }
 .h-dots { display: flex; gap: 7px; }
 .h-dots i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3f; }
 .h-live { color: #d1605a; letter-spacing: 0.08em; animation: h-blink 1.2s steps(1) infinite; }
+.h-lab-name { color: #9ba39d; letter-spacing: 0.02em; }
+.h-lab-name::first-letter { color: #6fbf73; }
 .h-timer { margin-left: auto; color: #e9d36b; }
 .h-term-body { padding: 18px 20px 22px; min-height: 260px; font: 13.5px/1.8 var(--font-code); overflow: hidden; }
 .h-term-body > div { white-space: pre-wrap; word-break: break-word; }
@@ -698,6 +700,7 @@ select { padding: 3px 8px; }
 .h-alert { color: #f2b3ad; background: #d1605a2e; border: 1px solid #d1605a59; display: inline-block; padding: 0 8px; border-radius: 4px; font-weight: 700; margin-bottom: 6px; }
 .h-out { color: #8e8e93; }
 .h-ok { color: #e9d36b; font-weight: 700; }
+.h-bad-line { color: #d1605a; }
 .h-cursor { display: inline-block; width: 8px; height: 16px; vertical-align: -3px; background: #e9e9ea; animation: h-blink 1s steps(1) infinite; }
 
 /* logo strip */
