@@ -4,7 +4,8 @@
     scripts/labbox validate [lab_id] [--no-docker]
     scripts/labbox test-lab <lab_id> [--no-build]
     scripts/labbox preview <lab_id>
-    scripts/labbox cover <lab_id> --query "chai stall"   (then --pick N)
+    scripts/labbox cover <lab_id> --generate              (AI art, then --pick N)
+    scripts/labbox cover <lab_id> --query "chai stall"   (stock photo, then --pick N)
 
 Runs with the backend's virtualenv and reuses the backend's own lab loader and checker,
 so a lab that passes here behaves the same in the app.
@@ -334,12 +335,103 @@ COVERS_DIR = Path(__file__).resolve().parent / ".covers"  # candidates for revie
 PEXELS_SEARCH = "https://api.pexels.com/v1/search"
 
 
-def _yaml_set_cover(lab_yaml: Path, credit: dict) -> None:
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
+GEMINI_API_REVISION = "2026-05-20"
+COVER_WIDTH = 1200
+
+# One house style for every cover, so 100+ labs look like one product.
+HOUSE_STYLE = (
+    "A tiny isometric 3D diorama on a floating square base, seen from a three-quarter top view, at night. "
+    "Lit by glowing neon accents in {palette} and soft screen glow, gentle volumetric haze, tiny detailed "
+    "props, miniature tilt-shift look, rich cinematic lighting, high detail 3D render. Deep navy background "
+    "with a subtle gradient and a few floating glowing particles. The diorama sits slightly right of centre "
+    "with calm empty space on the left. Absolutely no text, letters, numbers, logos or watermarks anywhere. "
+    "Scene: {scene}"
+)
+TRACK_PALETTES = {
+    "languages": "electric violet and indigo",
+    "frameworks": "teal and cyan",
+    "databases": "amber and hot magenta",
+    "devops": "electric blue and white",
+    "system-design": "indigo and ice blue",
+    "ai": "magenta and pink",
+    "interview": "emerald and lime",
+}
+
+
+def cover_prompt(lab: LabConfig) -> str:
+    scene = lab.cover_scene
+    if not scene:
+        story = lab.story.pitch if lab.story else ""
+        scene = f"{lab.title}. {lab.subtitle or lab.description} {story}".strip()
+    return HOUSE_STYLE.format(palette=TRACK_PALETTES.get(lab.track, TRACK_PALETTES["languages"]), scene=scene)
+
+
+def _find_image(obj) -> tuple[str, str] | None:
+    """The first base64 image anywhere in an API response: (base64 data, mime type)."""
+    if isinstance(obj, dict):
+        data = obj.get("data") or (obj.get("inlineData") or obj.get("inline_data") or {}).get("data")
+        mime = obj.get("mime_type") or obj.get("mimeType") or (obj.get("inlineData") or obj.get("inline_data") or {}).get("mimeType", "")
+        if isinstance(data, str) and len(data) > 1000 and (obj.get("type") == "image" or str(mime).startswith("image/")):
+            return data, str(mime or "image/png")
+        for v in obj.values():
+            found = _find_image(v)
+            if found:
+                return found
+    elif isinstance(obj, list):
+        for v in obj:
+            found = _find_image(v)
+            if found:
+                return found
+    return None
+
+
+def generate_image(prompt: str, key: str, model: str) -> bytes:
+    import base64
+
+    import httpx
+
+    r = httpx.post(
+        GEMINI_URL,
+        headers={"x-goog-api-key": key, "Content-Type": "application/json", "Api-Revision": GEMINI_API_REVISION},
+        json={
+            "model": model,
+            "input": [{"type": "text", "text": prompt}],
+            "response_format": {"type": "image", "aspect_ratio": "16:9", "image_size": "1K"},
+        },
+        timeout=180,
+    )
+    if r.status_code != 200:
+        raise RuntimeError(f"Gemini answered {r.status_code}: {r.text[:400]}")
+    found = _find_image(r.json())
+    if not found:
+        raise RuntimeError(f"No image in the Gemini response: {r.text[:400]}")
+    return base64.b64decode(found[0])
+
+
+def to_cover(raw: bytes) -> bytes:
+    """Resize to 1200 px wide and save as WebP, well under the 512 KB cover limit."""
+    import io
+
+    from PIL import Image
+
+    img = Image.open(io.BytesIO(raw)).convert("RGB")
+    if img.width > COVER_WIDTH:
+        img = img.resize((COVER_WIDTH, round(img.height * COVER_WIDTH / img.width)), Image.LANCZOS)
+    for quality in (86, 78, 70, 60):
+        buf = io.BytesIO()
+        img.save(buf, "WEBP", quality=quality, method=6)
+        if buf.tell() <= 480 * 1024:
+            return buf.getvalue()
+    return buf.getvalue()
+
+
+def _yaml_set_cover(lab_yaml: Path, credit: dict, filename: str = "cover.jpg") -> None:
     """Set cover and cover_credit in lab.yaml as text, so comments and layout stay as they are."""
     lines = lab_yaml.read_text(encoding="utf-8").splitlines()
     keep = [ln for ln in lines if not re.match(r"^cover(_credit)?:", ln)]
     flow = ", ".join(f"{k}: {json.dumps(v)}" for k, v in credit.items())
-    new = ["cover: cover.jpg", f"cover_credit: {{ {flow} }}"]
+    new = [f"cover: {filename}", f"cover_credit: {{ {flow} }}"]
     at = next((i for i, ln in enumerate(keep) if ln.startswith("image:")), len(keep))
     lab_yaml.write_text("\n".join(keep[:at] + new + keep[at:]) + "\n", encoding="utf-8")
 
@@ -352,8 +444,46 @@ def cmd_cover(args: argparse.Namespace) -> int:
 
     folder = _lab_folders(args.labs_dir, args.lab_id)[0]
     out = COVERS_DIR / args.lab_id
+    settings = get_settings()
+    if args.generate:
+        if not settings.GEMINI_API_KEY:
+            print("Set GEMINI_API_KEY in backend/.env (key from https://aistudio.google.com/apikey)")
+            return 2
+        lab = load_lab(folder)
+        prompt = cover_prompt(lab)
+        shutil.rmtree(out, ignore_errors=True)
+        out.mkdir(parents=True)
+        made = []
+        for i in range(1, args.count + 1):
+            try:
+                img = to_cover(generate_image(prompt, settings.GEMINI_API_KEY, settings.GEMINI_IMAGE_MODEL))
+            except Exception as e:
+                print(f"  {i}. failed: {e}")
+                continue
+            (out / f"{i}.webp").write_bytes(img)
+            made.append({"file": f"{i}.webp"})
+            print(f"  {i}. {out / f'{i}.webp'} ({len(img) // 1024} KB)")
+        (out / "generated.json").write_text(json.dumps({"model": settings.GEMINI_IMAGE_MODEL, "prompt": prompt, "images": made}, indent=1))
+        if not made:
+            return 1
+        print(f"Look at them, then: scripts/labbox cover {args.lab_id} --pick N")
+        return 0
+    if args.pick is not None and (out / "generated.json").is_file():
+        info = json.loads((out / "generated.json").read_text())
+        names = [m["file"] for m in info["images"]]
+        if f"{args.pick}.webp" not in names:
+            print(f"Pick one of: {', '.join(n.split('.')[0] for n in names)}")
+            return 2
+        old = folder / "cover.jpg"
+        if old.exists():
+            old.unlink()
+        shutil.copyfile(out / f"{args.pick}.webp", folder / "cover.webp")
+        _yaml_set_cover(folder / "lab.yaml", {"by": "Generated with Gemini", "source": info["model"]}, "cover.webp")
+        load_lab(folder)
+        print(f"✓ {folder / 'cover.webp'} ({(folder / 'cover.webp').stat().st_size // 1024} KB)")
+        return 0
     if args.pick is None:
-        key = get_settings().PEXELS_API_KEY
+        key = settings.PEXELS_API_KEY
         if not key:
             print("Set PEXELS_API_KEY in backend/.env (free key: https://www.pexels.com/api/)")
             return 2
@@ -429,11 +559,14 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("cover", help="find a stock photo for the lab card (Pexels), then pick one")
     c.add_argument("lab_id")
     c.add_argument("--query", help="what the photo should show")
+    c.add_argument("--generate", action="store_true", help="AI cover art in the house style (Gemini, paid per image)")
     c.add_argument("--pick", type=int, help="save candidate N as the cover")
-    c.add_argument("--count", type=int, default=6)
+    c.add_argument("--count", type=int, default=None, help="how many candidates (default: 3 generated, 6 photos)")
     c.set_defaults(fn=cmd_cover)
 
     args = p.parse_args(argv)
+    if getattr(args, "cmd", None) == "cover" and args.count is None:
+        args.count = 3 if args.generate else 6
     args.labs_dir = args.labs_dir.resolve()
     return args.fn(args)
 

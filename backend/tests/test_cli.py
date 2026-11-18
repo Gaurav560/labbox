@@ -17,7 +17,7 @@ LABS_DIR = ROOT / "labs"
 
 @pytest.fixture
 def labs_dir(tmp_path: Path) -> Path:
-    for name in ("python-basics", "java-basics"):
+    for name in ("python-basics", "java-basics", "fastapi-first-api"):
         shutil.copytree(LABS_DIR / name, tmp_path / name)
     return tmp_path
 
@@ -130,3 +130,56 @@ def test_cover_needs_a_key(capsys, monkeypatch):
     monkeypatch.setattr(get_settings(), "PEXELS_API_KEY", "")
     assert cli.main(["cover", "python-basics", "--query", "chai"]) == 2
     assert "PEXELS_API_KEY" in capsys.readouterr().out
+
+
+def test_generate_and_pick_cover(labs_dir: Path, tmp_path: Path, monkeypatch, capsys):
+    """--generate calls the image API with the house style prompt, --pick saves a small WebP."""
+    import base64
+    import io
+
+    from PIL import Image
+
+    from app.config import get_settings
+
+    buf = io.BytesIO()
+    Image.new("RGB", (1376, 768), (20, 30, 90)).save(buf, "PNG")
+    fake_png = base64.b64encode(buf.getvalue()).decode()
+    seen = {}
+
+    class Resp:
+        status_code = 200
+        text = "{}"
+
+        def json(self):
+            return {"steps": [{"type": "model_output", "content": [{"type": "image", "mime_type": "image/png", "data": fake_png}]}]}
+
+    def fake_post(url, headers, json, timeout):
+        seen.update(url=url, headers=headers, body=json)
+        return Resp()
+
+    import httpx
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(get_settings(), "GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(cli, "COVERS_DIR", tmp_path / "covers")
+
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--generate", "--count", "2"]) == 0
+    prompt = seen["body"]["input"][0]["text"]
+    assert "isometric 3D diorama" in prompt and "teal and cyan" in prompt and "chai stall" in prompt
+    assert seen["headers"]["x-goog-api-key"] == "test-key" and seen["body"]["response_format"]["aspect_ratio"] == "16:9"
+
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--pick", "2"]) == 0
+    folder = labs_dir / "fastapi-first-api"
+    cover = folder / "cover.webp"
+    assert cover.is_file() and cover.stat().st_size < 512 * 1024
+    assert Image.open(cover).size == (1200, round(768 * 1200 / 1376))
+    lab = cli.load_lab(folder)
+    assert lab.cover == "cover.webp" and lab.cover_credit and lab.cover_credit.url == ""
+
+
+def test_generate_needs_a_key(capsys, monkeypatch):
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "GEMINI_API_KEY", "")
+    assert cli.main(["cover", "python-basics", "--generate"]) == 2
+    assert "GEMINI_API_KEY" in capsys.readouterr().out

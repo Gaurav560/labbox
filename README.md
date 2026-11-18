@@ -233,6 +233,18 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `pitch`), `cover` (an image in the lab folder: svg, png, jpg or webp, up to 512 KB), and per chapter
 `minutes`. Tasks take `xp` (default 20) and `hints`.
 
+AI cover art uses Gemini (`GEMINI_API_KEY` in `backend/.env`, paid per image) in one house style
+(neon isometric dioramas, colours per track). Each lab describes its scene in one line:
+
+```yaml
+cover_scene: "Ravi's Tapri: a tiny roadside chai stall at night, a big brass kettle steaming..."
+```
+
+```bash
+scripts/labbox cover fastapi-first-api --generate   # 3 candidates in tools/.covers/ (about $0.03 each)
+scripts/labbox cover fastapi-first-api --pick 2     # saves cover.webp (1200 px, under 480 KB)
+```
+
 Stock photo covers come from Pexels (free for commercial use; put a free `PEXELS_API_KEY` in
 `backend/.env`):
 

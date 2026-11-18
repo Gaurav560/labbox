@@ -97,7 +97,7 @@ class CoverCredit(_Strict):
     """Who took the cover photo (stock photo licenses do not require it, but we credit anyway)."""
 
     by: str
-    url: str
+    url: str = ""  # link to the original (stock photos); empty for generated art
     source: str = "Pexels"
 
 
@@ -206,6 +206,7 @@ class LabConfig(_Strict):
     story: Story | None = None
     cover: str | None = None  # optional cover image in the lab folder; otherwise the UI draws one
     cover_credit: CoverCredit | None = None
+    cover_scene: str | None = None  # what the generated cover shows (labbox cover --generate)
     runtime: Literal["default", "gvisor", "sysbox"] = "default"
     services: list[Service] = []
     preview: list[PreviewPort] = []

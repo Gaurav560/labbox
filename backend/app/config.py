@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:5173"
     ALLOW_SIGNUP: bool = True
     PEXELS_API_KEY: str = ""  # only for `labbox cover` (stock photos for lab cards); free at pexels.com/api
+    # Only for `labbox cover --generate` (AI cover art). Never used by the running app.
+    GEMINI_API_KEY: str = ""
+    GEMINI_IMAGE_MODEL: str = "gemini-nano-banana-2.1"
 
     @field_validator("JWT_SECRET")
     @classmethod

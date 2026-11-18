@@ -162,7 +162,7 @@ export default function LabCover({ id, title, track, tags, coverUrl, credit }: P
     return (
       <div className="lab-cover-photo">
         <img className="lab-cover" src={coverUrl} alt="" loading="lazy" decoding="async" />
-        {credit && (
+        {credit?.url && (
           <a className="cover-credit" href={credit.url} target="_blank" rel="noreferrer noopener">
             Photo: {credit.by} / {credit.source}
           </a>

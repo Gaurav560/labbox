@@ -12,6 +12,7 @@ story:
   company: PaySetu
   character: { name: Kabir, role: "Lead engineer, PaySetu" }
   pitch: "PaySetu's merchant dashboard needs its first real backend endpoint."
+cover_scene: "PaySetu headquarters: a tiny rooftop fintech office at night with a glowing server rack sprouting a small green leaf, floating holographic dashboard panels showing merchant cards, city lights far below."
 image: labbox/spring-boot-first-api:v1
 resources: m
 workspace:
