@@ -160,7 +160,13 @@ select { padding: 3px 8px; }
   /* a muted dusk tint from the showcase colours, never plain white */
   --bg: #d4d7ea; --panel: #e7e8f2; --text: #1f2333; --muted: #4f5568; --border: #c5c9dc; --chip: #d6d9e8;
 }
-:root[data-theme="light"] .auth-main { background: linear-gradient(160deg, #cfd4ec, #dcd3ea 60%, #d6cfe6); }
+/* the right side: deep navy in both themes, a soft light behind the card */
+.auth-main {
+  background:
+    radial-gradient(60% 50% at 50% 45%, #2a3266 0%, transparent 70%),
+    linear-gradient(180deg, #0f1226, #0b0d1a);
+}
+.auth-legal { --muted: #9aa1bb; --text: #e6e8f2; }
 :root[data-theme="light"] .auth-card {
   /* the card stays dark slate in both themes: no bright surface next to the dark showcase */
   --bg: #0f1220; --panel: #171a2b; --text: #e8eaf2; --muted: #a3a9bd; --border: #2b3048; --chip: #262b42;
@@ -828,7 +834,9 @@ select { padding: 3px 8px; }
 .logo { display: inline-flex; align-items: center; gap: 9px; color: var(--text); flex-shrink: 0; }
 .logo:hover { text-decoration: none; }
 .logo-mark { display: block; flex-shrink: 0; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.05; }
 .logo-word { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.logo-by { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; color: var(--muted); margin-top: 2px; }
 
 /* ---------- Phase D: services, setup, preview ---------- */
 .service-dots { display: inline-flex; gap: var(--space-2); margin-left: var(--space-2); }

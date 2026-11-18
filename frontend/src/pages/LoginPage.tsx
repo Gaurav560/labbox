@@ -114,7 +114,7 @@ export default function LoginPage() {
             {busy ? "One moment…" : signupMode ? "Sign up" : "Log in"}
           </button>
           <p className="auth-switch muted">
-            {signupMode ? "Already have an account?" : "New to Telusko?"}{" "}
+            {signupMode ? "Already have an account?" : "New to LabBox?"}{" "}
             <button type="button" className="auth-link" disabled={!ready} onClick={() => submit(other)}>
               {signupMode ? "Log in" : "Sign up"}
             </button>

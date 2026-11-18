@@ -335,7 +335,7 @@ def load_lab(folder: Path) -> LabConfig:
         raise LabError(f"{yaml_path}: id {lab.id!r} must equal folder name {folder.name!r}")
     missing = unsupported_features(lab)
     if missing:
-        raise LabError(f"{yaml_path}: uses features this Telusko version does not have yet: {'; '.join(missing)}")
+        raise LabError(f"{yaml_path}: uses features this LabBox version does not have yet: {'; '.join(missing)}")
     root = folder.resolve()
     for ch in lab.chapters:
         chapter_file = (root / ch.file).resolve()

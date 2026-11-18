@@ -1,4 +1,4 @@
-# Telusko
+# LabBox by Telusko
 
 @AGENTS.md
 

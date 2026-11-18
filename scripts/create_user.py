@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a Telusko user from the command line (handy when ALLOW_SIGNUP=false).
+"""Create a LabBox user from the command line (handy when ALLOW_SIGNUP=false).
 
 Usage (from the repo root):
     backend/.venv/bin/python scripts/create_user.py <username> [password]

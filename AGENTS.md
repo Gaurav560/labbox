@@ -1,12 +1,12 @@
-# Notes for coding agents working on Telusko (codename LabBox)
+# Notes for coding agents working on LabBox by Telusko
 
 Read this first, then `ROADMAP.md` (what is left), `CHANGELOG.md` (what is done, newest first) and
 `labbox-v2-upgrade-spec.md` (the full spec). `README.md` explains how to run, test and author labs.
 
-The product is called **Telusko** everywhere a person can see it (name in `frontend/src/site.ts`).
-Technical names stay `labbox` on purpose: the `scripts/labbox` CLI, Docker labels and images
-(`labbox/...`), browser storage keys (`labbox.token`), the systemd unit. Renaming them would log
-everyone out and orphan running lab containers.
+Naming: **LabBox** is the product, **Telusko** the parent company. Write "LabBox by Telusko" in
+titles, "LabBox" in product text, "Telusko" for the company (legal pages, copyright). All names and
+the contact address (connect@telusko.com) live in `frontend/src/site.ts`. Technical names stay
+lowercase `labbox` (CLI, Docker labels and images, browser storage keys, systemd unit).
 
 ## The owner's rules (always apply)
 

@@ -13,5 +13,5 @@ export function SiteLinks({ className = "" }: { className?: string }) {
 }
 
 export function Copyright() {
-  return <span className="muted small-text">© {new Date().getFullYear()} {SITE.name}</span>;
+  return <span className="muted small-text">© {new Date().getFullYear()} {SITE.company}. {SITE.product} is a product of {SITE.company}.</span>;
 }

@@ -12,7 +12,7 @@ function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNo
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   useEffect(() => {
-    document.title = `${title} · ${SITE.name}`;
+    document.title = `${title} · ${SITE.full}`;
     window.scrollTo(0, 0);
   }, [title]);
   return (
@@ -48,7 +48,7 @@ const mail = <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>;
 
 const FAQS: { q: string; a: ReactNode }[] = [
   {
-    q: `What is ${SITE.name}?`,
+    q: `What is ${SITE.product}?`,
     a: <p>Hands-on labs for programming, frameworks, databases and DevOps. Each lab gives you a real Linux machine in your browser with an editor and a terminal, and walks you through small steps: read a little, guess what happens, try it, and check your work.</p>,
   },
   {
@@ -91,7 +91,7 @@ const FAQS: { q: string; a: ReactNode }[] = [
 
 export function FaqPage() {
   return (
-    <InfoLayout title="FAQs" intro={<p>Quick answers about how {SITE.name} labs work. Something missing? Write to {mail}.</p>}>
+    <InfoLayout title="FAQs" intro={<p>Quick answers about how {SITE.product} labs work. Something missing? Write to {mail}.</p>}>
       <div className="faq-list">
         {FAQS.map((f) => (
           <details key={f.q} className="faq">
@@ -107,7 +107,7 @@ export function FaqPage() {
 export function PrivacyPage() {
   return (
     <InfoLayout title="Privacy policy" intro={<p className="muted">Last updated {SITE.legalUpdated}</p>}>
-      <p>This policy explains what {SITE.name} collects when you use our labs, why, and what you can do about it. We collect as little as we can to run the service.</p>
+      <p>{SITE.product} is a product of {SITE.company} ("we", "us"). This policy explains what we collect when you use {SITE.product}, why, and what you can do about it. We collect as little as we can to run the service.</p>
 
       <h2>What we collect</h2>
       <ul>
@@ -137,7 +137,7 @@ export function PrivacyPage() {
       <p>You can ask us for a copy of your data, to correct it, or to delete your account and everything linked to it. Write to {mail} from the account you want to change and we will reply.</p>
 
       <h2>Children</h2>
-      <p>If you are under 18, please use {SITE.name} with the permission of a parent or guardian.</p>
+      <p>If you are under 18, please use {SITE.product} with the permission of a parent or guardian.</p>
 
       <h2>Changes</h2>
       <p>If we change this policy we will update the date at the top, and tell you in the app if the change is important.</p>
@@ -151,7 +151,7 @@ export function PrivacyPage() {
 export function TermsPage() {
   return (
     <InfoLayout title="Terms of Service" intro={<p className="muted">Last updated {SITE.legalUpdated}</p>}>
-      <p>These terms are the agreement between you and {SITE.name} when you use our labs. By creating an account or using the service you agree to them.</p>
+      <p>{SITE.product} is a product of {SITE.company} ("we", "us"). These terms are the agreement between you and {SITE.company} when you use {SITE.product}. By creating an account or using the service you agree to them.</p>
 
       <h2>Your account</h2>
       <ul>
@@ -173,16 +173,16 @@ export function TermsPage() {
       <p>The code you write is yours. You let us store it and run it so we can provide the service (for example, to run your checks).</p>
 
       <h2>Our content</h2>
-      <p>The lessons, labs, tests and everything else we provide belong to {SITE.name}. You may use them for your own learning.</p>
+      <p>The lessons, labs, tests and everything else we provide belong to {SITE.company}. You may use them for your own learning.</p>
 
       <h2>Lab machines</h2>
       <p>Machines have limits on memory, processor time and processes. They stop when idle and can be reset. Do not keep anything important only in a lab machine.</p>
 
       <h2>Early access</h2>
-      <p>{SITE.name} is in early access. Features may change, and the service may sometimes be unavailable. We provide it as it is, without guarantees, and to the extent the law allows we are not liable for indirect losses or lost data.</p>
+      <p>{SITE.product} is in early access. Features may change, and the service may sometimes be unavailable. We provide it as it is, without guarantees, and to the extent the law allows we are not liable for indirect losses or lost data.</p>
 
       <h2>Ending your account</h2>
-      <p>You can stop using {SITE.name} at any time and ask us to delete your account. We may close accounts that break these terms.</p>
+      <p>You can stop using {SITE.product} at any time and ask us to delete your account. We may close accounts that break these terms.</p>
 
       <h2>Changes</h2>
       <p>We may update these terms. We will change the date at the top and tell you in the app if the change is important. If you keep using the service after that, you accept the new terms.</p>

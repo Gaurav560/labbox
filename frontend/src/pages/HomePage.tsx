@@ -143,7 +143,7 @@ export default function HomePage() {
   const [demo, setDemo] = useState<ChoiceState>({ wrong: [], solved: false, answer: null, explain: null });
 
   useEffect(() => {
-    document.title = "Telusko: learn tech by doing";
+    document.title = "LabBox by Telusko: learn tech by doing";
     api.catalog().then(setCatalog).catch(() => setCatalog([]));
   }, []);
 
@@ -212,7 +212,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="h-stats" aria-label="Telusko in numbers">
+        <section className="h-stats" aria-label="LabBox in numbers">
           <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
           <div><strong>~60 s</strong><span>to a real machine</span></div>
           <div><strong>0</strong><span>videos to sit through</span></div>

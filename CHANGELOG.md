@@ -1,14 +1,15 @@
 # Changelog
 
-## Telusko name, FAQs and legal pages
+## LabBox by Telusko, FAQs and legal pages
 
-- The product is now called Telusko everywhere people see it: logo, page titles, login page, API
-  title, docs. The name lives in `frontend/src/site.ts`. Technical names (`labbox` CLI, Docker labels
-  and images, browser storage keys) stay as they are so nobody is logged out and no lab is lost.
+- Naming: LabBox is the product and Telusko the parent company. The logo shows "LabBox" with a small
+  "by Telusko" line, page titles read "LabBox by Telusko", the legal pages say "LabBox is a product of
+  Telusko", and the copyright is Telusko's. Names and the contact address (connect@telusko.com) live
+  in `frontend/src/site.ts`.
 - New public pages: `/faq` (10 questions), `/privacy` and `/terms`, written to match what the app
-  really does with data today. Linked from the home footer and under the login card. The support
-  address is a placeholder (`support@telusko.example`) to set in `site.ts` before launch.
-- Login page in light mode: the card is dark slate instead of near white.
+  really does with data today. Linked from the home footer and under the login card.
+- Login page: the right side is deep navy in both themes (matching the showcase), and the card is
+  dark slate.
 
 ## Home page redesign (red, black, grey, white, a little yellow)
 
