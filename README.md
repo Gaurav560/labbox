@@ -233,7 +233,8 @@ All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (
 `pitch`), `cover` (an image in the lab folder: svg, png, jpg or webp, up to 512 KB), and per chapter
 `minutes`. Tasks take `xp` (default 20) and `hints`.
 
-AI cover art uses Gemini (`GEMINI_API_KEY` in `backend/.env`, paid per image) in one house style
+AI cover art uses OpenAI (`OPENAI_API_KEY` in `backend/.env`, `gpt-image-2`, about $0.041 per image at
+medium quality, $0.165 at `--quality high`) or Gemini (`GEMINI_API_KEY`), in one house style
 (neon isometric dioramas, colours per track). Each lab describes its scene in one line:
 
 ```yaml
@@ -241,7 +242,7 @@ cover_scene: "Ravi's Tapri: a tiny roadside chai stall at night, a big brass ket
 ```
 
 ```bash
-scripts/labbox cover fastapi-first-api --generate   # 3 candidates in tools/.covers/ (about $0.03 each)
+scripts/labbox cover fastapi-first-api --generate   # 3 candidates in tools/.covers/
 scripts/labbox cover fastapi-first-api --pick 2     # saves cover.webp (1200 px, under 480 KB)
 ```
 

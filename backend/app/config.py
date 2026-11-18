@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     ALLOW_SIGNUP: bool = True
     PEXELS_API_KEY: str = ""  # only for `labbox cover` (stock photos for lab cards); free at pexels.com/api
     # Only for `labbox cover --generate` (AI cover art). Never used by the running app.
+    # OpenAI is used when its key is set, otherwise Gemini.
+    OPENAI_API_KEY: str = ""
+    OPENAI_IMAGE_MODEL: str = "gpt-image-2"
     GEMINI_API_KEY: str = ""
     GEMINI_IMAGE_MODEL: str = "gemini-nano-banana-2.1"
 

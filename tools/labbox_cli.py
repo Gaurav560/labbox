@@ -386,10 +386,37 @@ def _find_image(obj) -> tuple[str, str] | None:
     return None
 
 
-def generate_image(prompt: str, key: str, model: str) -> bytes:
+OPENAI_URL = "https://api.openai.com/v1/images/generations"
+
+
+def image_provider(settings) -> tuple[str, str, str] | None:
+    """(provider, key, model) for cover art: OpenAI when its key is set, else Gemini, else None."""
+    if settings.OPENAI_API_KEY:
+        return "openai", settings.OPENAI_API_KEY, settings.OPENAI_IMAGE_MODEL
+    if settings.GEMINI_API_KEY:
+        return "gemini", settings.GEMINI_API_KEY, settings.GEMINI_IMAGE_MODEL
+    return None
+
+
+def generate_image(prompt: str, provider: str, key: str, model: str, quality: str = "medium") -> bytes:
     import base64
 
     import httpx
+
+    if provider == "openai":
+        # gpt-image-2, 1536 x 1024: about $0.041 (medium) or $0.165 (high) per image.
+        r = httpx.post(
+            OPENAI_URL,
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            json={"model": model, "prompt": prompt, "size": "1536x1024", "quality": quality, "output_format": "webp", "n": 1},
+            timeout=240,
+        )
+        if r.status_code != 200:
+            raise RuntimeError(f"OpenAI answered {r.status_code}: {r.text[:400]}")
+        data = (r.json().get("data") or [{}])[0].get("b64_json")
+        if not data:
+            raise RuntimeError(f"No image in the OpenAI response: {r.text[:400]}")
+        return base64.b64decode(data)
 
     r = httpx.post(
         GEMINI_URL,
@@ -446,9 +473,11 @@ def cmd_cover(args: argparse.Namespace) -> int:
     out = COVERS_DIR / args.lab_id
     settings = get_settings()
     if args.generate:
-        if not settings.GEMINI_API_KEY:
-            print("Set GEMINI_API_KEY in backend/.env (key from https://aistudio.google.com/apikey)")
+        chosen = image_provider(settings)
+        if chosen is None:
+            print("Set OPENAI_API_KEY (or GEMINI_API_KEY) in backend/.env to generate cover art")
             return 2
+        provider, key, model = chosen
         lab = load_lab(folder)
         prompt = cover_prompt(lab)
         shutil.rmtree(out, ignore_errors=True)
@@ -456,14 +485,16 @@ def cmd_cover(args: argparse.Namespace) -> int:
         made = []
         for i in range(1, args.count + 1):
             try:
-                img = to_cover(generate_image(prompt, settings.GEMINI_API_KEY, settings.GEMINI_IMAGE_MODEL))
+                img = to_cover(generate_image(prompt, provider, key, model, args.quality))
             except Exception as e:
                 print(f"  {i}. failed: {e}")
                 continue
             (out / f"{i}.webp").write_bytes(img)
             made.append({"file": f"{i}.webp"})
             print(f"  {i}. {out / f'{i}.webp'} ({len(img) // 1024} KB)")
-        (out / "generated.json").write_text(json.dumps({"model": settings.GEMINI_IMAGE_MODEL, "prompt": prompt, "images": made}, indent=1))
+        (out / "generated.json").write_text(
+            json.dumps({"provider": provider, "model": model, "quality": args.quality, "prompt": prompt, "images": made}, indent=1)
+        )
         if not made:
             return 1
         print(f"Look at them, then: scripts/labbox cover {args.lab_id} --pick N")
@@ -478,7 +509,8 @@ def cmd_cover(args: argparse.Namespace) -> int:
         if old.exists():
             old.unlink()
         shutil.copyfile(out / f"{args.pick}.webp", folder / "cover.webp")
-        _yaml_set_cover(folder / "lab.yaml", {"by": "Generated with Gemini", "source": info["model"]}, "cover.webp")
+        who = "OpenAI" if info.get("provider") == "openai" else "Gemini"
+        _yaml_set_cover(folder / "lab.yaml", {"by": f"Generated with {who}", "source": info["model"]}, "cover.webp")
         load_lab(folder)
         print(f"✓ {folder / 'cover.webp'} ({(folder / 'cover.webp').stat().st_size // 1024} KB)")
         return 0
@@ -559,7 +591,8 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("cover", help="find a stock photo for the lab card (Pexels), then pick one")
     c.add_argument("lab_id")
     c.add_argument("--query", help="what the photo should show")
-    c.add_argument("--generate", action="store_true", help="AI cover art in the house style (Gemini, paid per image)")
+    c.add_argument("--generate", action="store_true", help="AI cover art in the house style (OpenAI or Gemini, paid per image)")
+    c.add_argument("--quality", choices=["low", "medium", "high"], default="medium", help="OpenAI image quality (cost goes up)")
     c.add_argument("--pick", type=int, help="save candidate N as the cover")
     c.add_argument("--count", type=int, default=None, help="how many candidates (default: 3 generated, 6 photos)")
     c.set_defaults(fn=cmd_cover)

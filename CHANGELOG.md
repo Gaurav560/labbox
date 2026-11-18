@@ -9,7 +9,7 @@
 - Optional `cover:` in `lab.yaml` (svg, png, jpg or webp in the lab folder, up to 512 KB) for real
   artwork; served publicly at `GET /api/labs/{lab}/cover` with a sandbox CSP and nosniff.
 - The language badge next to the card title is gone (the cover shows the tags).
-- `scripts/labbox cover <lab> --generate` then `--pick N`: AI cover art (Gemini) in one house style,
+- `scripts/labbox cover <lab> --generate` then `--pick N`: AI cover art (OpenAI `gpt-image-2` or Gemini) in one house style,
   neon isometric dioramas with colours per track, from a one-line `cover_scene` per lab; saved as a
   1200 px WebP. All five labs have a scene.
 - `scripts/labbox cover <lab> --query ...` then `--pick N`: stock photos from Pexels saved as the lab's

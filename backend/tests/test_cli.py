@@ -160,6 +160,7 @@ def test_generate_and_pick_cover(labs_dir: Path, tmp_path: Path, monkeypatch, ca
     import httpx
 
     monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(get_settings(), "OPENAI_API_KEY", "")
     monkeypatch.setattr(get_settings(), "GEMINI_API_KEY", "test-key")
     monkeypatch.setattr(cli, "COVERS_DIR", tmp_path / "covers")
 
@@ -177,9 +178,46 @@ def test_generate_and_pick_cover(labs_dir: Path, tmp_path: Path, monkeypatch, ca
     assert lab.cover == "cover.webp" and lab.cover_credit and lab.cover_credit.url == ""
 
 
+def test_generate_with_openai(labs_dir: Path, tmp_path: Path, monkeypatch):
+    import base64
+    import io
+
+    import httpx
+    from PIL import Image
+
+    from app.config import get_settings
+
+    buf = io.BytesIO()
+    Image.new("RGB", (1536, 1024), (90, 20, 60)).save(buf, "WEBP")
+    seen = {}
+
+    class Resp:
+        status_code = 200
+        text = "{}"
+
+        def json(self):
+            return {"data": [{"b64_json": base64.b64encode(buf.getvalue()).decode()}]}
+
+    def fake_post(url, headers, json, timeout):
+        seen.update(url=url, headers=headers, body=json)
+        return Resp()
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(get_settings(), "OPENAI_API_KEY", "sk-test")
+    monkeypatch.setattr(cli, "COVERS_DIR", tmp_path / "covers")
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "python-basics", "--generate", "--count", "1", "--quality", "high"]) == 0
+    assert seen["url"] == cli.OPENAI_URL and seen["headers"]["Authorization"] == "Bearer sk-test"
+    assert seen["body"]["model"] == "gpt-image-2" and seen["body"]["size"] == "1536x1024" and seen["body"]["quality"] == "high"
+    assert "tiffin" in seen["body"]["prompt"] and "electric violet" in seen["body"]["prompt"]
+    assert cli.main(["--labs-dir", str(labs_dir), "cover", "python-basics", "--pick", "1"]) == 0
+    lab = cli.load_lab(labs_dir / "python-basics")
+    assert lab.cover == "cover.webp" and lab.cover_credit.by == "Generated with OpenAI"
+
+
 def test_generate_needs_a_key(capsys, monkeypatch):
     from app.config import get_settings
 
+    monkeypatch.setattr(get_settings(), "OPENAI_API_KEY", "")
     monkeypatch.setattr(get_settings(), "GEMINI_API_KEY", "")
     assert cli.main(["cover", "python-basics", "--generate"]) == 2
-    assert "GEMINI_API_KEY" in capsys.readouterr().out
+    assert "OPENAI_API_KEY" in capsys.readouterr().out
