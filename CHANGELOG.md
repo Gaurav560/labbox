@@ -1,5 +1,13 @@
 # Changelog
 
+## Cleaner covers and closing panel, new Java cover, softer grid
+
+- Lab covers: the dot pattern and the small dots on the rings are gone (logo, rings and light only).
+- Java covers (java-basics, java-collections): Java blue (#1b4f80 to #08172b) instead of orange, so
+  the red flame and the blue cup both stand out. Picked from six candidates.
+- The red closing panel on the home page has no dot texture now.
+- The page grid is fainter (dark #161a17, light #edebe6).
+
 ## Home page: the hero terminal shows 11 different labs
 
 - The hero terminal plays short sessions from all 11 live labs (Postgres incident, Python, FastAPI,

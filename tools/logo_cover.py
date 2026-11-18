@@ -20,7 +20,7 @@ W, H = 1200, 800
 # name: (background, background dark end, accent). Brand colours from each project's own guidelines.
 BRANDS: dict[str, tuple[str, str, str]] = {
     "python": ("#3776AB", "#163a5f", "#FFD43B"),
-    "java": ("#E76F00", "#7a2d00", "#5382A1"),
+    "java": ("#1b4f80", "#08172b", "#f89820"),  # Java blue: the red flame and blue cup both stand out
     "fastapi": ("#009688", "#003f3a", "#ffffff"),
     "spring": ("#6DB33F", "#24501a", "#ffffff"),
     "postgresql": ("#336791", "#14304a", "#ffffff"),
@@ -38,6 +38,10 @@ BRANDS: dict[str, tuple[str, str, str]] = {
     "mysql": ("#00758F", "#003342", "#F29111"),
     "mongodb": ("#47A248", "#12351a", "#ffffff"),
 }
+
+
+# The light behind the logo, when white is not the best match for a brand.
+SPOTS: dict[str, str] = {}
 
 
 def known_logos() -> list[str]:
@@ -61,7 +65,8 @@ def build_cover(logos: list[str], seed: str) -> str:
     if not logos or unknown or len(logos) > 2:
         raise ValueError(f"Use one or two of: {', '.join(known_logos())}")
     r = random.Random(int(hashlib.sha256(seed.encode()).hexdigest()[:12], 16))
-    bg, dark, accent = BRANDS[logos[0]]
+    bg, dark, _accent = BRANDS[logos[0]]
+    spot = SPOTS.get(logos[0], "#fff")
     angle = r.randint(20, 70)
     glow_x = r.randint(760, 1000)
 
@@ -70,10 +75,8 @@ def build_cover(logos: list[str], seed: str) -> str:
         f'<stop offset="0" stop-color="{bg}"/><stop offset="1" stop-color="{dark}"/></linearGradient>',
         '<radialGradient id="glow"><stop offset="0" stop-color="#fff" stop-opacity=".32"/>'
         '<stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>',
-        '<pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">'
-        '<circle cx="2" cy="2" r="1.6" fill="#fff" fill-opacity=".16"/></pattern>',
-        '<radialGradient id="spot"><stop offset="0" stop-color="#fff" stop-opacity=".92"/>'
-        '<stop offset=".55" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>',
+        f'<radialGradient id="spot"><stop offset="0" stop-color="{spot}" stop-opacity=".92"/>'
+        f'<stop offset=".55" stop-color="{spot}" stop-opacity=".55"/><stop offset="1" stop-color="{spot}" stop-opacity="0"/></radialGradient>',
         '<filter id="shadow" x="-40%" y="-40%" width="180%" height="180%">'
         '<feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000" flood-opacity=".28"/></filter>',
     ]
@@ -81,16 +84,12 @@ def build_cover(logos: list[str], seed: str) -> str:
     cx, cy, size = 600, 400, 540  # the logo is the picture: big, in the middle, in its own colours
     body = [
         f'<rect width="{W}" height="{H}" fill="url(#bg)"/>',
-        f'<rect width="{W}" height="{H}" fill="url(#dots)"/>',
         f'<circle cx="{glow_x}" cy="40" r="520" fill="url(#glow)"/>',
         # a soft light behind the logo, so a red logo still stands out on a red card
         f'<circle cx="{cx}" cy="{cy}" r="400" fill="url(#spot)"/>',
     ]
     for i, rad in enumerate((350, 430)):
         body.append(f'<circle cx="{cx}" cy="{cy}" r="{rad}" fill="none" stroke="#fff" stroke-opacity="{.22 - i * .09:.2f}" stroke-width="2"/>')
-    for _ in range(6):  # small accent dots on the rings
-        rad, a = r.choice((350, 430)), r.uniform(0, 6.283)
-        body.append(f'<circle cx="{cx + rad * math.cos(a):.0f}" cy="{cy + rad * math.sin(a):.0f}" r="{r.randint(5, 9)}" fill="{accent}" fill-opacity=".9"/>')
     body.append(f'<g filter="url(#shadow)"><svg x="{cx - size // 2}" y="{cy - size // 2}" width="{size}" height="{size}" viewBox="{view0}">{main}</svg></g>')
     if len(logos) == 2:
         view1, badge = _logo(logos[1], "b-")
