@@ -84,7 +84,6 @@ def test_bad_track(lab_copy: Path):
 @pytest.mark.parametrize(
     "change, phase",
     [
-        (lambda d: d.update(llm={"enabled": True}), "llm needs Phase E"),
         (lambda d: d.update(runtime="sysbox"), "runtime: sysbox needs Phase F"),
         (lambda d: d["resources"].update(disk_mb=1024), "disk_mb needs Phase H"),
         (lambda d: d["workspace"].update(sudo=True), "sudo needs Phase F"),
@@ -129,6 +128,12 @@ def test_bad_phase_d_config(lab_copy: Path, change, match: str):
     edit(lab_copy, change)
     with pytest.raises(LabError, match=match):
         load_lab(lab_copy)
+
+
+def test_llm_labs_load_and_get_a_lab_network(lab_copy: Path):
+    edit(lab_copy, lambda d: d.update(llm={"enabled": True}))
+    lab = load_lab(lab_copy)
+    assert lab.llm.enabled and lab.uses_lab_network  # the gateway relay lives on the lab network
 
 
 def test_engine_fields_at_defaults_are_fine(lab_copy: Path):

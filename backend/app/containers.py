@@ -142,6 +142,24 @@ def _network_args(lab: LabConfig, ws: Workspace) -> dict:
     return dict(network_mode=lab.workspace.network)
 
 
+def llm_env(lab: LabConfig, ws: Workspace) -> dict[str, str]:
+    """What an llm.enabled lab gets: the gateway's address and a key that only works there, for this
+    user and lab. The real provider keys never enter a container."""
+    if not lab.llm.enabled:
+        return {}
+    from .llm_gateway import create_lab_token
+
+    base = f"http://{services.GATEWAY_ALIAS}:{get_settings().LLM_GATEWAY_PORT}"
+    token = create_lab_token(ws.user_id, lab.id)
+    return {
+        "LABBOX_GATEWAY": base,
+        "OPENAI_BASE_URL": f"{base}/llm/v1",
+        "OPENAI_API_KEY": token,
+        "ANTHROPIC_BASE_URL": f"{base}/llm/anthropic",
+        "ANTHROPIC_API_KEY": token,
+    }
+
+
 def _create(lab: LabConfig, ws: Workspace) -> Container:
     mount = lab.workspace.mount_path
     c = client().containers.run(
@@ -158,7 +176,7 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
         stdin_open=True,
         command=["sleep", "infinity"],
         init=True,  # tini as PID 1: stops in milliseconds (sleep ignores SIGTERM as PID 1) and reaps zombies
-        environment={**lab.workspace.env, "HOME": "/home/learner", "TERM": "xterm-256color"},
+        environment={**lab.workspace.env, **llm_env(lab, ws), "HOME": "/home/learner", "TERM": "xterm-256color"},
         **security_options(lab),
     )
     if lab.uses_lab_network and lab.workspace.network == "bridge":

@@ -254,8 +254,8 @@ class LabConfig(_Strict):
 
     @property
     def uses_lab_network(self) -> bool:
-        """A private per-user network: for services, network: lab, and live checks."""
-        return bool(self.services) or self.workspace.network == "lab"
+        """A private per-user network: for services, network: lab, live checks and the LLM relay."""
+        return bool(self.services) or self.workspace.network == "lab" or self.llm.enabled
 
     @model_validator(mode="after")
     def fill_v1_fields(self) -> "LabConfig":
@@ -314,8 +314,6 @@ def unsupported_features(lab: LabConfig) -> list[str]:
         found.append(("resources.disk_mb", "H"))
     if lab.workspace.sudo:
         found.append(("workspace.sudo", "F"))
-    if lab.llm.enabled:
-        found.append(("llm", "E"))
     if lab.runtime != "default":
         found.append((f"runtime: {lab.runtime}", "F"))
     return [f"{name} needs Phase {phase} (not built yet)" for name, phase in found]

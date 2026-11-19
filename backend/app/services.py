@@ -25,6 +25,10 @@ log = logging.getLogger(__name__)
 READY_TIMEOUT_SECONDS = 90
 READY_POLL_SECONDS = 0.5
 WORKSPACE_ALIAS = "workspace"  # how services and the live checker reach the workspace
+# Labs with llm.enabled reach the LLM gateway as http://gateway:9000 through a tiny relay: the lab
+# network has no way out, so the relay sits on it and on Docker's bridge, and forwards one port only.
+GATEWAY_ALIAS = "gateway"
+RELAY_IMAGE = "alpine/socat:1.8.0.3"
 
 ServiceState = Literal["running", "starting", "stopped", "missing"]
 
@@ -152,9 +156,46 @@ def _wait_ready(lab: LabConfig, ws: Workspace) -> None:
             time.sleep(READY_POLL_SECONDS)
 
 
+def relay_name(ws: Workspace) -> str:
+    return f"{ws.container_name}-gateway"
+
+
+def _ensure_relay(lab: LabConfig, ws: Workspace) -> None:
+    if not lab.llm.enabled:
+        return
+    c = _get(relay_name(ws))
+    if c is not None:
+        if c.status != "running":
+            c.start()
+        return
+    from . import llm_gateway
+
+    port = get_settings().LLM_GATEWAY_PORT
+    c = _client().containers.run(
+        image=RELAY_IMAGE,
+        name=relay_name(ws),
+        detach=True,
+        labels=_labels("relay", ws),
+        command=[f"TCP-LISTEN:{port},fork,reuseaddr", f"TCP:{llm_gateway.bind_host()}:{port}"],
+        network=network_name(ws),
+        networking_config=networking_config(ws, GATEWAY_ALIAS),
+        user="65534:65534",
+        cap_drop=["ALL"],
+        security_opt=["no-new-privileges:true"],
+        read_only=True,
+        nano_cpus=int(0.25e9),
+        mem_limit="32m",
+        memswap_limit="32m",
+        pids_limit=64,
+    )
+    _client().networks.get("bridge").connect(c)  # the only way out, and it only forwards to the gateway
+    log.info("Created LLM relay %s", c.name)
+
+
 def ensure_services(lab: LabConfig, ws: Workspace) -> None:
     """Network up, every service created and running, and ready (call before the workspace starts)."""
     ensure_network(lab, ws)
+    _ensure_relay(lab, ws)
     for svc in lab.services:
         c = _get(service_container_name(ws, svc))
         if c is None:
@@ -166,6 +207,9 @@ def ensure_services(lab: LabConfig, ws: Workspace) -> None:
 
 
 def stop_services(lab: LabConfig, ws: Workspace) -> None:
+    relay = _get(relay_name(ws)) if lab.llm.enabled else None
+    if relay is not None and relay.status == "running":
+        relay.stop(timeout=2)
     for svc in lab.services:
         c = _get(service_container_name(ws, svc))
         if c is not None and c.status == "running":
@@ -175,6 +219,9 @@ def stop_services(lab: LabConfig, ws: Workspace) -> None:
 
 def remove_services(lab: LabConfig, ws: Workspace, wipe_data: bool) -> None:
     """Used by reset: containers go, and with wipe_data their data folders too."""
+    relay = _get(relay_name(ws)) if lab.llm.enabled else None
+    if relay is not None:
+        relay.remove(force=True)
     for svc in lab.services:
         c = _get(service_container_name(ws, svc))
         if c is not None:

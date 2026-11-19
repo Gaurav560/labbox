@@ -1,0 +1,19 @@
+#!/bin/sh
+# lab: small helpers inside a LabBox machine.
+#   lab requests          your last 10 AI calls: model, tokens, time, cost (AI labs)
+#   lab requests --last   the full request and response of the last call
+case "${1:-}" in
+  requests)
+    if [ -z "${LABBOX_GATEWAY:-}" ]; then
+      echo "This lab has no AI access."
+      exit 1
+    fi
+    query=""
+    [ "${2:-}" = "--last" ] && query="?last=true"
+    exec curl -sS -H "Authorization: Bearer ${OPENAI_API_KEY:-}" "$LABBOX_GATEWAY/llm/requests$query"
+    ;;
+  *)
+    echo "usage: lab requests [--last]"
+    exit 2
+    ;;
+esac

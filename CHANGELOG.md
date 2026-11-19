@@ -1,5 +1,19 @@
 # Changelog
 
+## Phase E: labs talk to the gateway
+
+- `llm: {enabled: true}` in a lab is now allowed (it was refused until Phase E). Such a lab gets a
+  private network and a tiny relay container (`alpine/socat`, read-only, no capabilities, user
+  65534) that answers as `gateway:9000` and forwards only to the LLM gateway.
+- The workspace gets `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_API_KEY`
+  and `LABBOX_GATEWAY`; the key is a lab token for that user and lab only. Real provider keys never
+  enter a container.
+- `lab requests` (and `lab requests --last`) in every image built from the new base.
+- New image `labbox/ai-python` (OpenAI and Anthropic SDKs).
+- Docker acceptance tests: the OpenAI SDK reaches `lab-chat` with only the injected env vars, a
+  used-up budget shows a clear 429 inside the lab, and the server's provider key is nowhere in the
+  container (env, files, process list).
+
 ## Phase E: AI tutor and code review
 
 - "✦ Ask the tutor" under a task once a check has failed: a Socratic nudge built from the task text,

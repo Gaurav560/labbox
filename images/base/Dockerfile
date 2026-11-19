@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 # Ubuntu ships a uid 1000 user (ubuntu): rename it to learner and drop its extra groups.
 RUN usermod -l learner -d /home/learner -m -s /bin/bash -G "" ubuntu && groupmod -n learner ubuntu
+# `lab requests` and friends (see the script).
+COPY --chmod=755 lab /usr/local/bin/lab
 ENV PS1="\[\e[32m\]learner\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]$ "
 USER 1000
 WORKDIR /workspace

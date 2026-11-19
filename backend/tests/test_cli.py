@@ -61,8 +61,8 @@ def test_task_without_step(labs_dir: Path):
 
 def test_schema_errors_are_reported(labs_dir: Path):
     path = labs_dir / "python-basics" / "lab.yaml"
-    path.write_text(path.read_text() + "llm: {enabled: true}\n")
-    assert any("llm needs Phase E" in e for e in errors(labs_dir / "python-basics"))
+    path.write_text(path.read_text() + "runtime: sysbox\n")
+    assert any("runtime: sysbox needs Phase F" in e for e in errors(labs_dir / "python-basics"))
     assert cli.main(["--labs-dir", str(labs_dir), "validate", "--no-docker"]) == 1
 
 
@@ -73,7 +73,7 @@ def test_unknown_prerequisite_warns(labs_dir: Path):
     assert rep.errors == [] and any("core-java" in w for w in rep.warnings)
 
 
-@pytest.mark.parametrize("template", ["python", "java"])
+@pytest.mark.parametrize("template", ["python", "java", "ai"])
 def test_new_lab_is_valid(tmp_path: Path, template: str):
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", f"my-{template}", "--template", template, "--track", "languages"]) == 0
     rep = cli.validate_lab(tmp_path / f"my-{template}", check_image=False)
@@ -82,7 +82,7 @@ def test_new_lab_is_valid(tmp_path: Path, template: str):
 
 
 def test_new_lab_refuses(tmp_path: Path):
-    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "rag", "--template", "ai"]) == 2
+    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "load", "--template", "system-design"]) == 2
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "Bad_Id"]) == 2
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 0
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 2  # exists
