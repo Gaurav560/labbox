@@ -80,8 +80,17 @@ def mounts() -> dict:
     return {str(get_settings().IDE_DIR): {"bind": MOUNT, "mode": "ro"}} if available() else {}
 
 
+# Font sizes follow the learner's text size (the lab's Aa menu): they are only start-page defaults
+# (see inject_defaults), because a machine settings.json value would always win over them.
+SIZED = ("editor.fontSize", "editor.lineHeight", "terminal.integrated.fontSize")
+
+
+def machine_settings() -> dict:
+    return {k: v for k, v in SETTINGS.items() if k not in SIZED}
+
+
 def _command(ws: Workspace) -> list[str]:
-    settings_json = json.dumps(SETTINGS, indent=2)
+    settings_json = json.dumps(machine_settings(), indent=2)
     server = [
         SERVER, "--host", "0.0.0.0", "--port", str(PORT),
         "--connection-token", token(ws.user_id, ws.lab_id),
@@ -113,7 +122,7 @@ def setup_stamp() -> str:
     base = get_settings().IDE_DIR
     files = [base / "extensions" / "extensions.json", base / "current" / "product.json"]
     mtime = ":".join(str(f.stat().st_mtime_ns) if f.exists() else "0" for f in files)
-    return hashlib.sha256(f"{mtime}:{json.dumps(SETTINGS, sort_keys=True)}".encode()).hexdigest()[:16]
+    return hashlib.sha256(f"{mtime}:{json.dumps(machine_settings(), sort_keys=True)}".encode()).hexdigest()[:16]
 
 
 def start(lab: LabConfig, ws: Workspace) -> None:
@@ -150,15 +159,35 @@ def is_start_page(lab_id: str, path: str) -> bool:
     return path.rstrip("/") == base_path(lab_id)
 
 
-def inject_defaults(page: str) -> str:
+def text_scale(value: str | None) -> int:
+    """A learner's text size in percent (the lab's Aa menu), clamped to 80..150; 100 if missing or bad."""
+    try:
+        return min(150, max(80, int(value or 100)))
+    except ValueError:
+        return 100
+
+
+def sized_settings(editor_pct: int = 100, terminal_pct: int = 100) -> dict:
+    """SETTINGS with the editor and terminal fonts scaled to the learner's text size."""
+    return {
+        **SETTINGS,
+        "editor.fontSize": round(SETTINGS["editor.fontSize"] * editor_pct / 100),
+        "editor.lineHeight": round(SETTINGS["editor.lineHeight"] * editor_pct / 100),
+        "terminal.integrated.fontSize": round(SETTINGS["terminal.integrated.fontSize"] * terminal_pct / 100),
+    }
+
+
+def inject_defaults(page: str, editor_pct: int = 100, terminal_pct: int = 100) -> str:
     """Add our SETTINGS as configurationDefaults to VS Code's start page. They are registered before
     the workbench starts, early enough for settings like workspace trust (an extension is too late)."""
+    settings = sized_settings(editor_pct, terminal_pct)
+
     def add(m: re.Match) -> str:
         try:
             config = json.loads(html.unescape(m.group(2)))
         except ValueError:
             return m.group(0)
-        config["configurationDefaults"] = {**config.get("configurationDefaults", {}), **SETTINGS}
+        config["configurationDefaults"] = {**config.get("configurationDefaults", {}), **settings}
         return m.group(1) + html.escape(json.dumps(config), quote=True) + m.group(3)
 
     page = _CONFIG.sub(add, page, count=1)

@@ -3,6 +3,7 @@ import type { Chapter, Progress, ServiceStatus } from "../api";
 import { useTheme } from "../theme";
 import { LogoMark } from "./Logo";
 import StatsBadges from "./StatsBadges";
+import TextSizeMenu from "./TextSizeMenu";
 
 export type UiStatus = "starting" | "running" | "stopped" | "error";
 
@@ -72,6 +73,7 @@ export default function StatusBar(p: Props) {
       <button className="btn btn-small btn-ghost" onClick={p.onFocus} aria-pressed={p.focus} title="Hide the file tree and widen the lesson and editor">
         {p.focus ? "Exit focus" : "Focus"}
       </button>
+      <TextSizeMenu />
       <button className="btn btn-small btn-ghost" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title="Theme">
         {theme === "dark" ? "☀" : "☾"}
       </button>

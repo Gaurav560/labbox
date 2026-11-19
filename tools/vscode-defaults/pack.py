@@ -6,9 +6,9 @@ import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "backend"))
-from app.ide import SETTINGS  # noqa: E402
+from app.ide import machine_settings  # noqa: E402  (font sizes follow the learner, see ide.SIZED)
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 # "LabBox Dark": the app's GitHub greys around the code, GitHub's code colours, a green accent.
 BG, SIDE, BORDER, TEXT, MUTED, GREEN = "#111512", "#0d100e", "#222824", "#e6edf3", "#9ba39d", "#3fb950"
@@ -74,7 +74,7 @@ PACKAGE = {
     "description": "The LabBox Dark theme and default settings for VS Code in LabBox labs: no workspace trust prompt, no Copilot chat, lab fonts, auto-save.",
     "engines": {"vscode": "^1.80.0"}, "categories": ["Other"],
     "contributes": {
-        "configurationDefaults": SETTINGS,
+        "configurationDefaults": machine_settings(),
         "themes": [{"label": "LabBox Dark", "uiTheme": "vs-dark", "path": "./themes/labbox-dark.json"}],
     },
 }

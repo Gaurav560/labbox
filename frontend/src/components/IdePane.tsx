@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, ApiError } from "../api";
+import { useTextSizes } from "../textSize";
 
 // Real VS Code (openvscode-server) running inside the learner's own machine, shown through the
 // signed-in /ide proxy. If the server has no VS Code, or it does not start, the lab falls back to the
@@ -8,6 +9,13 @@ export default function IdePane({ labId, onUnavailable }: { labId: string; onUna
   const [url, setUrl] = useState<string | null>(null);
   const [state, setState] = useState<"starting" | "ready" | "slow">("starting");
   const [attempt, setAttempt] = useState(0);
+  // VS Code reads font sizes only when it starts, so a new size reloads the frame (files and tabs stay).
+  const { editor, terminal } = useTextSizes();
+  const [sized, setSized] = useState({ editor, terminal });
+  useEffect(() => {
+    const t = setTimeout(() => setSized({ editor, terminal }), 600); // wait until the slider stops
+    return () => clearTimeout(t);
+  }, [editor, terminal]);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,5 +42,6 @@ export default function IdePane({ labId, onUnavailable }: { labId: string; onUna
       </div>
     );
   }
-  return <iframe key={url} className="ide-frame" src={url} title="VS Code" allow="clipboard-read; clipboard-write" />;
+  const src = `${url}${url.includes("?") ? "&" : "?"}lb_fs=${sized.editor}&lb_ts=${sized.terminal}`;
+  return <iframe key={src} className="ide-frame" src={src} title="VS Code" allow="clipboard-read; clipboard-write" />;
 }

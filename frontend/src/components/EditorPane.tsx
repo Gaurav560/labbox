@@ -1,4 +1,5 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
+import { useTextSizes } from "../textSize";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { registerAiCompletion, setAiCompletion } from "../aiComplete";
@@ -34,6 +35,7 @@ function saveLabel(tab: Tab | undefined): string {
 }
 
 export default function EditorPane({ labId, tabs, activePath, onSelect, onClose, onChange, onSave }: Props) {
+  const editorPct = useTextSizes().editor;
   const { theme } = useTheme();
   // AI completion: offered when the server has a code model; the learner can switch it off.
   const [aiAvailable, setAiAvailable] = useState(false);
@@ -115,8 +117,8 @@ export default function EditorPane({ labId, tabs, activePath, onSelect, onClose,
             options={{
               automaticLayout: true,
               fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-              fontSize: 15,
-              lineHeight: 24,
+              fontSize: Math.round((15 * editorPct) / 100),
+              lineHeight: Math.round((24 * editorPct) / 100),
               fontLigatures: true,
               padding: { top: 12, bottom: 12 },
               lineNumbersMinChars: 3,

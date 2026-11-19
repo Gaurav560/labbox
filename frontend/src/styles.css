@@ -1126,3 +1126,30 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 @media (max-width: 640px) {
   .h-feats, .h-ai, .h-faq { grid-template-columns: 1fr; }
 }
+
+/* ---------- lab: text size (the Aa menu) ---------- */
+.left-panel .lesson-scroll, .left-panel > .chapter { zoom: var(--ts-lesson, 1); }
+.left-panel .lesson-scroll .task-box, .left-panel .lesson-scroll .incident { zoom: calc(var(--ts-tasks, 1) / var(--ts-lesson, 1)); }
+.left-panel .left-footer { zoom: var(--ts-tasks, 1); }
+.ts-wrap { position: relative; }
+.ts-btn { font-weight: 800; letter-spacing: -0.02em; }
+.ts-btn small { font-size: 0.72em; margin-left: 0; }
+.ts-btn[aria-expanded="true"] { background: var(--chip); }
+.ts-pop { position: absolute; top: calc(100% + 10px); right: 0; z-index: 60; width: 330px; padding: 18px 20px 14px; border-radius: 16px;
+  background: var(--panel); border: 1px solid var(--border); box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6); color: var(--text); }
+.ts-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.ts-head strong { font-size: 16px; }
+.ts-reset { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.ts-reset:hover { color: var(--text); }
+.ts-presets { display: grid; grid-template-columns: repeat(4, 1fr); padding: 3px; margin-bottom: 16px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); }
+.ts-presets button { padding: 8px 0; border: 0; border-radius: 7px; background: none; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+.ts-presets button:hover { color: var(--text); }
+.ts-presets button[aria-pressed="true"] { background: color-mix(in srgb, var(--brand-red) 28%, var(--card)); color: var(--text); font-weight: 700; }
+.ts-row { display: grid; grid-template-columns: 96px 1fr 44px; align-items: center; gap: 12px; padding: 7px 0; font-size: 14.5px; }
+.ts-row output { text-align: right; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.ts-row input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 999px; margin: 0; cursor: pointer;
+  background: linear-gradient(90deg, var(--brand-red) var(--ts-fill, 50%), var(--chip) var(--ts-fill, 50%)); }
+.ts-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--text); border: 0; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); }
+.ts-row input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--text); border: 0; }
+.ts-row input[type="range"]:focus-visible { outline: 2px solid var(--brand-red); outline-offset: 4px; }
+.ts-foot { margin: 10px 0 0; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12.5px; }

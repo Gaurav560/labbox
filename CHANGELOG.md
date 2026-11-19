@@ -1,5 +1,18 @@
 # Changelog
 
+## Lab page: text size per area (the Aa menu)
+
+- An **Aa** button in the lab's top bar opens "Text size": presets **S / M / L / XL** (90, 100, 115,
+  130%) and a slider per area from 80 to 150%: **Lesson**, **Tasks** (task cards, incident pagers,
+  the task bar, the tutor), **Code editor** and **Terminal**. Reset goes back to 100%. Saved on this
+  device (`labbox.textSize`).
+- Lesson and tasks resize at once (CSS zoom), and so do the terminal and the Lite editor. Real VS Code
+  reads font sizes only when it starts, so a new size reloads the IDE frame (files and tabs stay); the
+  sizes reach it through the start page (`lb_fs`, `lb_ts`).
+- VS Code's font sizes are no longer fixed in the machine `settings.json` or the `labbox-defaults`
+  extension (now 1.2.0), which would have overridden the learner's choice. On another server, run
+  `scripts/openvscode.sh` once to install the new extension.
+
 ## Home page: a different real lab on every visit
 
 - "Inside a lab" now picks one of **21 real screenshots** at random on each page load: 12 labs, from

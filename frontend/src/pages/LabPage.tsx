@@ -21,6 +21,7 @@ import { labBrand } from "../brand";
 import { MODEL_PREFIX, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import { useStats } from "../stats";
+import { useTextSizes } from "../textSize";
 
 const AUTOSAVE_MS = 800;
 const TREE_POLL_MS = 5000;
@@ -83,6 +84,7 @@ export default function LabPage() {
 
   // Panel sizes in px and focus mode, remembered in this browser.
   const [leftW, setLeftW] = usePersistentState("panel.lesson", 460);
+  const sizes = useTextSizes();
   const [treeW, setTreeW] = usePersistentState("panel.tree", 200);
   const [termH, setTermH] = usePersistentState("panel.terminal", 260);
   const [focus, setFocus] = usePersistentState("focus", false);
@@ -560,7 +562,10 @@ export default function LabPage() {
         onReset={resetLab}
       />
       <main className="lab-body">
-        <aside className="left-panel" style={{ width: leftW }}>
+        <aside
+          className="left-panel"
+          style={{ width: leftW, "--ts-lesson": sizes.lesson / 100, "--ts-tasks": sizes.tasks / 100 } as CSSProperties}
+        >
           {brand && (
             <div
               className="lesson-watermark"

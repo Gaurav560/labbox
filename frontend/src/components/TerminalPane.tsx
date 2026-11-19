@@ -2,6 +2,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { terminalUrl } from "../api";
+import { useTextSizes } from "../textSize";
 import { TERMINAL_THEMES, useTheme } from "../theme";
 
 interface Props {
@@ -20,6 +21,9 @@ export interface TerminalHandle {
 
 const TerminalPane = forwardRef<TerminalHandle, Props>(function TerminalPane({ labId, enabled, connectKey, onConnected }, ref) {
   const { theme } = useTheme();
+  const fontSize = Math.round((14 * useTextSizes().terminal) / 100);
+  const fontSizeRef = useRef(fontSize);
+  fontSizeRef.current = fontSize;
   const hostRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<Terminal | null>(null);
   const fitRef = useRef<FitAddon | null>(null);
@@ -40,12 +44,26 @@ const TerminalPane = forwardRef<TerminalHandle, Props>(function TerminalPane({ l
     },
   }));
 
+  // A new text size from the Aa menu: resize the font, then refit (which tells the shell its new size).
+  useEffect(() => {
+    const term = termRef.current;
+    if (!term || term.options.fontSize === fontSize) return;
+    term.options.fontSize = fontSize;
+    try {
+      fitRef.current?.fit();
+    } catch {
+      return;
+    }
+    const ws = wsRef.current;
+    if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "resize", cols: term.cols, rows: term.rows }));
+  }, [fontSize]);
+
   // Create the xterm instance once.
   useEffect(() => {
     const term = new Terminal({
       cursorBlink: true,
       fontFamily: '"JetBrains Mono", ui-monospace, Menlo, monospace',
-      fontSize: 14,
+      fontSize: fontSizeRef.current,
       theme: TERMINAL_THEMES[theme],
       scrollback: 5000,
     });

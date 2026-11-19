@@ -124,7 +124,11 @@ async def proxy_http(request: Request, lab_id: str, port: int, path: str, full_p
         headers["location"] = prefix + location  # keep redirects inside the preview
     await asyncio.to_thread(_touch, user, lab)
     if start_page and resp.status_code == 200 and "text/html" in resp.headers.get("content-type", ""):
-        page = ide.inject_defaults((await resp.aread()).decode("utf-8", errors="replace"))
+        q = request.query_params  # lb_fs / lb_ts: the learner's editor and terminal text size (percent)
+        page = ide.inject_defaults(
+            (await resp.aread()).decode("utf-8", errors="replace"),
+            ide.text_scale(q.get("lb_fs")), ide.text_scale(q.get("lb_ts")),
+        )
         await resp.aclose()
         headers.pop("content-encoding", None)
         return Response(page, status_code=200, headers=headers, media_type="text/html")
