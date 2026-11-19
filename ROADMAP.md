@@ -22,13 +22,17 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 | C | XP, levels, streaks with a weekly freeze, onboarding, skill map, daily drill |
 | D | Services next to the workspace (Postgres), the Preview tab for web apps, live checks, timed incidents with a bonus |
 
-### Labs: 11 live
+### Labs: 15 live (batch 1: 11, batch 2: 4)
 
 | Track | Labs |
 |---|---|
 | Languages | python-basics, python-collections, java-basics, java-collections, javascript-inside-out, go-basics |
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
-| Databases | sql-from-zero, postgres-indexing-incident |
+| Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice**, **postgres-transactions-and-locks** |
+| DevOps | **linux-on-call**, **git-without-fear** |
+
+Skill maps: `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`.
+You chose to stop at 15 labs for now and build the platform phases next.
 
 Every lab passes `validate --strict` and `test-lab` (the starter fails, the solution passes).
 
@@ -46,7 +50,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   connect@telusko.com. Names live in `frontend/src/site.ts`.
 - **Home page:**
   - Colours: GitHub charcoal (`#111512`) with a faint tile grid, black panels, white buttons, a muted brick red for small accents, and a little yellow.
-  - Hero product tour: Read, Guess, Code, Check scenes for 11 real labs, in a random order for each visitor, with opt-in sound.
+  - Hero product tour: Read, Guess, Code, Check scenes for all 15 labs, in a random order for each visitor, with opt-in sound.
   - Below the hero: a colour logo strip, the lab cards, the tracks, and a red closing panel.
 - **Login and signup:**
   - Left side: the blue and purple showcase with a typing terminal.
@@ -87,15 +91,9 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
       product spec.
 - [ ] Push the latest commits (`git push`). The last commits from 19 November are only on this machine.
 
-### 2. More labs: 11 written, 100+ to go
+### 2. More labs: 15 written, more later (on hold by your choice)
 
-**Next batch (proposed, waiting for your OK):**
-- Postgres transactions and isolation
-- Postgres locks and deadlocks
-- Redis in practice (needs a Redis service variant)
-- FastAPI CRUD with Postgres
-- Linux on call
-- SQL traps
+**Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.
 
 **Then, by track (spec section 8):**
 - **Languages:** Python traps, async Python, Java concurrency traps, JVM and memory incidents, Modern
@@ -104,7 +102,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   Spring Boot on fire (10 incidents), mini Spring, NestJS, React, Next.js.
 - **Databases:** Postgres partitioning, replication, Redis caching, streams and pub/sub, MongoDB,
   database incidents.
-- **DevOps:** Git without fear, Git disasters, Nginx and 502/504 debugging, CI with `act`,
+- **DevOps:** Git disasters, Nginx and 502/504 debugging, CI with `act`,
   Terraform and AWS on LocalStack, observability, on-call incidents.
 - **Interview:** traps for Python, Java and JavaScript; Java and Spring interview incidents.
 - **Needs a later phase first:**
@@ -115,7 +113,6 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 **Launch set still missing (spec 8.8):**
 - spring-boot-on-fire
 - postgres-in-depth
-- linux-on-call
 - rag-from-zero
 - build-your-own-gpt
 - rate-limiter
@@ -159,4 +156,4 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 ## How to pick up again
 
 Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md, then propose batch 2 and wait for my OK."** The agent reads `AGENTS.md` by itself.
+ROADMAP.md, then propose the next phase (E) and wait for my OK."** The agent reads `AGENTS.md` by itself.

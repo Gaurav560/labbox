@@ -109,6 +109,38 @@ const TOURS: Tour[] = [
     run: "java Stock.java", out: ["{coffee=1}"],
     result: "2 of 2 checks passed", xp: 40,
   },
+  {
+    lab: "redis-in-practice", step: "Step 3 of 6", title: "Cache-aside",
+    read: "Look in Redis first. On a miss, do the slow work once and keep the answer for 60 seconds.",
+    q: 'Redis holds price:samosa = 20. What does r.get("price:samosa") return?', options: ['"20", a string', "20, a number", "None"], answer: 0,
+    file: "app.py", code: 'cached = r.get(f"price:{item}")\nif cached is not None:\n    return {"item": item, "price": int(cached)}',
+    run: "time curl -s localhost:8000/price/samosa", out: ['{"item":"samosa","price":20}', "real  0m0.012s"],
+    result: "2 of 2 checks passed", xp: 80,
+  },
+  {
+    lab: "linux-on-call", step: "Step 2 of 6", title: "Count and rank",
+    read: "awk picks a field, sort and uniq -c count repeats. Pipes chain small tools into answers.",
+    q: "A file has the lines b, a, b. What does uniq -c print?", options: ["1 b, 1 a, 1 b", "2 b and 1 a", "1 a and 2 b"], answer: 0,
+    file: "top_ips.sh", code: "awk '{print $2}' \"$1\" | sort | uniq -c \\\n  | sort -rn | head -3 | awk '{print $2}'",
+    run: "bash top_ips.sh access.log", out: ["10.0.0.12", "10.0.0.31", "10.0.1.7"],
+    result: "3 of 3 checks passed", xp: 70,
+  },
+  {
+    lab: "git-without-fear", step: "Step 3 of 7", title: "Undo a pushed mistake",
+    read: "Never rewrite history other people have. git revert adds a new commit that undoes the bad one.",
+    q: "The bad commit is already pushed. What is safe?", options: ["git revert", "git reset --hard", "git commit --amend"], answer: 0,
+    file: "terminal", code: "git log --oneline\ngit revert --no-edit 6af4e0e",
+    run: "grep coffee menu.txt", out: ["filter coffee 30", "cold coffee 40"],
+    result: "2 of 2 checks passed", xp: 80,
+  },
+  {
+    lab: "postgres-transactions-and-locks", step: "Incident", title: "Checkout is frozen",
+    read: "A forgotten transaction holds a lock on order 42, so every payment for it waits forever.",
+    q: "When is a row lock released?", options: ["When its transaction ends", "After the UPDATE", "After a few seconds"], answer: 0,
+    file: "find.sql", code: "SELECT pid, state, application_name\nFROM pg_stat_activity\nWHERE state = 'idle in transaction';",
+    run: "psql -c 'SELECT pg_terminate_backend(4711)'", out: [" pg_terminate_backend", " t"],
+    result: "Checkout goes through again", xp: 80,
+  },
 ];
 
 // Short labels on the tabs; the longer phrase is the tooltip and the accessible name.
