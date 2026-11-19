@@ -700,7 +700,11 @@ def _logo_cover(folder: Path, lab_id: str, logos: str) -> int:
     for old in ("cover.jpg", "cover.webp", "cover.png"):
         (folder / old).unlink(missing_ok=True)
     (folder / "cover.svg").write_text(svg, encoding="utf-8")
-    source = "devicon (MIT), Duke (BSD)" if "duke" in logos else "devicon (MIT)"
+    names = [n.strip() for n in logos.split(",")]
+    parts = (["devicon (MIT)"] if any(n not in ("sql",) and not n.startswith("duke") for n in names) else [])
+    parts += ["Duke (BSD)"] if any(n.startswith("duke") for n in names) else []
+    parts += ["LabBox"] if "sql" in names else []  # our own generic SQL mark
+    source = ", ".join(parts)
     _yaml_set_cover(folder / "lab.yaml", {"by": f"Logos: {logos}", "source": source}, "cover.svg")
     load_lab(folder)
     print(f"✓ {folder / 'cover.svg'} ({len(svg) // 1024} KB)")

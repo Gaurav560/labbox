@@ -1,5 +1,11 @@
 # Changelog
 
+## SQL gets its own cover
+
+- SQL from zero no longer shares the Postgres elephant: it has our own generic SQL mark (an amber
+  database with "SQL" on indigo, `tools/logos/sql.svg`), since SQL is a language, not a product.
+  The elephant stays on the Postgres lab. Use `--logo sql`.
+
 ## Home page: hand-picked lab cards
 
 - "Pick a lab" shows a chosen 5 x 3 set instead of the first six labs: Express, FastAPI, Go, Java

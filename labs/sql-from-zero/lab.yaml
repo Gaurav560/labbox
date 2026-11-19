@@ -20,7 +20,7 @@ story:
 cover_scene: 'Tapri Counter''s data room: a tiny library where glowing filing drawers of chai orders slide open,
   little lantern-lit tables of rows and columns floating above a reading desk.'
 cover: cover.svg
-cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
+cover_credit: { by: "Logos: sql", source: "LabBox" }
 image: labbox/sql-from-zero:v1
 resources: s
 workspace:
