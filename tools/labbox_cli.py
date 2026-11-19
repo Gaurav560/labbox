@@ -38,9 +38,9 @@ TRACKS: tuple[str, ...] = Track.__args__  # type: ignore[attr-defined]
 # python, java, node, go: code exercises with fresh checks.
 # service-incident: a Postgres service, an injected failure and a live check.
 # preview-app: a FastAPI app shown in the Preview tab.
-TEMPLATES_READY = ["python", "java", "node", "go", "service-incident", "preview-app"]
+# ai: Python with the OpenAI SDK and llm.enabled; checks hand the code a fake client.
+TEMPLATES_READY = ["python", "java", "node", "go", "service-incident", "preview-app", "ai"]
 TEMPLATE_LATER = {
-    "ai": "Phase E (LLM gateway)",
     "system-design": "Phase G (k6 load tests)",
 }
 HINTS_PER_TASK = 3

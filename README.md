@@ -108,6 +108,10 @@ cd backend
 | `MAX_FILE_BYTES` | Max file size for the editor API. |
 | `CORS_ORIGINS` | Comma-separated origins. |
 | `ALLOW_SIGNUP` | `true` or `false`. |
+| `LLM_MODELS` | Model aliases for the LLM gateway: `alias=provider/model,...` (default: local Ollama). |
+| `OLLAMA_URL` | Where Ollama answers (default `http://127.0.0.1:11434`, started by `scripts/ollama.sh`). |
+| `LLM_DAILY_TOKENS` / `LLM_RPM` / `LLM_MAX_TOKENS` | Per-user AI budget: tokens a day, requests a minute, reply cap. |
+| `LLM_GATEWAY_PORT` / `LLM_GATEWAY_HOST` | Gateway port (9000); host defaults to the Docker bridge address. |
 
 Keep comments in `.env` on their own lines: systemd's `EnvironmentFile` does not strip inline comments.
 
@@ -342,8 +346,29 @@ chapters:
 ### Base images
 
 `scripts/build_lab_images.sh` builds `images/base` (Ubuntu 24.04, learner uid 1000), then
-`images/python` (Python 3.12, pytest), `images/java` (Temurin 21, Maven) and `images/checker`, then
-every lab. Lab Dockerfiles start `FROM labbox/python:v1` or `FROM labbox/java:v1` and add a few lines.
+`images/python` (Python 3.12, pytest), `images/java` (Temurin 21, Maven), `images/checker` and
+`images/ai-python` (OpenAI and Anthropic SDKs), then every lab. The base image has the `lab` helper. Lab Dockerfiles start `FROM labbox/python:v1` or `FROM labbox/java:v1` and add a few lines.
+
+### AI labs and the LLM gateway (Phase E)
+
+The backend also serves the LLM gateway on port 9000, bound to the Docker bridge address.
+Run `scripts/ollama.sh` once: it starts Ollama in Docker (localhost only) and pulls the free models
+behind the default aliases (`lab-chat` = qwen2.5:0.5b, `lab-chat-smart` = qwen2.5:1.5b,
+`lab-embed` = nomic-embed-text). To use a paid provider instead, map an alias in `LLM_MODELS`, for
+example `lab-chat=openai/gpt-4o-mini` (uses `OPENAI_API_KEY` from `.env`; ask the owner first).
+
+A lab with `llm: {enabled: true}` (template `ai`, image `labbox/ai-python`) gets `OPENAI_BASE_URL`,
+`OPENAI_API_KEY` and the `ANTHROPIC_` pair, so the official SDKs work unchanged. The key is a lab
+token for that learner and lab; real provider keys never enter a container. `lab requests` inside the
+machine shows the last 10 calls (`--last` shows the full request and response). Every call, including
+the tutor's, is stored in the `llm_request` table and counts against the learner's daily budget.
+
+The tutor (`✦ Ask the tutor` after a failed check, `✦ Review my code` after a pass) uses
+`lab-chat-smart`. A reply that contains a line of the reference solution is replaced by a safe nudge.
+
+AI lab checks stay deterministic: the hidden check gives the learner's code a fake client and grades
+the request it builds, not what a model said. For RAG labs, add `pgvector/pgvector` or `qdrant/qdrant`
+under `services` (see the commented example in `tools/templates/ai/lab.yaml`).
 
 ### Check output
 

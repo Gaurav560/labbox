@@ -1,5 +1,13 @@
 # Changelog
 
+## Phase E: the ai lab template
+
+- `scripts/labbox new-lab <id> --template ai`: a Python lab with `llm.enabled`, `FROM labbox/ai-python`,
+  a first "barista bot" chapter, and a deterministic check that hands the learner's code a fake
+  OpenAI client and grades the request (model alias, messages) and the returned text.
+- Commented pgvector and qdrant service examples for RAG labs in the template's `lab.yaml`.
+- README: the gateway, the models, the budget settings, the tutor and how AI labs are checked.
+
 ## Phase E: labs talk to the gateway
 
 - `llm: {enabled: true}` in a lab is now allowed (it was refused until Phase E). Such a lab gets a

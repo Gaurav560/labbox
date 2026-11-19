@@ -1,0 +1,52 @@
+id: {{lab_id}}
+version: 2
+title: "{{title}}"
+subtitle: "One line that says what the learner builds with a language model"
+description: "One line that says what the learner builds with a language model"
+language: python
+track: {{track}}
+tags: [python, ai]
+level: beginner
+estimated_minutes: 15
+image: labbox/{{lab_id}}:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab  # no internet; the model is reached through the LabBox gateway
+llm:
+  enabled: true  # injects OPENAI_BASE_URL, OPENAI_API_KEY (and the ANTHROPIC_ pair): models lab-chat, lab-chat-smart, lab-embed
+# RAG labs: add a vector database next to the workspace (reach it as vectors:5432 or vectors:6333).
+# services:
+#   - name: vectors
+#     image: pgvector/pgvector:0.8.0-pg16
+#     env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: rag }
+#     resources: { cpus: 0.5, memory: 512m, pids_limit: 256 }
+#     data: /var/lib/postgresql/data
+#     ready: [pg_isready, -h, 127.0.0.1, -U, postgres]
+#   - name: vectors
+#     image: qdrant/qdrant:v1.12.5
+#     resources: { cpus: 0.5, memory: 512m, pids_limit: 256 }
+#     data: /qdrant/storage
+check:
+  # Checks are deterministic: they hand the learner's code a fake client and inspect the request it
+  # builds, instead of grading what a model happened to say.
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+chapters:
+  - id: 01-first-call
+    title: Your first model call
+    file: chapters/01-first-call.md
+    minutes: 15
+    tasks:
+      - id: ask
+        title: "bot.py: ask(client, question)"
+        xp: 30
+        hints:
+          - "Look at what ask sends right now: which model, and which messages?"
+          - "Models are named by alias here. The system message sets the rules, the user message carries the question."
+          - "Call client.chat.completions.create with model lab-chat and two messages, then return the reply text."
