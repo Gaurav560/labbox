@@ -295,6 +295,9 @@ select { padding: 3px 8px; }
 .lab-page { height: 100%; display: flex; flex-direction: column; }
 .chapter-select { max-width: 320px; background: transparent; border-color: transparent; font-weight: 600; }
 .chapter-select:hover { border-color: var(--border); }
+/* Dropdown lists: Chrome draws them on white when the select is transparent; give them our colours. */
+select option { background: var(--panel); color: var(--text); }
+select option:checked { background: var(--chip); }
 .lab-progress { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
 .progress-inline { width: 90px; }
 .machine { display: inline-flex; align-items: center; gap: 6px; }
