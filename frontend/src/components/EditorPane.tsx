@@ -1,5 +1,6 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
 import { useRef } from "react";
+import { registerCompletions } from "../completions";
 import { languageFor, modelUri, monaco } from "../monaco";
 import { useTheme } from "../theme";
 
@@ -37,6 +38,7 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
   saveRef.current = onSave;
 
   const onMount: OnMount = (editor) => {
+    registerCompletions();
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       if (activeRef.current) saveRef.current(activeRef.current);
     });
@@ -80,6 +82,13 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
               minimap: { enabled: false },
               scrollBeyondLastLine: false,
               tabSize: 4,
+              // Completion: language keywords, built-ins and snippets (src/completions.ts), plus
+              // names from every open file. Offline and instant; no AI.
+              quickSuggestions: { other: true, comments: false, strings: false },
+              wordBasedSuggestions: "allDocuments",
+              snippetSuggestions: "inline",
+              suggestOnTriggerCharacters: true,
+              tabCompletion: "on",
             }}
           />
         ) : (

@@ -39,9 +39,9 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
 - Tests: `cd backend && .venv/bin/pytest` (about 190 tests, Docker ones included, about 2 minutes);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (8 tests,
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (9 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green after Phase E (187 backend tests, 8 browser tests, 15 labs valid).
+- Last known state: everything green after Phase E (190 backend tests, 9 browser tests, 15 labs valid).
 
 ## How a lab is made
 

@@ -28,6 +28,8 @@ const LANGUAGES: Record<string, string> = {
   java: "java",
   js: "javascript",
   ts: "typescript",
+  go: "go",
+  sql: "sql",
   md: "markdown",
   sh: "shell",
   json: "json",

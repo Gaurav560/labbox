@@ -1,5 +1,15 @@
 # Changelog
 
+## Editor: offline code completion
+
+- New `frontend/src/completions.ts`: completion for Python, Java, Go, SQL and shell (JavaScript and
+  TypeScript already had Monaco's full language service). Keywords, built-ins, the library calls the
+  labs use (redis-py, FastAPI, Spring, Postgres functions), and snippets (`def`, `for`, `ifmain`,
+  `sout`, `iferr`, `@app.get`...). Names from every open file are suggested too.
+- `.go` and `.sql` files now get syntax colouring. No AI and no network: instant and free, and it only
+  finishes names, never a task's solution. AI completion is planned for AI labs, behind a per-lab switch.
+- New browser test `e2e/editor.spec.ts`.
+
 ## Tutor: easy to find, harder to trick
 
 - "✦ Ask AI" in the lab footer next to Check and Hint, on every step, for the current task (it turns
