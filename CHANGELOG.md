@@ -1,5 +1,13 @@
 # Changelog
 
+## The Labs page uses the home page's tiles
+
+- After login, labs were shown as heavier cards (paragraph, three chips, a progress bar, an Open
+  button) that did not match the home page. They are now the same tiles as the home page grid: the
+  cover, the title, one quiet line (track, level, minutes), the whole tile clickable, plus a thin
+  progress line ("2 tasks · 1 chapter", "1 / 3 tasks", or "✓ Done"), aligned at the bottom.
+- The rate limiter's cover is now nginx with Redis, so it no longer looks like the Redis lab.
+
 ## One logo colour everywhere
 
 - The LabBox mark took the page's accent colour: red on the home page, blue on the login page, white

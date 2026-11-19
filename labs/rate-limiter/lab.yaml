@@ -14,7 +14,7 @@ story:
   pitch: "Brew Point opened its quotes API to partners. One partner's script is now melting both servers."
 cover_scene: "Two small servers behind a gate, with a counter that lets a steady stream of requests through."
 cover: cover.svg
-cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
+cover_credit: { by: "Logos: nginx,redis", source: "devicon (MIT)" }
 image: labbox/rate-limiter:v1
 resources: s
 workspace:

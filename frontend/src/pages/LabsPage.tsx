@@ -75,31 +75,27 @@ export default function LabsPage() {
         <DrillCard />
         <h2>Your labs</h2>
         {!labs && <p className="muted">Loading...</p>}
-        <div className="lab-grid">
+        {/* The same tile as the home page's lab grid, plus a quiet progress line. */}
+        <div className="h-labs labs-tiles">
           {labs?.map((lab) => {
-            const pct = lab.progress.total_tasks ? (100 * lab.progress.passed_tasks) / lab.progress.total_tasks : 0;
+            const { passed_tasks: done, total_tasks: total } = lab.progress;
+            const pct = total ? (100 * done) / total : 0;
             return (
-              <div key={lab.id} className="lab-card">
-                <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={lab.cover_url} credit={lab.cover_credit} />
-                <div className="lab-card-body">
-                  <h3>{lab.title}</h3>
-                  <p className="muted">{lab.subtitle || lab.description}</p>
-                  <div className="lab-meta">
-                    <span className="meta-chip">{TRACK_LABEL[lab.track] ?? lab.track}</span>
-                    {lab.level && <span className="meta-chip meta-chip-cap">{lab.level}</span>}
-                    {lab.estimated_minutes && <span className="meta-chip">{lab.estimated_minutes} min</span>}
-                  </div>
-                  <div className="progress" title={`${lab.progress.passed_tasks} of ${lab.progress.total_tasks} tasks`}>
-                    <div className="progress-fill" style={{ width: `${pct}%` }} />
-                  </div>
-                  <div className="row">
-                    <span className="muted small">
-                      {lab.progress.passed_tasks} / {lab.progress.total_tasks} task{lab.progress.total_tasks === 1 ? "" : "s"} · {lab.chapter_count} chapter{lab.chapter_count === 1 ? "" : "s"}
-                    </span>
-                    <Link className="btn btn-primary" to={`/labs/${lab.id}`}>Open</Link>
+              <Link key={lab.id} to={`/labs/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
+                <div className="h-lab-img">
+                  {lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : (
+                    <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
+                  )}
+                </div>
+                <div className="h-lab-text">
+                  <strong>{lab.title}</strong>
+                  <span>{TRACK_LABEL[lab.track] ?? lab.track}{lab.level ? ` · ${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : ""}{lab.estimated_minutes ? ` · ${lab.estimated_minutes} min` : ""}</span>
+                  <div className="h-lab-progress" title={`${done} of ${total} tasks`}>
+                    <div className="h-lab-track"><div style={{ width: `${pct}%` }} /></div>
+                    <span>{total && done === total ? "✓ Done" : done ? `${done} / ${total} tasks` : `${total} task${total === 1 ? "" : "s"} · ${lab.chapter_count} chapter${lab.chapter_count === 1 ? "" : "s"}`}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>

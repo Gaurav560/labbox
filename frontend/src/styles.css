@@ -1062,3 +1062,13 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .design-feedback li.none .design-mark { color: var(--muted); }
 .design-error { color: var(--danger); margin: 0; }
 .design-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+
+/* The Labs page uses the home page's lab tiles; this adds the learner's progress. */
+.labs-tiles .h-lab-text { padding-bottom: 14px; flex: 1; }
+.labs-tiles .h-lab-progress { margin-top: auto; padding-top: 10px; }
+.h-lab-progress { display: flex; align-items: center; gap: 10px; }
+.h-lab-track { flex: 1; height: 4px; border-radius: 999px; background: var(--chip); overflow: hidden; }
+.h-lab-track > div { height: 100%; border-radius: 999px; background: var(--success); }
+.h-lab-progress span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.h-lab.is-done .h-lab-progress span { color: var(--success); font-weight: 600; }
+.labs-main > h2 { margin-top: var(--space-6); }
