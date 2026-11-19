@@ -106,9 +106,11 @@ def _command(ws: Workspace) -> list[str]:
 
 
 def setup_stamp() -> str:
-    """Changes when scripts/openvscode.sh installs something new (extensions, theme) or SETTINGS change."""
-    ext = get_settings().IDE_DIR / "extensions" / "extensions.json"
-    mtime = ext.stat().st_mtime_ns if ext.exists() else 0
+    """Changes when scripts/openvscode.sh installs something new (extensions, theme, product settings
+    such as the switched-off marketplace) or SETTINGS change."""
+    base = get_settings().IDE_DIR
+    files = [base / "extensions" / "extensions.json", base / "current" / "product.json"]
+    mtime = ":".join(str(f.stat().st_mtime_ns) if f.exists() else "0" for f in files)
     return hashlib.sha256(f"{mtime}:{json.dumps(SETTINGS, sort_keys=True)}".encode()).hexdigest()[:16]
 
 

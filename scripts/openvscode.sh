@@ -14,6 +14,16 @@ if [ ! -x "$DIR/$NAME/bin/openvscode-server" ]; then
   rm "$DIR/$NAME.tar.gz"
 fi
 ln -sfn "$NAME" "$DIR/current"
+# No extension marketplace inside labs: the Extensions view lists only what LabBox pre-installs.
+# (The extension folder is read-only anyway; this removes the search box and its confusing error.)
+python3 - "$DIR/current/product.json" <<'PY'
+import json, sys
+p = sys.argv[1]
+d = json.load(open(p))
+if d.pop("extensionsGallery", None) is not None:
+    json.dump(d, open(p, "w"), indent=2)
+    print("marketplace switched off")
+PY
 # Extensions live next to the server, shared read-only by every lab.
 EXT="$DIR/extensions"
 mkdir -p "$EXT"
