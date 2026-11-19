@@ -29,6 +29,8 @@ class CompleteOut(BaseModel):
 
 def _trim(text: str, suffix: str) -> str:
     """Keep a short, clean suggestion: at most a few lines, never repeating what follows the cursor."""
+    text = "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("```"))  # models sometimes add markdown fences
+    text = text.lstrip("\n").split("\n\n", 1)[0]  # one block: stop before the model invents the next function
     lines = text.split("\n")[:MAX_LINES]
     while len(lines) > 1 and not lines[-1].strip():
         lines.pop()
@@ -42,7 +44,8 @@ def _trim(text: str, suffix: str) -> str:
 async def complete(user_id: int, lab: LabConfig, body: CompleteBody) -> CompleteOut:
     if not get_settings().AI_COMPLETION or ALIAS not in get_settings().llm_models:
         return CompleteOut(text="")
-    prefix, suffix = body.prefix[-PREFIX_CHARS:], body.suffix[:SUFFIX_CHARS]
+    # An empty suffix makes Ollama drop fill-in-the-middle and answer like a chat model, so send at least a newline.
+    prefix, suffix = body.prefix[-PREFIX_CHARS:], body.suffix[:SUFFIX_CHARS] or "\n"
     req = {"model": ALIAS, "prompt": prefix, "suffix": suffix, "max_tokens": 64, "temperature": 0.1}
     try:
         out = await llm_gateway.completions(llm_gateway.Identity(user_id, lab.id), req, endpoint=llm_gateway.COMPLETION)

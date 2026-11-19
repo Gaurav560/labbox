@@ -21,7 +21,7 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 | B | Content format v2, the authoring CLI (`scripts/labbox`), reference solutions |
 | C | XP, levels, streaks with a weekly freeze, onboarding, skill map, daily drill |
 | D | Services next to the workspace (Postgres), the Preview tab for web apps, live checks, timed incidents with a bonus |
-| E | LLM gateway (aliases, lab tokens, budgets, request log, OpenAI and Anthropic shapes), labs reach it through a locked-down relay, `lab requests`, AI tutor and code review with a solution leak guard, the `ai` lab template. Free local models via Ollama (`scripts/ollama.sh`). |
+| E | LLM gateway (aliases, lab tokens, budgets, request log, OpenAI and Anthropic shapes), labs reach it through a locked-down relay, `lab requests`, AI tutor and code review with a solution leak guard, the `ai` lab template, "✦ Ask AI" in the lab footer, offline editor completion and AI code completion (ghost text, `lab-code`, own limits). Free local models via Ollama (`scripts/ollama.sh`). |
 
 ### Labs: 15 live (batch 1: 11, batch 2: 4)
 

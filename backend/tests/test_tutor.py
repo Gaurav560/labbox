@@ -80,7 +80,7 @@ def test_tutor_never_leaks_the_solution_across_20_tasks(client: TestClient, monk
         assert r.status_code == 200, (lab_id, task, r.text)
         reply = r.json()["reply"]
         assert r.json()["blocked"] is True, (lab_id, task)
-        assert not any(line in tutor._words(reply) for line in lines), (lab_id, task, reply)
+        assert not any(line in tutor._code(reply) for line in lines), (lab_id, task, reply)
 
 
 def test_tutor_reply_with_whitespace_changes_still_blocked(client: TestClient, monkeypatch):
@@ -107,8 +107,9 @@ def test_tutor_replies_never_carry_code_blocks(client: TestClient, monkeypatch):
 
 
 def test_lines_the_lesson_already_shows_are_not_secrets():
-    shown = tutor._words(labs.get_lab("redis-in-practice").chapter_markdown("02-cache-and-limit"))
-    assert all(line not in shown for line in tutor.solution_lines(labs.get_lab("redis-in-practice")))
+    lab = labs.get_lab("redis-in-practice")
+    shown = {tutor._code(line) for line in lab.chapter_markdown("02-cache-and-limit").splitlines()}
+    assert not shown & tutor.solution_lines(lab)
 
 
 def test_review_needs_a_passed_task(client: TestClient, monkeypatch):

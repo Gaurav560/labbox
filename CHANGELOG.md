@@ -1,5 +1,14 @@
 # Changelog
 
+## AI completion: fixes from trying it for real
+
+- An empty text after the cursor made Ollama answer like a chat model (a markdown rewrite of the whole
+  file) instead of filling in the middle; at least a newline is now always sent.
+- Markdown fences are stripped from suggestions, and a suggestion stops at the first blank line.
+- The solution guard now compares code with spaces and quotes removed but symbols kept, so
+  `HSET menu "filter coffee" 30` still matches an unquoted copy, while similar but different code
+  (`n % 2 != 0` next to the solution `n % 2 == 0`) is no longer blocked.
+
 ## Editor: AI code completion
 
 - Grey ghost-text suggestions at the cursor once typing pauses (400 ms); Tab accepts, typing on

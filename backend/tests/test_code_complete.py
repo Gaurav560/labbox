@@ -45,10 +45,24 @@ def test_suggestion_and_log(client: TestClient, monkeypatch):
     assert (row.endpoint, row.alias) == ("completion", "lab-code")
 
 
+def test_suggestion_stops_at_the_first_blank_line(client: TestClient, monkeypatch):
+    h, _ = login(client)
+    monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: "return r.incr(page)\n\ndef extra():\n    return 1")
+    assert client.post(URL, headers=h, json={"path": "a.py", "prefix": "def f(page):\n    ", "suffix": ""}).json()["text"] == "return r.incr(page)"
+
+
+def test_fences_are_stripped_and_similar_code_is_allowed(client: TestClient, monkeypatch):
+    h, _ = login(client)
+    monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: "```python\nreturn n % 2 != 0\n```")
+    # is_odd is not the task (is_even is), so its line is a fine suggestion.
+    r = client.post("/api/labs/python-basics/complete", headers=h, json={"path": "math_utils.py", "prefix": "def is_odd(n):\n    ", "suffix": ""})
+    assert r.json()["text"] == "return n % 2 != 0"
+
+
 def test_solution_lines_are_never_suggested(client: TestClient, monkeypatch):
     h, _ = login(client)
     lab = labs.get_lab("python-basics")
-    line = next(l for l in tutor.solution_lines(lab) if l.startswith("return f"))  # the greet solution, as words
+    line = next(l for l in tutor.solution_lines(lab) if l.startswith("returnf"))  # the greet solution
     monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: 'return f"Hello, {name}!"')
     r = client.post(URL, headers=h, json={"path": "greet.py", "prefix": "def greet(name):\n    ", "suffix": ""})
     assert line and r.json()["text"] == ""

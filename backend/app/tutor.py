@@ -47,6 +47,12 @@ def _key(line: str) -> str:
     return re.sub(r"\s+", " ", line.strip())
 
 
+def _code(text: str) -> str:
+    """Code with spaces and quotes removed, symbols kept: `HSET menu "a b" 1` and `hset menu a b 1`
+    match, `n % 2 == 0` and `n % 2 != 0` do not."""
+    return re.sub(r"[\s'\"`]+", "", text.lower())
+
+
 def _words(text: str) -> str:
     """Lower-case words only: quotes, brackets and punctuation do not hide a copied line."""
     return " ".join(re.findall(r"[a-z0-9_.:]+", text.lower()))
@@ -59,9 +65,9 @@ _SHELL_NOISE = ("set ", "cd ", "for ", "done", "exit", "cat ", "sleep", "if ", "
 
 def solution_lines(lab: LabConfig) -> set[str]:
     """What the tutor must never write: meaningful solution lines (code files and the commands in
-    apply.sh), minus anything the starter or the lesson text already shows. Compared as words."""
+    apply.sh), minus anything the starter or the lesson text already shows. Compared with _code."""
     sol, starter = lab.root / "solution", lab.starter_dir
-    shown = " ".join(_words(lab.chapter_markdown(c.id)) for c in lab.chapters)
+    shown = "\n".join(_code(line) for c in lab.chapters for line in lab.chapter_markdown(c.id).splitlines())
     out: set[str] = set()
     for f in sol.rglob("*") if sol.is_dir() else []:
         if not f.is_file() or f.suffix in SKIP_SUFFIXES:
@@ -71,7 +77,7 @@ def solution_lines(lab: LabConfig) -> set[str]:
         except (UnicodeDecodeError, OSError):
             continue
         old = starter / f.relative_to(sol)
-        before = {_words(x) for x in old.read_text(encoding="utf-8").splitlines()} if old.is_file() else set()
+        before = {_code(x) for x in old.read_text(encoding="utf-8").splitlines()} if old.is_file() else set()
         for ln in text.splitlines():
             k = _key(ln)
             if f.name == "apply.sh":
@@ -80,14 +86,14 @@ def solution_lines(lab: LabConfig) -> set[str]:
                 k = _WRAPPERS.sub("", k).split(" >")[0]
             if len(k) < 10 or k.startswith(("#", "//", "--", "import ", "package ", "from ")):
                 continue
-            w = _words(k)
-            if len(w.split()) >= 3 and w not in before and w not in shown:
-                out.add(w)
+            c = _code(k)
+            if len(_words(k).split()) >= 3 and c not in before and c not in shown:
+                out.add(c)
     return out
 
 
 def leaks(reply: str, lab: LabConfig) -> bool:
-    text = _words(reply)
+    text = _code(reply)
     return any(line in text for line in solution_lines(lab))
 
 
