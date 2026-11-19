@@ -128,3 +128,22 @@ def test_labs_without_network_get_a_private_one(client: TestClient):
     subnet = ipaddress.ip_network(info["IPAM"]["Config"][0]["Subnet"])
     assert subnet.prefixlen == 28 and subnet.subnet_of(ipaddress.ip_network(get_settings().LAB_SUBNET_POOL))
     assert list(inspect("container", f"lab-u{uid}-linux-on-call")["NetworkSettings"]["Networks"]) == [net]
+
+
+def test_machines_from_before_vscode_are_upgraded_and_keep_the_home_folder(client: TestClient):
+    settings = get_settings()
+    h, uid = signup(client, "old")
+    name = f"lab-u{uid}-linux-on-call"
+    settings.IDE_ENABLED = False  # a machine made before VS Code was set up
+    try:
+        assert client.post("/api/labs/linux-on-call/workspace/start", headers=h).status_code == 200
+    finally:
+        settings.IDE_ENABLED = True
+    assert ide.MOUNT not in {m["Destination"] for m in inspect("container", name)["Mounts"]}
+    sh("docker", "exec", "-u", "1000", name, "sh", "-c", "echo remembered > ~/.notes")
+
+    info = client.post("/api/labs/linux-on-call/ide", headers=h).json()
+    assert info["ready"], info
+    assert ide.MOUNT in {m["Destination"] for m in inspect("container", name)["Mounts"]}
+    assert sh("docker", "exec", "-u", "1000", name, "cat", "/home/learner/.notes").stdout.strip() == "remembered"
+    assert sh("docker", "exec", "-u", "1000", name, "stat", "-c", "%u", "/home/learner/.notes").stdout.strip() == "1000"

@@ -59,6 +59,7 @@ async def open_ide(lab_id: str, response: Response, user: User = Depends(get_cur
     if not ide.available():
         return IdeInfo(available=False)
     assert user.id is not None
+    await asyncio.to_thread(containers.upgrade_for_ide, session, user, lab)
     ws = await asyncio.to_thread(containers.ensure_workspace, session, user, lab)
     await asyncio.to_thread(ide.start, lab, ws)
     ready = await asyncio.to_thread(ide.wait_ready, lab, ws)

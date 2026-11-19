@@ -234,6 +234,39 @@ def stop_group(session: Session, user: User, lab: LabConfig) -> str:
     return ws.container_name
 
 
+def upgrade_for_ide(session: Session, user: User, lab: LabConfig) -> None:
+    """Machines created before VS Code was set up lack its mount (and, for labs without a network, the
+    private network VS Code is reached through). Recreate such a machine: /workspace lives on the host
+    and the learner's home folder is copied across, so nothing of theirs is lost."""
+    if not ide.available():
+        return
+    ws = get_workspace(session, user, lab)
+    with _locks[ws.container_name]:
+        c = _get(ws.container_name)
+        if c is None:
+            return
+        has_mount = any(m.get("Destination") == ide.MOUNT for m in c.attrs.get("Mounts", []))
+        nets = c.attrs.get("NetworkSettings", {}).get("Networks", {})
+        has_net = not lab.uses_lab_network or services.network_name(ws) in nets
+        if has_mount and has_net:
+            return
+        home = None
+        try:
+            if c.status != "running":
+                c.start()
+            home, _ = c.get_archive("/home/learner")
+            home = b"".join(home)
+        except (APIError, docker.errors.NotFound):
+            log.warning("Could not copy the home folder of %s; it starts fresh", ws.container_name)
+        c.remove(force=True)
+        log.info("Recreating %s for VS Code", ws.container_name)
+        if lab.uses_lab_network:
+            services.ensure_services(lab, ws)
+        new = _create(lab, ws)
+        if home:
+            new.put_archive("/home", home)
+
+
 def reset_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
     """Delete the container and all files, re-seed starter files, start a new container."""
     ws = get_workspace(session, user, lab)

@@ -1,5 +1,12 @@
 # Changelog
 
+## VS Code: upgrade machines made before it
+
+- Machines created before VS Code was set up had no VS Code mount, so VS Code could not start in them
+  ("VS Code is taking longer than usual to start"). Opening VS Code now recreates such a machine (and
+  gives a no-network lab its private network): `/workspace` lives on the host, and the learner's home
+  folder is copied into the new machine, so nothing is lost. Docker test added.
+
 ## Real VS Code in the lab
 
 - Labs now open in real VS Code: openvscode-server (Gitpod's open-source VS Code, MIT) runs inside the
