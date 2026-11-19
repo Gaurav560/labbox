@@ -1,5 +1,5 @@
 import confetti from "canvas-confetti";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useParams } from "react-router-dom";
 import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
@@ -17,6 +17,7 @@ import { useToast } from "../components/Toasts";
 import LessonPanel from "../lesson/LessonPanel";
 import StepCard, { NO_PREDICT } from "../lesson/StepCard";
 import TutorBox from "../lesson/TutorBox";
+import { labBrand } from "../brand";
 import { MODEL_PREFIX, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import { useStats } from "../stats";
@@ -518,6 +519,7 @@ export default function LabPage() {
   const activeTask = tasks.find((t) => t.id === current?.task) ?? tasks.find((t) => !t.passed);
   const activeHintsLeft = activeTask ? activeTask.hint_count - (hints[activeTask.id]?.length ?? 0) : 0;
   const [tutorOpen, setTutorOpen] = useState(false);
+  const brand = labBrand(lab?.cover_credit);
 
   const stepOfTask = (taskId: string) => steps?.findIndex((s) => s.task === taskId) ?? -1;
 
@@ -555,6 +557,13 @@ export default function LabPage() {
       />
       <main className="lab-body">
         <aside className="left-panel" style={{ width: leftW }}>
+          {brand && (
+            <div
+              className="lesson-watermark"
+              aria-hidden="true"
+              style={{ "--wm-logo": `url(${brand.logo})`, "--wm-color": brand.color } as CSSProperties}
+            />
+          )}
           {setupState === "running" && (
             <div className="setup-banner" role="status">
               <span className="spinner" /> Setting up this chapter on your machine. This can take a few seconds.

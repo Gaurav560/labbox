@@ -1,5 +1,14 @@
 # Changelog
 
+## The lab's logo behind the lesson
+
+- Every lab shows its own technology logo (from its cover: Redis bricks, Python snakes, Duke for Java,
+  the Git mark...) very faintly behind the lesson, large, low on the right and slightly tilted, with
+  a soft glow of the brand's colour from the top-right corner. Pure CSS in the lesson panel, behind
+  every card and never clickable; about 6.5% opacity (7% in light mode). No animation.
+- `frontend/src/brand.ts` picks the logo from the lab's cover credit and the colour from the same
+  brand palette as the covers. The Duke, SQL, Express and Nginx logos were added to `public/logos`.
+
 ## A premium IDE: LabBox Dark, JetBrains Mono, IDE | Lite
 
 - "LabBox Dark", a VS Code colour theme in the labbox-defaults extension (now 1.1.0): the app's greys
