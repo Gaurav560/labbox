@@ -1007,3 +1007,4 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .editor-switch { align-self: center; display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; }
 .editor-switch button { background: none; border: 0; padding: 3px 10px; font: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; }
 .editor-switch button[aria-pressed="true"] { background: var(--chip); color: var(--text); }
+.editor-switch button:disabled { opacity: 0.45; cursor: default; }

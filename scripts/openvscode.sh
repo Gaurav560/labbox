@@ -21,9 +21,16 @@ for ext in ms-python.python ms-python.debugpy; do
   "$DIR/current/bin/openvscode-server" --extensions-dir "$EXT" --install-extension "$ext" >/dev/null 2>&1 \
     && echo "extension $ext ok" || echo "extension $ext could not be installed (VS Code still works without it)"
 done
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# JetBrains Mono for the editor and terminal (OFL), served by the backend at /ide-fonts/.
+FONTS="$ROOT/frontend/node_modules/@fontsource/jetbrains-mono/files"
+mkdir -p "$DIR/fonts"
+for f in latin-400-normal latin-400-italic latin-700-normal latin-700-italic; do
+  [ -f "$FONTS/jetbrains-mono-$f.woff2" ] && cp "$FONTS/jetbrains-mono-$f.woff2" "$DIR/fonts/"
+done
+[ -f "$FONTS/../LICENSE" ] && cp "$FONTS/../LICENSE" "$DIR/fonts/LICENSE-jetbrains-mono"
 # LabBox's default settings (no trust prompt, no Copilot chat, fonts, auto-save) as a tiny extension:
 # the browser version of VS Code reads defaults from extensions, not from files on the server.
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VSIX="$(mktemp -d)/labbox-defaults.vsix"
 "$ROOT/backend/.venv/bin/python" "$ROOT/tools/vscode-defaults/pack.py" "$VSIX" >/dev/null
 "$DIR/current/bin/openvscode-server" --extensions-dir "$EXT" --install-extension "$VSIX" --force >/dev/null 2>&1 \

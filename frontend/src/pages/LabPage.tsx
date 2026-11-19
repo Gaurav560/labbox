@@ -87,7 +87,14 @@ export default function LabPage() {
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
   const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
   const [ideError, setIdeError] = useState<string | null>(null);
-  const useIde = editorKind === "vscode" && !ideError;
+  // Phones and small windows always get the light editor: the IDE needs a desktop-sized screen.
+  const [narrow, setNarrow] = useState(() => window.innerWidth < 900);
+  useEffect(() => {
+    const onResize = () => setNarrow(window.innerWidth < 900);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  const useIde = editorKind === "vscode" && !ideError && !narrow;
   const onIdeUnavailable = useCallback((why: string) => setIdeError(why), []);
   const switchEditor = (kind: "vscode" | "classic") => {
     if (kind === "classic") {
@@ -659,8 +666,8 @@ export default function LabPage() {
               </button>
               <span className="spacer" />
               <div className="editor-switch" role="group" aria-label="Editor">
-                <button aria-pressed={editorKind === "vscode"} onClick={() => switchEditor("vscode")} title={ideError ?? "Real VS Code, running in your machine"}>VS Code</button>
-                <button aria-pressed={editorKind === "classic"} onClick={() => switchEditor("classic")} title="The lightweight built-in editor">Classic</button>
+                <button aria-pressed={useIde} disabled={narrow} onClick={() => switchEditor("vscode")} title={narrow ? "The IDE needs a bigger screen" : ideError ?? "A full IDE (OpenVSCode Server) running in your machine"}>IDE</button>
+                <button aria-pressed={!useIde} onClick={() => switchEditor("classic")} title="The light built-in editor, with AI completion">Lite</button>
               </div>
             </div>
             <div className="bottom-body" hidden={bottomTab !== "terminal"}>

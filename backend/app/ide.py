@@ -30,11 +30,12 @@ READY_SECONDS = 25
 
 # Machine settings: what makes it feel like a fresh VS Code, minus the parts that do not fit a lab.
 SETTINGS = {
-    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.colorTheme": "LabBox Dark",  # from the labbox-defaults extension (tools/vscode-defaults)
     "workbench.startupEditor": "none",
     "workbench.tips.enabled": False,
     "workbench.enableExperiments": False,
     "editor.fontFamily": "'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace",
+    "terminal.integrated.fontFamily": "'JetBrains Mono', monospace",
     "editor.fontSize": 15,
     "editor.lineHeight": 24,
     "editor.fontLigatures": True,
@@ -88,15 +89,27 @@ def _command(ws: Workspace) -> list[str]:
         "--telemetry-level", "off",
     ]
     quoted = " ".join("'" + a.replace("'", "'\\''") + "'" for a in server)
+    stamp = setup_stamp()
     return [
         "sh", "-c",
-        "pgrep -u 1000 -f '[s]erver-main.js' >/dev/null && exit 0; "  # [s]: the pattern must not match this shell itself
+        # Already running with the current setup: nothing to do. ([s]: the pattern must not match this
+        # shell itself.) Running with an older setup (new extensions or theme): restart it.
+        f"[ \"$(cat /tmp/openvscode.stamp 2>/dev/null)\" = '{stamp}' ] && pgrep -u 1000 -f '[s]erver-main.js' >/dev/null && exit 0; "
+        "pkill -u 1000 -f '[s]erver-main.js'; sleep 0.3; "
+        f"echo '{stamp}' > /tmp/openvscode.stamp; "
         # User settings (workspace trust, layout) and Machine settings (editor) both get the same file.
         "mkdir -p ~/.openvscode-server/data/Machine ~/.openvscode-server/data/User && "
         f"cat > ~/.openvscode-server/data/Machine/settings.json <<'JSON'\n{settings_json}\nJSON\n"
         "cp ~/.openvscode-server/data/Machine/settings.json ~/.openvscode-server/data/User/settings.json; "
         f"setsid nohup {quoted} > /tmp/openvscode.log 2>&1 < /dev/null &",
     ]
+
+
+def setup_stamp() -> str:
+    """Changes when scripts/openvscode.sh installs something new (extensions, theme) or SETTINGS change."""
+    ext = get_settings().IDE_DIR / "extensions" / "extensions.json"
+    mtime = ext.stat().st_mtime_ns if ext.exists() else 0
+    return hashlib.sha256(f"{mtime}:{json.dumps(SETTINGS, sort_keys=True)}".encode()).hexdigest()[:16]
 
 
 def start(lab: LabConfig, ws: Workspace) -> None:
@@ -144,4 +157,14 @@ def inject_defaults(page: str) -> str:
         config["configurationDefaults"] = {**config.get("configurationDefaults", {}), **SETTINGS}
         return m.group(1) + html.escape(json.dumps(config), quote=True) + m.group(3)
 
-    return _CONFIG.sub(add, page, count=1)
+    page = _CONFIG.sub(add, page, count=1)
+    return page.replace("</head>", FONT_FACES + "</head>", 1)
+
+
+# JetBrains Mono inside VS Code (the files come from scripts/openvscode.sh, served at /ide-fonts/).
+FONT_FILES = {f"jetbrains-mono-latin-{w}-{s}.woff2" for w in (400, 700) for s in ("normal", "italic")}
+FONT_FACES = "<style>" + "".join(
+    f"@font-face{{font-family:'JetBrains Mono';font-style:{s};font-weight:{w};font-display:swap;"
+    f"src:url('/ide-fonts/jetbrains-mono-latin-{w}-{s}.woff2') format('woff2')}}"
+    for w in (400, 700) for s in ("normal", "italic")
+) + "</style>"

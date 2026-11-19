@@ -58,8 +58,8 @@ test("labs open in real VS Code, and the switch goes back to the classic editor"
   await expect(vscode.locator(".monaco-workbench")).toBeVisible({ timeout: 90_000 });
   await expect(vscode.locator(".explorer-folders-view")).toContainText("greet.py", { timeout: 30_000 });
   await expect(vscode.locator(".monaco-dialog-box")).toHaveCount(0); // no workspace trust prompt
-  await page.getByRole("button", { name: "Classic" }).click();
+  await page.getByRole("button", { name: "Lite" }).click();
   await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
-  await page.getByRole("button", { name: "VS Code" }).click();
+  await page.getByRole("button", { name: "IDE", exact: true }).click();
   await expect(page.frameLocator("iframe.ide-frame").locator(".monaco-workbench")).toBeVisible({ timeout: 60_000 });
 });

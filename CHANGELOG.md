@@ -1,5 +1,18 @@
 # Changelog
 
+## A premium IDE: LabBox Dark, JetBrains Mono, IDE | Lite
+
+- "LabBox Dark", a VS Code colour theme in the labbox-defaults extension (now 1.1.0): the app's greys
+  around the code, GitHub's code colours (purple functions, orange types and parameters, red keywords,
+  blue strings), a green accent on the active tab, activity bar and badges, white buttons.
+- JetBrains Mono (OFL) inside the IDE's editor and terminal: `scripts/openvscode.sh` copies the font
+  files to `/srv/labbox/openvscode/fonts`, the backend serves a fixed list of them at `/ide-fonts/`, and
+  the proxy adds the `@font-face` rules to the IDE's start page.
+- A machine whose IDE is already running restarts it when the shared setup changes (new extension,
+  theme or settings), so everyone gets updates without a Reset.
+- The switch now reads "IDE | Lite" ("VS Code" is Microsoft's trademark; the IDE is OpenVSCode
+  Server). Screens under 900px always get Lite.
+
 ## Typing in VS Code keeps the machine awake
 
 - The idle reaper only saw plain HTTP requests through the proxy, not websocket traffic, so a learner

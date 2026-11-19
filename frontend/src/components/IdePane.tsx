@@ -24,12 +24,12 @@ export default function IdePane({ labId, onUnavailable }: { labId: string; onUna
   }, [labId, attempt, onUnavailable]);
 
   if (state === "starting" || !url) {
-    return <div className="ide-wait"><span className="spinner" /> Starting VS Code in your machine...</div>;
+    return <div className="ide-wait"><span className="spinner" /> Starting your IDE...</div>;
   }
   if (state === "slow") {
     return (
       <div className="ide-wait">
-        <p>VS Code is taking longer than usual to start.</p>
+        <p>The IDE is taking longer than usual to start.</p>
         <button className="btn btn-primary" onClick={() => setAttempt((a) => a + 1)}>Try again</button>
       </div>
     );

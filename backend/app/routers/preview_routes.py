@@ -1,11 +1,13 @@
 import asyncio
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, WebSocket
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlmodel import Session
 
 from .. import containers, ide, preview
 from ..auth import get_current_user
+from ..config import get_settings
 from ..db import get_session
 from ..labs import PreviewPort, get_lab
 from ..models import User
@@ -65,6 +67,15 @@ async def open_ide(lab_id: str, response: Response, user: User = Depends(get_cur
     ready = await asyncio.to_thread(ide.wait_ready, lab, ws)
     response.set_cookie(preview.COOKIE, preview.ticket(user), max_age=preview.TICKET_MINUTES * 60, httponly=True, samesite="strict", path="/ide")
     return IdeInfo(available=True, ready=ready, url=f"{ide.base_path(lab.id)}/?tkn={ide.token(user.id, lab.id)}&folder=/workspace")
+
+
+@router.get("/ide-fonts/{name}", include_in_schema=False)
+def ide_font(name: str):
+    """JetBrains Mono for VS Code's editor and terminal. A fixed list of files, nothing else."""
+    path = get_settings().IDE_DIR / "fonts" / name
+    if name not in ide.FONT_FILES or not path.is_file():
+        raise HTTPException(404, "No such font")
+    return FileResponse(path, media_type="font/woff2", headers={"Cache-Control": "public, max-age=604800"})
 
 
 @router.api_route("/ide/{lab_id}", methods=_METHODS, include_in_schema=False)
