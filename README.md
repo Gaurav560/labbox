@@ -375,6 +375,16 @@ AI lab checks stay deterministic: the hidden check gives the learner's code a fa
 the request it builds, not what a model said. For RAG labs, add `pgvector/pgvector` or `qdrant/qdrant`
 under `services` (see the commented example in `tools/templates/ai/lab.yaml`).
 
+### VS Code in labs
+
+Run `scripts/openvscode.sh` once: it downloads openvscode-server to `/srv/labbox/openvscode`
+(`IDE_DIR`), adds the Python extensions and the `labbox-defaults` settings extension. Every lab
+machine gets it mounted read-only at `/opt/openvscode`; the lab page starts it on demand and shows
+it through `/ide/{lab}/` (same signed-in proxy as Preview, so in production serve it from its own
+origin too). `IDE_ENABLED=false` (or not downloading it) keeps the classic editor. Each machine gets
+`IDE_EXTRA_MEMORY_MB` more memory while VS Code is on. Lab networks get a /28 each from
+`LAB_SUBNET_POOL` (Docker's default pool runs out after about 30 networks).
+
 ### Check output
 
 Besides `@@RESULT`, a check may print `@@METRIC {"name": "p95_ms", "value": 180, "target": 200,

@@ -18,7 +18,7 @@ from fastapi.responses import Response, StreamingResponse
 from sqlmodel import Session
 from starlette.background import BackgroundTask
 
-from . import containers, services
+from . import containers, ide, services
 from .auth import create_scoped_token, user_from_token
 from .db import engine
 from .labs import LabConfig, get_lab
@@ -61,9 +61,9 @@ def _user(cookie: str | None) -> User | None:
         return user_from_token(cookie, session, scope=SCOPE)
 
 
-def _target(user: User, lab: LabConfig, port: int) -> str:
+def _target(user: User, lab: LabConfig, port: int, any_port: bool = False) -> str:
     """host:port of the learner's workspace, or an HTTP error the browser can show."""
-    if port not in {p.port for p in lab.preview}:
+    if not any_port and port not in {p.port for p in lab.preview}:
         raise HTTPException(403, f"Port {port} is not open for preview in this lab")
     assert user.id is not None
     name = containers.container_name(user.id, lab.id)
@@ -74,12 +74,12 @@ def _target(user: User, lab: LabConfig, port: int) -> str:
     return f"{ip}:{port}"
 
 
-def _authorize(request_cookie: str | None, lab_id: str, port: int) -> tuple[User, LabConfig, str]:
+def _authorize(request_cookie: str | None, lab_id: str, port: int, any_port: bool = False) -> tuple[User, LabConfig, str]:
     user = _user(request_cookie)
     if user is None:
         raise HTTPException(403, "Open the preview from the lab page (your preview session is missing or expired)")
     lab = get_lab(lab_id)
-    return user, lab, _target(user, lab, port)
+    return user, lab, _target(user, lab, port, any_port)
 
 
 def _forward_headers(headers, prefix: str) -> dict[str, str]:
@@ -92,14 +92,19 @@ def _forward_headers(headers, prefix: str) -> dict[str, str]:
     return out
 
 
-async def proxy_http(request: Request, lab_id: str, port: int, path: str) -> Response:
-    user, lab, target = await asyncio.to_thread(_authorize, request.cookies.get(COOKIE), lab_id, port)
-    prefix = f"/preview/{lab_id}/{port}"
-    url = f"http://{target}/{quote(path)}"
+async def proxy_http(request: Request, lab_id: str, port: int, path: str, full_path: bool = False) -> Response:
+    """full_path: forward the whole request path (VS Code knows its base path), not just the tail."""
+    user, lab, target = await asyncio.to_thread(_authorize, request.cookies.get(COOKIE), lab_id, port, full_path)
+    prefix = f"/ide/{lab_id}" if full_path else f"/preview/{lab_id}/{port}"
+    url = f"http://{target}{quote(request.url.path)}" if full_path else f"http://{target}/{quote(path)}"
     if request.url.query:
         url += "?" + request.url.query
     client = http_client()
-    upstream = client.build_request(request.method, url, headers=_forward_headers(request.headers, prefix), content=request.stream())
+    headers_out = _forward_headers(request.headers, prefix)
+    start_page = full_path and request.method == "GET" and ide.is_start_page(lab_id, request.url.path)
+    if start_page:
+        headers_out["accept-encoding"] = "identity"  # we edit this page (see ide.inject_defaults)
+    upstream = client.build_request(request.method, url, headers=headers_out, content=request.stream())
     try:
         resp = await client.send(upstream, stream=True)
     except httpx.ConnectError:
@@ -115,6 +120,11 @@ async def proxy_http(request: Request, lab_id: str, port: int, path: str) -> Res
     if location and location.startswith("/") and not location.startswith(prefix):
         headers["location"] = prefix + location  # keep redirects inside the preview
     await asyncio.to_thread(_touch, user, lab)
+    if start_page and resp.status_code == 200 and "text/html" in resp.headers.get("content-type", ""):
+        page = ide.inject_defaults((await resp.aread()).decode("utf-8", errors="replace"))
+        await resp.aclose()
+        headers.pop("content-encoding", None)
+        return Response(page, status_code=200, headers=headers, media_type="text/html")
     return StreamingResponse(resp.aiter_raw(), status_code=resp.status_code, headers=headers, background=BackgroundTask(resp.aclose))
 
 
@@ -136,15 +146,20 @@ def _touch(user: User, lab: LabConfig) -> None:
         containers.touch(session, ws, force=False)
 
 
-async def proxy_ws(ws: WebSocket, lab_id: str, port: int, path: str) -> None:
+async def proxy_ws(ws: WebSocket, lab_id: str, port: int, path: str, full_path: bool = False) -> None:
     try:
-        _, _, target = await asyncio.to_thread(_authorize, ws.cookies.get(COOKIE), lab_id, port)
+        _, _, target = await asyncio.to_thread(_authorize, ws.cookies.get(COOKIE), lab_id, port, full_path)
     except HTTPException as e:
         await ws.close(code=4403 if e.status_code == 403 else 4404, reason=str(e.detail)[:120])
         return
-    url = f"ws://{target}/{quote(path)}" + (f"?{ws.url.query}" if ws.url.query else "")
+    url = (f"ws://{target}{quote(ws.url.path)}" if full_path else f"ws://{target}/{quote(path)}") + (f"?{ws.url.query}" if ws.url.query else "")
+    # The app's own cookies (VS Code keeps its connection token in one), never ours.
+    cookies = [c for c in ws.headers.get("cookie", "").split(";") if c.strip() and not c.strip().startswith(COOKIE + "=")]
     try:
-        upstream = await websockets.connect(url, open_timeout=5, max_size=2**22)
+        upstream = await websockets.connect(
+            url, open_timeout=5, max_size=None if full_path else 2**22,
+            additional_headers={"cookie": ";".join(cookies)} if cookies else None,
+        )
     except (OSError, websockets.WebSocketException, asyncio.TimeoutError):
         await ws.close(code=1011, reason=f"Nothing is answering on port {port}")
         return

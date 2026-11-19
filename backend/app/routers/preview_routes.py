@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Depends, Request, Response, WebSocket
-from pydantic import BaseModel
+import asyncio
 
-from .. import preview
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, WebSocket
+from pydantic import BaseModel
+from sqlmodel import Session
+
+from .. import containers, ide, preview
 from ..auth import get_current_user
+from ..db import get_session
 from ..labs import PreviewPort, get_lab
 from ..models import User
 
@@ -40,3 +44,36 @@ async def preview_http(request: Request, lab_id: str, port: int, path: str = "")
 @router.websocket("/preview/{lab_id}/{port}/{path:path}")
 async def preview_ws(ws: WebSocket, lab_id: str, port: int, path: str = ""):
     await preview.proxy_ws(ws, lab_id, port, path)
+
+
+class IdeInfo(BaseModel):
+    available: bool  # false: VS Code is not installed or switched off, use the classic editor
+    ready: bool = False
+    url: str = ""
+
+
+@router.post("/api/labs/{lab_id}/ide", response_model=IdeInfo)
+async def open_ide(lab_id: str, response: Response, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> IdeInfo:
+    """Make sure the machine and its VS Code are running, set the proxy cookie for /ide, return the URL."""
+    lab = get_lab(lab_id)
+    if not ide.available():
+        return IdeInfo(available=False)
+    assert user.id is not None
+    ws = await asyncio.to_thread(containers.ensure_workspace, session, user, lab)
+    await asyncio.to_thread(ide.start, lab, ws)
+    ready = await asyncio.to_thread(ide.wait_ready, lab, ws)
+    response.set_cookie(preview.COOKIE, preview.ticket(user), max_age=preview.TICKET_MINUTES * 60, httponly=True, samesite="strict", path="/ide")
+    return IdeInfo(available=True, ready=ready, url=f"{ide.base_path(lab.id)}/?tkn={ide.token(user.id, lab.id)}&folder=/workspace")
+
+
+@router.api_route("/ide/{lab_id}", methods=_METHODS, include_in_schema=False)
+@router.api_route("/ide/{lab_id}/{path:path}", methods=_METHODS, include_in_schema=False)
+async def ide_http(request: Request, lab_id: str, path: str = ""):
+    if not ide.available():
+        raise HTTPException(404, "VS Code is not set up on this server")
+    return await preview.proxy_http(request, lab_id, ide.PORT, path, full_path=True)
+
+
+@router.websocket("/ide/{lab_id}/{path:path}")
+async def ide_ws(ws: WebSocket, lab_id: str, path: str = ""):
+    await preview.proxy_ws(ws, lab_id, ide.PORT, path, full_path=True)

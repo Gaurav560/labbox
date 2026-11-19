@@ -30,6 +30,7 @@ test.afterAll(() => {
 });
 
 test("lesson flow: steps, predict, hint, run, check, recap, persistence", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
@@ -72,7 +73,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   // Try step: Run in terminal pastes the command but does not press Enter.
   await page.keyboard.press("ArrowRight");
   await expect(page.locator(".step-kind")).toHaveText("Try it");
-  await expect(termText(page)).resolves.toMatch(/learner@python-basics/);
+  await expect.poll(() => termText(page), { timeout: 15_000 }).toMatch(/learner@python-basics/);
   await page.getByRole("button", { name: /Run in terminal/ }).click();
   await expect.poll(() => termText(page)).toContain("print(greet('Asha'))");
   await page.waitForTimeout(800);
@@ -163,6 +164,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
 });
 
 test("java lab renders its v2 steps", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
   await page.goto("/login");
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill("secret123");

@@ -8,6 +8,7 @@ export default defineConfig({
       "/api": "http://localhost:8000",
       "/ws": { target: "ws://localhost:8000", ws: true },
       "/preview": { target: "http://localhost:8000", ws: true },
+      "/ide": { target: "http://localhost:8000", ws: true },
     },
   },
 });

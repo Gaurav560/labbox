@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     CHECKS_DIR: Path = Path("/srv/labbox/checks")
     DATABASE_URL: str = "sqlite:///./data/labbox.db"
     CONTAINER_RUNTIME: str = ""
+    # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
+    LAB_SUBNET_POOL: str = "10.88.0.0/16"
     IDLE_STOP_MINUTES: float = 15
     REAPER_INTERVAL_SECONDS: float = 60
     MAX_FILE_BYTES: int = 1_000_000
@@ -45,6 +47,11 @@ class Settings(BaseSettings):
     LLM_RPM: int = 20  # requests per minute per user
     LLM_MAX_TOKENS: int = 1024  # cap on the reply length of one request
     LLM_TIMEOUT_SECONDS: float = 120
+    # VS Code in the lab (openvscode-server, downloaded once by scripts/openvscode.sh and mounted
+    # read-only into every lab machine). Off, or not downloaded: labs use the classic editor.
+    IDE_ENABLED: bool = True
+    IDE_DIR: Path = Path("/srv/labbox/openvscode")
+    IDE_EXTRA_MEMORY_MB: int = 512  # added to a lab machine's memory while VS Code runs in it
     AI_COMPLETION: bool = True  # ghost-text code completion in the editor (alias lab-code)
     LLM_COMPLETION_RPM: int = 30  # editor completions have their own limits
     LLM_COMPLETION_DAILY_TOKENS: int = 200_000

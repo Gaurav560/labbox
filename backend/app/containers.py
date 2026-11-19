@@ -18,7 +18,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from . import services, workspace_files
+from . import ide, services, workspace_files
 from .config import get_settings
 from .labs import LabConfig, get_lab
 from .models import ChapterProgress, User, Workspace, utcnow
@@ -142,6 +142,15 @@ def _network_args(lab: LabConfig, ws: Workspace) -> dict:
     return dict(network_mode=lab.workspace.network)
 
 
+def _ide_memory(lab: LabConfig) -> dict:
+    """VS Code runs inside the machine, so the machine gets room for it on top of the lab's own limit."""
+    if not ide.available():
+        return {}
+    m = lab.resources.memory.lower()
+    mb = int(m[:-1]) * (1024 if m.endswith("g") else 1) + get_settings().IDE_EXTRA_MEMORY_MB
+    return {"mem_limit": f"{mb}m", "memswap_limit": f"{mb}m"}
+
+
 def llm_env(lab: LabConfig, ws: Workspace) -> dict[str, str]:
     """What an llm.enabled lab gets: the gateway's address and a key that only works there, for this
     user and lab. The real provider keys never enter a container."""
@@ -169,7 +178,7 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
         labels=labels("workspace", ws.user_id, lab.id),
         hostname=lab.id,
         working_dir=mount,
-        volumes={ws.volume_path: {"bind": mount, "mode": "rw"}},
+        volumes={ws.volume_path: {"bind": mount, "mode": "rw"}, **ide.mounts()},
         pids_limit=lab.resources.pids_limit,  # stops fork bombs
         **_network_args(lab, ws),
         tty=True,
@@ -177,7 +186,7 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
         command=["sleep", "infinity"],
         init=True,  # tini as PID 1: stops in milliseconds (sleep ignores SIGTERM as PID 1) and reaps zombies
         environment={**lab.workspace.env, **llm_env(lab, ws), "HOME": "/home/learner", "TERM": "xterm-256color"},
-        **security_options(lab),
+        **{**security_options(lab), **_ide_memory(lab)},
     )
     if lab.uses_lab_network and lab.workspace.network == "bridge":
         services.attach(c, ws, services.WORKSPACE_ALIAS)

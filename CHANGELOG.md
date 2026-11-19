@@ -1,5 +1,28 @@
 # Changelog
 
+## Real VS Code in the lab
+
+- Labs now open in real VS Code: openvscode-server (Gitpod's open-source VS Code, MIT) runs inside the
+  learner's own machine, as the learner, and shows in the editor area through the signed-in proxy at
+  `/ide/{lab}/` (HTTP and websockets). Explorer, tabs, command palette, VS Code's terminal, and Python
+  IntelliSense from the free Python extension (Open VSX). A "VS Code | Classic" switch in the bottom
+  bar goes back to the built-in editor (which keeps AI completion); Classic reopens files fresh.
+- `scripts/openvscode.sh` downloads it once to `/srv/labbox/openvscode` (mounted read-only into every
+  machine, so no image rebuild) with the Python extensions and `labbox-defaults`, a tiny extension of
+  default settings (`tools/vscode-defaults`).
+- Defaults (Dark Modern, 15px, auto-save so Check sees the latest code, no telemetry, no workspace
+  trust prompt, no Copilot chat panel) are added to VS Code's start page by the proxy, early enough
+  for workspace trust.
+- VS Code starts only when the lab page opens it (Classic users never pay for it); each machine gets
+  `IDE_EXTRA_MEMORY_MB` (512) more memory while it is on; a per-user, per-lab connection token, so
+  requests that skip the proxy are refused; labs without a network get a private one (still no internet).
+- Found while testing: Docker's default address pool gives every lab network a /16 and runs out after
+  about 30 networks ("all predefined address pools have been fully subnetted"). Lab networks now get a
+  /28 each from `LAB_SUBNET_POOL` (10.88.0.0/16): room for 4,096.
+- Tests: `test_ide_docker.py` (proxy, defaults, learner user, no capabilities, read-only mount, token,
+  isolation, private network and subnet) and a browser test for VS Code and the switch. The older
+  browser tests pin the classic editor.
+
 ## A VS Code-style editor
 
 - Code at 15px JetBrains Mono with ligatures and a 24px line height, GitHub's code colours (red

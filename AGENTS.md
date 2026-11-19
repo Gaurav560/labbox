@@ -35,13 +35,15 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   `lab.yaml`, lab content, tracks, drills or onboarding; content is loaded at startup).
 - Frontend: `cd frontend && npm run dev` (http://localhost:5173).
 - Images: `scripts/build_lab_images.sh` (bases first, then every lab).
+- VS Code in labs: `scripts/openvscode.sh` once (downloads to /srv/labbox/openvscode). Browser tests
+  that drive the classic editor set `localStorage["labbox.editor"] = "classic"` first.
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 190 tests, Docker ones included, about 2 minutes);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (9 tests,
+- Tests: `cd backend && .venv/bin/pytest` (about 200 tests, Docker ones included, about 2 minutes);
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (11 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green after Phase E (190 backend tests, 9 browser tests, 15 labs valid).
+- Last known state: everything green after Phase E (199 backend tests, 11 browser tests, 15 labs valid), with real VS Code in labs.
 
 ## How a lab is made
 
@@ -58,6 +60,9 @@ said that is enough for now, so the platform phases (F onward) come next.
 - Vite sometimes serves a stale module after edits ("export not found" in the page). Kill the
   process on port 5173 (`ss -ltnp | grep :5173`) and restart `npm run dev`.
 - Never `pkill -f` with a pattern that also matches your own shell command; it kills your shell.
+  Same for `pgrep -f` inside `sh -c`: write the pattern as `[s]erver-main.js` so it cannot match itself.
+- Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
+  /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword
   the hint; do not weaken the rule.
 - Specs are written back with `yaml.safe_dump`, so hint text is unquoted; match that when editing.

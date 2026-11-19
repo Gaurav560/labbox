@@ -21,6 +21,7 @@ test.afterAll(() => {
 const badge = (page: Page, label: RegExp) => page.locator(".topbar").getByLabel(label);
 
 test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));

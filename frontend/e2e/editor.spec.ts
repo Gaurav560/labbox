@@ -2,6 +2,7 @@
 import { expect, test } from "@playwright/test";
 
 test("the editor suggests Python names and snippets", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
   const r = await page.request.post("/api/auth/signup", { data: { username: `ed${Date.now() % 1_000_000_000}`, password: "secret123" } });
   const { token } = await r.json();
   await page.goto("/");
@@ -31,6 +32,7 @@ test("the editor suggests Python names and snippets", async ({ page }) => {
 });
 
 test("AI completion can be switched off and stays off", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
   const r = await page.request.post("/api/auth/signup", { data: { username: `ai${Date.now() % 1_000_000_000}`, password: "secret123" } });
   const { token } = await r.json();
   await page.goto("/");
@@ -44,4 +46,20 @@ test("AI completion can be switched off and stays off", async ({ page }) => {
   await page.reload();
   await page.locator(".tree-row", { hasText: "greet.py" }).click({ timeout: 60_000 });
   await expect(page.getByRole("button", { name: /✦ AI (on|off)/ })).toHaveText("✦ AI off");
+});
+
+test("labs open in real VS Code, and the switch goes back to the classic editor", async ({ page }) => {
+  const r = await page.request.post("/api/auth/signup", { data: { username: `vsc${Date.now() % 1_000_000_000}`, password: "secret123" } });
+  const { token } = await r.json();
+  await page.goto("/");
+  await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
+  await page.goto("/labs/python-basics");
+  const vscode = page.frameLocator("iframe.ide-frame");
+  await expect(vscode.locator(".monaco-workbench")).toBeVisible({ timeout: 90_000 });
+  await expect(vscode.locator(".explorer-folders-view")).toContainText("greet.py", { timeout: 30_000 });
+  await expect(vscode.locator(".monaco-dialog-box")).toHaveCount(0); // no workspace trust prompt
+  await page.getByRole("button", { name: "Classic" }).click();
+  await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
+  await page.getByRole("button", { name: "VS Code" }).click();
+  await expect(page.frameLocator("iframe.ide-frame").locator(".monaco-workbench")).toBeVisible({ timeout: 60_000 });
 });

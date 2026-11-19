@@ -254,8 +254,9 @@ class LabConfig(_Strict):
 
     @property
     def uses_lab_network(self) -> bool:
-        """A private per-user network: for services, network: lab, live checks and the LLM relay."""
-        return bool(self.services) or self.workspace.network == "lab" or self.llm.enabled
+        """A private per-user network: for services, network: lab, live checks, the LLM relay, and
+        VS Code in labs without a network (the network stays internal: still no internet)."""
+        return bool(self.services) or self.workspace.network == "lab" or self.llm.enabled or (self.workspace.network == "none" and _ide_wanted())
 
     @model_validator(mode="after")
     def fill_v1_fields(self) -> "LabConfig":
@@ -305,6 +306,13 @@ class LabConfig(_Strict):
             if t.id == task_id:
                 return t
         raise HTTPException(404, f"Task {task_id!r} not found in chapter {chapter_id!r}")
+
+
+def _ide_wanted() -> bool:
+    from .config import get_settings
+
+    s = get_settings()
+    return s.IDE_ENABLED and (s.IDE_DIR / "current" / "bin" / "openvscode-server").exists()
 
 
 def unsupported_features(lab: LabConfig) -> list[str]:

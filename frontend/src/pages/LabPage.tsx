@@ -5,6 +5,7 @@ import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type 
 import { useAuth } from "../auth";
 import ChapterPanel from "../components/ChapterPanel";
 import CheckDrawer from "../components/CheckDrawer";
+import IdePane from "../components/IdePane";
 import EditorPane, { type Tab } from "../components/EditorPane";
 import FileTree from "../components/FileTree";
 import PreviewPane from "../components/PreviewPane";
@@ -83,6 +84,20 @@ export default function LabPage() {
   const [treeW, setTreeW] = usePersistentState("panel.tree", 200);
   const [termH, setTermH] = usePersistentState("panel.terminal", 260);
   const [focus, setFocus] = usePersistentState("focus", false);
+  // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
+  const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
+  const [ideError, setIdeError] = useState<string | null>(null);
+  const useIde = editorKind === "vscode" && !ideError;
+  const onIdeUnavailable = useCallback((why: string) => setIdeError(why), []);
+  const switchEditor = (kind: "vscode" | "classic") => {
+    if (kind === "classic") {
+      // VS Code may have changed files: reopen them fresh instead of showing (or saving) old copies.
+      setTabs([]);
+      setActivePath(null);
+    }
+    setIdeError(null);
+    setEditorKind(kind);
+  };
 
   const terminalRef = useRef<TerminalHandle>(null);
   const stepTimer = useRef(0);
@@ -604,6 +619,10 @@ export default function LabPage() {
         <Splitter direction="vertical" label="Resize lesson panel" onDrag={(d) => setLeftW((w) => clamp(w + d, 280, 900))} />
         <section className="work-area" aria-label="Workspace">
           <div className="files-and-editor">
+            {useIde ? (
+              <IdePane labId={labId} onUnavailable={onIdeUnavailable} />
+            ) : (
+            <>
             {!focus && (
               <>
                 <div style={{ width: treeW }} className="tree-wrap">
@@ -621,6 +640,8 @@ export default function LabPage() {
               </>
             )}
             <EditorPane labId={labId} tabs={tabs} activePath={activePath} onSelect={setActivePath} onClose={closeTab} onChange={onChange} onSave={save} />
+            </>
+            )}
           </div>
           <Splitter direction="horizontal" label="Resize terminal" onDrag={(d) => setTermH((h) => clamp(h - d, 80, 800))} />
           <div style={{ height: termH }} className="terminal-wrap">
@@ -636,6 +657,11 @@ export default function LabPage() {
               <button role="tab" aria-selected={bottomTab === "output"} className="bottom-tab" onClick={() => setBottomTab("output")}>
                 Output
               </button>
+              <span className="spacer" />
+              <div className="editor-switch" role="group" aria-label="Editor">
+                <button aria-pressed={editorKind === "vscode"} onClick={() => switchEditor("vscode")} title={ideError ?? "Real VS Code, running in your machine"}>VS Code</button>
+                <button aria-pressed={editorKind === "classic"} onClick={() => switchEditor("classic")} title="The lightweight built-in editor">Classic</button>
+              </div>
             </div>
             <div className="bottom-body" hidden={bottomTab !== "terminal"}>
               <TerminalPane
