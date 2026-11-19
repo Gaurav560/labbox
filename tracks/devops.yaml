@@ -1,0 +1,21 @@
+# Skill map for the DevOps track. A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: devops
+title: DevOps
+nodes:
+  - id: linux-logs
+    title: Reading logs
+    chapters: [linux-on-call/01-reading-logs]
+  - id: linux-disk
+    title: Disk and permissions
+    requires: [linux-logs]
+    chapters: [linux-on-call/02-disk-and-permissions]
+  - id: docker
+    title: Docker
+    requires: [linux-disk]
+  - id: nginx
+    title: Nginx and 502s
+    requires: [linux-disk]
+  - id: kubernetes
+    title: Kubernetes
+    requires: [docker]

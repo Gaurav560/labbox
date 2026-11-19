@@ -14,7 +14,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
-  await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText("Soon");
+  await expect(page.locator(".track-chip", { hasText: "AI engineering" })).toContainText("Soon");
+  await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   await expect(page.locator(".live-labs")).toContainText(/^Live now: .+/);  // first few titles, then "and N more"
   await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText(/\d+ labs?/);
 

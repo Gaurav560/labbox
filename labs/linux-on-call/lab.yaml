@@ -1,0 +1,73 @@
+id: linux-on-call
+version: 2
+title: Linux on call
+subtitle: Read logs with grep, awk and sort, free a full disk, and fix permissions, like on a real pager shift.
+description: Read logs with grep, awk and sort, free a full disk, and fix permissions, like on a real pager shift.
+language: bash
+track: devops
+tags: [linux, bash]
+level: beginner
+estimated_minutes: 35
+story:
+  company: Dabba Express
+  character: { name: Priya, role: "Founder, Dabba Express" }
+  pitch: "Dabba Express's only server engineer is on leave, and the pager is now yours."
+cover_scene: "A small server rack at night with a glowing terminal and a pager on top."
+cover: cover.svg
+cover_credit: { by: "Logos: linux", source: "devicon (MIT)" }
+image: labbox/linux-on-call:v1
+resources: xs
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: none
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 60
+  network: none
+chapters:
+  - id: 01-reading-logs
+    title: Reading the logs
+    file: chapters/01-reading-logs.md
+    minutes: 20
+    tasks:
+      - id: count_5xx
+        title: "count_5xx.sh: how many requests failed"
+        xp: 20
+        hints:
+          - "The status is the 5th field on every line. You need the lines where it is from 500 to 599, then count them."
+          - "awk can test a field with a condition, like $5 >= 500, and print only the lines that match. wc -l counts lines."
+          - "Use \"$1\" for the log file, so the script works on any log, not just access.log."
+      - id: top_ips
+        title: "top_ips.sh: the three busiest IPs"
+        xp: 30
+        hints:
+          - "First keep only the IP column, the 2nd field. Then count how often each one appears."
+          - "uniq -c counts repeats, but only next to each other, so sort before it. Then sort the counts from high to low."
+          - "After sorting the counts, head keeps the top 3 lines; one more awk keeps just the IP column."
+      - id: slowest
+        title: "slowest.sh: the three slowest requests"
+        xp: 20
+        hints:
+          - "The duration is the 6th field, like 35ms. You want whole lines, sorted by that field."
+          - "sort -k picks the field to sort by, -n sorts by number (35ms still counts as 35), -r flips the order."
+          - "Sort by the 6th field as a number, biggest first, and keep the first 3 lines with head."
+  - id: 02-disk-and-permissions
+    title: Disk full, permissions wrong
+    file: chapters/02-disk-and-permissions.md
+    minutes: 15
+    tasks:
+      - id: free_disk
+        title: "Free the disk without breaking the app"
+        xp: 30
+        hints:
+          - "du -sh shows how big each file or folder is. Start in server/var/log/app."
+          - "The app still holds its log open. Deleting the file does not give the space back until the app restarts."
+          - "Empty the file instead of deleting it: truncate -s 0 sets its size to zero and keeps the same file."
+      - id: fix_perms
+        title: "fix_perms.sh: scripts that run, secrets that stay secret"
+        xp: 30
+        hints:
+          - "ls -l shows permissions. x means executable; r means readable. Three groups: owner, group, others."
+          - "chmod +x makes a file executable. A number like 600 means owner read and write, nobody else anything."
+          - "Use \"$1\" for the folder, and a * pattern so every .sh file in its bin folder gets fixed, even new ones."

@@ -9,7 +9,7 @@ goals:
     title: Learn DevOps
     blurb: Linux, Docker, Kubernetes and keeping things running.
     track: devops
-    start: [python-basics]
+    start: [linux-on-call, python-basics]
   - id: ai
     title: Learn AI engineering
     blurb: LLM apps, RAG, agents and evals, built for real.

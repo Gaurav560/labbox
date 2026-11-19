@@ -25,7 +25,7 @@ const FEATURED = [
   "express-api", "fastapi-first-api", "go-basics",
   "java-basics", "spring-boot-first-api", "javascript-inside-out",
   "python-basics", "sql-from-zero", "postgres-indexing-incident",
-  "redis-in-practice",
+  "redis-in-practice", "linux-on-call",
 ];
 const COMING_SOON = [
   { id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" },

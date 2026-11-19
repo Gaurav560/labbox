@@ -247,7 +247,9 @@ def test_onboarding(client: TestClient):
     assert [x["correct"] for x in r["results"]] == [True, True, False]
     assert client.get("/api/me/stats", headers=h).json()["needs_onboarding"] is False
     r = client.post("/api/onboarding", json={"goal": "devops", "answers": [0, 0, 0]}, headers=h).json()
-    assert r["level"] == "beginner" and r["start"]["lab_id"] == "python-basics" and "on the way" in r["note"]
+    assert r["level"] == "beginner" and r["start"]["lab_id"] == "linux-on-call" and r["note"] is None  # DevOps now has its own first lab
+    r = client.post("/api/onboarding", json={"goal": "ai", "answers": [0, 0, 0]}, headers=h).json()
+    assert r["start"]["lab_id"] == "python-basics" and "on the way" in r["note"]  # a track with no labs yet
     assert client.post("/api/onboarding", json={"goal": "devops", "answers": [0]}, headers=h).status_code == 422
     assert client.post("/api/onboarding", json={"goal": "nope", "answers": [0, 0, 0]}, headers=h).status_code == 422
 
@@ -277,7 +279,7 @@ def content_root(tmp_path: Path) -> Path:
          "    chapters: [python-basics/01-functions]\n    requires: [py-traps]", "loop"),
         ("drills/devops.yaml", "    answer: 2\n", "    answer: 7\n", "answer 7"),
         ("drills/devops.yaml", "id: sh-grep-r", "id: sh-ls-la", "duplicate drill id"),
-        ("onboarding/onboarding.yaml", "start: [python-basics]\n  - id: ai", "start: [no-such-lab]\n  - id: ai", "none of the existing labs"),
+        ("onboarding/onboarding.yaml", "track: ai\n    start: [python-basics]", "track: ai\n    start: [no-such-lab]", "none of the existing labs"),
     ],
 )
 def test_broken_content_fails_loudly(content_root: Path, file: str, old: str, new: str, match: str):

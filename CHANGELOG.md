@@ -1,5 +1,15 @@
 # Changelog
 
+## Batch 2, lab 2: Linux on call
+
+- New lab `linux-on-call` (devops, beginner, 2 chapters, 5 tasks). Chapter 1: three log tools
+  (`count_5xx.sh`, `top_ips.sh`, `slowest.sh`) built from awk, sort, uniq and head. Chapter 2: empty a
+  runaway log without deleting it, and `fix_perms.sh` (executable scripts, a 600 secrets file).
+- Checks run the learner's scripts on logs and server folders they have never seen (generated in the
+  checker), so hardcoded answers fail.
+- New skill map `tracks/devops.yaml`. The "Learn DevOps" goal now starts with this lab. The home
+  grid shows it live; the home test checks that DevOps has labs and AI is "Soon".
+
 ## Batch 2, lab 1: Redis in practice
 
 - New lab `redis-in-practice` (databases, intermediate, 2 chapters, 5 tasks) with a real Redis 7.4
