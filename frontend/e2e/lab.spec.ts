@@ -107,6 +107,14 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(page.locator(".expected-got").first()).toContainText("'Hello, Asha!'");
   await expect(page.locator(".expected-got").first()).toContainText("None");
 
+  // The tutor appears once a check has failed. It uses whatever model the server maps (local Ollama in
+  // dev), so only check that a reply, or a clear error if no model is running, comes back.
+  await page.getByRole("button", { name: "Close results" }).click();
+  await page.locator(".task-box").getByRole("button", { name: "✦ Ask the tutor" }).click();
+  await page.getByLabel("Your question for the tutor").fill("Why does greet fail?");
+  await page.locator(".tutor-ask").getByRole("button", { name: "Ask" }).click();
+  await expect(page.locator(".tutor-meta, .tutor-error")).toBeVisible({ timeout: 90_000 });
+
   // Solve it (through the files API, like saving from the editor) and Check again.
   for (const [path, content] of Object.entries(PY_SOLVED)) {
     const r = await page.request.put("/api/labs/python-basics/files/content", { headers: auth, data: { path, content } });

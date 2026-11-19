@@ -80,6 +80,7 @@ export interface ChapterProgress {
   predicts: Record<string, PredictState>; // keyed by step index
   xp_earned: number;
 }
+export interface TutorReply { reply: string; blocked: boolean; tokens_used_today: number }
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
 export interface ServiceStatus { name: string; status: "running" | "starting" | "stopped" | "missing" }
@@ -167,6 +168,10 @@ export const api = {
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),
   hint: (labId: string, chapterId: string, taskId: string) =>
     request<HintResponse>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/hint`),
+  tutor: (labId: string, chapterId: string, taskId: string, question: string) =>
+    request<TutorReply>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/tutor`, { question }),
+  review: (labId: string, chapterId: string, taskId: string) =>
+    request<TutorReply>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/review`),
 
   startWorkspace: (labId: string) => request<WorkspaceStatus>("POST", `/api/labs/${q(labId)}/workspace/start`),
   stopWorkspace: (labId: string) => request<WorkspaceStatus>("POST", `/api/labs/${q(labId)}/workspace/stop`),

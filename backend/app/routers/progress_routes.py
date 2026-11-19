@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import engagement, lab_setup, progress
+from .. import containers, engagement, lab_setup, progress, tutor
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import LabConfig, get_lab
@@ -28,6 +28,10 @@ class PredictBody(BaseModel):
 
 class StepBody(BaseModel):
     current_step: int = Field(ge=0, le=1000)
+
+
+class TutorBody(BaseModel):
+    question: str = Field(default="", max_length=500)
 
 
 class HintOut(BaseModel):
@@ -114,3 +118,27 @@ async def setup(
     lab = get_lab(lab_id)
     lab.chapter(chapter_id)
     return await asyncio.to_thread(lab_setup.run_setup, session, user, lab, chapter_id)
+
+
+@router.post("/tasks/{task_id}/tutor", response_model=tutor.TutorReply)
+async def ask_tutor(
+    lab_id: str, chapter_id: str, task_id: str, body: TutorBody, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> tutor.TutorReply:
+    """A Socratic nudge for a task (counts against the learner's daily AI budget)."""
+    assert user.id is not None
+    lab = get_lab(lab_id)
+    lab.task(chapter_id, task_id)  # 404 if unknown
+    ws = containers.get_workspace(session, user, lab)
+    return await tutor.ask(session, user.id, lab, chapter_id, task_id, body.question, ws)
+
+
+@router.post("/tasks/{task_id}/review", response_model=tutor.TutorReply)
+async def review_code(
+    lab_id: str, chapter_id: str, task_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> tutor.TutorReply:
+    """A short code review once the task passes. No XP either way."""
+    assert user.id is not None
+    lab = get_lab(lab_id)
+    lab.task(chapter_id, task_id)
+    ws = containers.get_workspace(session, user, lab)
+    return await tutor.review(session, user.id, lab, chapter_id, task_id, ws)

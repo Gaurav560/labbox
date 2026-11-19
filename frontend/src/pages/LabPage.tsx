@@ -542,6 +542,8 @@ export default function LabPage() {
                 <ChapterPanel markdown={current.markdown} onRun={runInTerminal} />
               ) : (
                 <StepCard
+                  labId={labId}
+                  chapterId={chapterId}
                   step={current}
                   task={tasks.find((t) => t.id === current.task)}
                   hints={current.task ? hints[current.task] ?? [] : []}

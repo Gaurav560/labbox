@@ -4,6 +4,7 @@ import ChoiceQuestion from "./ChoiceQuestion";
 import Countdown from "./Countdown";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
+import TutorBox from "./TutorBox";
 
 export const NO_PREDICT: PredictState = { wrong: [], solved: false, answer: null, explain: null };
 
@@ -20,6 +21,8 @@ const TYPE_LABEL: Record<Step["type"], string> = {
 };
 
 interface Props {
+  labId: string;
+  chapterId: string;
   step: Step;
   task: Task | undefined;
   hints: string[];
@@ -81,7 +84,7 @@ export default function StepCard(p: Props) {
       )}
 
       {(step.type === "task" || step.type === "incident") && p.task && (
-        <TaskBox task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} live={p.checkMode === "live"} onHint={p.onHint} onCheck={p.onCheck} />
+        <TaskBox labId={p.labId} chapterId={p.chapterId} task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} live={p.checkMode === "live"} onHint={p.onHint} onCheck={p.onCheck} />
       )}
 
       {step.type === "recap" && (
@@ -105,7 +108,7 @@ export default function StepCard(p: Props) {
   );
 }
 
-function TaskBox(p: { task: Task; hints: string[]; hintBusy: boolean; checking: boolean; live: boolean; onHint: (id: string) => void; onCheck: () => void }) {
+function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: string[]; hintBusy: boolean; checking: boolean; live: boolean; onHint: (id: string) => void; onCheck: () => void }) {
   const { task } = p;
   return (
     <div className={`task-box ${task.passed ? "task-done" : ""}`}>
@@ -130,6 +133,7 @@ function TaskBox(p: { task: Task; hints: string[]; hintBusy: boolean; checking: 
           {p.checking ? <><span className="spinner" /> Checking...</> : "Check"}
         </button>
       )}
+      <TutorBox key={`${p.labId}/${task.id}/${task.passed}`} labId={p.labId} chapterId={p.chapterId} task={task} />
     </div>
   );
 }

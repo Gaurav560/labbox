@@ -1,5 +1,16 @@
 # Changelog
 
+## Phase E: AI tutor and code review
+
+- "✦ Ask the tutor" under a task once a check has failed: a Socratic nudge built from the task text,
+  the hints already revealed (never the unrevealed ones), the last check result and the learner's
+  files (capped). "✦ Review my code" once the task passes: a short PR-style review, no XP.
+- Both go through the LLM gateway as `lab-chat-smart` and count against the learner's daily budget.
+- Leak guard: if a reply contains any line of the reference solution (whitespace-insensitive), it is
+  replaced by a safe nudge that only repeats a hint the learner already paid for. Tested on 20 tasks
+  with a model that tries to paste the solution: nothing gets through.
+- New routes `POST .../tasks/{task}/tutor` and `.../review`; the lab browser test asks the tutor.
+
 ## Phase E, step 1: the LLM gateway
 
 - New `backend/app/llm_gateway.py`, its own small app on port 9000 (`LLM_GATEWAY_PORT`), started by
