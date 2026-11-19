@@ -15,6 +15,10 @@
 - Tests stay on SQLite; `LABBOX_TEST_DATABASE_URL` runs the whole suite on Postgres (only a database
   named `*_test`). Both runs green: 219 passed on SQLite (plus 1 Postgres-only test skipped), 220 on
   Postgres.
+- Switched the dev app over (owner's OK): backend stopped, 3054 rows copied with every count matching,
+  `DATABASE_URL` appended to `backend/.env` (the old SQLite line stays above it; delete the new line to go
+  back), SQLite kept as `/srv/labbox/labbox-sqlite-before-h1.db`. All 14 browser tests pass on Postgres;
+  new accounts continue at id 319.
 
 ## Home: fresh lab screenshots, now from all 16 labs
 
