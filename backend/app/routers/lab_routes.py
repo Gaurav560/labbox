@@ -10,7 +10,7 @@ import json
 import time
 from pathlib import Path
 
-from .. import containers, ide, progress, services
+from .. import containers, ide, limits, progress, services
 from ..focus import chapter_focus
 from ..auth import get_current_user
 from ..checker import task_states
@@ -240,6 +240,7 @@ class WorkspaceStatus(BaseModel):
     status: Literal["running", "stopped", "missing"]
     container: str | None = None
     services: list[ServiceStatus] | None = None  # only for labs with services
+    stopped_reason: str | None = None  # a safety limit stopped it (Phase H5): the lab page says why
 
 
 @router.post("/{lab_id}/workspace/start", response_model=WorkspaceStatus, response_model_exclude_none=True)
@@ -278,7 +279,8 @@ async def workspace_status(
     if lab.services:
         ws = containers.get_workspace(session, user, lab)
         svc = [ServiceStatus(**s) for s in await asyncio.to_thread(services.service_states, lab, ws)]
-    return WorkspaceStatus(status=status, container=name, services=svc)
+    reason = await asyncio.to_thread(limits.stop_reason, name) if status != "running" else None
+    return WorkspaceStatus(status=status, container=name, services=svc, stopped_reason=reason)
 
 
 # ---------- public catalog (home page, no login) ----------

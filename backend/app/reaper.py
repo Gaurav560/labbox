@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from sqlmodel import Session
 
-from . import containers, shared
+from . import containers, limits, shared
 from .config import get_settings
 from .db import engine
 from .models import utcnow
@@ -25,6 +25,7 @@ def reap_once() -> None:
     with Session(engine) as session:
         for name in containers.stop_idle(session, cutoff):
             log.info("Reaper stopped idle container %s", name)
+        limits.enforce(session)  # session length, stuck CPU, disk (Phase H5)
     for name in containers.remove_old_check_containers(CHECK_LEFTOVER_SECONDS):
         log.info("Reaper removed leftover check container %s", name)
     for d in settings.CHECKS_DIR.iterdir():

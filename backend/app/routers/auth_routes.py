@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import auth
+from .. import auth, limits, shared
 from ..config import get_settings
 from ..db import get_session
 from ..models import User
@@ -31,15 +31,31 @@ def _token_out(user: User) -> TokenOut:
 
 
 @router.post("/auth/signup", response_model=TokenOut)
-def signup(body: Credentials, session: Session = Depends(get_session)) -> TokenOut:
-    if not get_settings().ALLOW_SIGNUP:
+def signup(body: Credentials, request: Request, session: Session = Depends(get_session)) -> TokenOut:
+    s = get_settings()
+    if not s.ALLOW_SIGNUP:
         raise HTTPException(403, "Sign up is disabled")
-    return _token_out(auth.create_user(session, body.username, body.password))
+    key = f"signup:ip:{limits.client_ip(request)}"
+    limits.too_many(key, s.SIGNUPS_PER_IP_HOUR, 3600, "Too many new accounts from your network. Try again in an hour.")
+    out = _token_out(auth.create_user(session, body.username, body.password))
+    shared.hit(key, 3600)  # only accounts that were really made count
+    return out
 
 
 @router.post("/auth/login", response_model=TokenOut)
-def login(body: Credentials, session: Session = Depends(get_session)) -> TokenOut:
-    return _token_out(auth.authenticate(session, body.username, body.password))
+def login(body: Credentials, request: Request, session: Session = Depends(get_session)) -> TokenOut:
+    s = get_settings()
+    by_ip, by_name = f"loginfail:ip:{limits.client_ip(request)}", f"loginfail:user:{body.username.lower()}"
+    wait = "Too many wrong passwords. Wait a minute and try again."
+    limits.too_many(by_ip, s.LOGIN_FAILS_PER_IP_MINUTE, 60, wait)
+    limits.too_many(by_name, s.LOGIN_FAILS_PER_USER_MINUTE, 60, wait)
+    try:
+        user = auth.authenticate(session, body.username, body.password)
+    except HTTPException:
+        shared.hit(by_ip)  # only failed attempts count: a learner logging in often is never slowed down
+        shared.hit(by_name)
+        raise
+    return _token_out(user)
 
 
 @router.get("/me", response_model=UserOut)

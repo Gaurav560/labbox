@@ -150,6 +150,8 @@ card per chapter for experienced engineers, and verified wrong answers that fail
       `<lab>.ide.<domain>`, together with the item above) or a per-lab folder path fixes it.
 - [ ] Put a real proxy (nginx or Traefik) in front of IDE and Preview websockets instead of the Python
       backend carrying every keystroke.
+- [ ] Hard disk quotas on the server: XFS project quotas on the volumes folder (this laptop's ext4 has none,
+      so H5 measures usage each minute and stops machines over the quota).
 - [ ] Pin and test openvscode-server upgrades (today v1.109.5 in `scripts/openvscode.sh`).
 - [ ] Rebuild all images once the Ubuntu mirror works again (`scripts/build_lab_images.sh`), so every
       lab image gets the `lab requests` helper from the new base image.
@@ -209,7 +211,7 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 results drawer, graded `design` steps (`tests/rubric.yaml`, table `design_answer`), the `rate-limiter`
 lab (lab 16) and the `system-design` template.
 
-**Phase H is under way** (OK given on 19 November). H1 is done: the app runs on Postgres since 19 November (SQLite copy kept at `/srv/labbox/labbox-sqlite-before-h1.db`).
+**Phase H is under way** (OK given on 19 November). Order set by you on 20 November: H5, then H6; H4 (Google and GitHub login with JWT) at the very end; Phase I (payments) after the AWS deploy (K). H1 is done: the app runs on Postgres since 19 November (SQLite copy kept at `/srv/labbox/labbox-sqlite-before-h1.db`).
 1. **H1 Postgres (done):** `scripts/devdb.sh` (Postgres 16 and Redis 7 in Docker on localhost);
    `DATABASE_URL` on Postgres; a one-time copy of the SQLite data (row counts compared, the SQLite
    file kept); fast tests stay on SQLite, plus one full run on Postgres.
@@ -217,10 +219,10 @@ lab (lab 16) and the `system-design` template.
    Redis, so uvicorn can run several workers; in memory when `REDIS_URL` is empty.
 3. **H3 worker (arq) (done):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
    dump to `/srv/labbox/backups`.
-4. **H4 login:** HttpOnly session cookie with CSRF protection, a 60 s websocket ticket instead of the
+4. **H4 login (moved to the end, by your call):** HttpOnly session cookie with CSRF protection, a 60 s websocket ticket instead of the
    token in the terminal URL, Google and GitHub sign-in (buttons only when keys are in `.env`;
    accounts linked by verified email). Email verification and password reset wait for Phase K.
-5. **H5 safety:** disk quota per learner (default 500 MB), stop machines at 100% CPU for 10+ minutes,
+5. **H5 safety (done):** disk quota per learner (default 500 MB), stop machines at 100% CPU for 10+ minutes,
    4 h session limit, at most 2 running labs per learner, per-IP rate limits on signup, login, check.
 6. **H6 operations:** `/metrics` for Prometheus and a Grafana dashboard file, JSON logs option, CI on
    Postgres, Sentry built in but off unless a DSN is added.

@@ -178,6 +178,42 @@ def hit(key: str, window: float = 60) -> None:
     p.execute()
 
 
+# ---------- small values with an expiry (why a machine stopped, CPU samples) ----------
+
+_mem_values: dict[str, tuple[str, float]] = {}  # key -> (value, expires at, monotonic)
+
+
+def put(key: str, value: str, seconds: float) -> None:
+    r = redis_client()
+    if r is None:
+        with _mem_guard:
+            _mem_values[key] = (value, time.monotonic() + seconds)
+        return
+    r.set(PREFIX + "val:" + key, value, px=int(seconds * 1000))
+
+
+def get(key: str) -> str | None:
+    r = redis_client()
+    if r is None:
+        with _mem_guard:
+            held = _mem_values.get(key)
+            if held and held[1] > time.monotonic():
+                return held[0]
+            _mem_values.pop(key, None)
+            return None
+    raw = r.get(PREFIX + "val:" + key)
+    return raw.decode() if isinstance(raw, bytes) else raw
+
+
+def delete(key: str) -> None:
+    r = redis_client()
+    if r is None:
+        with _mem_guard:
+            _mem_values.pop(key, None)
+        return
+    r.delete(PREFIX + "val:" + key)
+
+
 def forget_hits() -> None:
     """Tests only: start every counter from zero."""
     r = redis_client()

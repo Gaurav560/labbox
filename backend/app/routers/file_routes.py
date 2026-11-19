@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import containers
+from .. import containers, limits
 from .. import workspace_files as wf
 from ..auth import get_current_user
 from ..config import get_settings
@@ -69,12 +69,14 @@ def read(path: str = Query(...), ws: Workspace = Depends(active_workspace)) -> F
 
 @router.put("/content", response_model=Saved)
 def write(body: FileContent, ws: Workspace = Depends(active_workspace)) -> Saved:
+    limits.check_disk(ws.user_id)  # over the quota: saving is refused, deleting still works
     n = wf.write_file(root(ws), body.path, body.content, get_settings().MAX_FILE_BYTES)
     return Saved(saved=True, bytes=n)
 
 
 @router.post("/new", response_model=Flag, response_model_exclude_none=True)
 def new(body: NewEntry, ws: Workspace = Depends(active_workspace)) -> Flag:
+    limits.check_disk(ws.user_id)
     wf.create(root(ws), body.path, body.type)
     return Flag(created=True)
 

@@ -42,10 +42,11 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 232 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
+- Tests: `cd backend && .venv/bin/pytest` (about 240 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (14 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green (20 November, after H3 worker) (232 backend tests on Postgres and Redis, 229 on SQLite, 14 browser tests on 4 workers, 16 labs valid).
+- Last known state: green (20 November, after H5 limits) (240 backend tests on Postgres and Redis; on SQLite the
+  rate-limiter lab's load test is borderline, see Gotchas; 14 browser tests on 4 workers, 16 labs valid).
 
 ## How a lab is made
 
@@ -80,6 +81,8 @@ said about 15 is enough for now, so the platform phases come next.
 - A browser test that shows a blank lab page with `net::ERR_NETWORK_CHANGED` in its trace is this
   laptop, not the app: Chrome drops downloads when Docker adds a lab network, and the Vite dev server
   serves the editor as about 230 files. Rerun it. The app retries a failed page load, then reloads once.
+- `test_test_lab[rate-limiter]` is borderline: its solution lets about 60 a second through and the check
+  fails above 60, so it fails when the laptop is busy. Rerun it alone before suspecting a change.
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
   id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait

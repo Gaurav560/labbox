@@ -23,6 +23,16 @@ class Settings(BaseSettings):
     BACKUP_DIR: Path = Path("/srv/labbox/backups")
     BACKUP_KEEP: int = 14
     BACKUP_HOUR_UTC: int = 21  # 21:00 UTC is 02:30 in India, the quietest hour
+    # Safety limits (Phase H5, app/limits.py). 0 turns a limit off.
+    DISK_QUOTA_MB: int = 500  # a learner's own files, all labs together
+    SERVICE_DATA_MAX_MB: int = 1024  # one lab's databases (seeded data included)
+    MAX_RUNNING_LABS: int = 2  # per learner; starting a third stops the least recently used one
+    SESSION_HOURS: float = 4  # a machine running this long is stopped (files kept; start it again)
+    CPU_STUCK_MINUTES: float = 10  # a machine using all its CPU this long is stopped (an endless loop)
+    SIGNUPS_PER_IP_HOUR: int = 60  # generous: a whole classroom can share one address
+    LOGIN_FAILS_PER_IP_MINUTE: int = 30
+    LOGIN_FAILS_PER_USER_MINUTE: int = 10
+    CHECKS_PER_IP_MINUTE: int = 120
     CONTAINER_RUNTIME: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"

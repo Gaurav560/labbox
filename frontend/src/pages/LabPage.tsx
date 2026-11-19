@@ -135,8 +135,12 @@ export default function LabPage() {
     }
   }, [labId, toast]);
 
+  // A safety limit (session length, stuck CPU, disk, too many running labs) says why it stopped.
+  const [stopReason, setStopReason] = useState<string | null>(null);
+
   const startMachine = useCallback(async () => {
     setStatus("starting");
+    setStopReason(null);
     try {
       await api.startWorkspace(labId);
       setStatus("running");
@@ -299,6 +303,7 @@ export default function LabPage() {
       try {
         const s = await api.workspaceStatus(labId);
         setStatus((cur) => (cur === "running" && s.status !== "running" ? "stopped" : cur));
+        setStopReason(s.status !== "running" ? s.stopped_reason ?? null : null);
         setServices(s.services);
       } catch {
         /* toast-worthy errors surface elsewhere */
@@ -591,6 +596,12 @@ export default function LabPage() {
               aria-hidden="true"
               style={{ "--wm-logo": `url(${brand.logo})`, "--wm-color": brand.color } as CSSProperties}
             />
+          )}
+          {stopReason && status !== "running" && status !== "starting" && (
+            <div className="limit-banner" role="alert">
+              <p>{stopReason}</p>
+              <button className="btn btn-small" onClick={startMachine}>Start machine</button>
+            </div>
           )}
           {setupState === "running" && (
             <div className="setup-banner" role="status">

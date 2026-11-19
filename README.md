@@ -146,6 +146,24 @@ PGPASSWORD=... docker run --rm -i --network host -e PGPASSWORD postgres:16 \
   pg_restore --no-owner -h 127.0.0.1 -p 55432 -U labbox -d labbox_restored < /srv/labbox/backups/labbox-<time>.dump
 ```
 
+### Safety limits (Phase H5)
+
+`app/limits.py`; every limit is a setting in `backend/.env` (0 turns it off):
+
+| Setting | Default | What happens |
+|---|---|---|
+| `DISK_QUOTA_MB` | 500 | A learner's own files, all labs together. Over it: the machine stops, starting and saving are refused (deleting files and Reset lab still work). Lab databases do not count here. |
+| `SERVICE_DATA_MAX_MB` | 1024 | One lab's databases (seeded data included). Over it: the machine stops; Reset lab starts fresh. |
+| `MAX_RUNNING_LABS` | 2 | Per learner. Starting a third stops the least recently used one. |
+| `SESSION_HOURS` | 4 | A machine running this long stops; start it again to continue. |
+| `CPU_STUCK_MINUTES` | 10 | A machine using all its CPU this long (an endless loop) stops. |
+| `SIGNUPS_PER_IP_HOUR` | 60 | New accounts per address (a classroom shares one). |
+| `LOGIN_FAILS_PER_IP_MINUTE`, `LOGIN_FAILS_PER_USER_MINUTE` | 30, 10 | Wrong passwords only; logging in often is never slowed down. |
+| `CHECKS_PER_IP_MINUTE` | 120 | Checks per address (one per learner at a time already). |
+
+The reaper's round (every minute, one worker) checks running machines. A machine stopped by a limit
+keeps its files, and the lab page shows why it stopped, with a Start button.
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself
@@ -600,7 +618,8 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 - Single host: the lab containers run on the same machine as the backend.
 - Without `REDIS_URL`, locks, the one-check-per-learner slot, AI counters and the reaper live in one
   process: run uvicorn with **one worker**. With `REDIS_URL`, several workers are fine (see "Redis").
-- No per-user disk quota on workspaces (Check refuses workspaces over 20 MB).
+- Disk quotas are measured, not enforced by the filesystem: a learner can briefly write past the quota
+  until the next reaper round (a minute) stops the machine. A server can add hard XFS project quotas.
 - SQLite (the default without `DATABASE_URL`): fine for a POC, not for many concurrent writers; use Postgres.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file
   to see the new content.

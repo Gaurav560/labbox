@@ -90,7 +90,7 @@ export interface TutorReply { reply: string; blocked: boolean; tokens_used_today
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
 export interface ServiceStatus { name: string; status: "running" | "starting" | "stopped" | "missing" }
-export interface WorkspaceStatus { status: MachineStatus; container?: string; services?: ServiceStatus[] }
+export interface WorkspaceStatus { status: MachineStatus; container?: string; services?: ServiceStatus[]; stopped_reason?: string }
 export interface SetupResult { ran: boolean; setup_done: boolean; started_at: string | null }
 export interface FileNode { path: string; name: string; type: "file" | "dir"; children?: FileNode[] }
 export interface TaskResult { task: string; title: string; passed: boolean; message: string; expected?: string | null; actual?: string | null }

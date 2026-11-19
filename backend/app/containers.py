@@ -200,6 +200,14 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
 def ensure_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
     """Make sure the user's container for this lab exists and is running."""
     ws = get_workspace(session, user, lab)
+    if container_status(ws.container_name) != "running":
+        # Safety limits (Phase H5) before anything starts: disk, the lab's databases, running labs.
+        from . import limits
+
+        assert user.id is not None
+        limits.check_disk(user.id, fresh=True)
+        limits.check_service_data(lab, ws)
+        limits.make_room(session, user.id, lab)
     with shared.lock(ws.container_name):
         # Touch under the lock so the reaper's re-check sees this visit and does not stop us.
         touch(session, ws)
@@ -213,6 +221,9 @@ def ensure_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
             elif c.status != "running":
                 c.start()
                 log.info("Started container %s", ws.container_name)
+                from . import limits
+
+                limits.clear_reason(ws.container_name)  # running again: the old "why it stopped" is history
         except docker.errors.ImageNotFound:
             raise HTTPException(500, f"Lab image {lab.image} is not built. Run scripts/build_lab_images.sh")
         except APIError as e:
@@ -230,10 +241,13 @@ def stop_workspace(name: str) -> None:
 
 def stop_group(session: Session, user: User, lab: LabConfig) -> str:
     """Stop the workspace and its services together. Returns the workspace container name."""
+    from . import limits
+
     ws = get_workspace(session, user, lab)
     with shared.lock(ws.container_name):
         stop_workspace(ws.container_name)
         services.stop_services(lab, ws)
+    limits.clear_reason(ws.container_name)  # the learner stopped it: no limit to explain
     return ws.container_name
 
 

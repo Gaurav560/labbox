@@ -1,5 +1,24 @@
 # Changelog
 
+## Phase H5: safety limits
+
+- `app/limits.py`, every limit a setting (0 turns it off):
+  - Disk: a learner's own files, all labs together, up to 500 MB; each lab's databases up to 1 GB
+    (seeded lab data such as the 316 MB Postgres incident data does not count against the learner).
+    Over it: the machine stops, starting and saving are refused, deleting and Reset lab still work.
+  - At most 2 running labs per learner: starting a third stops the least recently used one.
+  - A machine running 4 hours stops; one using all its CPU for 10 minutes (an endless loop) stops.
+    CPU comes from the kernel's per-container counters, compared round by round.
+  - Per-address limits: 60 sign-ups an hour, 30 wrong passwords a minute (10 per username), 120
+    checks a minute. Only wrong passwords count, so logging in often is never slowed down.
+- The reaper's round enforces them; a stopped machine keeps its files and the lab page shows why it
+  stopped, with a Start machine button (`stopped_reason` in the workspace status, additive).
+- This laptop has no filesystem quotas, so disk is measured each minute; hard XFS quotas on the server
+  are on the pre-launch list.
+- Tests: 240 passed on Postgres and Redis; 236 on SQLite plus the rate-limiter lab's load test, which
+  sits right at its 60-a-second cut-off and fails when the machine is busy (it passed on rerun with
+  every limit on and with each switched off; not caused by H5). 14 browser tests pass on 4 workers.
+
 ## Phase H3: background worker
 
 - `app/jobs.py` with three jobs, scheduled by arq in `app/worker.py` (a second process, needs
