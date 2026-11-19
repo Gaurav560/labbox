@@ -1,0 +1,29 @@
+# Skill map for the databases track. A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: databases
+title: Databases
+nodes:
+  - id: sql-select
+    title: SELECT and WHERE
+    chapters: [sql-from-zero/01-select-and-where]
+  - id: sql-group
+    title: JOIN and GROUP BY
+    requires: [sql-select]
+    chapters: [sql-from-zero/02-group-by]
+  - id: redis-basics
+    title: Redis keys and types
+    chapters: [redis-in-practice/01-redis-cli]
+  - id: pg-indexes
+    title: Indexes and EXPLAIN
+    requires: [sql-group]
+    chapters: [postgres-indexing-incident/01-slow-checkout]
+  - id: redis-cache
+    title: Caching and rate limits
+    requires: [redis-basics]
+    chapters: [redis-in-practice/02-cache-and-limit]
+  - id: pg-transactions
+    title: Transactions and locks
+    requires: [pg-indexes]
+  - id: mongodb
+    title: MongoDB
+    requires: [sql-select]

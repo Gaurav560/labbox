@@ -1,0 +1,82 @@
+id: redis-in-practice
+version: 2
+title: Redis in practice
+subtitle: Hashes, expiring keys, a cache and a rate limiter, on a real Redis.
+description: Hashes, expiring keys, a cache and a rate limiter, on a real Redis.
+language: python
+track: databases
+tags: [redis, python, caching]
+level: intermediate
+estimated_minutes: 35
+story:
+  company: Brew Point
+  character: { name: Kabir, role: "Backend lead, Brew Point" }
+  pitch: "Brew Point's menu API takes 1.5 seconds a call, and someone is spamming the OTP button. Redis can fix both."
+cover_scene: "Brew Point's back office: a glowing red Redis cube on a counter, coffee cups flying past it on a conveyor."
+cover: cover.svg
+cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
+image: labbox/redis-in-practice:v1
+resources: s
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+  env: { REDIS_HOST: redis }
+services:
+  - name: redis
+    image: redis:7.4
+    resources: { cpus: 0.5, memory: 128m, pids_limit: 64 }
+    command: [redis-server, --appendonly, "yes", --maxmemory, 64mb]
+    data: /data
+    ready: [redis-cli, ping]
+check:
+  mode: live
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 60
+  network: none
+chapters:
+  - id: 01-redis-cli
+    title: Redis from the terminal
+    file: chapters/01-redis-cli.md
+    minutes: 15
+    tasks:
+      - id: menu_hash
+        title: "A hash for the menu"
+        xp: 20
+        hints:
+          - "A hash is one key that holds many field and value pairs. The key is menu, the fields are the item names."
+          - "HSET takes the key, then field value, field value, ... in one command. Names with a space need quotes."
+          - "Check your work with HGETALL menu: three fields, prices 30, 40 and 25."
+      - id: otp_expiry
+        title: "An OTP that expires in 5 minutes"
+        xp: 20
+        hints:
+          - "SET can give a key an expiry in the same command, so it disappears on its own."
+          - "The EX option takes seconds: 5 minutes is 300."
+          - "TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone."
+      - id: top_sellers
+        title: "A sorted set of today's sales"
+        xp: 20
+        hints:
+          - "A sorted set keeps members ordered by a number called the score. ZADD adds members with their scores."
+          - "ZADD takes the key, then score member, score member. ZINCRBY adds to one member's score."
+          - "ZRANGE sales:today 0 -1 REV WITHSCORES lists them, best seller first: 120, 80, then 50."
+  - id: 02-cache-and-limit
+    title: A cache and a rate limiter
+    file: chapters/02-cache-and-limit.md
+    minutes: 20
+    tasks:
+      - id: price_cache
+        title: "app.py: cache prices for 60 seconds"
+        xp: 40
+        hints:
+          - "Cache-aside: look in Redis first, and only on a miss call the slow lookup and keep the answer."
+          - "r.get returns None on a miss. r.set takes an ex= argument: the number of seconds to keep the value."
+          - "Use one key per item, like price:samosa. Redis gives strings back, so turn the price into an int."
+      - id: otp_limit
+        title: "app.py: at most 3 OTPs a minute"
+        xp: 40
+        hints:
+          - "Count requests per phone number in Redis, and let the count disappear after a minute."
+          - "r.incr(key) adds one and returns the new count, even for a key that does not exist yet."
+          - "Give the key a 60 second expiry when the count is 1, and raise HTTPException with status 429 above 3."

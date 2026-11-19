@@ -1,5 +1,15 @@
 # Changelog
 
+## Batch 2, lab 1: Redis in practice
+
+- New lab `redis-in-practice` (databases, intermediate, 2 chapters, 5 tasks) with a real Redis 7.4
+  service next to the workspace. Chapter 1 in `redis-cli`: a hash, a key with a TTL, a sorted set.
+  Chapter 2 in a FastAPI app: a cache-aside price cache (60 s TTL) and an OTP rate limiter (3 a minute).
+- Live checks read Redis and call the learner's running app over HTTP (cold call slow, warm call
+  under 0.3 s; 200, 200, 200, 429). No learner code runs in the checker.
+- New skill map `tracks/databases.yaml`. The home grid shows the lab live instead of "coming soon".
+- `test_skill_map_lights_up` now checks the languages map is in the list, not that it is the only one.
+
 ## Hero product tour
 
 - The hero subtitle is rewritten to paint the picture: a real Linux machine in the browser, code on

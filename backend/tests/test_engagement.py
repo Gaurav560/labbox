@@ -233,7 +233,7 @@ def test_skill_map_lights_up(client: TestClient):
     nodes = {n["id"]: n for n in client.get("/api/tracks/languages/skills", headers=h).json()["nodes"]}
     assert nodes["py-functions"]["state"] == "done" and nodes["java-methods"]["state"] == "available"
     assert nodes["py-collections"]["state"] == "available"  # unlocked by finishing Python functions
-    assert client.get("/api/tracks", headers=h).json() == [{"track": "languages", "title": "Programming languages", "nodes": 11, "done": 1}]
+    assert {"track": "languages", "title": "Programming languages", "nodes": 11, "done": 1} in client.get("/api/tracks", headers=h).json()
     assert client.get("/api/tracks/cooking/skills", headers=h).status_code == 404
 
 
