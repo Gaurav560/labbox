@@ -1,5 +1,14 @@
 # Changelog
 
+## Phase G, step 1: load tests in checks (k6)
+
+- The checker image now has k6 v0.55.0 (Grafana's load tester, copied from the `grafana/k6` image)
+  and `labbox_k6`, a small helper for live checks: `labbox_k6.run(script, env)` runs a k6 script and
+  returns p50, p95, p99 and max latency, requests, requests per second, error rate, and every custom
+  counter; `labbox_k6.report_metric(name, value, target, better)` prints the `@@METRIC` line.
+- Docker test: a 40-request load test against a tiny server inside the checker, as uid 1000 with no
+  capabilities.
+
 ## The lab's logo behind the lesson
 
 - Every lab shows its own technology logo (from its cover: Redis bricks, Python snakes, Duke for Java,
