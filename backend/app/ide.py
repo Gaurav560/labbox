@@ -50,6 +50,8 @@ SETTINGS = {
     "update.mode": "none",
     "extensions.autoCheckUpdates": False,
     "extensions.autoUpdate": False,
+    # There is no marketplace in labs, so "install the recommended extension" toasts lead nowhere.
+    "extensions.ignoreRecommendations": True,
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "git.openRepositoryInParentFolders": "always",
     "workbench.welcomePage.walkthroughs.openOnInstall": False,
