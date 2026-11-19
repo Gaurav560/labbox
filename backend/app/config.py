@@ -30,6 +30,21 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     GEMINI_IMAGE_MODEL: str = "gemini-nano-banana-2.1"
 
+    # LLM gateway (Phase E). Labs call model aliases; this maps each alias to provider/model.
+    # Providers: ollama (free, local: scripts/ollama.sh), openai, gemini, fake (tests). Paid providers
+    # use the keys above, so pointing an alias at one needs the owner's approval.
+    LLM_GATEWAY_ENABLED: bool = True
+    LLM_GATEWAY_HOST: str = ""  # empty: the Docker bridge address, so lab relays can reach it
+    LLM_GATEWAY_PORT: int = 9000
+    LLM_MODELS: str = (
+        "lab-chat=ollama/qwen2.5:0.5b,lab-chat-smart=ollama/qwen2.5:1.5b,lab-embed=ollama/nomic-embed-text"
+    )
+    OLLAMA_URL: str = "http://127.0.0.1:11434"
+    LLM_DAILY_TOKENS: int = 50_000  # per user, per UTC day, all labs and the tutor together
+    LLM_RPM: int = 20  # requests per minute per user
+    LLM_MAX_TOKENS: int = 1024  # cap on the reply length of one request
+    LLM_TIMEOUT_SECONDS: float = 120
+
     @field_validator("JWT_SECRET")
     @classmethod
     def secret_long_enough(cls, v: str) -> str:
@@ -50,6 +65,19 @@ class Settings(BaseSettings):
         if v.startswith(prefix) and not v.startswith(prefix + "/"):
             return prefix + str((BACKEND_DIR / v[len(prefix):]).resolve())
         return v
+
+    @property
+    def llm_models(self) -> dict[str, tuple[str, str]]:
+        """alias -> (provider, model), from LLM_MODELS ("alias=provider/model,...")."""
+        out: dict[str, tuple[str, str]] = {}
+        for part in self.LLM_MODELS.split(","):
+            if "=" not in part:
+                continue
+            alias, target = (x.strip() for x in part.split("=", 1))
+            provider, _, model = target.partition("/")
+            if alias and provider and model:
+                out[alias] = (provider, model)
+        return out
 
     @property
     def cors_origins(self) -> list[str]:

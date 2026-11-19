@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from . import containers, preview
+from . import containers, llm_gateway, preview
 from .config import get_settings
 from .db import init_db
 from .content import init_content
@@ -37,8 +37,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings.VOLUMES_DIR.mkdir(parents=True, exist_ok=True)
     settings.CHECKS_DIR.mkdir(parents=True, exist_ok=True)
     reaper = asyncio.create_task(reaper_loop())
+    gateway = asyncio.create_task(llm_gateway.serve()) if settings.LLM_GATEWAY_ENABLED else None
     yield
     reaper.cancel()
+    if gateway:
+        gateway.cancel()
     await preview.close_client()
 
 

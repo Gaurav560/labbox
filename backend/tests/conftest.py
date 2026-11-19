@@ -11,6 +11,9 @@ os.environ["VOLUMES_DIR"] = str(_TMP / "volumes")
 os.environ["CHECKS_DIR"] = str(_TMP / "checks")
 os.environ["LABS_DIR"] = str(Path(__file__).resolve().parents[2] / "labs")
 os.environ["ALLOW_SIGNUP"] = "true"
+# The gateway is tested in-process with the fake provider; no second server, no real models.
+os.environ["LLM_GATEWAY_ENABLED"] = "false"
+os.environ["LLM_MODELS"] = "lab-chat=fake/chat-small,lab-chat-smart=fake/chat-big,lab-embed=fake/embed"
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 

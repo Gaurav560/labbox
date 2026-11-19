@@ -131,3 +131,25 @@ class DrillAnswer(SQLModel, table=True):
     choice: int
     correct: bool
     created_at: datetime = Field(default_factory=utcnow)
+
+
+class LlmRequest(SQLModel, table=True):
+    # Every call through the LLM gateway (labs and the tutor): budgets are summed from here, and
+    # `lab requests` shows the learner their own rows.
+    __tablename__ = "llm_request"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    lab_id: str
+    endpoint: str  # chat | embeddings | messages | tutor | review
+    alias: str  # what the lab asked for, e.g. lab-chat
+    model: str  # provider/model it went to
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    cost_usd: float = 0.0
+    latency_ms: int = 0
+    status: int = 200
+    error: str | None = None
+    request_json: str = ""  # capped
+    response_json: str = ""  # capped
+    created_at: datetime = Field(default_factory=utcnow, index=True)

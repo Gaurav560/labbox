@@ -1,5 +1,21 @@
 # Changelog
 
+## Phase E, step 1: the LLM gateway
+
+- New `backend/app/llm_gateway.py`, its own small app on port 9000 (`LLM_GATEWAY_PORT`), started by
+  the backend and bound to the Docker bridge address. OpenAI-style `/llm/v1/chat/completions`
+  (with streaming), `/llm/v1/embeddings`, `/llm/v1/models`; Anthropic-style
+  `/llm/anthropic/v1/messages`; and `/llm/requests` (the learner's last 10 calls, or `?last=true`).
+- Labs ask for aliases (`lab-chat`, `lab-chat-smart`, `lab-embed`); `LLM_MODELS` maps them to a
+  provider and model. Providers: `ollama` (free, local, the default), `openai`, `gemini`, `fake`
+  (tests). Real keys stay on the server; paid providers are only used if the owner maps an alias to one.
+- Lab keys are tokens scoped to one user and lab; login and preview tokens are refused, and the
+  other way round. Budgets per user: 50,000 tokens a day, 20 requests a minute, replies capped at
+  1,024 tokens, with clear 429 messages. Every call is logged in the new `llm_request` table
+  (migration 0006, additive) with tokens, cost and latency.
+- `scripts/ollama.sh` runs Ollama in Docker on localhost and pulls `qwen2.5:0.5b`, `qwen2.5:1.5b`
+  and `nomic-embed-text`. 12 new tests use the fake provider.
+
 ## Batch 2, lab 4: Postgres transactions and locks
 
 - New lab `postgres-transactions-and-locks` (databases, intermediate, 2 chapters, 4 tasks). Chapter 1:
