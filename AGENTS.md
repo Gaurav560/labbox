@@ -75,6 +75,9 @@ said about 15 is enough for now, so the platform phases come next.
   Same for `pgrep -f` inside `sh -c`: write the pattern as `[s]erver-main.js` so it cannot match itself.
 - Dev Postgres and Redis (`scripts/devdb.sh`) use ports 55432 and 56379: this laptop already runs its
   own Postgres on 5432 and Redis on 6379; leave those alone.
+- A browser test that shows a blank lab page with `net::ERR_NETWORK_CHANGED` in its trace is this
+  laptop, not the app: Chrome drops downloads when Docker adds a lab network, and the Vite dev server
+  serves the editor as about 230 files. Rerun it. The app retries a failed page load, then reloads once.
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
   id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait

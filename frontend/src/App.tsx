@@ -7,9 +7,34 @@ import LabsPage from "./pages/LabsPage";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
 
+// A page's code is loaded when first needed. If that fails (Chrome drops downloads when the network
+// changes, or a deploy replaced the files), try again, then reload the page once (at most every 30 s).
+function lazyPage<T extends { default: React.ComponentType }>(load: () => Promise<T>) {
+  return lazy(async () => {
+    try {
+      return await load();
+    } catch {
+      await new Promise((r) => setTimeout(r, 1000));
+      try {
+        return await load();
+      } catch (e) {
+        const KEY = "labbox.reloadedForCode";
+        let last = 0;
+        try { last = Number(sessionStorage.getItem(KEY) || 0); } catch { /* storage blocked */ }
+        if (Date.now() - last > 30_000) {
+          try { sessionStorage.setItem(KEY, String(Date.now())); } catch { /* storage blocked */ }
+          window.location.reload();
+          return new Promise<T>(() => {}); // the reload takes over
+        }
+        throw e;
+      }
+    }
+  });
+}
+
 // The lab page pulls in Monaco and xterm, so load it only when needed.
-const LabPage = lazy(() => import("./pages/LabPage"));
-const TrackPage = lazy(() => import("./pages/TrackPage")); // React Flow is only needed here
+const LabPage = lazyPage(() => import("./pages/LabPage"));
+const TrackPage = lazyPage(() => import("./pages/TrackPage")); // React Flow is only needed here
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();

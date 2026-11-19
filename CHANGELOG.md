@@ -13,7 +13,10 @@
   Postgres advisory lock when several workers start at once.
 - Lite editor: the file asked for last is the one shown, so the chapter's file is not replaced by the
   first-file open when the two answers come back in the other order.
-- `deploy/labbox.service` runs 4 workers (needs `REDIS_URL`).
+- `deploy/labbox.service` runs 4 workers (needs `REDIS_URL`), and the dev app does too: `REDIS_URL` was
+  appended to `backend/.env` with the owner's OK.
+- If a page's code fails to download (Chrome drops downloads when the network changes; after a deploy the
+  old files are gone), the app tries again and then reloads the page once, instead of staying blank.
 - Tests: `LABBOX_TEST_REDIS_URL` runs them on Redis (a database other than 0). Checked with 4 workers on
   Postgres and Redis: all 14 browser tests pass; a killed worker is replaced and the reaper moves to a
   live worker. Backend: 226 passed on Postgres and Redis, 224 (plus 2 skipped) on SQLite.
