@@ -37,13 +37,17 @@ class Settings(BaseSettings):
     LLM_GATEWAY_HOST: str = ""  # empty: the Docker bridge address, so lab relays can reach it
     LLM_GATEWAY_PORT: int = 9000
     LLM_MODELS: str = (
-        "lab-chat=ollama/qwen2.5:0.5b,lab-chat-smart=ollama/qwen2.5:1.5b,lab-embed=ollama/nomic-embed-text"
+        "lab-chat=ollama/qwen2.5:0.5b,lab-chat-smart=ollama/qwen2.5:1.5b,lab-embed=ollama/nomic-embed-text,"
+        "lab-code=ollama/qwen2.5-coder:1.5b"
     )
     OLLAMA_URL: str = "http://127.0.0.1:11434"
     LLM_DAILY_TOKENS: int = 50_000  # per user, per UTC day, all labs and the tutor together
     LLM_RPM: int = 20  # requests per minute per user
     LLM_MAX_TOKENS: int = 1024  # cap on the reply length of one request
     LLM_TIMEOUT_SECONDS: float = 120
+    AI_COMPLETION: bool = True  # ghost-text code completion in the editor (alias lab-code)
+    LLM_COMPLETION_RPM: int = 30  # editor completions have their own limits
+    LLM_COMPLETION_DAILY_TOKENS: int = 200_000
 
     @field_validator("JWT_SECRET")
     @classmethod

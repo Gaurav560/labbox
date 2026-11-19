@@ -3,7 +3,7 @@
 # with the small models the default model aliases use. Safe to run again; it skips what is there.
 set -euo pipefail
 NAME=labbox-ollama
-MODELS=(qwen2.5:0.5b qwen2.5:1.5b nomic-embed-text)
+MODELS=(qwen2.5:0.5b qwen2.5:1.5b nomic-embed-text qwen2.5-coder:1.5b)
 
 if ! docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
   docker run -d --name "$NAME" --restart unless-stopped \

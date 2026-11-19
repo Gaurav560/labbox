@@ -1,5 +1,18 @@
 # Changelog
 
+## Editor: AI code completion
+
+- Grey ghost-text suggestions at the cursor once typing pauses (400 ms); Tab accepts, typing on
+  ignores. A "✦ AI on/off" switch in the editor bar, remembered per browser, on by default.
+- New alias `lab-code` (default `ollama/qwen2.5-coder:1.5b`, a fill-in-the-middle code model, free
+  and local; `scripts/ollama.sh` pulls it). The gateway gained OpenAI-style `/llm/v1/completions`
+  with `suffix`.
+- Route `POST /api/labs/{lab}/complete` sends the code around the cursor (2,000 characters before,
+  600 after), trims the suggestion to at most 6 lines, and drops any suggestion that would write a
+  line of the task's reference solution (the tutor's guard).
+- Completions have their own limits (30 a minute, 200,000 tokens a day, `LLM_COMPLETION_*`), so
+  typing never uses up the tutor's budget. `AI_COMPLETION=false` turns the feature off server-side.
+
 ## Editor: offline code completion
 
 - New `frontend/src/completions.ts`: completion for Python, Java, Go, SQL and shell (JavaScript and

@@ -620,7 +620,7 @@ export default function LabPage() {
                 <Splitter direction="vertical" label="Resize file tree" onDrag={(d) => setTreeW((w) => clamp(w + d, 120, 500))} />
               </>
             )}
-            <EditorPane tabs={tabs} activePath={activePath} onSelect={setActivePath} onClose={closeTab} onChange={onChange} onSave={save} />
+            <EditorPane labId={labId} tabs={tabs} activePath={activePath} onSelect={setActivePath} onClose={closeTab} onChange={onChange} onSave={save} />
           </div>
           <Splitter direction="horizontal" label="Resize terminal" onDrag={(d) => setTermH((h) => clamp(h - d, 80, 800))} />
           <div style={{ height: termH }} className="terminal-wrap">

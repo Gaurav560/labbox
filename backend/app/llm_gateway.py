@@ -99,31 +99,36 @@ def require_identity(request: Request) -> Identity:
 
 # ---------- budgets ----------
 
-_recent: dict[int, deque[float]] = defaultdict(deque)  # user id -> request times (this process)
+_recent: dict[tuple[int, str], deque[float]] = defaultdict(deque)  # (user id, bucket) -> request times
+COMPLETION = "completion"  # editor completions have their own bucket, so typing never eats the tutor's budget
 
 
-def tokens_used_today(user_id: int) -> int:
+def tokens_used_today(user_id: int, bucket: str = "") -> int:
+    """Tokens used since midnight UTC: editor completions (bucket "completion") or everything else."""
     start = utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    is_completion = LlmRequest.endpoint == COMPLETION
     with Session(engine) as s:
         q = select(func.coalesce(func.sum(LlmRequest.prompt_tokens + LlmRequest.completion_tokens), 0)).where(
-            LlmRequest.user_id == user_id, col(LlmRequest.created_at) >= start
+            LlmRequest.user_id == user_id, col(LlmRequest.created_at) >= start, is_completion if bucket == COMPLETION else ~is_completion
         )
         return int(s.exec(q).one())
 
 
-def check_budget(user_id: int) -> None:
+def check_budget(user_id: int, bucket: str = "") -> None:
     settings = get_settings()
+    rpm, daily = (settings.LLM_COMPLETION_RPM, settings.LLM_COMPLETION_DAILY_TOKENS) if bucket == COMPLETION else (settings.LLM_RPM, settings.LLM_DAILY_TOKENS)
     now = time.monotonic()
-    times = _recent[user_id]
+    times = _recent[(user_id, bucket)]
     while times and now - times[0] > 60:
         times.popleft()
-    if len(times) >= settings.LLM_RPM:
-        raise GatewayError(429, f"Too many requests: the limit is {settings.LLM_RPM} a minute. Wait a few seconds and try again.", "rate_limited", "rate_limit_error")
-    used = tokens_used_today(user_id)
-    if used >= settings.LLM_DAILY_TOKENS:
+    if len(times) >= rpm:
+        raise GatewayError(429, f"Too many requests: the limit is {rpm} a minute. Wait a few seconds and try again.", "rate_limited", "rate_limit_error")
+    used = tokens_used_today(user_id, bucket)
+    if used >= daily:
+        what = "code completion" if bucket == COMPLETION else "AI budget"
         raise GatewayError(
             429,
-            f"Your AI budget for today is used up ({used:,} of {settings.LLM_DAILY_TOKENS:,} tokens). It resets at midnight UTC.",
+            f"Your {what} for today is used up ({used:,} of {daily:,} tokens). It resets at midnight UTC.",
             "budget_exceeded",
             "rate_limit_error",
         )
@@ -190,6 +195,21 @@ def _fake_chat(model: str, body: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def fake_code_completion(prompt: str, suffix: str) -> str:
+    """The fake provider's code completion (tests replace this)."""
+    return "pass"
+
+
+def _fake_completion(model: str, body: dict[str, Any]) -> dict[str, Any]:
+    text = fake_code_completion(str(body.get("prompt") or ""), str(body.get("suffix") or ""))
+    prompt = _fake_tokens(str(body.get("prompt") or "") + str(body.get("suffix") or ""))
+    return {
+        "id": "cmpl-fake", "object": "text_completion", "created": int(time.time()), "model": model,
+        "choices": [{"index": 0, "text": text, "finish_reason": "stop"}],
+        "usage": {"prompt_tokens": prompt, "completion_tokens": _fake_tokens(text), "total_tokens": prompt + _fake_tokens(text)},
+    }
+
+
 def _fake_embed(inputs: list[str]) -> dict[str, Any]:
     data = []
     for i, text in enumerate(inputs):
@@ -205,6 +225,8 @@ async def upstream_post(provider: str, model: str, path: str, body: dict[str, An
     if provider == "fake":
         if path == "/chat/completions":
             return _fake_chat(model, body)
+        if path == "/completions":
+            return _fake_completion(model, body)
         inputs = body.get("input")
         return _fake_embed([inputs] if isinstance(inputs, str) else list(inputs or []))
     base, key = _base_and_key(provider)
@@ -291,6 +313,22 @@ async def chat(ident: Identity, body: dict[str, Any], endpoint: str = "chat") ->
     started = time.monotonic()
     try:
         out = await upstream_post(*target, "/chat/completions", body)
+    except GatewayError as e:
+        record(ident, endpoint, alias, target, started, body, status=e.status, error=e.message)
+        raise
+    record(ident, endpoint, alias, target, started, body, out, out.get("usage"))
+    return {**out, "model": alias}
+
+
+async def completions(ident: Identity, body: dict[str, Any], endpoint: str = "completion") -> dict[str, Any]:
+    """Legacy text completion with an optional suffix (fill in the middle), for code completion."""
+    alias = body.get("model")
+    target = resolve(alias)
+    check_budget(ident.user_id, COMPLETION if endpoint == COMPLETION else "")
+    cap_max_tokens(body)
+    started = time.monotonic()
+    try:
+        out = await upstream_post(*target, "/completions", body)
     except GatewayError as e:
         record(ident, endpoint, alias, target, started, body, status=e.status, error=e.message)
         raise
@@ -447,6 +485,14 @@ async def chat_completions(request: Request, ident: Identity = Depends(require_i
         body.pop("stream_options", None)
         return StreamingResponse(await chat_stream(ident, body), media_type="text/event-stream")
     return await chat(ident, body)
+
+
+@gateway_app.post("/llm/v1/completions")
+async def text_completions(request: Request, ident: Identity = Depends(require_identity)):
+    body = await _json_body(request)
+    if body.get("stream"):
+        raise GatewayError(400, "Streaming is not supported on /completions; use stream=False.", "stream_not_supported")
+    return await completions(ident, body)
 
 
 @gateway_app.post("/llm/v1/embeddings")

@@ -363,6 +363,11 @@ token for that learner and lab; real provider keys never enter a container. `lab
 machine shows the last 10 calls (`--last` shows the full request and response). Every call, including
 the tutor's, is stored in the `llm_request` table and counts against the learner's daily budget.
 
+AI code completion in the editor (grey ghost text, Tab accepts, "✦ AI on/off" in the editor bar)
+uses `lab-code` (qwen2.5-coder, fill in the middle), has its own limits (`LLM_COMPLETION_RPM`,
+`LLM_COMPLETION_DAILY_TOKENS`) and never suggests a line of the task's solution. `AI_COMPLETION=false`
+turns it off.
+
 The tutor (`✦ Ask the tutor` after a failed check, `✦ Review my code` after a pass) uses
 `lab-chat-smart`. A reply that contains a line of the reference solution is replaced by a safe nudge.
 

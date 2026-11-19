@@ -1,6 +1,9 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "../api";
+import { registerAiCompletion, setAiCompletion } from "../aiComplete";
 import { registerCompletions } from "../completions";
+import { usePersistentState } from "../persist";
 import { languageFor, modelUri, monaco } from "../monaco";
 import { useTheme } from "../theme";
 
@@ -12,6 +15,7 @@ export interface Tab {
 }
 
 interface Props {
+  labId: string;
   tabs: Tab[];
   activePath: string | null;
   onSelect: (path: string) => void;
@@ -28,8 +32,15 @@ function saveLabel(tab: Tab | undefined): string {
   return "Saved ✓";
 }
 
-export default function EditorPane({ tabs, activePath, onSelect, onClose, onChange, onSave }: Props) {
+export default function EditorPane({ labId, tabs, activePath, onSelect, onClose, onChange, onSave }: Props) {
   const { theme } = useTheme();
+  // AI completion: offered when the server has a code model; the learner can switch it off.
+  const [aiAvailable, setAiAvailable] = useState(false);
+  const [aiOn, setAiOn] = usePersistentState("aiCompletion", true);
+  useEffect(() => {
+    api.aiConfig().then((c) => setAiAvailable(c.completion)).catch(() => setAiAvailable(false));
+  }, []);
+  useEffect(() => setAiCompletion(labId, aiAvailable && aiOn), [labId, aiAvailable, aiOn]);
   const active = tabs.find((t) => t.path === activePath);
   // The editor command is registered once, so it reads the latest values through refs.
   const activeRef = useRef(activePath);
@@ -39,6 +50,7 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
 
   const onMount: OnMount = (editor) => {
     registerCompletions();
+    registerAiCompletion();
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       if (activeRef.current) saveRef.current(activeRef.current);
     });
@@ -65,6 +77,16 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
         ))}
         <span className="spacer" />
         {active && <span className="editor-hint" title="Suggestions also pop up while you type">Ctrl+Space: suggestions</span>}
+        {active && aiAvailable && (
+          <button
+            className={`ai-toggle ${aiOn ? "on" : ""}`}
+            onClick={() => setAiOn((v) => !v)}
+            aria-pressed={aiOn}
+            title={aiOn ? "AI completion is on: grey suggestions appear as you pause, Tab accepts. Click to turn off." : "AI completion is off. Click to turn on."}
+          >
+            ✦ AI {aiOn ? "on" : "off"}
+          </button>
+        )}
         <span className={`save-state ${active?.status === "error" ? "fail" : ""}`}>{saveLabel(active)}</span>
       </div>
       <div className="editor-body">
@@ -90,6 +112,7 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
               snippetSuggestions: "inline",
               suggestOnTriggerCharacters: true,
               tabCompletion: "on",
+              inlineSuggest: { enabled: true, mode: "subwordSmart" },
             }}
           />
         ) : (

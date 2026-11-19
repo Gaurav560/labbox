@@ -168,6 +168,9 @@ export const api = {
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),
   hint: (labId: string, chapterId: string, taskId: string) =>
     request<HintResponse>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/hint`),
+  aiConfig: () => request<{ completion: boolean }>("GET", "/api/ai/config"),
+  complete: (labId: string, path: string, prefix: string, suffix: string) =>
+    request<{ text: string }>("POST", `/api/labs/${q(labId)}/complete`, { path, prefix, suffix }),
   tutor: (labId: string, chapterId: string, taskId: string, question: string) =>
     request<TutorReply>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/tutor`, { question }),
   review: (labId: string, chapterId: string, taskId: string) =>
