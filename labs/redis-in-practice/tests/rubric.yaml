@@ -21,3 +21,43 @@
     - id: constraint
       points: 1
       look_for: Or mentions a database level guarantee such as a unique constraint or a conditional update, so the final write itself cannot double book.
+11-persistence:
+  rdb_vs_aof:
+    - id: different_strengths
+      points: 2
+      look_for: Explains that RDB is compact and fast to load (good for backups and quick restarts) while AOF loses far less data, so together they cover both.
+    - id: restore
+      points: 1
+      look_for: Mentions recovery, for example AOF used on restart for minimal loss and RDB files copied off the server as backups.
+  fsync_always:
+    - id: cost
+      points: 2
+      look_for: Explains that always means every write waits for the disk, so writes become much slower (throughput drops), in exchange for losing almost nothing.
+    - id: right_store
+      points: 2
+      look_for: Questions whether payments belong only in Redis, suggesting a durable database as the source of truth with Redis as a cache or fast path.
+13-production-capstone:
+  monitoring:
+    - id: memory
+      points: 1
+      look_for: Watches memory use against maxmemory (and evictions or fragmentation).
+    - id: latency
+      points: 1
+      look_for: Watches latency or the slow log, or blocked clients.
+    - id: more
+      points: 2
+      look_for: Names other key signals such as replication lag or link status, connected clients, hit and miss ratio of the cache, queue or stream length and pending entries, or persistence errors, with a reason.
+  big_keys:
+    - id: problem
+      points: 2
+      look_for: Explains why one unbounded huge key is dangerous, for example slow commands that block everyone, memory growth, or it cannot be spread across a cluster.
+    - id: design
+      points: 2
+      look_for: Proposes splitting it, for example one key per customer or per day, with trimming or TTLs, or moving long-term history to a database.
+  not_redis:
+    - id: example
+      points: 1
+      look_for: Names a fitting example such as payments, orders of record, or anything that must never be lost.
+    - id: reason
+      points: 2
+      look_for: Explains why, such as memory cost, asynchronous replication or a lost second of writes, and the lack of rich queries, so a durable database should be the source of truth.

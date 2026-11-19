@@ -49,7 +49,7 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 |---|---|
 | Languages | python-basics, python-collections, java-basics, java-collections, javascript-inside-out, go-basics |
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
-| Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice**, **postgres-transactions-and-locks** |
+| Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice** (a full course: 13 chapters, 32 tasks, zero to production), **postgres-transactions-and-locks** |
 | DevOps | **linux-on-call**, **git-without-fear** |
 | System design | **rate-limiter** (not on the home grid, which keeps its 15 cards) |
 

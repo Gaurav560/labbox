@@ -117,3 +117,12 @@ def release_lock(name: str, body: Release):
     # TODO(safe_unlock): this deletes the lock even when someone else holds it now.
     r.delete(f"lock:{name}")
     return {"released": True}
+
+
+# ---------- chapter 13: production habits ----------
+
+@app.get("/sessions/active")
+def active_sessions():
+    """How many customers are logged in right now (the ops dashboard calls this every few seconds)."""
+    # TODO(scan_not_keys): KEYS walks every key in one go while Redis serves nobody else.
+    return {"active": len(r.keys("session:*"))}

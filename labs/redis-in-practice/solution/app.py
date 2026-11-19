@@ -156,3 +156,12 @@ def release_lock(name: str, body: Release):
     """Release lock:<name>, but only if we still hold it: the value is our token."""
     released = UNLOCK(keys=[f"lock:{name}"], args=[body.token])
     return {"released": bool(released)}
+
+
+# ---------- chapter 13: production habits ----------
+
+@app.get("/sessions/active")
+def active_sessions():
+    """How many customers are logged in right now (the ops dashboard calls this every few seconds)."""
+    # SCAN walks the keyspace in small steps, so other clients get served in between.
+    return {"active": sum(1 for _ in r.scan_iter(match="session:*", count=1000))}

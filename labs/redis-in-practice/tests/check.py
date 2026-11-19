@@ -6,14 +6,19 @@ import random
 import time
 from concurrent.futures import ThreadPoolExecutor
 
+from redis.crc import key_slot
+
 import redis
 import requests
 
 APP = "http://workspace:8000"
 TASKS = ("first_keys", "cups_counter", "clean_up", "otp_expiry", "session_ttl", "keep_forever", "menu_hash",
-         "customer_profile", "order_queue", "unique_visitors", "common_customers", "top_sellers")
+         "customer_profile", "order_queue", "unique_visitors", "common_customers", "top_sellers",
+         "orders_stream", "kitchen_group", "reclaim_stuck", "find_big_key", "eviction_policy", "aof_on",
+         "fresh_snapshot", "replica_sync", "hash_tags", "unlink_culprit")
 APP_TASKS = ("profile_api", "bulk_import", "price_cache", "price_invalidate", "stampede_lock", "otp_limit",
-             "redeem_points", "book_once", "safe_unlock")
+             "redeem_points", "book_once", "safe_unlock", "scan_not_keys")
+OOM = "Redis refuses writes (out of memory): fix the chapter 10 incident first."
 SESSION = '{"customer": 42, "outlet": "andheri"}'  # what setup/02.sh stored
 ANDHERI = {"asha", "ravi", "meera", "kabir", "priya", "dev"}
 BANDRA = {"ravi", "sana", "priya", "arjun", "dev", "zoya"}
@@ -157,6 +162,167 @@ def common_customers():
     if got != want:
         return report("common_customers", False, "customers:both should hold exactly the people in both outlet sets.", ", ".join(sorted(want)), ", ".join(sorted(got)))
     report("common_customers", True, f"{len(want)} loyal customers visit both outlets.")
+
+
+# ---------- chapter 9: streams ----------
+
+ORDERS = [("o1", "filter coffee"), ("o2", "vada pav"), ("o3", "cold coffee")]
+
+
+def orders_stream():
+    key = "orders:stream"
+    if kind(key) == "none":
+        return report("orders_stream", False, "There is no orders:stream yet.")
+    if kind(key) != "stream":
+        return report("orders_stream", False, f"{key} is a {kind(key)}, not a stream.", "stream", kind(key))
+    got = [(f.get("order"), f.get("item")) for _, f in r.xrange(key)]
+    if got != ORDERS:
+        return report("orders_stream", False, "The stream should hold the three orders, oldest first, each with an order and an item field.",
+                      json.dumps(ORDERS), json.dumps(got))
+    report("orders_stream", True, "Three orders in the stream, in order, kept even after they are read.")
+
+
+def kitchen_group():
+    key = "orders:stream"
+    if kind(key) != "stream":
+        return report("kitchen_group", False, "Add the orders to orders:stream first.")
+    groups = {g["name"]: g for g in r.xinfo_groups(key)}
+    if "kitchen" not in groups:
+        return report("kitchen_group", False, "There is no consumer group called kitchen on orders:stream.")
+    pending = r.xpending_range(key, "kitchen", "-", "+", 10)
+    owners = {p["consumer"] for p in pending}
+    ids = [i for i, _ in r.xrange(key)]
+    if [p["message_id"] for p in pending] != ids[1:] or owners != {"barista1"}:
+        return report("kitchen_group", False, "barista1 should have read all three orders and acknowledged only the first.",
+                      "o2 and o3 pending for barista1", f"{len(pending)} pending: {', '.join(sorted(owners)) or 'none'}")
+    report("kitchen_group", True, "barista1 finished o1; o2 and o3 are still on the kitchen's list, safe if barista1 crashes.")
+
+
+def reclaim_stuck():
+    key = "payments:stream"
+    if kind(key) != "stream":
+        return report("reclaim_stuck", False, "payments:stream is gone. Press Reset lab to get it back.")
+    if len(r.xrange(key)) != 2:
+        return report("reclaim_stuck", False, "Both payments must stay in the stream; acknowledge them, do not delete them.")
+    pending = r.xpending(key, "billing")["pending"]
+    consumers = {c["name"] for c in r.xinfo_consumers(key, "billing")}
+    if pending:
+        return report("reclaim_stuck", False, f"{pending} payment(s) are still waiting for a worker that crashed.", "0 pending", f"{pending} pending")
+    if "worker-2" not in consumers:
+        return report("reclaim_stuck", False, "The payments were acknowledged, but never handed to worker-2. Claim them first, then acknowledge.")
+    report("reclaim_stuck", True, "worker-2 took over the crashed worker's payments and finished them.")
+
+
+# ---------- chapter 10: memory and eviction ----------
+
+def find_big_key():
+    if r.get("lab:ch10:seen") is None and r.exists("debug:log") == 0 and r.dbsize() < 1000:
+        return report("find_big_key", False, "Open chapter 10 first: its incident has not started yet.")
+    if r.exists("debug:log"):
+        size = r.memory_usage("debug:log") or 0
+        return report("find_big_key", False, f"Something huge is still eating memory ({size / 1_048_576:.0f} MB in one key).", "the debug log gone", "still there")
+    if r.dbsize() < 1000 or not r.exists("shop:name"):
+        return report("find_big_key", False, "Much more than the debug log is gone. Delete one key, not the whole database (Reset lab restores it).")
+    report("find_big_key", True, "The runaway debug log is gone, and nothing else was touched.")
+
+
+def eviction_policy():
+    policy = r.config_get("maxmemory-policy")["maxmemory-policy"]
+    if policy == "noeviction":
+        return report("eviction_policy", False, "With noeviction, a full Redis refuses every write again.", "a policy that evicts cache entries", policy)
+    if policy.startswith("allkeys"):
+        return report("eviction_policy", False, f"{policy} may also evict carts, sessions and counters: data that is not a cache.",
+                      "evict only keys that have a TTL", policy)
+    try:
+        r.set("lab:probe", "ok", ex=5)
+    except redis.exceptions.ResponseError as e:
+        return report("eviction_policy", False, f"Redis still refuses writes: {e}")
+    report("eviction_policy", True, f"{policy}: when Redis fills up, it drops cache entries (keys with a TTL), never real data.")
+
+
+# ---------- chapter 11: persistence ----------
+
+def aof_on():
+    cfg = r.config_get("append*")
+    if cfg.get("appendonly") != "yes":
+        return report("aof_on", False, "The append-only file is off: a restart loses everything since the last snapshot.", "appendonly yes", cfg.get("appendonly"))
+    if cfg.get("appendfsync") != "everysec":
+        hint = "always waits for the disk on every write" if cfg.get("appendfsync") == "always" else "leaves flushing to the operating system"
+        return report("aof_on", False, f"appendfsync {cfg.get('appendfsync')} {hint}.", "everysec", cfg.get("appendfsync"))
+    report("aof_on", True, "Every write is logged, and at most one second of writes can be lost.")
+
+
+def fresh_snapshot():
+    since = r.get("lab:ch11:since")
+    if since is None:
+        return report("fresh_snapshot", False, "Open chapter 11 first (its setup has not run).")
+    info = r.info("persistence")
+    if info.get("rdb_last_bgsave_status") != "ok":
+        return report("fresh_snapshot", False, "The last snapshot failed.", "ok", info.get("rdb_last_bgsave_status"))
+    if int(info.get("rdb_last_save_time", 0)) < int(since):
+        return report("fresh_snapshot", False, "There is no snapshot since persistence was turned off.", "a snapshot taken now", "an old one")
+    report("fresh_snapshot", True, "A fresh snapshot is on disk.")
+
+
+# ---------- chapter 12: scaling ----------
+
+def replica_sync():
+    try:
+        r2 = redis.Redis(host="replica", decode_responses=True, socket_timeout=5)
+        info = r2.info("replication")
+    except Exception as e:
+        return report("replica_sync", False, f"Could not reach the replica: {e}")
+    if info.get("role") != "slave":
+        return report("replica_sync", False, "The second server is still on its own, not a replica.", "role: replica", f"role: {info.get('role')}")
+    if info.get("master_host") != "redis" or info.get("master_link_status") != "up":
+        return report("replica_sync", False, "The replica is not connected to the main Redis.", "master redis, link up",
+                      f"master {info.get('master_host')}, link {info.get('master_link_status')}")
+    probe = f"lab:probe:{random.randint(1, 10**9)}"
+    try:
+        r.set(probe, "hello", ex=30)
+    except redis.exceptions.ResponseError:
+        return report("replica_sync", False, OOM)
+    for _ in range(30):
+        if r2.get(probe) == "hello":
+            return report("replica_sync", True, "Writes on the main Redis appear on the replica within moments.")
+        time.sleep(0.1)
+    report("replica_sync", False, "A new write did not reach the replica within 3 seconds.")
+
+
+def hash_tags():
+    carts = [k for k in r.scan_iter(match="*customer:42*", count=1000) if k.endswith(":cart")]
+    wishes = [k for k in r.scan_iter(match="*customer:42*", count=1000) if k.endswith(":wishlist")]
+    if not carts or not wishes:
+        return report("hash_tags", False, "Create customer 42's cart (a hash) and wishlist (a set), with key names that end in :cart and :wishlist.")
+    cart, wish = carts[0], wishes[0]
+    if kind(cart) != "hash" or r.hget(cart, "filter coffee") != "2":
+        return report("hash_tags", False, f"{cart} should be a hash with filter coffee = 2.")
+    if kind(wish) != "set" or not r.sismember(wish, "poha"):
+        return report("hash_tags", False, f"{wish} should be a set containing poha.")
+    a, b = key_slot(cart.encode()), key_slot(wish.encode())
+    if a != b:
+        return report("hash_tags", False, f"In a Redis Cluster, {cart} goes to slot {a} and {wish} to slot {b}: different nodes, no multi-key commands.",
+                      "the same slot", f"slots {a} and {b}")
+    report("hash_tags", True, f"Both keys hash to slot {a}: a cluster keeps customer 42 together.")
+
+
+# ---------- chapter 13: production habits ----------
+
+def unlink_culprit():
+    if r.get("lab:ch13:seen") is None and not r.exists("analytics:raw") and r.exists("session:s1") == 0:
+        return report("unlink_culprit", False, "Open chapter 13 first: its setup has not run.")
+    if r.exists("analytics:raw"):
+        return report("unlink_culprit", False, "The key behind the slow log entries is still there.", "removed", "still there")
+    if r.exists("session:s1") == 0 or r.exists("session:s30000") == 0:
+        return report("unlink_culprit", False, "Sessions were deleted too. Only the slow key had to go (Reset lab restores them).")
+    # A blocking DEL of a key that big takes milliseconds, so it lands in the slow log itself.
+    for entry in r.slowlog_get(128):
+        raw = entry.get("command", b"")
+        cmd = (raw.decode(errors="replace") if isinstance(raw, bytes) else str(raw)).split()
+        if cmd[:1] and cmd[0].upper() == "DEL" and "analytics:raw" in cmd:
+            return report("unlink_culprit", False, "It is gone, but DEL froze Redis while it freed the key (the slow log caught it). Remove it with UNLINK (Reset lab to retry).",
+                          "UNLINK", "DEL")
+    report("unlink_culprit", True, "The culprit is gone, freed in the background without freezing anyone.")
 
 
 # ---------- the menu (ch 3), the OTP (ch 2), best sellers (ch 4) ----------
@@ -403,13 +569,42 @@ def safe_unlock():
     report("safe_unlock", True, "Only the owner can release the lock.")
 
 
+def scan_not_keys():
+    stats = lambda: r.info("commandstats")
+    calls = lambda st, c: st.get(f"cmdstat_{c}", {}).get("calls", 0)
+    before = stats()
+    resp = requests.get(f"{APP}/sessions/active", timeout=20)
+    after = stats()
+    if resp.status_code != 200:
+        return report("scan_not_keys", False, f"GET /sessions/active answered {resp.status_code}.", "200", resp.text[:120])
+    want = sum(1 for _ in r.scan_iter(match="session:*", count=1000))
+    if calls(after, "keys") > calls(before, "keys"):
+        return report("scan_not_keys", False, "The endpoint still uses KEYS, which blocks Redis for every other client while it walks all keys.", "SCAN", "KEYS")
+    if calls(after, "scan") <= calls(before, "scan"):
+        return report("scan_not_keys", False, "The endpoint did not use SCAN.", "SCAN", "something else")
+    if resp.json().get("active") != want:
+        return report("scan_not_keys", False, "The count of active sessions is wrong.", str(want), str(resp.json().get("active")))
+    report("scan_not_keys", True, f"{want} sessions counted with SCAN, in small steps, without blocking anyone.")
+
+
+def guarded(check):
+    """A Redis that refuses writes (the chapter 10 incident) must not break every other check."""
+    try:
+        check()
+    except redis.exceptions.ResponseError as e:
+        report(check.__name__, False, OOM if "OOM" in str(e) else f"Redis answered an error: {e}")
+
+
 for check in (first_keys, cups_counter, clean_up, otp_expiry, session_ttl, keep_forever, menu_hash,
-              customer_profile, order_queue, unique_visitors, common_customers, top_sellers):
-    check()
+              customer_profile, order_queue, unique_visitors, common_customers, top_sellers,
+              orders_stream, kitchen_group, reclaim_stuck, find_big_key, eviction_policy, aof_on,
+              fresh_snapshot, replica_sync, hash_tags, unlink_culprit):
+    guarded(check)
 if app_up():
-    for check in (profile_api, bulk_import, price_cache, price_invalidate, stampede_lock, otp_limit, redeem_points, book_once, safe_unlock):
+    for check in (profile_api, bulk_import, price_cache, price_invalidate, stampede_lock, otp_limit, redeem_points, book_once,
+                  safe_unlock, scan_not_keys):
         try:
-            check()
+            guarded(check)
         except requests.RequestException as e:
             report(check.__name__, False, f"Calling your app failed: {e}")
 else:

@@ -1,13 +1,13 @@
 id: redis-in-practice
 version: 2
 title: Redis in practice
-subtitle: From your first SET to caches, rate limits and production habits, on a real Redis.
-description: From your first SET to caches, rate limits and production habits, on a real Redis.
+subtitle: From your first SET to streams, replication and production incidents, on a real Redis.
+description: From your first SET to streams, replication and production incidents, on a real Redis.
 language: python
 track: databases
 tags: [redis, python, caching]
 level: beginner
-estimated_minutes: 185
+estimated_minutes: 290
 story:
   company: Brew Point
   character: { name: Kabir, role: "Backend lead, Brew Point" }
@@ -25,9 +25,16 @@ workspace:
 services:
   - name: redis
     image: redis:7.4
-    resources: { cpus: 0.5, memory: 128m, pids_limit: 64 }
-    command: [redis-server, --appendonly, "yes", --maxmemory, 64mb]
+    # 64 MB budget for data; the container gets room above it for incidents and background saves.
+    resources: { cpus: 1, memory: 256m, pids_limit: 64 }
+    command: [redis-server, --appendonly, "yes", --maxmemory, 64mb, --repl-diskless-sync-delay, "0"]
     data: /data
+    ready: [redis-cli, ping]
+  # Chapter 12: a second server, which the learner turns into a replica.
+  - name: replica
+    image: redis:7.4
+    resources: { cpus: 0.5, memory: 256m, pids_limit: 64 }
+    command: [redis-server, --appendonly, "no", --save, "", --dir, /tmp]  # /tmp: writable for the first sync
     ready: [redis-cli, ping]
 check:
   mode: live
@@ -225,3 +232,110 @@ chapters:
           - "Before deleting, the value must be compared with the token. Doing that in two commands is a race."
           - "A short Lua script can GET the key and DEL it only when the value equals the token, in one step."
           - "Pass the lock key in KEYS and the token in ARGV, and return whether something was deleted."
+  - id: 09-streams
+    title: Streams and consumer groups
+    file: chapters/09-streams.md
+    minutes: 25
+    setup: ["bash", "/lab/setup/09.sh"]
+    tasks:
+      - id: orders_stream
+        title: "Three orders on orders:stream"
+        xp: 20
+        hints:
+          - "XADD appends one entry to a stream. Let Redis pick the ID with *."
+          - "After the ID come field value pairs: the order field and the item field. Quote item names with a space."
+          - "Three XADD commands in order o1, o2, o3; XRANGE orders:stream - + shows them oldest first."
+      - id: kitchen_group
+        title: "A kitchen group: read three, acknowledge one"
+        xp: 40
+        hints:
+          - "XGROUP CREATE makes a group on a stream. Starting at 0 means from the oldest entry."
+          - "XREADGROUP with GROUP kitchen barista1 and the special ID > hands out entries nobody has received yet."
+          - "Acknowledge only o1's ID with XACK. XPENDING orders:stream kitchen should then show 2."
+      - id: reclaim_stuck
+        title: "worker-2 takes over the stuck payments"
+        xp: 40
+        hints:
+          - "XPENDING shows who holds each payment and for how long. Someone alive must take them over."
+          - "XAUTOCLAIM with a minimum idle time in milliseconds moves old pending entries to a new consumer."
+          - "Claim as worker-2 with 60000 and start ID 0, then XACK both returned IDs in the billing group."
+  - id: 10-memory-and-eviction
+    title: Memory and eviction
+    file: chapters/10-memory-and-eviction.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/10.sh"]
+    tasks:
+      - id: find_big_key
+        title: "Find and remove what filled Redis"
+        xp: 60
+        hints:
+          - "One key is much bigger than everything else. The bigkeys option of redis-cli finds the biggest of each type."
+          - "MEMORY USAGE on a key shows its real size. Look for a key that should never have grown."
+          - "Remove only that one key (UNLINK frees a big key without blocking). The cache entries must stay."
+      - id: eviction_policy
+        title: "Evict cache entries, never real data"
+        xp: 40
+        hints:
+          - "The policy decides what Redis may throw away when it is full. Real data here has no TTL."
+          - "Policies starting with allkeys may evict anything; the ones starting with volatile only touch keys with a TTL."
+          - "CONFIG SET maxmemory-policy to the volatile version of least recently used."
+  - id: 11-persistence
+    title: Persistence
+    file: chapters/11-persistence.md
+    minutes: 15
+    setup: ["bash", "/lab/setup/11.sh"]
+    tasks:
+      - id: aof_on
+        title: "Turn on the append-only file, flushed every second"
+        xp: 30
+        hints:
+          - "Two settings: one turns the log on, the other says how often it is flushed to disk."
+          - "CONFIG SET appendonly takes yes or no; appendfsync takes always, everysec or no."
+          - "Set appendonly to yes and appendfsync to everysec, then check with CONFIG GET append*."
+      - id: fresh_snapshot
+        title: "Take a snapshot now"
+        xp: 30
+        hints:
+          - "A snapshot can be taken in the background while Redis keeps serving."
+          - "BGSAVE starts one. If the append-only file is still being rewritten, BGSAVE SCHEDULE waits for it."
+          - "Check INFO persistence: rdb_last_bgsave_status should be ok and the last save time recent."
+  - id: 12-scaling
+    title: Replication and clusters
+    file: chapters/12-scaling.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/12.sh"]
+    tasks:
+      - id: replica_sync
+        title: "Make the second server a live replica"
+        xp: 40
+        hints:
+          - "The command runs on the server that should become the replica, so talk to it with -h replica."
+          - "REPLICAOF takes the primary's host and port: here redis and 6379."
+          - "INFO replication on the replica should show role slave and master_link_status up."
+      - id: hash_tags
+        title: "Customer 42's cart and wishlist in one cluster slot"
+        xp: 40
+        hints:
+          - "In a cluster, a key's slot comes from a hash of its name. Different names usually mean different slots."
+          - "Only the part between curly braces is hashed, when the key name has one."
+          - "Put the same part in braces in both names, for example a braced customer 42 followed by :cart and :wishlist."
+  - id: 13-production-capstone
+    title: "Capstone: production is slow"
+    file: chapters/13-production-capstone.md
+    minutes: 25
+    setup: ["bash", "/lab/setup/13.sh"]
+    tasks:
+      - id: scan_not_keys
+        title: "GET /sessions/active with SCAN, not KEYS"
+        xp: 50
+        hints:
+          - "KEYS returns everything in one blocking call. SCAN returns a little at a time with a cursor."
+          - "The Python client has scan_iter, which runs the SCAN cursor loop for you; match and count are arguments."
+          - "Count what scan_iter yields for the session pattern, with a count of about 1000 per step."
+      - id: unlink_culprit
+        title: "Remove the slow key without blocking"
+        xp: 50
+        hints:
+          - "SLOWLOG GET shows the slow commands and the key they touched."
+          - "DEL frees memory on the main thread while everyone waits. There is a command that frees it in the background."
+          - "Use UNLINK on that one key, and leave the sessions alone."

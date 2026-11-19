@@ -33,6 +33,18 @@ nodes:
     title: Atomic operations and locks
     requires: [redis-cache]
     chapters: [redis-in-practice/07-atomic-operations, redis-in-practice/08-distributed-locks]
+  - id: redis-streams
+    title: Redis streams
+    requires: [redis-atomic]
+    chapters: [redis-in-practice/09-streams]
+  - id: redis-operations
+    title: Running Redis in production
+    requires: [redis-streams]
+    chapters: [redis-in-practice/10-memory-and-eviction, redis-in-practice/11-persistence]
+  - id: redis-scale
+    title: Scaling Redis
+    requires: [redis-operations]
+    chapters: [redis-in-practice/12-scaling, redis-in-practice/13-production-capstone]
   - id: pg-transactions
     title: Transactions
     requires: [pg-indexes]

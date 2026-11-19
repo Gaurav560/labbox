@@ -1,5 +1,26 @@
 # Changelog
 
+## Redis in practice, block 3: production Redis (chapters 9 to 13)
+
+- 9. **Streams and consumer groups:** why pub/sub loses messages; an order stream; a kitchen group
+  that acknowledges work; reclaiming a crashed worker's payments with `XAUTOCLAIM`. Go deeper:
+  trimming, at-least-once delivery, poison messages, when Kafka fits better.
+- 10. **Memory and eviction**, a timed incident: Redis at its 64 MB limit refuses writes with the real
+  OOM error. Find the runaway key (`--bigkeys`, `MEMORY USAGE`) and remove only it; choose a
+  `volatile-*` policy (an `allkeys-*` policy is refused: it may evict carts and sessions).
+- 11. **Persistence:** someone switched durability off; enable AOF with `everysec`, take a fresh
+  `BGSAVE`; a graded design review on RDB plus AOF and on `appendfsync always`.
+- 12. **Replication and clusters:** a second Redis server (new service `replica`) becomes a live
+  replica (`REPLICAOF`); customer 42's cart and wishlist named with a hash tag so a cluster keeps them
+  in one slot (the check computes real cluster slots: 10688 and 6132 without the tag, 4672 with it).
+- 13. **Capstone, production is slow:** the ops dashboard's `KEYS` replaced with `SCAN` (verified with
+  `INFO commandstats`), the culprit found in `SLOWLOG` and removed with `UNLINK` (a blocking `DEL`
+  shows up in the slow log and is refused); a final graded design review.
+- Fixed while testing: Redis checks `maxmemory` only when a script starts, so the incident fill runs in
+  batches (one script filled 200 MB and the container was killed); the replica gets a writable `--dir`
+  and the primary `--repl-diskless-sync-delay 0`. Verified tempting wrong answers fail with the right
+  lesson. The course: 13 chapters, 32 tasks, 4 graded design reviews, about 5 hours.
+
 ## Redis in practice, block 2: Redis inside a real app (chapters 5 to 8)
 
 - 5. **Redis from Python:** the client and its connection pool, strings back from Redis, `{}` for a
