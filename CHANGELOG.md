@@ -1,5 +1,13 @@
 # Changelog
 
+## Home page: hand-picked lab cards
+
+- "Pick a lab" shows a chosen 3 x 3 set instead of the first six labs: Express, FastAPI, Go, Java
+  basics, Spring Boot, JavaScript, Python basics, the Postgres incident, and Redis in practice as a
+  "Coming soon" card (not a link until the lab exists). The list is `FEATURED` and `COMING_SOON` in
+  `HomePage.tsx`; a coming-soon card hides itself once that lab is live.
+- The closing panel has no FREE sticker, and its button says "Start your first lab".
+
 ## Duke on the Java covers
 
 - Java basics shows Duke, the Java mascot, waving on Java orange; Java collections shows Duke giving a

@@ -19,7 +19,14 @@ const TRACKS: { id: string; title: string; blurb: string }[] = [
 ];
 
 const LIVE_SHOWN = 6; // lab titles listed under the tracks; the rest become "and N more"
-const LABS_SHOWN = 6; // lab cards in the "pick a lab" grid
+// The "pick a lab" grid: these labs, in this order (any that are not live are skipped), then the
+// coming-soon cards, which are not links.
+const FEATURED = [
+  "express-api", "fastapi-first-api", "go-basics",
+  "java-basics", "spring-boot-first-api", "javascript-inside-out",
+  "python-basics", "postgres-indexing-incident",
+];
+const COMING_SOON = [{ id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" }];
 
 // Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
 const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
@@ -229,6 +236,18 @@ function HabitDemo() {
   );
 }
 
+function SoonTile({ title, track, cover }: { title: string; track: string; cover: string }) {
+  return (
+    <div className="h-lab h-lab-soon" aria-label={`${title}: coming soon`}>
+      <div className="h-lab-img"><img src={cover} alt="" loading="lazy" /><span className="h-soon-chip">Coming soon</span></div>
+      <div className="h-lab-text">
+        <strong>{title}</strong>
+        <span>{track} · coming soon</span>
+      </div>
+    </div>
+  );
+}
+
 function LabTile({ lab, to }: { lab: CatalogLab; to: string }) {
   return (
     <Link to={to} className="h-lab">
@@ -348,7 +367,10 @@ export default function HomePage() {
             <p className="h-kicker">Live now</p>
             <h2 id="labs-title">Pick a lab. <span className="h-soft">Start in a minute.</span></h2>
             <div className="h-labs">
-              {live.slice(0, LABS_SHOWN).map((lab) => <LabTile key={lab.id} lab={lab} to={labLink(lab)} />)}
+              {FEATURED.map((id) => live.find((l) => l.id === id)).filter((l): l is CatalogLab => !!l).map((lab) => (
+                <LabTile key={lab.id} lab={lab} to={labLink(lab)} />
+              ))}
+              {COMING_SOON.filter((c) => !live.some((l) => l.id === c.id)).map((c) => <SoonTile key={c.id} {...c} />)}
             </div>
           </section>
         )}
