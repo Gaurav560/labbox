@@ -1,8 +1,15 @@
 # Changelog
 
-## Clearer hero line
+## Hero product tour
 
-- The home page subtitle now says plainly what LabBox is: hands-on coding labs in the browser, a real Linux machine with an editor and terminal, step-by-step guidance, automatic checks, nothing to install.
+- The hero subtitle is rewritten to paint the picture: a real Linux machine in the browser, code on
+  one side, a terminal on the other, and a guide checking every step.
+- The hero terminal is replaced by a product tour (`frontend/src/components/HeroTour.tsx`): a small
+  copy of a lab playing the four moves of every lesson (Read, Guess, Code, Check). Each loop shows
+  a different one of the 11 labs, in a shuffled order per visitor.
+- Tabs jump to a step and pause; a play/pause button; still frames for reduced motion.
+- Opt-in sound (off by default): soft key ticks, a pick sound and a chime on pass, generated with
+  Web Audio. No audio files, no paid service.
 
 ## No more "chai"
 

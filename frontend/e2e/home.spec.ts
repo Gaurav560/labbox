@@ -18,6 +18,16 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".live-labs")).toContainText(/^Live now: .+/);  // first few titles, then "and N more"
   await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText(/\d+ labs?/);
 
+  // The hero tour plays the four lesson moves; picking a step shows it and pauses.
+  const tour = page.getByRole("region", { name: "A short tour of a LabBox lab" });
+  await expect(tour.getByRole("tab", { name: /Read a little/ })).toHaveAttribute("aria-selected", "true");
+  await tour.getByRole("tab", { name: /Get instant feedback/ }).click();
+  await expect(tour.locator(".tour-pass")).toBeVisible();
+  await expect(tour.locator(".tour-xp")).toContainText(/\+\d+ XP/);
+  await expect(tour.getByRole("button", { name: "Play the tour" })).toBeVisible();
+  await tour.getByRole("button", { name: "Turn sound on" }).click();
+  await expect(tour.getByRole("button", { name: "Turn sound off" })).toHaveAttribute("aria-pressed", "true");
+
   // The demo question works in the browser.
   const demo = page.locator(".try-card");
   await demo.locator(".predict-option", { hasText: "coffee2" }).click();

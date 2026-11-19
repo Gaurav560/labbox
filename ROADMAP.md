@@ -46,7 +46,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   connect@telusko.com. Names live in `frontend/src/site.ts`.
 - **Home page:**
   - Colours: GitHub charcoal (`#111512`) with a faint tile grid, black panels, white buttons, a muted brick red for small accents, and a little yellow.
-  - Hero terminal: plays 11 real lab sessions, starting on a random one for each visitor.
+  - Hero product tour: Read, Guess, Code, Check scenes for 11 real labs, in a random order for each visitor, with opt-in sound.
   - Below the hero: a colour logo strip, the lab cards, the tracks, and a red closing panel.
 - **Login and signup:**
   - Left side: the blue and purple showcase with a typing terminal.
@@ -137,6 +137,7 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 
 ### 4. Smaller items put off by agreement
 
+- A spoken voiceover or a recorded demo video for the hero tour (needs your recording, or approval for a paid text-to-speech service)
 - Share card images for streaks and levels, and a public profile at `/u/{username}`
 - Gauges for live check numbers (shown as plain numbers today)
 - Previews on a separate web address, and an allowlist for outbound internet (with Phase H or K)
