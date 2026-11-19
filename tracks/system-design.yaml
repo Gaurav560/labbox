@@ -1,0 +1,24 @@
+# Skill map for the system design track. A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: system-design
+title: System design
+nodes:
+  - id: shared-state
+    title: Shared state across servers
+    chapters: [rate-limiter/01-shared-limit]
+  - id: layered-limits
+    title: Layered limits and trade-offs
+    requires: [shared-state]
+    chapters: [rate-limiter/02-global-limit]
+  - id: url-shortener
+    title: Scale a URL shortener
+    requires: [shared-state]
+  - id: cache-stampede
+    title: Cache stampede
+    requires: [layered-limits]
+  - id: idempotency
+    title: Idempotent payments
+    requires: [layered-limits]
+  - id: queues
+    title: Queue backpressure
+    requires: [idempotency]

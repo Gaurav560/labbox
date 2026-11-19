@@ -1,5 +1,21 @@
 # Changelog
 
+## Phase G, step 4: the rate-limiter lab (lab 16)
+
+- New lab `rate-limiter` (system-design, intermediate, 2 chapters). The learner's FastAPI app runs as
+  two copies (`bash run.sh`, ports 8001 and 8002) behind a real nginx load balancer
+  (`nginxinc/nginx-unprivileged`, service `lb`, resolving the workspace per request so it can start
+  first), with Redis. The starter's in-memory limiter lets a client through at about twice its limit.
+- Chapter 1: a per-key limit in Redis across both copies. Chapter 2: a global limit, then a design
+  review (Redis down, why two servers broke it, bursts at window edges) graded with `tests/rubric.yaml`.
+- The live check runs k6 through the load balancer with fresh API keys each run: one key at 30
+  requests a second must get about 10 through while another at 4 a second is never blocked, p95
+  under 50 ms; ten keys at 80 a second in total must be held to about 50. Gauges show the rates and
+  latency. Verified: the running starter fails with "got 23 a second through. Each server counts on
+  its own"; a half solution passes chapter 1 only.
+- System design skill map (`tracks/system-design.yaml`). The home page grid stays at 15 cards; the
+  lab is in the catalog. Browser test for the design review (answers, scores, feedback, reload).
+
 ## Phase G, step 3: design review steps, graded against a rubric
 
 - New step type `design`: 1 to 5 short written questions (`:::ask{id=...}` blocks), with a rubric in
