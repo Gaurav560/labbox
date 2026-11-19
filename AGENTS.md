@@ -40,10 +40,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 200 tests, Docker ones included, about 2 minutes);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (11 tests,
+- Tests: `cd backend && .venv/bin/pytest` (about 210 tests, Docker ones included, about 2 minutes);
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (12 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green after Phase E (199 backend tests, 11 browser tests, 15 labs valid), with real VS Code in labs.
+- Last known state: everything green after Phase G (208 backend tests, 12 browser tests, 16 labs valid).
 
 ## How a lab is made
 
