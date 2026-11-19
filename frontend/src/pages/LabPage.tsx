@@ -199,7 +199,9 @@ export default function LabPage() {
         toast(`Could not set up this chapter: ${errMsg(e)}`);
       });
     return () => {
+      // Leaving the chapter mid-setup must not leave the banner (and a disabled Check) behind.
       cancelled = true;
+      setSetupState("idle");
     };
   }, [needsSetup, status, labId, chapterId, toast]);
 
