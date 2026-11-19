@@ -46,7 +46,7 @@ function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNo
 
 const mail = <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>;
 
-const FAQS: { q: string; a: ReactNode }[] = [
+export const FAQS: { q: string; a: ReactNode }[] = [
   {
     q: `What is ${SITE.product}?`,
     a: <p>Hands-on labs for programming, frameworks, databases and DevOps. Each lab gives you a real Linux machine in your browser with an editor and a terminal, and walks you through small steps: read a little, guess what happens, try it, and check your work.</p>,

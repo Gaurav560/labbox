@@ -1,5 +1,20 @@
 # Changelog
 
+## Home page: AI labs first, "Inside a lab", FAQs above the footer
+
+- Positioning: LabBox is marketed as AI labs, with system design, languages, databases and DevOps
+  around them. Hero: "Learn AI by building it, not watching it." The pill says "AI track launching",
+  honestly, because no AI lab is live yet.
+- "How a lab works" (predict, checks, hints, streaks) is replaced by **Inside a lab: not exercises,
+  real systems.** Six cards, each with a real artifact: a model call with its `lab requests` cost
+  table and a grounded JSON answer, load-test gauges, a live incident pager, the tutor asking
+  instead of telling, a graded design review, and your own machine's services.
+- New **AI labs** section: the planned 24-lab track in four stages (Foundations, Retrieval, Agents,
+  Production), marked "Launching". The other tracks follow as "Also on LabBox".
+- **FAQs** as a section just above the footer (two AI questions plus the main ones, "All questions"
+  links to /faq); the home footer no longer links to the FAQ. New meta description and page title.
+- The IDE has no extension marketplace any more (read-only extensions, no confusing search).
+
 ## Redis in practice, block 3: production Redis (chapters 9 to 13)
 
 - 9. **Streams and consumer groups:** why pub/sub loses messages; an order stream; a kitchen group

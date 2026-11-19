@@ -7,14 +7,16 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn tech by doing, not watching.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn AI by building it, not watching.");
   await expect(page).toHaveTitle(/LabBox by Telusko/);
   // The logo, as a link home and as the favicon.
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
-  await expect(page.locator(".track-chip", { hasText: "AI engineering" })).toContainText("Soon");
+  // The AI track is the headline, honestly marked as launching, with its 24 planned labs.
+  await expect(page.locator("#ai .h-launch")).toHaveText("Launching");
+  await expect(page.locator("#ai .h-ai-stage li")).toHaveCount(24);
   await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   await expect(page.locator(".live-labs")).toContainText(/^Live now: .+/);  // first few titles, then "and N more"
   await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText(/\d+ labs?/);
@@ -29,12 +31,10 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await tour.getByRole("button", { name: "Turn sound on" }).click();
   await expect(tour.getByRole("button", { name: "Turn sound off" })).toHaveAttribute("aria-pressed", "true");
 
-  // The demo question works in the browser.
-  const demo = page.locator(".try-card");
-  await demo.locator(".predict-option", { hasText: "coffee2" }).click();
-  await expect(demo).toContainText("Not quite");
-  await demo.locator(".predict-option", { hasText: "coffeecoffee" }).click();
-  await expect(demo.locator(".predict-explain")).toContainText("repeats it");
+  // FAQs sit just above the footer, and the footer itself no longer links to them.
+  await page.locator(".h-faq-item summary", { hasText: "Do I need an API key" }).click();
+  await expect(page.locator(".h-faq-item[open]")).toContainText("lab requests");
+  await expect(page.locator(".home-footer").getByRole("link", { name: "FAQs" })).toHaveCount(0);
 
   // Start free goes to sign up (Enter signs up), then onboarding.
   await page.locator(".hero").getByRole("link", { name: "Start free →" }).click();
@@ -61,9 +61,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   expect(errors.filter((e) => !e.includes("401"))).toEqual([]);
 });
 
-test("FAQ, privacy policy and terms are public and linked from the footer", async ({ page }) => {
+test("FAQ, privacy policy and terms are public and linked from the home page", async ({ page }) => {
   await page.goto("/");
-  await page.locator(".home-footer").getByRole("link", { name: "FAQs" }).click();
+  await page.locator("#faq").getByRole("link", { name: "All questions →" }).click(); // from the FAQ section above the footer
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("FAQs");
   await page.getByText("Is it free?").click();
   await expect(page.getByText("every lab is free")).toBeVisible();

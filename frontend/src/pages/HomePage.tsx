@@ -1,11 +1,11 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import HeroTour from "../components/HeroTour";
-import ChoiceQuestion, { type ChoiceState } from "../lesson/ChoiceQuestion";
+import { AiTrack, HomeFaq, InsideLab } from "../components/HomeSections";
 import { useTheme } from "../theme";
 
 const TRACKS: { id: string; title: string; blurb: string }[] = [
@@ -14,7 +14,6 @@ const TRACKS: { id: string; title: string; blurb: string }[] = [
   { id: "databases", title: "Databases", blurb: "Postgres, Redis, real incidents" },
   { id: "devops", title: "DevOps", blurb: "Linux, Git, Docker, Kubernetes" },
   { id: "system-design", title: "System design", blurb: "Build it, then load test it" },
-  { id: "ai", title: "AI engineering", blurb: "Tokens to RAG to agents" },
   { id: "interview", title: "Interview prep", blurb: "Traps, bugs and drills" },
 ];
 
@@ -38,71 +37,6 @@ const COMING_SOON = [
 
 // Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
 const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
-
-// A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
-const DEMO = {
-  question: 'What does this print?\n\n```python\nprint("coffee" * 2)\n```',
-  options: ["`coffee2`", "`coffeecoffee`", "An error"],
-  answer: 1,
-  explain: "Multiplying a string by a number repeats it. Every lab has a few small surprises like this.",
-};
-
-function Panel({ n, title, text, className = "", children }: { n: string; title: string; text: string; className?: string; children: ReactNode }) {
-  return (
-    <article className={`h-panel ${className}`}>
-      <header>
-        <span className="h-num">{n}</span>
-        <h3>{title}</h3>
-        <p>{text}</p>
-      </header>
-      <div className="h-panel-body">{children}</div>
-    </article>
-  );
-}
-
-function CheckDemo() {
-  return (
-    <div className="h-mini" aria-label="A check result: 1 of 3 passed, with the expected and actual value side by side" role="img">
-      <div className="h-mini-title"><span className="h-bad">1 of 3 passed</span></div>
-      <div className="h-res h-res-bad">
-        <strong><span className="h-bad">✗</span> greet.py: return a greeting</strong>
-        <div className="h-eg">
-          <div><span>Expected</span><code>'Hello, Asha!'</code></div>
-          <div><span>Got</span><code>None</code></div>
-        </div>
-      </div>
-      <div className="h-res"><strong><span className="h-good">✓</span> math_utils.py: add two numbers</strong></div>
-    </div>
-  );
-}
-
-function HintDemo() {
-  return (
-    <div className="h-mini" role="img" aria-label="Two hints revealed: a nudge and a direction, one hint left">
-      <ol className="h-hints">
-        <li><span>Nudge</span>An empty sentence must give 0. What do you return first?</li>
-        <li><span>Direction</span>Split on spaces, then look at each word's length.</li>
-      </ol>
-      <span className="h-chip">💡 1 hint left</span>
-    </div>
-  );
-}
-
-function HabitDemo() {
-  const days = [1, 1, 1, 0, 1, 1, 1];
-  return (
-    <div className="h-mini" role="img" aria-label="A 6 day streak, 330 XP and level 3">
-      <div className="h-big-stats">
-        <div><strong>🔥 6</strong><span>day streak</span></div>
-        <div><strong>330</strong><span>XP</span></div>
-        <div><strong>Lv 3</strong><span>next at 520</span></div>
-      </div>
-      <div className="h-week">
-        {days.map((d, i) => <i key={i} className={d ? "on" : ""}>{"MTWTFSS"[i]}</i>)}
-      </div>
-    </div>
-  );
-}
 
 function SoonTile({ title, track, cover }: { title: string; track: string; cover: string }) {
   return (
@@ -132,16 +66,11 @@ export default function HomePage() {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   const [catalog, setCatalog] = useState<CatalogLab[] | null>(null);
-  const [demo, setDemo] = useState<ChoiceState>({ wrong: [], solved: false, answer: null, explain: null });
 
   useEffect(() => {
-    document.title = "LabBox by Telusko: learn tech by doing";
+    document.title = "LabBox by Telusko: AI labs and hands-on tech labs";
     api.catalog().then(setCatalog).catch(() => setCatalog([]));
   }, []);
-
-  function pickDemo(i: number) {
-    setDemo((d) => (i === DEMO.answer ? { ...d, solved: true, answer: i, explain: DEMO.explain } : { ...d, wrong: [...d.wrong, i] }));
-  }
 
   const cta = user ? (
     <Link className="h-btn h-btn-primary" to="/labs">Continue learning →</Link>
@@ -156,9 +85,10 @@ export default function HomePage() {
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#how">How it works</a>
+          <a href="#inside">Inside a lab</a>
+          <a href="#ai">AI labs</a>
           <a href="#labs">Labs</a>
-          <a href="#tracks">Tracks</a>
+          <a href="#faq">FAQs</a>
         </nav>
         <span className="spacer" />
         <button className="h-icon" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
@@ -180,15 +110,15 @@ export default function HomePage() {
           <div className="hero-text">
             <p className="h-pill">
               <span className="h-pulse" aria-hidden="true" />
-              {catalog === null ? "Labs are live" : `${live.length} lab${live.length === 1 ? "" : "s"} live now`}
+              {catalog === null ? "Labs are live" : `AI track launching · ${live.length} lab${live.length === 1 ? "" : "s"} live now`}
             </p>
             <h1 id="hero-title">
-              Learn tech by <span className="h-red-word">doing<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span>, not <span className="h-strike">watching</span>.
+              Learn AI by <span className="h-red-word">building<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span> it, not <span className="h-strike">watching</span>.
             </h1>
-            <p className="hero-sub">Open a lab and you're inside a real Linux machine: your code on one side, a terminal on the other, and a guide beside you checking every step. Python, Java, SQL, DevOps and more, right in your browser.</p>
+            <p className="hero-sub">Hands-on AI labs on your own machine in the browser: call real models, build RAG search and agents, write evals, with a guide checking every step. And the engineering around them: system design, languages, databases and DevOps.</p>
             <div className="hero-cta">
               {cta}
-              <a className="h-btn h-btn-ghost" href="#how">Try a question</a>
+              <a className="h-btn h-btn-ghost" href="#inside">See inside a lab</a>
             </div>
           </div>
           <HeroTour />
@@ -208,26 +138,20 @@ export default function HomePage() {
           <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
           <div><strong>~60 s</strong><span>to a real machine</span></div>
           <div><strong>0</strong><span>videos to sit through</span></div>
-          <div><strong>7</strong><span>tracks</span></div>
+          <div><strong>24</strong><span>AI labs on the way</span></div>
         </section>
 
-        <section id="how" className="h-section" aria-labelledby="how-title">
-          <p className="h-kicker">How a lab works</p>
-          <h2 id="how-title">Guess. Try. Break it. <span className="h-yellow">Fix it.</span></h2>
-          <div className="h-bento">
-            <Panel n="01" title="Predict first" text="Every lesson opens with a small surprise. Go on, try this one." className="h-panel-wide">
-              <div className="try-card"><ChoiceQuestion question={DEMO.question} options={DEMO.options} state={demo} busy={false} onPick={pickDemo} /></div>
-            </Panel>
-            <Panel n="02" title="Checks that explain" text="Hidden tests on a clean machine show what they expected next to what you gave.">
-              <CheckDemo />
-            </Panel>
-            <Panel n="03" title="Hints, not answers" text="A nudge, then a direction. You still write the code.">
-              <HintDemo />
-            </Panel>
-            <Panel n="04" title="A habit that sticks" text="XP for every win and a streak that survives a busy day.">
-              <HabitDemo />
-            </Panel>
-          </div>
+        <section id="inside" className="h-section" aria-labelledby="inside-title">
+          <p className="h-kicker">Inside a lab</p>
+          <h2 id="inside-title">Not exercises. <span className="h-yellow">Real systems.</span></h2>
+          <InsideLab />
+        </section>
+
+        <section id="ai" className="h-section h-ai-section" aria-labelledby="ai-title">
+          <p className="h-kicker">AI labs <span className="h-launch">Launching</span></p>
+          <h2 id="ai-title">24 labs, from your first model call to <span className="h-yellow">your own GPT.</span></h2>
+          <p className="h-section-lead">Four stages, each lab a real build on your own machine with real models. The AI track is being crafted now; these are the labs it launches with.</p>
+          <AiTrack />
         </section>
 
         {live.length > 0 && (
@@ -247,8 +171,8 @@ export default function HomePage() {
         )}
 
         <section className="home-tracks h-section" id="tracks" aria-labelledby="tracks-title">
-          <p className="h-kicker">Seven tracks</p>
-          <h2 id="tracks-title">Real tools in every one.</h2>
+          <p className="h-kicker">Also on LabBox</p>
+          <h2 id="tracks-title">The engineering around AI. <span className="h-soft">Real tools in every track.</span></h2>
           <ul className="track-list">
             {TRACKS.map((t, i) => {
               const n = live.filter((l) => l.track === t.id).length;
@@ -278,14 +202,20 @@ export default function HomePage() {
             <Link className="h-btn h-btn-black" to="/login?signup=1">Start your first lab →</Link>
           )}
         </section>
+        <section id="faq" className="h-section" aria-labelledby="faq-title">
+          <p className="h-kicker">FAQs</p>
+          <h2 id="faq-title">Questions, answered.</h2>
+          <HomeFaq />
+          <p className="h-faq-more"><Link to="/faq">All questions →</Link></p>
+        </section>
       </main>
 
       <footer className="home-footer">
         <div className="home-footer-brand">
           <Logo />
-          <span className="muted small-text">Hands-on labs for programming, databases, DevOps, system design and AI.</span>
+          <span className="muted small-text">Hands-on AI labs, plus system design, languages, databases and DevOps.</span>
         </div>
-        <SiteLinks />
+        <SiteLinks faq={false} />
         <Copyright />
       </footer>
     </div>
