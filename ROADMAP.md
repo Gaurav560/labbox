@@ -86,7 +86,7 @@ card per chapter for experienced engineers, and verified wrong answers that fail
 - **Name:** "LabBox by Telusko". LabBox is the product and Telusko the parent company. The contact is
   connect@telusko.com. Names live in `frontend/src/site.ts`.
 - **Home page (AI first):** hero "Learn AI by building it, not watching it", the pill "AI track
-  launching", **Inside a lab** (a real lab screenshot in a framed window, a different one of 21 on each visit, six
+  launching", **Inside a lab** (a real lab screenshot in a framed window, a different one of 21 on each visit, framed in that lab's colour, six
   one-line features), the **AI labs**
   map (four stage cards for the 24 planned labs, marked Launching), the lab grid, "Also on LabBox" tracks, the red closing panel, then
   **FAQs just above the footer** (heading on the left, one numbered list that opens smoothly) (the home footer no longer links to them).
