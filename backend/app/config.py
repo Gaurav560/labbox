@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     VOLUMES_DIR: Path = Path("/srv/labbox/volumes")
     CHECKS_DIR: Path = Path("/srv/labbox/checks")
     DATABASE_URL: str = "sqlite:///./data/labbox.db"
+    # Shared state between workers (Phase H2, app/shared.py): redis://... from scripts/devdb.sh url.
+    # Empty: in this process's memory, so run one worker.
+    REDIS_URL: str = ""
     CONTAINER_RUNTIME: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"

@@ -38,7 +38,7 @@ if not _ready():
 
 import uvicorn  # noqa: E402
 
-from app import containers, llm_gateway, services, workspace_files  # noqa: E402
+from app import containers, llm_gateway, services, shared, workspace_files  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.db import init_db  # noqa: E402
 from app.labs import load_lab  # noqa: E402
@@ -75,7 +75,7 @@ def gateway(monkeypatch) -> Iterator[None]:
     monkeypatch.setattr(settings, "LLM_GATEWAY_PORT", TEST_PORT)
     monkeypatch.setattr(settings, "OPENAI_API_KEY", FAKE_PROVIDER_KEY)
     init_db()
-    llm_gateway._recent.clear()
+    shared.forget_hits()
     server = uvicorn.Server(uvicorn.Config(llm_gateway.gateway_app, host=llm_gateway.bind_host(), port=TEST_PORT, log_level="warning", lifespan="off"))
     thread = threading.Thread(target=lambda: asyncio.run(server.serve()), daemon=True)
     thread.start()

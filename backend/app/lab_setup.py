@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from . import containers, progress, services
+from . import containers, progress, services, shared
 from .labs import Chapter, LabConfig
 from .models import User, Workspace, utcnow
 
@@ -46,7 +46,7 @@ def run_setup(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
     ws = containers.ensure_workspace(session, user, lab)  # machine and services up and ready
     cp = progress.chapter_progress(session, user.id, lab.id, chapter_id)
     ran = False
-    with containers._locks[f"{ws.container_name}:setup"]:
+    with shared.lock(f"{ws.container_name}:setup"):
         session.refresh(cp)
         if chapter.setup and not cp.setup_done:
             exec_setup(lab, ws, chapter)

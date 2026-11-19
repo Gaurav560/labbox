@@ -15,7 +15,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, col, select
 
-from . import containers, engagement, progress, services, workspace_files
+from . import containers, engagement, progress, services, shared, workspace_files
 from .config import get_settings
 from .labs import CHECKER_IMAGE, LabConfig
 from .models import CheckRun, User, Workspace
@@ -70,21 +70,22 @@ class _RawResult(BaseModel):
 
 # ---------- one check per user at a time ----------
 
-_running: set[int] = set()
-_running_lock = asyncio.Lock()
+# A check never takes longer than this (the lab's own timeout is at most 300 s); if a worker dies
+# mid-check, the learner's slot frees itself after it.
+CHECK_SLOT_SECONDS = 15 * 60
 
 
 @asynccontextmanager
 async def check_slot(user_id: int) -> AsyncIterator[None]:
-    async with _running_lock:
-        if user_id in _running:
-            raise HTTPException(429, "A check is already running")
-        _running.add(user_id)
+    """One check per learner at a time, across every worker (shared.claim)."""
+    key = f"check:{user_id}"
+    token = await asyncio.to_thread(shared.claim, key, CHECK_SLOT_SECONDS)
+    if token is None:
+        raise HTTPException(429, "A check is already running")
     try:
         yield
     finally:
-        async with _running_lock:
-            _running.discard(user_id)
+        await asyncio.to_thread(shared.release, key, token)
 
 
 # ---------- preparing the throwaway copy ----------

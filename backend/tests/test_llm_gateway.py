@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app import llm_gateway
+from app import llm_gateway, shared
 from app.auth import create_scoped_token, create_token
 from app.config import get_settings
 from app.db import engine, init_db
@@ -23,7 +23,7 @@ def user() -> User:
         s.add(u)
         s.commit()
         s.refresh(u)
-    llm_gateway._recent.clear()
+    shared.forget_hits()
     return u
 
 

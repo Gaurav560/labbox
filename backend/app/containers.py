@@ -3,9 +3,7 @@ import logging
 import shutil
 import shlex
 import socket
-import threading
 import uuid
-from collections import defaultdict
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
@@ -18,7 +16,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from . import ide, services, workspace_files
+from . import ide, services, shared, workspace_files
 from .config import get_settings
 from .labs import LabConfig, get_lab
 from .models import ChapterProgress, User, Workspace, utcnow
@@ -30,8 +28,8 @@ TOUCH_MIN_SECONDS = 30
 
 Status = Literal["running", "stopped", "missing"]
 
-# One lock per container name so a page load and a terminal connect cannot both create it.
-_locks: defaultdict[str, threading.Lock] = defaultdict(threading.Lock)
+# One lock per container name so a page load and a terminal connect cannot both create it, even when
+# they reach different workers (shared.lock lives in Redis when REDIS_URL is set).
 
 
 @lru_cache
@@ -93,10 +91,15 @@ def get_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
         workspace_files.chown(folder.parent)
         workspace_files.chown(folder)
     if not ws.seeded:
-        seed(lab, folder)
-        ws.seeded = True
-        session.add(ws)
-        session.commit()
+        # Two first requests (often on different workers) both see "not seeded": one copies, the other
+        # waits and then finds it done.
+        with shared.lock(f"{ws.container_name}:seed"):
+            session.refresh(ws)
+            if not ws.seeded:
+                seed(lab, folder)
+                ws.seeded = True
+                session.add(ws)
+                session.commit()
     return ws
 
 
@@ -197,7 +200,7 @@ def _create(lab: LabConfig, ws: Workspace) -> Container:
 def ensure_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
     """Make sure the user's container for this lab exists and is running."""
     ws = get_workspace(session, user, lab)
-    with _locks[ws.container_name]:
+    with shared.lock(ws.container_name):
         # Touch under the lock so the reaper's re-check sees this visit and does not stop us.
         touch(session, ws)
         c = _get(ws.container_name)
@@ -228,7 +231,7 @@ def stop_workspace(name: str) -> None:
 def stop_group(session: Session, user: User, lab: LabConfig) -> str:
     """Stop the workspace and its services together. Returns the workspace container name."""
     ws = get_workspace(session, user, lab)
-    with _locks[ws.container_name]:
+    with shared.lock(ws.container_name):
         stop_workspace(ws.container_name)
         services.stop_services(lab, ws)
     return ws.container_name
@@ -241,7 +244,7 @@ def upgrade_for_ide(session: Session, user: User, lab: LabConfig) -> None:
     if not ide.available():
         return
     ws = get_workspace(session, user, lab)
-    with _locks[ws.container_name]:
+    with shared.lock(ws.container_name):
         c = _get(ws.container_name)
         if c is None:
             return
@@ -270,7 +273,7 @@ def upgrade_for_ide(session: Session, user: User, lab: LabConfig) -> None:
 def reset_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
     """Delete the container and all files, re-seed starter files, start a new container."""
     ws = get_workspace(session, user, lab)
-    with _locks[ws.container_name]:
+    with shared.lock(ws.container_name):
         c = _get(ws.container_name)
         if c is not None:
             c.remove(force=True)
@@ -302,7 +305,7 @@ def stop_idle(session: Session, older_than: datetime) -> list[str]:
     ).all()
     stopped = []
     for ws in idle:
-        with _locks[ws.container_name]:
+        with shared.lock(ws.container_name):
             # Re-check under the lock in case the user came back meanwhile.
             session.refresh(ws)
             if ws.last_active_at >= older_than:

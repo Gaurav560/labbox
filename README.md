@@ -105,6 +105,22 @@ docker exec labbox-postgres psql -U labbox -c "CREATE DATABASE labbox_test"
 LABBOX_TEST_DATABASE_URL="postgresql+psycopg://labbox:<password>@127.0.0.1:55432/labbox_test" .venv/bin/pytest
 ```
 
+### Redis: several workers (Phase H2)
+
+With `REDIS_URL` in `backend/.env` (from `scripts/devdb.sh url`), the workers share what used to live
+in one process (`app/shared.py`): the lock on each lab machine (start, stop, reset, chapter setup,
+first copy of the starter files), the one-check-per-learner slot, the AI requests-per-minute counters
+and the reaper (only the worker holding its lease reaps; another takes over within three rounds if it
+dies). Every worker also serves the AI gateway on the same port. Then:
+
+```bash
+.venv/bin/uvicorn app.main:app --port 8000 --workers 4
+```
+
+Without `REDIS_URL` it all stays in memory, exactly as before: run one worker. Tests run in memory;
+`LABBOX_TEST_REDIS_URL=redis://127.0.0.1:56379/15` runs them on Redis (a database other than 0, emptied
+first).
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself
@@ -556,9 +572,9 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
 
 ## 6. Known POC limits
 
-- Single host. Containers, the check lock and the reaper all live on one machine and in one process
-  (run uvicorn with **one worker**).
-- In-memory locks: "one check per user" is per process.
+- Single host: the lab containers run on the same machine as the backend.
+- Without `REDIS_URL`, locks, the one-check-per-learner slot, AI counters and the reaper live in one
+  process: run uvicorn with **one worker**. With `REDIS_URL`, several workers are fine (see "Redis").
 - No per-user disk quota on workspaces (Check refuses workspaces over 20 MB).
 - SQLite (the default without `DATABASE_URL`): fine for a POC, not for many concurrent writers; use Postgres.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file

@@ -1,13 +1,15 @@
 """Background task: stop idle workspace containers and clean up check leftovers."""
 import asyncio
 import logging
+import os
 import shutil
+import socket
 import time
 from datetime import timedelta
 
 from sqlmodel import Session
 
-from . import containers
+from . import containers, shared
 from .config import get_settings
 from .db import engine
 from .models import utcnow
@@ -32,11 +34,20 @@ def reap_once() -> None:
 
 
 async def reaper_loop() -> None:
+    """Every worker runs this loop, but only the one holding the "reaper" lease reaps. The lease lasts three
+    rounds and its holder renews it each round, so if that worker dies another one takes over."""
     interval = get_settings().REAPER_INTERVAL_SECONDS
+    me = f"{socket.gethostname()}:{os.getpid()}"
     log.info("Reaper started: every %ss, idle limit %s min", interval, get_settings().IDLE_STOP_MINUTES)
+    leading = False
     while True:
         try:
-            await asyncio.to_thread(reap_once)
+            now_leading = await asyncio.to_thread(shared.keep, "reaper", me, interval * 3)
+            if now_leading != leading:
+                log.info("Reaper: %s", "this worker reaps" if now_leading else "another worker reaps")
+                leading = now_leading
+            if leading:
+                await asyncio.to_thread(reap_once)
         except Exception:
             log.exception("Reaper pass failed")
         await asyncio.sleep(interval)

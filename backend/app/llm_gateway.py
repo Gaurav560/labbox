@@ -12,8 +12,8 @@ import hashlib
 import json
 import logging
 import math
+import socket
 import time
-from collections import defaultdict, deque
 from collections.abc import AsyncIterator
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -25,6 +25,7 @@ from jose import JWTError, jwt
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
+from . import shared
 from .config import get_settings
 from .db import engine
 from .models import LlmRequest, User, utcnow
@@ -99,7 +100,6 @@ def require_identity(request: Request) -> Identity:
 
 # ---------- budgets ----------
 
-_recent: dict[tuple[int, str], deque[float]] = defaultdict(deque)  # (user id, bucket) -> request times
 COMPLETION = "completion"  # editor completions have their own bucket, so typing never eats the tutor's budget
 
 
@@ -117,11 +117,8 @@ def tokens_used_today(user_id: int, bucket: str = "") -> int:
 def check_budget(user_id: int, bucket: str = "") -> None:
     settings = get_settings()
     rpm, daily = (settings.LLM_COMPLETION_RPM, settings.LLM_COMPLETION_DAILY_TOKENS) if bucket == COMPLETION else (settings.LLM_RPM, settings.LLM_DAILY_TOKENS)
-    now = time.monotonic()
-    times = _recent[(user_id, bucket)]
-    while times and now - times[0] > 60:
-        times.popleft()
-    if len(times) >= rpm:
+    key = f"ai:{user_id}:{bucket or 'chat'}"  # requests in the last minute, counted across every worker
+    if shared.recent(key) >= rpm:
         raise GatewayError(429, f"Too many requests: the limit is {rpm} a minute. Wait a few seconds and try again.", "rate_limited", "rate_limit_error")
     used = tokens_used_today(user_id, bucket)
     if used >= daily:
@@ -132,7 +129,7 @@ def check_budget(user_id: int, bucket: str = "") -> None:
             "budget_exceeded",
             "rate_limit_error",
         )
-    times.append(now)
+    shared.hit(key)
 
 
 def cap_max_tokens(body: dict[str, Any]) -> None:
@@ -546,6 +543,14 @@ async def serve() -> None:
     config = uvicorn.Config(gateway_app, host=host, port=settings.LLM_GATEWAY_PORT, log_level="warning", lifespan="off")
     log.info("LLM gateway on http://%s:%d (models: %s)", host, settings.LLM_GATEWAY_PORT, ", ".join(sorted(settings.llm_models)))
     try:
-        await uvicorn.Server(config).serve()
+        # SO_REUSEPORT: with several uvicorn workers, each one serves the gateway on the same port and the
+        # kernel spreads lab requests over them (budgets are shared through app/shared.py).
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        sock.bind((host, settings.LLM_GATEWAY_PORT))
+        sock.listen(2048)
+        sock.setblocking(False)
+        await uvicorn.Server(config).serve(sockets=[sock])
     except (OSError, SystemExit) as e:  # port taken: the main API keeps running without the gateway
         log.error("LLM gateway could not start on %s:%d: %s", host, settings.LLM_GATEWAY_PORT, e)

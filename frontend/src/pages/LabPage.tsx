@@ -382,7 +382,11 @@ export default function LabPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, chapterId, useIde, labId]);
 
+  // The file asked for last is the one shown, whatever order the answers arrive in (the first-file
+  // open and the chapter's file can both be loading; with several backend workers either may finish first).
+  const openSeq = useRef(0);
   async function openFile(path: string) {
+    const seq = ++openSeq.current;
     if (tabsRef.current.some((t) => t.path === path)) {
       setActivePath(path);
       return;
@@ -390,7 +394,7 @@ export default function LabPage() {
     try {
       const { content } = await api.readFile(labId, path);
       setTabs((ts) => (ts.some((t) => t.path === path) ? ts : [...ts, { path, content, saved: content, status: "idle" }]));
-      setActivePath(path);
+      if (seq === openSeq.current) setActivePath(path);
     } catch (e) {
       toast(errMsg(e));
     }

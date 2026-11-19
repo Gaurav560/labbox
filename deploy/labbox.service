@@ -9,8 +9,9 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/opt/labbox/backend
 EnvironmentFile=/opt/labbox/backend/.env
-# One worker only: the check lock and the idle reaper live in memory.
-ExecStart=/opt/labbox/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1 --proxy-headers
+# Several workers share locks, check slots, AI counters and the reaper through Redis (REDIS_URL in .env,
+# Phase H2). Without REDIS_URL, state stays in memory: then use --workers 1.
+ExecStart=/opt/labbox/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4 --proxy-headers
 Restart=always
 RestartSec=3
 

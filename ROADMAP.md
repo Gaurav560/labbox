@@ -213,7 +213,7 @@ lab (lab 16) and the `system-design` template.
 1. **H1 Postgres (done):** `scripts/devdb.sh` (Postgres 16 and Redis 7 in Docker on localhost);
    `DATABASE_URL` on Postgres; a one-time copy of the SQLite data (row counts compared, the SQLite
    file kept); fast tests stay on SQLite, plus one full run on Postgres.
-2. **H2 Redis for app state:** check lock, machine locks, AI rate counters and a reaper leader lock in
+2. **H2 Redis for app state (done):** check lock, machine locks, AI rate counters and a reaper leader lock in
    Redis, so uvicorn can run several workers; in memory when `REDIS_URL` is empty.
 3. **H3 worker (arq):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
    dump to `/srv/labbox/backups`.

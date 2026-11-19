@@ -10,6 +10,8 @@ PyYAML==6.0.2
 alembic==1.20.1
 # Postgres driver (DATABASE_URL=postgresql+psycopg://...); SQLite needs nothing
 psycopg[binary]==3.2.3
+# shared state between workers (REDIS_URL); without it, state stays in memory (one worker)
+redis==5.2.1
 tzdata==2026.6
 # preview proxy (also used by the tests)
 httpx==0.28.1

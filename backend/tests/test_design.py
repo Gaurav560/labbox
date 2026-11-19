@@ -10,7 +10,7 @@ import pytest
 from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app import design, llm_gateway
+from app import design, llm_gateway, shared
 from app.db import engine, init_db
 from app.labs import load_lab
 from app.lessons import LessonError, parse_steps
@@ -65,7 +65,7 @@ def user_id() -> int:
         s.add(u)
         s.commit()
         s.refresh(u)
-    llm_gateway._recent.clear()
+    shared.forget_hits()
     return u.id
 
 

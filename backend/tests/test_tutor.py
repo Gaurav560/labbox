@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
-from app import labs, llm_gateway, progress, tutor
+from app import labs, llm_gateway, progress, shared, tutor
 from app.config import get_settings
 from app.db import engine
 from app.main import app
@@ -18,7 +18,7 @@ LAB, CH, TASK = "python-basics", "01-functions", "add"
 
 @pytest.fixture
 def client() -> TestClient:
-    llm_gateway._recent.clear()
+    shared.forget_hits()
     with TestClient(app) as c:
         yield c
 

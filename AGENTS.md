@@ -31,7 +31,7 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 
 ## Running and testing
 
-- Backend: `cd backend && .venv/bin/uvicorn app.main:app --port 8000` (restart it after changing any
+- Backend: `cd backend && .venv/bin/uvicorn app.main:app --port 8000 --workers 4` (4 workers only with `REDIS_URL`; otherwise 1) (restart it after changing any
   `lab.yaml`, lab content, tracks, drills or onboarding; content is loaded at startup).
 - Frontend: `cd frontend && npm run dev` (http://localhost:5173).
 - Images: `scripts/build_lab_images.sh` (bases first, then every lab).
@@ -40,10 +40,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 220 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` runs them on Postgres, see README);
+- Tests: `cd backend && .venv/bin/pytest` (about 226 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (14 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green (19 November, after H1 Postgres) (220 backend tests on SQLite and on Postgres, 14 browser tests, 16 labs valid).
+- Last known state: everything green (20 November, after H2 Redis) (226 backend tests on Postgres and Redis, 224 on SQLite, 14 browser tests on 4 workers, 16 labs valid).
 
 ## How a lab is made
 
@@ -75,6 +75,10 @@ said about 15 is enough for now, so the platform phases come next.
   Same for `pgrep -f` inside `sh -c`: write the pattern as `[s]erver-main.js` so it cannot match itself.
 - Dev Postgres and Redis (`scripts/devdb.sh`) use ports 55432 and 56379: this laptop already runs its
   own Postgres on 5432 and Redis on 6379; leave those alone.
+- Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
+  id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
+- Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait
+  until port 8000 is free; open terminals make shutdown take a few seconds.
 - Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
   /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword

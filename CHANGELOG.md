@@ -1,5 +1,27 @@
 # Changelog
 
+## Phase H2: Redis for shared state, several workers
+
+- `app/shared.py`: what the backend used to keep in one process now lives in Redis when `REDIS_URL` is
+  set (in memory without it, exactly as before): the lock on each lab machine (start, stop, reset,
+  chapter setup), the one-check-per-learner slot, the AI requests-per-minute counters and the reaper's
+  lease (one worker reaps; another takes over within three rounds if it dies). Locks free themselves if a
+  worker dies and are renewed while the work runs.
+- The first copy of a lab's starter files now happens under its own lock: with two workers, both first
+  requests copied the files at the same moment.
+- Every worker serves the AI gateway on port 9000 (`SO_REUSEPORT`); migrations wait their turn on a
+  Postgres advisory lock when several workers start at once.
+- Lite editor: the file asked for last is the one shown, so the chapter's file is not replaced by the
+  first-file open when the two answers come back in the other order.
+- `deploy/labbox.service` runs 4 workers (needs `REDIS_URL`).
+- Tests: `LABBOX_TEST_REDIS_URL` runs them on Redis (a database other than 0). Checked with 4 workers on
+  Postgres and Redis: all 14 browser tests pass; a killed worker is replaced and the reaper moves to a
+  live worker. Backend: 226 passed on Postgres and Redis, 224 (plus 2 skipped) on SQLite.
+- Fixed a test bug from H1: on Postgres, test accounts got ids 1, 2, 3, so the Docker tests reused the
+  machine names of real dev accounts (id 1 is the owner's). No files were changed (checked), but 23
+  machines and 8 networks pointed at deleted test folders; they were removed with the owner's OK. Test
+  account ids now start at a random 8-digit number on both databases.
+
 ## Phase H1: Postgres
 
 - `scripts/devdb.sh`: LabBox's own Postgres 16 and Redis 7 in Docker, on localhost only and on their own
