@@ -64,6 +64,7 @@ export default function EditorPane({ tabs, activePath, onSelect, onClose, onChan
           </div>
         ))}
         <span className="spacer" />
+        {active && <span className="editor-hint" title="Suggestions also pop up while you type">Ctrl+Space: suggestions</span>}
         <span className={`save-state ${active?.status === "error" ? "fail" : ""}`}>{saveLabel(active)}</span>
       </div>
       <div className="editor-body">
