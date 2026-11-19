@@ -2,11 +2,12 @@
 
 ## Home page: hand-picked lab cards
 
-- "Pick a lab" shows a chosen 4 x 3 set instead of the first six labs: Express, FastAPI, Go, Java
-  basics, Spring Boot, JavaScript, Python basics, Python collections, Java collections, SQL from
-  zero, the Postgres incident, and Redis in practice as a "Coming soon" card (not a link until the
-  lab exists). A "See all labs" button below opens the labs page (sign up first for visitors). The list is `FEATURED` and `COMING_SOON` in
-  `HomePage.tsx`; a coming-soon card hides itself once that lab is live.
+- "Pick a lab" shows a chosen 5 x 3 set instead of the first six labs: Express, FastAPI, Go, Java
+  basics, Spring Boot, JavaScript, Python basics, SQL from zero, the Postgres incident, then six
+  "Coming soon" cards (Redis, Git, Docker, Kubernetes, Linux, Nginx; not links until the labs exist).
+  A "See all labs" button below opens the labs page (sign up first for visitors). The lists are
+  `FEATURED` and `COMING_SOON` in `HomePage.tsx`; a coming-soon card hides itself once that lab is
+  live. Covers for the coming-soon cards are in `frontend/public/covers/`.
 - The closing panel has no FREE sticker, and its button says "Start your first lab".
 
 ## Duke on the Java covers

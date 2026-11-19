@@ -24,10 +24,16 @@ const LIVE_SHOWN = 6; // lab titles listed under the tracks; the rest become "an
 const FEATURED = [
   "express-api", "fastapi-first-api", "go-basics",
   "java-basics", "spring-boot-first-api", "javascript-inside-out",
-  "python-basics", "python-collections", "java-collections",
-  "sql-from-zero", "postgres-indexing-incident",
+  "python-basics", "sql-from-zero", "postgres-indexing-incident",
 ];
-const COMING_SOON = [{ id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" }];
+const COMING_SOON = [
+  { id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" },
+  { id: "git-without-fear", title: "Git without fear", track: "DevOps", cover: "/covers/git-without-fear.svg" },
+  { id: "docker-start-to-ship", title: "Docker: start to ship", track: "DevOps", cover: "/covers/docker-start-to-ship.svg" },
+  { id: "kubernetes-from-zero", title: "Kubernetes from zero", track: "DevOps", cover: "/covers/kubernetes-from-zero.svg" },
+  { id: "linux-on-call", title: "Linux on call", track: "DevOps", cover: "/covers/linux-on-call.svg" },
+  { id: "nginx-and-networking", title: "Nginx and networking", track: "DevOps", cover: "/covers/nginx-and-networking.svg" },
+];
 
 // Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
 const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
@@ -365,7 +371,7 @@ export default function HomePage() {
 
         {live.length > 0 && (
           <section id="labs" className="h-section" aria-labelledby="labs-title">
-            <p className="h-kicker">Live now</p>
+            <p className="h-kicker">Labs</p>
             <h2 id="labs-title">Pick a lab. <span className="h-soft">Start in a minute.</span></h2>
             <div className="h-labs">
               {FEATURED.map((id) => live.find((l) => l.id === id)).filter((l): l is CatalogLab => !!l).map((lab) => (
