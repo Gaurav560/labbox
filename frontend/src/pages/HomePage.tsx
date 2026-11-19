@@ -324,7 +324,7 @@ export default function HomePage() {
             <h1 id="hero-title">
               Learn tech by <span className="h-red-word">doing<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span>, not <span className="h-strike">watching</span>.
             </h1>
-            <p className="hero-sub">Real machines, real code, small steps, instant feedback. Every few minutes you read a little, guess, try, and win.</p>
+            <p className="hero-sub">LabBox is hands-on coding labs in your browser. Each lab gives you a real Linux machine with a code editor and a terminal, then guides you step by step through Python, Java, SQL, DevOps and more, checking your code as you go. Nothing to install.</p>
             <div className="hero-cta">
               {cta}
               <a className="h-btn h-btn-ghost" href="#how">Try a question</a>

@@ -1,5 +1,9 @@
 # Changelog
 
+## Clearer hero line
+
+- The home page subtitle now says plainly what LabBox is: hands-on coding labs in the browser, a real Linux machine with an editor and terminal, step-by-step guidance, automatic checks, nothing to install.
+
 ## No more "chai"
 
 - Every "chai" in the app is replaced (165 places in 56 files: lab stories, starters, solutions,
