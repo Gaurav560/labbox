@@ -130,7 +130,11 @@ def test_real_chapters_are_v2():
     for lab in load_labs(LABS_DIR).values():
         for ch in lab.chapters:
             types = [s.type for s in lab.chapter_steps(ch.id)]
-            assert 6 <= len(types) <= 9, (lab.id, types)
+            # Spec section 9: story, 1 to 3 concept or example steps, a predict, a try, 1 to 4 tasks
+            # (or an incident), a recap; deep-dive and design steps come on top.
+            assert 6 <= len(types) <= 14, (lab.id, types)
+            assert 1 <= sum(t in ("concept", "example") for t in types) <= 3, (lab.id, ch.id, "1 to 3 concept or example steps")
+            assert sum(t in ("task", "incident") for t in types) <= 4, (lab.id, ch.id, "at most 4 tasks")
             for needed in ("story", "predict", "recap"):
                 assert needed in types, (lab.id, needed)
             assert "task" in types or "incident" in types, (lab.id, "task or incident")  # content standard, section 9

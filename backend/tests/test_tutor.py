@@ -95,20 +95,20 @@ def test_commands_from_apply_sh_are_caught_without_quotes(client: TestClient, mo
     h, _ = login(client)
     reply = "Try running:\n```bash\nredis-cli HSET menu filter coffee 30 cold coffee 40 vada pav 25\n```"
     monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: reply)
-    r = client.post(url("redis-in-practice", "01-redis-cli", "menu_hash"), headers=h, json={})
+    r = client.post(url("redis-in-practice", "03-hashes-and-lists", "menu_hash"), headers=h, json={})
     assert r.json()["blocked"] is True and "HSET menu" not in r.json()["reply"]
 
 
 def test_tutor_replies_never_carry_code_blocks(client: TestClient, monkeypatch):
     h, _ = login(client)
     monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: "Think about hashes: one key, many fields.\n```python\nr.hset('menu', mapping=PRICES)\n```\nWhich command writes several fields at once?")
-    reply = client.post(url("redis-in-practice", "01-redis-cli", "menu_hash"), headers=h, json={}).json()["reply"]
+    reply = client.post(url("redis-in-practice", "03-hashes-and-lists", "menu_hash"), headers=h, json={}).json()["reply"]
     assert "```" not in reply and "hset(" not in reply and "Which command writes several fields" in reply
 
 
 def test_lines_the_lesson_already_shows_are_not_secrets():
     lab = labs.get_lab("redis-in-practice")
-    shown = {tutor._code(line) for line in lab.chapter_markdown("02-cache-and-limit").splitlines()}
+    shown = {tutor._code(line) for line in lab.chapter_markdown("05-cache-and-limit").splitlines()}
     assert not shown & tutor.solution_lines(lab)
 
 

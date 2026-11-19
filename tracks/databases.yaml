@@ -11,16 +11,20 @@ nodes:
     requires: [sql-select]
     chapters: [sql-from-zero/02-group-by]
   - id: redis-basics
-    title: Redis keys and types
-    chapters: [redis-in-practice/01-redis-cli]
+    title: Redis keys and expiry
+    chapters: [redis-in-practice/01-what-redis-is, redis-in-practice/02-expiring-keys]
+  - id: redis-types
+    title: Redis data types
+    requires: [redis-basics]
+    chapters: [redis-in-practice/03-hashes-and-lists, redis-in-practice/04-sets-and-sorted-sets]
   - id: pg-indexes
     title: Indexes and EXPLAIN
     requires: [sql-group]
     chapters: [postgres-indexing-incident/01-slow-checkout]
   - id: redis-cache
     title: Caching and rate limits
-    requires: [redis-basics]
-    chapters: [redis-in-practice/02-cache-and-limit]
+    requires: [redis-types]
+    chapters: [redis-in-practice/05-cache-and-limit]
   - id: pg-transactions
     title: Transactions
     requires: [pg-indexes]

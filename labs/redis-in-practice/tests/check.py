@@ -1,5 +1,5 @@
 """Live checks for redis-in-practice: read the learner's Redis, and call their running app over HTTP.
-Chapter 1 is checked by what is in Redis; chapter 2 by how the app behaves (timing and status codes)."""
+Chapters 1 to 4 are checked by what is in Redis; chapter 5 by how the app behaves (timing, status codes)."""
 import json
 import time
 
@@ -7,6 +7,11 @@ import redis
 import requests
 
 APP = "http://workspace:8000"
+TASKS = ("first_keys", "cups_counter", "clean_up", "otp_expiry", "session_ttl", "keep_forever", "menu_hash",
+         "customer_profile", "order_queue", "unique_visitors", "common_customers", "top_sellers", "price_cache", "otp_limit")
+SESSION = '{"customer": 42, "outlet": "andheri"}'  # what setup/02.sh stored
+ANDHERI = {"asha", "ravi", "meera", "kabir", "priya", "dev"}
+BANDRA = {"ravi", "sana", "priya", "arjun", "dev", "zoya"}
 NOT_RUNNING = "Your app is not answering on port 8000. Start it in a terminal: uvicorn app:app --host 0.0.0.0 --port 8000 --reload"
 
 
@@ -21,12 +26,135 @@ try:
     r = redis.Redis(host="redis", decode_responses=True, socket_timeout=5)
     r.ping()
 except Exception as e:
-    for t in ("menu_hash", "otp_expiry", "top_sellers", "price_cache", "otp_limit"):
+    for t in TASKS:
         report(t, False, f"Could not reach Redis: {e}")
     raise SystemExit(0)
 
 
-# ---------- chapter 1: redis-cli ----------
+def kind(key):
+    return r.type(key)
+
+
+# ---------- chapter 1: what Redis is ----------
+
+def first_keys():
+    want = {"shop:name": "Brew Point", "shop:city": "Pune"}
+    for key, value in want.items():
+        if kind(key) == "none":
+            return report("first_keys", False, f"There is no key named {key} yet.")
+        if kind(key) != "string":
+            return report("first_keys", False, f"{key} should hold plain text, not a {kind(key)}.", "string", kind(key))
+        if r.get(key) != value:
+            return report("first_keys", False, f"{key} holds something else.", value, r.get(key))
+    report("first_keys", True, "The shop has a name and a city.")
+
+
+def cups_counter():
+    if kind("cups:sold") == "none":
+        return report("cups_counter", False, "There is no cups:sold counter yet. The first INCR creates it.")
+    if r.get("cups:sold") != "3":
+        return report("cups_counter", False, "cups:sold should count the three cups.", "3", r.get("cups:sold"))
+    beans = r.get("beans:grams")
+    if beans is None:
+        return report("cups_counter", False, "beans:grams is gone. Press Reset lab to get the stock back.")
+    if beans != "750":
+        return report("cups_counter", False, "The bean stock should be 250 grams lower than the 1000 it started at.", "750", beans)
+    report("cups_counter", True, "Three cups counted, 250 grams of beans used.")
+
+
+def clean_up():
+    left = sorted(r.scan_iter("tmp:import:*"))
+    if left:
+        return report("clean_up", False, f"{len(left)} temporary key(s) are still there.", "none", ", ".join(left))
+    if r.get("beans:grams") is None:
+        return report("clean_up", False, "beans:grams was deleted too. Only the tmp:import keys had to go (Reset lab brings it back).")
+    report("clean_up", True, "The leftovers are gone; everything else is untouched.")
+
+
+# ---------- chapter 2: keys that expire ----------
+
+def session_ttl():
+    key = "session:7f3a"
+    ttl = r.ttl(key)
+    if ttl == -2:
+        return report("session_ttl", False, f"{key} is gone. Press Reset lab to get it back.")
+    if r.get(key) != SESSION:
+        return report("session_ttl", False, f"The value of {key} changed. Add a timer without writing the key again.", SESSION, r.get(key))
+    if ttl == -1:
+        return report("session_ttl", False, f"{key} still has no timer.", "about 1800 seconds", "no timer")
+    if ttl > 1800 or ttl < 60:
+        return report("session_ttl", False, f"{key} should live for 30 minutes.", "1800 seconds or a little less", f"{ttl} seconds")
+    report("session_ttl", True, f"The session now ends on its own, in {ttl // 60} minutes.")
+
+
+def keep_forever():
+    key = "promo:diwali"
+    ttl = r.ttl(key)
+    if ttl == -2:
+        return report("keep_forever", False, f"{key} is gone. Press Reset lab to get it back.")
+    if r.get(key) != "20% off filter coffee":
+        return report("keep_forever", False, f"The value of {key} changed.", "20% off filter coffee", r.get(key))
+    if ttl != -1:
+        return report("keep_forever", False, f"{key} still has a timer.", "no timer (-1)", f"{ttl} seconds left")
+    report("keep_forever", True, "The promo is here to stay.")
+
+
+# ---------- chapter 3: hashes and lists ----------
+
+def customer_profile():
+    key = "customer:42"
+    if kind(key) == "none":
+        return report("customer_profile", False, f"There is no {key} yet.")
+    if kind(key) != "hash":
+        return report("customer_profile", False, f"{key} is a {kind(key)}, not a hash.", "hash", kind(key))
+    want = {"name": "Asha", "visits": "8", "tier": "gold"}
+    got = r.hgetall(key)
+    if got != want:
+        return report("customer_profile", False, "Asha's profile is not right yet (7 visits plus the one today).", json.dumps(want), json.dumps(got))
+    report("customer_profile", True, "Asha: 8 visits, gold tier, all in one hash.")
+
+
+def order_queue():
+    key = "orders:pending"
+    if kind(key) == "none":
+        return report("order_queue", False, "There is no orders:pending list yet.")
+    if kind(key) != "list":
+        return report("order_queue", False, f"{key} is a {kind(key)}, not a list.", "list", kind(key))
+    got = r.lrange(key, 0, -1)
+    if got != ["o3", "o2"]:
+        return report("order_queue", False, "The queue should still hold the two newest orders, newest first.", '["o3", "o2"]', json.dumps(got))
+    report("order_queue", True, "First in, first out: o1 is being made, o2 and o3 wait.")
+
+
+# ---------- chapter 4: sets and sorted sets ----------
+
+def unique_visitors():
+    key = "visitors:today"
+    if kind(key) == "none":
+        return report("unique_visitors", False, "There is no visitors:today set yet.")
+    if kind(key) != "set":
+        return report("unique_visitors", False, f"{key} is a {kind(key)}, not a set.", "set", kind(key))
+    got = r.smembers(key)
+    if got != {"asha", "ravi", "meera"}:
+        return report("unique_visitors", False, "The set should hold each of this morning's visitors once.", "asha, meera, ravi", ", ".join(sorted(got)))
+    report("unique_visitors", True, "Five visits, three people.")
+
+
+def common_customers():
+    if r.smembers("customers:andheri") != ANDHERI or r.smembers("customers:bandra") != BANDRA:
+        return report("common_customers", False, "The outlet sets were changed. Press Reset lab to get them back.")
+    key = "customers:both"
+    if kind(key) == "none":
+        return report("common_customers", False, "There is no customers:both set yet.")
+    if kind(key) != "set":
+        return report("common_customers", False, f"{key} is a {kind(key)}, not a set.", "set", kind(key))
+    want, got = ANDHERI & BANDRA, r.smembers(key)
+    if got != want:
+        return report("common_customers", False, "customers:both should hold exactly the people in both outlet sets.", ", ".join(sorted(want)), ", ".join(sorted(got)))
+    report("common_customers", True, f"{len(want)} loyal customers visit both outlets.")
+
+
+# ---------- from the first version: the menu (ch 3), the OTP (ch 2), best sellers (ch 4) ----------
 
 def menu_hash():
     want = {"filter coffee": "30", "cold coffee": "40", "vada pav": "25"}
@@ -68,7 +196,7 @@ def top_sellers():
     report("top_sellers", True, "Best sellers, in order, kept by Redis.")
 
 
-# ---------- chapter 2: the app ----------
+# ---------- chapter 5: a cache and a rate limiter (the app) ----------
 
 def app_up():
     try:
@@ -126,9 +254,9 @@ def otp_limit():
     report("otp_limit", True, "Three OTPs go through, the fourth gets 429, and the count resets in a minute.")
 
 
-menu_hash()
-otp_expiry()
-top_sellers()
+for check in (first_keys, cups_counter, clean_up, otp_expiry, session_ttl, keep_forever, menu_hash,
+              customer_profile, order_queue, unique_visitors, common_customers, top_sellers):
+    check()
 if app_up():
     price_cache()
     otp_limit()

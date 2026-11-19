@@ -1,5 +1,25 @@
 # Changelog
 
+## Redis in practice, block 1: from zero (chapters 1 to 4)
+
+- The Redis lab becomes a course from "what is Redis" to production. Block 1, the beginner chapters:
+  1. **What Redis is:** a shared dictionary in memory; `SET`, `GET`, `DEL`, `EXISTS`; atomic
+     counters (`INCR`, `DECRBY`) and the race condition they prevent; key naming; `SCAN` not `KEYS`.
+  2. **Keys that expire:** `EX`, `EXPIRE`, `TTL` (-1 and -2), `PERSIST`; plain `SET` dropping a
+     timer and `KEEPTTL`; sliding sessions; how Redis actually expires keys.
+  3. **Hashes and lists:** a menu and a customer profile as hashes (`HINCRBY`), why a hash beats a
+     JSON string, a first-in first-out order queue, and why `LMOVE` keeps work safe.
+  4. **Sets and sorted sets:** unique visitors, `SINTERSTORE`, a live leaderboard, and HyperLogLog
+     for counting distinct visitors in 12 KB.
+  Each chapter: story, concept cards under 120 words, a guess, a try, 3 tasks, a "Go deeper" card
+  for experienced engineers, a recap. 12 new tasks, each with a 3-step hint ladder.
+- Chapter setups seed real data to work on (bean stock, leftover temp keys, a session without a
+  timer, a promo about to expire, two outlets' customers). Checks read the real Redis and refuse
+  shortcuts (deleting the stock, overwriting the session, changing the outlet sets).
+- The caching and rate limiting chapter stays as chapter 5 until blocks 2 and 3 replace it.
+- The chapter shape test now checks the spec's rule (1 to 3 concept or example steps, at most 4
+  tasks) instead of a 9-step cap. Task cards in live labs no longer say "fix the running system".
+
 ## Phase G, step 5: the system-design template
 
 - `scripts/labbox new-lab <id> --template system-design`: two app copies behind nginx (service `lb`),

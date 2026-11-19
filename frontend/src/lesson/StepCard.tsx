@@ -141,7 +141,7 @@ function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: strin
         {task.passed
           ? "Passed. Nice work."
           : p.live
-            ? "Fix the running system, then press Check: a checker inspects it live."
+            ? "Do it in your machine (the terminal or your files), then press Check: a checker looks at the real, running system."
             : "Edit your files, then press Check to run the hidden tests on a clean machine."}
       </p>
       <HintLadder task={task} hints={p.hints} busy={p.hintBusy} onReveal={() => p.onHint(task.id)} />

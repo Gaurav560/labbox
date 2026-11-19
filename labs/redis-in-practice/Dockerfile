@@ -6,4 +6,7 @@ RUN pip install --no-cache-dir --break-system-packages fastapi==0.115.6 "uvicorn
 # redis-cli talks to the lab's Redis (the service named redis) without typing -h every time.
 RUN printf '#!/bin/sh\nexec /usr/bin/redis-cli -h "${REDIS_HOST:-redis}" "$@"\n' > /usr/local/bin/redis-cli \
     && chmod 755 /usr/local/bin/redis-cli
+# Chapter setup scripts: run as root by LabBox, unreadable for the learner.
+COPY setup/ /lab/setup/
+RUN chmod -R go-rwx /lab
 USER 1000

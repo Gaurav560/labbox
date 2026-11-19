@@ -1,13 +1,13 @@
 id: redis-in-practice
 version: 2
 title: Redis in practice
-subtitle: Hashes, expiring keys, a cache and a rate limiter, on a real Redis.
-description: Hashes, expiring keys, a cache and a rate limiter, on a real Redis.
+subtitle: From your first SET to caches, rate limits and production habits, on a real Redis.
+description: From your first SET to caches, rate limits and production habits, on a real Redis.
 language: python
 track: databases
 tags: [redis, python, caching]
-level: intermediate
-estimated_minutes: 35
+level: beginner
+estimated_minutes: 95
 story:
   company: Brew Point
   character: { name: Kabir, role: "Backend lead, Brew Point" }
@@ -35,10 +35,64 @@ check:
   timeout_seconds: 60
   network: none
 chapters:
-  - id: 01-redis-cli
-    title: Redis from the terminal
-    file: chapters/01-redis-cli.md
+  - id: 01-what-redis-is
+    title: What Redis is
+    file: chapters/01-what-redis-is.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/01.sh"]
+    tasks:
+      - id: first_keys
+        title: "Store the shop's name and city"
+        xp: 10
+        hints:
+          - "Each fact is one key with a plain text value. SET stores a value under a key."
+          - "Two SET commands, one for shop:name and one for shop:city. A value with a space needs quotes."
+          - "Check with GET shop:name and GET shop:city: they should read Brew Point and Pune."
+      - id: cups_counter
+        title: "Count cups, take beans off the stock"
+        xp: 20
+        hints:
+          - "A counter that starts from nothing needs no SET: the first INCR creates it."
+          - "INCR adds one. Its cousins INCRBY and DECRBY add or subtract any whole number."
+          - "Three INCR on cups:sold, then subtract 250 from beans:grams with the command that decrements by an amount."
+      - id: clean_up
+        title: "Delete the leftover tmp:import keys"
+        xp: 20
+        hints:
+          - "First list them: the scan option of redis-cli shown in the step walks the keys matching a pattern."
+          - "DEL accepts several key names at once and tells you how many it removed."
+          - "Delete all five tmp:import keys, then scan again: nothing should be left, and beans:grams still there."
+  - id: 02-expiring-keys
+    title: Keys that expire
+    file: chapters/02-expiring-keys.md
     minutes: 15
+    setup: ["bash", "/lab/setup/02.sh"]
+    tasks:
+      - id: otp_expiry
+        title: "A login code that expires in 5 minutes"
+        xp: 20
+        hints:
+          - "SET can give a key a timer in the same command, so it disappears on its own."
+          - "The EX option takes seconds: 5 minutes is 300."
+          - "TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone."
+      - id: session_ttl
+        title: "Give the session a 30 minute lifetime"
+        xp: 20
+        hints:
+          - "The session already exists, and its value must not change. Which command adds a timer to an existing key?"
+          - "EXPIRE takes a key and a number of seconds. 30 minutes is 1800 seconds."
+          - "Do not SET the session again: that would replace its value. Check the result with TTL."
+      - id: keep_forever
+        title: "Make the promo permanent"
+        xp: 20
+        hints:
+          - "TTL promo:diwali shows its timer is counting down. You want the opposite of EXPIRE."
+          - "One command removes a key's timer and keeps its value."
+          - "After it, TTL promo:diwali should answer -1, and GET still shows the offer."
+  - id: 03-hashes-and-lists
+    title: Hashes and lists
+    file: chapters/03-hashes-and-lists.md
+    minutes: 20
     tasks:
       - id: menu_hash
         title: "A hash for the menu"
@@ -47,13 +101,40 @@ chapters:
           - "A hash is one key that holds many field and value pairs. The key is menu, the fields are the item names."
           - "HSET takes the key, then field value, field value, ... in one command. Names with a space need quotes."
           - "Check your work with HGETALL menu: three fields, prices 30, 40 and 25."
-      - id: otp_expiry
-        title: "An OTP that expires in 5 minutes"
+      - id: customer_profile
+        title: "Asha's profile, one more visit, a gold tier"
         xp: 20
         hints:
-          - "SET can give a key an expiry in the same command, so it disappears on its own."
-          - "The EX option takes seconds: 5 minutes is 300."
-          - "TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone."
+          - "Start with HSET customer:42 and two field and value pairs: name and visits."
+          - "Adding to one numeric field in one step is the hash version of INCRBY."
+          - "HINCRBY the visits field by 1, then HSET one more field, tier, to gold. HGETALL shows all three."
+      - id: order_queue
+        title: "Run the order queue"
+        xp: 20
+        hints:
+          - "Orders go in on the left with LPUSH, one at a time or all at once in arrival order."
+          - "The oldest order is the one furthest from where you push, so it comes off the right."
+          - "LPUSH o1, o2 and o3, then RPOP once. LRANGE orders:pending 0 -1 should show o3 then o2."
+  - id: 04-sets-and-sorted-sets
+    title: Sets and sorted sets
+    file: chapters/04-sets-and-sorted-sets.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/04.sh"]
+    tasks:
+      - id: unique_visitors
+        title: "Count each visitor once"
+        xp: 20
+        hints:
+          - "A set never holds the same member twice, so you can add every visit as it happened."
+          - "SADD takes the key and any number of members. Duplicates are simply ignored."
+          - "Add all five visits to visitors:today; SCARD should then answer 3."
+      - id: common_customers
+        title: "Customers of both outlets, in customers:both"
+        xp: 20
+        hints:
+          - "You want the people who are in the first set and also in the second: an intersection."
+          - "SINTER shows the intersection; its STORE version saves it under a new key."
+          - "The destination key comes first, then the two outlet sets. SMEMBERS customers:both shows the result."
       - id: top_sellers
         title: "A sorted set of today's sales"
         xp: 20
@@ -61,9 +142,9 @@ chapters:
           - "A sorted set keeps members ordered by a number called the score. ZADD adds members with their scores."
           - "ZADD takes the key, then score member, score member. ZINCRBY adds to one member's score."
           - "ZRANGE sales:today 0 -1 REV WITHSCORES lists them, best seller first: 120, 80, then 50."
-  - id: 02-cache-and-limit
+  - id: 05-cache-and-limit
     title: A cache and a rate limiter
-    file: chapters/02-cache-and-limit.md
+    file: chapters/05-cache-and-limit.md
     minutes: 20
     tasks:
       - id: price_cache
