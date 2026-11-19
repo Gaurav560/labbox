@@ -581,12 +581,20 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .lab-meta { display: flex; flex-wrap: wrap; gap: 6px; }
 .meta-chip { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--chip); border-radius: 999px; padding: 1px 10px; }
 .meta-chip-cap { text-transform: capitalize; }
-.metrics { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4) 0; }
-.metrics li { display: flex; align-items: baseline; gap: var(--space-2); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--space-2) var(--space-3); }
-.metrics li.metric-met { border-color: var(--success); }
-.metrics li.metric-missed { border-color: var(--danger); }
-.metric-name { font-family: var(--font-code); font-size: 13px; color: var(--muted); }
-.metric-value { font-size: 18px; }
+.metrics { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4) 0; }
+.gauge { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--space-2) var(--space-3) var(--space-3); }
+.gauge.metric-met { border-color: color-mix(in srgb, var(--success) 55%, var(--border)); }
+.gauge.metric-missed { border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+.gauge-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.metric-name { font-size: 13px; color: var(--muted); }
+.metric-value { font: 700 18px var(--font-code); }
+.metric-value small { font-size: 12px; font-weight: 500; color: var(--muted); }
+.gauge-track { position: relative; height: 8px; margin: 8px 0 6px; border-radius: 999px; background: var(--chip); }
+.gauge-fill { height: 100%; border-radius: 999px; background: var(--muted); transition: width 600ms cubic-bezier(.2, .8, .2, 1); }
+.metric-met .gauge-fill { background: var(--success); }
+.metric-missed .gauge-fill { background: var(--danger); }
+.gauge-target { position: absolute; top: -4px; width: 2px; height: 16px; margin-left: -1px; border-radius: 1px; background: var(--text); opacity: 0.8; }
+.gauge-foot { font-size: 12px; }
 
 /* ---------- engagement: badges, progress strip, drill ---------- */
 .stats-badges { display: inline-flex; align-items: center; gap: var(--space-3); white-space: nowrap; }

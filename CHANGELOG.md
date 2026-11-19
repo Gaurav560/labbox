@@ -1,5 +1,12 @@
 # Changelog
 
+## Phase G, step 2: gauges for check metrics
+
+- `@@METRIC` values are now gauges in the results drawer: a bar for the value and a tick for the
+  target, green when met, red when missed, grey without a target. Friendly names and units for the
+  usual metrics (`p95_ms` is "p95 latency, ms", `error_rate` is "errors, %", `rps` is
+  "throughput, req/s"). The Postgres incident browser test checks the gauge turns from red to green.
+
 ## Phase G, step 1: load tests in checks (k6)
 
 - The checker image now has k6 v0.55.0 (Grafana's load tester, copied from the `grafana/k6` image)

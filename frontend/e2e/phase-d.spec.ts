@@ -109,7 +109,10 @@ test("Postgres incident: setup, timer, fix, live check", async ({ page }) => {
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("0 of 1 passed", { timeout: 60_000 });
   await expect(page.locator(".res-message")).toContainText("Seq Scan");
-  await expect(page.locator(".metrics")).toContainText("lookup_ms");
+  // The metric is a gauge against its target (5 ms): missed before the fix.
+  const gauge = page.locator(".gauge", { hasText: "lookup" });
+  await expect(gauge).toHaveClass(/metric-missed/);
+  await expect(gauge).toContainText("target ≤ 5 ms");
   await page.getByRole("button", { name: "Close results" }).click();
 
   // Fix it from the terminal, like a learner would.
@@ -121,6 +124,7 @@ test("Postgres incident: setup, timer, fix, live check", async ({ page }) => {
 
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("1 of 1 passed 🎉", { timeout: 60_000 });
+  await expect(page.locator(".gauge", { hasText: "lookup" })).toHaveClass(/metric-met/); // green once fixed
   await expect(page.locator(".toast-info").last()).toContainText("+325 XP");
   await expect(page.locator(".toast-info").last()).toContainText("Fixed inside the timer");
 });
