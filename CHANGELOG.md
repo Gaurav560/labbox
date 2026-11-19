@@ -1,5 +1,15 @@
 # Changelog
 
+## Batch 2, lab 3: Git without fear
+
+- New lab `git-without-fear` (devops, beginner, 2 chapters, 5 tasks). Chapter 1 builds a real `shop`
+  repo: commit, branch, merge. Chapter 2 builds `kitchen` plus a bare `kitchen-origin.git`: amend a
+  secret out of an unpushed commit, then `git revert` a pushed typo without rewriting history.
+- Setup commits use fixed authors and dates, so every learner gets the same hashes; the live check
+  reads the repo read-only and verifies the pushed commits are still in `main`.
+- New chapter option `setup_user: learner` (default `root`, unchanged for existing labs): lab
+  containers drop every capability, so root cannot write the learner's files.
+
 ## Batch 2, lab 2: Linux on call
 
 - New lab `linux-on-call` (devops, beginner, 2 chapters, 5 tasks). Chapter 1: three log tools

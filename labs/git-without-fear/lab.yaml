@@ -1,0 +1,79 @@
+id: git-without-fear
+version: 2
+title: Git without fear
+subtitle: Commit, branch and merge, then undo a leaked secret and a pushed mistake the safe way.
+description: Commit, branch and merge, then undo a leaked secret and a pushed mistake the safe way.
+language: bash
+track: devops
+tags: [git]
+level: beginner
+estimated_minutes: 35
+story:
+  company: Brew Point
+  character: { name: Kabir, role: "Backend lead, Brew Point" }
+  pitch: "Brew Point's menu lives in git now, and Kabir wants you fearless with it by Friday."
+cover_scene: "A glowing branching tree of commits over a small coffee counter."
+cover: cover.svg
+cover_credit: { by: "Logos: git", source: "devicon (MIT)" }
+image: labbox/git-without-fear:v1
+resources: xs
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+check:
+  mode: live
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 30
+  network: none
+  mount_workspace: ro
+chapters:
+  - id: 01-commit-branch-merge
+    title: Commit, branch, merge
+    file: chapters/01-commit-branch-merge.md
+    minutes: 15
+    setup: ["bash", "/lab/setup/01.sh"]
+    setup_user: learner
+    tasks:
+      - id: commit_hours
+        title: "Commit hours.txt"
+        xp: 20
+        hints:
+          - "git status shows hours.txt as untracked: git does not know about it yet."
+          - "Two steps: git add puts the file in the staging area, git commit records what is staged."
+          - "Give the commit a message with -m that mentions the opening hours."
+      - id: combo_branch
+        title: "A branch for the breakfast combo"
+        xp: 20
+        hints:
+          - "A branch is a separate line of work. git switch -c makes a new one and moves you onto it."
+          - "On the new branch, create combo.txt with the combo line, then add and commit it there."
+          - "git log --oneline --all --graph shows both branches; main should not have combo.txt yet."
+      - id: merge_combo
+        title: "Merge the combo into main"
+        xp: 20
+        hints:
+          - "You merge INTO the branch you are on. So first go back to main."
+          - "git switch main, then git merge with the name of the branch that has the work."
+          - "After the merge, ls on main shows combo.txt, and git log shows the combo commit."
+  - id: 02-undo-without-fear
+    title: Undo without fear
+    file: chapters/02-undo-without-fear.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/02.sh"]
+    setup_user: learner
+    tasks:
+      - id: undo_secret
+        title: "Take the secret out of the last commit"
+        xp: 40
+        hints:
+          - "The last commit is not pushed yet, so you may change it. git status and git log origin/main..main show what is only local."
+          - "git rm --cached removes a file from git but keeps it on disk. A .gitignore line stops it coming back."
+          - "Stage the removal and the .gitignore, then git commit --amend to replace the last commit instead of adding a new one."
+      - id: revert_bad
+        title: "Undo the pushed price typo"
+        xp: 40
+        hints:
+          - "The 300 commit is already on origin, so other people have it. Do not rewrite it; add a commit that undoes it."
+          - "git log --oneline finds the commit's short hash. git revert makes a new commit with the opposite change."
+          - "git revert with the hash of the Raise filter coffee commit, keep the default message, then check menu.txt."

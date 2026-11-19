@@ -60,6 +60,9 @@ proposed in `ROADMAP.md` and waiting for the owner's OK.
 - Specs are written back with `yaml.safe_dump`, so hint text is unquoted; match that when editing.
 - Tests must not assume a fixed number of labs (use subset checks).
 - `copy_workspace` ignores `.git`; live checks cannot see processes inside the workspace.
+- Chapter setup runs as root with every capability dropped, so root cannot write the learner's
+  files. Setups that build files in `/workspace` (like a git repo) use `setup_user: learner`.
+- Git labs: use live checks with `mount_workspace: ro` (fresh checks copy without `.git`).
 - Postgres services need small memory tuning (see `postgres-indexing-incident/lab.yaml`, 768m).
 - Go images pre-warm `GOCACHE=/opt/gocache`; Spring labs build offline from the Maven repo in `/opt/m2`.
 

@@ -122,6 +122,7 @@ def test_phase_d_features_load(lab_copy: Path):
         (lambda d: d["check"].update(mode="live"), "live needs services"),
         (lambda d: d["workspace"].update(network_egress=True), "network_egress only applies"),
         (lambda d: d["chapters"][0].update(setup=["x"], setup_target="db"), "is not a service"),
+        (lambda d: d["chapters"][0].update(setup=["x"], setup_user="admin"), "setup_user"),
     ],
 )
 def test_bad_phase_d_config(lab_copy: Path, change, match: str):

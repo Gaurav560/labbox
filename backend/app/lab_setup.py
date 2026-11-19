@@ -23,14 +23,15 @@ class SetupResult(BaseModel):
 
 
 def exec_setup(lab: LabConfig, ws: Workspace, chapter: Chapter) -> None:
-    """Run the chapter's setup command as root in its target container. Raises HTTPException on failure."""
+    """Run the chapter's setup command (as root, or as the learner) in its target container. Raises HTTPException on failure."""
     assert chapter.setup
     name = ws.container_name
     if chapter.setup_target != "workspace":
         svc = next(s for s in lab.services if s.name == chapter.setup_target)
         name = services.service_container_name(ws, svc)
     try:
-        result = containers.client().containers.get(name).exec_run(chapter.setup, user="0")
+        user = containers.LEARNER_USER if chapter.setup_user == "learner" else "0"
+        result = containers.client().containers.get(name).exec_run(chapter.setup, user=user)
     except APIError as e:
         raise HTTPException(500, f"Could not run the chapter setup: {e.explanation or e}")
     if result.exit_code != 0:

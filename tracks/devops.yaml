@@ -10,9 +10,16 @@ nodes:
     title: Disk and permissions
     requires: [linux-logs]
     chapters: [linux-on-call/02-disk-and-permissions]
+  - id: git-basics
+    title: Commit, branch, merge
+    chapters: [git-without-fear/01-commit-branch-merge]
+  - id: git-undo
+    title: Undo without fear
+    requires: [git-basics]
+    chapters: [git-without-fear/02-undo-without-fear]
   - id: docker
     title: Docker
-    requires: [linux-disk]
+    requires: [linux-disk, git-basics]
   - id: nginx
     title: Nginx and 502s
     requires: [linux-disk]

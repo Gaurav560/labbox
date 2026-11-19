@@ -181,6 +181,9 @@ class Chapter(_Strict):
     # The script lives in the image under /lab/setup/, never in /workspace.
     setup: list[str] | None = None
     setup_target: str = "workspace"  # or a service name
+    # root (default) or learner. Lab containers drop every capability, so root cannot write the
+    # learner's files; setups that build files in /workspace (a git repo, say) run as the learner.
+    setup_user: Literal["root", "learner"] = "root"
 
 
 class LabConfig(_Strict):
