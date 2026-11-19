@@ -1,5 +1,12 @@
 # Changelog
 
+## Typing in VS Code keeps the machine awake
+
+- The idle reaper only saw plain HTTP requests through the proxy, not websocket traffic, so a learner
+  working only in VS Code could have their machine stopped after 15 minutes. Browser-to-machine
+  websocket messages of 64 bytes or more now count as activity (at most one database write a minute);
+  smaller keep-alives do not, so an abandoned tab still lets the machine stop. Test added.
+
 ## VS Code: upgrade machines made before it
 
 - Machines created before VS Code was set up had no VS Code mount, so VS Code could not start in them

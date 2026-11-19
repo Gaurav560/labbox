@@ -33,6 +33,9 @@ TICKET_MINUTES = 120
 _HOP = {"connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailer",
         "transfer-encoding", "upgrade", "host", "content-length"}
 
+ACTIVITY_MIN_BYTES = 64  # websocket messages smaller than this are keep-alives, not learner activity
+ACTIVITY_EVERY_SECONDS = 60
+
 _client: httpx.AsyncClient | None = None
 
 
@@ -148,7 +151,7 @@ def _touch(user: User, lab: LabConfig) -> None:
 
 async def proxy_ws(ws: WebSocket, lab_id: str, port: int, path: str, full_path: bool = False) -> None:
     try:
-        _, _, target = await asyncio.to_thread(_authorize, ws.cookies.get(COOKIE), lab_id, port, full_path)
+        user, lab, target = await asyncio.to_thread(_authorize, ws.cookies.get(COOKIE), lab_id, port, full_path)
     except HTTPException as e:
         await ws.close(code=4403 if e.status_code == 403 else 4404, reason=str(e.detail)[:120])
         return
@@ -165,12 +168,22 @@ async def proxy_ws(ws: WebSocket, lab_id: str, port: int, path: str, full_path: 
         return
     await ws.accept()
 
+    last_touch = 0.0
+
     async def to_upstream() -> None:
+        nonlocal last_touch
         while True:
             msg = await ws.receive()
             if msg["type"] == "websocket.disconnect":
                 return
-            await upstream.send(msg["bytes"] if msg.get("bytes") is not None else msg.get("text", ""))
+            data = msg["bytes"] if msg.get("bytes") is not None else msg.get("text", "")
+            # Typing in VS Code (or a preview app) is activity for the idle reaper. Tiny messages are
+            # keep-alives that an abandoned tab also sends, so they do not count.
+            now = asyncio.get_running_loop().time()
+            if len(data) >= ACTIVITY_MIN_BYTES and now - last_touch > ACTIVITY_EVERY_SECONDS:
+                last_touch = now
+                asyncio.get_running_loop().run_in_executor(None, _touch, user, lab)
+            await upstream.send(data)
 
     async def to_browser() -> None:
         async for data in upstream:
