@@ -89,7 +89,7 @@ card per chapter for experienced engineers, and verified wrong answers that fail
   launching", **Inside a lab** (a real lab screenshot in a framed window, a different one of 21 on each visit, six
   one-line features), the **AI labs**
   map (four stage cards for the 24 planned labs, marked Launching), the lab grid, "Also on LabBox" tracks, the red closing panel, then
-  **FAQs just above the footer** (the home footer no longer links to them).
+  **FAQs just above the footer** (heading on the left, one numbered list that opens smoothly) (the home footer no longer links to them).
 - **Home page look:**
   - Colours: GitHub charcoal (`#111512`) with a faint tile grid, black panels, white buttons, a muted brick red for small accents, and a little yellow.
   - Hero product tour: Read, Guess, Code, Check scenes for all 15 labs, in a random order for each visitor, with opt-in sound.

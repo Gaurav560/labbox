@@ -1,5 +1,12 @@
 # Changelog
 
+## Home: a cleaner, smoother FAQ section
+
+- The heading and a short line with the contact address sit on the left (they stay in view while you
+  scroll); the 8 questions run down the right as one numbered list with thin dividers.
+- Answers slide open smoothly, the round + turns into an x, the open row gets a red edge and a faint
+  glow, and only one answer is open at a time (`details name`). Motion is off for reduced-motion users.
+
 ## Lab page: a calmer task area, and each chapter opens its own code
 
 - The task area is a quiet stepper: "Task 1 of 3", one dot per task (a pill for the current one, green

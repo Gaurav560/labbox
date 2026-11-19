@@ -6,6 +6,7 @@ import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import HeroTour from "../components/HeroTour";
 import { AiTrack, HomeFaq, InsideLab } from "../components/HomeSections";
+import { SITE } from "../site";
 import { useTheme } from "../theme";
 
 const TRACKS: { id: string; title: string; blurb: string }[] = [
@@ -203,10 +204,15 @@ export default function HomePage() {
           )}
         </section>
         <section id="faq" className="h-section" aria-labelledby="faq-title">
-          <p className="h-kicker">FAQs</p>
-          <h2 id="faq-title">Questions, answered.</h2>
-          <HomeFaq />
-          <p className="h-faq-more"><Link to="/faq">All questions →</Link></p>
+          <div className="h-faq-wrap">
+            <div className="h-faq-intro">
+              <p className="h-kicker">FAQs</p>
+              <h2 id="faq-title">Questions, answered.</h2>
+              <p className="h-faq-lead">Everything about how a lab works, what it costs and what happens to your code. Still curious? Write to <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
+              <p className="h-faq-more"><Link to="/faq">All questions →</Link></p>
+            </div>
+            <HomeFaq />
+          </div>
         </section>
       </main>
 
