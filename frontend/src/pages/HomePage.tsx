@@ -382,7 +382,7 @@ export default function HomePage() {
           {user ? (
             <Link className="h-btn h-btn-black" to="/labs">Continue learning →</Link>
           ) : (
-            <Link className="h-btn h-btn-black" to="/login?signup=1">Start free →</Link>
+            <Link className="h-btn h-btn-black" to="/login?signup=1">Start your first lab →</Link>
           )}
         </section>
       </main>
