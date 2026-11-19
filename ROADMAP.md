@@ -21,6 +21,7 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 | B | Content format v2, the authoring CLI (`scripts/labbox`), reference solutions |
 | C | XP, levels, streaks with a weekly freeze, onboarding, skill map, daily drill |
 | D | Services next to the workspace (Postgres), the Preview tab for web apps, live checks, timed incidents with a bonus |
+| E | LLM gateway (aliases, lab tokens, budgets, request log, OpenAI and Anthropic shapes), labs reach it through a locked-down relay, `lab requests`, AI tutor and code review with a solution leak guard, the `ai` lab template. Free local models via Ollama (`scripts/ollama.sh`). |
 
 ### Labs: 15 live (batch 1: 11, batch 2: 4)
 
@@ -106,7 +107,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   Terraform and AWS on LocalStack, observability, on-call incidents.
 - **Interview:** traps for Python, Java and JavaScript; Java and Spring interview incidents.
 - **Needs a later phase first:**
-  - the AI track (Phase E)
+  - the AI track (Phase E is built; the labs themselves are not written yet)
   - Docker and Kubernetes labs (Phase F)
   - system design labs (Phase G)
 
@@ -120,11 +121,10 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 
 The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 
-### 3. Platform phases not started
+### 3. Platform phases not started (E is done)
 
 | Phase | What | Needs from you |
 |---|---|---|
-| E | LLM gateway, AI labs, AI tutor (spec 6) | Which LLM provider and key to use (the OpenAI key is approved for covers only) |
 | F | Docker and Kubernetes inside labs, with Sysbox (spec 4) | sudo on this machine to install Sysbox |
 | G | System design labs with k6 load tests and rubric grading (spec 7) | Nothing |
 | H | Real app foundations: Postgres instead of SQLite, Redis, Google login, workers, disk quotas (spec 10) | A Google OAuth client id and secret |
@@ -156,4 +156,4 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 ## How to pick up again
 
 Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md, then propose the next phase (E) and wait for my OK."** The agent reads `AGENTS.md` by itself.
+ROADMAP.md, then propose the next phase (F) and wait for my OK."** The agent reads `AGENTS.md` by itself.

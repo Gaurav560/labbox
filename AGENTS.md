@@ -35,10 +35,13 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   `lab.yaml`, lab content, tracks, drills or onboarding; content is loaded at startup).
 - Frontend: `cd frontend && npm run dev` (http://localhost:5173).
 - Images: `scripts/build_lab_images.sh` (bases first, then every lab).
-- Tests: `cd backend && .venv/bin/pytest` (about 158 tests, Docker ones included, about 1 minute);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (7 tests,
+- AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
+  gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
+  Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
+- Tests: `cd backend && .venv/bin/pytest` (about 190 tests, Docker ones included, about 2 minutes);
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (8 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green at commit `b1fbdb7`.
+- Last known state: everything green after Phase E (187 backend tests, 8 browser tests, 15 labs valid).
 
 ## How a lab is made
 
@@ -47,8 +50,8 @@ starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scri
 <lab>` (starter must fail, solution must pass) -> `scripts/labbox cover <lab> --logo <tech>[,<tech>]`
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> add the lab's chapters to a skill map in `tracks/` -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go,
-service-incident, preview-app. Labs have been written one at a time in batches of 6; batch 2 is
-proposed in `ROADMAP.md` and waiting for the owner's OK.
+service-incident, preview-app, ai. Labs are written one at a time in chat. There are 15; the owner
+said that is enough for now, so the platform phases (F onward) come next.
 
 ## Gotchas learned the hard way
 
