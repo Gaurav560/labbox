@@ -2,6 +2,7 @@
 :root {
   --font-text: "Inter", system-ui, sans-serif;
   --font-code: "JetBrains Mono", ui-monospace, monospace;
+  --brand-red: #d1605a; /* the LabBox logo, everywhere */
 
   --text-size: 16px;
   --text-line: 1.7;
@@ -50,6 +51,7 @@
 }
 
 :root[data-theme="light"] {
+  --brand-red: #b8463f;
   --bg: #f6f8fa;
   --panel: #ffffff;
   --card: #ffffff;
@@ -684,7 +686,6 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   --tint-accent: #b8463f14; --tint-danger: #b8463f12; --tint-success: #f2d63040;
 }
 .home main { flex: 1; }
-.home .logo-mark rect:first-child { fill: var(--red); }
 
 .home-header {
   position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: var(--space-3);

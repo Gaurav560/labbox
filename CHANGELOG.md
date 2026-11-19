@@ -1,5 +1,11 @@
 # Changelog
 
+## One logo colour everywhere
+
+- The LabBox mark took the page's accent colour: red on the home page, blue on the login page, white
+  in the app. It now always uses the brand red (`--brand-red`: `#d1605a`, `#b8463f` in light mode)
+  with a white prompt, and the favicon is red too.
+
 ## Redis in practice, block 1: from zero (chapters 1 to 4)
 
 - The Redis lab becomes a course from "what is Redis" to production. Block 1, the beginner chapters:

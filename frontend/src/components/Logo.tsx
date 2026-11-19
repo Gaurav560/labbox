@@ -5,10 +5,11 @@ import { SITE } from "../site";
 export function LogoMark({ size = 28 }: { size?: number }) {
   return (
     <svg className="logo-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <rect x="1" y="1" width="30" height="30" rx="8" fill="var(--accent)" />
-      <rect x="1.5" y="1.5" width="29" height="29" rx="7.5" fill="none" stroke="var(--on-accent)" strokeOpacity="0.12" />
-      <path d="M9 11.5 L14.5 16 L9 20.5" fill="none" stroke="var(--on-accent)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M17 21 H23" stroke="var(--on-accent)" strokeWidth="2.8" strokeLinecap="round" />
+      {/* The brand red, the same on every page (not the page's accent colour). */}
+      <rect x="1" y="1" width="30" height="30" rx="8" fill="var(--brand-red)" />
+      <rect x="1.5" y="1.5" width="29" height="29" rx="7.5" fill="none" stroke="#ffffff" strokeOpacity="0.12" />
+      <path d="M9 11.5 L14.5 16 L9 20.5" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 21 H23" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" />
     </svg>
   );
 }
