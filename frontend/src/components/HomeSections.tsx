@@ -1,22 +1,26 @@
+import { useState } from "react";
 import { FAQS } from "../pages/InfoPages";
+import SHOTS from "../homeShots.json";
 
 // Home page sections: a real lab screenshot, the AI track and the FAQs.
 
-/** "Inside a lab": one real screenshot of a lab, then six quiet features. */
+/** "Inside a lab": a real screenshot of a lab (a different one on each visit), then six features. */
 export function InsideLab() {
+  const [shot] = useState(() => SHOTS[Math.floor(Math.random() * SHOTS.length)]);
   return (
     <div className="h-inside">
       <figure className="h-shot">
         <div className="h-shot-bar" aria-hidden="true">
           <span /><span /><span />
-          <em>labbox · Redis in practice · Ch 6, Caching for real</em>
+          <em>{shot.caption}</em>
         </div>
         <img
-          src="/images/lab-inside.webp"
-          width={2400}
-          height={1440}
+          key={shot.src}
+          src={shot.src}
+          width={1920}
+          height={1152}
           loading="lazy"
-          alt="A LabBox lab: the lesson on the left, VS Code with app.py in the middle, a terminal talking to a live Redis below"
+          alt={shot.alt}
         />
       </figure>
       <ul className="h-feats">

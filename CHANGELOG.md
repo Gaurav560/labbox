@@ -1,5 +1,16 @@
 # Changelog
 
+## Home page: a different real lab on every visit
+
+- "Inside a lab" now picks one of **21 real screenshots** at random on each page load: 12 labs, from
+  Redis caching and the Postgres checkout incident to the rate limiter's load balancer, a Go till, a
+  git history graph and Linux logs. The window title names the lab and chapter.
+- `frontend/tools/home-shots.mjs` captures them (demo learner `riya`, a fresh browser profile and a
+  reset per lab, a real terminal command each); `frontend/tools/home-shots.py` turns them into
+  `public/images/labs/*.webp` (about 110 KB each, only one is loaded) and `src/homeShots.json`.
+- IDE: VS Code no longer offers to install "recommended" extensions (there is no marketplace in labs,
+  so the Install button led nowhere).
+
 ## Home page: a real lab screenshot and a calmer AI track
 
 - **Inside a lab** is now one large, real screenshot of a lab (Redis chapter 6: the lesson, VS Code

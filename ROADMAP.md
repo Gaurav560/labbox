@@ -83,7 +83,8 @@ card per chapter for experienced engineers, and verified wrong answers that fail
 - **Name:** "LabBox by Telusko". LabBox is the product and Telusko the parent company. The contact is
   connect@telusko.com. Names live in `frontend/src/site.ts`.
 - **Home page (AI first):** hero "Learn AI by building it, not watching it", the pill "AI track
-  launching", **Inside a lab** (a real lab screenshot in a framed window, six one-line features), the **AI labs**
+  launching", **Inside a lab** (a real lab screenshot in a framed window, a different one of 21 on each visit, six
+  one-line features), the **AI labs**
   map (four stage cards for the 24 planned labs, marked Launching), the lab grid, "Also on LabBox" tracks, the red closing panel, then
   **FAQs just above the footer** (the home footer no longer links to them).
 - **Home page look:**
@@ -141,6 +142,9 @@ card per chapter for experienced engineers, and verified wrong answers that fail
 - [ ] Host VS Code's webview files ourselves: openvscode loads them from Microsoft's `vscode-cdn.net`,
       which contradicts "no third party" in the Privacy policy (`webviewContentExternalBaseUrlTemplate`
       in its product.json).
+- [ ] VS Code reopens the previous lab's tabs in the next lab: every lab opens `/workspace` from the same
+      browser origin, so they share VS Code's saved editor state. A per-lab IDE origin (for example
+      `<lab>.ide.<domain>`, together with the item above) or a per-lab folder path fixes it.
 - [ ] Put a real proxy (nginx or Traefik) in front of IDE and Preview websockets instead of the Python
       backend carrying every keystroke.
 - [ ] Pin and test openvscode-server upgrades (today v1.109.5 in `scripts/openvscode.sh`).
