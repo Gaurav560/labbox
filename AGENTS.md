@@ -53,7 +53,15 @@ starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scri
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> add the lab's chapters to a skill map in `tracks/` -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go,
 service-incident, preview-app, ai. Labs are written one at a time in chat. There are 15; the owner
-said that is enough for now, so the platform phases (F onward) come next.
+said that is enough for now, so the platform phases come next.
+
+## Where we are (keep this current)
+
+- Done: phases A to E, 15 labs, real VS Code in labs (IDE | Lite), GitHub-grey theme everywhere.
+- Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
+- **Next: Phase G.** Its full plan is in `ROADMAP.md` section B.3, waiting for the owner's OK.
+- Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real
+  websocket proxy) are listed in `ROADMAP.md` section B.1.
 
 ## Gotchas learned the hard way
 
