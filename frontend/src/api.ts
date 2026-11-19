@@ -169,6 +169,8 @@ export const api = {
     request<ChapterProgress>("PUT", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/progress`, { current_step: step }),
   predict: (labId: string, chapterId: string, step: number, choice: number) =>
     request<PredictState>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/predict`, { step, choice }),
+  chapterFocus: (labId: string, chapterId: string, ide: boolean) =>
+    request<{ path: string | null; line: number }>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/focus`, { ide }),
   chapterSetup: (labId: string, chapterId: string) =>
     request<SetupResult>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/setup`),
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),

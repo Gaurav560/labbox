@@ -48,6 +48,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
   at about 30 networks.
 
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
+- **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
 ### Labs: 16 live (batch 1: 11, batch 2: 4, Phase G: 1)
 

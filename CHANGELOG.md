@@ -1,5 +1,17 @@
 # Changelog
 
+## Lab page: a calmer task area, and each chapter opens its own code
+
+- The task area is a quiet stepper: "Task 1 of 3", one dot per task (a pill for the current one, green
+  when passed), and the task's real title instead of its id. Check is the one big button; Hint (with
+  the hints left as a small badge) and Ask AI are icon buttons beside it.
+- Switching chapters opens that chapter's code: the learner's files stay, and the chapter's file opens
+  at its section (Redis chapter 6: `app.py` at `# ---------- chapter 6`). It finds the TODO that names
+  one of the chapter's tasks, else a `chapter <n>` marker, else the README, else the first TODO
+  (`backend/app/focus.py`, route `POST /api/labs/{lab}/chapters/{chapter}/focus`). Works in Lite and in
+  real VS Code: the `labbox-defaults` extension (now 1.3.0, with a small `extension.js`) opens the file
+  the backend names in `/tmp/labbox-open.json`. On another server, run `scripts/openvscode.sh` once.
+
 ## Lab page: text size per area (the Aa menu)
 
 - An **Aa** button in the lab's top bar opens "Text size": presets **S / M / L / XL** (90, 100, 115,

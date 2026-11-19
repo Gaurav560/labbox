@@ -18,7 +18,7 @@ import LessonPanel from "../lesson/LessonPanel";
 import StepCard, { NO_PREDICT } from "../lesson/StepCard";
 import TutorBox from "../lesson/TutorBox";
 import { labBrand } from "../brand";
-import { MODEL_PREFIX, monaco } from "../monaco";
+import { MODEL_PREFIX, modelUri, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import { useStats } from "../stats";
 import { useTextSizes } from "../textSize";
@@ -367,6 +367,21 @@ export default function LabPage() {
     timers.current.set(path, window.setTimeout(() => save(path), AUTOSAVE_MS));
   }
 
+  // Switching chapters opens that chapter's code (in VS Code through the backend, in Lite here).
+  const focusedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (status !== "running" || !chapterId) return;
+    const key = `${chapterId}/${useIde}`;
+    if (focusedRef.current === key) return;
+    focusedRef.current = key;
+    api.chapterFocus(labId, chapterId, useIde).then((f) => {
+      if (!f.path || useIde) return;
+      const path = f.path;
+      openFile(path).then(() => revealLine(path, f.line));
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, chapterId, useIde, labId]);
+
   async function openFile(path: string) {
     if (tabsRef.current.some((t) => t.path === path)) {
       setActivePath(path);
@@ -638,13 +653,28 @@ export default function LabPage() {
                 {checking ? <><span className="spinner" /> Checking...</> : "Check"}
               </button>
               {activeTask && activeTask.hint_count > 0 && !activeTask.passed && (
-                <button className="btn btn-ghost" onClick={footerHint} disabled={hintBusy || activeHintsLeft === 0}>
-                  {activeHintsLeft > 0 ? `Hint (${activeHintsLeft} left)` : "No hints left"}
+                <button
+                  className="btn btn-ghost btn-icon"
+                  onClick={footerHint}
+                  disabled={hintBusy || activeHintsLeft === 0}
+                  aria-label={activeHintsLeft > 0 ? `Hint (${activeHintsLeft} left)` : "No hints left"}
+                  title={activeHintsLeft > 0 ? `Hint (${activeHintsLeft} left)` : "No hints left"}
+                >
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" />
+                  </svg>
+                  {activeHintsLeft > 0 && <span className="btn-badge">{activeHintsLeft}</span>}
                 </button>
               )}
               {activeTask && (
-                <button className="btn btn-ghost btn-ask-ai" onClick={() => setTutorOpen((o) => !o)} aria-expanded={tutorOpen}>
-                  {activeTask.passed ? "✦ Review" : "✦ Ask AI"}
+                <button
+                  className="btn btn-ghost btn-icon btn-ask-ai"
+                  onClick={() => setTutorOpen((o) => !o)}
+                  aria-expanded={tutorOpen}
+                  aria-label={activeTask.passed ? "Review with the tutor" : "Ask AI"}
+                  title={activeTask.passed ? "Review with the tutor" : "Ask the AI tutor"}
+                >
+                  <span aria-hidden="true">✦</span>
                 </button>
               )}
             </div>
@@ -728,4 +758,15 @@ export default function LabPage() {
       </main>
     </div>
   );
+}
+
+/** Put the Lite editor's cursor on a line, near the top, once the file's editor exists. */
+function revealLine(path: string, line: number, tries = 0) {
+  const ed = monaco.editor.getEditors().find((e) => e.getModel()?.uri.toString() === modelUri(path));
+  if (!ed) {
+    if (tries < 30) setTimeout(() => revealLine(path, line, tries + 1), 100);
+    return;
+  }
+  ed.setPosition({ lineNumber: line, column: 1 });
+  ed.revealLineNearTop(line);
 }

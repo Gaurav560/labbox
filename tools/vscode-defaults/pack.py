@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "backend"))
 from app.ide import machine_settings  # noqa: E402  (font sizes follow the learner, see ide.SIZED)
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 # "LabBox Dark": the app's GitHub greys around the code, GitHub's code colours, a green accent.
 BG, SIDE, BORDER, TEXT, MUTED, GREEN = "#111512", "#0d100e", "#222824", "#e6edf3", "#9ba39d", "#3fb950"
@@ -71,8 +71,10 @@ THEME = {
 }
 PACKAGE = {
     "name": "labbox-defaults", "displayName": "LabBox defaults", "publisher": "labbox", "version": VERSION,
-    "description": "The LabBox Dark theme and default settings for VS Code in LabBox labs: no workspace trust prompt, no Copilot chat, lab fonts, auto-save.",
+    "description": "Opens each chapter's code, plus the LabBox Dark theme and default settings for VS Code in LabBox labs: no workspace trust prompt, no Copilot chat, lab fonts, auto-save.",
     "engines": {"vscode": "^1.80.0"}, "categories": ["Other"],
+    # extension.js runs next to the files (in the machine): it opens a chapter's code on request.
+    "main": "./extension.js", "activationEvents": ["onStartupFinished"], "extensionKind": ["workspace"],
     "contributes": {
         "configurationDefaults": machine_settings(),
         "themes": [{"label": "LabBox Dark", "uiTheme": "vs-dark", "path": "./themes/labbox-dark.json"}],
@@ -92,7 +94,7 @@ MANIFEST = f"""<?xml version="1.0" encoding="utf-8"?>
 </PackageManifest>
 """
 TYPES = """<?xml version="1.0" encoding="utf-8"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension=".json" ContentType="application/json"/><Default Extension=".vsixmanifest" ContentType="text/xml"/></Types>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension=".json" ContentType="application/json"/><Default Extension=".vsixmanifest" ContentType="text/xml"/><Default Extension=".js" ContentType="application/javascript"/></Types>
 """
 
 with zipfile.ZipFile(sys.argv[1], "w", zipfile.ZIP_DEFLATED) as z:
@@ -100,4 +102,5 @@ with zipfile.ZipFile(sys.argv[1], "w", zipfile.ZIP_DEFLATED) as z:
     z.writestr("extension.vsixmanifest", MANIFEST)
     z.writestr("extension/package.json", json.dumps(PACKAGE, indent=2))
     z.writestr("extension/themes/labbox-dark.json", json.dumps(THEME, indent=2))
+    z.write(Path(__file__).with_name("extension.js"), "extension/extension.js")
 print("packed", sys.argv[1])

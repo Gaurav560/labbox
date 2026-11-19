@@ -6,7 +6,12 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from .. import containers, progress, services
+import json
+import time
+from pathlib import Path
+
+from .. import containers, ide, progress, services
+from ..focus import chapter_focus
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
@@ -185,6 +190,45 @@ def outline(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)
     lab = get_lab(lab_id)
     lab.chapter(chapter_id)
     return Outline(steps=[OutlineStep(type=s.type, title=s.title, task=s.task) for s in lab.chapter_steps(chapter_id)])
+
+
+class FocusIn(BaseModel):
+    ide: bool = False  # also open it in the learner's running VS Code
+
+
+class FocusOut(BaseModel):
+    path: str | None = None
+    line: int = 1
+
+
+@router.post("/{lab_id}/chapters/{chapter_id}/focus", response_model=FocusOut)
+async def chapter_focus_route(
+    lab_id: str, chapter_id: str, body: FocusIn | None = None,
+    user: User = Depends(get_current_user), session: Session = Depends(get_session),
+) -> FocusOut:
+    """The file and line this chapter is about. With ide=true, VS Code opens it too (the
+    labbox-defaults extension watches /tmp/labbox-open.json in the machine)."""
+    lab = get_lab(lab_id)
+    ch = lab.chapter(chapter_id)
+    ws = containers.get_workspace(session, user, lab)
+    hit = await asyncio.to_thread(chapter_focus, lab, ch, Path(ws.volume_path))
+    if not hit:
+        return FocusOut()
+    path, line = hit
+    if body and body.ide and ide.available():
+        await asyncio.to_thread(_tell_ide, ws.container_name, path, line)
+    return FocusOut(path=path, line=line)
+
+
+def _tell_ide(container: str, path: str, line: int) -> None:
+    request = json.dumps({"path": path, "line": line, "at": time.time()})
+    try:
+        containers.client().containers.get(container).exec_run(
+            ["sh", "-c", 'printf "%s" "$LB_OPEN" > /tmp/labbox-open.json'],
+            user=containers.LEARNER_USER, environment={"LB_OPEN": request},
+        )
+    except Exception:  # the machine is stopped or gone: the Lite editor still gets the answer
+        pass
 
 
 class ServiceStatus(BaseModel):
