@@ -1,5 +1,16 @@
 # Changelog
 
+## A VS Code-style editor
+
+- Code at 15px JetBrains Mono with ligatures and a 24px line height, GitHub's code colours (red
+  keywords, blue strings and numbers, orange types, purple built-ins, italic comments) on the app's
+  greys, and VS Code's gold, purple and blue bracket pairs.
+- Minimap, indent and bracket guides, sticky scroll, smooth cursor and scrolling, Ctrl+wheel zoom.
+- Tabs with file-type icons, a green top line on the active tab and VS Code's dirty dot; the same
+  icons in the file tree; a breadcrumb path above the code; a status bar with save state, line and
+  column (and selection size), spaces, encoding, language and the AI on/off switch.
+- A friendlier empty state with the shortcuts when no file is open.
+
 ## The app in GitHub greys
 
 - The app-wide theme moves from the old blue (`#7c9cff`) to the GitHub greys of the home and login

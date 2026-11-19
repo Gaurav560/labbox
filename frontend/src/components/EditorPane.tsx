@@ -6,6 +6,7 @@ import { registerCompletions } from "../completions";
 import { usePersistentState } from "../persist";
 import { languageFor, modelUri, monaco } from "../monaco";
 import { useTheme } from "../theme";
+import FileIcon, { languageName } from "./FileIcon";
 
 export interface Tab {
   path: string;
@@ -48,61 +49,89 @@ export default function EditorPane({ labId, tabs, activePath, onSelect, onClose,
   const saveRef = useRef(onSave);
   saveRef.current = onSave;
 
+  const [cursor, setCursor] = useState({ line: 1, col: 1, selected: 0 });
+
   const onMount: OnMount = (editor) => {
     registerCompletions();
     registerAiCompletion();
+    editor.onDidChangeCursorSelection((e) => {
+      const sel = e.selection;
+      const selected = editor.getModel()?.getValueInRange(sel).length ?? 0;
+      setCursor({ line: sel.positionLineNumber, col: sel.positionColumn, selected });
+    });
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       if (activeRef.current) saveRef.current(activeRef.current);
     });
   };
 
+  const language = active ? languageFor(active.path) : "plaintext";
+  const crumbs = active ? ["workspace", ...active.path.split("/")] : [];
+
   return (
     <div className="editor-pane">
-      <div className="tabs">
-        {tabs.map((t) => (
-          <div key={t.path} className={`tab ${t.path === activePath ? "active" : ""}`} onClick={() => onSelect(t.path)} title={t.path}>
-            <span>{t.path.split("/").pop()}</span>
-            {t.content !== t.saved && <span className="dirty-dot">●</span>}
-            <button
-              className="tab-close"
-              aria-label={`Close ${t.path}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose(t.path);
-              }}
-            >
-              ×
-            </button>
-          </div>
-        ))}
-        <span className="spacer" />
-        {active && <span className="editor-hint" title="Suggestions also pop up while you type">Ctrl+Space: suggestions</span>}
-        {active && aiAvailable && (
-          <button
-            className={`ai-toggle ${aiOn ? "on" : ""}`}
-            onClick={() => setAiOn((v) => !v)}
-            aria-pressed={aiOn}
-            title={aiOn ? "AI completion is on: grey suggestions appear as you pause, Tab accepts. Click to turn off." : "AI completion is off. Click to turn on."}
-          >
-            ✦ AI {aiOn ? "on" : "off"}
-          </button>
-        )}
-        <span className={`save-state ${active?.status === "error" ? "fail" : ""}`}>{saveLabel(active)}</span>
+      <div className="tabs" role="tablist" aria-label="Open files">
+        {tabs.map((t) => {
+          const name = t.path.split("/").pop() ?? t.path;
+          const dirty = t.content !== t.saved;
+          return (
+            <div key={t.path} role="tab" aria-selected={t.path === activePath} className={`tab ${t.path === activePath ? "active" : ""} ${dirty ? "dirty" : ""}`} onClick={() => onSelect(t.path)} title={t.path}>
+              <FileIcon name={name} />
+              <span className="tab-name">{name}</span>
+              <button
+                className="tab-close"
+                aria-label={`Close ${t.path}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose(t.path);
+                }}
+              >
+                <span className="tab-dot" aria-hidden="true">●</span>
+                <span className="tab-x" aria-hidden="true">×</span>
+              </button>
+            </div>
+          );
+        })}
       </div>
+      {active && (
+        <nav className="breadcrumbs" aria-label="Breadcrumbs">
+          {crumbs.map((c, i) => (
+            <span key={i} className="crumb">
+              {i === crumbs.length - 1 && <FileIcon name={c} />}
+              {c}
+              {i < crumbs.length - 1 && <span className="crumb-sep">›</span>}
+            </span>
+          ))}
+        </nav>
+      )}
       <div className="editor-body">
         {active ? (
           <Editor
             path={modelUri(active.path)}
             defaultValue={active.content}
-            language={languageFor(active.path)}
+            language={language}
             theme={theme === "dark" ? "labbox-dark" : "labbox-light"}
             onMount={onMount}
             onChange={(v) => onChange(active.path, v ?? "")}
             options={{
               automaticLayout: true,
               fontFamily: '"JetBrains Mono", ui-monospace, monospace',
-              fontSize: 14,
-              minimap: { enabled: false },
+              fontSize: 15,
+              lineHeight: 24,
+              fontLigatures: true,
+              padding: { top: 12, bottom: 12 },
+              lineNumbersMinChars: 3,
+              renderLineHighlight: "all",
+              cursorBlinking: "smooth",
+              cursorSmoothCaretAnimation: "on",
+              smoothScrolling: true,
+              mouseWheelZoom: true,
+              bracketPairColorization: { enabled: true },
+              guides: { bracketPairs: "active", indentation: true, highlightActiveIndentation: true },
+              stickyScroll: { enabled: true },
+              minimap: { enabled: true, renderCharacters: false, maxColumn: 80, showSlider: "mouseover", scale: 1 },
+              scrollbar: { verticalScrollbarSize: 10, horizontalScrollbarSize: 10, useShadows: false },
+              overviewRulerBorder: false,
+              fixedOverflowWidgets: true,
               scrollBeyondLastLine: false,
               tabSize: 4,
               // Completion: language keywords, built-ins and snippets (src/completions.ts), plus
@@ -116,9 +145,34 @@ export default function EditorPane({ labId, tabs, activePath, onSelect, onClose,
             }}
           />
         ) : (
-          <div className="center-fill muted">Open a file from the tree</div>
+          <div className="editor-empty">
+            <div className="editor-empty-logo" aria-hidden="true">{"</>"}</div>
+            <p>Open a file from the tree on the left.</p>
+            <p className="muted small-text"><kbd>Ctrl</kbd> + <kbd>S</kbd> save · <kbd>Ctrl</kbd> + <kbd>Space</kbd> suggestions · <kbd>Tab</kbd> accepts an AI suggestion</p>
+          </div>
         )}
       </div>
+      {active && (
+        <footer className="editor-status" aria-label="Editor status">
+          <span className={`status-item ${active.status === "error" ? "fail" : ""}`}>{saveLabel(active)}</span>
+          <span className="spacer" />
+          <span className="status-item">Ln {cursor.line}, Col {cursor.col}{cursor.selected ? ` (${cursor.selected} selected)` : ""}</span>
+          <span className="status-item">Spaces: 4</span>
+          <span className="status-item">UTF-8</span>
+          <span className="status-item">{languageName(language)}</span>
+          <span className="status-item" title="Suggestions also pop up while you type">Ctrl+Space</span>
+          {aiAvailable && (
+            <button
+              className={`status-item ai-toggle ${aiOn ? "on" : ""}`}
+              onClick={() => setAiOn((v) => !v)}
+              aria-pressed={aiOn}
+              title={aiOn ? "AI completion is on: grey suggestions appear as you pause, Tab accepts. Click to turn off." : "AI completion is off. Click to turn on."}
+            >
+              ✦ AI {aiOn ? "on" : "off"}
+            </button>
+          )}
+        </footer>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, type MouseEvent } from "react";
+import FileIcon from "./FileIcon";
 import type { FileNode } from "../api";
 
 interface Props {
@@ -47,7 +48,7 @@ export default function FileTree(p: Props) {
             onClick={() => (isDir ? toggle(n.path) : (setSelectedDir(parentOf(n.path)), p.onOpen(n.path)))}
             title={n.path}
           >
-            <span className="tree-icon">{isDir ? (open ? "▾" : "▸") : "·"}</span>
+            {isDir ? <span className="tree-icon">{open ? "▾" : "▸"}</span> : <FileIcon name={n.name} />}
             <span className="tree-name">{n.name}</span>
             <span className="tree-actions">
               <button title="Rename" onClick={(e) => stop(e, () => p.onRename(n.path))}>✎</button>
