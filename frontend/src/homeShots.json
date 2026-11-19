@@ -1,5 +1,15 @@
 [
   {
+    "src": "/images/labs/express-api-01-orders-api.webp",
+    "caption": "labbox \u00b7 Express: an order tracking API \u00b7 Ch 1, Where is my tiffin?",
+    "alt": "A LabBox lab, Express: an order tracking API (Ch 1, Where is my tiffin?): the lesson, VS Code and a live terminal"
+  },
+  {
+    "src": "/images/labs/fastapi-first-api-01-menu-api.webp",
+    "caption": "labbox \u00b7 FastAPI: your first API \u00b7 Ch 1, A menu that answers",
+    "alt": "A LabBox lab, FastAPI: your first API (Ch 1, A menu that answers): the lesson, VS Code and a live terminal"
+  },
+  {
     "src": "/images/labs/git-without-fear-02-undo-without-fear.webp",
     "caption": "labbox \u00b7 Git without fear \u00b7 Ch 2, Undo without fear",
     "alt": "A LabBox lab, Git without fear (Ch 2, Undo without fear): the lesson, VS Code and a live terminal"
@@ -8,6 +18,11 @@
     "src": "/images/labs/go-basics-01-slices-and-errors.webp",
     "caption": "labbox \u00b7 Go basics \u00b7 Ch 1, Rupees, paise and bad input",
     "alt": "A LabBox lab, Go basics (Ch 1, Rupees, paise and bad input): the lesson, VS Code and a live terminal"
+  },
+  {
+    "src": "/images/labs/java-basics-01-methods.webp",
+    "caption": "labbox \u00b7 Java Basics \u00b7 Ch 1, Your first methods",
+    "alt": "A LabBox lab, Java Basics (Ch 1, Your first methods): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/java-collections-01-lists-and-maps.webp",
@@ -43,6 +58,11 @@
     "src": "/images/labs/postgres-transactions-and-locks-02-checkout-frozen.webp",
     "caption": "labbox \u00b7 Postgres: transactions and locks \u00b7 Ch 2, Checkout is frozen",
     "alt": "A LabBox lab, Postgres: transactions and locks (Ch 2, Checkout is frozen): the lesson, VS Code and a live terminal"
+  },
+  {
+    "src": "/images/labs/python-basics-01-functions.webp",
+    "caption": "labbox \u00b7 Python Basics \u00b7 Ch 1, Your first functions",
+    "alt": "A LabBox lab, Python Basics (Ch 1, Your first functions): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/python-collections-01-lists-and-dicts.webp",
@@ -93,6 +113,11 @@
     "src": "/images/labs/redis-in-practice-13-production-capstone.webp",
     "caption": "labbox \u00b7 Redis in practice \u00b7 Ch 13, Capstone: production is slow",
     "alt": "A LabBox lab, Redis in practice (Ch 13, Capstone: production is slow): the lesson, VS Code and a live terminal"
+  },
+  {
+    "src": "/images/labs/spring-boot-first-api-01-first-endpoints.webp",
+    "caption": "labbox \u00b7 Spring Boot: your first API \u00b7 Ch 1, Your first endpoints",
+    "alt": "A LabBox lab, Spring Boot: your first API (Ch 1, Your first endpoints): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/sql-from-zero-01-select-and-where.webp",

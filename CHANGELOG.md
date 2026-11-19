@@ -1,5 +1,13 @@
 # Changelog
 
+## Home: fresh lab screenshots, now from all 16 labs
+
+- All shots retaken with the current lab page (task stepper, icon Hint and Ask AI, Aa menu), and five
+  labs added: Spring Boot, Express, FastAPI, Java basics and Python basics. 26 shots in all.
+- `tools/home-shots.mjs`: an optional wait per shot (Spring Boot needs its build to finish), and it
+  types the file name into VS Code's Quick Open box itself, never into the editor that the chapter
+  now opens on its own.
+
 ## Home: the screenshot frame glows in the lab's own colour
 
 - The glow and border around the "Inside a lab" screenshot follow the lab shown: Redis red, Spring
