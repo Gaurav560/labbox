@@ -1,5 +1,15 @@
 # Changelog
 
+## Tutor: easy to find, harder to trick
+
+- "✦ Ask AI" in the lab footer next to Check and Hint, on every step, for the current task (it turns
+  into "✦ Review" once the task passes). The tutor is available before the first Check too.
+- Replies render as formatted text. Code blocks are removed from tutor replies (the tutor gives
+  nudges, not code); a reply with almost nothing left becomes the safe nudge.
+- The leak guard now compares words (quotes and punctuation do not hide a copied line) and also
+  covers the commands in `solution/apply.sh`, minus anything the lesson text already shows. Found
+  live: the local model handed out the full `HSET menu ...` command; that reply is now blocked.
+
 ## Phase E: the ai lab template
 
 - `scripts/labbox new-lab <id> --template ai`: a Python lab with `llm.enabled`, `FROM labbox/ai-python`,

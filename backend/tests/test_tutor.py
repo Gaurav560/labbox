@@ -80,7 +80,7 @@ def test_tutor_never_leaks_the_solution_across_20_tasks(client: TestClient, monk
         assert r.status_code == 200, (lab_id, task, r.text)
         reply = r.json()["reply"]
         assert r.json()["blocked"] is True, (lab_id, task)
-        assert not any(line in tutor._key(reply) for line in lines), (lab_id, task, reply)
+        assert not any(line in tutor._words(reply) for line in lines), (lab_id, task, reply)
 
 
 def test_tutor_reply_with_whitespace_changes_still_blocked(client: TestClient, monkeypatch):
@@ -88,6 +88,27 @@ def test_tutor_reply_with_whitespace_changes_still_blocked(client: TestClient, m
     line = sorted(tutor.solution_lines(labs.get_lab(LAB)))[0]
     monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: "Try:   " + line.replace(" ", "    "))
     assert client.post(url(LAB, CH, TASK), headers=h, json={}).json()["blocked"] is True
+
+
+def test_commands_from_apply_sh_are_caught_without_quotes(client: TestClient, monkeypatch):
+    """A real reply from a small model: the redis-cli command that solves the task, unquoted."""
+    h, _ = login(client)
+    reply = "Try running:\n```bash\nredis-cli HSET menu filter coffee 30 cold coffee 40 vada pav 25\n```"
+    monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: reply)
+    r = client.post(url("redis-in-practice", "01-redis-cli", "menu_hash"), headers=h, json={})
+    assert r.json()["blocked"] is True and "HSET menu" not in r.json()["reply"]
+
+
+def test_tutor_replies_never_carry_code_blocks(client: TestClient, monkeypatch):
+    h, _ = login(client)
+    monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: "Think about hashes: one key, many fields.\n```python\nr.hset('menu', mapping=PRICES)\n```\nWhich command writes several fields at once?")
+    reply = client.post(url("redis-in-practice", "01-redis-cli", "menu_hash"), headers=h, json={}).json()["reply"]
+    assert "```" not in reply and "hset(" not in reply and "Which command writes several fields" in reply
+
+
+def test_lines_the_lesson_already_shows_are_not_secrets():
+    shown = tutor._words(labs.get_lab("redis-in-practice").chapter_markdown("02-cache-and-limit"))
+    assert all(line not in shown for line in tutor.solution_lines(labs.get_lab("redis-in-practice")))
 
 
 def test_review_needs_a_passed_task(client: TestClient, monkeypatch):

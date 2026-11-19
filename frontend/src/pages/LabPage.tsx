@@ -15,6 +15,7 @@ import TerminalPane, { type TerminalHandle } from "../components/TerminalPane";
 import { useToast } from "../components/Toasts";
 import LessonPanel from "../lesson/LessonPanel";
 import StepCard, { NO_PREDICT } from "../lesson/StepCard";
+import TutorBox from "../lesson/TutorBox";
 import { MODEL_PREFIX, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import { useStats } from "../stats";
@@ -494,6 +495,7 @@ export default function LabPage() {
   const tasks = chapter?.tasks ?? [];
   const activeTask = tasks.find((t) => t.id === current?.task) ?? tasks.find((t) => !t.passed);
   const activeHintsLeft = activeTask ? activeTask.hint_count - (hints[activeTask.id]?.length ?? 0) : 0;
+  const [tutorOpen, setTutorOpen] = useState(false);
 
   const stepOfTask = (taskId: string) => steps?.findIndex((s) => s.task === taskId) ?? -1;
 
@@ -579,6 +581,9 @@ export default function LabPage() {
                 }}
               />
             )}
+            {tutorOpen && activeTask && (
+              <TutorBox key={`${chapterId}/${activeTask.id}/${activeTask.passed}`} labId={labId} chapterId={chapterId} task={activeTask} startOpen onClose={() => setTutorOpen(false)} />
+            )}
             <div className="footer-actions">
               <button className="btn btn-primary btn-check" onClick={runCheck} disabled={checking || !chapterId || setupState === "running"}>
                 {checking ? <><span className="spinner" /> Checking...</> : "Check"}
@@ -586,6 +591,11 @@ export default function LabPage() {
               {activeTask && activeTask.hint_count > 0 && !activeTask.passed && (
                 <button className="btn btn-ghost" onClick={footerHint} disabled={hintBusy || activeHintsLeft === 0}>
                   {activeHintsLeft > 0 ? `Hint (${activeHintsLeft} left)` : "No hints left"}
+                </button>
+              )}
+              {activeTask && (
+                <button className="btn btn-ghost btn-ask-ai" onClick={() => setTutorOpen((o) => !o)} aria-expanded={tutorOpen}>
+                  {activeTask.passed ? "✦ Review" : "✦ Ask AI"}
                 </button>
               )}
             </div>

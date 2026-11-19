@@ -26,6 +26,7 @@ TUTOR_RULES = """You are the LabBox tutor, helping a learner who is stuck on one
 Rules, all of them, always:
 - Be Socratic. Point to ONE thing to look at, then ask ONE question that helps them find the fix.
 - Never write the solution, never write the fixed code, never give a complete command or line that solves the task.
+- Do not write code blocks or commands. Name the concept or the command, never the full line with its values.
 - At most 120 words. Plain, friendly English. No headings.
 - If their code has a small bug, name where it is (file and what to look at), not the fix.
 """
@@ -46,29 +47,56 @@ def _key(line: str) -> str:
     return re.sub(r"\s+", " ", line.strip())
 
 
+def _words(text: str) -> str:
+    """Lower-case words only: quotes, brackets and punctuation do not hide a copied line."""
+    return " ".join(re.findall(r"[a-z0-9_.:]+", text.lower()))
+
+
+# Shell wrappers in solution/apply.sh that are not part of what the learner would type.
+_WRAPPERS = re.compile(r'^\s*("\$\{R\[@\]\}"|redis-cli|psql( -[a-zA-Z]+( [^ ]+)?)*|git)\s+')
+_SHELL_NOISE = ("set ", "cd ", "for ", "done", "exit", "cat ", "sleep", "if ", "fi", "then", "export ", "R=(")
+
+
 def solution_lines(lab: LabConfig) -> set[str]:
-    """Meaningful solution lines that are not in the starter (same rule as the hint check in validate)."""
+    """What the tutor must never write: meaningful solution lines (code files and the commands in
+    apply.sh), minus anything the starter or the lesson text already shows. Compared as words."""
     sol, starter = lab.root / "solution", lab.starter_dir
+    shown = " ".join(_words(lab.chapter_markdown(c.id)) for c in lab.chapters)
     out: set[str] = set()
     for f in sol.rglob("*") if sol.is_dir() else []:
-        if not f.is_file() or f.suffix in SKIP_SUFFIXES or f.name == "apply.sh":
+        if not f.is_file() or f.suffix in SKIP_SUFFIXES:
             continue
         try:
             text = f.read_text(encoding="utf-8")
         except (UnicodeDecodeError, OSError):
             continue
         old = starter / f.relative_to(sol)
-        before = {_key(x) for x in old.read_text(encoding="utf-8").splitlines()} if old.is_file() else set()
+        before = {_words(x) for x in old.read_text(encoding="utf-8").splitlines()} if old.is_file() else set()
         for ln in text.splitlines():
             k = _key(ln)
-            if len(k) >= 10 and k not in before and not k.startswith(("#", "//", "--", "import ", "package ", "from ")):
-                out.add(k)
+            if f.name == "apply.sh":
+                if not k or k.startswith(_SHELL_NOISE) or k.startswith("#"):
+                    continue
+                k = _WRAPPERS.sub("", k).split(" >")[0]
+            if len(k) < 10 or k.startswith(("#", "//", "--", "import ", "package ", "from ")):
+                continue
+            w = _words(k)
+            if len(w.split()) >= 3 and w not in before and w not in shown:
+                out.add(w)
     return out
 
 
 def leaks(reply: str, lab: LabConfig) -> bool:
-    text = _key(reply)
+    text = _words(reply)
     return any(line in text for line in solution_lines(lab))
+
+
+_FENCE = re.compile(r"```.*?(```|$)", re.S)
+
+
+def strip_code(reply: str) -> str:
+    """The tutor gives nudges, not code: small models write code blocks anyway, so they are removed."""
+    return re.sub(r"\n{3,}", "\n\n", _FENCE.sub("", reply)).strip()
 
 
 def learner_files(lab: LabConfig, ws: Workspace | None) -> str:
@@ -132,8 +160,8 @@ async def ask(session: Session, user_id: int, lab: LabConfig, chapter_id: str, t
         f"Their files:\n{learner_files(lab, ws)}\n\n"
         f"The learner asks: {question.strip() or 'I am stuck. What should I look at?'}"
     )
-    reply = await _complete(user_id, lab, TUTOR_RULES, context, "tutor")
-    if leaks(reply, lab):
+    reply = strip_code(await _complete(user_id, lab, TUTOR_RULES, context, "tutor"))
+    if leaks(reply, lab) or len(_words(reply).split()) < 6:
         return TutorReply(reply=_safe_nudge(lab, chapter_id, task_id, used), blocked=True, tokens_used_today=llm_gateway.tokens_used_today(user_id))
     return TutorReply(reply=reply, tokens_used_today=llm_gateway.tokens_used_today(user_id))
 

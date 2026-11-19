@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { api, ApiError, type Task, type TutorReply } from "../api";
+import LessonMarkdown from "./LessonMarkdown";
 
-// The AI tutor under a task: "Ask the tutor" once a check has failed, "Review my code" once it passes.
+// The AI tutor for a task: "Ask the tutor" until it passes, then "Review my code".
 // Both use the learner's daily AI budget; the tutor nudges and asks, it never hands over the solution.
-export default function TutorBox({ labId, chapterId, task }: { labId: string; chapterId: string; task: Task }) {
-  const [open, setOpen] = useState(false);
+export default function TutorBox({ labId, chapterId, task, startOpen = false, onClose }: {
+  labId: string; chapterId: string; task: Task; startOpen?: boolean; onClose?: () => void;
+}) {
+  const [open, setOpen] = useState(startOpen);
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
   const [answer, setAnswer] = useState<TutorReply | null>(null);
   const [error, setError] = useState<string | null>(null);
   const review = task.passed === true;
-  if (task.passed === null) return null; // nothing to talk about before the first check
 
   const run = async () => {
     setBusy(true);
@@ -36,13 +38,14 @@ export default function TutorBox({ labId, chapterId, task }: { labId: string; ch
     <div className="tutor" aria-live="polite">
       <div className="tutor-head">
         <strong>{review ? "Code review" : "Tutor"}</strong>
+        <span className="tutor-task">{task.title}</span>
         <span className="muted small-text">{review ? "Like a senior engineer's PR review. No XP either way." : "Nudges and questions, never the answer."}</span>
         <span className="spacer" />
-        <button className="btn btn-small btn-ghost" onClick={() => setOpen(false)} aria-label="Close the tutor">✕</button>
+        <button className="btn btn-small btn-ghost" onClick={() => { setOpen(false); onClose?.(); }} aria-label="Close the tutor">✕</button>
       </div>
       {answer && (
         <div className={`tutor-reply ${answer.blocked ? "tutor-blocked" : ""}`}>
-          {answer.reply}
+          <LessonMarkdown markdown={answer.reply} />
           <div className="muted small-text tutor-meta">AI tokens used today: {answer.tokens_used_today.toLocaleString()}</div>
         </div>
       )}
