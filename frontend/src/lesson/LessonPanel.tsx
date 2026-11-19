@@ -19,6 +19,7 @@ const DOT_LABEL: Record<Step["type"], string> = {
   incident: "Incident",
   recap: "Recap",
   "deep-dive": "Go deeper",
+  design: "Design review",
 };
 
 export default function LessonPanel({ steps, current, visited, onGo, children }: Props) {

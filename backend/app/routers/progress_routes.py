@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import containers, engagement, lab_setup, progress, tutor
+from .. import containers, design, engagement, lab_setup, progress, tutor
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import LabConfig, get_lab
@@ -19,6 +19,7 @@ class ChapterProgressOut(BaseModel):
     hints: dict[str, list[str]]  # task id -> hints revealed so far
     predicts: dict[int, progress.PredictState] = {}  # step index -> attempts so far
     xp_earned: int = 0  # in this chapter, for the recap card
+    designs: dict[int, design.DesignAttempt] = {}  # step index -> last graded design attempt
 
 
 class PredictBody(BaseModel):
@@ -28,6 +29,11 @@ class PredictBody(BaseModel):
 
 class StepBody(BaseModel):
     current_step: int = Field(ge=0, le=1000)
+
+
+class DesignBody(BaseModel):
+    step: int = Field(ge=0)
+    answers: dict[str, str] = Field(max_length=5)
 
 
 class TutorBody(BaseModel):
@@ -51,6 +57,7 @@ def _out(session: Session, user_id: int, lab: LabConfig, chapter_id: str) -> Cha
         hints={t.id: t.hints[: used.get(t.id, 0)] for t in tasks if used.get(t.id, 0)},
         predicts=progress.predict_states(session, user_id, lab, chapter_id),
         xp_earned=engagement.chapter_xp(session, user_id, lab.id, chapter_id),
+        designs=design.latest(session, user_id, lab, chapter_id),
     )
 
 
@@ -142,3 +149,14 @@ async def review_code(
     lab.task(chapter_id, task_id)
     ws = containers.get_workspace(session, user, lab)
     return await tutor.review(session, user.id, lab, chapter_id, task_id, ws)
+
+
+@router.post("/design", response_model=design.DesignResult)
+async def grade_design(
+    lab_id: str, chapter_id: str, body: DesignBody, user: User = Depends(get_current_user), session: Session = Depends(get_session)
+) -> design.DesignResult:
+    """Grade a design step's written answers against the lab's rubric (uses the daily AI budget)."""
+    assert user.id is not None
+    lab = get_lab(lab_id)
+    lab.chapter(chapter_id)
+    return await design.grade(session, user.id, lab, chapter_id, body.step, body.answers)

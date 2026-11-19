@@ -1034,3 +1034,30 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 :root[data-theme="light"] .lesson-watermark::after { opacity: 0.07; }
 :root[data-theme="light"] .lesson-watermark::before { background: radial-gradient(closest-side, color-mix(in srgb, var(--wm-color) 12%, transparent), transparent); }
 @media (max-width: 900px) { .lesson-watermark::after { width: 200px; height: 200px; } }
+
+/* Design review steps (system design labs) */
+.design { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-3); }
+.design-score { display: flex; align-items: baseline; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--tint-warn); }
+.design-score.good { background: var(--tint-success); }
+.design-score strong { font: 700 22px var(--font-code); }
+.design-q { display: flex; flex-direction: column; gap: var(--space-2); }
+.design-q-head { display: flex; gap: var(--space-3); align-items: flex-start; }
+.design-q-head > :nth-child(2) { flex: 1; }
+.design-q-head p { margin: 0; font-weight: 600; }
+.design-num { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--chip); font: 700 12px var(--font-code); margin-top: 2px; }
+.design-pts { flex: none; font: 700 13px var(--font-code); padding: 2px 8px; border-radius: 999px; background: var(--tint-warn); color: var(--warn); }
+.design-pts.full { background: var(--tint-success); color: var(--success); }
+.design-pts.none { background: var(--chip); color: var(--muted); }
+.design textarea {
+  width: 100%; resize: vertical; min-height: 92px; padding: var(--space-3); border-radius: 10px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit; font-size: 15px; line-height: 1.6;
+}
+.design textarea:focus { outline: none; border-color: var(--muted); }
+.design-feedback { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; }
+.design-feedback li { display: flex; gap: var(--space-2); align-items: baseline; }
+.design-mark { flex: none; width: 16px; text-align: center; }
+.design-feedback li.full .design-mark { color: var(--success); }
+.design-feedback li.part .design-mark { color: var(--warn); }
+.design-feedback li.none .design-mark { color: var(--muted); }
+.design-error { color: var(--danger); margin: 0; }
+.design-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }

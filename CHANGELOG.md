@@ -1,5 +1,19 @@
 # Changelog
 
+## Phase G, step 3: design review steps, graded against a rubric
+
+- New step type `design`: 1 to 5 short written questions (`:::ask{id=...}` blocks), with a rubric in
+  `tests/rubric.yaml` that never reaches the browser. The tutor model grades each answer, asking for
+  JSON; replies are matched to the rubric and clamped (a model cannot give more points than a
+  criterion has, or invent criteria), a bad reply is retried once, and if grading still fails the
+  learner sees "could not grade right now" instead of a made-up score. Answers under 20 characters
+  are scored 0 without a model call.
+- Every attempt is stored in the new `design_answer` table (migration 0007, additive) and the last
+  one comes back with the chapter progress. +30 XP once, at half the points; never blocks completion.
+- `POST /api/labs/{lab}/chapters/{chapter}/design`; the lab page shows the questions, a score per
+  question and a line of feedback per rubric point, and lets the learner improve and resend.
+- `labbox validate` refuses a design question without criteria. Tests with a scripted fake model.
+
 ## Phase G, step 2: gauges for check metrics
 
 - `@@METRIC` values are now gauges in the results drawer: a bar for the value and a tick for the

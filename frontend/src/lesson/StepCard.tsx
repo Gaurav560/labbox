@@ -1,10 +1,11 @@
-import type { PredictState, Step, Task } from "../api";
+import type { DesignAttempt, PredictState, Step, Task } from "../api";
 import { useStats } from "../stats";
 import ChoiceQuestion from "./ChoiceQuestion";
 import Countdown from "./Countdown";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
 import TutorBox from "./TutorBox";
+import DesignStep from "./DesignStep";
 
 export const NO_PREDICT: PredictState = { wrong: [], solved: false, answer: null, explain: null };
 
@@ -18,11 +19,15 @@ const TYPE_LABEL: Record<Step["type"], string> = {
   incident: "Incident",
   recap: "Recap",
   "deep-dive": "Go deeper",
+  design: "Design review",
 };
 
 interface Props {
   labId: string;
   chapterId: string;
+  stepIndex: number;
+  design: DesignAttempt | undefined;
+  onDesignGraded: (attempt: DesignAttempt) => void;
   step: Step;
   task: Task | undefined;
   hints: string[];
@@ -80,6 +85,18 @@ export default function StepCard(p: Props) {
           busy={p.predictBusy}
           onPick={p.onPredict}
           onRun={p.onRun}
+        />
+      )}
+
+      {step.type === "design" && step.questions && (
+        <DesignStep
+          key={`${p.chapterId}/${p.stepIndex}`}
+          labId={p.labId}
+          chapterId={p.chapterId}
+          stepIndex={p.stepIndex}
+          questions={step.questions}
+          attempt={p.design}
+          onGraded={p.onDesignGraded}
         />
       )}
 

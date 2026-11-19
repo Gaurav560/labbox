@@ -12,7 +12,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-StepType = Literal["story", "concept", "example", "predict", "try", "task", "incident", "recap", "deep-dive"]
+StepType = Literal["story", "concept", "example", "predict", "try", "task", "incident", "recap", "deep-dive", "design"]
 STEP_TYPES: tuple[str, ...] = StepType.__args__  # type: ignore[attr-defined]
 
 _FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
@@ -37,6 +37,11 @@ class Predict(BaseModel):
     explain: str = ""  # markdown
 
 
+class DesignQuestion(BaseModel):
+    id: str
+    text: str  # markdown
+
+
 class Step(BaseModel):
     type: StepType
     title: str | None = None
@@ -44,6 +49,7 @@ class Step(BaseModel):
     minutes: int | None = None  # incident countdown
     markdown: str  # body, rendered by the frontend
     predict: Predict | None = None
+    questions: list[DesignQuestion] = []  # design steps: short written answers, graded with tests/rubric.yaml
 
 
 def _closes_fence(line: str, fence: str) -> bool:
@@ -145,6 +151,26 @@ def _parse_predict(lines: list[str]) -> tuple[Predict, list[str]]:
     return Predict(question=question, options=options, answer=answers[0], explain=explain or ""), remaining
 
 
+def _parse_design(lines: list[str]) -> tuple[list[DesignQuestion], list[str]]:
+    """`:::ask{id=redis_down}` blocks are the questions; everything else is the step's intro."""
+    questions: list[DesignQuestion] = []
+    rest = lines
+    while True:
+        idx = next((i for i, l in enumerate(rest) if (m := _OPEN_RE.match(l)) and m.group(2) == "ask"), None)
+        if idx is None:
+            break
+        qid = parse_attrs(_OPEN_RE.match(rest[idx]).group(3)).get("id", "")  # type: ignore[union-attr]
+        text, rest = _take_directive(rest, "ask")
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", qid):
+            raise LessonError(f"design question needs an id like id=redis_down (got {qid!r})")
+        if any(q.id == qid for q in questions):
+            raise LessonError(f"design question id {qid!r} is used twice")
+        questions.append(DesignQuestion(id=qid, text=text or ""))
+    if not 1 <= len(questions) <= 5:
+        raise LessonError("design step needs 1 to 5 :::ask{id=...} questions")
+    return questions, rest
+
+
 def _int_or_none(v: str | None) -> int | None:
     return int(v) if v and v.isdigit() else None
 
@@ -166,8 +192,11 @@ def parse_steps(markdown: str) -> list[Step]:
         if step_type not in STEP_TYPES:
             raise LessonError(f"unknown step type {step_type!r} (use one of: {', '.join(STEP_TYPES)})")
         predict = None
+        questions: list[DesignQuestion] = []
         if step_type == "predict":
             predict, lines = _parse_predict(lines)
+        if step_type == "design":
+            questions, lines = _parse_design(lines)
         if step_type in ("task", "incident") and not attrs.get("task"):
             raise LessonError(f"{step_type} step needs a task=... attribute")
         steps.append(
@@ -178,6 +207,7 @@ def parse_steps(markdown: str) -> list[Step]:
                 minutes=_int_or_none(attrs.get("minutes")),
                 markdown="\n".join(lines).strip(),
                 predict=predict,
+                questions=questions,
             )
         )
     return steps
@@ -199,6 +229,7 @@ class PublicStep(BaseModel):
     minutes: int | None = None
     markdown: str
     predict: PublicPredict | None = None
+    questions: list[DesignQuestion] = []
 
 
 def public_step(step: Step) -> PublicStep:
@@ -209,6 +240,7 @@ def public_step(step: Step) -> PublicStep:
         minutes=step.minutes,
         markdown=step.markdown,
         predict=PublicPredict(question=step.predict.question, options=step.predict.options) if step.predict else None,
+        questions=step.questions,
     )
 
 

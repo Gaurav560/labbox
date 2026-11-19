@@ -171,6 +171,10 @@ def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | 
     for where in _em_dashes(folder):
         rep.errors.append(f"{where}: em dash (use a comma, colon or full stop instead)")
 
+    from app import design
+
+    rep.errors.extend(design.check_rubric(lab))  # every design question needs criteria in tests/rubric.yaml
+
     solution = folder / "solution"
     if not solution.is_dir() or not any(solution.iterdir()):
         rep.errors.append("solution/ is missing or empty (test-lab and CI need it)")

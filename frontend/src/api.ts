@@ -66,12 +66,17 @@ export interface Task { id: string; title: string; passed: boolean | null; xp: n
 export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; has_setup: boolean }
 export interface PreviewPort { name: string; port: number; path: string }
 export interface LabDetail extends LabInfo { preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
-export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive";
+export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive" | "design";
 // The answer and explanation are not sent with the chapter; they come back once answered correctly.
 export interface Predict { question: string; options: { text: string }[] }
 export interface XpAward { kind: string; amount: number; label: string }
 export interface PredictState { wrong: number[]; solved: boolean; answer: number | null; explain: string | null; xp_awarded?: XpAward[] }
-export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null }
+export interface DesignQuestion { id: string; text: string }
+export interface DesignCriterion { id: string; score: number; max: number; feedback: string }
+export interface DesignQuestionResult { id: string; score: number; max: number; criteria: DesignCriterion[] }
+export interface DesignResult { score: number; max: number; questions: DesignQuestionResult[]; xp_awarded?: XpAward[]; created_at: string }
+export interface DesignAttempt { answers: Record<string, string>; result: DesignResult }
+export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null; questions?: DesignQuestion[] }
 export interface ChapterContent { id: string; title: string; markdown: string; steps: Step[] }
 export interface ChapterProgress {
   current_step: number;
@@ -79,6 +84,7 @@ export interface ChapterProgress {
   hints: Record<string, string[]>;
   predicts: Record<string, PredictState>; // keyed by step index
   xp_earned: number;
+  designs?: Record<string, DesignAttempt>; // keyed by step index: the last graded attempt
 }
 export interface TutorReply { reply: string; blocked: boolean; tokens_used_today: number }
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
@@ -172,6 +178,8 @@ export const api = {
   aiConfig: () => request<{ completion: boolean }>("GET", "/api/ai/config"),
   complete: (labId: string, path: string, prefix: string, suffix: string) =>
     request<{ text: string }>("POST", `/api/labs/${q(labId)}/complete`, { path, prefix, suffix }),
+  gradeDesign: (labId: string, chapterId: string, step: number, answers: Record<string, string>) =>
+    request<DesignResult>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/design`, { step, answers }),
   tutor: (labId: string, chapterId: string, taskId: string, question: string) =>
     request<TutorReply>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/tutor`, { question }),
   review: (labId: string, chapterId: string, taskId: string) =>

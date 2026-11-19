@@ -242,6 +242,34 @@ Make `greet(name)` return `"Hello, <name>!"`.
   and the `:::explain` text stay on the server: the browser gets them only after a correct answer
   (`POST /api/labs/{lab}/chapters/{ch}/predict`), and the raw markdown it receives has them removed.
 
+### Design review steps (system design labs)
+
+A `design` step asks 1 to 5 short written questions. Each `:::ask{id=...}` is a question; the rest of
+the step is its intro. The rubric stays hidden in `tests/rubric.yaml`, keyed by chapter and question:
+
+```markdown
+:::step{type=design title="Design review"}
+Answer in a few sentences.
+
+:::ask{id=redis_down}
+What happens to your limiter if Redis goes down?
+:::
+:::
+```
+
+```yaml
+02-global-limit:
+  redis_down:
+    - id: behaviour
+      points: 2
+      look_for: Says whether requests are allowed or blocked when Redis is down, and why.
+```
+
+The tutor model (`lab-chat-smart`) grades each answer against its criteria and returns a score and a
+sentence of feedback per criterion; scores are clamped to the rubric. Every attempt is stored
+(`design_answer`). +30 XP the first time an attempt reaches half the points; it never blocks finishing
+the chapter. `labbox validate` refuses a design question without criteria.
+
 ### `lab.yaml` v2 fields
 
 All optional; a v1 `lab.yaml` keeps working. `version: 2`, `subtitle`, `track` (`languages`,

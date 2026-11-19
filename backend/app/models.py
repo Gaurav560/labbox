@@ -153,3 +153,19 @@ class LlmRequest(SQLModel, table=True):
     request_json: str = ""  # capped
     response_json: str = ""  # capped
     created_at: datetime = Field(default_factory=utcnow, index=True)
+
+
+class DesignAnswer(SQLModel, table=True):
+    # One graded attempt at a design step (system design labs): the answers and the rubric scores.
+    __tablename__ = "design_answer"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    lab_id: str
+    chapter_id: str
+    step_index: int
+    answers_json: str  # {question id: text}
+    result_json: str  # see design.DesignResult
+    score: int
+    max_score: int
+    created_at: datetime = Field(default_factory=utcnow)

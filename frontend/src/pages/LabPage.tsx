@@ -1,7 +1,7 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useParams } from "react-router-dom";
-import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type PredictState, type ServiceStatus, type Step } from "../api";
+import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
 import ChapterPanel from "../components/ChapterPanel";
 import CheckDrawer from "../components/CheckDrawer";
@@ -64,6 +64,7 @@ export default function LabPage() {
   const [hints, setHints] = useState<Record<string, string[]>>({});
   const [hintBusy, setHintBusy] = useState(false);
   const [predicts, setPredicts] = useState<Record<number, PredictState>>({});
+  const [designs, setDesigns] = useState<Record<number, DesignAttempt>>({});
   const [predictBusy, setPredictBusy] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bottomTab, setBottomTab] = useState<"terminal" | "preview" | "output">("terminal");
@@ -171,6 +172,7 @@ export default function LabPage() {
         setHints(p.hints);
         setChapterXp(p.xp_earned);
         setPredicts(Object.fromEntries(Object.entries(p.predicts).map(([k, v]) => [Number(k), v])));
+        setDesigns(Object.fromEntries(Object.entries(p.designs ?? {}).map(([k, v]) => [Number(k), v])));
       })
       .catch((e) => toast(errMsg(e)));
   }, [labId, chapterId, toast]);
@@ -577,6 +579,15 @@ export default function LabPage() {
                 <StepCard
                   labId={labId}
                   chapterId={chapterId}
+                  stepIndex={step}
+                  design={designs[step]}
+                  onDesignGraded={(attempt) => {
+                    setDesigns((all) => ({ ...all, [step]: attempt }));
+                    if (attempt.result.xp_awarded?.length) {
+                      celebrate(attempt.result.xp_awarded);
+                      setChapterXp((x) => x + attempt.result.xp_awarded!.reduce((n, a) => n + a.amount, 0));
+                    }
+                  }}
                   step={current}
                   task={tasks.find((t) => t.id === current.task)}
                   hints={current.task ? hints[current.task] ?? [] : []}
