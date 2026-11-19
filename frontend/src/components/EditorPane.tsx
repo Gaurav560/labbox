@@ -95,7 +95,7 @@ export default function EditorPane({ labId, tabs, activePath, onSelect, onClose,
             path={modelUri(active.path)}
             defaultValue={active.content}
             language={languageFor(active.path)}
-            theme={theme === "dark" ? "vs-dark" : "vs"}
+            theme={theme === "dark" ? "labbox-dark" : "labbox-light"}
             onMount={onMount}
             onChange={(v) => onChange(active.path, v ?? "")}
             options={{

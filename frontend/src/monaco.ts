@@ -15,6 +15,40 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco });
 
+// Editor themes on the app's GitHub greys, so editor, panels and terminal read as one surface.
+monaco.editor.defineTheme("labbox-dark", {
+  base: "vs-dark",
+  inherit: true,
+  rules: [],
+  colors: {
+    "editor.background": "#111512",
+    "editor.lineHighlightBackground": "#1a1f1b",
+    "editorLineNumber.foreground": "#4b544e",
+    "editorLineNumber.activeForeground": "#c9d1cb",
+    "editorGutter.background": "#111512",
+    "editor.selectionBackground": "#3a423c",
+    "editorWidget.background": "#161a17",
+    "editorWidget.border": "#2c322e",
+    "editorSuggestWidget.background": "#161a17",
+    "editorSuggestWidget.border": "#2c322e",
+    "editorSuggestWidget.selectedBackground": "#252b27",
+    "editorGhostText.foreground": "#7d877f",
+  },
+});
+monaco.editor.defineTheme("labbox-light", {
+  base: "vs",
+  inherit: true,
+  rules: [],
+  colors: {
+    "editor.background": "#ffffff",
+    "editor.lineHighlightBackground": "#f6f8fa",
+    "editorLineNumber.foreground": "#8c959f",
+    "editorWidget.background": "#ffffff",
+    "editorSuggestWidget.background": "#ffffff",
+    "editorSuggestWidget.border": "#d1d9e0",
+  },
+});
+
 export { monaco };
 
 export const MODEL_PREFIX = "file:///workspace/";

@@ -21,13 +21,13 @@ export const useTheme = () => useContext(ThemeContext);
 
 // Terminal colours follow the theme (xterm cannot read CSS variables).
 export const TERMINAL_THEMES = {
-  dark: { background: "#0f1115", foreground: "#e6e8ee", cursor: "#e6e8ee", selectionBackground: "#3a4466" },
+  dark: { background: "#0d100e", foreground: "#e6ebe7", cursor: "#e6ebe7", selectionBackground: "#3a423c" },
   // xterm's default ANSI colours are made for dark backgrounds; these keep AA contrast on light.
   light: {
-    background: "#fbfbfd",
-    foreground: "#1b1f2a",
-    cursor: "#1b1f2a",
-    selectionBackground: "#c9d4ff",
+    background: "#ffffff",
+    foreground: "#1f2328",
+    cursor: "#1f2328",
+    selectionBackground: "#d1d9e0",
     black: "#1b1f2a",
     red: "#b3261e",
     green: "#0b7a4b",

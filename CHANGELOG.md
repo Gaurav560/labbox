@@ -1,5 +1,14 @@
 # Changelog
 
+## The app in GitHub greys
+
+- The app-wide theme moves from the old blue (`#7c9cff`) to the GitHub greys of the home and login
+  pages: charcoal `#111512` background, grey panels, white primary buttons (black in light mode), and
+  GitHub's green, red and amber for pass, fail and warnings. Light mode uses GitHub's light greys.
+- The editor gets matching `labbox-dark` and `labbox-light` Monaco themes (same background, quieter
+  line numbers, grey ghost text), and the terminal uses the same greys, so the lab reads as one surface.
+- The login page's blue and purple showcase is unchanged (it has its own colours).
+
 ## AI completion: fixes from trying it for real
 
 - An empty text after the cursor made Ollama answer like a chat model (a markdown rewrite of the whole
