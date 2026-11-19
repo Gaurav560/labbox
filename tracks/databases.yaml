@@ -21,10 +21,18 @@ nodes:
     title: Indexes and EXPLAIN
     requires: [sql-group]
     chapters: [postgres-indexing-incident/01-slow-checkout]
-  - id: redis-cache
-    title: Caching and rate limits
+  - id: redis-python
+    title: Redis from Python
     requires: [redis-types]
-    chapters: [redis-in-practice/05-cache-and-limit]
+    chapters: [redis-in-practice/05-redis-from-python]
+  - id: redis-cache
+    title: Caching for real
+    requires: [redis-python]
+    chapters: [redis-in-practice/06-caching-for-real]
+  - id: redis-atomic
+    title: Atomic operations and locks
+    requires: [redis-cache]
+    chapters: [redis-in-practice/07-atomic-operations, redis-in-practice/08-distributed-locks]
   - id: pg-transactions
     title: Transactions
     requires: [pg-indexes]

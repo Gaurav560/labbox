@@ -108,7 +108,7 @@ def test_tutor_replies_never_carry_code_blocks(client: TestClient, monkeypatch):
 
 def test_lines_the_lesson_already_shows_are_not_secrets():
     lab = labs.get_lab("redis-in-practice")
-    shown = {tutor._code(line) for line in lab.chapter_markdown("05-cache-and-limit").splitlines()}
+    shown = {tutor._code(line) for line in lab.chapter_markdown("06-caching-for-real").splitlines()}
     assert not shown & tutor.solution_lines(lab)
 
 

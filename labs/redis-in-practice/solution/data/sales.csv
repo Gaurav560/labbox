@@ -1,0 +1,2001 @@
+outlet,item,cups
+outlet1,filter coffee,79
+outlet1,cold coffee,32
+outlet1,vada pav,45
+outlet1,samosa,88
+outlet1,poha,83
+outlet1,bun maska,67
+outlet1,masala dosa,3
+outlet1,idli,59
+outlet1,upma,31
+outlet1,lassi,83
+outlet2,filter coffee,6
+outlet2,cold coffee,20
+outlet2,vada pav,14
+outlet2,samosa,47
+outlet2,poha,60
+outlet2,bun maska,31
+outlet2,masala dosa,48
+outlet2,idli,69
+outlet2,upma,13
+outlet2,lassi,73
+outlet3,filter coffee,31
+outlet3,cold coffee,1
+outlet3,vada pav,27
+outlet3,samosa,52
+outlet3,poha,35
+outlet3,bun maska,23
+outlet3,masala dosa,49
+outlet3,idli,20
+outlet3,upma,9
+outlet3,lassi,17
+outlet4,filter coffee,79
+outlet4,cold coffee,79
+outlet4,vada pav,56
+outlet4,samosa,16
+outlet4,poha,16
+outlet4,bun maska,0
+outlet4,masala dosa,0
+outlet4,idli,26
+outlet4,upma,27
+outlet4,lassi,21
+outlet5,filter coffee,21
+outlet5,cold coffee,37
+outlet5,vada pav,40
+outlet5,samosa,25
+outlet5,poha,69
+outlet5,bun maska,86
+outlet5,masala dosa,80
+outlet5,idli,26
+outlet5,upma,23
+outlet5,lassi,88
+outlet6,filter coffee,25
+outlet6,cold coffee,49
+outlet6,vada pav,38
+outlet6,samosa,2
+outlet6,poha,46
+outlet6,bun maska,53
+outlet6,masala dosa,21
+outlet6,idli,18
+outlet6,upma,33
+outlet6,lassi,8
+outlet7,filter coffee,42
+outlet7,cold coffee,38
+outlet7,vada pav,77
+outlet7,samosa,75
+outlet7,poha,0
+outlet7,bun maska,76
+outlet7,masala dosa,86
+outlet7,idli,90
+outlet7,upma,43
+outlet7,lassi,8
+outlet8,filter coffee,39
+outlet8,cold coffee,45
+outlet8,vada pav,39
+outlet8,samosa,61
+outlet8,poha,89
+outlet8,bun maska,40
+outlet8,masala dosa,23
+outlet8,idli,61
+outlet8,upma,60
+outlet8,lassi,90
+outlet9,filter coffee,22
+outlet9,cold coffee,7
+outlet9,vada pav,32
+outlet9,samosa,2
+outlet9,poha,45
+outlet9,bun maska,51
+outlet9,masala dosa,2
+outlet9,idli,70
+outlet9,upma,53
+outlet9,lassi,46
+outlet10,filter coffee,48
+outlet10,cold coffee,74
+outlet10,vada pav,1
+outlet10,samosa,57
+outlet10,poha,5
+outlet10,bun maska,90
+outlet10,masala dosa,23
+outlet10,idli,79
+outlet10,upma,25
+outlet10,lassi,15
+outlet11,filter coffee,31
+outlet11,cold coffee,59
+outlet11,vada pav,44
+outlet11,samosa,65
+outlet11,poha,45
+outlet11,bun maska,67
+outlet11,masala dosa,32
+outlet11,idli,59
+outlet11,upma,13
+outlet11,lassi,75
+outlet12,filter coffee,47
+outlet12,cold coffee,37
+outlet12,vada pav,4
+outlet12,samosa,55
+outlet12,poha,11
+outlet12,bun maska,26
+outlet12,masala dosa,43
+outlet12,idli,65
+outlet12,upma,78
+outlet12,lassi,46
+outlet13,filter coffee,18
+outlet13,cold coffee,43
+outlet13,vada pav,35
+outlet13,samosa,89
+outlet13,poha,69
+outlet13,bun maska,11
+outlet13,masala dosa,39
+outlet13,idli,87
+outlet13,upma,40
+outlet13,lassi,39
+outlet14,filter coffee,22
+outlet14,cold coffee,10
+outlet14,vada pav,80
+outlet14,samosa,19
+outlet14,poha,88
+outlet14,bun maska,39
+outlet14,masala dosa,61
+outlet14,idli,20
+outlet14,upma,6
+outlet14,lassi,10
+outlet15,filter coffee,76
+outlet15,cold coffee,68
+outlet15,vada pav,51
+outlet15,samosa,4
+outlet15,poha,30
+outlet15,bun maska,76
+outlet15,masala dosa,44
+outlet15,idli,32
+outlet15,upma,58
+outlet15,lassi,83
+outlet16,filter coffee,53
+outlet16,cold coffee,18
+outlet16,vada pav,7
+outlet16,samosa,81
+outlet16,poha,4
+outlet16,bun maska,63
+outlet16,masala dosa,42
+outlet16,idli,26
+outlet16,upma,16
+outlet16,lassi,72
+outlet17,filter coffee,16
+outlet17,cold coffee,80
+outlet17,vada pav,52
+outlet17,samosa,13
+outlet17,poha,21
+outlet17,bun maska,55
+outlet17,masala dosa,47
+outlet17,idli,19
+outlet17,upma,7
+outlet17,lassi,53
+outlet18,filter coffee,37
+outlet18,cold coffee,18
+outlet18,vada pav,58
+outlet18,samosa,79
+outlet18,poha,21
+outlet18,bun maska,66
+outlet18,masala dosa,58
+outlet18,idli,62
+outlet18,upma,88
+outlet18,lassi,40
+outlet19,filter coffee,61
+outlet19,cold coffee,35
+outlet19,vada pav,37
+outlet19,samosa,60
+outlet19,poha,51
+outlet19,bun maska,18
+outlet19,masala dosa,14
+outlet19,idli,48
+outlet19,upma,68
+outlet19,lassi,22
+outlet20,filter coffee,80
+outlet20,cold coffee,63
+outlet20,vada pav,43
+outlet20,samosa,23
+outlet20,poha,11
+outlet20,bun maska,62
+outlet20,masala dosa,34
+outlet20,idli,65
+outlet20,upma,70
+outlet20,lassi,64
+outlet21,filter coffee,46
+outlet21,cold coffee,8
+outlet21,vada pav,45
+outlet21,samosa,88
+outlet21,poha,75
+outlet21,bun maska,84
+outlet21,masala dosa,4
+outlet21,idli,39
+outlet21,upma,46
+outlet21,lassi,71
+outlet22,filter coffee,90
+outlet22,cold coffee,85
+outlet22,vada pav,35
+outlet22,samosa,62
+outlet22,poha,33
+outlet22,bun maska,88
+outlet22,masala dosa,37
+outlet22,idli,43
+outlet22,upma,83
+outlet22,lassi,22
+outlet23,filter coffee,74
+outlet23,cold coffee,1
+outlet23,vada pav,60
+outlet23,samosa,70
+outlet23,poha,32
+outlet23,bun maska,41
+outlet23,masala dosa,85
+outlet23,idli,35
+outlet23,upma,59
+outlet23,lassi,36
+outlet24,filter coffee,64
+outlet24,cold coffee,82
+outlet24,vada pav,86
+outlet24,samosa,45
+outlet24,poha,44
+outlet24,bun maska,35
+outlet24,masala dosa,82
+outlet24,idli,44
+outlet24,upma,52
+outlet24,lassi,44
+outlet25,filter coffee,22
+outlet25,cold coffee,88
+outlet25,vada pav,57
+outlet25,samosa,46
+outlet25,poha,42
+outlet25,bun maska,66
+outlet25,masala dosa,18
+outlet25,idli,67
+outlet25,upma,21
+outlet25,lassi,25
+outlet26,filter coffee,46
+outlet26,cold coffee,61
+outlet26,vada pav,36
+outlet26,samosa,88
+outlet26,poha,10
+outlet26,bun maska,85
+outlet26,masala dosa,53
+outlet26,idli,21
+outlet26,upma,78
+outlet26,lassi,74
+outlet27,filter coffee,66
+outlet27,cold coffee,85
+outlet27,vada pav,53
+outlet27,samosa,38
+outlet27,poha,79
+outlet27,bun maska,70
+outlet27,masala dosa,81
+outlet27,idli,34
+outlet27,upma,3
+outlet27,lassi,25
+outlet28,filter coffee,20
+outlet28,cold coffee,75
+outlet28,vada pav,56
+outlet28,samosa,79
+outlet28,poha,83
+outlet28,bun maska,23
+outlet28,masala dosa,28
+outlet28,idli,87
+outlet28,upma,23
+outlet28,lassi,80
+outlet29,filter coffee,5
+outlet29,cold coffee,60
+outlet29,vada pav,28
+outlet29,samosa,21
+outlet29,poha,6
+outlet29,bun maska,17
+outlet29,masala dosa,14
+outlet29,idli,40
+outlet29,upma,23
+outlet29,lassi,61
+outlet30,filter coffee,24
+outlet30,cold coffee,70
+outlet30,vada pav,4
+outlet30,samosa,53
+outlet30,poha,59
+outlet30,bun maska,44
+outlet30,masala dosa,48
+outlet30,idli,84
+outlet30,upma,78
+outlet30,lassi,9
+outlet31,filter coffee,75
+outlet31,cold coffee,26
+outlet31,vada pav,30
+outlet31,samosa,47
+outlet31,poha,0
+outlet31,bun maska,44
+outlet31,masala dosa,51
+outlet31,idli,35
+outlet31,upma,52
+outlet31,lassi,14
+outlet32,filter coffee,88
+outlet32,cold coffee,70
+outlet32,vada pav,47
+outlet32,samosa,4
+outlet32,poha,70
+outlet32,bun maska,78
+outlet32,masala dosa,38
+outlet32,idli,12
+outlet32,upma,37
+outlet32,lassi,69
+outlet33,filter coffee,65
+outlet33,cold coffee,43
+outlet33,vada pav,74
+outlet33,samosa,37
+outlet33,poha,45
+outlet33,bun maska,16
+outlet33,masala dosa,53
+outlet33,idli,52
+outlet33,upma,72
+outlet33,lassi,82
+outlet34,filter coffee,68
+outlet34,cold coffee,47
+outlet34,vada pav,59
+outlet34,samosa,18
+outlet34,poha,20
+outlet34,bun maska,76
+outlet34,masala dosa,48
+outlet34,idli,72
+outlet34,upma,61
+outlet34,lassi,25
+outlet35,filter coffee,17
+outlet35,cold coffee,77
+outlet35,vada pav,11
+outlet35,samosa,44
+outlet35,poha,84
+outlet35,bun maska,0
+outlet35,masala dosa,48
+outlet35,idli,13
+outlet35,upma,41
+outlet35,lassi,72
+outlet36,filter coffee,78
+outlet36,cold coffee,69
+outlet36,vada pav,18
+outlet36,samosa,41
+outlet36,poha,80
+outlet36,bun maska,72
+outlet36,masala dosa,48
+outlet36,idli,54
+outlet36,upma,55
+outlet36,lassi,28
+outlet37,filter coffee,63
+outlet37,cold coffee,37
+outlet37,vada pav,61
+outlet37,samosa,90
+outlet37,poha,48
+outlet37,bun maska,49
+outlet37,masala dosa,20
+outlet37,idli,76
+outlet37,upma,76
+outlet37,lassi,33
+outlet38,filter coffee,38
+outlet38,cold coffee,63
+outlet38,vada pav,32
+outlet38,samosa,53
+outlet38,poha,2
+outlet38,bun maska,40
+outlet38,masala dosa,39
+outlet38,idli,62
+outlet38,upma,36
+outlet38,lassi,18
+outlet39,filter coffee,61
+outlet39,cold coffee,3
+outlet39,vada pav,15
+outlet39,samosa,84
+outlet39,poha,79
+outlet39,bun maska,56
+outlet39,masala dosa,31
+outlet39,idli,37
+outlet39,upma,5
+outlet39,lassi,17
+outlet40,filter coffee,50
+outlet40,cold coffee,1
+outlet40,vada pav,61
+outlet40,samosa,68
+outlet40,poha,71
+outlet40,bun maska,35
+outlet40,masala dosa,31
+outlet40,idli,60
+outlet40,upma,4
+outlet40,lassi,31
+outlet41,filter coffee,62
+outlet41,cold coffee,34
+outlet41,vada pav,19
+outlet41,samosa,36
+outlet41,poha,37
+outlet41,bun maska,63
+outlet41,masala dosa,77
+outlet41,idli,60
+outlet41,upma,66
+outlet41,lassi,82
+outlet42,filter coffee,77
+outlet42,cold coffee,15
+outlet42,vada pav,2
+outlet42,samosa,16
+outlet42,poha,38
+outlet42,bun maska,36
+outlet42,masala dosa,68
+outlet42,idli,90
+outlet42,upma,43
+outlet42,lassi,78
+outlet43,filter coffee,37
+outlet43,cold coffee,67
+outlet43,vada pav,3
+outlet43,samosa,59
+outlet43,poha,44
+outlet43,bun maska,46
+outlet43,masala dosa,87
+outlet43,idli,75
+outlet43,upma,16
+outlet43,lassi,4
+outlet44,filter coffee,0
+outlet44,cold coffee,32
+outlet44,vada pav,70
+outlet44,samosa,58
+outlet44,poha,87
+outlet44,bun maska,13
+outlet44,masala dosa,87
+outlet44,idli,69
+outlet44,upma,24
+outlet44,lassi,1
+outlet45,filter coffee,54
+outlet45,cold coffee,54
+outlet45,vada pav,76
+outlet45,samosa,73
+outlet45,poha,88
+outlet45,bun maska,90
+outlet45,masala dosa,80
+outlet45,idli,83
+outlet45,upma,61
+outlet45,lassi,49
+outlet46,filter coffee,60
+outlet46,cold coffee,50
+outlet46,vada pav,87
+outlet46,samosa,25
+outlet46,poha,37
+outlet46,bun maska,59
+outlet46,masala dosa,8
+outlet46,idli,38
+outlet46,upma,0
+outlet46,lassi,88
+outlet47,filter coffee,55
+outlet47,cold coffee,74
+outlet47,vada pav,36
+outlet47,samosa,82
+outlet47,poha,60
+outlet47,bun maska,39
+outlet47,masala dosa,18
+outlet47,idli,21
+outlet47,upma,61
+outlet47,lassi,88
+outlet48,filter coffee,70
+outlet48,cold coffee,63
+outlet48,vada pav,42
+outlet48,samosa,68
+outlet48,poha,19
+outlet48,bun maska,54
+outlet48,masala dosa,74
+outlet48,idli,69
+outlet48,upma,6
+outlet48,lassi,8
+outlet49,filter coffee,29
+outlet49,cold coffee,34
+outlet49,vada pav,10
+outlet49,samosa,8
+outlet49,poha,84
+outlet49,bun maska,3
+outlet49,masala dosa,42
+outlet49,idli,54
+outlet49,upma,8
+outlet49,lassi,51
+outlet50,filter coffee,89
+outlet50,cold coffee,62
+outlet50,vada pav,6
+outlet50,samosa,15
+outlet50,poha,15
+outlet50,bun maska,28
+outlet50,masala dosa,78
+outlet50,idli,82
+outlet50,upma,14
+outlet50,lassi,17
+outlet51,filter coffee,37
+outlet51,cold coffee,90
+outlet51,vada pav,56
+outlet51,samosa,19
+outlet51,poha,23
+outlet51,bun maska,78
+outlet51,masala dosa,23
+outlet51,idli,52
+outlet51,upma,20
+outlet51,lassi,8
+outlet52,filter coffee,79
+outlet52,cold coffee,27
+outlet52,vada pav,5
+outlet52,samosa,71
+outlet52,poha,13
+outlet52,bun maska,84
+outlet52,masala dosa,48
+outlet52,idli,9
+outlet52,upma,35
+outlet52,lassi,7
+outlet53,filter coffee,73
+outlet53,cold coffee,73
+outlet53,vada pav,15
+outlet53,samosa,51
+outlet53,poha,79
+outlet53,bun maska,17
+outlet53,masala dosa,1
+outlet53,idli,55
+outlet53,upma,11
+outlet53,lassi,40
+outlet54,filter coffee,87
+outlet54,cold coffee,76
+outlet54,vada pav,62
+outlet54,samosa,62
+outlet54,poha,45
+outlet54,bun maska,83
+outlet54,masala dosa,47
+outlet54,idli,7
+outlet54,upma,17
+outlet54,lassi,89
+outlet55,filter coffee,37
+outlet55,cold coffee,19
+outlet55,vada pav,72
+outlet55,samosa,80
+outlet55,poha,86
+outlet55,bun maska,64
+outlet55,masala dosa,37
+outlet55,idli,71
+outlet55,upma,70
+outlet55,lassi,79
+outlet56,filter coffee,28
+outlet56,cold coffee,33
+outlet56,vada pav,8
+outlet56,samosa,70
+outlet56,poha,30
+outlet56,bun maska,32
+outlet56,masala dosa,36
+outlet56,idli,66
+outlet56,upma,17
+outlet56,lassi,30
+outlet57,filter coffee,47
+outlet57,cold coffee,58
+outlet57,vada pav,49
+outlet57,samosa,22
+outlet57,poha,16
+outlet57,bun maska,2
+outlet57,masala dosa,83
+outlet57,idli,43
+outlet57,upma,10
+outlet57,lassi,73
+outlet58,filter coffee,85
+outlet58,cold coffee,4
+outlet58,vada pav,11
+outlet58,samosa,15
+outlet58,poha,64
+outlet58,bun maska,76
+outlet58,masala dosa,58
+outlet58,idli,30
+outlet58,upma,49
+outlet58,lassi,59
+outlet59,filter coffee,61
+outlet59,cold coffee,41
+outlet59,vada pav,13
+outlet59,samosa,67
+outlet59,poha,3
+outlet59,bun maska,69
+outlet59,masala dosa,49
+outlet59,idli,6
+outlet59,upma,19
+outlet59,lassi,54
+outlet60,filter coffee,87
+outlet60,cold coffee,28
+outlet60,vada pav,14
+outlet60,samosa,10
+outlet60,poha,85
+outlet60,bun maska,62
+outlet60,masala dosa,27
+outlet60,idli,17
+outlet60,upma,89
+outlet60,lassi,79
+outlet61,filter coffee,48
+outlet61,cold coffee,45
+outlet61,vada pav,30
+outlet61,samosa,37
+outlet61,poha,42
+outlet61,bun maska,78
+outlet61,masala dosa,90
+outlet61,idli,44
+outlet61,upma,49
+outlet61,lassi,48
+outlet62,filter coffee,17
+outlet62,cold coffee,45
+outlet62,vada pav,82
+outlet62,samosa,37
+outlet62,poha,80
+outlet62,bun maska,55
+outlet62,masala dosa,46
+outlet62,idli,66
+outlet62,upma,4
+outlet62,lassi,75
+outlet63,filter coffee,73
+outlet63,cold coffee,27
+outlet63,vada pav,23
+outlet63,samosa,50
+outlet63,poha,8
+outlet63,bun maska,12
+outlet63,masala dosa,4
+outlet63,idli,4
+outlet63,upma,23
+outlet63,lassi,25
+outlet64,filter coffee,25
+outlet64,cold coffee,5
+outlet64,vada pav,62
+outlet64,samosa,61
+outlet64,poha,84
+outlet64,bun maska,44
+outlet64,masala dosa,0
+outlet64,idli,54
+outlet64,upma,60
+outlet64,lassi,38
+outlet65,filter coffee,79
+outlet65,cold coffee,54
+outlet65,vada pav,41
+outlet65,samosa,59
+outlet65,poha,59
+outlet65,bun maska,12
+outlet65,masala dosa,24
+outlet65,idli,19
+outlet65,upma,83
+outlet65,lassi,20
+outlet66,filter coffee,9
+outlet66,cold coffee,47
+outlet66,vada pav,49
+outlet66,samosa,60
+outlet66,poha,19
+outlet66,bun maska,70
+outlet66,masala dosa,32
+outlet66,idli,14
+outlet66,upma,35
+outlet66,lassi,20
+outlet67,filter coffee,36
+outlet67,cold coffee,86
+outlet67,vada pav,30
+outlet67,samosa,4
+outlet67,poha,61
+outlet67,bun maska,4
+outlet67,masala dosa,44
+outlet67,idli,47
+outlet67,upma,40
+outlet67,lassi,7
+outlet68,filter coffee,88
+outlet68,cold coffee,2
+outlet68,vada pav,86
+outlet68,samosa,58
+outlet68,poha,60
+outlet68,bun maska,19
+outlet68,masala dosa,15
+outlet68,idli,85
+outlet68,upma,41
+outlet68,lassi,37
+outlet69,filter coffee,58
+outlet69,cold coffee,86
+outlet69,vada pav,30
+outlet69,samosa,20
+outlet69,poha,4
+outlet69,bun maska,25
+outlet69,masala dosa,3
+outlet69,idli,73
+outlet69,upma,29
+outlet69,lassi,84
+outlet70,filter coffee,10
+outlet70,cold coffee,79
+outlet70,vada pav,51
+outlet70,samosa,90
+outlet70,poha,46
+outlet70,bun maska,87
+outlet70,masala dosa,39
+outlet70,idli,23
+outlet70,upma,59
+outlet70,lassi,46
+outlet71,filter coffee,36
+outlet71,cold coffee,8
+outlet71,vada pav,59
+outlet71,samosa,20
+outlet71,poha,30
+outlet71,bun maska,22
+outlet71,masala dosa,86
+outlet71,idli,26
+outlet71,upma,5
+outlet71,lassi,82
+outlet72,filter coffee,77
+outlet72,cold coffee,55
+outlet72,vada pav,34
+outlet72,samosa,0
+outlet72,poha,59
+outlet72,bun maska,7
+outlet72,masala dosa,57
+outlet72,idli,87
+outlet72,upma,52
+outlet72,lassi,21
+outlet73,filter coffee,5
+outlet73,cold coffee,4
+outlet73,vada pav,70
+outlet73,samosa,66
+outlet73,poha,72
+outlet73,bun maska,44
+outlet73,masala dosa,12
+outlet73,idli,9
+outlet73,upma,30
+outlet73,lassi,62
+outlet74,filter coffee,11
+outlet74,cold coffee,60
+outlet74,vada pav,6
+outlet74,samosa,87
+outlet74,poha,31
+outlet74,bun maska,82
+outlet74,masala dosa,6
+outlet74,idli,63
+outlet74,upma,50
+outlet74,lassi,7
+outlet75,filter coffee,6
+outlet75,cold coffee,32
+outlet75,vada pav,52
+outlet75,samosa,57
+outlet75,poha,39
+outlet75,bun maska,81
+outlet75,masala dosa,6
+outlet75,idli,4
+outlet75,upma,24
+outlet75,lassi,22
+outlet76,filter coffee,89
+outlet76,cold coffee,65
+outlet76,vada pav,81
+outlet76,samosa,51
+outlet76,poha,24
+outlet76,bun maska,68
+outlet76,masala dosa,29
+outlet76,idli,10
+outlet76,upma,40
+outlet76,lassi,13
+outlet77,filter coffee,11
+outlet77,cold coffee,69
+outlet77,vada pav,20
+outlet77,samosa,76
+outlet77,poha,9
+outlet77,bun maska,27
+outlet77,masala dosa,79
+outlet77,idli,2
+outlet77,upma,56
+outlet77,lassi,69
+outlet78,filter coffee,45
+outlet78,cold coffee,62
+outlet78,vada pav,54
+outlet78,samosa,73
+outlet78,poha,48
+outlet78,bun maska,66
+outlet78,masala dosa,80
+outlet78,idli,16
+outlet78,upma,1
+outlet78,lassi,39
+outlet79,filter coffee,88
+outlet79,cold coffee,57
+outlet79,vada pav,28
+outlet79,samosa,70
+outlet79,poha,14
+outlet79,bun maska,17
+outlet79,masala dosa,39
+outlet79,idli,61
+outlet79,upma,11
+outlet79,lassi,33
+outlet80,filter coffee,51
+outlet80,cold coffee,40
+outlet80,vada pav,16
+outlet80,samosa,16
+outlet80,poha,68
+outlet80,bun maska,10
+outlet80,masala dosa,60
+outlet80,idli,31
+outlet80,upma,89
+outlet80,lassi,10
+outlet81,filter coffee,54
+outlet81,cold coffee,73
+outlet81,vada pav,85
+outlet81,samosa,31
+outlet81,poha,35
+outlet81,bun maska,7
+outlet81,masala dosa,63
+outlet81,idli,89
+outlet81,upma,31
+outlet81,lassi,6
+outlet82,filter coffee,90
+outlet82,cold coffee,25
+outlet82,vada pav,36
+outlet82,samosa,47
+outlet82,poha,12
+outlet82,bun maska,9
+outlet82,masala dosa,53
+outlet82,idli,40
+outlet82,upma,48
+outlet82,lassi,71
+outlet83,filter coffee,0
+outlet83,cold coffee,36
+outlet83,vada pav,83
+outlet83,samosa,16
+outlet83,poha,73
+outlet83,bun maska,3
+outlet83,masala dosa,56
+outlet83,idli,18
+outlet83,upma,88
+outlet83,lassi,83
+outlet84,filter coffee,2
+outlet84,cold coffee,6
+outlet84,vada pav,89
+outlet84,samosa,54
+outlet84,poha,34
+outlet84,bun maska,13
+outlet84,masala dosa,48
+outlet84,idli,71
+outlet84,upma,16
+outlet84,lassi,41
+outlet85,filter coffee,8
+outlet85,cold coffee,39
+outlet85,vada pav,21
+outlet85,samosa,17
+outlet85,poha,33
+outlet85,bun maska,63
+outlet85,masala dosa,86
+outlet85,idli,41
+outlet85,upma,36
+outlet85,lassi,4
+outlet86,filter coffee,8
+outlet86,cold coffee,69
+outlet86,vada pav,71
+outlet86,samosa,3
+outlet86,poha,3
+outlet86,bun maska,15
+outlet86,masala dosa,6
+outlet86,idli,16
+outlet86,upma,45
+outlet86,lassi,55
+outlet87,filter coffee,33
+outlet87,cold coffee,78
+outlet87,vada pav,2
+outlet87,samosa,29
+outlet87,poha,67
+outlet87,bun maska,54
+outlet87,masala dosa,16
+outlet87,idli,46
+outlet87,upma,25
+outlet87,lassi,42
+outlet88,filter coffee,45
+outlet88,cold coffee,1
+outlet88,vada pav,20
+outlet88,samosa,74
+outlet88,poha,79
+outlet88,bun maska,20
+outlet88,masala dosa,12
+outlet88,idli,34
+outlet88,upma,67
+outlet88,lassi,77
+outlet89,filter coffee,21
+outlet89,cold coffee,80
+outlet89,vada pav,90
+outlet89,samosa,18
+outlet89,poha,57
+outlet89,bun maska,55
+outlet89,masala dosa,54
+outlet89,idli,15
+outlet89,upma,42
+outlet89,lassi,40
+outlet90,filter coffee,57
+outlet90,cold coffee,29
+outlet90,vada pav,59
+outlet90,samosa,76
+outlet90,poha,55
+outlet90,bun maska,21
+outlet90,masala dosa,56
+outlet90,idli,6
+outlet90,upma,85
+outlet90,lassi,20
+outlet91,filter coffee,68
+outlet91,cold coffee,60
+outlet91,vada pav,62
+outlet91,samosa,76
+outlet91,poha,0
+outlet91,bun maska,13
+outlet91,masala dosa,16
+outlet91,idli,53
+outlet91,upma,87
+outlet91,lassi,6
+outlet92,filter coffee,26
+outlet92,cold coffee,0
+outlet92,vada pav,4
+outlet92,samosa,73
+outlet92,poha,30
+outlet92,bun maska,61
+outlet92,masala dosa,90
+outlet92,idli,45
+outlet92,upma,50
+outlet92,lassi,59
+outlet93,filter coffee,27
+outlet93,cold coffee,25
+outlet93,vada pav,35
+outlet93,samosa,25
+outlet93,poha,38
+outlet93,bun maska,71
+outlet93,masala dosa,66
+outlet93,idli,45
+outlet93,upma,30
+outlet93,lassi,46
+outlet94,filter coffee,45
+outlet94,cold coffee,31
+outlet94,vada pav,84
+outlet94,samosa,7
+outlet94,poha,79
+outlet94,bun maska,63
+outlet94,masala dosa,51
+outlet94,idli,44
+outlet94,upma,18
+outlet94,lassi,18
+outlet95,filter coffee,30
+outlet95,cold coffee,62
+outlet95,vada pav,48
+outlet95,samosa,4
+outlet95,poha,12
+outlet95,bun maska,21
+outlet95,masala dosa,50
+outlet95,idli,12
+outlet95,upma,36
+outlet95,lassi,25
+outlet96,filter coffee,41
+outlet96,cold coffee,61
+outlet96,vada pav,87
+outlet96,samosa,60
+outlet96,poha,68
+outlet96,bun maska,79
+outlet96,masala dosa,11
+outlet96,idli,25
+outlet96,upma,48
+outlet96,lassi,88
+outlet97,filter coffee,1
+outlet97,cold coffee,13
+outlet97,vada pav,65
+outlet97,samosa,77
+outlet97,poha,75
+outlet97,bun maska,79
+outlet97,masala dosa,23
+outlet97,idli,49
+outlet97,upma,2
+outlet97,lassi,40
+outlet98,filter coffee,86
+outlet98,cold coffee,3
+outlet98,vada pav,78
+outlet98,samosa,39
+outlet98,poha,65
+outlet98,bun maska,49
+outlet98,masala dosa,64
+outlet98,idli,60
+outlet98,upma,69
+outlet98,lassi,90
+outlet99,filter coffee,88
+outlet99,cold coffee,51
+outlet99,vada pav,57
+outlet99,samosa,74
+outlet99,poha,88
+outlet99,bun maska,71
+outlet99,masala dosa,85
+outlet99,idli,7
+outlet99,upma,68
+outlet99,lassi,18
+outlet100,filter coffee,53
+outlet100,cold coffee,46
+outlet100,vada pav,75
+outlet100,samosa,2
+outlet100,poha,86
+outlet100,bun maska,66
+outlet100,masala dosa,26
+outlet100,idli,36
+outlet100,upma,36
+outlet100,lassi,9
+outlet101,filter coffee,3
+outlet101,cold coffee,11
+outlet101,vada pav,45
+outlet101,samosa,78
+outlet101,poha,74
+outlet101,bun maska,52
+outlet101,masala dosa,39
+outlet101,idli,1
+outlet101,upma,35
+outlet101,lassi,30
+outlet102,filter coffee,9
+outlet102,cold coffee,4
+outlet102,vada pav,11
+outlet102,samosa,85
+outlet102,poha,38
+outlet102,bun maska,44
+outlet102,masala dosa,88
+outlet102,idli,77
+outlet102,upma,78
+outlet102,lassi,71
+outlet103,filter coffee,26
+outlet103,cold coffee,61
+outlet103,vada pav,66
+outlet103,samosa,11
+outlet103,poha,15
+outlet103,bun maska,30
+outlet103,masala dosa,43
+outlet103,idli,69
+outlet103,upma,54
+outlet103,lassi,50
+outlet104,filter coffee,0
+outlet104,cold coffee,85
+outlet104,vada pav,49
+outlet104,samosa,48
+outlet104,poha,22
+outlet104,bun maska,83
+outlet104,masala dosa,67
+outlet104,idli,26
+outlet104,upma,86
+outlet104,lassi,78
+outlet105,filter coffee,41
+outlet105,cold coffee,49
+outlet105,vada pav,41
+outlet105,samosa,13
+outlet105,poha,88
+outlet105,bun maska,70
+outlet105,masala dosa,88
+outlet105,idli,47
+outlet105,upma,31
+outlet105,lassi,12
+outlet106,filter coffee,27
+outlet106,cold coffee,37
+outlet106,vada pav,39
+outlet106,samosa,34
+outlet106,poha,79
+outlet106,bun maska,9
+outlet106,masala dosa,21
+outlet106,idli,9
+outlet106,upma,80
+outlet106,lassi,52
+outlet107,filter coffee,23
+outlet107,cold coffee,28
+outlet107,vada pav,83
+outlet107,samosa,8
+outlet107,poha,72
+outlet107,bun maska,72
+outlet107,masala dosa,80
+outlet107,idli,81
+outlet107,upma,69
+outlet107,lassi,52
+outlet108,filter coffee,53
+outlet108,cold coffee,29
+outlet108,vada pav,54
+outlet108,samosa,61
+outlet108,poha,67
+outlet108,bun maska,76
+outlet108,masala dosa,31
+outlet108,idli,38
+outlet108,upma,53
+outlet108,lassi,35
+outlet109,filter coffee,10
+outlet109,cold coffee,77
+outlet109,vada pav,42
+outlet109,samosa,23
+outlet109,poha,53
+outlet109,bun maska,3
+outlet109,masala dosa,19
+outlet109,idli,14
+outlet109,upma,37
+outlet109,lassi,72
+outlet110,filter coffee,71
+outlet110,cold coffee,77
+outlet110,vada pav,72
+outlet110,samosa,23
+outlet110,poha,55
+outlet110,bun maska,24
+outlet110,masala dosa,41
+outlet110,idli,76
+outlet110,upma,13
+outlet110,lassi,82
+outlet111,filter coffee,88
+outlet111,cold coffee,42
+outlet111,vada pav,9
+outlet111,samosa,7
+outlet111,poha,62
+outlet111,bun maska,17
+outlet111,masala dosa,66
+outlet111,idli,9
+outlet111,upma,40
+outlet111,lassi,24
+outlet112,filter coffee,59
+outlet112,cold coffee,82
+outlet112,vada pav,49
+outlet112,samosa,29
+outlet112,poha,89
+outlet112,bun maska,78
+outlet112,masala dosa,61
+outlet112,idli,12
+outlet112,upma,0
+outlet112,lassi,24
+outlet113,filter coffee,86
+outlet113,cold coffee,20
+outlet113,vada pav,14
+outlet113,samosa,11
+outlet113,poha,42
+outlet113,bun maska,19
+outlet113,masala dosa,47
+outlet113,idli,78
+outlet113,upma,13
+outlet113,lassi,73
+outlet114,filter coffee,56
+outlet114,cold coffee,41
+outlet114,vada pav,23
+outlet114,samosa,70
+outlet114,poha,74
+outlet114,bun maska,80
+outlet114,masala dosa,13
+outlet114,idli,46
+outlet114,upma,13
+outlet114,lassi,8
+outlet115,filter coffee,25
+outlet115,cold coffee,26
+outlet115,vada pav,41
+outlet115,samosa,47
+outlet115,poha,22
+outlet115,bun maska,58
+outlet115,masala dosa,87
+outlet115,idli,10
+outlet115,upma,31
+outlet115,lassi,51
+outlet116,filter coffee,69
+outlet116,cold coffee,59
+outlet116,vada pav,48
+outlet116,samosa,0
+outlet116,poha,15
+outlet116,bun maska,76
+outlet116,masala dosa,47
+outlet116,idli,16
+outlet116,upma,87
+outlet116,lassi,0
+outlet117,filter coffee,63
+outlet117,cold coffee,48
+outlet117,vada pav,43
+outlet117,samosa,9
+outlet117,poha,62
+outlet117,bun maska,37
+outlet117,masala dosa,2
+outlet117,idli,14
+outlet117,upma,61
+outlet117,lassi,45
+outlet118,filter coffee,25
+outlet118,cold coffee,43
+outlet118,vada pav,48
+outlet118,samosa,18
+outlet118,poha,37
+outlet118,bun maska,63
+outlet118,masala dosa,82
+outlet118,idli,89
+outlet118,upma,11
+outlet118,lassi,73
+outlet119,filter coffee,14
+outlet119,cold coffee,37
+outlet119,vada pav,52
+outlet119,samosa,43
+outlet119,poha,8
+outlet119,bun maska,66
+outlet119,masala dosa,55
+outlet119,idli,6
+outlet119,upma,28
+outlet119,lassi,53
+outlet120,filter coffee,30
+outlet120,cold coffee,34
+outlet120,vada pav,85
+outlet120,samosa,9
+outlet120,poha,18
+outlet120,bun maska,34
+outlet120,masala dosa,12
+outlet120,idli,70
+outlet120,upma,61
+outlet120,lassi,55
+outlet121,filter coffee,23
+outlet121,cold coffee,69
+outlet121,vada pav,49
+outlet121,samosa,31
+outlet121,poha,11
+outlet121,bun maska,57
+outlet121,masala dosa,45
+outlet121,idli,16
+outlet121,upma,10
+outlet121,lassi,0
+outlet122,filter coffee,18
+outlet122,cold coffee,46
+outlet122,vada pav,2
+outlet122,samosa,2
+outlet122,poha,32
+outlet122,bun maska,71
+outlet122,masala dosa,58
+outlet122,idli,49
+outlet122,upma,66
+outlet122,lassi,10
+outlet123,filter coffee,6
+outlet123,cold coffee,27
+outlet123,vada pav,24
+outlet123,samosa,56
+outlet123,poha,1
+outlet123,bun maska,60
+outlet123,masala dosa,66
+outlet123,idli,10
+outlet123,upma,35
+outlet123,lassi,76
+outlet124,filter coffee,87
+outlet124,cold coffee,60
+outlet124,vada pav,65
+outlet124,samosa,2
+outlet124,poha,6
+outlet124,bun maska,20
+outlet124,masala dosa,50
+outlet124,idli,64
+outlet124,upma,55
+outlet124,lassi,75
+outlet125,filter coffee,84
+outlet125,cold coffee,82
+outlet125,vada pav,79
+outlet125,samosa,81
+outlet125,poha,75
+outlet125,bun maska,4
+outlet125,masala dosa,27
+outlet125,idli,3
+outlet125,upma,53
+outlet125,lassi,52
+outlet126,filter coffee,55
+outlet126,cold coffee,48
+outlet126,vada pav,1
+outlet126,samosa,21
+outlet126,poha,43
+outlet126,bun maska,18
+outlet126,masala dosa,38
+outlet126,idli,24
+outlet126,upma,54
+outlet126,lassi,9
+outlet127,filter coffee,47
+outlet127,cold coffee,27
+outlet127,vada pav,50
+outlet127,samosa,53
+outlet127,poha,24
+outlet127,bun maska,34
+outlet127,masala dosa,17
+outlet127,idli,60
+outlet127,upma,46
+outlet127,lassi,36
+outlet128,filter coffee,0
+outlet128,cold coffee,85
+outlet128,vada pav,81
+outlet128,samosa,15
+outlet128,poha,21
+outlet128,bun maska,58
+outlet128,masala dosa,9
+outlet128,idli,9
+outlet128,upma,87
+outlet128,lassi,48
+outlet129,filter coffee,4
+outlet129,cold coffee,52
+outlet129,vada pav,19
+outlet129,samosa,25
+outlet129,poha,82
+outlet129,bun maska,2
+outlet129,masala dosa,63
+outlet129,idli,40
+outlet129,upma,76
+outlet129,lassi,58
+outlet130,filter coffee,17
+outlet130,cold coffee,59
+outlet130,vada pav,30
+outlet130,samosa,9
+outlet130,poha,46
+outlet130,bun maska,79
+outlet130,masala dosa,3
+outlet130,idli,1
+outlet130,upma,23
+outlet130,lassi,54
+outlet131,filter coffee,10
+outlet131,cold coffee,34
+outlet131,vada pav,16
+outlet131,samosa,83
+outlet131,poha,47
+outlet131,bun maska,42
+outlet131,masala dosa,27
+outlet131,idli,19
+outlet131,upma,37
+outlet131,lassi,66
+outlet132,filter coffee,89
+outlet132,cold coffee,71
+outlet132,vada pav,11
+outlet132,samosa,36
+outlet132,poha,14
+outlet132,bun maska,13
+outlet132,masala dosa,82
+outlet132,idli,51
+outlet132,upma,47
+outlet132,lassi,38
+outlet133,filter coffee,47
+outlet133,cold coffee,61
+outlet133,vada pav,70
+outlet133,samosa,74
+outlet133,poha,56
+outlet133,bun maska,30
+outlet133,masala dosa,72
+outlet133,idli,17
+outlet133,upma,33
+outlet133,lassi,2
+outlet134,filter coffee,69
+outlet134,cold coffee,1
+outlet134,vada pav,49
+outlet134,samosa,17
+outlet134,poha,30
+outlet134,bun maska,61
+outlet134,masala dosa,85
+outlet134,idli,90
+outlet134,upma,7
+outlet134,lassi,1
+outlet135,filter coffee,1
+outlet135,cold coffee,27
+outlet135,vada pav,53
+outlet135,samosa,29
+outlet135,poha,64
+outlet135,bun maska,78
+outlet135,masala dosa,30
+outlet135,idli,39
+outlet135,upma,7
+outlet135,lassi,64
+outlet136,filter coffee,30
+outlet136,cold coffee,4
+outlet136,vada pav,88
+outlet136,samosa,49
+outlet136,poha,44
+outlet136,bun maska,2
+outlet136,masala dosa,71
+outlet136,idli,38
+outlet136,upma,56
+outlet136,lassi,57
+outlet137,filter coffee,13
+outlet137,cold coffee,83
+outlet137,vada pav,15
+outlet137,samosa,47
+outlet137,poha,72
+outlet137,bun maska,67
+outlet137,masala dosa,35
+outlet137,idli,74
+outlet137,upma,76
+outlet137,lassi,49
+outlet138,filter coffee,48
+outlet138,cold coffee,38
+outlet138,vada pav,21
+outlet138,samosa,75
+outlet138,poha,87
+outlet138,bun maska,9
+outlet138,masala dosa,82
+outlet138,idli,57
+outlet138,upma,7
+outlet138,lassi,27
+outlet139,filter coffee,67
+outlet139,cold coffee,79
+outlet139,vada pav,49
+outlet139,samosa,12
+outlet139,poha,65
+outlet139,bun maska,38
+outlet139,masala dosa,70
+outlet139,idli,47
+outlet139,upma,52
+outlet139,lassi,17
+outlet140,filter coffee,58
+outlet140,cold coffee,44
+outlet140,vada pav,8
+outlet140,samosa,63
+outlet140,poha,0
+outlet140,bun maska,72
+outlet140,masala dosa,72
+outlet140,idli,26
+outlet140,upma,72
+outlet140,lassi,58
+outlet141,filter coffee,5
+outlet141,cold coffee,7
+outlet141,vada pav,11
+outlet141,samosa,14
+outlet141,poha,43
+outlet141,bun maska,18
+outlet141,masala dosa,47
+outlet141,idli,43
+outlet141,upma,33
+outlet141,lassi,35
+outlet142,filter coffee,61
+outlet142,cold coffee,18
+outlet142,vada pav,15
+outlet142,samosa,33
+outlet142,poha,32
+outlet142,bun maska,3
+outlet142,masala dosa,80
+outlet142,idli,32
+outlet142,upma,49
+outlet142,lassi,21
+outlet143,filter coffee,80
+outlet143,cold coffee,31
+outlet143,vada pav,89
+outlet143,samosa,33
+outlet143,poha,75
+outlet143,bun maska,56
+outlet143,masala dosa,22
+outlet143,idli,76
+outlet143,upma,17
+outlet143,lassi,72
+outlet144,filter coffee,6
+outlet144,cold coffee,45
+outlet144,vada pav,71
+outlet144,samosa,15
+outlet144,poha,1
+outlet144,bun maska,58
+outlet144,masala dosa,5
+outlet144,idli,88
+outlet144,upma,78
+outlet144,lassi,63
+outlet145,filter coffee,86
+outlet145,cold coffee,83
+outlet145,vada pav,5
+outlet145,samosa,3
+outlet145,poha,75
+outlet145,bun maska,52
+outlet145,masala dosa,15
+outlet145,idli,52
+outlet145,upma,67
+outlet145,lassi,78
+outlet146,filter coffee,56
+outlet146,cold coffee,78
+outlet146,vada pav,73
+outlet146,samosa,28
+outlet146,poha,68
+outlet146,bun maska,89
+outlet146,masala dosa,14
+outlet146,idli,90
+outlet146,upma,8
+outlet146,lassi,87
+outlet147,filter coffee,75
+outlet147,cold coffee,11
+outlet147,vada pav,5
+outlet147,samosa,8
+outlet147,poha,58
+outlet147,bun maska,38
+outlet147,masala dosa,83
+outlet147,idli,67
+outlet147,upma,69
+outlet147,lassi,8
+outlet148,filter coffee,82
+outlet148,cold coffee,87
+outlet148,vada pav,34
+outlet148,samosa,15
+outlet148,poha,51
+outlet148,bun maska,39
+outlet148,masala dosa,33
+outlet148,idli,58
+outlet148,upma,38
+outlet148,lassi,38
+outlet149,filter coffee,0
+outlet149,cold coffee,41
+outlet149,vada pav,66
+outlet149,samosa,84
+outlet149,poha,63
+outlet149,bun maska,59
+outlet149,masala dosa,48
+outlet149,idli,19
+outlet149,upma,83
+outlet149,lassi,27
+outlet150,filter coffee,33
+outlet150,cold coffee,40
+outlet150,vada pav,78
+outlet150,samosa,26
+outlet150,poha,58
+outlet150,bun maska,11
+outlet150,masala dosa,19
+outlet150,idli,45
+outlet150,upma,10
+outlet150,lassi,81
+outlet151,filter coffee,54
+outlet151,cold coffee,56
+outlet151,vada pav,79
+outlet151,samosa,66
+outlet151,poha,83
+outlet151,bun maska,50
+outlet151,masala dosa,22
+outlet151,idli,25
+outlet151,upma,17
+outlet151,lassi,62
+outlet152,filter coffee,21
+outlet152,cold coffee,87
+outlet152,vada pav,64
+outlet152,samosa,57
+outlet152,poha,73
+outlet152,bun maska,44
+outlet152,masala dosa,2
+outlet152,idli,18
+outlet152,upma,55
+outlet152,lassi,34
+outlet153,filter coffee,72
+outlet153,cold coffee,63
+outlet153,vada pav,64
+outlet153,samosa,68
+outlet153,poha,27
+outlet153,bun maska,71
+outlet153,masala dosa,30
+outlet153,idli,84
+outlet153,upma,21
+outlet153,lassi,53
+outlet154,filter coffee,70
+outlet154,cold coffee,32
+outlet154,vada pav,40
+outlet154,samosa,37
+outlet154,poha,78
+outlet154,bun maska,13
+outlet154,masala dosa,25
+outlet154,idli,33
+outlet154,upma,54
+outlet154,lassi,45
+outlet155,filter coffee,66
+outlet155,cold coffee,33
+outlet155,vada pav,62
+outlet155,samosa,80
+outlet155,poha,90
+outlet155,bun maska,82
+outlet155,masala dosa,11
+outlet155,idli,14
+outlet155,upma,88
+outlet155,lassi,14
+outlet156,filter coffee,43
+outlet156,cold coffee,12
+outlet156,vada pav,13
+outlet156,samosa,80
+outlet156,poha,36
+outlet156,bun maska,74
+outlet156,masala dosa,22
+outlet156,idli,6
+outlet156,upma,69
+outlet156,lassi,49
+outlet157,filter coffee,22
+outlet157,cold coffee,81
+outlet157,vada pav,42
+outlet157,samosa,33
+outlet157,poha,12
+outlet157,bun maska,52
+outlet157,masala dosa,42
+outlet157,idli,12
+outlet157,upma,39
+outlet157,lassi,8
+outlet158,filter coffee,37
+outlet158,cold coffee,43
+outlet158,vada pav,52
+outlet158,samosa,52
+outlet158,poha,8
+outlet158,bun maska,8
+outlet158,masala dosa,38
+outlet158,idli,8
+outlet158,upma,23
+outlet158,lassi,5
+outlet159,filter coffee,12
+outlet159,cold coffee,64
+outlet159,vada pav,52
+outlet159,samosa,13
+outlet159,poha,59
+outlet159,bun maska,53
+outlet159,masala dosa,9
+outlet159,idli,28
+outlet159,upma,53
+outlet159,lassi,3
+outlet160,filter coffee,72
+outlet160,cold coffee,69
+outlet160,vada pav,37
+outlet160,samosa,83
+outlet160,poha,13
+outlet160,bun maska,87
+outlet160,masala dosa,65
+outlet160,idli,41
+outlet160,upma,46
+outlet160,lassi,9
+outlet161,filter coffee,59
+outlet161,cold coffee,48
+outlet161,vada pav,13
+outlet161,samosa,21
+outlet161,poha,31
+outlet161,bun maska,14
+outlet161,masala dosa,78
+outlet161,idli,68
+outlet161,upma,12
+outlet161,lassi,10
+outlet162,filter coffee,83
+outlet162,cold coffee,84
+outlet162,vada pav,69
+outlet162,samosa,48
+outlet162,poha,55
+outlet162,bun maska,14
+outlet162,masala dosa,34
+outlet162,idli,39
+outlet162,upma,70
+outlet162,lassi,58
+outlet163,filter coffee,54
+outlet163,cold coffee,5
+outlet163,vada pav,26
+outlet163,samosa,65
+outlet163,poha,17
+outlet163,bun maska,48
+outlet163,masala dosa,84
+outlet163,idli,81
+outlet163,upma,23
+outlet163,lassi,24
+outlet164,filter coffee,41
+outlet164,cold coffee,67
+outlet164,vada pav,9
+outlet164,samosa,17
+outlet164,poha,39
+outlet164,bun maska,6
+outlet164,masala dosa,82
+outlet164,idli,59
+outlet164,upma,39
+outlet164,lassi,56
+outlet165,filter coffee,70
+outlet165,cold coffee,73
+outlet165,vada pav,81
+outlet165,samosa,64
+outlet165,poha,32
+outlet165,bun maska,36
+outlet165,masala dosa,21
+outlet165,idli,80
+outlet165,upma,32
+outlet165,lassi,58
+outlet166,filter coffee,60
+outlet166,cold coffee,51
+outlet166,vada pav,90
+outlet166,samosa,77
+outlet166,poha,12
+outlet166,bun maska,17
+outlet166,masala dosa,76
+outlet166,idli,25
+outlet166,upma,58
+outlet166,lassi,88
+outlet167,filter coffee,13
+outlet167,cold coffee,56
+outlet167,vada pav,29
+outlet167,samosa,17
+outlet167,poha,31
+outlet167,bun maska,21
+outlet167,masala dosa,82
+outlet167,idli,11
+outlet167,upma,57
+outlet167,lassi,32
+outlet168,filter coffee,79
+outlet168,cold coffee,59
+outlet168,vada pav,86
+outlet168,samosa,20
+outlet168,poha,89
+outlet168,bun maska,61
+outlet168,masala dosa,13
+outlet168,idli,38
+outlet168,upma,74
+outlet168,lassi,32
+outlet169,filter coffee,80
+outlet169,cold coffee,45
+outlet169,vada pav,89
+outlet169,samosa,6
+outlet169,poha,69
+outlet169,bun maska,71
+outlet169,masala dosa,15
+outlet169,idli,26
+outlet169,upma,3
+outlet169,lassi,43
+outlet170,filter coffee,73
+outlet170,cold coffee,75
+outlet170,vada pav,61
+outlet170,samosa,81
+outlet170,poha,62
+outlet170,bun maska,66
+outlet170,masala dosa,77
+outlet170,idli,36
+outlet170,upma,77
+outlet170,lassi,42
+outlet171,filter coffee,7
+outlet171,cold coffee,36
+outlet171,vada pav,17
+outlet171,samosa,67
+outlet171,poha,53
+outlet171,bun maska,37
+outlet171,masala dosa,53
+outlet171,idli,47
+outlet171,upma,16
+outlet171,lassi,37
+outlet172,filter coffee,83
+outlet172,cold coffee,24
+outlet172,vada pav,4
+outlet172,samosa,0
+outlet172,poha,62
+outlet172,bun maska,20
+outlet172,masala dosa,39
+outlet172,idli,53
+outlet172,upma,84
+outlet172,lassi,36
+outlet173,filter coffee,53
+outlet173,cold coffee,75
+outlet173,vada pav,86
+outlet173,samosa,59
+outlet173,poha,43
+outlet173,bun maska,67
+outlet173,masala dosa,64
+outlet173,idli,41
+outlet173,upma,88
+outlet173,lassi,78
+outlet174,filter coffee,1
+outlet174,cold coffee,20
+outlet174,vada pav,73
+outlet174,samosa,63
+outlet174,poha,83
+outlet174,bun maska,0
+outlet174,masala dosa,68
+outlet174,idli,61
+outlet174,upma,59
+outlet174,lassi,47
+outlet175,filter coffee,5
+outlet175,cold coffee,29
+outlet175,vada pav,68
+outlet175,samosa,0
+outlet175,poha,61
+outlet175,bun maska,15
+outlet175,masala dosa,25
+outlet175,idli,21
+outlet175,upma,21
+outlet175,lassi,64
+outlet176,filter coffee,30
+outlet176,cold coffee,85
+outlet176,vada pav,51
+outlet176,samosa,83
+outlet176,poha,13
+outlet176,bun maska,49
+outlet176,masala dosa,53
+outlet176,idli,82
+outlet176,upma,29
+outlet176,lassi,82
+outlet177,filter coffee,35
+outlet177,cold coffee,1
+outlet177,vada pav,26
+outlet177,samosa,84
+outlet177,poha,30
+outlet177,bun maska,74
+outlet177,masala dosa,8
+outlet177,idli,64
+outlet177,upma,47
+outlet177,lassi,55
+outlet178,filter coffee,74
+outlet178,cold coffee,39
+outlet178,vada pav,28
+outlet178,samosa,12
+outlet178,poha,47
+outlet178,bun maska,71
+outlet178,masala dosa,76
+outlet178,idli,70
+outlet178,upma,56
+outlet178,lassi,87
+outlet179,filter coffee,7
+outlet179,cold coffee,33
+outlet179,vada pav,67
+outlet179,samosa,0
+outlet179,poha,18
+outlet179,bun maska,54
+outlet179,masala dosa,7
+outlet179,idli,59
+outlet179,upma,1
+outlet179,lassi,24
+outlet180,filter coffee,24
+outlet180,cold coffee,13
+outlet180,vada pav,22
+outlet180,samosa,58
+outlet180,poha,56
+outlet180,bun maska,60
+outlet180,masala dosa,61
+outlet180,idli,37
+outlet180,upma,66
+outlet180,lassi,9
+outlet181,filter coffee,3
+outlet181,cold coffee,89
+outlet181,vada pav,78
+outlet181,samosa,79
+outlet181,poha,59
+outlet181,bun maska,79
+outlet181,masala dosa,78
+outlet181,idli,77
+outlet181,upma,79
+outlet181,lassi,26
+outlet182,filter coffee,2
+outlet182,cold coffee,83
+outlet182,vada pav,56
+outlet182,samosa,64
+outlet182,poha,25
+outlet182,bun maska,8
+outlet182,masala dosa,89
+outlet182,idli,43
+outlet182,upma,25
+outlet182,lassi,12
+outlet183,filter coffee,68
+outlet183,cold coffee,47
+outlet183,vada pav,11
+outlet183,samosa,22
+outlet183,poha,28
+outlet183,bun maska,50
+outlet183,masala dosa,0
+outlet183,idli,4
+outlet183,upma,54
+outlet183,lassi,7
+outlet184,filter coffee,38
+outlet184,cold coffee,24
+outlet184,vada pav,49
+outlet184,samosa,50
+outlet184,poha,21
+outlet184,bun maska,14
+outlet184,masala dosa,49
+outlet184,idli,88
+outlet184,upma,24
+outlet184,lassi,27
+outlet185,filter coffee,16
+outlet185,cold coffee,51
+outlet185,vada pav,57
+outlet185,samosa,18
+outlet185,poha,52
+outlet185,bun maska,3
+outlet185,masala dosa,35
+outlet185,idli,58
+outlet185,upma,67
+outlet185,lassi,25
+outlet186,filter coffee,88
+outlet186,cold coffee,88
+outlet186,vada pav,87
+outlet186,samosa,34
+outlet186,poha,11
+outlet186,bun maska,29
+outlet186,masala dosa,54
+outlet186,idli,53
+outlet186,upma,84
+outlet186,lassi,84
+outlet187,filter coffee,71
+outlet187,cold coffee,56
+outlet187,vada pav,24
+outlet187,samosa,25
+outlet187,poha,41
+outlet187,bun maska,74
+outlet187,masala dosa,32
+outlet187,idli,87
+outlet187,upma,5
+outlet187,lassi,24
+outlet188,filter coffee,68
+outlet188,cold coffee,20
+outlet188,vada pav,46
+outlet188,samosa,81
+outlet188,poha,12
+outlet188,bun maska,90
+outlet188,masala dosa,77
+outlet188,idli,55
+outlet188,upma,46
+outlet188,lassi,18
+outlet189,filter coffee,80
+outlet189,cold coffee,36
+outlet189,vada pav,23
+outlet189,samosa,0
+outlet189,poha,69
+outlet189,bun maska,19
+outlet189,masala dosa,90
+outlet189,idli,54
+outlet189,upma,13
+outlet189,lassi,0
+outlet190,filter coffee,89
+outlet190,cold coffee,70
+outlet190,vada pav,59
+outlet190,samosa,41
+outlet190,poha,10
+outlet190,bun maska,62
+outlet190,masala dosa,19
+outlet190,idli,47
+outlet190,upma,0
+outlet190,lassi,7
+outlet191,filter coffee,77
+outlet191,cold coffee,47
+outlet191,vada pav,61
+outlet191,samosa,33
+outlet191,poha,73
+outlet191,bun maska,57
+outlet191,masala dosa,42
+outlet191,idli,77
+outlet191,upma,68
+outlet191,lassi,52
+outlet192,filter coffee,21
+outlet192,cold coffee,50
+outlet192,vada pav,54
+outlet192,samosa,71
+outlet192,poha,56
+outlet192,bun maska,2
+outlet192,masala dosa,29
+outlet192,idli,61
+outlet192,upma,37
+outlet192,lassi,13
+outlet193,filter coffee,65
+outlet193,cold coffee,9
+outlet193,vada pav,68
+outlet193,samosa,61
+outlet193,poha,28
+outlet193,bun maska,10
+outlet193,masala dosa,85
+outlet193,idli,83
+outlet193,upma,76
+outlet193,lassi,40
+outlet194,filter coffee,12
+outlet194,cold coffee,10
+outlet194,vada pav,41
+outlet194,samosa,52
+outlet194,poha,22
+outlet194,bun maska,41
+outlet194,masala dosa,44
+outlet194,idli,5
+outlet194,upma,39
+outlet194,lassi,80
+outlet195,filter coffee,86
+outlet195,cold coffee,15
+outlet195,vada pav,66
+outlet195,samosa,10
+outlet195,poha,82
+outlet195,bun maska,87
+outlet195,masala dosa,81
+outlet195,idli,10
+outlet195,upma,5
+outlet195,lassi,62
+outlet196,filter coffee,65
+outlet196,cold coffee,60
+outlet196,vada pav,27
+outlet196,samosa,56
+outlet196,poha,38
+outlet196,bun maska,19
+outlet196,masala dosa,54
+outlet196,idli,35
+outlet196,upma,78
+outlet196,lassi,57
+outlet197,filter coffee,73
+outlet197,cold coffee,9
+outlet197,vada pav,86
+outlet197,samosa,66
+outlet197,poha,31
+outlet197,bun maska,37
+outlet197,masala dosa,11
+outlet197,idli,75
+outlet197,upma,38
+outlet197,lassi,9
+outlet198,filter coffee,48
+outlet198,cold coffee,37
+outlet198,vada pav,52
+outlet198,samosa,12
+outlet198,poha,20
+outlet198,bun maska,44
+outlet198,masala dosa,80
+outlet198,idli,54
+outlet198,upma,11
+outlet198,lassi,43
+outlet199,filter coffee,26
+outlet199,cold coffee,45
+outlet199,vada pav,87
+outlet199,samosa,13
+outlet199,poha,59
+outlet199,bun maska,41
+outlet199,masala dosa,12
+outlet199,idli,63
+outlet199,upma,41
+outlet199,lassi,4
+outlet200,filter coffee,87
+outlet200,cold coffee,57
+outlet200,vada pav,89
+outlet200,samosa,7
+outlet200,poha,76
+outlet200,bun maska,29
+outlet200,masala dosa,36
+outlet200,idli,39
+outlet200,upma,33
+outlet200,lassi,58

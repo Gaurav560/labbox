@@ -1,5 +1,22 @@
 # Changelog
 
+## Redis in practice, block 2: Redis inside a real app (chapters 5 to 8)
+
+- 5. **Redis from Python:** the client and its connection pool, strings back from Redis, `{}` for a
+  missing hash; a profile API from a hash; a 2000-row import made fast with a pipeline. The check
+  counts round trips (Redis's `total_reads_processed`): one by one is about 2000, a pipeline about 5.
+- 6. **Caching for real:** cache-aside with a TTL, invalidation on a price change (delete, do not
+  update), and a cache stampede: 30 requests at once on an empty cache must make at most 2 calls to
+  the slow billing system (`SET NX` with a TTL). Go deeper: jitter, early refresh, negative caching.
+- 7. **Atomic operations:** check-then-act races; the OTP limiter; loyalty redemptions made atomic
+  with a Lua script (20 redemptions at once from 500 points: exactly 5 succeed, balance 0).
+- 8. **Distributed locks:** `SET NX PX` with a token; 30 people booking one table at once, exactly one
+  wins; release only your own lock (compare and delete in Lua); a graded design review on lock
+  expiry during slow work, failover, and fencing tokens.
+- The app's TODOs follow the chapters; every check exercises the running app with real concurrency.
+  Verified on the running starter: each task fails for its intended reason (2000 round trips, 30
+  billing calls, 20 redemptions, 30 bookings, a stolen lock). 21 tasks in 8 chapters, about 3 hours.
+
 ## The Labs page uses the home page's tiles
 
 - After login, labs were shown as heavier cards (paragraph, three chips, a progress bar, an Open

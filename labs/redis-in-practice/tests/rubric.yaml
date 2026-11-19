@@ -1,0 +1,23 @@
+# Design reviews, graded by the tutor model. Never shown to the learner.
+08-distributed-locks:
+  lock_expiry:
+    - id: problem
+      points: 2
+      look_for: Explains that the lock expires while the work is still running, so a second server can take the lock and both work at once (for example double booking).
+    - id: remedy
+      points: 2
+      look_for: Proposes a remedy such as a longer expiry sized to the work, renewing or extending the lock while working (a watchdog), or checking ownership before the final write.
+  redis_failover:
+    - id: lost_lock
+      points: 2
+      look_for: Explains that the replica never received the lock, so after failover the new main Redis lets a second client take the same lock.
+    - id: mitigation
+      points: 1
+      look_for: Mentions a mitigation such as Redlock across several independent Redis nodes, WAIT for replication, or not relying on the lock alone for correctness.
+  fencing:
+    - id: fencing_token
+      points: 2
+      look_for: Describes a fencing token, a number that grows with every lock grant, which the database or service checks and rejects when it is older than one it has seen.
+    - id: constraint
+      points: 1
+      look_for: Or mentions a database level guarantee such as a unique constraint or a conditional update, so the final write itself cannot double book.

@@ -7,7 +7,7 @@ language: python
 track: databases
 tags: [redis, python, caching]
 level: beginner
-estimated_minutes: 95
+estimated_minutes: 185
 story:
   company: Brew Point
   character: { name: Kabir, role: "Backend lead, Brew Point" }
@@ -142,22 +142,86 @@ chapters:
           - "A sorted set keeps members ordered by a number called the score. ZADD adds members with their scores."
           - "ZADD takes the key, then score member, score member. ZINCRBY adds to one member's score."
           - "ZRANGE sales:today 0 -1 REV WITHSCORES lists them, best seller first: 120, 80, then 50."
-  - id: 05-cache-and-limit
-    title: A cache and a rate limiter
-    file: chapters/05-cache-and-limit.md
+  - id: 05-redis-from-python
+    title: Redis from Python
+    file: chapters/05-redis-from-python.md
     minutes: 20
     tasks:
+      - id: profile_api
+        title: "GET /customers/{cid}: a profile from a hash"
+        xp: 30
+        hints:
+          - "One command reads every field of a hash. In Python it returns a dict."
+          - "A missing hash comes back as an empty dict: answer 404 when there is nothing."
+          - "Build the answer from the dict, and turn the visits field into an int before returning it."
+      - id: bulk_import
+        title: "POST /import: 2000 rows in a handful of round trips"
+        xp: 40
+        hints:
+          - "The loop sends one command per row and waits for each answer. That waiting is the cost."
+          - "A pipeline queues commands on the client and sends them together. r.pipeline gives you one."
+          - "Queue every HSET on the pipeline inside the loop, then run them all with one call after the loop."
+  - id: 06-caching-for-real
+    title: Caching for real
+    file: chapters/06-caching-for-real.md
+    minutes: 25
+    tasks:
       - id: price_cache
-        title: "app.py: cache prices for 60 seconds"
+        title: "GET /price/{item}: cache-aside for 60 seconds"
         xp: 40
         hints:
           - "Cache-aside: look in Redis first, and only on a miss call the slow lookup and keep the answer."
           - "r.get returns None on a miss. r.set takes an ex= argument: the number of seconds to keep the value."
           - "Use one key per item, like price:samosa. Redis gives strings back, so turn the price into an int."
+      - id: price_invalidate
+        title: "PUT /price/{item}: the next read sees the new price"
+        xp: 30
+        hints:
+          - "After the price changes, the cached copy is wrong. What should happen to it?"
+          - "Removing the cached value is enough: the next read misses and asks billing again."
+          - "Delete the price key for that item right after updating PRICES."
+      - id: stampede_lock
+        title: "30 requests on an empty cache, one call to billing"
+        xp: 50
+        hints:
+          - "Only one request may call billing. The others must notice someone is already on it."
+          - "SET with nx=True succeeds for exactly one caller. Give that key a short expiry so a crash cannot block everyone."
+          - "The winner fills the cache and deletes its lock; the others sleep 50 ms at a time and read the cache again."
+  - id: 07-atomic-operations
+    title: Atomic operations
+    file: chapters/07-atomic-operations.md
+    minutes: 20
+    tasks:
       - id: otp_limit
-        title: "app.py: at most 3 OTPs a minute"
+        title: "POST /otp/{phone}: at most 3 OTPs a minute"
         xp: 40
         hints:
           - "Count requests per phone number in Redis, and let the count disappear after a minute."
           - "r.incr(key) adds one and returns the new count, even for a key that does not exist yet."
           - "Give the key a 60 second expiry when the count is 1, and raise HTTPException with status 429 above 3."
+      - id: redeem_points
+        title: "POST /redeem/{cid}: never double-spend"
+        xp: 50
+        hints:
+          - "The read, the check and the write must happen as one step, with nothing in between."
+          - "A Lua script runs atomically inside Redis. register_script turns its source into a function you can call."
+          - "In the script: read the balance, return -1 when it is too low, otherwise DECRBY and return the result. Answer 409 on -1."
+  - id: 08-distributed-locks
+    title: Distributed locks
+    file: chapters/08-distributed-locks.md
+    minutes: 25
+    tasks:
+      - id: book_once
+        title: "POST /book/{table}: exactly one winner"
+        xp: 50
+        hints:
+          - "Take a lock for the table before checking whether it is free, and give up (409) if you cannot get it."
+          - "SET with nx=True and px= takes the lock; its value should be a random token, for example from uuid4."
+          - "Hold the lock around the check and the booking, and release it in a finally block, even when you answer 409."
+      - id: safe_unlock
+        title: "Release a lock only if it is yours"
+        xp: 40
+        hints:
+          - "Before deleting, the value must be compared with the token. Doing that in two commands is a race."
+          - "A short Lua script can GET the key and DEL it only when the value equals the token, in one step."
+          - "Pass the lock key in KEYS and the token in ARGV, and return whether something was deleted."

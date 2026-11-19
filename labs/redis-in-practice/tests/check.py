@@ -1,14 +1,19 @@
 """Live checks for redis-in-practice: read the learner's Redis, and call their running app over HTTP.
-Chapters 1 to 4 are checked by what is in Redis; chapter 5 by how the app behaves (timing, status codes)."""
+Chapters 1 to 4 are checked by what is in Redis; chapters 5 to 8 by how the app behaves: answers,
+round trips, and real races (many requests at the same moment)."""
 import json
+import random
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import redis
 import requests
 
 APP = "http://workspace:8000"
 TASKS = ("first_keys", "cups_counter", "clean_up", "otp_expiry", "session_ttl", "keep_forever", "menu_hash",
-         "customer_profile", "order_queue", "unique_visitors", "common_customers", "top_sellers", "price_cache", "otp_limit")
+         "customer_profile", "order_queue", "unique_visitors", "common_customers", "top_sellers")
+APP_TASKS = ("profile_api", "bulk_import", "price_cache", "price_invalidate", "stampede_lock", "otp_limit",
+             "redeem_points", "book_once", "safe_unlock")
 SESSION = '{"customer": 42, "outlet": "andheri"}'  # what setup/02.sh stored
 ANDHERI = {"asha", "ravi", "meera", "kabir", "priya", "dev"}
 BANDRA = {"ravi", "sana", "priya", "arjun", "dev", "zoya"}
@@ -26,7 +31,7 @@ try:
     r = redis.Redis(host="redis", decode_responses=True, socket_timeout=5)
     r.ping()
 except Exception as e:
-    for t in TASKS:
+    for t in TASKS + APP_TASKS:
         report(t, False, f"Could not reach Redis: {e}")
     raise SystemExit(0)
 
@@ -154,7 +159,7 @@ def common_customers():
     report("common_customers", True, f"{len(want)} loyal customers visit both outlets.")
 
 
-# ---------- from the first version: the menu (ch 3), the OTP (ch 2), best sellers (ch 4) ----------
+# ---------- the menu (ch 3), the OTP (ch 2), best sellers (ch 4) ----------
 
 def menu_hash():
     want = {"filter coffee": "30", "cold coffee": "40", "vada pav": "25"}
@@ -196,7 +201,7 @@ def top_sellers():
     report("top_sellers", True, "Best sellers, in order, kept by Redis.")
 
 
-# ---------- chapter 5: a cache and a rate limiter (the app) ----------
+# ---------- the app (chapters 5 to 8): helpers ----------
 
 def app_up():
     try:
@@ -205,6 +210,57 @@ def app_up():
     except requests.RequestException:
         return False
 
+
+def metric(name, value, target, better="lower"):
+    print("@@METRIC " + json.dumps({"name": name, "value": value, "target": target, "better": better}), flush=True)
+
+
+def together(n, call):
+    """n requests at the same moment: the only honest test of a race."""
+    with ThreadPoolExecutor(max_workers=n) as pool:
+        return list(pool.map(lambda i: call(i), range(n)))
+
+
+# ---------- chapter 5: Redis from Python ----------
+
+def profile_api():
+    cid = random.randint(900_000, 999_999)
+    r.hset(f"customer:{cid}", mapping={"name": "Zoya", "visits": "12", "tier": "silver"})
+    try:
+        got = requests.get(f"{APP}/customers/{cid}", timeout=5)
+        missing = requests.get(f"{APP}/customers/{cid + 1}", timeout=5)
+    finally:
+        r.delete(f"customer:{cid}")
+    want = {"id": cid, "name": "Zoya", "visits": 12, "tier": "silver"}
+    if got.status_code != 200:
+        return report("profile_api", False, f"GET /customers/{cid} answered {got.status_code}.", "200", f"{got.status_code} {got.text[:120]}")
+    if got.json() != want:
+        return report("profile_api", False, "The profile is not right (visits must be a number, not text).", json.dumps(want), json.dumps(got.json()))
+    if missing.status_code != 404:
+        return report("profile_api", False, "A customer that does not exist must get a 404.", "404", str(missing.status_code))
+    report("profile_api", True, "Profiles come straight from the hash, with the right types.")
+
+
+def bulk_import():
+    r.delete("sales:import")
+    reads = lambda: int(r.info("stats")["total_reads_processed"])
+    before = reads()
+    t0 = time.monotonic()
+    resp = requests.post(f"{APP}/import", timeout=60)
+    ms = (time.monotonic() - t0) * 1000
+    trips = reads() - before - 1  # minus our own INFO
+    metric("round_trips", trips, 100)
+    if resp.status_code != 200:
+        return report("bulk_import", False, f"POST /import answered {resp.status_code}.", "200", f"{resp.status_code} {resp.text[:120]}")
+    if r.hlen("sales:import") != 2000 or r.hget("sales:import", "outlet1:filter coffee") != "79":
+        return report("bulk_import", False, "sales:import does not hold the 2000 rows of data/sales.csv.", "2000 fields", f"{r.hlen('sales:import')} fields")
+    if trips > 100:
+        return report("bulk_import", False, f"The import made about {trips} round trips to Redis. At 0.5 ms each in production, that is {trips * 0.5 / 1000:.1f} s.",
+                      "a handful of round trips", f"about {trips}")
+    report("bulk_import", True, f"2000 rows in {max(trips, 1)} round trip(s), {ms:.0f} ms.")
+
+
+# ---------- chapter 6: caching for real ----------
 
 def price_cache():
     item, key = "poha", "price:poha"
@@ -234,6 +290,43 @@ def price_cache():
     report("price_cache", True, f"First call {cold:.2f} s, second {warm * 1000:.0f} ms.")
 
 
+def price_invalidate():
+    item = "samosa"
+    try:
+        requests.get(f"{APP}/price/{item}", timeout=10)  # warm the cache with 20
+        requests.put(f"{APP}/price/{item}", json={"price": 22}, timeout=10)
+        after = requests.get(f"{APP}/price/{item}", timeout=10)
+        t0 = time.monotonic()
+        again = requests.get(f"{APP}/price/{item}", timeout=10)  # must come from the cache again
+        again_s = time.monotonic() - t0
+    finally:
+        requests.put(f"{APP}/price/{item}", json={"price": 20}, timeout=10)
+        r.delete(f"price:{item}")
+    got = after.json().get("price") if after.status_code == 200 else after.status_code
+    if got != 22:
+        return report("price_invalidate", False, "After a price change, the next read still shows the old price from the cache.", "22", str(got))
+    if again_s > 0.3 or again.json().get("price") != 22:
+        return report("price_invalidate", False, "Prices are not cached at all, so nothing can be stale. Do the cache task first.", "a cached read after the change", f"{again_s:.2f} s")
+    report("price_invalidate", True, "A price change shows up on the very next read.")
+
+
+def stampede_lock():
+    item = "cold coffee"
+    r.delete(f"price:{item}", f"lock:price:{item}")
+    before = int(r.get("billing:calls") or 0)
+    answers = together(30, lambda i: requests.get(f"{APP}/price/{item}", timeout=15))
+    calls = int(r.get("billing:calls") or 0) - before
+    metric("billing_calls", calls, 2)
+    bad = [a for a in answers if a.status_code != 200 or a.json().get("price") != 40]
+    if bad:
+        return report("stampede_lock", False, f"{len(bad)} of 30 requests did not get the price.", "200 and 40 for all 30", f"{bad[0].status_code} {bad[0].text[:100]}")
+    if calls > 2:
+        return report("stampede_lock", False, f"30 requests at once on an empty cache made {calls} calls to the slow billing system.", "1 (at most 2)", str(calls))
+    report("stampede_lock", True, f"30 requests at once, {calls} call to billing. The stampede is over.")
+
+
+# ---------- chapter 7: atomic operations ----------
+
 def otp_limit():
     phone = "9000000001"
     key = f"otp:count:{phone}"
@@ -254,12 +347,71 @@ def otp_limit():
     report("otp_limit", True, "Three OTPs go through, the fourth gets 429, and the count resets in a minute.")
 
 
+def redeem_points():
+    cid = random.randint(900_000, 999_999)
+    key = f"loyalty:{cid}"
+    r.set(key, 500)
+    try:
+        codes = [a.status_code for a in together(20, lambda i: requests.post(f"{APP}/redeem/{cid}?points=100", timeout=10))]
+        left = r.get(key)
+    finally:
+        r.delete(key)
+    ok = codes.count(200)
+    if ok != 5 or left != "0":
+        return report("redeem_points", False, f"500 points, 20 redemptions of 100 at once: {ok} went through and {left} points are left.",
+                      "exactly 5 through, 0 left", f"{ok} through, {left} left")
+    if codes.count(409) != 15:
+        return report("redeem_points", False, "The 15 that cannot be paid must get a 409.", "15 x 409", str(sorted(set(codes))))
+    report("redeem_points", True, "20 redemptions at once: exactly 5 paid, the balance never went below zero.")
+
+
+# ---------- chapter 8: distributed locks ----------
+
+def book_once():
+    table = random.randint(900_000, 999_999)
+    key = f"booking:table:{table}"
+    try:
+        answers = together(30, lambda i: requests.post(f"{APP}/book/{table}?customer=c{i}", timeout=10))
+        winner = r.get(key)
+    finally:
+        r.delete(key)
+    wins = [a for a in answers if a.status_code == 200]
+    if len(wins) != 1:
+        return report("book_once", False, f"30 people booked table {table} at the same moment and {len(wins)} were told it is theirs.", "exactly 1", str(len(wins)))
+    if winner != wins[0].json().get("booked_for"):
+        return report("book_once", False, "The table is stored for someone other than the person told they won.", wins[0].json().get("booked_for"), str(winner))
+    if any(a.status_code not in (200, 409) for a in answers):
+        return report("book_once", False, "Everyone else must get a 409.", "409", str(sorted({a.status_code for a in answers})))
+    report("book_once", True, "30 at once, exactly one booking, everyone else told politely.")
+
+
+def safe_unlock():
+    name = f"report-{random.randint(900_000, 999_999)}"
+    key = f"lock:{name}"
+    r.set(key, "token-A", ex=30)
+    try:
+        requests.post(f"{APP}/locks/{name}/release", json={"token": "token-B"}, timeout=5)
+        stolen = r.get(key) != "token-A"
+        requests.post(f"{APP}/locks/{name}/release", json={"token": "token-A"}, timeout=5)
+        still = r.exists(key)
+    finally:
+        r.delete(key)
+    if stolen:
+        return report("safe_unlock", False, "Releasing with token-B removed a lock that token-A holds.", "the lock stays with token-A", "the lock is gone")
+    if still:
+        return report("safe_unlock", False, "The real owner (token-A) could not release its own lock.", "the lock released", "the lock is still there")
+    report("safe_unlock", True, "Only the owner can release the lock.")
+
+
 for check in (first_keys, cups_counter, clean_up, otp_expiry, session_ttl, keep_forever, menu_hash,
               customer_profile, order_queue, unique_visitors, common_customers, top_sellers):
     check()
 if app_up():
-    price_cache()
-    otp_limit()
+    for check in (profile_api, bulk_import, price_cache, price_invalidate, stampede_lock, otp_limit, redeem_points, book_once, safe_unlock):
+        try:
+            check()
+        except requests.RequestException as e:
+            report(check.__name__, False, f"Calling your app failed: {e}")
 else:
-    report("price_cache", False, NOT_RUNNING)
-    report("otp_limit", False, NOT_RUNNING)
+    for t in APP_TASKS:
+        report(t, False, NOT_RUNNING)
