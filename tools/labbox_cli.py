@@ -39,10 +39,9 @@ TRACKS: tuple[str, ...] = Track.__args__  # type: ignore[attr-defined]
 # service-incident: a Postgres service, an injected failure and a live check.
 # preview-app: a FastAPI app shown in the Preview tab.
 # ai: Python with the OpenAI SDK and llm.enabled; checks hand the code a fake client.
-TEMPLATES_READY = ["python", "java", "node", "go", "service-incident", "preview-app", "ai"]
-TEMPLATE_LATER = {
-    "system-design": "Phase G (k6 load tests)",
-}
+# system-design: two app copies behind nginx, Redis, a k6 live check and a graded design review.
+TEMPLATES_READY = ["python", "java", "node", "go", "service-incident", "preview-app", "ai", "system-design"]
+TEMPLATE_LATER: dict[str, str] = {}
 HINTS_PER_TASK = 3
 
 

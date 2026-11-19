@@ -1,5 +1,11 @@
 # Changelog
 
+## Phase G, step 5: the system-design template
+
+- `scripts/labbox new-lab <id> --template system-design`: two app copies behind nginx (service `lb`),
+  Redis, a k6 live check with gauges and a graded design review, based on the rate-limiter lab, built
+  from `labbox/python:v1` only. A lab made from it builds and passes `test-lab`.
+
 ## Phase G, step 4: the rate-limiter lab (lab 16)
 
 - New lab `rate-limiter` (system-design, intermediate, 2 chapters). The learner's FastAPI app runs as

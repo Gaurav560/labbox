@@ -73,7 +73,7 @@ def test_unknown_prerequisite_warns(labs_dir: Path):
     assert rep.errors == [] and any("core-java" in w for w in rep.warnings)
 
 
-@pytest.mark.parametrize("template", ["python", "java", "ai"])
+@pytest.mark.parametrize("template", ["python", "java", "ai", "system-design"])
 def test_new_lab_is_valid(tmp_path: Path, template: str):
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", f"my-{template}", "--template", template, "--track", "languages"]) == 0
     rep = cli.validate_lab(tmp_path / f"my-{template}", check_image=False)
@@ -82,7 +82,6 @@ def test_new_lab_is_valid(tmp_path: Path, template: str):
 
 
 def test_new_lab_refuses(tmp_path: Path):
-    assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "load", "--template", "system-design"]) == 2
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "Bad_Id"]) == 2
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 0
     assert cli.main(["--labs-dir", str(tmp_path), "new-lab", "ok-lab"]) == 2  # exists

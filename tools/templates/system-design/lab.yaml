@@ -1,0 +1,77 @@
+# System design template: two copies of an app behind nginx (service lb), Redis, a k6 live check,
+# and a design review graded with tests/rubric.yaml. Replace the rate limiter example with your system.
+id: {{lab_id}}
+version: 2
+title: "{{title}}"
+subtitle: Two servers behind a load balancer, one shared limit in Redis, proven with a real load test.
+description: Two servers behind a load balancer, one shared limit in Redis, proven with a real load test.
+language: python
+track: {{track}}
+tags: [system-design, redis, python]
+level: intermediate
+estimated_minutes: 40
+story:
+  company: Brew Point
+  character: { name: Kabir, role: "Backend lead, Brew Point" }
+  pitch: "Brew Point opened its quotes API to partners. One partner's script is now melting both servers."
+cover_scene: "TODO(author): one line, what the cover shows"
+cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
+image: labbox/{{lab_id}}:v1
+resources: s
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+  env: { REDIS_HOST: redis }
+services:
+  - name: redis
+    image: redis:7.4
+    resources: { cpus: 0.5, memory: 128m, pids_limit: 64 }
+    command: [redis-server, --save, "", --appendonly, "no", --maxmemory, 64mb]
+    ready: [redis-cli, ping]
+  # The load balancer: nginx sends each request to one of the two app copies in the workspace
+  # (ports 8001 and 8002). It looks the workspace up on every request, so it can start first.
+  - name: lb
+    image: nginxinc/nginx-unprivileged:1.27.4-alpine
+    resources: { cpus: 0.5, memory: 64m, pids_limit: 64 }
+    command:
+      - sh
+      - -c
+      - >-
+        printf '%s\n'
+        'pid /tmp/nginx.pid; events {}'
+        'http { access_log off; client_body_temp_path /tmp/cb; proxy_temp_path /tmp/pt; fastcgi_temp_path /tmp/ft; uwsgi_temp_path /tmp/ut; scgi_temp_path /tmp/st;'
+        'resolver 127.0.0.11 valid=5s ipv6=off;'
+        'split_clients "${request_id}" $app_port { 50% 8001; * 8002; }'
+        'server { listen 8080; location / { proxy_pass http://workspace:$app_port; proxy_set_header X-Forwarded-For $remote_addr; } } }'
+        > /tmp/nginx.conf && exec nginx -c /tmp/nginx.conf -g 'daemon off;'
+check:
+  mode: live
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 90
+  network: none
+chapters:
+  - id: 01-shared-limit
+    title: Two servers, one limit
+    file: chapters/01-shared-limit.md
+    minutes: 20
+    tasks:
+      - id: per_key_limit
+        title: "app.py: 10 requests a second per API key, across both servers"
+        xp: 60
+        hints:
+          - "Each copy of the app keeps its own dict, so each one allows 10. Where can both copies see the same count?"
+          - "Keep the count in Redis: one key per API key and per second, increased on every request, gone after a couple of seconds."
+          - "r.incr on a key made of the API key and int(time.time()) returns the new count; give it an expire of 2 and allow while the count is at most the limit."
+  - id: 02-global-limit
+    title: A limit for everyone
+    file: chapters/02-global-limit.md
+    minutes: 20
+    tasks:
+      - id: global_limit
+        title: "app.py: at most 50 requests a second in total"
+        xp: 60
+        hints:
+          - "Every key now stays under its own limit, but together they still flood the database. Count all requests too."
+          - "A second counter in Redis, the same way, but one for everybody: allow only while both counters are within their limits."
+          - "Send both increments in one round trip with a pipeline, and check the per-key count and the total."

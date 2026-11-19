@@ -1,0 +1,23 @@
+# Design review for chapter 2 (graded by the tutor model; never shown to the learner).
+02-global-limit:
+  redis_down:
+    - id: choice
+      points: 2
+      look_for: Says what the limiter does when Redis cannot be reached, either let requests through (fail open) or block them (fail closed).
+    - id: tradeoff
+      points: 2
+      look_for: Explains the trade-off, for example staying available for users versus protecting the database, or adds a fallback such as a local limit or a timeout.
+  two_servers:
+    - id: separate_counts
+      points: 2
+      look_for: Explains that each server keeps its own in-memory count, so the real limit is multiplied by the number of servers.
+    - id: shared_store
+      points: 1
+      look_for: Says the count must live in one shared place, such as Redis, that every server uses.
+  burst:
+    - id: window_edge
+      points: 2
+      look_for: Notices that a fixed one-second window lets a client send its full limit at the end of one second and again at the start of the next, so up to twice the limit in a short moment.
+    - id: better_algorithm
+      points: 1
+      look_for: Names a fix such as a sliding window or a token bucket.

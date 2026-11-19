@@ -22,6 +22,7 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 | C | XP, levels, streaks with a weekly freeze, onboarding, skill map, daily drill |
 | D | Services next to the workspace (Postgres), the Preview tab for web apps, live checks, timed incidents with a bonus |
 | E | LLM gateway (aliases, lab tokens, budgets, request log, OpenAI and Anthropic shapes), labs reach it through a locked-down relay, `lab requests`, AI tutor and code review with a solution leak guard, the `ai` lab template, "✦ Ask AI" in the lab footer, offline editor completion and AI code completion (ghost text, `lab-code`, own limits). Free local models via Ollama (`scripts/ollama.sh`). Real VS Code in labs (openvscode-server, `scripts/openvscode.sh`). |
+| G | System design: k6 load tests in live checks, metric gauges, `design` steps graded by the tutor model against a hidden rubric, the `rate-limiter` lab (two app copies behind nginx, Redis), the `system-design` template. |
 
 ### The lab page, editor and AI (after Phase E)
 
@@ -42,7 +43,7 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 - **Lab networks** get a /28 each from `LAB_SUBNET_POOL` (10.88.0.0/16); Docker's default pool ran out
   at about 30 networks.
 
-### Labs: 15 live (batch 1: 11, batch 2: 4)
+### Labs: 16 live (batch 1: 11, batch 2: 4, Phase G: 1)
 
 | Track | Labs |
 |---|---|
@@ -50,8 +51,9 @@ green, and ask before deleting data, touching AWS, or using anything that needs 
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
 | Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice**, **postgres-transactions-and-locks** |
 | DevOps | **linux-on-call**, **git-without-fear** |
+| System design | **rate-limiter** (not on the home grid, which keeps its 15 cards) |
 
-Skill maps: `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`.
+Skill maps: `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`, `tracks/system-design.yaml`.
 You chose to stop at 15 labs for now and build the platform phases next.
 
 Every lab passes `validate --strict` and `test-lab` (the starter fails, the solution passes).
@@ -59,7 +61,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 ### The lab pipeline
 
 - Base images: base, python, java, node, go, checker, ai-python.
-- Seven templates: python, java, node, go, service-incident, preview-app, ai.
+- Eight templates: python, java, node, go, service-incident, preview-app, ai, system-design.
 - A lab starts as one spec file (`specs/<lab>.yaml`), then `new-lab --from-spec`.
 - The quality gate (`validate --strict`) checks the lesson shape and refuses hints that give away the solution.
 - CI runs the tests and `test-lab` on every changed lab.
@@ -146,42 +148,26 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - **Needs a later phase first:**
   - the AI track (Phase E is built; the labs themselves are not written yet)
   - Docker and Kubernetes labs (Phase F, moved to the AWS server in Phase K)
-  - system design labs (Phase G, next)
+  - more system design labs (Phase G is built: URL shortener, cache stampede, idempotency, queues, news feed)
 
 **Launch set still missing (spec 8.8):**
 - spring-boot-on-fire
 - postgres-in-depth
 - rag-from-zero
 - build-your-own-gpt
-- rate-limiter
 - docker-start-to-ship
 
 The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 
-### 3. Platform phases not started (E is done)
+### 3. Platform phases not started (E and G are done)
 
-**Next: Phase G. The plan below was proposed on 19 November and is waiting for your OK.**
-
-Phase G, system design labs (spec 7), one commit per step:
-1. **G1 k6 in checks:** add k6 to the checker image (copied from the `grafana/k6` image, no apt);
-   checks report p50, p95, p99 latency, error rate and throughput with `@@METRIC`.
-2. **G2 gauges:** metrics shown as bars against their targets in the results drawer.
-3. **G3 graded design answers:** a new `design` step (3 to 5 short written questions), graded by the
-   tutor model against `tests/rubric.yaml` into JSON (score and feedback per criterion), stored per
-   attempt in a new table (additive migration). Gives XP, never blocks completion. JSON is requested
-   and retried once; if grading fails the learner sees "could not grade right now".
-4. **G4 `rate-limiter` lab:** the learner's FastAPI app runs as 2 replicas behind
-   `nginxinc/nginx-unprivileged`, with Redis. The starter's in-memory limiter breaks with 2 replicas.
-   Chapter 1: a token bucket in Redis per API key, verified by k6 (rate within the limit, extras get
-   429, p95 under 50 ms). Chapter 2: a global limit, then the design questions. This is lab 16.
-5. **G5 `system-design` template** for `new-lab`.
-Tests: rubric parsing and storage (fake model), `test-lab rate-limiter`, a browser test for gauges and
-the design step, all old tests.
+**Phase G is done** (19 November): k6 and the `labbox_k6` helper in the checker, metric gauges in the
+results drawer, graded `design` steps (`tests/rubric.yaml`, table `design_answer`), the `rate-limiter`
+lab (lab 16) and the `system-design` template. Next: Phase H (plan first).
 
 | Phase | What | Needs from you |
 |---|---|---|
 | F | Docker and Kubernetes inside labs, with Sysbox (spec 4). Skipped here; do it on the AWS server in K | sudo on that server |
-| G | System design labs with k6 load tests and rubric grading (spec 7), plan above | Your OK |
 | H | Real app foundations: Postgres instead of SQLite, Redis, Google login, workers, disk quotas (spec 10) | A Google OAuth client id and secret |
 | I | Payments with Razorpay in test mode: 2 free chapters, paid unlocks the rest | Razorpay test keys |
 | J | Admin dashboard and funnel analytics | Nothing |
@@ -210,7 +196,7 @@ the design step, all old tests.
 ## How to pick up again
 
 Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md and AGENTS.md. Phase G's plan is in ROADMAP section B.3: build it if I say OK."**
+ROADMAP.md and AGENTS.md, then propose the plan for Phase H and wait for my OK."**
 Claude Code reads `CLAUDE.md` (which loads `AGENTS.md`); Codex reads `AGENTS.md` by itself.
 
 **On a fresh machine, before running anything:**
