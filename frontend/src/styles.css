@@ -774,6 +774,7 @@ select { padding: 3px 8px; }
 .h-lab-img { position: relative; }
 .h-lab-soon { cursor: default; }
 .h-lab-soon:hover { transform: none; border-color: var(--border); box-shadow: none; }
+.h-labs-more { display: flex; justify-content: center; margin-top: var(--space-8); }
 .h-soon-chip { position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px; background: #000000b3; color: #f0f3f1; font: 700 12px var(--font-code); letter-spacing: 0.04em; backdrop-filter: blur(4px); }
 .h-lab-text { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 16px; }
 .h-lab-text strong { font-size: 17px; letter-spacing: -0.01em; }

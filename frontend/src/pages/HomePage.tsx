@@ -24,7 +24,8 @@ const LIVE_SHOWN = 6; // lab titles listed under the tracks; the rest become "an
 const FEATURED = [
   "express-api", "fastapi-first-api", "go-basics",
   "java-basics", "spring-boot-first-api", "javascript-inside-out",
-  "python-basics", "postgres-indexing-incident",
+  "python-basics", "python-collections", "java-collections",
+  "sql-from-zero", "postgres-indexing-incident",
 ];
 const COMING_SOON = [{ id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" }];
 
@@ -371,6 +372,9 @@ export default function HomePage() {
                 <LabTile key={lab.id} lab={lab} to={labLink(lab)} />
               ))}
               {COMING_SOON.filter((c) => !live.some((l) => l.id === c.id)).map((c) => <SoonTile key={c.id} {...c} />)}
+            </div>
+            <div className="h-labs-more">
+              <Link className="h-btn h-btn-ghost" to={user ? "/labs" : "/login?signup=1"}>See all labs →</Link>
             </div>
           </section>
         )}
