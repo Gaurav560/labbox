@@ -59,7 +59,7 @@ said about 15 is enough for now, so the platform phases come next.
 
 - Done: phases A to E and G, 16 labs, real VS Code in labs (IDE | Lite), GitHub-grey theme everywhere.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
-- **Next: Phase H** (Postgres, Redis, Google login, workers, disk quotas; spec section 10). Plan first.
+- **Next: Phase H.** Its plan is in `ROADMAP.md` section B.3, waiting for the owner's OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real
   websocket proxy) are listed in `ROADMAP.md` section B.1.
 

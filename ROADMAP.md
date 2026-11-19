@@ -163,7 +163,23 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 
 **Phase G is done** (19 November): k6 and the `labbox_k6` helper in the checker, metric gauges in the
 results drawer, graded `design` steps (`tests/rubric.yaml`, table `design_answer`), the `rate-limiter`
-lab (lab 16) and the `system-design` template. Next: Phase H (plan first).
+lab (lab 16) and the `system-design` template.
+
+**Next: Phase H. The plan below was proposed on 19 November and is waiting for your OK.**
+1. **H1 Postgres:** `scripts/devdb.sh` (Postgres 16 and Redis 7 in Docker on localhost);
+   `DATABASE_URL` on Postgres; a one-time copy of the SQLite data (row counts compared, the SQLite
+   file kept); fast tests stay on SQLite, plus one full run on Postgres.
+2. **H2 Redis for app state:** check lock, machine locks, AI rate counters and a reaper leader lock in
+   Redis, so uvicorn can run several workers; in memory when `REDIS_URL` is empty.
+3. **H3 worker (arq):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
+   dump to `/srv/labbox/backups`.
+4. **H4 login:** HttpOnly session cookie with CSRF protection, a 60 s websocket ticket instead of the
+   token in the terminal URL, Google and GitHub sign-in (buttons only when keys are in `.env`;
+   accounts linked by verified email). Email verification and password reset wait for Phase K.
+5. **H5 safety:** disk quota per learner (default 500 MB), stop machines at 100% CPU for 10+ minutes,
+   4 h session limit, at most 2 running labs per learner, per-IP rate limits on signup, login, check.
+6. **H6 operations:** `/metrics` for Prometheus and a Grafana dashboard file, JSON logs option, CI on
+   Postgres, Sentry built in but off unless a DSN is added.
 
 | Phase | What | Needs from you |
 |---|---|---|
@@ -196,7 +212,7 @@ lab (lab 16) and the `system-design` template. Next: Phase H (plan first).
 ## How to pick up again
 
 Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md and AGENTS.md, then propose the plan for Phase H and wait for my OK."**
+ROADMAP.md and AGENTS.md. Phase H's plan is in ROADMAP section B.3: build it if I say OK."**
 Claude Code reads `CLAUDE.md` (which loads `AGENTS.md`); Codex reads `AGENTS.md` by itself.
 
 **On a fresh machine, before running anything:**
