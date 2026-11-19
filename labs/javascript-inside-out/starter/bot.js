@@ -26,9 +26,9 @@ module.exports = { parseQuantity, sameItems, makeTokenCounter, fetchAllPrices };
 
 if (require.main === module) {
   console.log(parseQuantity("2"), parseQuantity("two"));    // 2 0
-  console.log(sameItems(["chai"], ["chai"]));              // true
+  console.log(sameItems(["coffee"], ["coffee"]));              // true
   const next = makeTokenCounter("T");
   console.log(next(), next());                             // T1 T2
   const slow = (item) => new Promise((ok) => setTimeout(() => ok(item.length * 5), 100));
-  fetchAllPrices(["chai", "bun"], slow).then(console.log); // [ 20, 15 ]
+  fetchAllPrices(["coffee", "bun"], slow).then(console.log); // [ 20, 15 ]
 }

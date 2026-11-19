@@ -15,9 +15,9 @@ A **Set** holds each value once. A `TreeSet` also keeps its values sorted:
 ```java
 Set<String> names = new TreeSet<>();
 names.add("Kirana King");
-names.add("Chai Point");
+names.add("Brew Point");
 names.add("Kirana King");
-// [Chai Point, Kirana King]
+// [Brew Point, Kirana King]
 ```
 
 `new ArrayList<>(names)` turns any set into a list, in the set's order.

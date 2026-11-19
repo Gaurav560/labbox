@@ -267,8 +267,8 @@ def test_preview_proxy(client: TestClient):
     sh("docker", "exec", "-d", "-u", "1000", ws_a, "python3", "-c", ECHO_SERVER)
     time.sleep(1.5)
     with client.websocket_connect(f"/preview/{API_LAB}/8000/echo", headers={"cookie": f"labbox_preview={ca}"}) as wsock:
-        wsock.send_text("ek cutting chai")
-        assert wsock.receive_text() == "ek cutting chai"
+        wsock.send_text("ek cold coffee")
+        assert wsock.receive_text() == "ek cold coffee"
 
 
 def test_service_data_dir_is_outside_workspace(pg_user):

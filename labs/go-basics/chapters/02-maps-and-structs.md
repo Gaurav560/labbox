@@ -10,12 +10,12 @@ Count orders per item, and pick the best seller fairly.
 :::
 
 :::step{type=concept title="Structs and maps"}
-A **struct** groups fields: `Order{Item: "chai", Qty: 2}`. A **map** finds a value by key:
+A **struct** groups fields: `Order{Item: "coffee", Qty: 2}`. A **map** finds a value by key:
 
 ```go
 counts := make(map[string]int)
-counts["chai"] += 2
-counts["chai"]      // 2
+counts["coffee"] += 2
+counts["coffee"]      // 2
 counts["poha"]      // 0: a missing key reads as the zero value
 ```
 

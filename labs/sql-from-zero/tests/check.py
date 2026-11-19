@@ -7,7 +7,7 @@ import psycopg
 
 WS = Path("/check/workspace")
 TASKS = {
-    "q_paid_chai": ("q1.sql", "SELECT id, qty FROM orders WHERE item = 'masala chai' AND status = 'paid' AND outlet_id = 3 ORDER BY id"),
+    "q_paid_coffee": ("q1.sql", "SELECT id, qty FROM orders WHERE item = 'filter coffee' AND status = 'paid' AND outlet_id = 3 ORDER BY id"),
     "q_count_refunds": ("q2.sql", "SELECT COUNT(*) FROM orders WHERE status = 'refunded'"),
     "q_revenue_by_outlet": ("q3.sql", "SELECT o.name, SUM(r.amount_paise) FROM orders r JOIN outlets o ON o.id = r.outlet_id "
                             "WHERE r.status = 'paid' GROUP BY o.name ORDER BY 2 DESC"),

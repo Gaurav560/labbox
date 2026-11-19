@@ -13,7 +13,7 @@ CREATE TABLE orders (
 );
 INSERT INTO orders (customer_id, item, amount_paise, status, created_at)
 SELECT 1 + (random() * 49999)::int,
-       (ARRAY['cutting chai', 'masala chai', 'vada pav', 'samosa', 'bun maska', 'poha'])[1 + (random() * 5)::int],
+       (ARRAY['cold coffee', 'filter coffee', 'vada pav', 'samosa', 'bun maska', 'poha'])[1 + (random() * 5)::int],
        1000 + (random() * 20000)::int,
        (ARRAY['paid', 'paid', 'paid', 'refunded'])[1 + (random() * 3)::int],
        now() - random() * interval '180 days'

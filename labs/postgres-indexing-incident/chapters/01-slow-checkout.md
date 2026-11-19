@@ -1,7 +1,7 @@
 :::step{type=story title="Lunch rush at Tapri Counter"}
 :::character{name="Meera" role="CTO, Tapri Counter"}
 Forty outlets, six hundred orders a minute at lunch, and checkout has started to crawl.
-Customers are walking out with their chai unpaid. The database is the only thing that
+Customers are walking out with their coffee unpaid. The database is the only thing that
 changed since yesterday. Can you find out why?
 :::
 

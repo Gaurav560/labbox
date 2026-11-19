@@ -264,7 +264,7 @@ medium quality, $0.165 at `--quality high`) or Gemini (`GEMINI_API_KEY`), in one
 (neon isometric dioramas, colours per track). Each lab describes its scene in one line:
 
 ```yaml
-cover_scene: "Ravi's Tapri: a tiny roadside chai stall at night, a big brass kettle steaming..."
+cover_scene: "Ravi's Tapri: a tiny roadside coffee stall at night, a big brass kettle steaming..."
 ```
 
 ```bash
@@ -276,7 +276,7 @@ Stock photo covers come from Pexels (free for commercial use; put a free `PEXELS
 `backend/.env`):
 
 ```bash
-scripts/labbox cover fastapi-first-api --query "chai stall india"   # downloads 6 candidates to tools/.covers/
+scripts/labbox cover fastapi-first-api --query "coffee stall india"   # downloads 6 candidates to tools/.covers/
 scripts/labbox cover fastapi-first-api --pick 3                     # saves cover.jpg and the credit in lab.yaml
 ```
 

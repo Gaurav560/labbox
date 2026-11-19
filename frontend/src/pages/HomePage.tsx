@@ -75,7 +75,7 @@ const SESSIONS: Session[] = [
       "$ mvn -q package && java -jar target/merchant-api.jar",
       "Started MerchantApiApplication in 2.4 seconds",
       "$ curl localhost:8080/merchants",
-      '["Annapurna Mess","Chai Point","Kirana King"]',
+      '["Annapurna Mess","Brew Point","Kirana King"]',
       "$ check",
       "✓ 2 of 2 passed   +40 XP",
     ],
@@ -86,7 +86,7 @@ const SESSIONS: Session[] = [
   },
   {
     lab: "go-basics",
-    lines: ["$ go run ./cmd", "3500", "1250 <nil>", "map[chai:3 vada pav:1] chai", "$ check", "✓ 4 of 4 passed   +80 XP"],
+    lines: ["$ go run ./cmd", "3500", "1250 <nil>", "map[coffee:3 vada pav:1] coffee", "$ check", "✓ 4 of 4 passed   +80 XP"],
   },
   {
     lab: "sql-from-zero",
@@ -119,8 +119,8 @@ const SESSIONS: Session[] = [
     lines: [
       "$ java Payments.java",
       "20000",
-      "{Chai Point=5000, Kirana King=15000}",
-      "[Chai Point, Kirana King]",
+      "{Brew Point=5000, Kirana King=15000}",
+      "[Brew Point, Kirana King]",
       "[Kirana King]",
       "$ check",
       "✓ 4 of 4 passed   +80 XP",
@@ -151,8 +151,8 @@ function shuffled(n: number): number[] {
 
 // A small taste of a lesson. Demo content: answered in the browser, nothing is saved.
 const DEMO = {
-  question: 'What does this print?\n\n```python\nprint("chai" * 2)\n```',
-  options: ["`chai2`", "`chaichai`", "An error"],
+  question: 'What does this print?\n\n```python\nprint("coffee" * 2)\n```',
+  options: ["`coffee2`", "`coffeecoffee`", "An error"],
   answer: 1,
   explain: "Multiplying a string by a number repeats it. Every lab has a few small surprises like this.",
 };

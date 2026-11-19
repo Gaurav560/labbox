@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MerchantController {
 
-    static final List<String> MERCHANTS = List.of("Kirana King", "Chai Point", "Annapurna Mess");
+    static final List<String> MERCHANTS = List.of("Kirana King", "Brew Point", "Annapurna Mess");
 
     // TODO (task hello): GET /hello returns the text "Hello from PaySetu!"
 

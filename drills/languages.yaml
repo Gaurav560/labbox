@@ -24,10 +24,10 @@ drills:
   - id: py-string-slice
     kind: predict
     question: |
-      What does `"chaiwala"[0:4]` give?
-    options: ['"chai"', '"chaiw"', '"wala"']
+      What does `"coffeecup"[0:6]` give?
+    options: ['"coffee"', '"coffeec"', '"cup"']
     answer: 0
-    explain: "A slice includes the start index and stops just before the end index: characters 0, 1, 2 and 3."
+    explain: "A slice includes the start index and stops just before the end index: characters 0 to 5."
   - id: py-default-none
     kind: bug
     question: |

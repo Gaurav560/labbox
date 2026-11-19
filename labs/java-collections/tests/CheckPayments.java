@@ -32,18 +32,18 @@ public class CheckPayments {
     }
 
     public static void main(String[] args) {
-        List<Payment> day = List.of(p("Chai Point", 2000), p("Kirana King", 15000), p("Chai Point", 3000),
-                p("Annapurna Mess", 15000), p("Bata Footwear", 499900), p("Chai Point", 1));
+        List<Payment> day = List.of(p("Brew Point", 2000), p("Kirana King", 15000), p("Brew Point", 3000),
+                p("Annapurna Mess", 15000), p("Bata Footwear", 499900), p("Brew Point", 1));
         List<Payment> none = List.of();
 
         check("total_paise", "totalPaise(today)", () -> Payments.totalPaise(day), 534901L);
         if (Payments.totalPaise(none) != 0) report("total_paise", false, "totalPaise of no payments should be 0", 0, Payments.totalPaise(none));
 
         check("totals_by_merchant", "totalsByMerchant(today)", () -> Payments.totalsByMerchant(day),
-                Map.of("Chai Point", 5001L, "Kirana King", 15000L, "Annapurna Mess", 15000L, "Bata Footwear", 499900L));
+                Map.of("Brew Point", 5001L, "Kirana King", 15000L, "Annapurna Mess", 15000L, "Bata Footwear", 499900L));
 
         check("unique_merchants", "uniqueMerchants(today)", () -> Payments.uniqueMerchants(day),
-                List.of("Annapurna Mess", "Bata Footwear", "Chai Point", "Kirana King"));
+                List.of("Annapurna Mess", "Bata Footwear", "Brew Point", "Kirana King"));
 
         check("top_merchants", "topMerchants(today, 3)", () -> Payments.topMerchants(day, 3),
                 List.of("Bata Footwear", "Annapurna Mess", "Kirana King"));

@@ -1,5 +1,16 @@
 # Changelog
 
+## No more "chai"
+
+- Every "chai" in the app is replaced (165 places in 56 files: lab stories, starters, solutions,
+  hidden tests, the SQL lab's sample data, a drill, the home page demo and hero terminal, templates,
+  specs, backend and browser tests): masala chai -> filter coffee, cutting chai -> cold coffee,
+  chai stall -> coffee stall, Chai Point -> Brew Point, chai -> coffee. The SQL task id
+  `q_paid_chai` is now `q_paid_coffee`. Words like "chain" are untouched; the two spec documents and
+  older changelog entries keep their history.
+- The JavaScript lab's ordering check expected prices from the old item name; updated.
+- All lab images rebuilt; every lab passes `test-lab` again.
+
 ## SQL gets its own cover
 
 - SQL from zero no longer shares the Postgres elephant: it has our own generic SQL mark (an amber

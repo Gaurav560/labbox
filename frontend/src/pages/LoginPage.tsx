@@ -8,7 +8,7 @@ import { useTyped } from "../components/useTyped";
 const SCRIPT = [
   "$ labbox start redis-in-practice",
   "✓ machine ready in 2.1 s",
-  "$ redis-cli SET chai:orders 42",
+  "$ redis-cli SET coffee:orders 42",
   "OK",
   "$ check",
   "✓ 3 of 3 passed  +60 XP  🔥 5 day streak",

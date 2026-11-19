@@ -20,9 +20,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
 
   // The demo question works in the browser.
   const demo = page.locator(".try-card");
-  await demo.locator(".predict-option", { hasText: "chai2" }).click();
+  await demo.locator(".predict-option", { hasText: "coffee2" }).click();
   await expect(demo).toContainText("Not quite");
-  await demo.locator(".predict-option", { hasText: "chaichai" }).click();
+  await demo.locator(".predict-option", { hasText: "coffeecoffee" }).click();
   await expect(demo.locator(".predict-explain")).toContainText("repeats it");
 
   // Start free goes to sign up (Enter signs up), then onboarding.

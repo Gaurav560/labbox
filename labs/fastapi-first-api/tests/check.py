@@ -6,7 +6,7 @@ import traceback
 sys.path.insert(0, "/check/workspace")
 sys.dont_write_bytecode = True
 
-EXPECTED_MENU = {"cutting chai": 15, "masala chai": 20, "bun maska": 30, "vada pav": 25}
+EXPECTED_MENU = {"cold coffee": 15, "filter coffee": 20, "bun maska": 30, "vada pav": 25}
 
 
 def report(task, passed, message, expected=None, actual=None):
@@ -51,7 +51,7 @@ except Exception as e:
 
 try:
     ok = True
-    for item, price in [("masala chai", 20), ("vada pav", 25)]:
+    for item, price in [("filter coffee", 20), ("vada pav", 25)]:
         r = client.get(f"/menu/{item}")
         want = {"item": item, "price": price}
         if r.status_code != 200 or body(r) != want:

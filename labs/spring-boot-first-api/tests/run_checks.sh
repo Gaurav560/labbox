@@ -23,7 +23,7 @@ if [ "$code" = 200 ] && [ "$got" = "Hello from PaySetu!" ]; then report hello tr
 elif [ "$code" = 404 ]; then report hello false "GET /hello returned 404: there is no /hello mapping yet." "200" "404"
 else report hello false "GET /hello returned the wrong text." "Hello from PaySetu!" "$code $got"; fi
 
-want='["Annapurna Mess","Chai Point","Kirana King"]'
+want='["Annapurna Mess","Brew Point","Kirana King"]'
 code=$(curl -s -o /tmp/merchants -w '%{http_code}' http://127.0.0.1:8080/merchants)
 got=$(jq -c . /tmp/merchants 2>/dev/null || cat /tmp/merchants)
 if [ "$code" = 200 ] && [ "$got" = "$want" ]; then report merchants true ok

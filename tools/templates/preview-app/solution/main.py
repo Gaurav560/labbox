@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 app = FastAPI(title="Ravi's Tapri")
 
 # Prices in rupees.
-MENU = {"cutting chai": 15, "masala chai": 20, "bun maska": 30, "vada pav": 25}
+MENU = {"cold coffee": 15, "filter coffee": 20, "bun maska": 30, "vada pav": 25}
 
 
 @app.get("/")

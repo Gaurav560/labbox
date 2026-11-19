@@ -21,13 +21,13 @@ SELECT setseed(0.42);
 INSERT INTO orders
 SELECT g,
        1 + floor(random() * 6)::int,
-       (ARRAY['cutting chai', 'masala chai', 'vada pav', 'samosa', 'bun maska', 'poha'])[1 + floor(random() * 6)::int],
+       (ARRAY['cold coffee', 'filter coffee', 'vada pav', 'samosa', 'bun maska', 'poha'])[1 + floor(random() * 6)::int],
        1 + floor(random() * 4)::int,
        0,
        (ARRAY['paid', 'paid', 'paid', 'paid', 'refunded'])[1 + floor(random() * 5)::int]
 FROM generate_series(1, 5000) AS g;
 UPDATE orders SET amount_paise = qty * CASE item
-  WHEN 'cutting chai' THEN 1500 WHEN 'masala chai' THEN 2000 WHEN 'vada pav' THEN 2500
+  WHEN 'cold coffee' THEN 1500 WHEN 'filter coffee' THEN 2000 WHEN 'vada pav' THEN 2500
   WHEN 'samosa' THEN 2000 WHEN 'bun maska' THEN 3000 ELSE 3500 END;
 ANALYZE;
 SQL

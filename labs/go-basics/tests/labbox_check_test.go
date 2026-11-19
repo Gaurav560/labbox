@@ -58,8 +58,8 @@ func TestLabboxCheckParseAmount(t *testing.T) {
 
 func TestLabboxCheckCountByItem(t *testing.T) {
 	defer guard("count_by_item")
-	orders := []Order{{"chai", 2}, {"vada pav", 1}, {"chai", 1}, {"poha", 4}}
-	want := map[string]int{"chai": 3, "vada pav": 1, "poha": 4}
+	orders := []Order{{"coffee", 2}, {"vada pav", 1}, {"coffee", 1}, {"poha", 4}}
+	want := map[string]int{"coffee": 3, "vada pav": 1, "poha": 4}
 	if got := CountByItem(orders); !reflect.DeepEqual(got, want) {
 		report("count_by_item", false, "CountByItem does not add up the quantities per item.", want, got)
 		return
@@ -77,8 +77,8 @@ func TestLabboxCheckBusiest(t *testing.T) {
 		in   []Order
 		want string
 	}{
-		{[]Order{{"chai", 2}, {"vada pav", 1}, {"chai", 1}}, "chai"},
-		{[]Order{{"poha", 3}, {"bun", 3}, {"chai", 2}}, "bun"},
+		{[]Order{{"coffee", 2}, {"vada pav", 1}, {"coffee", 1}}, "coffee"},
+		{[]Order{{"poha", 3}, {"bun", 3}, {"coffee", 2}}, "bun"},
 		{nil, ""},
 	}
 	for _, c := range cases {

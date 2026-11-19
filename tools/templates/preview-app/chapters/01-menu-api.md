@@ -1,7 +1,7 @@
 :::step{type=story title="A menu that answers"}
 :::character{name="Ravi" role="Owner, Ravi's Tapri"}
 Every morning I send a photo of the menu board on WhatsApp. People still ask
-"bhaiya, masala chai kitne ka?" all day. My nephew built a bot, but it needs an
+"bhaiya, filter coffee kitne ka?" all day. My nephew built a bot, but it needs an
 API to read the menu from. Can you make one?
 :::
 
@@ -57,7 +57,7 @@ the machine.
 Add `GET /menu`, returning every item name from `MENU`, sorted A to Z:
 
 ```json
-{"items": ["bun maska", "cutting chai", "masala chai", "vada pav"]}
+{"items": ["bun maska", "cold coffee", "filter coffee", "vada pav"]}
 ```
 
 Check it in the Preview tab: change the address to `/menu`.
@@ -82,7 +82,7 @@ raise HTTPException(status_code=404, detail="No outlet there yet")
 :::
 
 :::step{type=task task=price title="Price of one item"}
-Add `GET /menu/{item}`. `/menu/masala chai` returns `{"item": "masala chai", "price": 20}`.
+Add `GET /menu/{item}`. `/menu/filter coffee` returns `{"item": "filter coffee", "price": 20}`.
 An item that is not on the menu (try `/menu/pizza`) returns **404**.
 
 :::mistake

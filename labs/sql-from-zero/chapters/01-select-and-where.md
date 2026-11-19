@@ -25,13 +25,13 @@ Text goes in single quotes. `ORDER BY` sorts the result; without it, the order i
 
 :::step{type=predict title="Guess first"}
 :::question
-What does `SELECT COUNT(*) FROM orders WHERE item = 'Masala Chai'` return, when the data says `'masala chai'`?
+What does `SELECT COUNT(*) FROM orders WHERE item = 'Filter Coffee'` return, when the data says `'filter coffee'`?
 :::
-- [ ] The number of masala chai orders
+- [ ] The number of filter coffee orders
 - [x] `0`
 - [ ] An error
 :::explain
-Text comparison with `=` is exact, including capital letters. No row equals `'Masala Chai'`, so the
+Text comparison with `=` is exact, including capital letters. No row equals `'Filter Coffee'`, so the
 count is 0. That is a quiet wrong answer, the worst kind.
 :::
 :::
@@ -46,8 +46,8 @@ psql -c "SELECT * FROM orders ORDER BY id LIMIT 5"
 `\d orders` inside `psql` shows every column and its type.
 :::
 
-:::step{type=task task=q_paid_chai title="Paid masala chai at outlet 3"}
-In `q1.sql`, list the `id` and `qty` of every **paid** `'masala chai'` order at **outlet 3**, sorted by `id`.
+:::step{type=task task=q_paid_coffee title="Paid filter coffee at outlet 3"}
+In `q1.sql`, list the `id` and `qty` of every **paid** `'filter coffee'` order at **outlet 3**, sorted by `id`.
 Run your file with `psql -f q1.sql` to see what it returns.
 :::
 

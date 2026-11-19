@@ -74,7 +74,7 @@ public class MerchantController {
     public String hello() { return "Hello from PaySetu!"; }
 
     @GetMapping("/merchants")
-    public List<String> merchants() { return List.of("Annapurna Mess", "Chai Point", "Kirana King"); }
+    public List<String> merchants() { return List.of("Annapurna Mess", "Brew Point", "Kirana King"); }
 }
 `;
   await page.goto("/labs/spring-boot-first-api");

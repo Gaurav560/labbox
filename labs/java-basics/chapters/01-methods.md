@@ -1,6 +1,6 @@
 :::step{type=story title="600 merchants a day"}
 :::character{name="Kabir" role="Lead engineer, PaySetu"}
-PaySetu signs up 600 new UPI merchants every day, from chai stalls to pharmacies.
+PaySetu signs up 600 new UPI merchants every day, from coffee stalls to pharmacies.
 Each one gets a welcome message, and our shop-name checker keeps breaking on long
 names. I need two small Java methods I can trust.
 :::
@@ -60,7 +60,7 @@ For example, `greet("Asha")` returns `"Hello, Asha!"`. Mind the comma and the
 exclamation mark.
 
 :::tip
-In Java, `+` joins Strings together: `"chai" + "wala"` is `"chaiwala"`.
+In Java, `+` joins Strings together: `"coffee" + "cup"` is `"coffeecup"`.
 :::
 :::
 
@@ -68,8 +68,8 @@ In Java, `+` joins Strings together: `"chai" + "wala"` is `"chaiwala"`.
 `String.split` cuts a String into an array of pieces wherever it finds a separator:
 
 ```java
-String[] parts = "masala chai stall".split(" ");
-// parts is ["masala", "chai", "stall"]
+String[] parts = "filter coffee stall".split(" ");
+// parts is ["masala", "coffee", "stall"]
 parts.length      // 3
 parts[0].length() // 6
 ```

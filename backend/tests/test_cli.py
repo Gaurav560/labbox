@@ -116,20 +116,20 @@ def test_cover_writes_lab_yaml(labs_dir: Path):
     """--pick sets cover and cover_credit in lab.yaml as text and the lab still loads."""
     folder = labs_dir / "python-basics"
     (folder / "cover.jpg").write_bytes(b"\xff\xd8\xff fake jpeg")
-    credit = {"by": 'Ravi "Chai" Kumar', "url": "https://www.pexels.com/photo/1/", "source": "Pexels"}
+    credit = {"by": 'Ravi "Coffee" Kumar', "url": "https://www.pexels.com/photo/1/", "source": "Pexels"}
     cli._yaml_set_cover(folder / "lab.yaml", credit)
     cli._yaml_set_cover(folder / "lab.yaml", credit)  # again: replaces, never duplicates
     text = (folder / "lab.yaml").read_text()
     assert text.count("cover: cover.jpg") == 1 and text.count("cover_credit:") == 1
     lab = cli.load_lab(folder)
-    assert lab.cover == "cover.jpg" and lab.cover_credit and lab.cover_credit.by == 'Ravi "Chai" Kumar'
+    assert lab.cover == "cover.jpg" and lab.cover_credit and lab.cover_credit.by == 'Ravi "Coffee" Kumar'
 
 
 def test_cover_needs_a_key(capsys, monkeypatch):
     from app.config import get_settings
 
     monkeypatch.setattr(get_settings(), "PEXELS_API_KEY", "")
-    assert cli.main(["cover", "python-basics", "--query", "chai"]) == 2
+    assert cli.main(["cover", "python-basics", "--query", "coffee"]) == 2
     assert "PEXELS_API_KEY" in capsys.readouterr().out
 
 
@@ -167,7 +167,7 @@ def test_generate_and_pick_cover(labs_dir: Path, tmp_path: Path, monkeypatch, ca
 
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--generate", "--count", "2"]) == 0
     prompt = seen["body"]["input"][0]["text"]
-    assert "isometric 3D diorama" in prompt and "teal and cyan" in prompt and "chai stall" in prompt
+    assert "isometric 3D diorama" in prompt and "teal and cyan" in prompt and "coffee stall" in prompt
     assert seen["headers"]["x-goog-api-key"] == "test-key" and seen["body"]["response_format"]["aspect_ratio"] == "16:9"
 
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--pick", "2"]) == 0

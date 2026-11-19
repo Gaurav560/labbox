@@ -1,8 +1,8 @@
 id: {{lab_id}}
 version: 2
 title: "{{title}}"
-subtitle: Build a real menu API for a chai stall and watch it answer in the Preview tab.
-description: Build a real menu API for a chai stall and watch it answer in the Preview tab.
+subtitle: Build a real menu API for a coffee stall and watch it answer in the Preview tab.
+description: Build a real menu API for a coffee stall and watch it answer in the Preview tab.
 language: python
 track: {{track}}
 tags: [python, fastapi]
@@ -40,6 +40,6 @@ chapters:
       - id: price
         title: "GET /menu/{item}: one item's price"
         hints:
-          - "The item name comes from the URL path, like /menu/masala chai."
+          - "The item name comes from the URL path, like /menu/filter coffee."
           - "Write @app.get(\"/menu/{item}\") and give the function a parameter called item."
           - "If item is not in MENU, raise HTTPException(status_code=404). Otherwise return the item and MENU[item]."

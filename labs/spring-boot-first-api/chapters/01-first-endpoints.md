@@ -77,7 +77,7 @@ Sort a copy instead.
 
 :::step{type=task task=merchants title="List the merchants"}
 Add `GET /merchants` returning the names in `MERCHANTS`, sorted A to Z, as JSON:
-`["Annapurna Mess","Chai Point","Kirana King"]`.
+`["Annapurna Mess","Brew Point","Kirana King"]`.
 :::
 
 :::step{type=recap}

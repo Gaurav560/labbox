@@ -9,7 +9,7 @@ story:
   company: Tapri Counter
   character: { name: Meera, role: "CTO, Tapri Counter" }
   pitch: "Tapri Counter is rewriting its till service in Go, and the first pieces are yours."
-cover_scene: "Tapri Counter's till room: a tiny glowing kitchen counter where small gopher-like delivery robots carry chai cups along neat glowing conveyor lines between cash tills."
+cover_scene: "Tapri Counter's till room: a tiny glowing kitchen counter where small gopher-like delivery robots carry coffee cups along neat glowing conveyor lines between cash tills."
 chapters:
   - id: 01-slices-and-errors
     title: Rupees, paise and bad input
