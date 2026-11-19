@@ -1,0 +1,78 @@
+id: postgres-transactions-and-locks
+version: 2
+title: "Postgres: transactions and locks"
+subtitle: All-or-nothing money moves, then a checkout frozen by a forgotten transaction.
+description: All-or-nothing money moves, then a checkout frozen by a forgotten transaction.
+language: sql
+track: databases
+tags: [postgres, sql, transactions]
+level: intermediate
+estimated_minutes: 40
+story:
+  company: Brew Point
+  character: { name: Kabir, role: "Backend lead, Brew Point" }
+  pitch: "Loyalty money is vanishing and checkout keeps freezing. Both live in the database."
+cover_scene: "A glowing database vault with a padlock, coins moving between two cups."
+cover: cover.svg
+cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
+image: labbox/postgres-transactions-and-locks:v1
+resources: s
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: tapri }
+services:
+  - name: db
+    image: postgres:16
+    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: tapri }
+    resources: { cpus: 1, memory: 512m, pids_limit: 256 }
+    command: [postgres, -c, shared_buffers=32MB, -c, work_mem=4MB]
+    data: /var/lib/postgresql/data
+    ready: [pg_isready, -h, 127.0.0.1, -U, postgres]
+check:
+  mode: live
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 60
+  network: none
+chapters:
+  - id: 01-all-or-nothing
+    title: Money that vanishes
+    file: chapters/01-all-or-nothing.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/01.sh"]
+    tasks:
+      - id: no_negative
+        title: "No wallet below zero, ever"
+        xp: 30
+        hints:
+          - "Find the wallet that is already negative: a WHERE on balance_paise. A constraint cannot be added while bad rows exist."
+          - "Set that balance to 0 (the shop takes the loss), then make the database itself refuse negative balances."
+          - "ALTER TABLE wallets ADD CONSTRAINT with a CHECK on balance_paise being at least zero."
+      - id: atomic_transfer
+        title: "transfer.sql: all or nothing"
+        xp: 50
+        hints:
+          - "A function runs in one transaction: if it raises an error, every change it made is undone."
+          - "Two UPDATEs (take from one wallet, add to the other) and one INSERT into ledger. The CHECK constraint stops overdrafts for you."
+          - "An UPDATE that matches no row is not an error. After each UPDATE, test the special FOUND variable and raise an exception when it is false."
+  - id: 02-checkout-frozen
+    title: Checkout is frozen
+    file: chapters/02-checkout-frozen.md
+    minutes: 20
+    setup: ["bash", "/lab/setup/02.sh"]
+    tasks:
+      - id: kill_blocker
+        title: "Unfreeze order 42"
+        xp: 50
+        hints:
+          - "pg_stat_activity lists every session: who, what it ran last, and its state."
+          - "Look for a session whose state is idle in transaction: it holds its locks until it ends. pg_blocking_pids shows who blocks whom."
+          - "Pass that session's pid to pg_terminate_backend. Its transaction is rolled back and the lock is released."
+      - id: idle_timeout
+        title: "Make sure it cannot happen again"
+        xp: 30
+        hints:
+          - "Postgres can end sessions that sit idle inside a transaction for too long, on its own."
+          - "The setting is idle_in_transaction_session_timeout. ALTER DATABASE can set it for every new session of one database."
+          - "Set it on the tapri database to something like 60s. SHOW in a new psql session confirms it."

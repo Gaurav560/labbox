@@ -26,6 +26,7 @@ const FEATURED = [
   "java-basics", "spring-boot-first-api", "javascript-inside-out",
   "python-basics", "sql-from-zero", "postgres-indexing-incident",
   "redis-in-practice", "linux-on-call", "git-without-fear",
+  "postgres-transactions-and-locks",
 ];
 const COMING_SOON = [
   { id: "redis-in-practice", title: "Redis in practice", track: "Databases", cover: "/covers/redis-in-practice.svg" },
@@ -33,7 +34,6 @@ const COMING_SOON = [
   { id: "docker-start-to-ship", title: "Docker: start to ship", track: "DevOps", cover: "/covers/docker-start-to-ship.svg" },
   { id: "kubernetes-from-zero", title: "Kubernetes from zero", track: "DevOps", cover: "/covers/kubernetes-from-zero.svg" },
   { id: "linux-on-call", title: "Linux on call", track: "DevOps", cover: "/covers/linux-on-call.svg" },
-  { id: "nginx-and-networking", title: "Nginx and networking", track: "DevOps", cover: "/covers/nginx-and-networking.svg" },
 ];
 
 // Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.

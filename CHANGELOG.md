@@ -1,5 +1,17 @@
 # Changelog
 
+## Batch 2, lab 4: Postgres transactions and locks
+
+- New lab `postgres-transactions-and-locks` (databases, intermediate, 2 chapters, 4 tasks). Chapter 1:
+  fix a negative wallet, add a CHECK constraint, and write an all-or-nothing `transfer()` function
+  (overdrafts and unknown wallets must raise and change nothing). Chapter 2, an incident: a forgotten
+  "nightly-report" transaction locks order 42; end it with `pg_terminate_backend` and set
+  `idle_in_transaction_session_timeout` on the database.
+- The checker tries the learner's database only inside transactions it rolls back, with a 2 s
+  `lock_timeout`, so a Check never changes their data and never hangs.
+- The home grid stays at 15 cards: 13 live labs, plus Docker and Kubernetes as "coming soon"
+  (the Nginx card is dropped until that lab exists).
+
 ## Batch 2, lab 3: Git without fear
 
 - New lab `git-without-fear` (devops, beginner, 2 chapters, 5 tasks). Chapter 1 builds a real `shop`

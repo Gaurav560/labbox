@@ -22,8 +22,13 @@ nodes:
     requires: [redis-basics]
     chapters: [redis-in-practice/02-cache-and-limit]
   - id: pg-transactions
-    title: Transactions and locks
+    title: Transactions
     requires: [pg-indexes]
+    chapters: [postgres-transactions-and-locks/01-all-or-nothing]
+  - id: pg-locks
+    title: Locks and blockers
+    requires: [pg-transactions]
+    chapters: [postgres-transactions-and-locks/02-checkout-frozen]
   - id: mongodb
     title: MongoDB
     requires: [sql-select]
