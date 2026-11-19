@@ -33,7 +33,7 @@
   dot, section labels, the stats lines. No glows, no red blocks; the yellow is softer too.
 - Background: the GitHub tile grid (32 px). Film grain and topographic lines were tried and dropped.
 - The closing panel is red again, in calmer brick shades (#e07a72 to #a9443e) with a fine dot
-  texture, dark text and a black button.
+  texture, dark text and a black button. (The yellow FREE sticker was removed on 20 November.)
 
 ## LabBox by Telusko, FAQs and legal pages
 
@@ -55,7 +55,7 @@
   checkout, add an index, check passes, +325 XP).
 - Below: a moving strip of real technology logos, big numbers, a bento grid with the four lesson
   moments (the predict question still works), the live labs as cards with their logo covers, the
-  tracks as numbered rows, and a red closing panel with a yellow FREE sticker.
+  tracks as numbered rows, and a red closing panel.
 - Login page: the floating logos are gone (first they danced, then floated; the page is calmer without
   them: the headline and the typing terminal carry the showcase side). In light mode the card and the
   page around it are soft grey-white instead of pure white, easier on the eyes.

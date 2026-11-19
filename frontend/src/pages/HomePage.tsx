@@ -377,7 +377,6 @@ export default function HomePage() {
         </section>
 
         <section className="home-final" aria-labelledby="final-title">
-          <span className="h-sticker" aria-hidden="true">FREE</span>
           <h2 id="final-title">Your first win is about three minutes away.</h2>
           <p>Sign up, pick a goal, and you are writing code on a real machine within a minute.</p>
           {user ? (

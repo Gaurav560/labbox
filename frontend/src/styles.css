@@ -796,10 +796,6 @@ select { padding: 3px 8px; }
 .home-final > * { position: relative; }
 .home-final h2 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.04; letter-spacing: -0.045em; font-weight: 800; max-width: 14em; margin: 0 auto var(--space-4); }
 .home-final p { font-size: 19px; max-width: 30em; margin: 0 auto var(--space-8); color: #2a0d0b; }
-.h-sticker {
-  position: absolute; top: 28px; right: 40px; padding: 10px 16px; border-radius: 12px; transform: rotate(8deg);
-  background: var(--yellow); color: #0a0a0a; font: 800 18px var(--font-code); letter-spacing: 0.08em; box-shadow: 0 10px 24px #0000004d;
-}
 .home-footer { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-8); align-items: center; justify-content: space-between; padding: var(--space-8) var(--space-6); border-top: 1px solid var(--border); }
 .home-footer-brand { display: flex; flex-direction: column; gap: 6px; }
 .home-footer .site-links a:hover { color: var(--red); }
@@ -832,7 +828,6 @@ select { padding: 3px 8px; }
   .track-chip { grid-template-columns: 36px 1fr; }
   .t-count { grid-column: 2; justify-self: start; }
   .home-final { margin: 24px var(--space-4) 48px; padding: 72px var(--space-4) 64px; }
-  .h-sticker { top: 16px; right: 16px; font-size: 14px; }
   .h-term-body { min-height: 300px; font-size: 12.5px; }
 }
 
