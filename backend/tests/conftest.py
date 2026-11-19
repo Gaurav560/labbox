@@ -7,6 +7,21 @@ from pathlib import Path
 _TMP = Path(tempfile.mkdtemp(prefix="labbox-tests-"))
 os.environ["JWT_SECRET"] = "test-secret-that-is-long-enough-123"
 os.environ["DATABASE_URL"] = f"sqlite:///{_TMP}/test.db"
+# The same tests on Postgres: LABBOX_TEST_DATABASE_URL=postgresql+psycopg://.../labbox_test pytest
+# (only a database whose name ends in _test, and it is emptied first).
+_PG = os.environ.get("LABBOX_TEST_DATABASE_URL")
+if _PG:
+    from sqlalchemy import create_engine, text
+    from sqlalchemy.engine import make_url
+
+    if not (make_url(_PG).database or "").endswith("_test"):
+        raise SystemExit("LABBOX_TEST_DATABASE_URL must name a database ending in _test (it is emptied).")
+    _e = create_engine(_PG)
+    with _e.begin() as c:
+        c.execute(text("DROP SCHEMA public CASCADE"))
+        c.execute(text("CREATE SCHEMA public"))
+    _e.dispose()
+    os.environ["DATABASE_URL"] = _PG
 os.environ["VOLUMES_DIR"] = str(_TMP / "volumes")
 os.environ["CHECKS_DIR"] = str(_TMP / "checks")
 os.environ["LABS_DIR"] = str(Path(__file__).resolve().parents[2] / "labs")

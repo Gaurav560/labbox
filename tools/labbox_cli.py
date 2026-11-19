@@ -812,6 +812,34 @@ def cmd_cover(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_db_copy(args: argparse.Namespace) -> int:
+    """Copy the LabBox database to a new, empty one (SQLite to Postgres). The source is only read."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.engine import make_url
+
+    from app.dbcopy import CopyError, copy_database, open_source
+
+    to = args.to or os.environ.get("LABBOX_COPY_TO", "")
+    if not to:
+        print("Give the target with --to (or LABBOX_COPY_TO), for example the DATABASE_URL from scripts/devdb.sh url")
+        return 2
+    shown = lambda url: make_url(url).render_as_string(hide_password=True)  # noqa: E731
+    print(f"From {shown(args.source)}\nTo   {shown(to)}")
+    try:
+        counts = copy_database(open_source(args.source), create_engine(to))
+    except CopyError as e:
+        print(f"✗ {e}")
+        return 1
+    width = max(len(c.table) for c in counts)
+    for c in counts:
+        print(f"  {'✓' if c.ok else '✗'} {c.table:<{width}}  {c.source:>7} -> {c.target}")
+    if not all(c.ok for c in counts):
+        print("✗ Row counts differ. The source is unchanged; empty the target and try again.")
+        return 1
+    print(f"✓ Copied {sum(c.source for c in counts)} rows in {len(counts)} tables. The source file is unchanged.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox (by Telusko) labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
@@ -824,6 +852,11 @@ def main(argv: list[str] | None = None) -> int:
     n.add_argument("--template", choices=[*TEMPLATES_READY, *TEMPLATE_LATER], default="python")
     n.add_argument("--title")
     n.set_defaults(fn=cmd_new_lab)
+
+    d = sub.add_parser("db-copy", help="copy the database to a new, empty one (SQLite to Postgres); the source is only read")
+    d.add_argument("--source", default=f"sqlite:///{BACKEND / 'data' / 'labbox.db'}", help="default: backend/data/labbox.db")
+    d.add_argument("--to", help="target DATABASE_URL (or set LABBOX_COPY_TO, to keep the password out of the shell history)")
+    d.set_defaults(fn=cmd_db_copy)
 
     v = sub.add_parser("validate", help="check lab.yaml, chapters, hints, solution and image")
     v.add_argument("lab_id", nargs="?")

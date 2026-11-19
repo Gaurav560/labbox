@@ -14,7 +14,7 @@ FastAPI backend ── docker-py ──► Docker (+ gVisor)
    │                              ├─ lab-u1-python-basics  (/workspace = host volume)
    │                              ├─ lab-u2-java-basics
    │                              └─ check-u1-...          (temporary, no network)
-   └─ SQLite (users, workspaces, check runs)
+   └─ Postgres, or SQLite for a quick start (users, workspaces, check runs)
 ```
 
 - One container per **user + lab**: `lab-u{user_id}-{lab_id}`. Files live on the host in
@@ -80,6 +80,31 @@ hint, passes Check and checks that step, panel sizes and theme survive a reload.
 onboarding into a lab, solves the daily drill and completes a chapter to light up the skill map. They
 remove the containers they created when they finish.
 
+### Postgres (Phase H1)
+
+SQLite works for a quick start; Postgres is the real database (many learners writing at once).
+
+```bash
+scripts/devdb.sh              # LabBox's own Postgres 16 and Redis 7 in Docker, localhost ports 55432 and 56379
+scripts/devdb.sh url          # the DATABASE_URL and REDIS_URL lines for backend/.env
+```
+
+Moving existing data from SQLite: stop the backend, copy, put `DATABASE_URL` in `backend/.env`, start
+the backend. The copy only reads the SQLite file (it stays as a backup), refuses a target that already
+has rows, and compares row counts per table:
+
+```bash
+LABBOX_COPY_TO="<the DATABASE_URL>" scripts/labbox db-copy
+```
+
+The tests run on SQLite. The same suite on Postgres, in a database whose name ends in `_test` (it is
+emptied first):
+
+```bash
+docker exec labbox-postgres psql -U labbox -c "CREATE DATABASE labbox_test"
+LABBOX_TEST_DATABASE_URL="postgresql+psycopg://labbox:<password>@127.0.0.1:55432/labbox_test" .venv/bin/pytest
+```
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself
@@ -102,7 +127,7 @@ cd backend
 | `LABS_DIR` | Folder with lab definitions (relative paths are relative to `backend/`). |
 | `VOLUMES_DIR` | Host folder for user files. |
 | `CHECKS_DIR` | Host folder for temporary check copies (default `/srv/labbox/checks`). |
-| `DATABASE_URL` | SQLite file (default `backend/data/labbox.db`). |
+| `DATABASE_URL` | Postgres (`postgresql+psycopg://...`, see "Postgres" below) or a SQLite file (default `backend/data/labbox.db`). |
 | `CONTAINER_RUNTIME` | Empty for runc; `runsc` for gVisor. |
 | `IDLE_STOP_MINUTES` / `REAPER_INTERVAL_SECONDS` | Idle reaper timing. |
 | `MAX_FILE_BYTES` | Max file size for the editor API. |
@@ -535,7 +560,7 @@ Add `https://labs.example.com` to `CORS_ORIGINS`. The frontend switches to `wss:
   (run uvicorn with **one worker**).
 - In-memory locks: "one check per user" is per process.
 - No per-user disk quota on workspaces (Check refuses workspaces over 20 MB).
-- SQLite: fine for a POC, not for many concurrent writers.
+- SQLite (the default without `DATABASE_URL`): fine for a POC, not for many concurrent writers; use Postgres.
 - An open editor tab does not notice when the same file is changed from the terminal. Reopen the file
   to see the new content.
 - In `fresh` labs a determined user can still fake a passing check from inside their own process (for

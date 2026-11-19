@@ -209,8 +209,8 @@ The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 results drawer, graded `design` steps (`tests/rubric.yaml`, table `design_answer`), the `rate-limiter`
 lab (lab 16) and the `system-design` template.
 
-**Next: Phase H. The plan below was proposed on 19 November and is waiting for your OK.**
-1. **H1 Postgres:** `scripts/devdb.sh` (Postgres 16 and Redis 7 in Docker on localhost);
+**Phase H is under way** (OK given on 19 November). H1 is built; the switch of your running app waits for your OK.
+1. **H1 Postgres (built):** `scripts/devdb.sh` (Postgres 16 and Redis 7 in Docker on localhost);
    `DATABASE_URL` on Postgres; a one-time copy of the SQLite data (row counts compared, the SQLite
    file kept); fast tests stay on SQLite, plus one full run on Postgres.
 2. **H2 Redis for app state:** check lock, machine locks, AI rate counters and a reaper leader lock in

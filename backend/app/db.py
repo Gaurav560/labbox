@@ -18,7 +18,12 @@ _url = get_settings().DATABASE_URL
 if _url.startswith("sqlite:///"):
     Path(_url.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
 
-engine = create_engine(_url, connect_args={"check_same_thread": False} if _url.startswith("sqlite") else {})
+if _url.startswith("sqlite"):
+    engine = create_engine(_url, connect_args={"check_same_thread": False})
+else:
+    # Postgres (Phase H1): a small pool per worker; pre_ping replaces connections the server dropped
+    # (a database restart), so a request never fails on a stale one.
+    engine = create_engine(_url, pool_size=10, max_overflow=20, pool_pre_ping=True, pool_recycle=1800)
 
 
 def alembic_config() -> Config:

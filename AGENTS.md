@@ -40,10 +40,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 216 tests, Docker ones included, about 2 minutes);
+- Tests: `cd backend && .venv/bin/pytest` (about 220 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` runs them on Postgres, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (14 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green (19 November, after the task stepper and chapter focus) (216 backend tests, 14 browser tests, 16 labs valid).
+- Last known state: everything green (19 November, after H1 Postgres) (220 backend tests on SQLite and on Postgres, 14 browser tests, 16 labs valid).
 
 ## How a lab is made
 
@@ -61,7 +61,8 @@ said about 15 is enough for now, so the platform phases come next.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).
-- **Next: the AI track** (`ROADMAP.md` section B.2): two owner decisions first (which model, build
+- **Now: Phase H** (ROADMAP B.4); the AI track moved to the end.
+- AI track (later) (`ROADMAP.md` section B.2): two owner decisions first (which model, build
   order), then stage 1. Phase H's plan is in section B.4, also waiting for an OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real
   websocket proxy) are listed in `ROADMAP.md` section B.1.
@@ -72,6 +73,8 @@ said about 15 is enough for now, so the platform phases come next.
   process on port 5173 (`ss -ltnp | grep :5173`) and restart `npm run dev`.
 - Never `pkill -f` with a pattern that also matches your own shell command; it kills your shell.
   Same for `pgrep -f` inside `sh -c`: write the pattern as `[s]erver-main.js` so it cannot match itself.
+- Dev Postgres and Redis (`scripts/devdb.sh`) use ports 55432 and 56379: this laptop already runs its
+  own Postgres on 5432 and Redis on 6379; leave those alone.
 - Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
   /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword

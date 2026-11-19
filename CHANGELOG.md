@@ -1,5 +1,21 @@
 # Changelog
 
+## Phase H1: Postgres
+
+- `scripts/devdb.sh`: LabBox's own Postgres 16 and Redis 7 in Docker, on localhost only and on their own
+  ports (55432, 56379), so they never clash with a Postgres or Redis already on the machine. The password
+  is made once at random (`/srv/labbox/devdb.password`, only the owner can read it); `devdb.sh url`
+  prints the lines for `backend/.env`.
+- The backend runs on Postgres when `DATABASE_URL` points at it (`psycopg` 3 driver, a pool with
+  pre-ping). Without it, SQLite as before. All migrations run unchanged on Postgres.
+- `scripts/labbox db-copy`: copies SQLite to an empty Postgres, table by table in foreign-key order,
+  keeps the ids, moves the id sequences past the highest copied id, and compares row counts. The source
+  is opened read-only, and targets that already hold rows are refused. A practice copy of the dev database
+  moved 3054 rows in 11 tables with every count matching and the SQLite file byte for byte unchanged.
+- Tests stay on SQLite; `LABBOX_TEST_DATABASE_URL` runs the whole suite on Postgres (only a database
+  named `*_test`). Both runs green: 219 passed on SQLite (plus 1 Postgres-only test skipped), 220 on
+  Postgres.
+
 ## Home: fresh lab screenshots, now from all 16 labs
 
 - All shots retaken with the current lab page (task stepper, icon Hint and Ask AI, Aa menu), and five

@@ -8,6 +8,8 @@ python-jose[cryptography]==3.5.0
 pydantic-settings==2.6.1
 PyYAML==6.0.2
 alembic==1.20.1
+# Postgres driver (DATABASE_URL=postgresql+psycopg://...); SQLite needs nothing
+psycopg[binary]==3.2.3
 tzdata==2026.6
 # preview proxy (also used by the tests)
 httpx==0.28.1
