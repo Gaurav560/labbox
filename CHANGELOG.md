@@ -1,5 +1,15 @@
 # Changelog
 
+## Home page: a real lab screenshot and a calmer AI track
+
+- **Inside a lab** is now one large, real screenshot of a lab (Redis chapter 6: the lesson, VS Code
+  with `app.py`, a terminal talking to a live Redis) in a framed window with a soft red glow, and
+  under it six features, each an icon, a title and one sentence. The six dense mock cards are gone.
+- **AI labs**: four quiet stage cards (a large faint stage number, the title, one sentence, "6 labs"
+  with three example labs and "+ 3 more") instead of four numbered lists of all 24 labs.
+- Fix: leaving a chapter while its setup was still running left the "Setting up this chapter" banner
+  and a disabled Check button behind for good.
+
 ## Home page: AI labs first, "Inside a lab", FAQs above the footer
 
 - Positioning: LabBox is marketed as AI labs, with system design, languages, databases and DevOps

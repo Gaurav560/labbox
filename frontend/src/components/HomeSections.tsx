@@ -1,121 +1,89 @@
 import { FAQS } from "../pages/InfoPages";
 
-// Home page sections that show what a LabBox lab really is: real systems, real models, real
-// incidents. Every artifact below is taken from an actual lab (Redis, rate limiter, the AI gateway).
+// Home page sections: a real lab screenshot, the AI track and the FAQs.
 
-/** "Inside a lab": six things no video course can do, each shown with a real artifact. */
+/** "Inside a lab": one real screenshot of a lab, then six quiet features. */
 export function InsideLab() {
   return (
     <div className="h-inside">
-      <article className="h-in h-in-wide">
-        <header><span className="h-num">01</span><h3>Build with real models</h3></header>
-        <p>Your machine already has a model gateway. Call it like production code, then see every token it cost you.</p>
-        <pre className="h-in-code">{`client.chat.completions.create(
-    model="lab-chat",
-    messages=[{"role": "user", "content": question}],
-)`}</pre>
-        <div className="h-in-term" aria-label="lab requests output">
-          <div><span className="h-prompt">$</span> lab requests</div>
-          <div className="h-in-row h-in-head"><span>model</span><span>in</span><span>out</span><span>ms</span><span>cost</span></div>
-          <div className="h-in-row"><span>lab-chat</span><span>412</span><span>96</span><span>530</span><span>$0.00009</span></div>
-          <div className="h-in-row"><span>lab-embed</span><span>1 204</span><span>0</span><span>88</span><span>$0.00002</span></div>
+      <figure className="h-shot">
+        <div className="h-shot-bar" aria-hidden="true">
+          <span /><span /><span />
+          <em>labbox · Redis in practice · Ch 6, Caching for real</em>
         </div>
-        <div className="h-in-answer">
-          <span>The answer, grounded in your own documents</span>
-          <pre>{`{"answer": "Two bags, up to 15 kg each.",
- "sources": ["policy.md#luggage"],
- "confidence": 0.92}`}</pre>
-        </div>
-      </article>
-
-      <article className="h-in">
-        <header><span className="h-num">02</span><h3>Prove it under load</h3></header>
-        <p>Checks fire real traffic at your code: load tests, races, 30 requests at once.</p>
-        <div className="h-in-gauges">
-          <InGauge label="p95 latency" value="38" unit="ms" target="≤ 50 ms" pct={58} ok />
-          <InGauge label="calls to billing" value="1" unit="" target="≤ 2" pct={30} ok />
-        </div>
-      </article>
-
-      <article className="h-in">
-        <header><span className="h-num">03</span><h3>Fix live incidents</h3></header>
-        <p>The pager goes off on a real, broken system. The clock is running.</p>
-        <div className="h-in-pager" role="img" aria-label="An incident: Redis out of memory, 14:52 left">
-          <div className="h-in-pager-head"><span>🚨 INCIDENT</span><span>14:52</span></div>
-          <strong>Redis is refusing writes</strong>
-          <code>OOM command not allowed when used memory &gt; 'maxmemory'</code>
-        </div>
-      </article>
-
-      <article className="h-in">
-        <header><span className="h-num">04</span><h3>A tutor that asks, not tells</h3></header>
-        <p>Stuck? The AI tutor points at one thing and asks one question. It never hands you the answer.</p>
-        <div className="h-in-chat">
-          <div className="h-in-me">Why does the second call still take 1.5 s?</div>
-          <div className="h-in-ai">✦ Look at what happens on a miss. After the slow lookup, where does the answer go?</div>
-        </div>
-      </article>
-
-      <article className="h-in">
-        <header><span className="h-num">05</span><h3>Defend your design</h3></header>
-        <p>Every senior chapter ends with a design review, graded against a rubric.</p>
-        <div className="h-in-review">
-          <div className="h-in-score"><strong>9 / 10</strong><span>Design review</span></div>
-          <div className="h-in-crit"><span className="ok">✓</span>Explains why two servers doubled the limit</div>
-          <div className="h-in-crit"><span className="part">◐</span>Names a fix for bursts at window edges</div>
-        </div>
-      </article>
-
-      <article className="h-in">
-        <header><span className="h-num">06</span><h3>Your own machine</h3></header>
-        <p>Real VS Code and a real terminal in the browser, next to the services your lab needs.</p>
-        <ul className="h-in-services">
-          {[["workspace", "VS Code, terminal, Python"], ["redis", "Redis 7.4"], ["replica", "a live replica"], ["lb", "nginx load balancer"]].map(([n, d]) => (
-            <li key={n}><span className="h-in-dot" /><code>{n}</code><span>{d}</span></li>
-          ))}
-        </ul>
-      </article>
+        <img
+          src="/images/lab-inside.webp"
+          width={2400}
+          height={1440}
+          loading="lazy"
+          alt="A LabBox lab: the lesson on the left, VS Code with app.py in the middle, a terminal talking to a live Redis below"
+        />
+      </figure>
+      <ul className="h-feats">
+        {FEATURES.map((f) => (
+          <li key={f.title}>
+            <span className="h-feat-icon" aria-hidden="true">{f.icon}</span>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-function InGauge({ label, value, unit, target, pct, ok }: { label: string; value: string; unit: string; target: string; pct: number; ok: boolean }) {
-  return (
-    <div className={`h-in-gauge ${ok ? "ok" : ""}`}>
-      <div><span>{label}</span><strong>{value}<small>{unit && ` ${unit}`}</small></strong></div>
-      <div className="h-in-track"><i style={{ width: `${pct}%` }} /><b style={{ left: "75%" }} /></div>
-      <small>target {target} · met ✓</small>
-    </div>
-  );
-}
+const svg = (d: string) => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />
+  </svg>
+);
+
+const FEATURES = [
+  { title: "Real models", text: "A model gateway on your machine. No API key, every token counted.",
+    icon: svg("M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z") },
+  { title: "Real VS Code", text: "The editor you use at work, with a terminal and live services beside it.",
+    icon: svg("M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16") },
+  { title: "Checked under load", text: "Your code faces real traffic, races and latency targets, not a quiz.",
+    icon: svg("M3 12h4l3-8 4 16 3-8h4") },
+  { title: "Live incidents", text: "A real system breaks, the pager goes off, and you fix it.",
+    icon: svg("M12 3a6 6 0 016 6v4l2 3H4l2-3V9a6 6 0 016-6zM10 19a2 2 0 004 0") },
+  { title: "A tutor that asks", text: "Stuck? It points at one thing and asks one question. No spoilers.",
+    icon: svg("M4 5h16v11H9l-5 4zM9 10h.01M12 10h.01M15 10h.01") },
+  { title: "Design reviews", text: "Senior chapters end with your reasoning, graded against a rubric.",
+    icon: svg("M9 4h6l1 2h3v15H5V6h3zM9 13l2 2 4-4") },
+];
 
 // The AI track, as planned: four stages from the first model call to your own GPT.
 const AI_STAGES: { title: string; blurb: string; labs: string[] }[] = [
-  { title: "Foundations", blurb: "What a model really does with your words.",
+  { title: "Foundations", blurb: "What a model really does with your words, and how to make it dependable.",
     labs: ["How LLMs work", "Prompts that hold up", "Structured output", "Tool calling", "Streaming responses", "Cost and latency budgets"] },
-  { title: "Retrieval", blurb: "Answers grounded in your own data.",
+  { title: "Retrieval", blurb: "Answers grounded in your own data, and proof that they are right.",
     labs: ["Embeddings and similarity", "Vector search with pgvector", "RAG from zero", "Chunking and ranking", "Hybrid search and rerankers", "Evaluating RAG"] },
-  { title: "Agents", blurb: "Models that act, safely.",
+  { title: "Agents", blurb: "Models that plan, use tools and act, without being talked into harm.",
     labs: ["The agent loop", "Memory and state", "Planning multi-step work", "Prompt injection and guardrails", "Build an MCP server", "Multi-agent workflows"] },
-  { title: "Production", blurb: "Ship it, measure it, own it.",
+  { title: "Production", blurb: "Ship it, measure it, own it, then build your own GPT.",
     labs: ["Evals and LLM judges", "Tracing and observability", "Caching and rate limits for LLMs", "Local models with Ollama", "Fine-tuning basics", "Build your own GPT"] },
 ];
 
 export function AiTrack() {
   return (
-    <div className="h-ai">
+    <ol className="h-ai">
       {AI_STAGES.map((st, i) => (
-        <article key={st.title} className="h-ai-stage">
-          <header>
-            <span className="h-ai-num">{String(i + 1).padStart(2, "0")}</span>
-            <div><h3>{st.title}</h3><p>{st.blurb}</p></div>
-          </header>
-          <ol>
-            {st.labs.map((l, j) => <li key={l}><span>{i * 6 + j + 1}</span>{l}</li>)}
-          </ol>
-        </article>
+        <li key={st.title} className="h-ai-stage">
+          <span className="h-ai-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+          <span className="h-ai-dot" aria-hidden="true" />
+          <h3>{st.title}</h3>
+          <p>{st.blurb}</p>
+          <div className="h-ai-labs" title={st.labs.join(", ")}>
+            <strong>{st.labs.length} labs</strong>
+            <ul>
+              {st.labs.slice(0, 3).map((l) => <li key={l}>{l}</li>)}
+              <li className="h-ai-more">+ {st.labs.length - 3} more</li>
+            </ul>
+          </div>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }
 

@@ -16,7 +16,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
   // The AI track is the headline, honestly marked as launching, with its 24 planned labs.
   await expect(page.locator("#ai .h-launch")).toHaveText("Launching");
-  await expect(page.locator("#ai .h-ai-stage li")).toHaveCount(24);
+  await expect(page.locator("#ai .h-ai-stage")).toHaveCount(4);
+  await expect(page.locator("#ai-title")).toContainText("24 labs");
+  await expect(page.locator("#inside .h-shot img")).toBeVisible();
   await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   await expect(page.locator(".live-labs")).toContainText(/^Live now: .+/);  // first few titles, then "and N more"
   await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText(/\d+ labs?/);
