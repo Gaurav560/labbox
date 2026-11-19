@@ -1,5 +1,11 @@
 # Changelog
 
+## Home: the screenshot frame glows in the lab's own colour
+
+- The glow and border around the "Inside a lab" screenshot follow the lab shown: Redis red, Spring
+  green, Postgres blue, Go cyan, Java orange, and so on (`TONES` in `HomeSections.tsx`, taken from each
+  lab's cover; dark covers use their bright accent). A new lab without a colour falls back to red.
+
 ## Home: a cleaner, smoother FAQ section
 
 - The heading and a short line with the contact address sit on the left (they stay in view while you
