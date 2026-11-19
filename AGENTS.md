@@ -57,9 +57,12 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 16 labs, real VS Code in labs (IDE | Lite), GitHub-grey theme everywhere.
+- Done: phases A to E and G, 16 labs (Redis is a 13-chapter course), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
-- **Next: Phase H.** Its plan is in `ROADMAP.md` section B.3, waiting for the owner's OK.
+- Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
+- `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).
+- **Next: the AI track** (`ROADMAP.md` section B.2): two owner decisions first (which model, build
+  order), then stage 1. Phase H's plan is in section B.4, also waiting for an OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real
   websocket proxy) are listed in `ROADMAP.md` section B.1.
 

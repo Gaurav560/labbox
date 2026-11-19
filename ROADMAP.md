@@ -8,6 +8,10 @@ The detail of every step is in `CHANGELOG.md` and `git log`; the full plan is
 Rules that always apply: plan first and wait for an OK, one commit per step, all old tests stay
 green, and ask before deleting data, touching AWS, or using anything that needs a paid API key.
 
+**Positioning (your decision, 19 November):** LabBox is marketed as **AI labs**: a track of 20 to 25
+deeply crafted AI labs. System design, programming languages, DevOps, databases and challenges are
+the additional tracks. Every lab is built to the Redis course's standard (see "Content standard").
+
 ---
 
 ## A. What is done
@@ -66,11 +70,23 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - The quality gate (`validate --strict`) checks the lesson shape and refuses hints that give away the solution.
 - CI runs the tests and `test-lab` on every changed lab.
 
+### Content standard (set by the Redis course, 19 November)
+
+`redis-in-practice` is the reference for every flagship lab: 13 chapters from zero to senior, 32
+tasks, 4 graded design reviews, about 5 hours. Short cards with one idea each, a "guess first" before
+each key idea, chapter setups that seed real data or real incidents, checks that test behaviour on
+the running system (real concurrency, load tests, `INFO commandstats`, `SLOWLOG`), a "Go deeper"
+card per chapter for experienced engineers, and verified wrong answers that fail with the right lesson.
+
 ### Website and brand
 
 - **Name:** "LabBox by Telusko". LabBox is the product and Telusko the parent company. The contact is
   connect@telusko.com. Names live in `frontend/src/site.ts`.
-- **Home page:**
+- **Home page (AI first):** hero "Learn AI by building it, not watching it", the pill "AI track
+  launching", **Inside a lab** (six cards with real artifacts), the **AI labs** map (24 planned labs in
+  four stages, marked Launching), the lab grid, "Also on LabBox" tracks, the red closing panel, then
+  **FAQs just above the footer** (the home footer no longer links to them).
+- **Home page look:**
   - Colours: GitHub charcoal (`#111512`) with a faint tile grid, black panels, white buttons, a muted brick red for small accents, and a little yellow.
   - Hero product tour: Read, Guess, Code, Check scenes for all 15 labs, in a random order for each visitor, with opt-in sound.
   - Below the hero: a colour logo strip, the lab cards, the tracks, and a red closing panel.
@@ -131,7 +147,28 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - [ ] Rebuild all images once the Ubuntu mirror works again (`scripts/build_lab_images.sh`), so every
       lab image gets the `lab requests` helper from the new base image.
 
-### 2. More labs: 15 written, more later (on hold by your choice)
+### 2. Next: the AI track (24 labs), waiting for your OK on the plan
+
+This is the product's headline, so it comes first. Planned labs, in four stages (shown on the home page):
+- **Foundations:** How LLMs work, Prompts that hold up, Structured output, Tool calling, Streaming
+  responses, Cost and latency budgets.
+- **Retrieval:** Embeddings and similarity, Vector search with pgvector, RAG from zero, Chunking and
+  ranking, Hybrid search and rerankers, Evaluating RAG.
+- **Agents:** The agent loop, Memory and state, Planning multi-step work, Prompt injection and
+  guardrails, Build an MCP server, Multi-agent workflows.
+- **Production:** Evals and LLM judges, Tracing and observability, Caching and rate limits for LLMs,
+  Local models with Ollama, Fine-tuning basics, Build your own GPT.
+
+Already built for it: the LLM gateway (aliases, budgets, `lab requests`), the `ai` lab template with
+deterministic checks (a fake client), graded design reviews, services (pgvector, qdrant as lab
+services). Decisions needed from you before building:
+1. **Which model the AI labs use.** The free local models (qwen2.5 0.5B and 1.5B) work, but are weak
+   at tool calling, JSON and agents; a premium AI course needs a capable model. Mapping `lab-chat` to a
+   paid provider (OpenAI, Gemini or Anthropic) needs your approval and your key in `backend/.env`.
+2. **Build order and size:** suggested first release is stage 1 (6 Foundations labs), then one
+   stage at a time, each lab to the content standard above.
+
+### 3. More labs in the other tracks (after the AI track)
 
 **Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.
 
@@ -159,7 +196,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 
 The flagship labs should reach 8 to 12 chapters; today's labs have 1 or 2.
 
-### 3. Platform phases not started (E and G are done)
+### 4. Platform phases not started (E and G are done)
 
 **Phase G is done** (19 November): k6 and the `labbox_k6` helper in the checker, metric gauges in the
 results drawer, graded `design` steps (`tests/rubric.yaml`, table `design_answer`), the `rate-limiter`
@@ -189,13 +226,13 @@ lab (lab 16) and the `system-design` template.
 | J | Admin dashboard and funnel analytics | Nothing |
 | K | Launch-set labs complete, deploy to AWS | AWS access, and your approval before anything runs there |
 
-### 4. Smaller items put off by agreement
+### 5. Smaller items put off by agreement
 
 - A spoken voiceover or a recorded demo video for the hero tour (needs your recording, or approval for a paid text-to-speech service)
 - Share card images for streaks and levels, and a public profile at `/u/{username}`
 - Previews on a separate web address, and an allowlist for outbound internet (with Phase H or K)
 
-### 5. Definition of done for v2 (spec 12)
+### 6. Definition of done for v2 (spec 12)
 
 - [ ] Sign up with Google, pick "Learn DevOps", typing in a terminal within 60 seconds (Google login needs Phase H)
 - [x] Calm, one-step-at-a-time lesson panel
@@ -212,7 +249,8 @@ lab (lab 16) and the `system-design` template.
 ## How to pick up again
 
 Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md and AGENTS.md. Phase H's plan is in ROADMAP section B.3: build it if I say OK."**
+ROADMAP.md and AGENTS.md. Next is the AI track (section B.2): ask me the two decisions, then build
+stage 1 to the Redis course's standard."** Phase H's plan is in section B.4 if I choose it instead.
 Claude Code reads `CLAUDE.md` (which loads `AGENTS.md`); Codex reads `AGENTS.md` by itself.
 
 **On a fresh machine, before running anything:**
