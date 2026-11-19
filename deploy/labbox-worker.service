@@ -1,0 +1,18 @@
+[Unit]
+Description=LabBox background worker (images, unused lab networks, nightly database backup)
+After=network-online.target docker.service labbox.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/labbox/backend
+EnvironmentFile=/opt/labbox/backend/.env
+# Needs REDIS_URL. The user must be in the docker group (images, networks, pg_dump in a container).
+ExecStart=/opt/labbox/backend/.venv/bin/arq app.worker.WorkerSettings
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

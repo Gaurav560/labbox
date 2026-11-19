@@ -12,6 +12,8 @@ alembic==1.20.1
 psycopg[binary]==3.2.3
 # shared state between workers (REDIS_URL); without it, state stays in memory (one worker)
 redis==5.2.1
+# background worker (Phase H3): scheduled jobs, app/worker.py
+arq==0.26.3
 tzdata==2026.6
 # preview proxy (also used by the tests)
 httpx==0.28.1

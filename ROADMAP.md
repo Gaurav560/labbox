@@ -215,7 +215,7 @@ lab (lab 16) and the `system-design` template.
    file kept); fast tests stay on SQLite, plus one full run on Postgres.
 2. **H2 Redis for app state (done):** check lock, machine locks, AI rate counters and a reaper leader lock in
    Redis, so uvicorn can run several workers; in memory when `REDIS_URL` is empty.
-3. **H3 worker (arq):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
+3. **H3 worker (arq) (done):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
    dump to `/srv/labbox/backups`.
 4. **H4 login:** HttpOnly session cookie with CSRF protection, a 60 s websocket ticket instead of the
    token in the terminal URL, Google and GitHub sign-in (buttons only when keys are in `.env`;

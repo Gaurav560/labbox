@@ -840,6 +840,28 @@ def cmd_db_copy(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_jobs(args: argparse.Namespace) -> int:
+    """Background jobs (Phase H3): when each last ran, or run one now."""
+    import logging
+
+    from app import jobs
+    from app.labs import init_labs
+
+    if args.run:
+        logging.basicConfig(level=logging.WARNING)
+        init_labs(args.labs_dir)
+        r = jobs.run(args.run)
+        print(f"{'✓' if r.ok else '✗'} {r.job} ({r.seconds} s): {r.summary}")
+        return 0 if r.ok else 1
+    runs = jobs.last_runs()
+    if not runs:
+        print("No runs recorded yet (the worker records them in Redis: is REDIS_URL set and the worker running?)")
+    for name in jobs.JOBS:
+        r = runs.get(name)
+        print(f"  {name:<9} " + (f"{'✓' if r['ok'] else '✗'} {r['at']}  {r['summary']}" if r else "never"))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox (by Telusko) labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
@@ -852,6 +874,10 @@ def main(argv: list[str] | None = None) -> int:
     n.add_argument("--template", choices=[*TEMPLATES_READY, *TEMPLATE_LATER], default="python")
     n.add_argument("--title")
     n.set_defaults(fn=cmd_new_lab)
+
+    j = sub.add_parser("jobs", help="background jobs: when each last ran, or --run images|networks|backup now")
+    j.add_argument("--run", choices=["images", "networks", "backup"])
+    j.set_defaults(fn=cmd_jobs)
 
     d = sub.add_parser("db-copy", help="copy the database to a new, empty one (SQLite to Postgres); the source is only read")
     d.add_argument("--source", default=f"sqlite:///{BACKEND / 'data' / 'labbox.db'}", help="default: backend/data/labbox.db")

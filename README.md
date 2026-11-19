@@ -121,6 +121,31 @@ Without `REDIS_URL` it all stays in memory, exactly as before: run one worker. T
 `LABBOX_TEST_REDIS_URL=redis://127.0.0.1:56379/15` runs them on Redis (a database other than 0, emptied
 first).
 
+### Background worker (Phase H3)
+
+A second process next to the backend runs scheduled jobs (`app/jobs.py`, scheduled by arq in
+`app/worker.py`; needs `REDIS_URL`):
+
+| Job | When (UTC) | What |
+|---|---|---|
+| images | at start, daily 03:00 | every image the labs use is on this machine; public ones (postgres:16, redis:7.4, nginx, socat) are pulled if missing, lab images are reported if not built |
+| networks | at start, hourly at :15 | removes lab networks no container of that lab group uses (running or stopped) and older than an hour |
+| backup | daily at `BACKUP_HOUR_UTC` (21:00, 02:30 in India) | `pg_dump` (in a `postgres:<server version>` container) to `BACKUP_DIR` (`/srv/labbox/backups`, only the owner can read it), checked with `pg_restore --list`; the newest `BACKUP_KEEP` (14) kept. SQLite: a checked copy of the file |
+
+```bash
+cd backend && .venv/bin/arq app.worker.WorkerSettings   # the worker (deploy/labbox-worker.service on a server)
+scripts/labbox jobs                                     # when each job last ran, and how it went
+scripts/labbox jobs --run backup                        # run one now (images, networks or backup)
+```
+
+Restoring a backup into a new database:
+
+```bash
+docker exec labbox-postgres psql -U labbox -c "CREATE DATABASE labbox_restored"
+PGPASSWORD=... docker run --rm -i --network host -e PGPASSWORD postgres:16 \
+  pg_restore --no-owner -h 127.0.0.1 -p 55432 -U labbox -d labbox_restored < /srv/labbox/backups/labbox-<time>.dump
+```
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself

@@ -1,5 +1,21 @@
 # Changelog
 
+## Phase H3: background worker
+
+- `app/jobs.py` with three jobs, scheduled by arq in `app/worker.py` (a second process, needs
+  `REDIS_URL`; arq runs each scheduled job once even with several workers or servers):
+  - images (at start, daily): every image the labs use is here; public ones are pulled when missing,
+    unbuilt lab images are reported. 21 images on this laptop, all present.
+  - networks (at start, hourly): removes lab networks that no container of that lab group uses, running
+    or stopped, older than an hour, under the machine's lock. On this laptop: 85 networks, all in use.
+  - backup (nightly, 21:00 UTC): `pg_dump` in a container of the server's own Postgres version into
+    `/srv/labbox/backups` (owner-only), checked with `pg_restore --list` before it is kept, newest 14
+    kept; SQLite gets a checked copy. The first backup was restored into a scratch database: every row
+    count matched the live one (393 accounts, 496 workspaces, 854 XP events).
+- `scripts/labbox jobs` shows when each job last ran; `--run <job>` runs one now.
+- `deploy/labbox-worker.service` for a server. Tests use their own backup folder, never the real one.
+- Tests: 232 passed on Postgres and Redis, 229 (plus 3 skipped) on SQLite.
+
 ## Phase H2: Redis for shared state, several workers
 
 - `app/shared.py`: what the backend used to keep in one process now lives in Redis when `REDIS_URL` is

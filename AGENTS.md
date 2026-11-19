@@ -33,6 +33,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 
 - Backend: `cd backend && .venv/bin/uvicorn app.main:app --port 8000 --workers 4` (4 workers only with `REDIS_URL`; otherwise 1) (restart it after changing any
   `lab.yaml`, lab content, tracks, drills or onboarding; content is loaded at startup).
+- Worker (Phase H3): `cd backend && .venv/bin/arq app.worker.WorkerSettings` (images, networks, nightly
+  backup to /srv/labbox/backups); `scripts/labbox jobs` shows the last runs.
 - Frontend: `cd frontend && npm run dev` (http://localhost:5173).
 - Images: `scripts/build_lab_images.sh` (bases first, then every lab).
 - VS Code in labs: `scripts/openvscode.sh` once (downloads to /srv/labbox/openvscode). Browser tests
@@ -40,10 +42,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 226 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
+- Tests: `cd backend && .venv/bin/pytest` (about 232 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (14 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: everything green (20 November, after H2 Redis) (226 backend tests on Postgres and Redis, 224 on SQLite, 14 browser tests on 4 workers, 16 labs valid).
+- Last known state: everything green (20 November, after H3 worker) (232 backend tests on Postgres and Redis, 229 on SQLite, 14 browser tests on 4 workers, 16 labs valid).
 
 ## How a lab is made
 

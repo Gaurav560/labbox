@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # Shared state between workers (Phase H2, app/shared.py): redis://... from scripts/devdb.sh url.
     # Empty: in this process's memory, so run one worker.
     REDIS_URL: str = ""
+    # Background worker (Phase H3, app/worker.py): nightly database backups, newest BACKUP_KEEP kept.
+    BACKUP_DIR: Path = Path("/srv/labbox/backups")
+    BACKUP_KEEP: int = 14
+    BACKUP_HOUR_UTC: int = 21  # 21:00 UTC is 02:30 in India, the quietest hour
     CONTAINER_RUNTIME: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"
