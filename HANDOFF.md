@@ -38,7 +38,8 @@ every session.
 | 4 | Phones: reading mode, no machine started | done | `440249f` |
 | 5a | A trace on every worked example in Python, Go and Java from zero (23 new, 49 in all) | done | see git log |
 | 5b | Redis chapters 1 to 6 up to the standard (history, 3 diagrams, worked examples, traces, quick checks, task cards) | done | see git log |
-| 5c | Redis chapters 7 to 13, the same | **next** | |
+| 5c | Redis chapters 7 to 13, the same; traces get a Play button; trace cells read from the source | done | see git log |
+| next | Python in practice (the next course in the owner's order, with a story): propose story and syllabus first | **next** | |
 | later | The other short labs get the standard when each grows into a full course (owner agreed) | | |
 | idea | "Run this example" on worked examples and "run your file" on task steps (the owner likes Run in terminal) | proposed | |
 

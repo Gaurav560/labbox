@@ -36,7 +36,8 @@ const BLOCKS = new Set([
 
 /** Turn directives into <div data-directive=...> and keep code fence meta (```bash run). */
 function remarkLessonBlocks() {
-  return (tree: Root) => {
+  return (tree: Root, file: { value?: unknown }) => {
+    const source = String(file?.value ?? "");
     visit(tree, (node, index, parent) => {
       if (node.type === "containerDirective" || node.type === "leafDirective") {
         const data = (node.data ??= {});
@@ -49,11 +50,15 @@ function remarkLessonBlocks() {
           // Without GFM tables the pipe rows arrive as one paragraph of text: read them line by line.
           const table = node.children.find((c) => c.type === "paragraph" && plain(c).trimStart().startsWith("|"));
           if (table) {
-            const rows = plain(table)
+            // Read the rows from the chapter's source text, not the parsed nodes: markdown would read
+            // "customer:7:cart" as text plus a ":cart" directive and drop part of it.
+            const start = table.position?.start.offset, end = table.position?.end.offset;
+            const text = start !== undefined && end !== undefined ? source.slice(start, end) : plain(table);
+            const rows = text
               .split("\n")
               .map((ln) => ln.trim())
               .filter((ln) => ln.startsWith("|") && !/^\|[\s|:-]+\|$/.test(ln)) // drop the |---| separator
-              .map((ln) => ln.replace(/^\||\|$/g, "").split("|").map((c) => c.trim()));
+              .map((ln) => ln.replace(/^\||\|$/g, "").split("|").map((c) => cellText(c)));
             attrs.dataTrace = JSON.stringify({ headers: rows[0] ?? [], rows: rows.slice(1) } satisfies TraceData);
             node.children = node.children.filter((c) => c !== table);
           }
@@ -67,6 +72,11 @@ function remarkLessonBlocks() {
       }
     });
   };
+}
+
+/** A trace cell as a learner should read it: code backticks dropped, markdown escapes undone ("\\n" shows \n). */
+function cellText(raw: string): string {
+  return raw.trim().replace(/`([^`]*)`/g, "$1").replace(/\\([\\`*_{}\[\]()#+\-.!|"'<>~])/g, "$1");
 }
 
 /** The plain text of an mdast node (a table cell, say), inline code included. */

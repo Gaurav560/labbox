@@ -252,7 +252,68 @@ function CacheAside() {
   );
 }
 
+/** Streams: one log, a consumer group shares entries out; unacknowledged work waits in the pending list. */
+function ConsumerGroup() {
+  return (
+    <Svg viewBox="0 0 440 212" label="A stream of entries feeds a consumer group; each entry goes to one worker; entries stay in the pending list until the worker acknowledges them">
+      <text className="dg-note" x={10} y={18}>stream: an append-only log</text>
+      <Cells x={10} y={26} values={["1-0", "2-0", "3-0", "4-0"]} />
+      <Arrow x1={110} y1={70} x2={150} y2={96} />
+      <Box x={120} y={98} w={140} h={34} label="group: kitchen" tone="accent" />
+      <Arrow x1={160} y1={134} x2={80} y2={164} />
+      <Arrow x1={220} y1={134} x2={300} y2={164} />
+      <Box x={10} y={166} w={120} h={34} label="barista1" />
+      <Box x={250} y={166} w={120} h={34} label="barista2" />
+      <text className="dg-note" x={276} y={110}>pending until XACK:</text>
+      <text className="dg-note" x={276} y={126}>a crash loses nothing</text>
+    </Svg>
+  );
+}
+
+/** Persistence: RDB snapshots now and then; AOF logs every write. What a crash at the end loses. */
+function Persistence() {
+  return (
+    <Svg viewBox="0 0 440 200" label="On a time line, RDB takes a snapshot every few minutes, so a crash loses the writes since the last one; AOF logs every write, so a crash loses at most about one second">
+      <text className="dg-note" x={10} y={18}>RDB: a snapshot now and then</text>
+      <line className="dg-arrow" x1={10} y1={50} x2={400} y2={50} />
+      <Box x={40} y={34} w={70} h={32} label="snap" tone="accent" />
+      <Box x={200} y={34} w={70} h={32} label="snap" tone="accent" />
+      <Box x={290} y={34} w={110} h={32} label="lost writes" tone="highlight" />
+      <text className="dg-note" x={404} y={30}>crash</text>
+      <text className="dg-note" x={10} y={110}>AOF: every write logged</text>
+      <line className="dg-arrow" x1={10} y1={142} x2={400} y2={142} />
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
+        <Box key={i} x={20 + i * 30} y={128} w={24} h={28} label="w" tone="accent" />
+      ))}
+      <Box x={384} y={128} w={20} h={28} label="" tone="highlight" />
+      <text className="dg-note" x={150} y={186}>a crash loses at most about one second</text>
+    </Svg>
+  );
+}
+
+/** Replication: the primary takes writes and streams them to read-only replicas, a little behind. */
+function Replication() {
+  return (
+    <Svg viewBox="0 0 440 200" label="Apps write to the primary; the primary sends every write to two replicas, which apps can read from; the replicas can be a few milliseconds behind">
+      <Box x={10} y={80} w={90} h={36} label="apps" />
+      <Arrow x1={102} y1={98} x2={170} y2={98} />
+      <text className="dg-note" x={108} y={88}>writes</text>
+      <Box x={174} y={78} w={110} h={40} label="primary" tone="accent" />
+      <Arrow x1={286} y1={88} x2={330} y2={46} />
+      <Arrow x1={286} y1={108} x2={330} y2={150} />
+      <Box x={334} y={24} w={100} h={36} label="replica" />
+      <Box x={334} y={138} w={100} h={36} label="replica" />
+      <text className="dg-note" x={300} y={92}>every write,</text>
+      <text className="dg-note" x={300} y={108}>a few ms later</text>
+      <text className="dg-note" x={334} y={190}>read-only copies</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "consumer-group": ConsumerGroup,
+  persistence: Persistence,
+  replication: Replication,
   "redis-shared": RedisShared,
   "round-trips": RoundTrips,
   "cache-aside": CacheAside,

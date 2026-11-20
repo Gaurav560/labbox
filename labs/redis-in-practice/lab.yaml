@@ -287,6 +287,12 @@ chapters:
           - "Count requests per phone number in Redis, and let the count disappear after a minute."
           - "r.incr(key) adds one and returns the new count, even for a key that does not exist yet."
           - "Give the key a 60 second expiry when the count is 1, and raise HTTPException with status 429 above 3."
+        examples:
+          - call: "4 x POST /otp/9876543210 within a minute"
+            gives: "200, 200, 200, 429"
+          - call: "the 5th call a minute later"
+            gives: "200"
+            note: "the count reset"
       - id: redeem_points
         title: "POST /redeem/{cid}: never double-spend"
         xp: 50
@@ -294,6 +300,12 @@ chapters:
           - "The read, the check and the write must happen as one step, with nothing in between."
           - "A Lua script runs atomically inside Redis. register_script turns its source into a function you can call."
           - "In the script: read the balance, return -1 when it is too low, otherwise DECRBY and return the result. Answer 409 on -1."
+        examples:
+          - call: "20 x POST /redeem/77?points=100 at once, 500 points"
+            gives: "5 x 200, 15 x 409"
+          - call: "GET loyalty:77"
+            gives: "\"0\""
+            note: "never below zero"
   - id: 08-distributed-locks
     title: Distributed locks
     file: chapters/08-distributed-locks.md
@@ -306,6 +318,9 @@ chapters:
           - "Take a lock for the table before checking whether it is free, and give up (409) if you cannot get it."
           - "SET with nx=True and px= takes the lock; its value should be a random token, for example from uuid4."
           - "Hold the lock around the check and the booking, and release it in a finally block, even when you answer 409."
+        examples:
+          - call: "30 x POST /book/5 at the same moment"
+            gives: "1 x 200, 29 x 409"
       - id: safe_unlock
         title: "Release a lock only if it is yours"
         xp: 40
@@ -313,6 +328,11 @@ chapters:
           - "Before deleting, the value must be compared with the token. Doing that in two commands is a race."
           - "A short Lua script can GET the key and DEL it only when the value equals the token, in one step."
           - "Pass the lock key in KEYS and the token in ARGV, and return whether something was deleted."
+        examples:
+          - call: "release lock:x with the wrong token"
+            gives: "the lock stays"
+          - call: "release lock:x with its own token"
+            gives: "the lock is gone"
   - id: 09-streams
     title: Streams and consumer groups
     file: chapters/09-streams.md
@@ -326,6 +346,11 @@ chapters:
           - "XADD appends one entry to a stream. Let Redis pick the ID with *."
           - "After the ID come field value pairs: the order field and the item field. Quote item names with a space."
           - "Three XADD commands in order o1, o2, o3; XRANGE orders:stream - + shows them oldest first."
+        examples:
+          - call: "XLEN orders:stream"
+            gives: "3"
+          - call: "XRANGE orders:stream - +"
+            gives: "o1, o2, o3, in order"
       - id: kitchen_group
         title: "A kitchen group: read three, acknowledge one"
         xp: 40
@@ -333,6 +358,10 @@ chapters:
           - "XGROUP CREATE makes a group on a stream. Starting at 0 means from the oldest entry."
           - "XREADGROUP with GROUP kitchen barista1 and the special ID > hands out entries nobody has received yet."
           - "Acknowledge only o1's ID with XACK. XPENDING orders:stream kitchen should then show 2."
+        examples:
+          - call: "XPENDING orders:stream kitchen"
+            gives: "2 pending, for barista1"
+            note: "o2 and o3"
       - id: reclaim_stuck
         title: "worker-2 takes over the stuck payments"
         xp: 40
@@ -340,6 +369,10 @@ chapters:
           - "XPENDING shows who holds each payment and for how long. Someone alive must take them over."
           - "XAUTOCLAIM with a minimum idle time in milliseconds moves old pending entries to a new consumer."
           - "Claim as worker-2 with 60000 and start ID 0, then XACK both returned IDs in the billing group."
+        examples:
+          - call: "XPENDING payments:stream billing"
+            gives: "0 pending"
+            note: "worker-2 claimed and acknowledged them"
   - id: 10-memory-and-eviction
     title: Memory and eviction
     file: chapters/10-memory-and-eviction.md
@@ -353,6 +386,11 @@ chapters:
           - "One key is much bigger than everything else. The bigkeys option of redis-cli finds the biggest of each type."
           - "MEMORY USAGE on a key shows its real size. Look for a key that should never have grown."
           - "Remove only that one key (UNLINK frees a big key without blocking). The cache entries must stay."
+        examples:
+          - call: "redis-cli --bigkeys"
+            gives: "no runaway key left"
+          - call: "the cache, carts and sessions"
+            gives: "all still there"
       - id: eviction_policy
         title: "Evict cache entries, never real data"
         xp: 40
@@ -360,6 +398,10 @@ chapters:
           - "The policy decides what Redis may throw away when it is full. Real data here has no TTL."
           - "Policies starting with allkeys may evict anything; the ones starting with volatile only touch keys with a TTL."
           - "CONFIG SET maxmemory-policy to the volatile version of least recently used."
+        examples:
+          - call: "CONFIG GET maxmemory-policy"
+            gives: "a volatile-* policy"
+            note: "only keys with a TTL can go"
   - id: 11-persistence
     title: Persistence
     file: chapters/11-persistence.md
@@ -373,6 +415,11 @@ chapters:
           - "Two settings: one turns the log on, the other says how often it is flushed to disk."
           - "CONFIG SET appendonly takes yes or no; appendfsync takes always, everysec or no."
           - "Set appendonly to yes and appendfsync to everysec, then check with CONFIG GET append*."
+        examples:
+          - call: "CONFIG GET appendonly"
+            gives: "\"yes\""
+          - call: "CONFIG GET appendfsync"
+            gives: "\"everysec\""
       - id: fresh_snapshot
         title: "Take a snapshot now"
         xp: 30
@@ -380,6 +427,10 @@ chapters:
           - "A snapshot can be taken in the background while Redis keeps serving."
           - "BGSAVE starts one. If the append-only file is still being rewritten, BGSAVE SCHEDULE waits for it."
           - "Check INFO persistence: rdb_last_bgsave_status should be ok and the last save time recent."
+        examples:
+          - call: "INFO persistence"
+            gives: "rdb_last_bgsave_status:ok"
+            note: "and a recent rdb_last_save_time"
   - id: 12-scaling
     title: Replication and clusters
     file: chapters/12-scaling.md
@@ -393,6 +444,11 @@ chapters:
           - "The command runs on the server that should become the replica, so talk to it with -h replica."
           - "REPLICAOF takes the primary's host and port: here redis and 6379."
           - "INFO replication on the replica should show role slave and master_link_status up."
+        examples:
+          - call: "redis-cli -h replica INFO replication"
+            gives: "master_link_status:up"
+          - call: "SET on redis, GET on replica"
+            gives: "the same value"
       - id: hash_tags
         title: "Customer 42's cart and wishlist in one cluster slot"
         xp: 40
@@ -400,6 +456,9 @@ chapters:
           - "In a cluster, a key's slot comes from a hash of its name. Different names usually mean different slots."
           - "Only the part between curly braces is hashed, when the key name has one."
           - "Put the same part in braces in both names, for example a braced customer 42 followed by :cart and :wishlist."
+        examples:
+          - call: "the slots of customer 42's cart and wishlist keys"
+            gives: "the same slot"
   - id: 13-production-capstone
     title: "Capstone: production is slow"
     file: chapters/13-production-capstone.md
@@ -413,6 +472,10 @@ chapters:
           - "KEYS returns everything in one blocking call. SCAN returns a little at a time with a cursor."
           - "The Python client has scan_iter, which runs the SCAN cursor loop for you; match and count are arguments."
           - "Count what scan_iter yields for the session pattern, with a count of about 1000 per step."
+        examples:
+          - call: "curl -s localhost:8000/sessions/active"
+            gives: "the exact count"
+            note: "counted with SCAN"
       - id: unlink_culprit
         title: "Remove the slow key without blocking"
         xp: 50
@@ -420,3 +483,8 @@ chapters:
           - "SLOWLOG GET shows the slow commands and the key they touched."
           - "DEL frees memory on the main thread while everyone waits. There is a command that frees it in the background."
           - "Use UNLINK on that one key, and leave the sessions alone."
+        examples:
+          - call: "the huge key from the slow log"
+            gives: "gone, freed in the background"
+          - call: "the sessions"
+            gives: "all still there"

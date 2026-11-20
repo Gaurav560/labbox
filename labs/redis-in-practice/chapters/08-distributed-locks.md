@@ -23,6 +23,34 @@ SET lock:booking:table:7 <token> NX PX 2000
 - `<token>`: a random value only you know, like a `uuid4`. It proves the lock is still **yours**.
 
 While you hold it, check and book. Then release it.
+
+:::trace{title="why a release must check the token"}
+| second | server A | server B | lock holds | note |
+|---|---|---|---|---|
+| 0 | SET lock NX PX 2000: OK |  | A's token | A has the lock for 2 seconds. |
+| 2 | still working |  | (expired) | A's work is slow; the lock expires on its own. |
+| 2.5 |  | SET lock NX PX 2000: OK | B's token | The lock was free, so B takes it. B is now inside. |
+| 3 | plain DEL lock |  | (nothing) | A deletes B's lock without knowing. |
+| 3.1 | with a token check |  | B's token | Checking "is it still mine?" first would have left B's lock alone. |
+:::
+:::
+
+:::step{type=example title="Worked example: a lock for the nightly report"}
+Two servers both try to build the nightly report. Only one should:
+
+```text
+server A> SET lock:report a91f NX PX 30000
+OK
+server B> SET lock:report 7c2e NX PX 30000
+(nil)
+server A> GET lock:report
+"a91f"
+```
+
+1. A takes the lock with its own random token, `a91f`, for 30 seconds.
+2. B asks too, and `NX` refuses it: `(nil)` means "someone else has it", so B skips the work.
+3. When A has finished, it releases the lock, but only after checking the value is still `a91f`, in one
+   atomic step (a tiny script). If the lock expired and someone else holds it, A leaves it alone.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -65,6 +93,30 @@ Use a lock per table, with a token and a short expiry.
 
 The check takes a lock for `token-A`, asks your endpoint to release it with `token-B` (it must stay),
 then with `token-A` (it must go).
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+Why does each lock holder use its own random token as the value?
+:::
+- [ ] To make the lock harder to guess for attackers
+- [x] So a holder can prove the lock is still its own before deleting it
+- [ ] Redis requires a value for every key
+:::explain
+After an expiry, someone else may hold the lock. Comparing the value with your token tells you whether it is still yours.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+`SET lock:table:7 t1 NX PX 2000` answers `(nil)`. What does it mean?
+:::
+- [ ] The lock was taken by you
+- [x] Someone else holds the lock right now
+- [ ] The key expired
+:::explain
+`NX` sets the key only if it does not exist. `(nil)` means it exists: another request holds the lock, so answer 409 or wait.
+:::
 :::
 
 :::step{type=design title="Design review"}

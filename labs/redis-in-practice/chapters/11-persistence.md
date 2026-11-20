@@ -26,6 +26,29 @@ often it is flushed to disk is `appendfsync`:
 | `no` | whatever the OS had not written yet |
 
 Most production setups run both.
+
+:::diagram{name="persistence"}
+RDB saves now and then and loses the writes since the last snapshot; AOF logs every write and loses about a second.
+:::
+:::
+
+:::step{type=example title="Worked example: is this server safe to restart?"}
+Three commands tell you what a crash right now would cost:
+
+```text
+> CONFIG GET save
+1) "save"   2) "3600 1 300 100 60 10000"
+> CONFIG GET appendonly
+1) "appendonly"   2) "no"
+> INFO persistence
+rdb_changes_since_last_save:4820
+rdb_last_bgsave_status:ok
+```
+
+1. `save` is the snapshot schedule: here, after an hour with 1 change, 5 minutes with 100, or a
+   minute with 10000.
+2. `appendonly no`: there is no write log.
+3. 4820 writes since the last snapshot: a crash now loses all of them. Turn AOF on, or snapshot now.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -60,6 +83,30 @@ running server with `CONFIG SET`.
 
 :::step{type=task task=fresh_snapshot title="A snapshot, now"}
 Take a fresh RDB snapshot in the background, and make sure it succeeded.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+The last RDB snapshot was 10 minutes ago, and AOF is off. Redis crashes. What is lost?
+:::
+- [ ] Nothing
+- [x] Every write from the last 10 minutes
+- [ ] Only the last second
+:::explain
+Without AOF, the restart loads the last snapshot. Everything written since then is gone.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Why does `BGSAVE` not stop Redis from serving clients while it writes the snapshot?
+:::
+- [ ] It does stop Redis
+- [x] Redis forks a child process that writes the file while the main process keeps serving
+- [ ] It saves only the keys nobody is using
+:::explain
+The fork gets a frozen copy of memory to write out, so the main thread carries on. `SAVE`, without the B, would block everyone.
+:::
 :::
 
 :::step{type=design title="Design review"}

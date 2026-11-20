@@ -25,6 +25,28 @@ replicas, so a replica can be a few milliseconds behind.
 
 **Sentinel** watches the primary and, if it dies, promotes a replica and tells clients where the new
 primary is: automatic failover.
+
+:::diagram{name="replication"}
+Writes go to the primary, which sends each one on to its read-only replicas, a few milliseconds behind.
+:::
+:::
+
+:::step{type=example title="Worked example: reading a replica's health"}
+`INFO replication` on a replica tells you whether it is keeping up:
+
+```text
+> INFO replication
+role:slave
+master_host:redis
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:0
+```
+
+1. `role:slave` (the old word Redis still prints) means this server is a replica.
+2. `master_host` and `master_port` show which primary it copies.
+3. `master_link_status:up` is the line that matters: the copy is live.
+4. `master_last_io_seconds_ago:0`: it heard from the primary this second.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -58,6 +80,15 @@ the same slot, or the cluster refuses.
 
 **Hash tags** fix it. If a key contains `{...}`, only the part inside the braces is hashed:
 `{customer:42}:cart` and `{customer:42}:wishlist` always share a slot, on the same node.
+
+:::trace{title="which slot a key lands in (the real numbers)"}
+| key | the part that is hashed | slot | note |
+|---|---|---|---|
+| customer:7:cart | the whole name | 10870 | Without a hash tag, every name lands somewhere different. |
+| customer:7:wishlist | the whole name | 13267 | A different slot, maybe a different node: no multi-key commands. |
+| {customer:7}:cart | customer:7 | 1721 | Only the part in braces is hashed. |
+| {customer:7}:wishlist | customer:7 | 1721 | Same part, same slot, same node: they stay together. |
+:::
 :::
 
 :::step{type=task task=hash_tags title="Keep a customer together"}
@@ -66,6 +97,30 @@ with key names that end in `:cart` and `:wishlist`, chosen so a Redis Cluster wo
 same slot**.
 
 `redis-cli CLUSTER KEYSLOT <key>` only works on a cluster, so the check computes the slots for you.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+You write to the primary and read from a replica one millisecond later. Is the new value guaranteed?
+:::
+- [ ] Yes, always
+- [x] No: replication is asynchronous, so the replica may still be behind
+- [ ] Only with Sentinel
+:::explain
+The primary answers your write before the replicas have it. Read your own fresh writes from the primary.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Which pair of keys is guaranteed to share a slot in Redis Cluster?
+:::
+- [ ] `order:9:items` and `order:9:total`
+- [x] `{order:9}:items` and `{order:9}:total`
+- [ ] `items:{9}` and `total:9`
+:::explain
+With a hash tag, only the part in braces is hashed. Both keys hash `order:9`, so they share a slot.
+:::
 :::
 
 :::step{type=deep-dive title="What you give up at scale"}

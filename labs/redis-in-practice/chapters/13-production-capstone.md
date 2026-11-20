@@ -19,6 +19,34 @@ long for its caller: **every other client waits** behind it. Two classic offende
 
 **`SLOWLOG GET 10`** lists the recent commands that took longer than `slowlog-log-slower-than`
 microseconds, with how long each took. It is the first place to look.
+
+:::trace{title="one KEYS call on a million keys"}
+| ms | Redis is running | other clients | note |
+|---|---|---|---|
+| 0 | KEYS session:* starts | waiting | It must look at every key before it answers. |
+| 900 | still KEYS | waiting | Logins, carts and prices all queue behind it. |
+| 1800 | KEYS answers | waiting | Done at last. |
+| 1801 | the queued commands | served | Everyone was frozen for 1.8 seconds. SCAN would have let them in between its small steps. |
+:::
+:::
+
+:::step{type=example title="Worked example: reading one slow log entry"}
+Each `SLOWLOG GET` entry is a small report:
+
+```text
+> SLOWLOG GET 1
+1) 1) (integer) 14              an id
+   2) (integer) 1732012345      when (a Unix time)
+   3) (integer) 1843200         how long: 1843200 microseconds
+   4) 1) "KEYS"                 the command
+      2) "session:*"
+   5) "10.0.0.7:51234"          which client sent it
+   6) "dashboard"               the client's name, if it set one
+```
+
+1. The duration is in **microseconds**: 1843200 is about 1.8 seconds.
+2. For those 1.8 seconds, every other client waited.
+3. The command names the culprit: `KEYS session:*`, the dashboard. Fix the caller, not Redis.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -54,6 +82,30 @@ Python, `r.scan_iter(match=..., count=...)` walks the keys in small steps), and 
 :::step{type=task task=unlink_culprit title="Remove the culprit, without a pause"}
 The slow log points at one huge key. Remove it in a way that does **not** block Redis while its memory
 is freed. Keep every session.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `UNLINK big:key` do differently from `DEL big:key`?
+:::
+- [ ] Nothing: they are the same
+- [x] It removes the name at once and frees the memory in a background thread
+- [ ] It deletes only the first million members
+:::explain
+`DEL` frees every member on the main thread before answering. `UNLINK` returns immediately and frees the memory in the background.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Your dashboard must count keys matching `session:*` every minute. What should it use?
+:::
+- [ ] `KEYS session:*`
+- [x] `SCAN` with `MATCH session:*`, in small steps
+- [ ] `DBSIZE`
+:::explain
+`SCAN` walks the keyspace a little at a time, so other clients are served in between. `DBSIZE` counts every key, not only sessions.
+:::
 :::
 
 :::step{type=design title="Final design review"}

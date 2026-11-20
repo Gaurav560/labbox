@@ -206,6 +206,14 @@ test("lessons show pictures, a step-through trace and task cards", async ({ page
   await trace.getByRole("button", { name: "Next ▶" }).click();
   await expect(trace).toContainText("best becomes 3");
   await expect(trace.locator(".trace-changed")).toHaveCount(3); // w, w.length() and best all changed
+  // Every control does something: ▶ plays the rest by itself, and at the end "Watch again" plays it again.
+  await trace.getByRole("button", { name: "▶ Watch it run" }).click();
+  await expect(trace.getByRole("button", { name: "⏸ Pause" })).toBeVisible();
+  await expect(trace).toContainText("step 5 of 5", { timeout: 10_000 });
+  await expect(trace.getByRole("button", { name: "▶ Watch it run" })).toBeVisible(); // stopped at the end
+  await trace.getByRole("button", { name: "↻ Watch again" }).click();
+  await expect(trace).toContainText("step 1 of 5");
+  await expect(trace.getByRole("button", { name: "⏸ Pause" })).toBeVisible();
   await page.locator(".dot").nth(8).click(); // the greet task
   await expect(page.locator(".task-card")).toContainText('greet("Asha")');
   await expect(page.locator(".task-card")).toContainText('"Hello, Asha!"');

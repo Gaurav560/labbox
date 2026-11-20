@@ -1345,6 +1345,13 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .trace { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
 .trace-head { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: 8px; flex-wrap: wrap; }
 .trace-label { font-size: 12px; font-weight: 700; color: #8c84e8; text-transform: uppercase; letter-spacing: .04em; }
+/* The label is a real Play button: every control in a trace does something. */
+.trace-play { font: 700 12px var(--font-text); color: #8c84e8; text-transform: uppercase; letter-spacing: .04em; background: transparent;
+  border: 1px solid color-mix(in srgb, #5048b8 55%, var(--border)); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.trace-play:hover { background: color-mix(in srgb, #5048b8 14%, transparent); }
+.trace-play[aria-pressed="true"] { background: #5048b8; color: #fff; border-color: #5048b8; }
+:root[data-theme="light"] .trace-play { color: #5048b8; }
+:root[data-theme="light"] .trace-play[aria-pressed="true"] { color: #fff; }
 .trace-title { font-size: 14px; font-weight: 600; white-space: pre-wrap; font-family: var(--font-code); font-variant-ligatures: none; }
 .trace-table { width: 100%; border-collapse: collapse; font: 13px var(--font-code); font-variant-ligatures: none; }
 .trace-table th { text-align: left; font: 600 12px var(--font-text); color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--border); }

@@ -1,5 +1,20 @@
 # Changelog
 
+## Redis in practice, chapters 7 to 13, and a "watch it run" player
+
+- **Redis chapters 7 to 13 up to the standard:** three diagrams (a consumer group with its pending
+  list, RDB versus AOF on a time line, a primary with replicas), seven worked examples (a login rate
+  limit, a report lock, a delivery stream, sizing a key, a restart-safety check, a replica's health, a
+  slow log entry), seven traces (a Lua script spending points, why a release checks its token, riders
+  sharing a group, volatile-lru eviction, real Redis Cluster hash slots, one KEYS call freezing
+  everyone), two quick checks per chapter and 15 task cards. The whole course now has 32 task cards.
+- **Every trace control does something:** "▶ Watch it run" is now a Play button (one row every 1.5 s,
+  ⏸ to pause), stepping by hand pauses it, and at the end "↻ Watch again" plays it again instead of a
+  disabled "Done". Found by the owner.
+- **Trace cells show exactly what the chapter says:** tables are read from the chapter's source text.
+  Before, markdown read `customer:7:cart` as text plus a `:cart` directive and dropped part of it. A
+  browser walk compared all 60 traces in five courses with their source, cell by cell: no differences.
+
 ## Redis in practice, chapters 1 to 6, brought up to the standard
 
 - **The story of Redis** in chapter 1: memcached and disk-bound databases before it, Salvatore Sanfilippo
