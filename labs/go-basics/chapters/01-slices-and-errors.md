@@ -54,6 +54,14 @@ func ParseCount(text string) (int, error) {
 3. On success, return the value and `nil`.
 
 `ParseAmount` follows this shape, with a dot between rupees and paise.
+
+:::trace{title="ParseCount with three inputs"}
+| text | strconv.Atoi | n < 0? | returns | note |
+|---|---|---|---|---|
+| "12" | 12, nil |  no | 12, nil | A good count: no error. |
+| "abc" | 0, an error |  | 0, not a count: "abc" | Atoi failed: return our own, clearer error. |
+| "-3" | -3, nil | yes | 0, a count cannot be negative | It parsed, but it makes no sense as a count. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

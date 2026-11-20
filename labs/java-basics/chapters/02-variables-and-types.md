@@ -79,6 +79,14 @@ public static double average(int total, int count) {
 3. A `double` divided by an `int` is a `double`, so the fraction survives.
 
 `percent` uses this same idea, plus rounding.
+
+:::trace{title="average(7, 2)"}
+| step | value | note |
+|---|---|---|
+| count == 0? | false | 2 is not 0, so it is safe to divide. |
+| 7 / 2 (ints) | 3 | Dividing two ints drops the fraction: this is the trap. |
+| (double) 7 / 2 | 3.5 | Make one side a double first, and the fraction stays. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

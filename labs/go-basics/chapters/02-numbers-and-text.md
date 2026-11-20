@@ -47,6 +47,14 @@ func Average(total, count int) float64 {
 2. `float64(total)` turns an `int` into a `float64`; dividing two `float64`s keeps the fraction.
 
 `Percent` adds one more line: rounding with `math.Round`.
+
+:::trace{title="Average(7, 2)"}
+| step | value | note |
+|---|---|---|
+| count == 0? | false | 2 is not 0, so it is safe to divide. |
+| 7 / 2 (ints) | 3 | Dividing two ints drops the fraction: this is the trap. |
+| float64(7) / float64(2) | 3.5 | Turn both into float64 first, and the fraction stays. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -70,6 +70,16 @@ public static List<String> longNames(List<String> names) {
 ```
 
 Each line reads like a step of the sentence it implements. `passing` needs only steps 1 and 4.
+
+:::trace{title='longNames(["Riya", "Arjun", "Meera"])'}
+| station | items on the belt | note |
+|---|---|---|
+| stream() | [Riya, Arjun, Meera] | The items as they arrive. |
+| filter(n -> n.length() > 4) | [Arjun, Meera] | Riya has exactly 4 letters, not more than 4: dropped. |
+| map(String::toUpperCase) | [ARJUN, MEERA] | Each kept name is changed. |
+| sorted() | [ARJUN, MEERA] | Already alphabetical, so nothing moves. |
+| toList() | [ARJUN, MEERA] | The box at the end. The original list never changed. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

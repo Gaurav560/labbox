@@ -217,8 +217,8 @@ visualizations (interactive "watch it run" traces) first, real code always, deco
 JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
 learners land on it. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
-button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Next: more traces in every course
-(step 5 of the review), then the flagship Redis course and the other labs. Python, Go and Java already have the
+button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
+courses (49). Next (step 5, part 2): the flagship Redis course and the other labs up to the standard. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.
 

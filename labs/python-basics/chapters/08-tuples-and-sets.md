@@ -48,6 +48,15 @@ came_either_day(["Riya", "Arjun"], ["Arjun", "Meera"])
 :::picture{name="guest-list"}
 A set keeps each item once, like a guest list.
 :::
+
+:::trace{title='came_either_day(["Riya", "Arjun"], ["Arjun", "Meera"])'}
+| step | value | note |
+|---|---|---|
+| set(monday) | {'Riya', 'Arjun'} | A set of Monday's names. |
+| set(tuesday) | {'Arjun', 'Meera'} | A set of Tuesday's names. |
+| the union of the two sets | {'Riya', 'Arjun', 'Meera'} | Everyone from either set. Arjun came on both days but appears once. |
+| sorted(both) | ['Arjun', 'Meera', 'Riya'] | Sets have no order, so sort them into a predictable list. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

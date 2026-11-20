@@ -47,6 +47,14 @@ func Fence(p Perimeterer) float64 {
 3. `Fence` works for any shape that has `Perimeter()`.
 
 Your `Area` methods and `TotalArea` follow this pattern.
+
+:::trace{title="Fence(Square{Side: 5})"}
+| step | value | note |
+|---|---|---|
+| Square{Side: 5} | a square | It has a Perimeter() method, so it satisfies Perimeterer. |
+| p.Perimeter() | 20 | Fence calls the method without knowing it is a square: 4 * 5. |
+| 20 * 1.1 | 22 | 10% extra fence. Any shape with Perimeter() would work the same way. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

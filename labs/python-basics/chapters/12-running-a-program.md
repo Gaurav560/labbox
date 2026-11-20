@@ -49,6 +49,15 @@ if __name__ == "__main__":
 `python greet_cli.py Riya --times 2` prints the greeting twice. The work lives in `main()`, problems
 go to stderr with an exit code, and the last two lines run `main()` only when the file is run
 directly. `summary.py` has the same skeleton.
+
+:::trace{title="python greet.py Riya --times 2"}
+| step | value | note |
+|---|---|---|
+| parse_args() | name='Riya', times=2 | The words after the file name become arguments; type=int turns "2" into 2. |
+| args.times < 1? | no | 2 is fine, so the program does not stop with exit code 2. |
+| loop, round 1 | prints Hello, Riya! | range(2) runs the loop twice. |
+| loop, round 2 | prints Hello, Riya! | Done. Without --times, the default of 1 would print it once. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

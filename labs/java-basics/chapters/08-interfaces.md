@@ -84,6 +84,14 @@ public static double totalPerimeter(List<HasPerimeter> items) {
 
 The method never mentions squares or circles. Next month someone adds triangles, and this method works
 for them with no changes. `totalArea` is the same idea with `area()`.
+
+:::trace{title="totalPerimeter of a 3 by 4 and a 5 by 1 rectangle"}
+| p | p.perimeter() | total | note |
+|---|---|---|---|
+|  |  | 0.0 | Start at zero. |
+| the 3 by 4 rectangle | 14.0 | 14.0 | The loop only knows it HasPerimeter, and calls the method. |
+| the 5 by 1 rectangle | 12.0 | 26.0 | A circle or a triangle would work the same way. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

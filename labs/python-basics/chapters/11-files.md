@@ -49,6 +49,15 @@ lines   # ['milk', 'bread', 'tea']
 3. Reading line by line gives each line with its `"\n"`; `strip()` removes it.
 
 The warm-up task is step 1 and 2 as a function.
+
+:::trace{title="the file as it is written and read"}
+| step | list.txt holds | note |
+|---|---|---|
+| open("list.txt", "w") | (empty) | "w" creates the file, or empties it. |
+| write "milk\\n" | milk | Each write adds a line; we add the new line ourselves. |
+| write "bread\\n", "tea\\n" | milk, bread, tea | Three lines. The with block closes the file. |
+| read back, strip() | ['milk', 'bread', 'tea'] | strip removes each line's "\\n". |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

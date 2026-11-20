@@ -49,6 +49,13 @@ bill_total([])              # 0.0
 3. `round(x, 2)` keeps two digits after the point, for showing to people.
 
 The average task needs the same three ideas, plus one division.
+
+:::trace{title="bill_total([10.5, 20.25]), then bill_total([])"}
+| call | not prices? | result | note |
+|---|---|---|---|
+| bill_total([10.5, 20.25]) | False | 30.75 | The list has prices, so sum them (30.75) and round to 2 decimals. |
+| bill_total([]) | True | 0.0 | An empty list is "falsy": the function answers 0.0 before trying to add. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

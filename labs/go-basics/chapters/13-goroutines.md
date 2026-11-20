@@ -56,6 +56,16 @@ func Squares(nums []int) []int {
 3. `wg.Wait()` waits for all of them before returning.
 
 `FetchAll` is this with `fetch(item)` in place of `n * n`.
+
+:::trace{title="Squares([]int{2, 3, 4})"}
+| moment | out | note |
+|---|---|---|
+| make([]int, 3) | [0 0 0] | One slot per number, made before any goroutine starts. |
+| three goroutines start | [0 0 0] | Each one knows its own i and n. They run at the same time. |
+| the goroutine for 4 finishes first | [0 0 16] | Order of finishing does not matter: it writes only to slot 2. |
+| the others finish | [4 9 16] | Each wrote its own slot, so nothing clashes. |
+| wg.Wait() returns | [4 9 16] | Only now is it safe to return: every goroutine called Done. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

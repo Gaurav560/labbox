@@ -94,6 +94,14 @@ new Rect(3, 4).area()    // 12
 
 Inside the record, `width` and `height` are this object's own values. To read another object's values,
 call its methods: `other.width()`.
+
+:::trace{title="new Rect(3, 4).area()"}
+| step | value | note |
+|---|---|---|
+| new Rect(3, 4) | Rect[width=3, height=4] | The record stores width and height for you. |
+| .area() | width * height | The method reads the object's own fields. |
+| result | 12 | 3 * 4. Another Rect, say 5 by 1, would give its own 5. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -68,6 +68,15 @@ public static Map<String, Integer> rowsPerCategory(Path path) throws IOException
 
 `merge(key, 1, Integer::sum)` is a compact "add 1 to this key's count". `readTotals` adds amounts
 instead, and skips amounts that are not numbers.
+
+:::trace{title="four lines of a file"}
+| i | line | parts | out | note |
+|---|---|---|---|---|
+| 0 | date,category,amount |  | {} | The loop starts at 1, so the header is skipped. |
+| 1 | 2026-03-02,food,120 | 3 parts | {food=1} | merge adds 1 to food's count (0 the first time). |
+| 2 | 2026-03-02,travel | 2 parts | {food=1} | A broken row: continue skips it. |
+| 3 | 2026-03-03,food,80 | 3 parts | {food=2} | food again: 1 + 1. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

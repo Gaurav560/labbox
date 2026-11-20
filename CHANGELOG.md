@@ -1,5 +1,16 @@
 # Changelog
 
+## A "watch it run" trace on every worked example
+
+- 23 new traces in Python, Go and Java from zero (all worked examples except the three one-line "a
+  function that builds text" ones): remainders, a bill total, set union, a safe default, a caught error,
+  writing and reading a file, command-line arguments, CSV line numbers, parsing with errors, int versus
+  float division, tidying text, a sorted copy, a method through an interface, a wrapped error, reading a
+  file line by line, goroutines filling their own slots, a record's method, an interface loop, a stream
+  pipeline, counting rows per category. Every value was worked out with the languages' own arithmetic.
+- The four from-zero courses now have 49 traces; a browser walk through all of them found every row
+  with the same number of cells as its header.
+
 ## Phones: a reading mode
 
 - On screens narrower than 760 px the lab page becomes a reading mode: the lesson fills the screen and

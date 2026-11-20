@@ -42,6 +42,14 @@ add_tag("go")             # ['go']   (not ['python', 'go'])
 
 `None` never changes, so it is a safe default. Keep this pattern in mind when you look at
 `add_item`.
+
+:::trace{title="two calls without a list"}
+| call | tags is None? | tags after | note |
+|---|---|---|---|
+| add_tag("python") | yes | ['python'] | No list given, so a new empty list is made, then "python" added. |
+| add_tag("go") | yes | ['go'] | Again a brand new list: the first call's list is not reused. |
+| add_tag("sql", ["py"]) | no | ['py', 'sql'] | A list was passed in, so it is used as it is. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

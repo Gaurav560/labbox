@@ -60,6 +60,15 @@ with open("expenses.csv", newline="") as f:
 `reader.line_num` is the row's real line in the file. The header is line 1, and blank lines (which
 `csv` skips by itself) still count, so the numbers always match what someone sees in an editor.
 Counting rows yourself with a counter would drift after the first blank line.
+
+:::trace{title="the first lines of a file"}
+| line in the file | reader.line_num | prints | note |
+|---|---|---|---|
+| date,category,amount | 1 | (nothing) | DictReader reads the header to name the columns. |
+| 2026-03-02,food,120 | 2 | 2 food | The first data row is line 2. |
+| (blank) |  | (nothing) | csv skips a blank line, but it still counts. |
+| 2026-03-03,travel,40 | 4 | 4 travel | So this row is line 4, as an editor shows it. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

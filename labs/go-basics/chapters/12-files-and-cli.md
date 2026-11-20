@@ -55,6 +55,16 @@ func CountLines(path string) (int, error) {
 3. Read in a loop until the reader says it is done.
 
 `ReadTotals` is this shape with `csv.NewReader` in place of the scanner.
+
+:::trace{title='CountLines("notes.txt") for a file with 3 lines'}
+| step | n | note |
+|---|---|---|
+| os.Open | 0 | The file opened, so err is nil and we go on. defer schedules Close for later. |
+| sc.Scan() reads line 1 | 1 | Scan returns true while there is a line to read. |
+| sc.Scan() reads line 2 | 2 |  |
+| sc.Scan() reads line 3 | 3 |  |
+| sc.Scan() returns false | 3 | No more lines: the loop ends, Close runs, and the function returns 3, nil. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -87,6 +87,14 @@ public static int parseQuantity(String text) {
 3. A value that parsed but makes no sense gets its own clear message.
 
 `parseAge` follows this exact shape with `InvalidAgeException`.
+
+:::trace{title="parseQuantity with three inputs"}
+| text | parseInt | q < 1? | result |
+|---|---|---|---|
+| " 3 " | 3 | no | returns 3 (trim removed the spaces) |
+| "2.5" | NumberFormatException |  | IllegalArgumentException: not a quantity: "2.5" |
+| "0" | 0 | yes | IllegalArgumentException: quantity must be at least 1: 0 |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

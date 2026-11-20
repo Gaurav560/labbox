@@ -39,6 +39,14 @@ func Cheapest(prices []int, n int) []int {
 3. `min(n, len(c))` keeps the slice from going past the end.
 
 `TopN` is this, biggest first.
+
+:::trace{title="Cheapest([]int{40, 10, 30}, 2)"}
+| step | result | prices | note |
+|---|---|---|---|
+| slices.Clone(prices) | [40 10 30] | [40 10 30] | A copy with its own array. |
+| slices.Sort(c) | [10 30 40] | [40 10 30] | Only the copy is sorted. |
+| c[:min(2, 3)] | [10 30] | [40 10 30] | The first two; the caller's slice never changed. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

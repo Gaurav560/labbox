@@ -66,6 +66,14 @@ for (int i = 1; i < lines.size(); i++) {
 
 `readAllLines` keeps blank lines in the list, so `i + 1` always matches what someone sees in an editor,
 even after a blank line.
+
+:::trace{title="four lines of a file"}
+| i | lineNumber | line | prints | note |
+|---|---|---|---|---|
+| 1 | 2 | 2026-03-02,food,120 | 2: 2026-03-02,food,120 | Index 1 is line 2: the header was line 1. |
+| 2 | 3 | (blank) | (nothing) | Blank: skipped, but it still uses a number. |
+| 3 | 4 | 2026-03-03,,45 | 4: 2026-03-03,,45 | So this row is line 4, as an editor shows it. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

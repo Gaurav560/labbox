@@ -161,6 +161,16 @@ A comparison like `x == 0` is itself a value: it is either `True` or `False`.
 `=` stores a value in a variable. `==` compares two values. Mixing them up is the
 most common bug on day one.
 :::
+
+:::trace{title="17 % 5, step by step"}
+| step | value | note |
+|---|---|---|
+| 17 // 5 | 3 | 5 fits into 17 three whole times. |
+| 3 * 5 | 15 | Those three fives make 15. |
+| 17 - 15 | 2 | What is left over is the remainder. |
+| 17 % 5 | 2 | % gives exactly that leftover in one step. |
+| 10 % 2 | 0 | Nothing left over: 10 is even, the test you will need for is_even. |
+:::
 :::
 
 :::step{type=task task=add title="Add two numbers"}

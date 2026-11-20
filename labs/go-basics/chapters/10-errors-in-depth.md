@@ -46,6 +46,14 @@ _, err := FindUser(3)
 
 `%w` is the one detail that matters: it wraps, so callers can still recognise `ErrNotFound`. `Withdraw`
 does the same with `ErrInsufficientFunds`.
+
+:::trace{title="FindUser(3), then FindUser(7)"}
+| call | id != 7? | returns | note |
+|---|---|---|---|
+| FindUser(3) | true | "", find user 3: not found | %w wraps ErrNotFound inside a message with the id. |
+| errors.Is(err, ErrNotFound) | | true | The original error is still inside, so callers can test for it. |
+| FindUser(7) | false | "Riya", nil | Found: no error. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

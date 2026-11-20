@@ -44,6 +44,15 @@ func Code(raw string) string {
 3. `strings.Join` glues them back with a separator.
 
 Both tasks here use parts of this.
+
+:::trace{title='Code("  ab-12   cd ")'}
+| step | value | note |
+|---|---|---|
+| raw | "  ab-12   cd " | The text as it arrives. |
+| strings.Fields(raw) | [ab-12 cd] | Fields splits on any run of spaces and drops them. |
+| ToUpper each | [AB-12 CD] | The loop changes each slot of the slice. |
+| strings.Join(parts, "-") | "AB-12-CD" | The pieces are glued back with a dash. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

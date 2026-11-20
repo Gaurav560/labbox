@@ -46,6 +46,13 @@ percent(3, 0)     # ValueError: whole must not be 0
 3. Raise a clear error in your own words; `from None` hides the less helpful original.
 
 `to_number` follows this exact shape with `float()` and `ValueError`.
+
+:::trace{title="percent(3, 4), then percent(3, 0)"}
+| call | inside try | result | note |
+|---|---|---|---|
+| percent(3, 4) | 3 / 4 * 100 = 75.0 | 75.0 | No error: the except block is skipped. |
+| percent(3, 0) | 3 / 0 raises ZeroDivisionError | ValueError: whole must not be 0 | The except block catches it and raises a clear error instead. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}
