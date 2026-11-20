@@ -1,5 +1,11 @@
 # Changelog
 
+## Product and architecture audit (20 November 2026)
+
+- Reviewed the learning workflow, execution environments, progress tracking and visualizations across 17 labs, 85 chapters and 176 tasks.
+- Reproduced an open issue in the JavaScript loop walkthrough. Re-rendering the same lesson Markdown returned the trace from row 2 to row 1.
+- Saved the audit and a Word summary of the completed changes in `~/Documents/LabBox/`.
+
 ## Lesson diagrams in light and dark themes
 
 - Lesson pictures and technical diagrams now share an opaque charcoal or warm off-white canvas, colored shapes and visible connectors. Printed Inter labels and monospace code keep the same layout in both themes.
