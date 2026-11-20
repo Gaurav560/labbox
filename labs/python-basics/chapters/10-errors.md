@@ -23,6 +23,27 @@ The last line of the error, the **traceback**, names the exception and says why.
 half of debugging.
 :::
 
+:::step{type=example title="Worked example: a safe percentage"}
+A function that explains bad input instead of crashing:
+
+```python
+def percent(part, whole):
+    try:
+        return round(part / whole * 100, 1)
+    except ZeroDivisionError:
+        raise ValueError("whole must not be 0") from None
+
+percent(3, 4)     # 75.0
+percent(3, 0)     # ValueError: whole must not be 0
+```
+
+1. Put the risky line inside `try`.
+2. Catch only the exception you expect (`ZeroDivisionError`), never everything.
+3. Raise a clear error in your own words; `from None` hides the less helpful original.
+
+`to_number` follows this exact shape with `float()` and `ValueError`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does this print?
@@ -106,6 +127,32 @@ order they appeared.
 - `safe_sum(["10", "x", "2.5", ""])` returns `(12.5, ["x", ""])`
 - `safe_sum(["1", "2"])` returns `(3.0, [])`
 - `safe_sum([])` returns `(0.0, [])`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `int("12.5")` do?
+:::
+- [ ] Gives `12`
+- [ ] Gives `12.5`
+- [x] Raises a ValueError
+- [ ] Gives `13`
+:::explain
+`int()` only reads whole numbers from text, so `"12.5"` raises a ValueError. `float("12.5")` would work.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+When does an `else` block after `try`/`except` run?
+:::
+- [ ] Always
+- [ ] Only when an exception happened
+- [x] Only when no exception happened
+- [ ] Never
+:::explain
+`else` runs when the `try` block finished **without** an exception; `finally` is the one that always runs.
+:::
 :::
 
 :::step{type=deep-dive title="Asking forgiveness, and exceptions as a family"}

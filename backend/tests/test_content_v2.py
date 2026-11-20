@@ -202,7 +202,7 @@ def test_outline(client: TestClient):
     assert out["steps"][0] == {"type": "story", "title": "Why start with functions", "task": None}
     assert [s["task"] for s in out["steps"] if s["type"] == "task"] == ["greet", "add", "is_even"]
     assert out["steps"][1] == {"type": "history", "title": "The story of Python", "task": None}
-    assert len(out["steps"]) == 10
+    assert len(out["steps"]) == len(_ch1_steps())
     assert client.get(f"/api/labs/{LAB}/chapters/{CH}/outline").status_code == 401
 
 

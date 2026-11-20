@@ -21,6 +21,28 @@ counts["poha"]      // 0: a missing key reads as the zero value
 Use `make` before writing: writing to a nil map panics.
 :::
 
+:::step{type=example title="Worked example: count words with a map"}
+Counting in Go is one line inside a loop:
+
+```go
+func CountWords(words []string) map[string]int {
+	counts := make(map[string]int)
+	for _, w := range words {
+		counts[w]++
+	}
+	return counts
+}
+
+// CountWords([]string{"tea", "coffee", "tea"})
+// map[coffee:1 tea:2]
+```
+
+1. `make(map[string]int)` creates an empty, ready-to-use map.
+2. A missing key reads as `0`, so `counts[w]++` works even the first time.
+
+`CountByItem` adds a struct's `Qty` instead of `1`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 You loop over the same map twice with `range`. Do you get the keys in the same order?
@@ -55,6 +77,32 @@ No orders give an empty map, not `nil`.
 :::step{type=task task=busiest title="The best seller"}
 Make `Busiest(orders)` return the item with the biggest total quantity. On a tie, the name that sorts
 first wins. No orders give `""`.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `m["missing"]` give for a `map[string]int`?
+:::
+- [ ] It panics
+- [x] `0`
+- [ ] `nil`
+- [ ] `-1`
+:::explain
+Reading a missing key gives the type's zero value: `0` for an int. Use `v, ok := m[k]` to tell "missing" from "zero".
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Is the order of `range` over a map always the same?
+:::
+- [ ] Yes, insertion order
+- [ ] Yes, sorted by key
+- [x] No: Go randomises it on purpose
+- [ ] Only for small maps
+:::explain
+Go deliberately varies map order, so code never depends on it. That is why `Busiest` needs a tie rule.
+:::
 :::
 
 :::step{type=deep-dive title="Why Go shuffles map order on purpose"}

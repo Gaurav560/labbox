@@ -26,6 +26,28 @@ return fmt.Errorf("load user %d: %w", id, ErrNotFound)
 `errors.Is(err, ErrNotFound)` looks through every layer of wrapping and says whether it is in there.
 :::
 
+:::step{type=example title="Worked example: wrap a sentinel with context"}
+A function that adds context and keeps the original error recognisable:
+
+```go
+var ErrNotFound = errors.New("not found")
+
+func FindUser(id int) (string, error) {
+	if id != 7 {
+		return "", fmt.Errorf("find user %d: %w", id, ErrNotFound)
+	}
+	return "Riya", nil
+}
+
+_, err := FindUser(3)
+// err: "find user 3: not found"
+// errors.Is(err, ErrNotFound) is true
+```
+
+`%w` is the one detail that matters: it wraps, so callers can still recognise `ErrNotFound`. `Withdraw`
+does the same with `ErrInsufficientFunds`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `err := fmt.Errorf("withdraw: %v", ErrInsufficientFunds)`. What is
@@ -77,6 +99,10 @@ error with the **balance unchanged**:
 :::
 
 :::step{type=concept title="Errors with details: errors.As"}
+:::diagram{name="error-chain"}
+Each `%w` adds a layer of context around the error inside; `errors.Is` and `errors.As` look through every layer.
+:::
+
 Some errors are types with fields. `strconv.Atoi` returns a `*strconv.NumError` that holds the text it
 could not read. `errors.As` finds such an error inside the wrapping and gives you its fields:
 
@@ -97,6 +123,32 @@ In `bank/bank.go`, make `ParseAge(text string) (int, error)` return a whole numb
 - `ParseAge("abc")` returns an error that **wraps** strconv's error, so
   `errors.Is(err, strconv.ErrSyntax)` is `true`
 - `ParseAge("-1")`, `ParseAge("151")`, `ParseAge("")` and `ParseAge("12.5")` return errors
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+Which verb wraps an error so `errors.Is` can find it?
+:::
+- [ ] `%v`
+- [ ] `%s`
+- [x] `%w`
+- [ ] `%e`
+:::explain
+Only `%w` wraps; `%v` and `%s` just copy the text.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is the best way to check for a specific error?
+:::
+- [ ] `err.Error() == "not found"`
+- [x] `errors.Is(err, ErrNotFound)`
+- [ ] `strings.Contains(err.Error(), "not")`
+- [ ] `err != nil`
+:::explain
+Compare errors, not their text: messages can change, sentinels do not.
+:::
 :::
 
 :::step{type=deep-dive title="Handle each error once"}

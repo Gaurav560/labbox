@@ -24,6 +24,31 @@ Conditions use `== != < <= > >=`, combined with `&&` (and), `||` (or) and `!` (n
 start with a short statement: `if n, err := strconv.Atoi(s); err == nil { ... }`.
 :::
 
+:::step{type=example title="Worked example: a ticket price by age"}
+A `switch` with no value is a list of rules, checked from the top:
+
+```go
+func Ticket(age int) string {
+	switch {
+	case age < 0:
+		return "Invalid"
+	case age >= 60:
+		return "Senior"
+	case age >= 18:
+		return "Adult"
+	default:
+		return "Child"
+	}
+}
+```
+
+1. Impossible values first.
+2. Then the ranges from the top down: the first matching `case` wins.
+3. `default` catches everything left.
+
+`Grade` uses the same layout with marks.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does `level(90)` return?
@@ -109,6 +134,32 @@ In `decisions/decisions.go`, make `IsLeapYear(year int) bool` follow the real ru
 3. **except** years divisible by 400, which are leap years again.
 
 `2024` is `true`, `2023` is `false`, `1900` is `false`, `2000` is `true`.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+Does Go need `break` at the end of each `case`?
+:::
+- [ ] Yes, always
+- [x] No: cases do not fall through
+- [ ] Only in a `switch` with a value
+- [ ] Only for the last case
+:::explain
+Go cases stop by themselves; you would write `fallthrough` on purpose if you ever wanted the next case to run.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Does `if count { ... }` compile when `count` is an `int`?
+:::
+- [ ] Yes
+- [x] No: a condition must be a `bool`
+- [ ] Only if count is not zero
+- [ ] Only inside a function
+:::explain
+Go has no truthy values. Write the comparison you mean: `if count > 0 { ... }`.
+:::
 :::
 
 :::step{type=deep-dive title="Why Go has no ternary operator"}

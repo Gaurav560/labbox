@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -41,7 +44,7 @@ func TestLabboxCheckDeposit(t *testing.T) {
 		report("deposit", false, fmt.Sprintf("Deposit through a *Wallet left the balance at %d", p.Balance), 10, p.Balance)
 		return
 	}
-	report("deposit", true, "ok", nil, nil)
+	report("deposit", true, "Fixed: a pointer receiver changes the caller's wallet instead of a copy.", nil, nil)
 }
 
 func TestLabboxCheckSwap(t *testing.T) {
@@ -58,5 +61,5 @@ func TestLabboxCheckSwap(t *testing.T) {
 		report("swap", false, fmt.Sprintf("Swap(&x, &x) changed x to %d", x), 5, x)
 		return
 	}
-	report("swap", true, "ok", nil, nil)
+	report("swap", true, "Correct: you swapped the values the pointers point to.", nil, nil)
 }

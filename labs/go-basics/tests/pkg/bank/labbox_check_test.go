@@ -10,6 +10,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -53,7 +56,7 @@ func TestLabboxCheckWithdraw(t *testing.T) {
 			return
 		}
 	}
-	report("withdraw", true, "ok", nil, nil)
+	report("withdraw", true, "Wrapped with %w: callers can check errors.Is(err, ErrInsufficientFunds), and the message still says how much.", nil, nil)
 }
 
 func TestLabboxCheckParseAge(t *testing.T) {
@@ -80,5 +83,5 @@ func TestLabboxCheckParseAge(t *testing.T) {
 			return
 		}
 	}
-	report("parse_age", true, "ok", nil, nil)
+	report("parse_age", true, "Your error keeps strconv's error inside, so errors.Is and errors.As both work for the caller.", nil, nil)
 }

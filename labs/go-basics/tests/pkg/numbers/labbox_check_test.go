@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -38,7 +41,7 @@ func TestLabboxCheckPercent(t *testing.T) {
 			return
 		}
 	}
-	report("percent", true, "ok", nil, nil)
+	report("percent", true, "Right, including 0 out of 0. Converting to float64 before dividing is the habit that avoids Go's integer division trap.", nil, nil)
 }
 
 func TestLabboxCheckFormatRupees(t *testing.T) {
@@ -50,5 +53,5 @@ func TestLabboxCheckFormatRupees(t *testing.T) {
 			return
 		}
 	}
-	report("format_rupees", true, "ok", nil, nil)
+	report("format_rupees", true, "Spot on: %02d keeps the paise at two digits, so 5 paise shows as 0.05.", nil, nil)
 }

@@ -86,6 +86,24 @@ Python knows which lines belong to the function from the **indentation**. Use 4 
 :::
 :::
 
+:::step{type=example title="Worked example: a function that builds text"}
+Here is a complete function, line by line:
+
+```python
+def welcome(city):
+    return f"Welcome to {city}!"
+
+welcome("Pune")
+# 'Welcome to Pune!'
+```
+
+1. `def welcome(city):` names the function and its input, `city`.
+2. The indented line is the body. `f"..."` is an **f-string**: `{city}` is replaced by the value.
+3. `return` hands the finished text back to whoever called the function.
+
+Your first task has exactly this shape, with different words.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 Open `greet.py`. The function body is just `pass`. What does `greet("Asha")` give back right now?
@@ -150,6 +168,32 @@ In `math_utils.py`, make `add(a, b)` return the sum of `a` and `b`.
 :::step{type=task task=is_even title="Even or odd"}
 In `math_utils.py`, make `is_even(n)` return `True` when `n` is even and `False`
 otherwise. Zero and negative numbers count too: `is_even(0)` and `is_even(-4)` are `True`.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `double(5)` give, after `def double(n): return n * 2`?
+:::
+- [ ] `5`
+- [x] `10`
+- [ ] `None`
+- [ ] `25`
+:::explain
+`n` is 5 inside the function, and `return n * 2` gives back `10`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+A function has no `return` line. What does calling it give back?
+:::
+- [ ] `0`
+- [ ] An empty string
+- [x] `None`
+- [ ] An error
+:::explain
+Without `return`, a function gives back `None`, Python's way of saying "nothing". You saw it in this chapter's try step.
+:::
 :::
 
 :::step{type=recap title="Chapter done"}

@@ -4,8 +4,8 @@ like a bank statement or a list of marks, and save results for later. Most of th
 text, and very often **CSV**: values separated by commas, one record per line.
 
 :::mission
-In `file_tools.py`, read `expenses.csv` (a real file in your workspace, with a few messy lines) into
-totals per category, and write lines of text to a new file.
+In `file_tools.py`, write lines of text to a file (a warm-up), then read `expenses.csv` (a real
+file in your workspace, with a few messy lines) into totals per category.
 :::
 :::
 
@@ -26,6 +26,29 @@ with open("out.txt", "w") as f:       # "w" creates or empties the file
 ```
 
 Mode `"a"` adds to the end instead of emptying the file.
+:::
+
+:::step{type=example title="Worked example: write a shopping list, then read it back"}
+Writing and reading a file, with nothing left open:
+
+```python
+items = ["milk", "bread", "tea"]
+
+with open("list.txt", "w") as f:   # 1. open to write
+    for item in items:
+        f.write(item + "\n")       # 2. one line each
+
+with open("list.txt") as f:        # 3. open to read
+    lines = [line.strip() for line in f]
+
+lines   # ['milk', 'bread', 'tea']
+```
+
+1. `"w"` creates the file, or empties it if it exists.
+2. `write` adds no new line by itself, so we add `"\n"`.
+3. Reading line by line gives each line with its `"\n"`; `strip()` removes it.
+
+The warm-up task is step 1 and 2 as a function.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -53,6 +76,15 @@ head -6 expenses.csv; echo ...; grep -n -v -E '^[0-9-]+,[a-z]+,[0-9.]+$' expense
 
 The second command lists the lines that do not look like `date,category,amount`: the header, a
 blank line, a missing amount, a word where a number should be. Your code must survive all of them.
+:::
+
+:::step{type=task task=save_lines title="Warm-up: write lines to a file"}
+In `file_tools.py`, make `save_lines(path, lines)` write each string in `lines` to the file as its
+own line, replacing anything that was there, and return how many lines it wrote.
+
+- `save_lines("report.txt", ["food: 200.00", "travel: 40.50"])` creates a file with exactly those
+  two lines, each ending in a new line, and returns `2`
+- `save_lines("empty.txt", [])` leaves an empty file and returns `0`
 :::
 
 :::step{type=concept title="The csv module"}
@@ -89,13 +121,30 @@ For a file with these rows (after the header):
 it returns `{"food": 200.0, "travel": 40.5}`. Try it on `expenses.csv` in the terminal too.
 :::
 
-:::step{type=task task=save_lines title="Write lines to a file"}
-In `file_tools.py`, make `save_lines(path, lines)` write each string in `lines` to the file as its
-own line, replacing anything that was there, and return how many lines it wrote.
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+Which mode adds to the end of a file instead of replacing it?
+:::
+- [ ] `"r"`
+- [ ] `"w"`
+- [x] `"a"`
+- [ ] `"x"`
+:::explain
+`"a"` appends. `"w"` replaces the whole file, which is what `save_lines` wants.
+:::
+:::
 
-- `save_lines("report.txt", ["food: 200.00", "travel: 40.50"])` creates a file with exactly those
-  two lines, each ending in a new line, and returns `2`
-- `save_lines("empty.txt", [])` leaves an empty file and returns `0`
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Why use `csv.DictReader` instead of `line.split(",")`?
+:::
+- [ ] It is faster
+- [x] It handles values with commas inside quotes, and names columns by the header
+- [ ] It turns numbers into ints
+- [ ] It skips the file's first line only
+:::explain
+A value like `"snacks, tea"` contains a comma; `split` would cut it in two. DictReader also gives each row as a dictionary keyed by the header.
+:::
 :::
 
 :::step{type=deep-dive title="Paths, encodings and big files"}

@@ -28,6 +28,24 @@ low, high = split_marks([72, 45, 90])  # low is 45, high is 90
 ```
 :::
 
+:::step{type=example title="Worked example: everyone who came on either day"}
+Sets answer "who is in this group, or that one" in one line:
+
+```python
+def came_either_day(monday, tuesday):
+    both = set(monday) | set(tuesday)   # 1. union
+    return sorted(both)                 # 2. a sorted list
+
+came_either_day(["Riya", "Arjun"], ["Arjun", "Meera"])
+# ['Arjun', 'Meera', 'Riya']
+```
+
+1. `set(...)` drops duplicates, and `|` keeps what is in **either** set.
+2. Sets have no order, so `sorted(...)` turns the result into a predictable list.
+
+`common_items` is the same shape with a different operator (look at the try step).
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What is `len({3, 1, 3, 2, 1})`?
@@ -87,6 +105,32 @@ In `sets_tuples.py`, make `min_max(numbers)` return a **tuple** `(smallest, larg
 - `min_max([7])` returns `(7, 7)`
 - `min_max([])` returns `(None, None)`
 - `min_max([-3, -10, 4.5])` returns `(-10, 4.5)`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+After `a, b = (1, 2)`, what is `b`?
+:::
+- [ ] `1`
+- [x] `2`
+- [ ] `(1, 2)`
+- [ ] An error
+:::explain
+Unpacking gives each name one value in order: `a` is 1 and `b` is 2.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `{}` make in Python?
+:::
+- [ ] An empty set
+- [x] An empty dictionary
+- [ ] An empty tuple
+- [ ] An error
+:::explain
+`{}` is an empty **dictionary**. An empty set is written `set()`.
+:::
 :::
 
 :::step{type=deep-dive title="When to use which container"}

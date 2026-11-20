@@ -27,6 +27,25 @@ for m in marks:
 ```
 :::
 
+:::step{type=example title="Worked example: count the passing marks"}
+The counting pattern, one line at a time:
+
+```python
+def count_passed(marks):
+    count = 0              # 1. start at zero
+    for m in marks:        # 2. each mark
+        if m >= 33:        # 3. does it count?
+            count += 1     # 4. add one
+    return count           # 5. the answer
+
+count_passed([45, 20, 90, 33])
+# 3
+```
+
+Change only the condition in step 3 and the same five lines count anything you like. That is your
+first task.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does this print?
@@ -94,6 +113,32 @@ In `loops.py`, make `first_negative(numbers)` return the **first** negative numb
 - `first_negative([1, 2, 3])` returns `None`
 - `first_negative([])` returns `None`
 - `first_negative([0, 5])` returns `None` (zero is not negative)
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `list(range(2, 5))`?
+:::
+- [ ] `[2, 3, 4, 5]`
+- [x] `[2, 3, 4]`
+- [ ] `[3, 4, 5]`
+- [ ] `[0, 1, 2, 3, 4]`
+:::explain
+A range starts at the first number and stops **before** the second: 2, 3 and 4.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `for x in []: print(x)` print?
+:::
+- [ ] `None`
+- [ ] `[]`
+- [x] Nothing at all
+- [ ] An error
+:::explain
+The list is empty, so the loop body never runs and nothing is printed. That is why `count_above([], 10)` gives `0`: the starting value.
+:::
 :::
 
 :::step{type=deep-dive title="What a for loop really does"}

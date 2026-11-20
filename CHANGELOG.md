@@ -1,5 +1,21 @@
 # Changelog
 
+## The teaching standard, applied to all of Python from zero and Go from zero
+
+- Every chapter of both courses now has a **worked example** before its first task (a different problem
+  solved line by line), an **easy-win first task** (task order changed where the harder one came first:
+  Python chapters 5, 11 and 13, Go chapter 6), and **two quick checks** before the recap.
+- **"The story of Go"** in chapter 1: before Go (Google, 2007), Griesemer, Pike and Thompson, the problem
+  it solved, a timeline from 2007 to generics in 2022, who maintains it, where it is used, the gopher.
+- **Pictures** for invisible ideas: the shared default list (Python), a slice's shared array, the error
+  chain, copy versus pointer and goroutines side by side (Go).
+- **Checks that teach**: every one of the 53 tasks has a pass message that says what went right; Python
+  failures say "Not yet" with advice for the known mistakes (`//` instead of `/`, `>` at a boundary, the
+  1900 rule, `split(" ")`, a missing `return`), always pointing the way rather than giving the answer;
+  Go failures start with "Not yet".
+- Tests updated for the longer chapters (the lesson flow walks 13 steps in chapter 1). Tests: 261 on
+  Postgres and Redis, 257 on SQLite, 15 browser tests, 16 labs valid.
+
 ## The LabBox teaching standard, and its pilot in Python from zero
 
 - `CONTENT_STANDARD.md`: the owner's bar (world class, yet calm and confidence-building) as a checklist:

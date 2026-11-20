@@ -9,6 +9,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -44,7 +47,7 @@ func TestLabboxCheckTopN(t *testing.T) {
 			return
 		}
 	}
-	report("top_n", true, "ok", nil, nil)
+	report("top_n", true, "Well done: you sorted a copy, so the caller's slice is untouched. Shared backing arrays catch many Go developers; not you.", nil, nil)
 }
 
 func TestLabboxCheckUnique(t *testing.T) {
@@ -64,5 +67,5 @@ func TestLabboxCheckUnique(t *testing.T) {
 		report("unique", false, "Unique(nil) returned nil: start the result as an empty slice ([]string{}) so callers get [] and JSON gets [], not null.", "[]string{}", "nil")
 		return
 	}
-	report("unique", true, "ok", nil, nil)
+	report("unique", true, "Right: a map as a set, the original order kept, and an empty slice instead of nil.", nil, nil)
 }

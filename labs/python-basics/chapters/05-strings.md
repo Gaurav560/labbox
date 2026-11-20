@@ -3,8 +3,8 @@ Text from the real world is messy: names typed in capitals, extra spaces, senten
 somewhere else. Before a program can use text, it usually has to clean it up.
 
 :::mission
-Write two functions in `text_tools.py`: one tidies up a name, and one counts the words in a
-sentence.
+Write two functions in `text_tools.py`: one counts the words in a sentence (a warm-up), and one
+tidies up a name.
 :::
 :::
 
@@ -26,6 +26,23 @@ Strings never change in place: methods give you a **new** string.
 "riya".upper()        # 'RIYA'
 "riya sharma".title() # 'Riya Sharma'
 ```
+:::
+
+:::step{type=example title="Worked example: tidy a product code"}
+Cleaning text is usually three moves: **split** it into pieces, **change** each piece, **join** them back.
+
+```python
+raw = "  ab-12   cd  "
+parts = raw.split()        # ['ab-12', 'cd']
+parts = [p.upper() for p in parts]
+code = "-".join(parts)     # 'AB-12-CD'
+```
+
+1. `split()` with no argument drops all the extra spaces.
+2. Each piece is changed (here, to upper case).
+3. `"-".join(parts)` glues the pieces with a dash between them.
+
+Both tasks in this chapter use some of these three moves.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -58,17 +75,6 @@ print(' '.join(parts).title())
 space between the pieces.
 :::
 
-:::step{type=task task=clean_name title="Tidy up a name"}
-In `text_tools.py`, make `clean_name(raw)` return the name with:
-
-- no spaces at the start or end,
-- exactly one space between words,
-- each word starting with a capital letter and the rest small.
-
-So `clean_name("  riya   SHARMA ")` returns `"Riya Sharma"`, `clean_name("ARJUN")` returns
-`"Arjun"`, and `clean_name("   ")` returns `""`.
-:::
-
 :::step{type=concept title="Searching in text"}
 Some quick questions you can ask a string:
 
@@ -82,7 +88,7 @@ s.replace("fun", "great")   # 'Python is great'
 ```
 :::
 
-:::step{type=task task=count_words title="Count the words"}
+:::step{type=task task=count_words title="Warm-up: count the words"}
 In `text_tools.py`, make `count_words(text)` return how many words the text has. Words are
 separated by one or more spaces (or tabs and new lines).
 
@@ -90,6 +96,43 @@ separated by one or more spaces (or tabs and new lines).
 - `count_words("  lots   of   spaces  ")` returns `3`
 - `count_words("")` returns `0`
 - `count_words("hello, world")` returns `2`
+:::
+
+:::step{type=task task=clean_name title="Tidy up a name"}
+In `text_tools.py`, make `clean_name(raw)` return the name with:
+
+- no spaces at the start or end,
+- exactly one space between words,
+- each word starting with a capital letter and the rest small.
+
+So `clean_name("  riya   SHARMA ")` returns `"Riya Sharma"`, `clean_name("ARJUN")` returns
+`"Arjun"`, and `clean_name("   ")` returns `""`.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `"  hi there  ".split()`?
+:::
+- [x] `['hi', 'there']`
+- [ ] `['', 'hi', 'there', '']`
+- [ ] `'hi there'`
+- [ ] `['  hi there  ']`
+:::explain
+With no argument, `split()` splits on any run of spaces and drops the empty pieces.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is `" ".join(["a", "b", "c"])`?
+:::
+- [ ] `'abc'`
+- [x] `'a b c'`
+- [ ] `['a b c']`
+- [ ] `'a, b, c'`
+:::explain
+`join` puts the string it is called on (a space) between every piece.
+:::
 :::
 
 :::step{type=deep-dive title="Text is Unicode"}

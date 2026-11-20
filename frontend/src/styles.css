@@ -1278,3 +1278,4 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .res-message.res-good { color: var(--text); border-left: 3px solid #3fb950; padding-left: 10px; }
 /* Lesson code shows exactly what to type: no ligatures (">=" must not turn into a single symbol). */
 .code-card pre, .code-card code, .lesson-scroll code, .predict-option code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+.dg-cells-small .dg-box text { font-size: 13px; }

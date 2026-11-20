@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -31,7 +34,7 @@ func TestLabboxCheckCleanName(t *testing.T) {
 			return
 		}
 	}
-	report("clean_name", true, "ok", nil, nil)
+	report("clean_name", true, "Tidy: strings.Fields, a little slicing and strings.Join did it.", nil, nil)
 }
 
 func TestLabboxCheckCountWords(t *testing.T) {
@@ -43,5 +46,5 @@ func TestLabboxCheckCountWords(t *testing.T) {
 			return
 		}
 	}
-	report("count_words", true, "ok", nil, nil)
+	report("count_words", true, "Correct even with tabs and new lines: strings.Fields does the hard part.", nil, nil)
 }

@@ -9,6 +9,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -37,7 +40,7 @@ func TestLabboxCheckAreas(t *testing.T) {
 		report("areas", false, fmt.Sprintf("Rect{}.Area() returned %v", got), 0, got)
 		return
 	}
-	report("areas", true, "ok", nil, nil)
+	report("areas", true, "Both methods work: a method is just a function with a receiver.", nil, nil)
 }
 
 func TestLabboxCheckTotalArea(t *testing.T) {
@@ -52,5 +55,5 @@ func TestLabboxCheckTotalArea(t *testing.T) {
 			return
 		}
 	}
-	report("total_area", true, "ok", nil, nil)
+	report("total_area", true, "Any type with Area() is a Shape, so your function works for shapes nobody has written yet.", nil, nil)
 }

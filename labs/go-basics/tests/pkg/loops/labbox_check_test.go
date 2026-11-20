@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -30,7 +33,7 @@ func TestLabboxCheckSumTo(t *testing.T) {
 			return
 		}
 	}
-	report("sum_to", true, "ok", nil, nil)
+	report("sum_to", true, "Correct, and a loop that never runs leaves 0, so negative n is handled for free.", nil, nil)
 }
 
 func TestLabboxCheckCountVowels(t *testing.T) {
@@ -42,5 +45,5 @@ func TestLabboxCheckCountVowels(t *testing.T) {
 			return
 		}
 	}
-	report("count_vowels", true, "ok", nil, nil)
+	report("count_vowels", true, "Nice: range over a string gives runes, and one switch case lists all five vowels.", nil, nil)
 }

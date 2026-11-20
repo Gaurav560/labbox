@@ -9,6 +9,9 @@ import (
 
 // Hidden checks for go-basics. Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -34,7 +37,7 @@ func TestLabboxCheckTotal(t *testing.T) {
 			return
 		}
 	}
-	report("total", true, "ok", nil, nil)
+	report("total", true, "Correct: range over a slice, a running total, and nil works like an empty slice.", nil, nil)
 }
 
 func TestLabboxCheckParseAmount(t *testing.T) {
@@ -53,7 +56,7 @@ func TestLabboxCheckParseAmount(t *testing.T) {
 			return
 		}
 	}
-	report("parse_amount", true, "ok", nil, nil)
+	report("parse_amount", true, "Robust: every bad input comes back as an error, never a panic. That is idiomatic Go.", nil, nil)
 }
 
 func TestLabboxCheckCountByItem(t *testing.T) {
@@ -68,7 +71,7 @@ func TestLabboxCheckCountByItem(t *testing.T) {
 		report("count_by_item", false, "CountByItem(nil) should return an empty map, not nil.", "map[]", got)
 		return
 	}
-	report("count_by_item", true, "ok", nil, nil)
+	report("count_by_item", true, "Correct counts, and an empty map (not nil) for no orders.", nil, nil)
 }
 
 func TestLabboxCheckBusiest(t *testing.T) {
@@ -89,5 +92,5 @@ func TestLabboxCheckBusiest(t *testing.T) {
 			}
 		}
 	}
-	report("busiest", true, "ok", nil, nil)
+	report("busiest", true, "Fair every time, even though map order is random: your tie rule makes the answer stable.", nil, nil)
 }

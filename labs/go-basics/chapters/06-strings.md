@@ -3,7 +3,7 @@ Names typed in capitals, extra spaces, text pasted from somewhere else: input is
 tools for cleaning it in the `strings` package, and they are worth knowing by heart.
 
 :::mission
-In `words/words.go`, tidy up a person's name, and count the words in a sentence.
+In `words/words.go`, count the words in a sentence (a warm-up), then tidy up a person's name.
 :::
 :::
 
@@ -18,6 +18,28 @@ strings.Split("a,b,,c", ",")          // []string{"a", "b", "", "c"}
 ```
 
 Strings cannot change: every function returns a **new** string.
+:::
+
+:::step{type=example title="Worked example: tidy a product code"}
+Clean text in three moves: split, change each piece, join.
+
+```go
+func Code(raw string) string {
+	parts := strings.Fields(raw)
+	for i, p := range parts {
+		parts[i] = strings.ToUpper(p)
+	}
+	return strings.Join(parts, "-")
+}
+
+// Code("  ab-12   cd ") is "AB-12-CD"
+```
+
+1. `strings.Fields` drops all the extra spaces.
+2. The loop changes each piece in place (`parts[i] = ...`).
+3. `strings.Join` glues them back with a separator.
+
+Both tasks here use parts of this.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -58,13 +80,13 @@ go run /tmp/str.go
 `w[:1]` is the first byte and `w[1:]` the rest: slicing works on strings too.
 :::
 
-:::step{type=task task=clean_name title="Tidy up a name"}
-In `words/words.go`, make `CleanName(raw string) string` return the name with no spaces at either end,
-one space between words, and each word starting with a capital letter followed by small letters.
+:::step{type=task task=count_words title="Warm-up: count the words"}
+In `words/words.go`, make `CountWords(text string) int` count the words separated by spaces, tabs or
+new lines.
 
-- `CleanName("  riya   SHARMA ")` returns `"Riya Sharma"`
-- `CleanName("ARJUN")` returns `"Arjun"`
-- `CleanName("   ")` returns `""`
+- `CountWords("Go is fun")` returns `3`
+- `CountWords("  lots   of   spaces  ")` returns `3`
+- `CountWords("")` returns `0`
 :::
 
 :::step{type=concept title="Building strings efficiently"}
@@ -81,13 +103,39 @@ s := b.String()   // "go go go "
 For a fixed list, `strings.Join` is simpler.
 :::
 
-:::step{type=task task=count_words title="Count the words"}
-In `words/words.go`, make `CountWords(text string) int` count the words separated by spaces, tabs or
-new lines.
+:::step{type=task task=clean_name title="Tidy up a name"}
+In `words/words.go`, make `CleanName(raw string) string` return the name with no spaces at either end,
+one space between words, and each word starting with a capital letter followed by small letters.
 
-- `CountWords("Go is fun")` returns `3`
-- `CountWords("  lots   of   spaces  ")` returns `3`
-- `CountWords("")` returns `0`
+- `CleanName("  riya   SHARMA ")` returns `"Riya Sharma"`
+- `CleanName("ARJUN")` returns `"Arjun"`
+- `CleanName("   ")` returns `""`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `len(strings.Fields("  go  is fun "))`?
+:::
+- [x] `3`
+- [ ] `5`
+- [ ] `7`
+- [ ] `1`
+:::explain
+`Fields` splits on runs of spaces and never returns empty pieces: `go`, `is`, `fun`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Can you change a Go string in place, like `s[0] = 'G'`?
+:::
+- [ ] Yes
+- [x] No: strings are immutable
+- [ ] Only for ASCII text
+- [ ] Only with a pointer
+:::explain
+Strings cannot change; every function returns a new string. Build new text with `+`, `Join` or a `strings.Builder`.
+:::
 :::
 
 :::step{type=deep-dive title="Bytes, runes and capital letters"}

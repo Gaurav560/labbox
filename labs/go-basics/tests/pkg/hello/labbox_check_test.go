@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -30,7 +33,7 @@ func TestLabboxCheckGreeting(t *testing.T) {
 			return
 		}
 	}
-	report("greeting", true, "ok", nil, nil)
+	report("greeting", true, "Your first Go function works: typed input, typed output, joined text. Every Go program is built from pieces like this.", nil, nil)
 }
 
 func TestLabboxCheckTotalMinutes(t *testing.T) {
@@ -41,5 +44,5 @@ func TestLabboxCheckTotalMinutes(t *testing.T) {
 			return
 		}
 	}
-	report("total_minutes", true, "ok", nil, nil)
+	report("total_minutes", true, "Correct. Several parameters of one type can share it: (hours, minutes int).", nil, nil)
 }

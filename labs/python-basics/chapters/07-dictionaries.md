@@ -24,6 +24,27 @@ Asking for a key that is not there with `phone["Kabir"]` raises a `KeyError`. `p
 gives `None` instead, and `phone.get("Kabir", "unknown")` gives your own default.
 :::
 
+:::step{type=example title="Worked example: count the words"}
+Counting with a dictionary always looks like this:
+
+```python
+def count_words(words):
+    counts = {}                   # 1. empty dictionary
+    for w in words:               # 2. each word
+        counts[w] = counts.get(w, 0) + 1   # 3. one more
+    return counts
+
+count_words(["tea", "coffee", "tea"])
+# {'tea': 2, 'coffee': 1}
+```
+
+1. Start with an empty dictionary.
+2. Look at each item.
+3. `counts.get(w, 0)` is the count so far, or `0` the first time; add one and store it back.
+
+`count_letters` is this pattern, plus deciding which characters count.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What is `counts` after this code?
@@ -91,6 +112,32 @@ category.
 - for the three expenses above it returns `{"food": 200, "travel": 40}`
 - `total_by_category([])` returns `{}`
 - amounts can be decimals: `120.5` and `0.5` in the same category add up to `121.0`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `{"a": 1}.get("b", 0)`?
+:::
+- [ ] `1`
+- [x] `0`
+- [ ] `None`
+- [ ] A KeyError
+:::explain
+`b` is not a key, so `get` gives the default you passed: `0`. Square brackets would raise a KeyError instead.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is `len({"x": 1, "y": 2})`?
+:::
+- [ ] `1`
+- [x] `2`
+- [ ] `3`
+- [ ] `4`
+:::explain
+`len` counts the keys of a dictionary: two.
+:::
 :::
 
 :::step{type=deep-dive title="Why dictionaries are so fast"}

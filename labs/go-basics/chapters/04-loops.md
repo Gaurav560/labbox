@@ -26,6 +26,28 @@ for {                      // forever, until break or return
 `i++` adds one to `i`. `break` leaves the loop, `continue` skips to the next round.
 :::
 
+:::step{type=example title="Worked example: count the passing marks"}
+The counting loop in Go:
+
+```go
+func CountPassed(marks []int) int {
+	count := 0
+	for _, m := range marks {
+		if m >= 33 {
+			count++
+		}
+	}
+	return count
+}
+```
+
+1. Start a counter at zero.
+2. `range` gives each mark (the `_` ignores its position).
+3. `count++` adds one when the mark passes.
+
+`SumTo` is the classic three-part `for` instead, adding instead of counting.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 How many times does this print?
@@ -93,6 +115,32 @@ lower case.
 - `CountVowels("Hello World")` returns `3`
 - `CountVowels("AEIOU")` returns `5`
 - `CountVowels("rhythm")` returns `0`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+How many times does `for i := 0; i < 3; i++ { }` run?
+:::
+- [ ] 2
+- [x] 3
+- [ ] 4
+- [ ] Forever
+:::explain
+`i` is 0, 1 and 2, then `i < 3` is false: three rounds.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `for i, r := range "hi"` give as `r`?
+:::
+- [ ] Bytes
+- [x] Runes (characters)
+- [ ] Strings of length 1
+- [ ] Nothing: strings cannot be ranged
+:::explain
+Ranging over a string gives each **rune**; `i` is the byte position where it starts.
+:::
 :::
 
 :::step{type=deep-dive title="Loop variables and the 1.22 change"}

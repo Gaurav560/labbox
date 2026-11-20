@@ -4,9 +4,33 @@ expense data into a report, and fix a bug in code somebody else wrote. Everythin
 chapters before.
 
 :::mission
-Write `monthly_report(path)` in `report.py`, then find and fix the bugs in the inherited
-`budget.py`.
+First find and fix the bugs in the inherited `budget.py` (a warm-up), then write
+`monthly_report(path)` in `report.py`.
 :::
+:::
+
+:::step{type=concept title="Reading code you did not write"}
+At work you change code more often than you write it from scratch. A good routine:
+
+1. **Read** the function and say in one sentence what it is supposed to do.
+2. **Run** it on a small example, including an edge case (an empty input, a missing key).
+3. Compare what it **does** with what it **should** do, and find the exact line where they part.
+4. Fix that, and nothing else, then run the example again.
+
+`budget.py` was written by a colleague who has left. Its tests are failing in production.
+:::
+
+:::step{type=task task=fix_budget title="Warm-up: fix the inherited code"}
+`over_budget(totals, budgets)` in `budget.py` should return the **sorted** list of categories whose
+spending is **above** their budget. A category with a budget but no spending at all is simply not
+over budget.
+
+- `over_budget({"food": 500, "travel": 50}, {"food": 400, "travel": 100})` returns `["food"]`
+- `over_budget({"food": 500}, {"food": 400, "fun": 100})` returns `["food"]` (no spending on fun)
+- `over_budget({"b": 10, "a": 10}, {"b": 5, "a": 5})` returns `["a", "b"]`
+- exactly on budget is not over: `over_budget({"food": 400}, {"food": 400})` returns `[]`
+
+Run it first and find out how it fails. Keep the fix small.
 :::
 
 :::step{type=concept title="A plan before code"}
@@ -19,6 +43,23 @@ For a task with several parts, write the steps down first:
 
 Small helper functions for each step (some you already wrote) keep the main function short and easy
 to test.
+:::
+
+:::step{type=example title="Worked example: read rows with their line numbers"}
+The one new trick the report needs: knowing **which line** each row came from.
+
+```python
+import csv
+
+with open("expenses.csv", newline="") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(reader.line_num, row["category"])
+```
+
+`reader.line_num` is the row's real line in the file. The header is line 1, and blank lines (which
+`csv` skips by itself) still count, so the numbers always match what someone sees in an editor.
+Counting rows yourself with a counter would drift after the first blank line.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -69,28 +110,30 @@ For the five lines in the "Guess first" step it returns a total of `18120.0`, a 
 average of `9060.0`, the rent as the biggest, and `bad_lines` of `[3, 4]`.
 :::
 
-:::step{type=concept title="Reading code you did not write"}
-At work you change code more often than you write it from scratch. A good routine:
-
-1. **Read** the function and say in one sentence what it is supposed to do.
-2. **Run** it on a small example, including an edge case (an empty input, a missing key).
-3. Compare what it **does** with what it **should** do, and find the exact line where they part.
-4. Fix that, and nothing else, then run the example again.
-
-`budget.py` was written by a colleague who has left. Its tests are failing in production.
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+A CSV has a header, a blank line, then a bad row. Which line number is the bad row?
+:::
+- [ ] `1`
+- [ ] `2`
+- [x] `3`
+- [ ] `4`
+:::explain
+Header is line 1, the blank line is line 2, so the bad row is line 3. `reader.line_num` counts it that way for you.
+:::
 :::
 
-:::step{type=task task=fix_budget title="Fix the inherited budget code"}
-`over_budget(totals, budgets)` in `budget.py` should return the **sorted** list of categories whose
-spending is **above** their budget. A category with a budget but no spending at all is simply not
-over budget.
-
-- `over_budget({"food": 500, "travel": 50}, {"food": 400, "travel": 100})` returns `["food"]`
-- `over_budget({"food": 500}, {"food": 400, "fun": 100})` returns `["food"]` (no spending on fun)
-- `over_budget({"b": 10, "a": 10}, {"b": 5, "a": 5})` returns `["a", "b"]`
-- exactly on budget is not over: `over_budget({"food": 400}, {"food": 400})` returns `[]`
-
-Run it first and find out how it fails. Keep the fix small.
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is the safest first step when fixing someone else's function?
+:::
+- [ ] Rewrite it from scratch
+- [x] Run it on a small example and see how it fails
+- [ ] Delete the parts you do not understand
+- [ ] Add more comments
+:::explain
+Run it first: seeing the exact failure points you to the one line to change, and keeps the fix small.
+:::
 :::
 
 :::step{type=deep-dive title="What comes next"}

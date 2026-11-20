@@ -8,6 +8,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -34,7 +37,7 @@ func TestLabboxCheckGrade(t *testing.T) {
 			return
 		}
 	}
-	report("grade", true, "ok", nil, nil)
+	report("grade", true, "All the edges are right. A switch with no value reads like the rules on paper.", nil, nil)
 }
 
 func TestLabboxCheckLeapYear(t *testing.T) {
@@ -46,5 +49,5 @@ func TestLabboxCheckLeapYear(t *testing.T) {
 			return
 		}
 	}
-	report("leap_year", true, "ok", nil, nil)
+	report("leap_year", true, "Correct for 1900 and 2000 too: three rules in one boolean expression.", nil, nil)
 }

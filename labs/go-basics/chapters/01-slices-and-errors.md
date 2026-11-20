@@ -29,6 +29,29 @@ if err != nil {
 ```
 :::
 
+:::step{type=example title="Worked example: parse a whole number safely"}
+The Go way to handle input that may be wrong:
+
+```go
+func ParseCount(text string) (int, error) {
+	n, err := strconv.Atoi(text)
+	if err != nil {
+		return 0, fmt.Errorf("not a count: %q", text)
+	}
+	if n < 0 {
+		return 0, errors.New("a count cannot be negative")
+	}
+	return n, nil
+}
+```
+
+1. A function that can fail returns `(value, error)`.
+2. Check `err` right after the call, and return early with a clear message.
+3. On success, return the value and `nil`.
+
+`ParseAmount` follows this shape, with a dot between rupees and paise.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does `strconv.Atoi("12.50")` return?
@@ -60,6 +83,32 @@ Anything else, like `""`, `"abc"`, `"1.5"` or `"-3"`, returns `0` and a non-nil 
 
 :::why
 Returning an error lets a program show "please type an amount like 12.50" instead of crashing.
+:::
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `strconv.Atoi("12.50")` return?
+:::
+- [ ] `12, nil`
+- [ ] `1250, nil`
+- [x] `0` and an error
+- [ ] It panics
+:::explain
+`Atoi` reads only whole numbers, so anything else gives `0` and an error.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is `len(nil)` for a nil `[]int`?
+:::
+- [ ] It panics
+- [x] `0`
+- [ ] `-1`
+- [ ] It does not compile
+:::explain
+A nil slice behaves like an empty one for `len` and `range`: `0`. That is why `Total(nil)` can simply be `0`.
 :::
 :::
 

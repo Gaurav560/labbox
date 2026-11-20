@@ -28,6 +28,28 @@ reset(&n)     // n is now 0
 ```
 :::
 
+:::step{type=example title="Worked example: a counter that really counts"}
+A method that changes its struct needs a pointer receiver:
+
+```go
+type Counter struct{ N int }
+
+func (c *Counter) Inc() {
+	c.N++
+}
+
+var c Counter
+c.Inc()
+c.Inc()
+// c.N is 2
+```
+
+1. `(c *Counter)` receives a pointer, so `c.N++` changes the caller's counter.
+2. Go takes the address for you: `c.Inc()` works on a plain variable.
+
+`Deposit` needs exactly this change.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `wallet.go` starts with this method. What does the last line print?
@@ -54,6 +76,10 @@ the copy is thrown away when it returns. The caller's wallet still holds 100. A 
 :::
 
 :::step{type=try title="Watch the copy"}
+:::diagram{name="value-vs-pointer"}
+A value receiver changes a copy that is thrown away; a pointer receiver changes the caller's wallet.
+:::
+
 ```bash run
 cat > /tmp/wallet.go <<'GO'
 package main
@@ -107,6 +133,32 @@ Swap(&x, &y)
 ```
 
 `Swap(&x, &x)` must leave `x` unchanged.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What does `&x` give?
+:::
+- [ ] A copy of x
+- [x] The address of x
+- [ ] x's type
+- [ ] x multiplied
+:::explain
+`&x` is the address of `x`, a pointer; `*p` reads or writes what a pointer points to.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Why is returning `&Wallet{}` from a function safe in Go?
+:::
+- [ ] It is not safe
+- [x] Escape analysis keeps it alive on the heap
+- [ ] Go copies it
+- [ ] Only in tests
+:::explain
+The compiler sees the value outlives the function and keeps it on the heap; the garbage collector frees it later.
+:::
 :::
 
 :::step{type=deep-dive title="Escape analysis and nil"}

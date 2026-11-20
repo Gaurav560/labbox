@@ -27,6 +27,32 @@ row, err := r.Read()      // []string{"2026-03-02", "food", "120"}, or io.EOF at
 ```
 :::
 
+:::step{type=example title="Worked example: read a file line by line"}
+Open, defer the close, and read:
+
+```go
+func CountLines(path string) (int, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+	n := 0
+	sc := bufio.NewScanner(f)
+	for sc.Scan() {
+		n++
+	}
+	return n, sc.Err()
+}
+```
+
+1. `os.Open` returns the file or an error; return the error for a missing file.
+2. `defer f.Close()` runs when the function returns, however it returns.
+3. Read in a loop until the reader says it is done.
+
+`ReadTotals` is this shape with `csv.NewReader` in place of the scanner.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `expenses.csv` has a row `2026-03-07,food,` (no amount). What does `strconv.ParseFloat("", 64)` return?
@@ -83,6 +109,32 @@ shopping: 4095.00
 prints the biggest categories, biggest first, as `category: amount` with two decimals (3 when `-top`
 is left out), and `go run ./cmd/summary missing.csv` prints `File not found: missing.csv` to stderr and
 exits with code `1`, without a panic.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+When does a deferred call run?
+:::
+- [ ] Immediately
+- [x] When the function returns
+- [ ] When the program ends
+- [ ] Never, unless there is an error
+:::explain
+`defer` schedules the call for when the surrounding function returns, which makes clean-up impossible to forget.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Where should a command-line tool print an error for a person?
+:::
+- [ ] `os.Stdout`
+- [x] `os.Stderr`
+- [ ] A log file only
+- [ ] Nowhere: just exit
+:::explain
+Errors go to stderr, so they still show when the normal output is sent to a file or another program.
+:::
 :::
 
 :::step{type=deep-dive title="Single binaries and cross-compiling"}

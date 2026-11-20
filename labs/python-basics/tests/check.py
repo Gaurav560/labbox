@@ -8,7 +8,39 @@ sys.path.insert(0, "/check/workspace")
 sys.dont_write_bytecode = True
 
 
+# Content standard: a pass teaches (one line on what went right), a failure says what to try.
+PASS = {
+    "greet": "Your first function works: it takes a name and returns new text. Every program is built from pieces like this.",
+    "add": "Correct. Returning the result (not printing it) lets other code use it.",
+    "is_even": "Right, including zero and negative numbers. n % 2 == 0 is a check you will meet everywhere.",
+    "average": "Nice: the empty list is handled and the result is rounded. Real data is often empty; your function copes.",
+    "format_price": "Spot on: separators and exactly two decimals, even for 5 and 999.999.",
+    "grade": "All the edges are right: 80, 79, 40, 39 and the invalid marks. Testing the boundaries is what careful developers do.",
+    "leap_year": "Correct for 1900 and 2000 too. Three rules combined into one clear condition.",
+    "count_above": "Well done: a counter, a loop and a condition. The limit itself is not counted, exactly as asked.",
+    "first_negative": "Good: you stop at the first match and say None when there is nothing to find.",
+    "count_words": "Correct, even with extra spaces, tabs and new lines. split() with no argument does the hard work.",
+    "clean_name": "Tidy: no extra spaces and every word capitalised. You chained split, join and title like a pro.",
+    "count_letters": "Nice counting: the get-with-a-default line is the classic way to count with a dictionary.",
+    "total_by_category": "Correct totals per category. Lists of small dictionaries are how real data arrives.",
+    "common_items": "Right: sets found the shared items, and sorting made the answer predictable.",
+    "min_max": "Good: two answers at once in a tuple, and a clear answer for an empty list.",
+    "add_item": "You fixed one of Python's most famous traps. Many experienced developers have shipped this bug; you will spot it now.",
+    "total": "Correct, and the discount can only be given by name, so nobody passes it by mistake.",
+    "to_number": "Clear errors that name the bad value: whoever reads them will know exactly what to fix.",
+    "safe_sum": "Robust: good values added, bad ones reported, nothing crashes.",
+    "save_lines": "The file holds exactly your lines. Opening with 'w' and a with block is the safe way to write files.",
+    "read_totals": "You read a messy real file without crashing, quoted commas and all. That is a real-world skill.",
+    "summary_top": "Your program runs from the command line and prints a clean answer. You built a real tool.",
+    "summary_errors": "A friendly message, the right exit code, and silence on import: this is how professional tools behave.",
+    "fix_budget": "Found and fixed all three bugs in someone else's code: the crash, the boundary and the missing return.",
+    "monthly_report": "A complete report from messy data, with the right line numbers. You have finished Python from zero: well done.",
+}
+
+
 def report(task: str, passed: bool, message: str, expected=None, actual=None) -> None:
+    if passed and message == "ok":
+        message = PASS.get(task, "ok")
     result = {"task": task, "passed": passed, "message": message}
     if expected is not None:
         # Optional v2 fields: the UI shows them side by side.
@@ -41,6 +73,47 @@ def get_func(module, module_err, name: str):
     return fn, None
 
 
+def advice(task: str, args, got, expected) -> str:
+    """One line on the likely mistake, for the wrong answers learners really give."""
+    if got is None:
+        return "The function gave back None: it needs a return statement with the answer."
+    tip = _specific(task, args, got, expected)
+    if tip:
+        return tip
+    if type(got) is not type(expected) and got == expected:
+        def a(t):
+            return ("an " if t[0] in "aeiou" else "a ") + t
+        return f"The value is right but the type is not: give back {a(type(expected).__name__)}, not {a(type(got).__name__)}."
+    return ""
+
+
+def _specific(task: str, args, got, expected) -> str:
+    """The mistakes a task is known for, checked before the general advice."""
+    if task == "average" and isinstance(got, int):
+        return "// drops the decimal part; / keeps it."
+    if task == "format_price" and isinstance(got, str) and "," not in got and abs(args[0]) >= 1000:
+        return "Big amounts need thousands separators: look again at what a comma does inside an f-string format."
+    if task == "grade" and args[0] in (80, 60, 40):
+        return "Check the boundary: 80 is an A, 60 a B, 40 a C. Use >=, not >."
+    if task == "grade" and got in ("C", "B") and args[0] >= 80:
+        return "Python stops at the first true condition: test the highest grade first."
+    if task == "leap_year" and args[0] in (1900, 2100):
+        return "Years divisible by 100 are not leap years, unless they are also divisible by 400."
+    if task == "count_above" and isinstance(got, int) and got > expected:
+        return "Only numbers greater than the limit count; the limit itself does not."
+    if task == "clean_name" and isinstance(got, str) and "  " in got:
+        return "There are still double spaces inside: split() with no argument, then join with one space."
+    if task == "count_words" and isinstance(got, int) and got > expected:
+        return "split(\" \") makes an empty piece for every extra space; split() with no argument does not."
+    if task == "count_letters" and isinstance(got, dict) and any(not k.isalpha() or k.isupper() for k in got):
+        return "Count only letters (isalpha), and lower() the text first so A and a count together."
+    if task == "common_items" and isinstance(got, list) and len(got) != len(set(got)):
+        return "Some items appear twice: turn the lists into sets first."
+    if task == "common_items" and isinstance(got, list) and sorted(got) == expected:
+        return "The right items, in another order: give back sorted(...)."
+    return ""
+
+
 def run_cases(task: str, fn, err, cases) -> None:
     """cases: list of (args, expected). Reports first failure."""
     if fn is None:
@@ -51,7 +124,9 @@ def run_cases(task: str, fn, err, cases) -> None:
             got = fn(*args)
             if got != expected or type(got) is not type(expected):
                 call = f"{fn.__name__}({', '.join(repr(a) for a in args)})"
-                report(task, False, f"{call} returned {got!r}, expected {expected!r}", repr(expected), repr(got))
+                msg = f"Not yet: {call} gave {got!r}, but it should be {expected!r}."
+                tip = advice(task, args, got, expected)
+                report(task, False, f"{msg} {tip}" if tip else msg, repr(expected), repr(got))
                 return
         report(task, True, "ok")
     except Exception as e:

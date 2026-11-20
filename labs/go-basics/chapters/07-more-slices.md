@@ -21,6 +21,26 @@ slices.Contains(nums, 66)    // true
 The `slices` package (Go 1.21+) holds the everyday helpers.
 :::
 
+:::step{type=example title="Worked example: the cheapest two, safely"}
+Sort a **copy** so the caller's slice is never touched:
+
+```go
+func Cheapest(prices []int, n int) []int {
+	c := slices.Clone(prices)
+	slices.Sort(c)
+	return c[:min(n, len(c))]
+}
+
+// prices stays exactly as it was
+```
+
+1. `slices.Clone` makes a separate copy with its own array.
+2. Sorting the copy leaves the original alone.
+3. `min(n, len(c))` keeps the slice from going past the end.
+
+`TopN` is this, biggest first.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does this print?
@@ -43,6 +63,10 @@ share one array and sorting `b` sorts what `a` sees too. `slices.Clone(a)` makes
 :::
 
 :::step{type=try title="Shared memory, then a copy"}
+:::diagram{name="slice-array"}
+`a` and `b` are two views of one array; `slices.Clone` gives `c` an array of its own.
+:::
+
 ```bash run
 cat > /tmp/sl.go <<'GO'
 package main
@@ -95,6 +119,32 @@ order it **first** appeared, and an empty (not nil) slice for no items.
 
 - `Unique([]string{"tea", "coffee", "tea", "milk"})` returns `[tea coffee milk]`
 - `Unique(nil)` returns `[]`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+After `b := a` and `b[0] = 9`, what is `a[0]`?
+:::
+- [ ] The old value
+- [x] `9`
+- [ ] `0`
+- [ ] It does not compile
+:::explain
+`b := a` copies the view, not the numbers, so both see the same array: `a[0]` is `9`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Why write `s = append(s, x)` instead of just `append(s, x)`?
+:::
+- [ ] Style only
+- [x] append may return a new, bigger slice
+- [ ] To avoid a panic
+- [ ] It is faster
+:::explain
+When capacity runs out, `append` moves the items to a bigger array and returns the new slice. Without the assignment you would keep the old one.
+:::
 :::
 
 :::step{type=deep-dive title="Length, capacity and append"}

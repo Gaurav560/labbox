@@ -11,6 +11,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -44,7 +47,7 @@ func TestLabboxCheckFetchAll(t *testing.T) {
 		report("fetch_all", false, fmt.Sprintf("FetchAll(nil) returned %v", got), "[]", got)
 		return
 	}
-	report("fetch_all", true, "ok", nil, nil)
+	report("fetch_all", true, "Concurrent and still in order: each goroutine wrote its own slot, and a WaitGroup waited for all of them.", nil, nil)
 }
 
 func TestLabboxCheckWordCounts(t *testing.T) {
@@ -64,5 +67,5 @@ func TestLabboxCheckWordCounts(t *testing.T) {
 		report("word_counts", false, "CountWords(nil) should return an empty map, not nil", "map[]", got)
 		return
 	}
-	report("word_counts", true, "ok", nil, nil)
+	report("word_counts", true, "Exactly right under 200 goroutines: the mutex kept the map safe. You have finished Go from zero: well done.", nil, nil)
 }

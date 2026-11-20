@@ -24,6 +24,33 @@ Python looks for modules in the folder of the program you run, then in the stand
 installed packages. Thousands more come from the internet with `pip install`.
 :::
 
+:::step{type=example title="Worked example: a tiny command-line greeter"}
+A whole command-line program, small enough to read in one go:
+
+```python
+import argparse
+import sys
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("name")
+    p.add_argument("--times", type=int, default=1)
+    args = p.parse_args()
+    if args.times < 1:
+        print("--times must be 1 or more", file=sys.stderr)
+        sys.exit(2)
+    for _ in range(args.times):
+        print(f"Hello, {args.name}!")
+
+if __name__ == "__main__":
+    main()
+```
+
+`python greet_cli.py Riya --times 2` prints the greeting twice. The work lives in `main()`, problems
+go to stderr with an exit code, and the last two lines run `main()` only when the file is run
+directly. `summary.py` has the same skeleton.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `tools.py` contains:
@@ -101,6 +128,32 @@ Make `summary.py` behave like a good program:
 :::why
 A traceback is for the programmer; a person running your tool needs one clear sentence. Scripts that
 call your program rely on the exit code to know whether it worked.
+:::
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `__name__` inside a file that was **imported**?
+:::
+- [ ] `"__main__"`
+- [x] The module's name, like `"summary"`
+- [ ] `None`
+- [ ] The folder name
+:::explain
+Only the file you run directly gets `"__main__"`. Imported, `__name__` is the module's name, so the guarded code does not run.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does exit code `0` tell the shell?
+:::
+- [ ] The program failed
+- [x] The program succeeded
+- [ ] The program printed nothing
+- [ ] The program was imported
+:::explain
+`0` means success; any other number means failure, which is why a missing file exits with `1`.
 :::
 :::
 

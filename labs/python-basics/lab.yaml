@@ -104,18 +104,18 @@ chapters:
     file: chapters/05-strings.md
     minutes: 15
     tasks:
+      - id: count_words
+        title: "text_tools.py: warm-up, count the words"
+        hints:
+          - "Words are separated by spaces, sometimes several in a row."
+          - "split() without an argument already ignores extra spaces at the ends and in between."
+          - "Count the pieces with len()."
       - id: clean_name
         title: "text_tools.py: tidy up a name"
         hints:
           - "split() with no argument splits on any run of spaces and drops the empty pieces."
           - "Join the pieces back with a single space between them."
           - "title() makes the first letter of each word a capital and the rest small."
-      - id: count_words
-        title: "text_tools.py: count the words in a sentence"
-        hints:
-          - "Words are separated by spaces, sometimes several in a row."
-          - "split() without an argument already ignores extra spaces at the ends and in between."
-          - "Count the pieces with len()."
   - id: 06-lists
     title: Lists
     file: chapters/06-lists.md
@@ -206,18 +206,18 @@ chapters:
     file: chapters/11-files.md
     minutes: 20
     tasks:
+      - id: save_lines
+        title: "file_tools.py: warm-up, write lines to a file"
+        hints:
+          - "Open the file for writing with mode \"w\": it is created, or emptied if it exists."
+          - "write() does not add a new line by itself, so add \"\\n\" after each line."
+          - "Give back how many lines you wrote: len(lines)."
       - id: read_totals
         title: "file_tools.py: totals per category from a CSV file"
         hints:
           - "Open the file with a with block and read it with csv.DictReader, which uses the header row for the keys."
           - "A broken row has a missing or non-numeric amount: put the conversion in try and skip the row on ValueError or TypeError."
           - "Add each good amount to its category, like total_by_category in chapter 7, and round the totals to 2 decimals."
-      - id: save_lines
-        title: "file_tools.py: write lines to a file"
-        hints:
-          - "Open the file for writing with mode \"w\": it is created, or emptied if it exists."
-          - "write() does not add a new line by itself, so add \"\\n\" after each line."
-          - "Give back how many lines you wrote: len(lines)."
   - id: 12-running-a-program
     title: Running a program
     file: chapters/12-running-a-program.md
@@ -240,15 +240,15 @@ chapters:
     file: chapters/13-capstone.md
     minutes: 25
     tasks:
+      - id: fix_budget
+        title: "budget.py: warm-up, fix the inherited code"
+        hints:
+          - "Run over_budget with a budget for a category nobody spent on: what happens?"
+          - "A category with no spending has a total of 0: use get with a default."
+          - "list.sort() sorts in place and gives back None. Give back sorted(...) instead."
       - id: monthly_report
         title: "report.py: the monthly report"
         hints:
           - "Read the rows with csv.DictReader. reader.line_num is the row's real line in the file, even after blank lines (csv skips those itself)."
           - "A row is bad when its amount is not a number or its category is empty: remember its line number and skip it."
           - "From the good rows work out the total, count, average (0.0 when there are none), the biggest expense and the totals per category."
-      - id: fix_budget
-        title: "budget.py: fix the inherited code"
-        hints:
-          - "Run over_budget with a budget for a category nobody spent on: what happens?"
-          - "A category with no spending has a total of 0: use get with a default."
-          - "list.sort() sorts in place and gives back None. Give back sorted(...) instead."

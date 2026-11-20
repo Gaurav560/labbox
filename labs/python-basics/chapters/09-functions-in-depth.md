@@ -25,6 +25,25 @@ greet(greeting="Hi", name="Riya")    # 'Hi, Riya!'  any order, by name
 Parameters with defaults come after the ones without.
 :::
 
+:::step{type=example title="Worked example: a safe default"}
+When a parameter needs a fresh list (or dictionary) on every call, use `None` as the default and
+make the list inside:
+
+```python
+def add_tag(tag, tags=None):
+    if tags is None:      # 1. no list given?
+        tags = []         # 2. a new one, every call
+    tags.append(tag)      # 3. add to it
+    return tags
+
+add_tag("python")         # ['python']
+add_tag("go")             # ['go']   (not ['python', 'go'])
+```
+
+`None` never changes, so it is a safe default. Keep this pattern in mind when you look at
+`add_item`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `add_item` in `functions.py` looks harmless. What does the second line print?
@@ -56,6 +75,10 @@ print(add_item('eggs'))
 ```
 
 Each call should start with an empty basket, but the list keeps growing.
+
+:::diagram{name="default-list"}
+Every call without a basket gets the same one list, made once when Python read the `def` line.
+:::
 :::
 
 :::step{type=task task=add_item title="Fix the basket"}
@@ -97,6 +120,32 @@ In `functions.py`, write `total(*prices, discount=0)`: the sum of all the prices
 - `total()` returns `0.0`
 - `total(99.99, 0.01)` returns `100.0`
 - `total(100, 10)` returns `110.0` (10 is a price here, not a discount)
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+In `def f(x, *args, sep=" ")`, how must `sep` be passed?
+:::
+- [ ] By position, third
+- [x] Only by name, like `sep="-"`
+- [ ] It cannot be changed
+- [ ] Before `x`
+:::explain
+Everything after `*args` is keyword-only: it can only be given by name, which keeps calls clear.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `total(10, 20)` see in `prices`, for `def total(*prices)`?
+:::
+- [ ] `[10, 20]`
+- [x] `(10, 20)`
+- [ ] `10`
+- [ ] `{10, 20}`
+:::explain
+`*prices` collects the positional arguments into a **tuple**: `(10, 20)`.
+:::
 :::
 
 :::step{type=deep-dive title="Scope, and functions as values"}

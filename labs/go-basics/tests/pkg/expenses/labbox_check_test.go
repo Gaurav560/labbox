@@ -15,6 +15,9 @@ import (
 
 // Hidden checks (LabBox). Each test reports with @@RESULT and never fails, so every task reports.
 func report(task string, passed bool, message string, expected, actual any) {
+	if !passed && message != "" {
+		message = "Not yet: " + message // Content standard: calm, never blaming
+	}
 	r := map[string]any{"task": task, "passed": passed, "message": message}
 	if expected != nil {
 		r["expected"], r["actual"] = fmt.Sprint(expected), fmt.Sprint(actual)
@@ -61,7 +64,7 @@ func TestLabboxCheckReadTotals(t *testing.T) {
 		report("read_totals", false, fmt.Sprintf("ReadTotals on a missing file returned %v: return (or wrap with %%w) the error from os.Open", err), "an error with errors.Is(err, fs.ErrNotExist)", err)
 		return
 	}
-	report("read_totals", true, "ok", nil, nil)
+	report("read_totals", true, "You read a messy real CSV, quoted commas and all, and a missing file comes back as a proper error.", nil, nil)
 }
 
 const big = "date,category,amount\n2026-03-01,rent,18000\n2026-03-02,food,120\n2026-03-03,shopping,799\n2026-03-03,food,abc\n2026-03-04,travel,60\n2026-03-05,food,80.5\n2026-03-06,fun,350\n"
@@ -105,5 +108,5 @@ func TestLabboxCheckSummaryCli(t *testing.T) {
 		report("summary_cli", false, fmt.Sprintf("For a missing file: stderr should say \"File not found: %s\" and the exit code be 1; got %q and %d", missing, strings.TrimSpace(errOut), code), "exit 1", code)
 		return
 	}
-	report("summary_cli", true, "ok", nil, nil)
+	report("summary_cli", true, "A real command-line tool: clean output, a friendly message and exit code 1 when the file is missing.", nil, nil)
 }

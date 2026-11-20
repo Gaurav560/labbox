@@ -26,6 +26,30 @@ Python checks the conditions **from the top** and stops at the **first** one tha
 Conditions use `==`, `!=`, `<`, `<=`, `>`, `>=`, and can be combined with `and`, `or` and `not`.
 :::
 
+:::step{type=example title="Worked example: a ticket price by age"}
+A cinema charges by age. Notice the order of the checks:
+
+```python
+def ticket(age):
+    if age < 0:
+        return "Invalid"
+    if age >= 60:
+        return "Senior"
+    elif age >= 18:
+        return "Adult"
+    elif age >= 5:
+        return "Child"
+    else:
+        return "Free"
+```
+
+1. **Impossible values first**: a negative age is answered before anything else.
+2. Then the ranges **from the top down**: 60 and over, then 18 and over, then 5 and over.
+3. Each age matches exactly one branch, because Python stops at the first true condition.
+
+`grade` works the same way: invalid marks first, then 80, 60 and 40.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does `level(90)` return?
@@ -96,6 +120,32 @@ parts:
 3. **except** years divisible by 400, which are.
 
 So `2024` is `True`, `2023` is `False`, `1900` is `False` and `2000` is `True`.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `True and not False`?
+:::
+- [x] `True`
+- [ ] `False`
+- [ ] `None`
+- [ ] An error
+:::explain
+`not False` is `True`, and `True and True` is `True`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What is `5 <= 5 < 9`?
+:::
+- [x] `True`
+- [ ] `False`
+- [ ] An error
+- [ ] `5`
+:::explain
+Python reads it as `5 <= 5 and 5 < 9`, and both are true. Chained comparisons are a tidy way to check a range.
+:::
 :::
 
 :::step{type=deep-dive title="Truthy and falsy values"}

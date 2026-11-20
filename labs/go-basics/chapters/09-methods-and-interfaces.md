@@ -25,6 +25,30 @@ room.Area()    // 12
 ```
 :::
 
+:::step{type=example title="Worked example: a method on a struct"}
+A struct with a method, and a function that works on any type with that method:
+
+```go
+type Square struct{ Side float64 }
+
+func (s Square) Perimeter() float64 {
+	return 4 * s.Side
+}
+
+type Perimeterer interface{ Perimeter() float64 }
+
+func Fence(p Perimeterer) float64 {
+	return p.Perimeter() * 1.1 // 10% extra
+}
+```
+
+1. `(s Square)` is the receiver: the method belongs to `Square`.
+2. `Square` satisfies `Perimeterer` just by having the method; no "implements" keyword.
+3. `Fence` works for any shape that has `Perimeter()`.
+
+Your `Area` methods and `TotalArea` follow this pattern.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `Shape` is `interface { Area() float64 }`. Which line does **not** compile?
@@ -96,6 +120,32 @@ decimals**.
 
 - `TotalArea([]Shape{Rect{3, 4}, Circle{1}})` returns `15.14`
 - `TotalArea(nil)` returns `0`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+How does a type say it implements an interface in Go?
+:::
+- [ ] With `implements`
+- [x] By having the interface's methods
+- [ ] By embedding the interface
+- [ ] With a comment
+:::explain
+Interfaces are satisfied **implicitly**: having the methods is enough.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Which is the empty interface that accepts every value?
+:::
+- [ ] `void`
+- [x] `any`
+- [ ] `object`
+- [ ] `interface{}` only in old Go
+:::explain
+`any` (another name for `interface{}`) accepts every value, at the cost of checking the type later. Use it sparingly.
+:::
 :::
 
 :::step{type=deep-dive title="Small interfaces"}

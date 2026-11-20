@@ -25,6 +25,26 @@ avg := float64(total) / float64(count)
 ```
 :::
 
+:::step{type=example title="Worked example: an average, without losing the fraction"}
+Converting before dividing is the whole trick:
+
+```go
+func Average(total, count int) float64 {
+	if count == 0 {
+		return 0
+	}
+	return float64(total) / float64(count)
+}
+
+// Average(7, 2) is 3.5, not 3
+```
+
+1. Answer the impossible case (`count == 0`) first.
+2. `float64(total)` turns an `int` into a `float64`; dividing two `float64`s keeps the fraction.
+
+`Percent` adds one more line: rounding with `math.Round`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does `fmt.Println(45 / 50 * 100)` print?
@@ -88,6 +108,32 @@ digits of paise.
 - `FormatRupees(5)` returns `"₹0.05"`
 - `FormatRupees(0)` returns `"₹0.00"`
 - `FormatRupees(120000)` returns `"₹1200.00"`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `7 / 2` when both are `int` in Go?
+:::
+- [ ] `3.5`
+- [x] `3`
+- [ ] `4`
+- [ ] It does not compile
+:::explain
+Dividing two ints throws the fraction away: `3`. Convert to `float64` first to keep it.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `fmt.Sprintf("%02d", 7)` give?
+:::
+- [ ] `"7"`
+- [x] `"07"`
+- [ ] `"70"`
+- [ ] `"007"`
+:::explain
+`%02d` pads the number to two digits with a leading zero: `"07"`.
+:::
 :::
 
 :::step{type=deep-dive title="Sizes, overflow and runes"}

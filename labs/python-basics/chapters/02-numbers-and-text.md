@@ -27,6 +27,26 @@ division:
 ```
 :::
 
+:::step{type=example title="Worked example: a bill total, rounded"}
+A function that adds up prices and rounds the answer, and copes with an empty list:
+
+```python
+def bill_total(prices):
+    if not prices:
+        return 0.0
+    return round(sum(prices), 2)
+
+bill_total([10.5, 20.25])   # 30.75
+bill_total([])              # 0.0
+```
+
+1. `if not prices:` is true for an empty list, so we answer `0.0` straight away.
+2. `sum(prices)` adds them all; `len(prices)` would count them.
+3. `round(x, 2)` keeps two digits after the point, for showing to people.
+
+The average task needs the same three ideas, plus one division.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 What does Python print for `0.1 + 0.2 == 0.3`?
@@ -90,6 +110,32 @@ thousands separators and exactly two decimals.
 - `format_price(5)` returns `"₹5.00"`
 - `format_price(1234567.891)` returns `"₹1,234,567.89"`
 - `format_price(0)` returns `"₹0.00"`
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What is `7 // 2`?
+:::
+- [ ] `3.5`
+- [x] `3`
+- [ ] `4`
+- [ ] `1`
+:::explain
+`//` keeps only the whole part of the division: `3`. `7 / 2` would be `3.5`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+What does `f"{1234.5:,.2f}"` give?
+:::
+- [ ] `'1234.5'`
+- [x] `'1,234.50'`
+- [ ] `'1,234.5'`
+- [ ] `'1234.50'`
+:::explain
+`,` adds the thousands separator and `.2f` keeps exactly two decimals: `'1,234.50'`. That is your `format_price` in one line.
+:::
 :::
 
 :::step{type=deep-dive title="Why money is often stored as whole numbers"}

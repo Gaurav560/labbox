@@ -126,6 +126,12 @@ chapters:
   file: chapters/06-strings.md
   minutes: 15
   tasks:
+  - id: count_words
+    title: 'words/words.go: warm-up, CountWords(text)'
+    hints:
+    - Words are separated by one or more spaces, tabs or new lines.
+    - strings.Fields already ignores extra spaces at the ends and in between.
+    - Count the pieces with len().
   - id: clean_name
     title: 'words/words.go: CleanName(raw)'
     hints:
@@ -133,12 +139,6 @@ chapters:
     - 'For each word: the first letter upper case, the rest lower case (strings.ToUpper and strings.ToLower on slices
       of the word).'
     - strings.Join puts the words back together with a single space.
-  - id: count_words
-    title: 'words/words.go: CountWords(text)'
-    hints:
-    - Words are separated by one or more spaces, tabs or new lines.
-    - strings.Fields already ignores extra spaces at the ends and in between.
-    - Count the pieces with len().
 - id: 07-more-slices
   title: More slices
   file: chapters/07-more-slices.md

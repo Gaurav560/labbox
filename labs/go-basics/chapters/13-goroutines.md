@@ -28,6 +28,32 @@ wg.Wait()    // wait until all three called Done
 run.
 :::
 
+:::step{type=example title="Worked example: square numbers in parallel, in order"}
+Each goroutine writes only its own slot, so the order is kept:
+
+```go
+func Squares(nums []int) []int {
+	out := make([]int, len(nums))
+	var wg sync.WaitGroup
+	for i, n := range nums {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			out[i] = n * n
+		}()
+	}
+	wg.Wait()
+	return out
+}
+```
+
+1. Make the result slice first, one slot per input.
+2. Start one goroutine per item; each writes `out[i]`, its own slot.
+3. `wg.Wait()` waits for all of them before returning.
+
+`FetchAll` is this with `fetch(item)` in place of `n * n`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 Five calls each take 200 ms. Run one after another they take 1 second. Started as five goroutines and
@@ -44,6 +70,10 @@ is why Go is so good at network work, which is mostly waiting.
 :::
 
 :::step{type=try title="Sequential versus concurrent"}
+:::diagram{name="goroutines"}
+One after another, five waits add up; as goroutines, they overlap.
+:::
+
 ```bash run
 cat > /tmp/conc.go <<'GO'
 package main
@@ -109,6 +139,32 @@ word := <-ch         // receives "hello"
 In `concurrent/concurrent.go`, make `CountWords(texts []string) map[string]int` count every word (in
 lower case) across all the texts, using one goroutine per text, and return an empty map for no texts.
 With 200 texts at once the counts must be exactly right, every time.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+What happens if `main` returns while goroutines are still running?
+:::
+- [ ] It waits for them
+- [x] They are stopped with the program
+- [ ] They keep running
+- [ ] It panics
+:::explain
+When `main` returns the whole program ends, goroutines included. That is why `wg.Wait()` matters.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Several goroutines add to one map. What keeps it safe?
+:::
+- [ ] Nothing is needed
+- [x] A `sync.Mutex` around each write
+- [ ] Making the map bigger
+- [ ] `defer`
+:::explain
+Lock a mutex around each write (or send values over a channel to one owner). Unprotected map writes crash the program.
+:::
 :::
 
 :::step{type=deep-dive title="Do not communicate by sharing memory"}
