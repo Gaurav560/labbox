@@ -13,10 +13,8 @@ every session.
    Frontend: `cd frontend && npm run dev`. Database and Redis: `scripts/devdb.sh`.
 2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (17 labs valid).
 3. **Next task: step 5 of the owner's UX review** (below). Plan first, wait for the owner's OK.
-4. Open question for the owner: an uncommitted edit in `CHANGELOG.md` removes the entry "Product and
-   architecture audit (20 November 2026)". It came from another session. Do not commit or discard it
-   without the owner's word; commit your own CHANGELOG entries through the index only (see "How
-   CHANGELOG entries were committed" below).
+4. The working tree was clean at handoff. (The audit-entry question is settled: the owner let me decide,
+   and the entry was kept.)
 
 ## The owner's goals (20 to 21 November)
 
@@ -125,12 +123,10 @@ every session.
   tests, 17 labs valid. `diagram-themes.spec.ts` sometimes fails its arrowhead check once and passes on a
   rerun; `ERR_NETWORK_CHANGED` blank pages are this laptop (rerun).
 
-## How CHANGELOG entries were committed
+## Editing CHANGELOG.md safely
 
-Because of the uncommitted audit-entry removal, entries were committed without touching it: build the new
-text from `git show HEAD:CHANGELOG.md` plus the entry, `git hash-object -w --stdin`, then
-`git update-index --cacheinfo 100644,<hash>,CHANGELOG.md`, and add the same entry to the working file.
-Never open a file for writing and reading in one expression (it empties the file first).
+Add new entries at the top, under `# Changelog`. Never open a file for writing and reading in one
+expression (Python's `open(f, "w").write(open(f).read())` empties the file first).
 
 ## Known gaps
 
