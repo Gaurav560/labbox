@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
+import { usePhone } from "../usePhone";
 import ChapterPanel from "../components/ChapterPanel";
 import CheckDrawer from "../components/CheckDrawer";
 import IdePane from "../components/IdePane";
@@ -59,6 +60,7 @@ export default function LabPage() {
   const [lab, setLab] = useState<LabDetail | null>(null);
   const [chapterId, setChapterId] = useState("");
   const [searchParams] = useSearchParams();
+  const phone = usePhone();
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [steps, setSteps] = useState<Step[] | null>(null);
   const [step, setStep] = useState(0);
@@ -162,8 +164,16 @@ export default function LabPage() {
         setChapterId(firstOpen.id);
       })
       .catch((e) => toast(errMsg(e)));
-    startMachine().then(refreshTree);
-  }, [loadLab, startMachine, refreshTree, toast]);
+    // searchParams is read once on arrival: later changes must not reload the lab and move the learner.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadLab, toast]);
+
+  // Phones read; the machine starts on a laptop or tablet. Its own effect, so crossing the phone width
+  // (rotating a tablet, resizing a window) starts the machine without reloading the lab or moving the
+  // learner to another chapter.
+  useEffect(() => {
+    if (!phone) startMachine().then(refreshTree);
+  }, [phone, startMachine, refreshTree]);
 
   useEffect(() => {
     if (!chapterId) return;
@@ -582,7 +592,7 @@ export default function LabPage() {
   }
 
   return (
-    <div className={`lab-page ${focus ? "focus-mode" : ""}`} data-lab={labId}>
+    <div className={`lab-page ${focus ? "focus-mode" : ""} ${phone ? "is-phone" : ""}`} data-lab={labId}>
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}
@@ -624,7 +634,7 @@ export default function LabPage() {
           {steps && current ? (
             <LessonPanel steps={steps} current={step} visited={visited} onGo={goStep}>
               {steps.length === 1 ? (
-                <ChapterPanel markdown={current.markdown} onRun={runInTerminal} />
+                <ChapterPanel markdown={current.markdown} onRun={phone ? undefined : runInTerminal} />
               ) : (
                 <StepCard
                   labId={labId}
@@ -653,7 +663,7 @@ export default function LabPage() {
                   checkMode={lab?.check_mode ?? "fresh"}
                   onPredict={(o) => pickPredict(step, o)}
                   onHint={revealHint}
-                  onRun={runInTerminal}
+                  onRun={phone ? undefined : runInTerminal}
                   onCheck={runCheck}
                   onNextChapter={() => nextChapter && setChapterId(nextChapter.id)}
                 />
@@ -677,6 +687,11 @@ export default function LabPage() {
             {tutorOpen && activeTask && (
               <TutorBox key={`${chapterId}/${activeTask.id}/${activeTask.passed}`} labId={labId} chapterId={chapterId} task={activeTask} startOpen onClose={() => setTutorOpen(false)} />
             )}
+            {phone ? (
+              <p className="phone-note" role="note">
+                Reading mode. Writing and checking code works on a laptop or tablet; your place is saved, so you can pick it up there.
+              </p>
+            ) : (
             <div className="footer-actions">
               <button className="btn btn-primary btn-check" onClick={runCheck} disabled={checking || !chapterId || setupState === "running"}>
                 {checking ? <><span className="spinner" /> Checking...</> : "Check"}
@@ -707,8 +722,12 @@ export default function LabPage() {
                 </button>
               )}
             </div>
+            )}
           </div>
         </aside>
+        {/* Phones get a reading mode: no editor, VS Code or terminal (they would start the machine). */}
+        {!phone && (
+        <>
         <Splitter direction="vertical" label="Resize lesson panel" onDrag={(d) => setLeftW((w) => clamp(w + d, 280, 900))} />
         <section className="work-area" aria-label="Workspace">
           <div className="files-and-editor">
@@ -785,6 +804,8 @@ export default function LabPage() {
             onShowOutput={() => setBottomTab("output")}
           />
         </section>
+        </>
+        )}
       </main>
     </div>
   );

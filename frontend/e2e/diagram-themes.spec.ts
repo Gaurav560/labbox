@@ -30,7 +30,8 @@ async function appearance(figure: Locator) {
       head: getComputedStyle(head.firstElementChild!).fill,
       marker: getComputedStyle(arrow).markerEnd.includes(`#${head.id}"`),
       fits: svg.getBoundingClientRect().width <= el.clientWidth && el.scrollWidth === el.clientWidth && el.clientWidth <= window.innerWidth,
-      layout: [el, svg, document.querySelector(".left-panel")!, document.querySelector(".work-area")!].map(size),
+      // Phones are a reading mode with no editor area (step 4 of the UX review), so it may be missing.
+      layout: [el, svg, document.querySelector(".left-panel"), document.querySelector(".work-area")].map(e => (e ? size(e) : [0, 0])),
       labels: [...svg.querySelectorAll("text")].map(t => {
         const { x, y, width, height } = t.getBBox();
         return [t.textContent, x, y, width, height];

@@ -1393,3 +1393,21 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .ide-holder .ide-frame { flex: 1; }
 .ide-frame.ide-hidden { visibility: hidden; }
 .ide-over { position: absolute; inset: 0; }
+
+/* Phones: a reading mode (the owner's UX review, step 4). The lesson fills the screen; the header keeps
+   only what reading needs, so nothing runs off the right edge. */
+.lab-page.is-phone .left-panel { width: 100% !important; flex: 1; }
+.lab-page.is-phone .topbar { gap: 8px; padding-left: 12px; padding-right: 12px; overflow: hidden; }
+.lab-page.is-phone .topbar > .brand,
+.lab-page.is-phone .topbar > .brand + .muted,
+.lab-page.is-phone .topbar .lab-progress,
+.lab-page.is-phone .topbar .machine,
+.lab-page.is-phone .topbar .mm-wrap,
+.lab-page.is-phone .topbar .btn[aria-pressed],
+.lab-page.is-phone .topbar .ts-wrap,
+.lab-page.is-phone .topbar .stats-badges,
+.lab-page.is-phone .topbar > .btn:not([aria-label^="Switch to"]) { display: none; }
+.lab-page.is-phone .chapter-select { min-width: 0; max-width: none; flex: 1; text-overflow: ellipsis; }
+.phone-note { margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 14px; color: var(--muted);
+  border: 1px dashed var(--border); background: color-mix(in srgb, #5048b8 8%, transparent); }
+.lab-page.is-phone .kbd-hint { display: none; }

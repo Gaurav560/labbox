@@ -1,5 +1,15 @@
 # Changelog
 
+## Phones: a reading mode
+
+- On screens narrower than 760 px the lab page becomes a reading mode: the lesson fills the screen and
+  the header keeps only the logo, Labs, the chapter picker and the theme, so nothing runs off the edge.
+- No editor, VS Code or terminal is shown, and **no machine is started** (it would cost a machine for
+  nothing on a phone). Guess-first questions, pictures and "watch it run" traces all work as usual.
+- Task steps say "Reading mode. Writing and checking code works on a laptop or tablet; your place is
+  saved", instead of a Check button; Run buttons are hidden (there is no terminal). The keys hint is hidden.
+- A browser test at 390 px checks the fit, the missing editor and buttons, and that no machine starts.
+
 ## The lab page, polished
 
 - **No white flash:** VS Code stays behind "Opening VS Code..." until it is drawn in its dark theme with the

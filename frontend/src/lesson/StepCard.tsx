@@ -45,7 +45,7 @@ interface Props {
   checkMode: "fresh" | "live";
   onPredict: (option: number) => void;
   onHint: (taskId: string) => void;
-  onRun: (command: string) => void;
+  onRun?: (command: string) => void; // missing on phones (no terminal): no Run buttons
   onCheck: () => void;
   onNextChapter: () => void;
 }
@@ -103,7 +103,7 @@ export default function StepCard(p: Props) {
       )}
 
       {(step.type === "task" || step.type === "incident") && p.task && (
-        <TaskBox labId={p.labId} chapterId={p.chapterId} task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} live={p.checkMode === "live"} onHint={p.onHint} onCheck={p.onCheck} />
+        <TaskBox labId={p.labId} chapterId={p.chapterId} task={p.task} hints={p.hints} hintBusy={p.hintBusy} checking={p.checking} live={p.checkMode === "live"} reading={!p.onRun} onHint={p.onHint} onCheck={p.onCheck} />
       )}
 
       {step.type === "recap" && (
@@ -127,7 +127,7 @@ export default function StepCard(p: Props) {
   );
 }
 
-function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: string[]; hintBusy: boolean; checking: boolean; live: boolean; onHint: (id: string) => void; onCheck: () => void }) {
+function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: string[]; hintBusy: boolean; checking: boolean; live: boolean; reading: boolean; onHint: (id: string) => void; onCheck: () => void }) {
   const { task } = p;
   return (
     <div className={`task-box ${task.passed ? "task-done" : ""}`}>
@@ -143,7 +143,9 @@ function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: strin
       <p className="muted small-text">
         {task.passed
           ? "Passed. Nice work."
-          : p.live
+          : p.reading
+            ? "On a laptop or tablet: write it in your files, then press Check to run the hidden tests."
+            : p.live
             ? "Do it in your machine (the terminal or your files), then press Check below: a checker looks at the real, running system."
             : "Edit your files, then press Check below to run the hidden tests on a clean machine."}
       </p>
