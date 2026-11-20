@@ -42,6 +42,7 @@ export default function LabsPage() {
       <header className="topbar">
         <Logo to="/" />
         <span className="spacer" />
+        {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
         <StatsBadges username={user?.username ?? ""} />
         <button className="btn btn-small" onClick={logout}>Log out</button>
       </header>

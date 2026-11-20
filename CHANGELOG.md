@@ -1,5 +1,18 @@
 # Changelog
 
+## Phase J, part 2: the admin page
+
+- `/admin` (lazy-loaded; only admins ever download it) with six tabs: Funnel (bars with the share kept
+  at each step, 7 to 90 days or all), Labs (every lab, then one lab's tasks ranked by confusion and each
+  chapter's steps with "stopped here", average time and views), Learners (newest 50 or a username
+  search), Machines (running now; Stop and Kill ask first and say what happens to the learner), AI spend
+  (per day with bars, by model, top learners) and Errors (latest server errors with request ids).
+- An Admin link on /labs for admins only; a learner opening /admin lands back on /labs.
+- Browser test `e2e/admin.spec.ts`: a learner is kept out; an admin (granted with the CLI and revoked
+  again at the end, even when the test fails) walks the tabs, opens a lab report and stops a learner's
+  machine, whose lab page then says an admin stopped it.
+- Tests: 257 passed on Postgres and Redis, 253 (plus 4 skipped) on SQLite, 15 browser tests.
+
 ## Phase J, part 1: admin data and routes
 
 - `user.is_admin` and a new `analytics_event` table (migration 0008, additive). `scripts/labbox admin

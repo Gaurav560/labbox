@@ -188,6 +188,24 @@ keeps its files, and the lab page shows why it stopped, with a Start button.
 curl -s localhost:8000/metrics | grep -v '^#' | head      # on the server
 ```
 
+### Admin and funnel analytics (Phase J)
+
+`/admin` is for accounts with admin rights; everyone else gets 403 from `/api/admin/*` (the page sends
+them back to /labs). Grant and revoke with the CLI:
+
+```bash
+scripts/labbox admin grant <username>    # then log in as that account: an Admin link appears on /labs
+scripts/labbox admin list
+scripts/labbox admin revoke <username>
+```
+
+Tabs: **Funnel** (signed up, opened a lab, passed a first check, finished a chapter 1, finished a
+chapter 2; 7, 30, 90 days or all), **Labs** (per lab: where learners stopped, time per step, tasks
+ranked by confusion), **Learners** (search), **Machines** (running now, Stop and Kill; files are kept),
+**AI spend** (per day, model and learner) and **Errors** (the last 200 server errors with request ids).
+Most numbers come from the tables LabBox already keeps, so they cover the past; time per step comes
+from `analytics_event` "step" rows, recorded from Phase J on.
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself

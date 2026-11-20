@@ -49,7 +49,7 @@ const q = encodeURIComponent;
 
 // ---------- types ----------
 
-export interface User { id: number; username: string }
+export interface User { id: number; username: string; is_admin?: boolean }
 export interface AuthResponse { token: string; user: User }
 export interface Progress { passed_tasks: number; total_tasks: number }
 export interface LabInfo {
@@ -211,6 +211,32 @@ export const api = {
   skipOnboarding: () => request<Stats>("POST", "/api/onboarding/skip"),
 
   check: (labId: string, chapterId: string) => request<CheckResponse>("POST", `/api/labs/${q(labId)}/check`, { chapter_id: chapterId }),
+};
+
+// ---------- admin (Phase J) ----------
+
+export type AdminWindow = "7d" | "30d" | "90d" | "all";
+export interface FunnelStep { key: string; label: string; count: number; of_previous: number | null; of_first: number | null }
+export interface AdminLabRow { id: string; title: string; learners: number; chapters_completed: number; pass_rate: number | null; most_confusing_task: string | null }
+export interface AdminStep { index: number; title: string; type: string; stopped_here: number; avg_seconds: number | null; views: number }
+export interface AdminChapter { id: string; title: string; started: number; completed: number; steps: AdminStep[] }
+export interface AdminTask { id: string; title: string; chapter_id: string; attempted: number; passed: number; pass_rate: number | null; failed_checks_per_learner: number; hints_per_learner: number; hint_count: number; confusion: number }
+export interface AdminLabReport { id: string; title: string; learners: number; chapters: AdminChapter[]; tasks: AdminTask[] }
+export interface AdminLearner { id: number; username: string; joined: string; is_admin: boolean; labs: number; xp: number; checks: number; last_active: string | null }
+export interface SpendRow { name: string; requests: number; tokens: number; cost_usd: number }
+export interface AdminSpend { days: { day: string; requests: number; tokens: number; cost_usd: number }[]; by_model: SpendRow[]; top_learners: SpendRow[] }
+export interface AdminMachine { container: string; user_id: number; username: string; lab_id: string; lab_title: string; started_at: string | null; files_mb: number }
+export interface AdminError { at: string; method: string; route: string; status: number; request_id: string; ms: number; error: string }
+
+export const admin = {
+  funnel: (w: AdminWindow) => request<FunnelStep[]>("GET", `/api/admin/funnel?window=${w}`),
+  labs: () => request<AdminLabRow[]>("GET", "/api/admin/labs"),
+  lab: (labId: string) => request<AdminLabReport>("GET", `/api/admin/labs/${q(labId)}`),
+  learners: (query: string) => request<AdminLearner[]>("GET", `/api/admin/learners?q=${q(query)}`),
+  spend: (days: number) => request<AdminSpend>("GET", `/api/admin/ai-spend?days=${days}`),
+  machines: () => request<AdminMachine[]>("GET", "/api/admin/machines"),
+  machineAction: (container: string, action: "stop" | "kill") => request<{ ok: boolean }>("POST", `/api/admin/machines/${q(container)}`, { action }),
+  errors: () => request<AdminError[]>("GET", "/api/admin/errors"),
 };
 
 export function terminalUrl(labId: string): string {

@@ -234,7 +234,7 @@ lab (lab 16) and the `system-design` template.
 | F | Docker and Kubernetes inside labs, with Sysbox (spec 4). Skipped here; do it on the AWS server in K | sudo on that server |
 | H | Real app foundations: Postgres instead of SQLite, Redis, Google login, workers, disk quotas (spec 10) | A Google OAuth client id and secret |
 | I | Payments with Razorpay in test mode: 2 free chapters, paid unlocks the rest | Razorpay test keys |
-| J | Admin dashboard and funnel analytics | Nothing |
+| J | Admin dashboard and funnel analytics (done 20 November) | Nothing |
 | K | Launch-set labs complete, deploy to AWS | AWS access, and your approval before anything runs there |
 
 ### 5. Smaller items put off by agreement

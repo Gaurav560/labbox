@@ -35,6 +35,7 @@ function lazyPage<T extends { default: React.ComponentType }>(load: () => Promis
 // The lab page pulls in Monaco and xterm, so load it only when needed.
 const LabPage = lazyPage(() => import("./pages/LabPage"));
 const TrackPage = lazyPage(() => import("./pages/TrackPage")); // React Flow is only needed here
+const AdminPage = lazyPage(() => import("./pages/AdminPage")); // only admins ever load it
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -60,6 +61,10 @@ export default function App() {
       <Route
         path="/tracks/:track"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><TrackPage /></Suspense></RequireAuth>}
+      />
+      <Route
+        path="/admin"
+        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><AdminPage /></Suspense></RequireAuth>}
       />
       <Route path="*" element={<Navigate to="/labs" replace />} />
     </Routes>

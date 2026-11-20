@@ -1198,3 +1198,48 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .ts-row input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--text); border: 0; }
 .ts-row input[type="range"]:focus-visible { outline: 2px solid var(--brand-red); outline-offset: 4px; }
 .ts-foot { margin: 10px 0 0; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12.5px; }
+
+/* ---------- admin (Phase J) ---------- */
+.adm-title { font-weight: 700; color: var(--muted); padding-left: var(--space-2); border-left: 1px solid var(--border); }
+.adm-main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 64px; }
+.adm-tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--border); margin-bottom: var(--space-6); }
+.adm-tabs button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 10px 14px; font: inherit; font-weight: 600; cursor: pointer; margin-bottom: -1px; }
+.adm-tabs button:hover { color: var(--text); }
+.adm-tabs button[aria-current="page"] { color: var(--text); border-bottom-color: var(--brand-red); }
+.adm-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: var(--space-5, 20px); margin-bottom: var(--space-5, 20px); overflow-x: auto; }
+.adm-panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap; }
+.adm-panel h2 { margin: 0 0 4px; font-size: 18px; }
+.adm-panel h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: var(--space-4) 0 var(--space-2); }
+.adm-panel p { margin: 0; }
+.adm-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.adm-seg button { background: none; border: 0; padding: 6px 12px; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.adm-seg button + button { border-left: 1px solid var(--border); }
+.adm-seg button[aria-pressed="true"] { background: color-mix(in srgb, var(--brand-red) 22%, transparent); color: var(--text); font-weight: 600; }
+.adm-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.adm-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.adm-table td { padding: 9px 10px; border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent); vertical-align: middle; }
+.adm-table tr:last-child td { border-bottom: 0; }
+.adm-num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.adm-bar { display: inline-block; width: 160px; max-width: 100%; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--border) 70%, transparent); overflow: hidden; vertical-align: middle; }
+.adm-bar > span { display: block; height: 100%; border-radius: 4px; }
+.adm-bar-brand > span { background: var(--brand-red); }
+.adm-bar-warn > span { background: #d29922; }
+.adm-inline { display: inline-flex; align-items: center; gap: 10px; }
+.adm-funnel { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.adm-funnel li { display: grid; grid-template-columns: 200px minmax(0, 1fr) 60px 180px; align-items: center; gap: 14px; }
+.adm-funnel .adm-bar { width: 100%; height: 14px; }
+.adm-funnel-label { font-weight: 600; }
+.adm-link { background: none; border: 0; padding: 0; color: var(--text); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--brand-red) 60%, transparent); text-underline-offset: 3px; }
+.adm-search { background: var(--card, var(--panel)); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font: inherit; min-width: 220px; }
+.adm-tag { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: color-mix(in srgb, var(--brand-red) 22%, transparent); }
+.adm-actions { white-space: nowrap; text-align: right; }
+.adm-actions .btn + .btn { margin-left: 6px; }
+.adm-note { padding: 8px 12px; border-radius: 8px; background: color-mix(in srgb, var(--brand-red) 10%, transparent); margin-bottom: var(--space-3) !important; }
+.adm-error { color: #f85149; }
+.adm-err-text { font-family: var(--font-code); font-size: 12.5px; max-width: 420px; word-break: break-word; }
+.adm-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-6); align-items: start; }
+@media (max-width: 760px) {
+  .adm-funnel li { grid-template-columns: 1fr 60px; }
+  .adm-funnel .adm-bar, .adm-funnel-drop { grid-column: 1 / -1; }
+  .adm-grid { grid-template-columns: 1fr; }
+}
