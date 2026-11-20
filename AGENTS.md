@@ -43,10 +43,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (16 tests,
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (20 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (20 November, after JavaScript from zero and pictures in every from-zero course) (266 backend tests on Postgres and Redis,
-  262 on SQLite, 16 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (21 November, after the owner's UX review steps 1 to 4) (268 backend tests on Postgres and Redis,
+  264 on SQLite, 20 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -107,6 +107,13 @@ said about 15 is enough for now, so the platform phases come next.
 - Git labs: use live checks with `mount_workspace: ro` (fresh checks copy without `.git`).
 - Postgres services need small memory tuning (see `postgres-indexing-incident/lab.yaml`, 768m).
 - Go images pre-warm `GOCACHE=/opt/gocache`; Spring labs build offline from the Maven repo in `/opt/m2`.
+
+- Every browser test signs up a fresh account, and the app allows 60 sign-ups per address per hour
+  (`SIGNUPS_PER_IP_HOUR`). A busy evening of test runs hits it ("Too many new accounts", tests stuck
+  at login or onboarding). For the local dev server only, start uvicorn with `SIGNUPS_PER_IP_HOUR=1000`
+  in its environment; never raise the default in code or touch `backend/.env` for this.
+- Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that
+  resize to phone width will find no editor area.
 
 ## POC deviations still in place (intentional)
 
