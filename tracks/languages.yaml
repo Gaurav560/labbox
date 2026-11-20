@@ -14,6 +14,14 @@ nodes:
     title: Python loops and strings
     requires: [py-numbers-decisions]
     chapters: [python-basics/04-loops, python-basics/05-strings]
+  - id: py-lists-dicts
+    title: Python lists and dictionaries
+    requires: [py-loops-strings]
+    chapters: [python-basics/06-lists, python-basics/07-dictionaries]
+  - id: py-sets-functions
+    title: Python sets, tuples and functions
+    requires: [py-lists-dicts]
+    chapters: [python-basics/08-tuples-and-sets, python-basics/09-functions-in-depth]
   - id: java-methods
     title: Java methods
     chapters: [java-basics/01-methods]

@@ -130,3 +130,127 @@ run_cases("count_words", fn, err, [
     (("Python is fun",), 3), (("  lots   of   spaces  ",), 3), (("",), 0), (("hello, world",), 2), (("one",), 1),
     (("tab\tand\nnew line",), 4),
 ])
+
+# ---------- chapter 6: lists ----------
+lst_mod, lst_err = load("lists")
+
+fn, err = get_func(lst_mod, lst_err, "top_n")
+if fn is None:
+    report("top_n", False, err)
+else:
+    try:
+        marks = [72, 45, 90, 66]
+        got = fn(marks, 2)
+        if marks != [72, 45, 90, 66]:
+            report("top_n", False, f"top_n changed the list it was given: it is now {marks}. Use sorted(), not .sort().",
+                   "[72, 45, 90, 66]", repr(marks))
+        else:
+            run_cases("top_n", fn, None, [
+                (([72, 45, 90, 66], 2), [90, 72]), (([5, 1], 5), [5, 1]), (([3, 1, 2], 0), []), (([], 3), []),
+                (([4, 4, 1], 2), [4, 4]),
+            ])
+    except Exception as e:
+        traceback.print_exc()
+        report("top_n", False, f"top_n raised {type(e).__name__}: {e}")
+
+fn, err = get_func(lst_mod, lst_err, "remove_duplicates")
+run_cases("remove_duplicates", fn, err, [
+    (([3, 1, 3, 2, 1],), [3, 1, 2]), ((["tea", "coffee", "tea"],), ["tea", "coffee"]), (([],), []),
+    (([5, 5, 5],), [5]), (([2, 1],), [2, 1]),
+])
+
+# ---------- chapter 7: dictionaries ----------
+dct_mod, dct_err = load("dict_tools")
+
+fn, err = get_func(dct_mod, dct_err, "count_letters")
+run_cases("count_letters", fn, err, [
+    (("Hello!",), {"h": 1, "e": 1, "l": 2, "o": 1}), (("A a",), {"a": 2}), (("123 ?!",), {}), (("",), {}),
+    (("Mississippi",), {"m": 1, "i": 4, "s": 4, "p": 2}),
+])
+
+
+def same_values(task, fn, err, cases):
+    """Like run_cases, but 200 and 200.0 count as the same answer."""
+    if fn is None:
+        report(task, False, err)
+        return
+    try:
+        for args, expected in cases:
+            got = fn(*args)
+            if got != expected:
+                call = f"{fn.__name__}({', '.join(repr(a) for a in args)})"
+                report(task, False, f"{call} returned {got!r}, expected {expected!r}", repr(expected), repr(got))
+                return
+        report(task, True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report(task, False, f"{fn.__name__} raised {type(e).__name__}: {e}")
+
+
+EXPENSES = [{"category": "food", "amount": 120}, {"category": "travel", "amount": 40}, {"category": "food", "amount": 80}]
+fn, err = get_func(dct_mod, dct_err, "total_by_category")
+same_values("total_by_category", fn, err, [
+    ((EXPENSES,), {"food": 200, "travel": 40}), (([],), {}),
+    (([{"category": "fun", "amount": 120.5}, {"category": "fun", "amount": 0.5}],), {"fun": 121.0}),
+    (([{"category": "rent", "amount": 9000}],), {"rent": 9000}),
+])
+
+# ---------- chapter 8: tuples and sets ----------
+st_mod, st_err = load("sets_tuples")
+
+fn, err = get_func(st_mod, st_err, "common_items")
+run_cases("common_items", fn, err, [
+    ((["tea", "coffee", "milk"], ["milk", "tea", "juice"]), ["milk", "tea"]), (([1, 2, 2, 3], [2, 2, 4]), [2]),
+    (([1, 2], [3, 4]), []), (([], [1]), []), (([3, 2, 1], [1, 2, 3]), [1, 2, 3]),
+])
+
+fn, err = get_func(st_mod, st_err, "min_max")
+run_cases("min_max", fn, err, [
+    (([72, 45, 90],), (45, 90)), (([7],), (7, 7)), (([],), (None, None)), (([-3, -10, 4.5],), (-10, 4.5)),
+])
+
+# ---------- chapter 9: functions in depth ----------
+fun_mod, fun_err = load("functions")
+
+fn, err = get_func(fun_mod, fun_err, "add_item")
+if fn is None:
+    report("add_item", False, err)
+else:
+    try:
+        first, second, third = fn("milk"), fn("bread"), fn("eggs")
+        mine = ["milk"]
+        given = fn("tea", mine)
+        if second != ["bread"]:
+            report("add_item", False, f'add_item("milk") then add_item("bread") gave {second!r}: the calls share one basket. '
+                   "A default list is made once and reused; use None as the default.", "['bread']", repr(second))
+        elif first != ["milk"] or third != ["eggs"]:
+            report("add_item", False, f"Three calls without a basket gave {first!r}, {second!r}, {third!r}; each should hold one item.")
+        elif given is not mine or mine != ["milk", "tea"]:
+            report("add_item", False, 'add_item("tea", basket) should add to the basket it was given and return that same '
+                   f"basket, but the caller's basket is still {mine!r} (a copy was changed instead).", "['milk', 'tea']", repr(mine))
+        else:
+            report("add_item", True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report("add_item", False, f"add_item raised {type(e).__name__}: {e}")
+
+fn, err = get_func(fun_mod, fun_err, "total")
+if fn is None:
+    report("total", False, err)
+else:
+    try:
+        cases = [((100, 50), {}, 150.0), ((100, 50), {"discount": 10}, 135.0), ((), {}, 0.0), ((99.99, 0.01), {}, 100.0),
+                 ((100, 10), {}, 110.0), ((10,), {"discount": 33}, 6.7)]
+        for args, kw, expected in cases:
+            got = fn(*args, **kw)
+            if got != expected or type(got) is not float:
+                call = "total(" + ", ".join([*map(repr, args), *(f"{k}={v!r}" for k, v in kw.items())]) + ")"
+                report("total", False, f"{call} returned {got!r}, expected {expected!r}", repr(expected), repr(got))
+                break
+        else:
+            report("total", True, "ok")
+    except TypeError as e:
+        report("total", False, f"total could not be called like total(100, 50, discount=10): {e}")
+    except Exception as e:
+        traceback.print_exc()
+        report("total", False, f"total raised {type(e).__name__}: {e}")

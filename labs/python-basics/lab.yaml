@@ -7,7 +7,7 @@ language: python
 track: languages
 tags: [python, beginner]
 level: beginner
-estimated_minutes: 75
+estimated_minutes: 140
 cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
@@ -116,3 +116,71 @@ chapters:
           - "Words are separated by spaces, sometimes several in a row."
           - "split() without an argument already ignores extra spaces at the ends and in between."
           - "Count the pieces with len()."
+  - id: 06-lists
+    title: Lists
+    file: chapters/06-lists.md
+    minutes: 15
+    tasks:
+      - id: top_n
+        title: "lists.py: the n biggest numbers"
+        hints:
+          - "sorted() gives back a new sorted list and leaves the original alone; list.sort() changes the original."
+          - "sorted(numbers, reverse=True) puts the biggest first."
+          - "A slice [:n] keeps the first n items, and asking for more than the list has is fine."
+      - id: remove_duplicates
+        title: "lists.py: remove duplicates, keep the order"
+        hints:
+          - "Build a new list and only add an item if it is not in the new list yet."
+          - "The in operator tells you whether an item is already in a list."
+          - "A set would lose the order, so loop over the items in their original order."
+  - id: 07-dictionaries
+    title: Dictionaries
+    file: chapters/07-dictionaries.md
+    minutes: 15
+    tasks:
+      - id: count_letters
+        title: "dict_tools.py: count each letter"
+        hints:
+          - "Make the text lower case first, then look at one character at a time."
+          - "Skip characters that are not letters: str.isalpha() tells you."
+          - "counts.get(ch, 0) gives the count so far, or 0 the first time: add 1 to it."
+      - id: total_by_category
+        title: "dict_tools.py: total spent per category"
+        hints:
+          - "Each expense is a small dictionary: read its category and amount with square brackets."
+          - "Start with an empty dictionary and add each amount to its category's running total."
+          - "get with a default of 0 handles a category you have not seen before."
+  - id: 08-tuples-and-sets
+    title: Tuples and sets
+    file: chapters/08-tuples-and-sets.md
+    minutes: 15
+    tasks:
+      - id: common_items
+        title: "sets_tuples.py: the items two lists share"
+        hints:
+          - "Turn both lists into sets: duplicates disappear."
+          - "The & operator (or .intersection) keeps what is in both sets."
+          - "Sets have no order, so give back sorted(...) of the result."
+      - id: min_max
+        title: "sets_tuples.py: smallest and largest together"
+        hints:
+          - "A function can give back two values at once as a tuple: (a, b)."
+          - "min() and max() find the smallest and largest of a list."
+          - "Handle the empty list first: there is no smallest or largest, so both are None."
+  - id: 09-functions-in-depth
+    title: Functions in depth
+    file: chapters/09-functions-in-depth.md
+    minutes: 20
+    tasks:
+      - id: add_item
+        title: "functions.py: fix the basket that never empties"
+        hints:
+          - "A default value like [] is created once, when Python reads the def line, and then shared by every call."
+          - "Use None as the default instead, because None is never changed."
+          - "Inside the function, if basket is still None, make a fresh empty list before appending."
+      - id: total
+        title: "functions.py: any number of prices, with a discount"
+        hints:
+          - "*prices collects every positional argument into a tuple, so sum() works on it."
+          - "A parameter after *prices can only be given by name, like discount=10."
+          - "Take the discount percent off the sum, then round to 2 decimals and make sure it is a float."

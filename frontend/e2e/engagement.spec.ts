@@ -97,7 +97,7 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await page.goto("/tracks/languages");
   await expect(pyNode).toContainText("✓ Done");
   await expect(page.locator(".skill-node", { hasText: "Java methods" })).toContainText("Start");
-  await expect(page.locator(".topbar")).toContainText("1 of 13 skills");
+  await expect(page.locator(".topbar")).toContainText(/1 of \d+ skills/);  // more skills appear as courses grow
 
   // Returning: no onboarding again.
   await page.goto("/labs");

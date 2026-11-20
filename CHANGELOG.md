@@ -1,5 +1,20 @@
 # Changelog
 
+## Python from zero, chapters 6 to 9
+
+- 6. Lists (`top_n` without changing the caller's list, `remove_duplicates` keeping the order),
+  7. Dictionaries (`count_letters`, `total_by_category` over a list of expense records),
+  8. Tuples and sets (`common_items`, `min_max` with `(None, None)` for an empty list),
+  9. Functions in depth (fix the classic shared default list in `add_item`, which the starter really
+  has; `total(*prices, discount=0)` with a keyword-only discount). 9 chapters, 19 tasks, about 140
+  minutes.
+- Checks written for the real mistakes: `top_n` that sorts the caller's list says "use sorted(), not
+  .sort()"; `add_item` that shares one basket names the trap, and one that returns a copy says the
+  caller's basket did not change; `total_by_category` accepts 200 and 200.0 alike; `total(100, 10)` must
+  treat 10 as a price. Every typical wrong answer was run and fails with its lesson.
+- Skill map: lists and dictionaries, then sets, tuples and functions. The browser test no longer counts
+  skill nodes exactly. Tests: 261 on Postgres and Redis, 257 on SQLite, 15 browser tests, 16 labs valid.
+
 ## Python from zero, chapters 2 to 5 (the first lab growing into a full course)
 
 - `python-basics` is now **Python from zero** (same id, so progress, XP and streaks stay): plain style
