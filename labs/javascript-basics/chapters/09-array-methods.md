@@ -6,6 +6,10 @@ and you will see them in almost every modern JavaScript file.
 :::mission
 In `arraymethods/marks.js`, keep only the passing marks, then sort words by length.
 :::
+
+:::picture{name="sieve" concept="filter and map: a conveyor belt"}
+The marks that meet the rule stay in the sieve in their original order.
+:::
 :::
 
 :::step{type=concept title="Arrow functions: small functions, written short"}
@@ -19,6 +23,10 @@ const isPass2 = (m) => m >= 40;           // the same, as an arrow
 
 Read `(m) => m >= 40` as "given m, answer whether m is at least 40". The inputs go left of `=>` and
 the result on the right; with one short expression, `return` is not needed.
+
+:::picture{name="rule-gate" concept="Arrow functions: small functions, written short"}
+The arrow function asks one small question about whichever mark arrives.
+:::
 :::
 
 :::step{type=concept title="filter and map: a conveyor belt"}
@@ -34,7 +42,7 @@ marks                           // [72, 30, 90]: never changed
 
 Both give back a **new** array and leave the original alone.
 
-:::picture{name="conveyor-belt"}
+:::picture{name="conveyor-belt" concept="filter and map: a conveyor belt"}
 Items ride the belt; stations keep, change or sort them.
 :::
 :::
@@ -56,6 +64,10 @@ longNames(["Riya", "Arjun", "Meera"])   // ["ARJUN", "MEERA"]
 2. `map` turns each kept name into capitals.
 
 Each line reads like part of the sentence it implements. `passing` needs only step 1.
+
+:::picture{name="capital-station" concept="filter and map: a conveyor belt"}
+The first station keeps long names and the next changes their letters.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -82,6 +94,10 @@ node -e 'const m = [72, 30, 90, 45, 12]; console.log(m.filter((x) => x >= 40), m
 ```
 
 `reduce` folds an array into one value, here a total: you will meet it in the capstone.
+
+:::picture{name="doubling-machine" concept="Arrow functions: small functions, written short"}
+The same little function is applied separately to every input.
+:::
 :::
 
 :::step{type=task task=passing title="Warm-up: the passing marks"}
@@ -107,6 +123,10 @@ For ties, combine two rules with `||`: when the first gives `0`, the second deci
 :::mistake
 `sort` changes the array it is called on. Sort a copy (`[...words]`) when the array is not yours.
 :::
+
+:::picture{name="line-up" concept="Sorting by your own rule"}
+The shortest words stand first. Equal-length words line up alphabetically.
+:::
 :::
 
 :::step{type=task task=sort_by_length title="Sort words by length"}
@@ -115,6 +135,10 @@ alphabetical order, without changing the array it was given:
 
 - `sortByLength(["banana", "fig", "apple", "kiwi", "date"])` returns
   `["fig", "date", "kiwi", "apple", "banana"]`
+
+:::picture{name="tie-break" concept="Sorting by your own rule"}
+Length leaves a tie between date and kiwi. The alphabet decides their order.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -150,6 +174,10 @@ page runs one when a button is clicked, and Node runs one when a file has been r
 
 Other useful methods: `find` (the first match), `some` and `every` (does any or every item pass?),
 `reduce` (fold into one value) and `flatMap`.
+
+:::picture{name="callback-bell" concept="Arrow functions: small functions, written short"}
+Hand over a function now so the receiver can call it when the event arrives.
+:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -157,4 +185,8 @@ Other useful methods: `find` (the first match), `some` and `every` (does any or 
 - `filter` keeps, `map` changes, and both return new arrays.
 - `sort((a, b) => ...)` sorts by your rule; combine rules with `||` for ties.
 - `sort` changes the array: sort a copy when it is not yours.
+
+:::picture{name="sorted-notebook" concept="Sorting by your own rule"}
+Write the sorted order on a fresh page so the caller keeps the original order.
+:::
 :::

@@ -1,5 +1,13 @@
 # Changelog
 
+## JavaScript from zero: three pictures per concept
+
+- Each of the 38 concepts now has three distinct captioned drawings, spread across the existing steps in all 13 chapters. The 114 pictures include 15 existing drawings, 26 from the preview, and 73 drawn for this sample.
+- In the JavaScript light theme the notebook drawings use printed Inter labels, aligned numeric columns and monospace code.
+- Chapter 7 shows how two names reach one object, what a copy preserves, and why changing a discounted copy leaves the original price alone.
+- A browser check walks the JavaScript course, counts each concept's pictures, and checks captions, accessible descriptions, label fit and both themes on the lesson page.
+- Checks passed on 20 November: 266 backend tests on Postgres and Redis, 262 on SQLite (4 skipped), 17 browser tests, the frontend production build, and strict validation of all 17 labs.
+
 ## JavaScript from zero: a new course (13 chapters, 26 tasks)
 
 - New lab `javascript-basics`, plain style for beginners: functions, values and types (the `"2" + "2"`

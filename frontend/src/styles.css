@@ -1302,10 +1302,19 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .pc-ink { fill: none; stroke: var(--pc-ink); stroke-width: 1.6; filter: url(#pc-wobble); }
 .pc-rule { stroke: var(--pc-rule); stroke-width: 1.2; }
 .pc-head { fill: none; stroke: var(--pc-ink); stroke-width: 1.6; }
-.pc-title { fill: var(--pc-strong); font: 700 23px var(--font-hand); }
-.pc-hand { fill: var(--pc-ink); font: 500 19px var(--font-hand); }
-.pc-label { fill: var(--pc-accent); font: 700 20px var(--font-hand); }
+.pc-title { fill: var(--pc-strong); font: var(--pc-title-font, 700 23px var(--font-hand)); }
+.pc-hand { fill: var(--pc-ink); font: var(--pc-hand-font, 500 19px var(--font-hand)); }
+.pc-label { fill: var(--pc-accent); font: var(--pc-label-font, 700 20px var(--font-hand)); }
 .pc-code { fill: var(--pc-accent); font: 600 11.5px var(--font-code); font-variant-ligatures: none; }
+
+/* The JavaScript sample prints its labels on the light notebook paper. */
+:root[data-theme="light"] [data-lab="javascript-basics"] .picture {
+  --pc-hand-font: 400 14px var(--font-text);
+  --pc-label-font: 600 14px var(--font-text);
+  --pc-title-font: 600 17px var(--font-text);
+}
+
+:root[data-theme="light"] [data-lab="javascript-basics"] .picture text { font-variant-numeric: tabular-nums; }
 
 /* Watch it run (:::trace) */
 .trace { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }

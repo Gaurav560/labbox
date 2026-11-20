@@ -6,6 +6,10 @@ A shop's app stores a price, a product name, and whether the item is in stock. T
 :::mission
 In `types/numbers.js`, work out a percentage safely, and show an amount in paise as rupees.
 :::
+
+:::picture{name="price-tags" concept="Variables: names for values"}
+A shop keeps the price as a number, the name as text, and stock status as a yes or no.
+:::
 :::
 
 :::step{type=concept title="Variables: names for values"}
@@ -21,8 +25,8 @@ inStock = false;           // let can change later
 - `const` means the name always points at the same value. Use it by default.
 - `let` is for values that will change, like a counter.
 
-:::picture{name="labelled-jars"}
-A variable is a labelled jar; its shape is its type.
+:::picture{name="labelled-jars" concept="Variables: names for values"}
+The labels name the values. Both 17 and 12.50 are numbers in JavaScript.
 :::
 :::
 
@@ -46,6 +50,10 @@ Number("2") + 2   // 4
 
 Values from a form or a file arrive as **text**. Turn them into numbers with `Number(...)` before
 doing sums.
+
+:::picture{name="glue-vs-add" concept="typeof, and the + trap"}
+Two number blocks add up, while two text tiles fit together end to end.
+:::
 :::
 
 :::step{type=example title="Worked example: an average, rounded"}
@@ -64,6 +72,10 @@ average(70, 71, 71)   // 70.7
 2. `Math.round` rounds to a whole number, so multiply by 10 first, then divide by 10 again.
 
 `percent` needs the same rounding, plus one guard you will meet in the next step.
+
+:::picture{name="average-notebook" concept="Variables: names for values"}
+Naming the exact average gives the rounding step a value to work with.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -86,6 +98,10 @@ node -e 'console.log(2 + 2, "2" + "2", "2" + 2, Number("2") + 2, 10 / 0, typeof 
 ```
 
 `node -e` runs one line of JavaScript, handy for quick experiments.
+
+:::picture{name="type-stamps" concept="typeof, and the + trap"}
+Converting the typed digit changes which operation the plus sign performs.
+:::
 :::
 
 :::step{type=task task=percent title="Warm-up: a safe percentage"}
@@ -108,6 +124,10 @@ const paise = 1999;
 ```
 
 `toFixed(2)` always shows two decimals, which is exactly what a price needs.
+
+:::picture{name="coin-jar" concept="Money: whole paise, shown as rupees"}
+Keep 1,999 whole paise in the calculation and write ₹19.99 on the price label.
+:::
 :::
 
 :::step{type=task task=format_rupees title="Show an amount in rupees"}
@@ -115,6 +135,10 @@ Make `formatRupees(paise)` return the amount as text with the ₹ sign and two d
 
 - `formatRupees(1250)` returns `"₹12.50"`
 - `formatRupees(5)` returns `"₹0.05"`
+
+:::picture{name="paise-pockets" concept="Money: whole paise, shown as rupees"}
+The two small places after the decimal point hold tens of paise and single paise.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -150,6 +174,10 @@ symbol. Everything else (arrays, objects, functions) is an **object**.
 `Number("abc")` gives `NaN`, "not a number", which is still of type number. `NaN` is the only value
 not equal to itself, so check for it with `Number.isNaN(x)`. For very large whole numbers, beyond
 about 9 million billion, use **bigint** (`123n`).
+
+:::picture{name="number-sorter" concept="typeof, and the + trap"}
+A failed conversion still produces a value of the number type.
+:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -157,4 +185,8 @@ about 9 million billion, use **bigint** (`123n`).
 - `+` adds numbers but joins strings: turn text into numbers with `Number(...)`.
 - Round with `Math.round(x * 10) / 10`; show money with `toFixed(2)`.
 - Guard a division by zero: JavaScript gives `Infinity`, not an error.
+
+:::picture{name="shop-till" concept="Money: whole paise, shown as rupees"}
+The till adds whole paise and formats the total once for the customer.
+:::
 :::

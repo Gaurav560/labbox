@@ -1,6 +1,6 @@
 # LabBox by Telusko: project status
 
-Last updated 19 November 2026. **Part A** is what is done, **part B** is what is left, in order.
+Last updated 20 November 2026. **Part A** is what is done, **part B** is what is left, in order.
 The detail of every step is in `CHANGELOG.md` and `git log`; the full plan is
 `labbox-v2-upgrade-spec.md` (section numbers below point there). How to work on the repo:
 `AGENTS.md`.
@@ -50,7 +50,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
 - **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
-### Labs: 16 live (batch 1: 11, batch 2: 4, Phase G: 1)
+### Labs: 17 live
 
 | Track | Labs |
 |---|---|
@@ -212,9 +212,10 @@ Linux, Git, system design). Beginner courses are plain; advanced courses start w
 from zero and Go from zero follow it in full (20 November). Python from
 zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
 tasks, written in the "explain, do not just state" style) and JavaScript from zero (13 chapters, 26 tasks, 20 November) are complete; next: Python in practice
-(with a story) and the others. **Pictures in lessons** (task cards on
-every task, 18 hand-drawn pictures, "watch it run" traces) are in all three from-zero courses (20
-November); every new course gets them from the start.
+(with a story) and the others. **JavaScript illustration sample (20 November):** 114 distinct captioned drawings across
+13 chapters, three for each of the 38 named concepts. Review chapter 7 (Objects) in either theme.
+Applying the sample to the other courses is a later batch. Python, Go and Java already have the
+earlier set of task cards, hand-drawn pictures and step-through traces.
 
 ### 4. Platform phases not started (E and G are done)
 

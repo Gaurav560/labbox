@@ -7,6 +7,10 @@ account made from it follows them.
 In `classes/bank.js`, finish a bank account that protects its balance, then make different shapes
 work together through one method name.
 :::
+
+:::picture{name="passbook" concept="A class is a blueprint"}
+Riya and Arjun have separate balances, even though both accounts follow the same rules.
+:::
 :::
 
 :::step{type=concept title="A class is a blueprint"}
@@ -27,7 +31,7 @@ a.owner   // "Riya", and b.owner is "Arjun"
 
 `new` builds an object from the blueprint, and `this` means "the object being built or used".
 
-:::picture{name="blueprint-houses"}
+:::picture{name="blueprint-houses" concept="A class is a blueprint"}
 One blueprint, many houses: one class, many objects.
 :::
 :::
@@ -51,6 +55,10 @@ class Counter {
 
 A field starting with `#` is **private**: code outside the class cannot change it, so the methods are
 the only way in. That is how a class protects its rules.
+
+:::picture{name="bank-counter" concept="Methods, and a private balance"}
+The cash stays behind the counter. Each change goes through a method that can check it.
+:::
 :::
 
 :::step{type=example title="Worked example: a counter that refuses bad steps"}
@@ -77,6 +85,10 @@ class Steps {
 2. Only a good value changes `#total`, so it can never go wrong.
 
 `deposit` and `withdraw` follow this exact shape.
+
+:::picture{name="step-turnstile" concept="Methods, and a private balance"}
+Check the proposed step before touching the stored total.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -99,6 +111,10 @@ node -e 'class C { #n = 0; get n() { return this.#n; } inc() { this.#n++; } } co
 ```
 
 Each object has its own private count.
+
+:::picture{name="independent-dials" concept="A class is a blueprint"}
+Turning the first counter twice changes only its own dial.
+:::
 :::
 
 :::step{type=task task=bank_account title="Warm-up: deposit and withdraw"}
@@ -109,6 +125,10 @@ In `classes/bank.js`, finish `deposit` and `withdraw`:
   `RangeError` and leaves the balance exactly as it was
 
 After `deposit(500)` and `withdraw(200)`, `balance` is `300`.
+
+:::picture{name="withdraw-slip" concept="Methods, and a private balance"}
+When a withdrawal is refused, the balance on the slip stays where it was.
+:::
 :::
 
 :::step{type=concept title="Same method name, different classes"}
@@ -128,7 +148,7 @@ for (const s of [new Square(2), new Rect(3, 4)]) {
 The loop never asks which shape it has: it just calls `area()`. Like a wall socket, anything with the
 right plug fits.
 
-:::picture{name="plug-socket"}
+:::picture{name="plug-socket" code='area()' concept="Same method name, different classes"}
 Anything with the right plug fits the socket.
 :::
 :::
@@ -139,6 +159,10 @@ In `classes/bank.js`, give `Circle` an `area()` method (`Math.PI` times the radi
 
 - `totalArea([new Rect(3, 4), new Circle(1)])` returns `15.14`
 - `totalArea([])` returns `0`
+
+:::picture{name="area-tiles" concept="Same method name, different classes"}
+Both shapes report areas in the same square units, so their answers can be added.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -181,4 +205,8 @@ object holding the shared methods. `class` (added in 2015) is a clearer way to w
 - Methods work on `this`; `#private` fields can only change through them.
 - Check and throw before changing data, so the object can never go wrong.
 - Different classes with the same method name can be used side by side.
+
+:::picture{name="shape-requests" concept="Same method name, different classes"}
+One request reaches different shapes. Each shape uses its own measurements to answer.
+:::
 :::

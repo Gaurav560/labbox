@@ -7,6 +7,10 @@ wrong, or skips the bad value and carries on.
 In `errors/ages.js`, read an age with clear errors for bad input, and add up a list of values while
 collecting the ones that are not numbers.
 :::
+
+:::picture{name="error-form" concept="An error is an alarm"}
+An error message can point back to the exact entry the person needs to fix.
+:::
 :::
 
 :::step{type=concept title="An error is an alarm"}
@@ -21,7 +25,7 @@ null.length           // TypeError: Cannot read properties of null
 JSON.parse("{oops")   // SyntaxError
 ```
 
-:::picture{name="fire-alarm"}
+:::picture{name="fire-alarm" concept="An error is an alarm"}
 An error stops the work until something handles it.
 :::
 :::
@@ -42,6 +46,10 @@ console.log("carrying on");
 - If nothing throws, the `catch` block is skipped.
 - If something throws, the rest of `try` is skipped and `catch` runs with the error as `e`.
 - Either way, the program **carries on** afterwards.
+
+:::picture{name="safety-net" concept="try and catch"}
+A thrown error drops out of the risky work and into its handler.
+:::
 :::
 
 :::step{type=example title="Worked example: a safe quantity"}
@@ -63,6 +71,10 @@ function parseQuantity(text) {
 1. Text that is not a whole number gets a `TypeError` (the wrong **kind** of value).
 2. A number that makes no sense gets a `RangeError` (the right kind, out of range).
 3. Each message names the bad value, so the person can fix it.
+
+:::picture{name="quantity-checkpoint" concept="An error is an alarm"}
+An unreadable quantity and a whole number outside the allowed range need different messages.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -93,6 +105,10 @@ carries on with `C`.
 ```bash run
 node -e 'for (const t of ["42", "abc", "7"]) { try { const n = Number(t); if (Number.isNaN(n)) throw new TypeError("not a number: " + t); console.log(t, "->", n); } catch (e) { console.log(t, "-> problem:", e.message); } }'
 ```
+
+:::picture{name="catch-detour" concept="try and catch"}
+Once an operation throws, control goes to the handler and then continues past it.
+:::
 :::
 
 :::step{type=task task=parse_age title="Warm-up: read an age"}
@@ -116,6 +132,10 @@ Number("")              // 0, careful!
 ```
 
 So when you read values, test them yourself: skip or report the bad ones.
+
+:::picture{name="spoiled-total" code='NaN' concept="NaN: the quiet failure"}
+A failed conversion can carry a bad value into the next sum without ringing an alarm.
+:::
 :::
 
 :::step{type=task task=safe_sum title="Add the good, report the bad"}
@@ -123,6 +143,10 @@ Make `safeSum(values)` add up the values that are numbers and collect the others
 
 - `safeSum(["10", "x", "2.5", ""])` returns `{ total: 12.5, bad: ["x", ""] }`
 - `safeSum([])` returns `{ total: 0, bad: [] }`
+
+:::picture{name="sorting-inputs" concept="NaN: the quiet failure"}
+The good inputs build the total while the rejected entries stay available to report.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -158,6 +182,10 @@ JavaScript's built-in errors include `TypeError`, `RangeError`, `SyntaxError` an
 Catch only what you expect and can handle. An empty `catch (e) {}` swallows every problem, including
 real bugs, and makes failures silent: one of the most common causes of "it just stopped working" in
 production systems.
+
+:::picture{name="handler-desk" concept="try and catch"}
+Handle a failure you recognise and let unexpected failures reach someone who can diagnose them.
+:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -165,4 +193,8 @@ production systems.
 - `try { } catch (e) { }` handles what you expect; then the program carries on.
 - `throw new TypeError(...)` or `RangeError(...)` with a message that names the value.
 - `Number` gives `NaN` (and `0` for `""`) instead of throwing: test values yourself.
+
+:::picture{name="empty-number" concept="NaN: the quiet failure"}
+A blank entry and an unreadable entry behave differently when converted to numbers.
+:::
 :::

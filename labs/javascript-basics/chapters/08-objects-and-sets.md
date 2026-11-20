@@ -6,6 +6,10 @@ a **dictionary** for counting, and a **Set** for "is it in there?".
 :::mission
 In `counting/counting.js`, count how often each word appears, and find the items two lists share.
 :::
+
+:::picture{name="tally-marks" concept="An object as a dictionary"}
+Each new sale adds a stroke beside its own item.
+:::
 :::
 
 :::step{type=concept title="An object as a dictionary"}
@@ -23,7 +27,7 @@ phones["Kabir"] ?? "none"   // "none"
 `??` gives the value on its right when the left is `undefined` or `null`, which is perfect for
 "or this default".
 
-:::picture{name="phone-book" code='phones[who]'}
+:::picture{name="phone-book" code='phones[who]' concept="An object as a dictionary"}
 Look up a key to find its value.
 :::
 :::
@@ -79,6 +83,10 @@ Make `wordCounts(words)` return how many times each word appears, with words low
 
 - `wordCounts(["tea", "Coffee", "TEA", "tea"])` returns `{ tea: 3, coffee: 1 }`
 - `wordCounts([])` returns `{}`
+
+:::picture{name="case-tallies" concept="An object as a dictionary"}
+Different spellings in upper and lower case land in the same counting bucket.
+:::
 :::
 
 :::step{type=concept title="A Set: each value once"}
@@ -94,7 +102,7 @@ guests.add("Meera");
 
 `has` stays fast even with a million items, while `includes` on an array checks one item at a time.
 
-:::picture{name="guest-list"}
+:::picture{name="guest-list" concept="A Set: each value once"}
 A set keeps each item once, like a guest list.
 :::
 :::
@@ -104,6 +112,10 @@ Make `commonItems(a, b)` return the items that are in **both** arrays, each once
 
 - `commonItems(["tea", "coffee", "milk"], ["milk", "tea", "juice"])` returns `["milk", "tea"]`
 - `commonItems(["b", "a", "b"], ["b", "b", "a"])` returns `["a", "b"]`
+
+:::picture{name="shared-groceries" concept="A Set: each value once"}
+The overlap holds only the items on both lists. Each shared item appears once.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -147,4 +159,8 @@ items are added and removed constantly.
 - Count with `counts[k] = (counts[k] ?? 0) + 1`.
 - A Set keeps each value once and answers `has` instantly; `[...set]` gives an array back.
 - `??` gives a default only for `undefined` and `null`.
+
+:::picture{name="door-tokens" concept="A Set: each value once"}
+A second visit by the same guest leaves the size of the set alone.
+:::
 :::

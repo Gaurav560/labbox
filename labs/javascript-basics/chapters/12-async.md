@@ -8,6 +8,10 @@ heart of how JavaScript works.
 In `async/prices.js`, fetch many prices at once instead of one after another, and retry a task that
 sometimes fails.
 :::
+
+:::picture{name="food-counter" concept="A promise is a receipt"}
+The customer can do something else while the kitchen prepares the order.
+:::
 :::
 
 :::step{type=concept title="A promise is a receipt"}
@@ -21,6 +25,10 @@ p.then((price) => console.log(price));   // runs later, when ready
 
 A promise is **pending** at first, then either **fulfilled** (here is the value) or **rejected** (it
 failed, with an error).
+
+:::picture{name="token-receipt" concept="A promise is a receipt"}
+The receipt is available immediately. Its final outcome arrives later.
+:::
 :::
 
 :::step{type=concept title="async and await"}
@@ -37,6 +45,10 @@ async function priceOfTwo() {
 - `await` only works inside a function marked `async`.
 - An `async` function always returns a promise, so its caller awaits it too.
 - If the promise is rejected, `await` throws, so `try`/`catch` works as usual.
+
+:::picture{name="parallel-tickets" concept="async and await"}
+One suspended function can wait while other work keeps moving.
+:::
 :::
 
 :::step{type=example title="Worked example: two at once"}
@@ -57,7 +69,7 @@ async function priceOfTwo() {
 With 100 ms each, this takes about 100 ms instead of 200 ms. Like more cooks in the kitchen, the
 waiting happens side by side.
 
-:::picture{name="two-cooks"}
+:::picture{name="two-cooks" concept="async and await"}
 More cooks, all at once: dinner is ready sooner.
 :::
 :::
@@ -93,6 +105,10 @@ the next. Make it ask for **every** price at once and still return the prices in
 
 - `fetchAll(["coffee", "bun"], fetchPrice)` gives `[30, 15]` (in the order of the items)
 - four fetches of about 100 ms each take about 100 ms in all, not 400
+
+:::picture{name="price-tickets" concept="async and await"}
+Prices go back into request order even if the bun price is ready first.
+:::
 :::
 
 :::step{type=concept title="Retrying a flaky task"}
@@ -110,6 +126,10 @@ for (let i = 0; i < 3; i++) {
 
 `return` inside the loop ends the whole function as soon as one try works. If every try fails, the
 loop simply ends: decide what to do then.
+
+:::picture{name="retry-stamps" concept="Retrying a flaky task"}
+Each failure opens another attempt while tries remain. A success ends the journey.
+:::
 :::
 
 :::step{type=task task=retry title="Try again"}
@@ -118,6 +138,10 @@ successful result; if every try fails, throw the **last** error:
 
 - a task that fails twice then gives `"ok"`: `retry(task, 5)` gives `"ok"` on the third try
 - a task that always fails: `retry(task, 2)` tries exactly twice, then throws the second error
+
+:::picture{name="last-error-slip" concept="Retrying a flaky task"}
+When all attempts fail, the caller needs the reason from the last attempt.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -155,6 +179,10 @@ callback from the queue whenever the current code has finished.
 That is why one Node server can serve thousands of people at once: nobody's request blocks anyone
 else's while it waits. It is also why a long calculation in a loop freezes a web page: while it runs,
 nothing else in the queue gets a turn.
+
+:::picture{name="ready-queue" concept="A promise is a receipt"}
+A completed job waits for the current code to finish before its callback takes a turn.
+:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -162,4 +190,8 @@ nothing else in the queue gets a turn.
 - `await` waits without freezing; it only works inside `async` functions.
 - Start several promises, then `await Promise.all([...])`: faster, and in your order.
 - Retry flaky work with `await` inside `try` in a loop.
+
+:::picture{name="retry-exits" concept="Retrying a flaky task"}
+The two ways out of a retry loop carry different things back to its caller.
+:::
 :::

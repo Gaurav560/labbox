@@ -6,6 +6,10 @@ would be madness. An **array** holds many values under one name, in order, and g
 In `arrays/arrays.js`, return the biggest numbers without disturbing the caller's array, and remove
 repeats while keeping the order.
 :::
+
+:::picture{name="playlist" concept="Numbered slots"}
+One playlist name reaches all four songs, with the first song at position zero.
+:::
 :::
 
 :::step{type=concept title="Numbered slots"}
@@ -19,7 +23,7 @@ marks[marks.length - 1]   // 90: the last one
 marks.push(66);  // adds to the end: [72, 45, 90, 66]
 ```
 
-:::picture{name="egg-box"}
+:::picture{name="egg-box" concept="Numbered slots"}
 An array is a row of numbered slots, starting at 0.
 :::
 :::
@@ -38,7 +42,7 @@ const c = [...a];   // a real copy, with the spread syntax
 An array variable holds the **address** of the array. `b = a` copies the address, so both names
 reach the same array. `[...a]` spreads the items into a **new** array.
 
-:::picture{name="envelope-address"}
+:::picture{name="envelope-address" concept="Two names, one array"}
 Two names, one address: both lead to the same array.
 :::
 :::
@@ -61,6 +65,10 @@ cheapest([40, 10, 30], 2)   // [10, 30]
 3. `slice(0, n)` keeps the first n, and is fine when n is bigger than the array.
 
 `topN` is this, biggest first.
+
+:::picture{name="cheapest-tray" concept="Two names, one array"}
+Sorting a second tray preserves the order on the original and makes the cheapest pair easy to lift out.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -83,6 +91,10 @@ node -e 'const a = [10, 9, 100]; console.log([...a].sort(), [...a].sort((x, y) =
 ```
 
 The original `a` is printed last, unchanged, because every sort worked on a copy.
+
+:::picture{name="sorting-lanes" concept="Two names, one array"}
+The same three numbers can take different orders depending on the comparison rule.
+:::
 :::
 
 :::step{type=task task=top_n title="Warm-up: the n biggest numbers"}
@@ -92,6 +104,10 @@ changing the array it was given:
 - `topN([72, 45, 90, 66], 2)` returns `[90, 72]`
 - `topN([5, 1], 5)` returns `[5, 1]`
 - after the call, the caller's array is still `[72, 45, 90, 66]`
+
+:::picture{name="podium-slots" concept="Numbered slots"}
+After ranking, two result slots hold the two largest values.
+:::
 :::
 
 :::step{type=concept title="Searching an array"}
@@ -104,6 +120,10 @@ items.indexOf("coffee")    // 1: where is it? (-1 when missing)
 ```
 
 To build a new array as you go, start empty and `push` what you want to keep.
+
+:::picture{name="search-signs" concept="Searching an array"}
+A membership question gives yes or no. A position question gives a slot number.
+:::
 :::
 
 :::step{type=task task=unique title="Each item once"}
@@ -111,6 +131,10 @@ Make `unique(items)` return the items with repeats removed, in the order they fi
 
 - `unique(["tea", "coffee", "tea", "milk"])` returns `["tea", "coffee", "milk"]`
 - `unique([3, 1, 3, 2, 1])` returns `[3, 1, 2]`
+
+:::picture{name="first-footprints" concept="Searching an array"}
+Keep the first footprint for each value while walking from left to right.
+:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -155,4 +179,8 @@ family of "who changed my data?" bugs.
 - `b = a` shares one array; `[...a]` makes a real copy.
 - Sort numbers with a compare function: `(a, b) => a - b`.
 - `includes` and `indexOf` search; build new arrays with `push`.
+
+:::picture{name="missing-slot" concept="Searching an array"}
+A missing item gets a special result outside the numbered slots.
+:::
 :::

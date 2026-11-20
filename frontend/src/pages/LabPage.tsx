@@ -574,7 +574,7 @@ export default function LabPage() {
   }
 
   return (
-    <div className={`lab-page ${focus ? "focus-mode" : ""}`}>
+    <div className={`lab-page ${focus ? "focus-mode" : ""}`} data-lab={labId}>
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}

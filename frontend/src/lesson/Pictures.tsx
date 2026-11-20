@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Card, Hand, Ink, Svg } from "./PicturePrimitives";
+import * as js from "./JavaScriptPictures";
 
 /*
  * Small pictures for the everyday images a lesson uses to explain an idea (Content standard, section 3:
@@ -7,48 +9,9 @@ import type { ReactNode } from "react";
  * theme (styles.css). Everyday words are handwritten (pc-hand). Most pictures hold no code, so one drawing
  * serves every language; a picture that shows code takes it from the chapter (code='phones["Riya"]'),
  * draws it in the code font (pc-code), and the validator checks that the same code is in a code block of
- * that step: learners never copy from a drawing.
+ * that step: learners never copy from a drawing. JavaScript chapters also name the teaching concept
+ * on each picture, so the browser test can verify coverage across the related steps.
  */
-
-/** Filters and markers for the hand-drawn look; every picture carries its own copy. */
-function Defs() {
-  return (
-    <defs>
-      <filter id="pc-wobble">
-        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" />
-        <feDisplacementMap in="SourceGraphic" scale="3" />
-      </filter>
-      <pattern id="pc-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-        <line className="pc-hatch-line" x1="0" y1="0" x2="0" y2="6" />
-      </pattern>
-      <marker id="pc-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 1 L 9 5 L 0 9" className="pc-head" />
-      </marker>
-    </defs>
-  );
-}
-
-/** A hand-drawn line or curve; with an arrow head unless plain. */
-function Ink({ d, plain }: { d: string; plain?: boolean }) {
-  return <path className="pc-ink" d={d} markerEnd={plain ? undefined : "url(#pc-head)"} />;
-}
-
-function Card({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
-  return <rect className="pc-card" x={x} y={y} width={w} height={h} rx={10} />;
-}
-
-function Hand({ x, y, children, kind = "hand", anchor }: { x: number; y: number; children: ReactNode; kind?: "hand" | "title" | "label" | "code"; anchor?: "middle" | "end" }) {
-  return <text className={`pc-${kind}`} x={x} y={y} textAnchor={anchor}>{children}</text>;
-}
-
-function Svg({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <svg viewBox="0 0 320 150" role="img" aria-label={label}>
-      <Defs />
-      {children}
-    </svg>
-  );
-}
 
 interface P { code?: string }
 
@@ -83,7 +46,7 @@ function LabelledJars() {
     [228, "name", "Riya", "text"],
   ];
   return (
-    <Svg label="Three labelled jars: age holds 17, price holds 12.50, name holds Riya; each jar's shape is its type">
+    <Svg label="Three labelled jars: age holds 17, price holds 12.50, name holds Riya; the age and price are numbers, the name is text">
       {jars.map(([x, name, value, type]) => (
         <g key={name}>
           <path className="pc-ink" d={`M${x + 8} 30 L${x + 64} 30 L${x + 70} 46 L${x + 70} 112 Q${x + 70} 120 ${x + 62} 120 L${x + 10} 120 Q${x + 2} 120 ${x + 2} 112 L${x + 2} 46 Z`} />
@@ -163,7 +126,7 @@ function EggBox() {
       ))}
       <Hand x={14} y={22}>slots numbered from 0</Hand>
       <Hand x={262} y={74}>len 4</Hand>
-      <Hand x={14} y={146}>the last slot is len - 1</Hand>
+      <Hand x={14} y={142}>last slot: length minus one</Hand>
     </Svg>
   );
 }
@@ -235,7 +198,7 @@ function BlueprintHouses() {
     <g>
       <path className="pc-ink" d={`M${x} 92 L${x + 32} 66 L${x + 64} 92 L${x + 64} 132 L${x} 132 Z`} />
       <Hand x={x + 32} y={112} anchor="middle" kind="label">{label}</Hand>
-      <Hand x={x + 32} y={148} anchor="middle">{detail}</Hand>
+      <Hand x={x + 32} y={143} anchor="middle">{detail}</Hand>
     </g>
   );
   return (
@@ -254,13 +217,13 @@ function BlueprintHouses() {
 }
 
 /** An interface is a wall socket: anything with the right plug fits, whatever is behind it. */
-function PlugSocket() {
+function PlugSocket({ code }: P) {
   return (
     <Svg label="A wall socket labelled area; a rectangle plug and a circle plug both fit, because both have the area plug">
       <rect className="pc-card" x={10} y={34} width={90} height={82} rx={12} />
       <circle className="pc-cell" cx={42} cy={75} r={6} />
       <circle className="pc-cell" cx={68} cy={75} r={6} />
-      <Hand x={55} y={136} anchor="middle" kind="label">area()</Hand>
+      <Hand x={55} y={136} anchor="middle" kind={code ? "code" : "label"}>{code ?? "area()"}</Hand>
       <Hand x={10} y={22}>the socket: one shape</Hand>
       <Ink d="M190 52 Q150 58 108 70" />
       <Ink d="M190 104 Q150 96 108 82" />
@@ -415,6 +378,472 @@ function LibraryShelves() {
   );
 }
 
+/* ---- Story scenes: one small picture at the start of a chapter ---- */
+
+/** A web page with a button that reacts at once (JavaScript's first job). */
+function WebPage() {
+  return (
+    <Svg label="A browser window with a like button; clicking it updates the count at once, without asking the server">
+      <Card x={10} y={10} w={200} h={128} />
+      <path className="pc-ink" d="M10 34 Q111 35 210 34" />
+      {[22, 36, 50].map((x) => <circle key={x} className="pc-cell" cx={x} cy={22} r={4} />)}
+      <rect className="pc-band" x={30} y={54} width={110} height={14} rx={3} />
+      <rect className="pc-mark" x={30} y={88} width={78} height={30} rx={8} />
+      <Hand x={40} y={109}>{"♥ Like  12"}</Hand>
+      <Ink d="M221 78 Q187 84 113 100" />
+      <Hand x={222} y={50} kind="label">click:</Hand>
+      <Hand x={222} y={70}>12 likes</Hand>
+      <Hand x={222} y={112}>now 13!</Hand>
+    </Svg>
+  );
+}
+
+/** Price tags: some values are numbers, some text, some yes or no. */
+function PriceTags() {
+  const tags: [number, string, string][] = [[14, "₹120", "number"], [118, "masala tea", "text"], [222, "in stock: yes", "true / false"]];
+  return (
+    <Svg label="Three shop tags: a price is a number, a product name is text, in stock is yes or no">
+      {tags.map(([x, v, k]) => (
+        <g key={k}>
+          <path className="pc-card" d={`M${x} 40 L${x + 70} 40 L${x + 88} 66 L${x + 70} 92 L${x} 92 Z`} />
+          <circle className="pc-cell" cx={x + 70} cy={66} r={4} />
+          <Hand x={x + 8} y={71}>{v}</Hand>
+          <Hand x={x + 8} y={124} kind="label">{k}</Hand>
+        </g>
+      ))}
+      <Hand x={14} y={24}>different kinds of value</Hand>
+    </Svg>
+  );
+}
+
+/** A cinema booth: the price depends on the age. */
+function CinemaBooth() {
+  return (
+    <Svg label="A cinema ticket booth with a price board: child, adult and senior prices depend on age">
+      <Ink d="M14 140 L14 40 L120 20 L226 40 L226 140" plain />
+      <rect className="pc-band" x={40} y={46} width={160} height={22} rx={4} />
+      <Hand x={84} y={63} kind="title">TICKETS</Hand>
+      <Card x={40} y={76} w={160} h={56} />
+      <Hand x={52} y={96}>child  under 18</Hand>
+      <Hand x={52} y={120}>adult / senior</Hand>
+      <Hand x={230} y={70} kind="label">age decides</Hand>
+      <Hand x={230} y={92} kind="label">the price</Hand>
+    </Svg>
+  );
+}
+
+/** A pile of papers to mark: the same job, again and again. */
+function MarkingPile() {
+  return (
+    <Svg label="A tall pile of answer sheets; marking each one is the same job, repeated">
+      {[0, 1, 2, 3, 4, 5].map((i) => <rect key={i} className="pc-card" x={30 + i * 3} y={100 - i * 12} width={120} height={30} rx={4} />)}
+      <Hand x={60} y={44 - 12}>{"✓ 45"}</Hand>
+      <Hand x={170} y={60}>40 sheets,</Hand>
+      <Hand x={170} y={82}>same steps</Hand>
+      <Hand x={170} y={104} kind="label">for each one</Hand>
+    </Svg>
+  );
+}
+
+/** A form filled in a hurry: extra spaces and odd capitals. */
+function MessyForm() {
+  return (
+    <Svg label="A form where the name was typed as riya, many spaces, SHARMA; the tidy version is Riya Sharma">
+      <Card x={10} y={16} w={180} h={110} />
+      <Hand x={22} y={42} kind="label">Name:</Hand>
+      <rect className="pc-cell" x={22} y={50} width={156} height={26} rx={4} />
+      <Hand x={28} y={69}><tspan style={{ whiteSpace: "pre" }}>{"  riya     SHARMA "}</tspan></Hand>
+      <Hand x={22} y={102}>typed in a hurry</Hand>
+      <Ink d="M193 65 Q204 62 215 65" />
+      <rect className="pc-mark" x={218} y={50} width={96} height={26} rx={4} />
+      <Hand x={223} y={69}>Riya Sharma</Hand>
+    </Svg>
+  );
+}
+
+/** A playlist: many songs under one name, in order. */
+function Playlist() {
+  return (
+    <Svg label="A playlist called Road trip with numbered songs 0, 1, 2, 3 under one name">
+      <Card x={60} y={10} w={200} h={130} />
+      <rect className="pc-band" x={62} y={12} width={196} height={30} rx={8} />
+      <Hand x={76} y={33} kind="title">Road trip</Hand>
+      {["Song A", "Song B", "Song C", "Song D"].map((t, i) => (
+        <g key={t}>
+          <Hand x={78} y={64 + i * 22} kind="label">{i}</Hand>
+          <Hand x={100} y={64 + i * 22}>{t}</Hand>
+        </g>
+      ))}
+      <Hand x={269} y={70}>one</Hand>
+      <Hand x={269} y={90}>list</Hand>
+    </Svg>
+  );
+}
+
+/** A shopping cart: each line has a name, a price and a quantity. */
+function ShoppingCart() {
+  return (
+    <Svg label="A shopping cart list: tea, price 20, quantity 2; bun, price 15, quantity 1">
+      <Ink d="M14 34 L36 34 L54 104 L136 104 L150 52 L44 52" plain />
+      <circle className="pc-ink" cx={64} cy={120} r={8} />
+      <circle className="pc-ink" cx={126} cy={120} r={8} />
+      <Card x={155} y={20} w={159} h={104} />
+      <Hand x={167} y={45} kind="label">Item</Hand>
+      <Hand x={260} y={45} kind="label" anchor="end">Price</Hand>
+      <Hand x={301} y={45} kind="label" anchor="end">Qty</Hand>
+      <path className="pc-rule" d="M165 52 H304" />
+      {[["Tea", "20", "2"], ["Bun", "15", "1"]].map(([item, price, quantity], index) => (
+        <g key={item}>
+          <Hand x={167} y={80 + 27 * index}>{item}</Hand>
+          <Hand x={260} y={80 + 27 * index} anchor="end">{price}</Hand>
+          <Hand x={301} y={80 + 27 * index} anchor="end">{quantity}</Hand>
+        </g>
+      ))}
+    </Svg>
+  );
+}
+
+/** Tally marks: counting how many times each thing appears. */
+function TallyMarks() {
+  return (
+    <Svg label="Tally marks on paper: tea has five marks, coffee two, milk one">
+      <Card x={30} y={14} w={240} h={122} />
+      {[["tea", 5], ["coffee", 2], ["milk", 1]].map(([w, n], r) => (
+        <g key={String(w)}>
+          <Hand x={46} y={48 + Number(r) * 34} kind="label">{String(w)}</Hand>
+          {Array.from({ length: Math.min(Number(n), 4) }, (_, i) => <path key={i} className="pc-ink" d={`M${130 + i * 12} ${32 + Number(r) * 34} L${131 + i * 12} ${54 + Number(r) * 34}`} />)}
+          {Number(n) === 5 && <path className="pc-ink" d={`M124 ${50 + Number(r) * 34} L176 ${34 + Number(r) * 34}`} />}
+        </g>
+      ))}
+    </Svg>
+  );
+}
+
+/** A sieve: shake the marks, and only the passing ones stay. */
+function Sieve() {
+  return (
+    <Svg label="Marks poured into a sieve: 30 and 12 fall through, 72 and 90 stay in">
+      <path className="pc-card" d="M40 50 L200 50 L170 100 L70 100 Z" />
+      {[60, 80, 100, 120, 140, 160, 180].map((x) => <line key={x} className="pc-rule" x1={x} y1={52} x2={x - 6 + (x - 120) * -0.1} y2={98} />)}
+      <Hand x={84} y={44}>72</Hand>
+      <Hand x={130} y={44}>90</Hand>
+      <Hand x={100} y={128} kind="label">30   12</Hand>
+      <Ink d="M120 104 L120 112" />
+      <Hand x={214} y={60}>stay: 40</Hand>
+      <Hand x={214} y={80}>or more</Hand>
+      <Hand x={214} y={120} kind="label">fall through</Hand>
+    </Svg>
+  );
+}
+
+/** A form that says what went wrong, instead of crashing. */
+function ErrorForm() {
+  return (
+    <Svg label="A form with age typed as abc; a friendly message says please type a whole number">
+      <Card x={10} y={16} w={200} h={112} />
+      <Hand x={24} y={44} kind="label">Age:</Hand>
+      <rect className="pc-cell" x={24} y={52} width={100} height={26} rx={4} />
+      <Hand x={32} y={71}>abc</Hand>
+      <rect className="pc-mark" x={24} y={90} width={176} height={26} rx={4} />
+      <Hand x={30} y={109}>please type a whole number</Hand>
+      <Hand x={222} y={60}>explain,</Hand>
+      <Hand x={222} y={82}>do not crash</Hand>
+    </Svg>
+  );
+}
+
+/** A bank passbook: every account follows the same rules. */
+function Passbook() {
+  return (
+    <Svg label="Two bank passbooks, Riya and Arjun, each with its own balance, both following the same rules">
+      {[[20, "Riya", "500"], [150, "Arjun", "80"]].map(([x, n, b]) => (
+        <g key={String(n)}>
+          <Card x={Number(x)} y={24} w={110} h={86} />
+          <rect className="pc-band" x={Number(x) + 2} y={26} width={106} height={24} rx={8} />
+          <Hand x={Number(x) + 12} y={44} kind="title">{String(n)}</Hand>
+          <Hand x={Number(x) + 12} y={80}>{`balance ${b}`}</Hand>
+        </g>
+      ))}
+      <Hand x={20} y={138}>same rules for every account</Hand>
+    </Svg>
+  );
+}
+
+/** A food counter: order, take a token, and the kitchen works while you wait. */
+function FoodCounter() {
+  return (
+    <Svg label="A food counter: customers take a token and wait while the kitchen cooks several orders at once">
+      <rect className="pc-band" x={10} y={20} width={180} height={24} rx={4} />
+      <Hand x={54} y={38} kind="title">ORDER HERE</Hand>
+      <Card x={10} y={50} w={180} h={50} />
+      <Hand x={22} y={80}>kitchen: 3 orders cooking</Hand>
+      {[30, 80, 130].map((x, i) => (
+        <g key={x}>
+          <circle className="pc-ink" cx={x} cy={118} r={8} />
+          <Hand x={x - 14} y={142} kind="label">{`#${i + 41}`}</Hand>
+        </g>
+      ))}
+      <Hand x={206} y={70}>take a token,</Hand>
+      <Hand x={206} y={92}>wait, carry on</Hand>
+    </Svg>
+  );
+}
+
+/** A pile of receipts to turn into a monthly report. */
+function ReceiptPile() {
+  return (
+    <Svg label="A pile of receipts for a month becomes one neat report with a total">
+      {[0, 1, 2, 3].map((i) => <rect key={i} className="pc-card" x={20 + i * 14} y={40 + (i % 2) * 10} width={60} height={80} rx={3} transform={`rotate(${(i - 1.5) * 6} ${50 + i * 14} 80)`} />)}
+      <Ink d="M150 80 Q180 72 206 80" />
+      <Card x={210} y={24} w={100} h={110} />
+      <Hand x={222} y={48} kind="title">March</Hand>
+      <Hand x={222} y={76}>food 2262</Hand>
+      <Hand x={222} y={98}>rent 18000</Hand>
+      <rect className="pc-mark" x={218} y={106} width={84} height={20} rx={3} />
+      <Hand x={222} y={121}>total</Hand>
+    </Svg>
+  );
+}
+
+/* ---- Main ideas ---- */
+
+/** + adds numbers but glues text. */
+function GlueVsAdd() {
+  return (
+    <Svg label="Two number blocks 2 and 2 add up to 4; two text tiles 2 and 2 are glued into 22">
+      <Hand x={10} y={24} kind="label">numbers: add</Hand>
+      <rect className="pc-cell" x={10} y={34} width={30} height={30} rx={4} />
+      <rect className="pc-cell" x={60} y={34} width={30} height={30} rx={4} />
+      <Hand x={20} y={55}>2</Hand><Hand x={70} y={55}>2</Hand><Hand x={44} y={55}>+</Hand>
+      <Ink d="M96 49 L120 49" />
+      <rect className="pc-mark" x={126} y={34} width={30} height={30} rx={4} />
+      <Hand x={136} y={55} kind="title">4</Hand>
+      <Hand x={10} y={96} kind="label">text: glue</Hand>
+      <rect className="pc-band" x={10} y={106} width={30} height={30} rx={4} />
+      <rect className="pc-band" x={60} y={106} width={30} height={30} rx={4} />
+      <Hand x={20} y={127}>2</Hand><Hand x={70} y={127}>2</Hand><Hand x={44} y={127}>+</Hand>
+      <Ink d="M96 121 L120 121" />
+      <rect className="pc-mark" x={126} y={106} width={52} height={30} rx={4} />
+      <Hand x={136} y={127} kind="title">22</Hand>
+      <Hand x={200} y={60}>same sign,</Hand>
+      <Hand x={200} y={82}>different job</Hand>
+    </Svg>
+  );
+}
+
+/** Money as whole paise: count coins, show rupees only at the end. */
+function CoinJar() {
+  return (
+    <Svg label="A jar of 1999 paise coins, shown as 19 rupees 99 only when printed">
+      <Ink d="M30 40 L110 40 L118 56 L118 128 Q118 136 110 136 L30 136 Q22 136 22 128 L22 56 Z" plain />
+      {[40, 64, 88, 52, 76, 100].map((x, i) => <circle key={i} className="pc-cell" cx={x} cy={i < 3 ? 120 : 100} r={10} />)}
+      <Hand x={34} y={30} kind="label">1999 paise</Hand>
+      <Ink d="M126 88 Q170 80 200 88" />
+      <rect className="pc-mark" x={204} y={70} width={104} height={32} rx={6} />
+      <Hand x={214} y={93} kind="title">{"₹19.99"}</Hand>
+      <Hand x={142} y={130}>whole paise first</Hand>
+    </Svg>
+  );
+}
+
+/** 5 and "5" look alike but are different kinds of thing. */
+function NumberVsText() {
+  return (
+    <Svg label="A number 5 on a round coin and a text 5 on a paper tag look alike but are different; === says false">
+      <circle className="pc-cell" cx={60} cy={70} r={32} />
+      <Hand x={52} y={80} kind="title">5</Hand>
+      <Hand x={30} y={128} kind="label">a number</Hand>
+      <path className="pc-card" d="M170 46 L240 46 L256 70 L240 94 L170 94 Z" />
+      <Hand x={194} y={78} kind="title">"5"</Hand>
+      <Hand x={176} y={128} kind="label">text</Hand>
+      <Hand x={110} y={74}>look alike,</Hand>
+      <Hand x={110} y={96}>not the same</Hand>
+    </Svg>
+  );
+}
+
+/** && and || as switches: in a row both must be on; side by side either will do. */
+function TwoSwitches() {
+  return (
+    <Svg label="Two switches in a row light the bulb only when both are on (and); two side by side light it when either is on (or)">
+      <Hand x={10} y={22} kind="label">and: both on</Hand>
+      <Ink d="M10 50 Q31 49 50 50 M70 50 Q85 49 100 50 M120 50 Q130 49 140 50" plain />
+      <Ink d="M50 50 L68 40 M100 50 L118 40" plain />
+      <circle className="pc-mark" cx={152} cy={50} r={11} />
+      <Hand x={10} y={92} kind="label">or: either one</Hand>
+      <Ink d="M10 116 L40 116 L40 104 L60 104 M80 104 L100 104 L100 116 M40 116 L40 132 L60 132 M80 132 L100 132 L100 116 L130 116" plain />
+      <Ink d="M60 104 L78 96 M60 132 L78 124" plain />
+      <circle className="pc-mark" cx={142} cy={116} r={11} />
+      <Hand x={184} y={56}>in series</Hand>
+      <Hand x={184} y={122}>in parallel</Hand>
+    </Svg>
+  );
+}
+
+/** for...of is a postman visiting every house on the street, in order. */
+function Postman() {
+  return (
+    <Svg label="A postman walks down a street and visits every house in order, one after another">
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i}>
+          <path className="pc-ink" d={`M${20 + i * 74} 76 L${46 + i * 74} 56 L${72 + i * 74} 76 L${72 + i * 74} 110 L${20 + i * 74} 110 Z`} />
+          <Hand x={40 + i * 74} y={100} kind="label">{String(i + 1)}</Hand>
+        </g>
+      ))}
+      <Ink d="M20 128 Q160 140 300 128" />
+      <Hand x={20} y={30}>every house, in order:</Hand>
+      <Hand x={190} y={30} kind="label">one visit each</Hand>
+    </Svg>
+  );
+}
+
+/** split, change, join: cut a strip, change each piece, glue it back. */
+function CutAndGlue() {
+  return (
+    <Svg label="A paper strip ab-12 cd is cut into pieces, each piece is changed to capitals, and the pieces are glued with a dash">
+      <rect className="pc-cell" x={10} y={20} width={130} height={26} rx={4} />
+      <Hand x={18} y={39}><tspan style={{ whiteSpace: "pre" }}>{"  ab-12   cd "}</tspan></Hand>
+      <Hand x={150} y={39} kind="label">cut</Hand>
+      <rect className="pc-cell" x={20} y={62} width={60} height={26} rx={4} />
+      <rect className="pc-cell" x={96} y={62} width={34} height={26} rx={4} />
+      <Hand x={28} y={81}>ab-12</Hand><Hand x={104} y={81}>cd</Hand>
+      <Hand x={150} y={81} kind="label">change</Hand>
+      <rect className="pc-mark" x={10} y={104} width={130} height={26} rx={4} />
+      <Hand x={22} y={123}>AB-12-CD</Hand>
+      <Hand x={150} y={123} kind="label">glue</Hand>
+      <Hand x={210} y={60}>split,</Hand>
+      <Hand x={210} y={82}>change each,</Hand>
+      <Hand x={210} y={104}>join</Hand>
+    </Svg>
+  );
+}
+
+/** An object is a filled-in form: each field has a label and a value. */
+function FormCard() {
+  return (
+    <Svg label="An object drawn as a form card with three labelled fields: name tea, price 20, qty 2">
+      <Card x={30} y={14} w={200} h={122} />
+      {[["name", "masala tea"], ["price", "20"], ["qty", "2"]].map(([k, v], i) => (
+        <g key={k}>
+          <Hand x={44} y={46 + i * 34} kind="label">{`${k}:`}</Hand>
+          <rect className="pc-cell" x={110} y={30 + i * 34} width={108} height={24} rx={4} />
+          <Hand x={118} y={48 + i * 34}>{v}</Hand>
+        </g>
+      ))}
+      <Hand x={240} y={60}>a label,</Hand>
+      <Hand x={240} y={82}>an answer</Hand>
+    </Svg>
+  );
+}
+
+/** Copy, then change: write on the photocopy and the original stays clean. */
+function Photocopy() {
+  return (
+    <Svg label="The original price tag 20 stays untouched; a photocopy is made and the copy is changed to 18">
+      <Card x={10} y={30} w={110} h={90} />
+      <Hand x={22} y={56} kind="label">original</Hand>
+      <Hand x={22} y={90}>price 20</Hand>
+      <Ink d="M126 74 Q160 60 190 74" />
+      <Hand x={136} y={52}>copy</Hand>
+      <Card x={196} y={30} w={116} h={90} />
+      <Hand x={208} y={56} kind="label">the copy</Hand>
+      <Hand x={208} y={90}>price</Hand>
+      <Ink d="M250 84 L272 84" plain />
+      <rect className="pc-mark" x={274} y={72} width={30} height={24} rx={4} />
+      <Hand x={278} y={90}>18</Hand>
+      <Hand x={10} y={142}>the original keeps its price</Hand>
+    </Svg>
+  );
+}
+
+/** Sorting by a rule: line people up, the rule says who goes first. */
+function LineUp() {
+  return (
+    <Svg label="Words line up shortest first: fig, date, kiwi, apple, banana; ties go alphabetical">
+      {[["fig", 22], ["date", 30], ["kiwi", 30], ["apple", 38], ["banana", 46]].map(([w, h], i) => (
+        <g key={String(w)}>
+          <rect className={i === 1 || i === 2 ? "pc-mark" : "pc-cell"} x={14 + i * 60} y={110 - Number(h) * 1.6} width={44} height={Number(h) * 1.6} rx={5} />
+          <Hand x={16 + i * 60} y={132}>{String(w)}</Hand>
+        </g>
+      ))}
+      <Hand x={14} y={24}>shorter first</Hand>
+      <Hand x={180} y={24} kind="label">ties: a to z</Hand>
+    </Svg>
+  );
+}
+
+/** try and catch are a safety net: if the risky step fails, the net catches it. */
+function SafetyNet() {
+  return (
+    <Svg label="An acrobat on a high wire, the try block; below is a safety net, the catch block, so a fall is caught and the show goes on">
+      <Ink d="M10 40 Q160 42 310 40" plain />
+      <circle className="pc-ink" cx={150} cy={26} r={7} />
+      <Ink d="M150 33 l1 7" plain />
+      <Hand x={14} y={30} kind="label">high wire</Hand>
+      <path className="pc-card" d="M30 108 Q160 140 290 108" />
+      {[60, 100, 140, 180, 220, 260].map((x) => <line key={x} className="pc-rule" x1={x} y1={110} x2={x + 14} y2={128} />)}
+      <Hand x={14} y={102} kind="label">net</Hand>
+      <Ink d="M160 46 Q166 80 160 112" />
+      <Hand x={180} y={84}>a fall is caught</Hand>
+      <Hand x={170} y={142}>the show goes on</Hand>
+    </Svg>
+  );
+}
+
+/** A private field is money behind the counter: only the clerk (the methods) can touch it. */
+function BankCounter() {
+  return (
+    <Svg label="A bank counter with a window; the cash box behind it can only be reached through the clerk, the deposit and withdraw methods">
+      <Ink d="M10 120 L310 120" plain />
+      <rect className="pc-card" x={110} y={20} width={180} height={100} rx={6} />
+      <rect className="pc-mark" x={196} y={74} width={70} height={36} rx={4} />
+      <Hand x={204} y={97}>balance</Hand>
+      <rect className="pc-cell" x={110} y={56} width={30} height={34} rx={4} />
+      <Hand x={14} y={60} kind="label">pay in</Hand>
+      <Hand x={14} y={84} kind="label">take out</Hand>
+      <Ink d="M96 72 Q104 72 112 72" />
+      <Hand x={150} y={46}>behind the counter</Hand>
+      <Hand x={14} y={142}>only through the window, with its checks</Hand>
+    </Svg>
+  );
+}
+
+/** A promise is a token receipt: you get it now, the food comes later. */
+function TokenReceipt() {
+  return (
+    <Svg label="A token receipt number 42 says pending now; later the order is ready, or it failed">
+      <path className="pc-card" d="M20 14 L120 14 L120 132 L110 126 L100 132 L90 126 L80 132 L70 126 L60 132 L50 126 L40 132 L30 126 L20 132 Z" />
+      <Hand x={34} y={44} kind="title">Token 42</Hand>
+      <rect className="pc-mark" x={30} y={60} width={80} height={24} rx={4} />
+      <Hand x={40} y={78}>pending</Hand>
+      <Ink d="M128 60 Q170 40 204 46" />
+      <Ink d="M128 90 Q170 110 204 106" />
+      <Hand x={210} y={50} kind="label">ready: a value</Hand>
+      <Hand x={210} y={110} kind="label">failed: an error</Hand>
+      <Hand x={137} y={140}>token now, food later</Hand>
+    </Svg>
+  );
+}
+
+/** reduce is a funnel: many values go in, one comes out. */
+function Funnel() {
+  return (
+    <Svg label="Numbers 120, 80 and 45 pour into a funnel and come out as one total, 245">
+      {[["120", 30], ["80", 90], ["45", 150]].map(([v, x]) => (
+        <g key={String(v)}>
+          <rect className="pc-cell" x={Number(x)} y={14} width={46} height={26} rx={4} />
+          <Hand x={Number(x) + 8} y={33}>{String(v)}</Hand>
+        </g>
+      ))}
+      <Ink d="M20 52 L210 52 L130 102 L130 122 L100 122 L100 102 Z" plain />
+      <rect className="pc-mark" x={86} y={124} width={58} height={24} rx={4} />
+      <Hand x={96} y={142} kind="title">245</Hand>
+      <Hand x={222} y={84}>many in,</Hand>
+      <Hand x={222} y={106}>one out</Hand>
+    </Svg>
+  );
+}
+
 const PICTURES: Record<string, (p: P) => JSX.Element> = {
   "recipe-card": RecipeCard,
   "labelled-jars": LabelledJars,
@@ -434,6 +863,105 @@ const PICTURES: Record<string, (p: P) => JSX.Element> = {
   "file-lines": FileLines,
   "two-cooks": TwoCooks,
   "library-shelves": LibraryShelves,
+  "web-page": WebPage,
+  "price-tags": PriceTags,
+  "cinema-booth": CinemaBooth,
+  "marking-pile": MarkingPile,
+  "messy-form": MessyForm,
+  playlist: Playlist,
+  "shopping-cart": ShoppingCart,
+  "tally-marks": TallyMarks,
+  sieve: Sieve,
+  "error-form": ErrorForm,
+  passbook: Passbook,
+  "food-counter": FoodCounter,
+  "receipt-pile": ReceiptPile,
+  "glue-vs-add": GlueVsAdd,
+  "coin-jar": CoinJar,
+  "number-vs-text": NumberVsText,
+  "two-switches": TwoSwitches,
+  postman: Postman,
+  "cut-and-glue": CutAndGlue,
+  "form-card": FormCard,
+  photocopy: Photocopy,
+  "line-up": LineUp,
+  "safety-net": SafetyNet,
+  "bank-counter": BankCounter,
+  "token-receipt": TokenReceipt,
+  funnel: Funnel,
+  "greeting-counter": js.GreetingCounter,
+  "square-tiles": js.SquareTiles,
+  "postcard-slot": js.PostcardSlot,
+  "terminal-handoff": js.TerminalHandoff,
+  "remainder-bowls": js.RemainderBowls,
+  "clock-quarter": js.ClockQuarter,
+  "minutes-receipt": js.MinutesReceipt,
+  "average-notebook": js.AverageNotebook,
+  "type-stamps": js.TypeStamps,
+  "number-sorter": js.NumberSorter,
+  "paise-pockets": js.PaisePockets,
+  "shop-till": js.ShopTill,
+  "grade-boundary": js.GradeBoundary,
+  "empty-labels": js.EmptyLabels,
+  "matching-badges": js.MatchingBadges,
+  "adult-interval": js.AdultInterval,
+  "century-calendar": js.CenturyCalendar,
+  "passing-stamps": js.PassingStamps,
+  "total-odometer": js.TotalOdometer,
+  "staircase-sum": js.StaircaseSum,
+  "case-lenses": js.CaseLenses,
+  "vowel-beads": js.VowelBeads,
+  "letter-walk": js.LetterWalk,
+  "trim-edges": js.TrimEdges,
+  "word-islands": js.WordIslands,
+  "initial-and-tail": js.InitialAndTail,
+  "name-register": js.NameRegister,
+  "utf-slots": js.UtfSlots,
+  "unchanged-string": js.UnchangedString,
+  "cheapest-tray": js.CheapestTray,
+  "sorting-lanes": js.SortingLanes,
+  "podium-slots": js.PodiumSlots,
+  "search-signs": js.SearchSigns,
+  "first-footprints": js.FirstFootprints,
+  "missing-slot": js.MissingSlot,
+  "missing-field": js.MissingField,
+  "cart-shelves": js.CartShelves,
+  "basket-count": js.BasketCount,
+  "line-subtotals": js.LineSubtotals,
+  "two-price-tags": js.TwoPriceTags,
+  "one-price-tag": js.OnePriceTag,
+  "case-tallies": js.CaseTallies,
+  "shared-groceries": js.SharedGroceries,
+  "door-tokens": js.DoorTokens,
+  "rule-gate": js.RuleGate,
+  "capital-station": js.CapitalStation,
+  "doubling-machine": js.DoublingMachine,
+  "tie-break": js.TieBreak,
+  "callback-bell": js.CallbackBell,
+  "sorted-notebook": js.SortedNotebook,
+  "quantity-checkpoint": js.QuantityCheckpoint,
+  "catch-detour": js.CatchDetour,
+  "spoiled-total": js.SpoiledTotal,
+  "sorting-inputs": js.SortingInputs,
+  "handler-desk": js.HandlerDesk,
+  "empty-number": js.EmptyNumber,
+  "step-turnstile": js.StepTurnstile,
+  "independent-dials": js.IndependentDials,
+  "withdraw-slip": js.WithdrawSlip,
+  "area-tiles": js.AreaTiles,
+  "shape-requests": js.ShapeRequests,
+  "parallel-tickets": js.ParallelTickets,
+  "price-tickets": js.PriceTickets,
+  "retry-stamps": js.RetryStamps,
+  "last-error-slip": js.LastErrorSlip,
+  "ready-queue": js.ReadyQueue,
+  "retry-exits": js.RetryExits,
+  "file-ribbon": js.FileRibbon,
+  "margin-numbers": js.MarginNumbers,
+  "category-bins": js.CategoryBins,
+  "category-book": js.CategoryBook,
+  "report-inboxes": js.ReportInboxes,
+  "fold-notepad": js.FoldNotepad,
 };
 
 export default function Picture({ name, code, caption }: { name: string; code?: string; caption?: ReactNode }) {
