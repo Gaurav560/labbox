@@ -53,6 +53,29 @@ nodes:
     title: Java streams, files and the capstone
     requires: [java-collections-errors]
     chapters: [java-basics/11-lambdas-and-streams, java-basics/12-files-and-cli, java-basics/13-capstone]
+  - id: js-functions
+    title: JavaScript functions
+    chapters: [javascript-basics/01-first-program]
+  - id: js-types-decisions
+    title: JavaScript types and decisions
+    requires: [js-functions]
+    chapters: [javascript-basics/02-values-and-types, javascript-basics/03-decisions]
+  - id: js-loops-strings
+    title: JavaScript loops and strings
+    requires: [js-types-decisions]
+    chapters: [javascript-basics/04-loops, javascript-basics/05-strings]
+  - id: js-arrays-objects
+    title: JavaScript arrays, objects and sets
+    requires: [js-loops-strings]
+    chapters: [javascript-basics/06-arrays, javascript-basics/07-objects, javascript-basics/08-objects-and-sets]
+  - id: js-methods-errors
+    title: JavaScript array methods and errors
+    requires: [js-arrays-objects]
+    chapters: [javascript-basics/09-array-methods, javascript-basics/10-errors]
+  - id: js-classes-async
+    title: JavaScript classes, async and the capstone
+    requires: [js-methods-errors]
+    chapters: [javascript-basics/11-classes, javascript-basics/12-async, javascript-basics/13-capstone]
   - id: js-values
     title: JavaScript values
     chapters: [javascript-inside-out/01-values-and-equality]

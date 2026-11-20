@@ -1,0 +1,388 @@
+id: javascript-basics
+version: 2
+title: JavaScript from zero
+subtitle: From your first function to objects, classes, promises and a real report.
+description: 'Learn JavaScript from the very first line: values and types, decisions, loops, strings, arrays,
+  objects, sets, array methods, errors, classes, async and await, and reading files. Plain explanations,
+  everyday examples and real tests.'
+language: javascript
+track: languages
+tags: [javascript, beginner]
+level: beginner
+estimated_minutes: 220
+cover: cover.svg
+cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
+image: labbox/javascript-basics:v1
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: bridge
+check:
+  command: [bash, /check/tests/run_checks.sh]
+  timeout_seconds: 30
+  network: none
+chapters:
+- id: 01-first-program
+  title: Your first functions
+  file: chapters/01-first-program.md
+  minutes: 15
+  tasks:
+  - id: greet
+    title: 'hello/hello.js: greet(name)'
+    hints:
+    - Right now greet returns an empty string. What should it give back instead?
+    - A template literal uses backticks and puts a value inside with ${...}.
+    - Put the name between "Hello, " and "!" inside one template literal, and return it.
+    examples:
+    - call: greet("Asha")
+      gives: '"Hello, Asha!"'
+    - call: greet("Kabir")
+      gives: '"Hello, Kabir!"'
+  - id: total_minutes
+    title: 'hello/hello.js: totalMinutes(hours, minutes)'
+    hints:
+    - How many minutes are in one hour?
+    - Turn the hours into minutes first, then add the extra minutes.
+    - Multiply hours by 60, add minutes, and return the result.
+    examples:
+    - call: totalMinutes(2, 15)
+      gives: '135'
+    - call: totalMinutes(0, 45)
+      gives: '45'
+- id: 02-values-and-types
+  title: Values and types
+  file: chapters/02-values-and-types.md
+  minutes: 18
+  tasks:
+  - id: percent
+    title: 'types/numbers.js: percent(scored, total)'
+    hints:
+    - What should happen when total is 0? Answer that before you divide.
+    - scored / total gives a fraction; times 100 gives a percentage.
+    - To keep one decimal, multiply by 10, round with Math.round, then divide by 10.
+    examples:
+    - call: percent(45, 50)
+      gives: '90'
+    - call: percent(1, 3)
+      gives: '33.3'
+      note: one decimal
+    - call: percent(7, 0)
+      gives: '0'
+  - id: format_rupees
+    title: 'types/numbers.js: formatRupees(paise)'
+    hints:
+    - There are 100 paise in a rupee.
+    - toFixed(2) turns a number into text with exactly two decimals.
+    - Divide by 100, use toFixed(2), and put the ₹ sign in front with a template literal.
+    examples:
+    - call: formatRupees(1250)
+      gives: '"₹12.50"'
+    - call: formatRupees(5)
+      gives: '"₹0.05"'
+- id: 03-decisions
+  title: Making decisions
+  file: chapters/03-decisions.md
+  minutes: 16
+  tasks:
+  - id: grade
+    title: 'decisions/decisions.js: grade(marks)'
+    hints:
+    - Answer the impossible marks (below 0, above 100) before anything else.
+    - Then check from the top down, 80 first, so each mark meets exactly one rule.
+    - Use >= so that 80, 60 and 40 themselves get the higher grade.
+    examples:
+    - call: grade(80)
+      gives: '"A"'
+    - call: grade(79)
+      gives: '"B"'
+    - call: grade(101)
+      gives: '"Invalid"'
+  - id: leap_year
+    title: 'decisions/decisions.js: isLeapYear(year)'
+    hints:
+    - year % 4 === 0 is true when the year divides by 4 exactly.
+    - Years divisible by 100 are the exception, unless they divide by 400.
+    - Combine the three rules with && and || in one return line.
+    examples:
+    - call: isLeapYear(2024)
+      gives: 'true'
+    - call: isLeapYear(1900)
+      gives: 'false'
+    - call: isLeapYear(2000)
+      gives: 'true'
+- id: 04-loops
+  title: Loops
+  file: chapters/04-loops.md
+  minutes: 15
+  tasks:
+  - id: sum_to
+    title: 'loops/loops.js: sumTo(n)'
+    hints:
+    - Start a total at 0 before the loop.
+    - Count i from 1 up to n, including n itself.
+    - Add i to the total inside the loop, and return the total after it.
+    examples:
+    - call: sumTo(5)
+      gives: '15'
+      note: 1 + 2 + 3 + 4 + 5
+    - call: sumTo(100)
+      gives: '5050'
+  - id: count_vowels
+    title: 'loops/loops.js: countVowels(text)'
+    hints:
+    - A for...of loop visits each character of a string.
+    - Lower-case the text first, so "A" and "a" are the same.
+    - '"aeiou".includes(ch) tells you whether ch is a vowel.'
+    examples:
+    - call: countVowels("Hello World")
+      gives: '3'
+    - call: countVowels("rhythm")
+      gives: '0'
+- id: 05-strings
+  title: Strings
+  file: chapters/05-strings.md
+  minutes: 16
+  tasks:
+  - id: count_words
+    title: 'words/words.js: warm-up, countWords(text)'
+    hints:
+    - Several spaces in a row should still count as one gap.
+    - trim() removes the spaces at the ends; split(/\s+/) splits on runs of spaces.
+    - 'Text that is only spaces has no words: check for that before counting the pieces.'
+    examples:
+    - call: countWords("JavaScript is fun")
+      gives: '3'
+    - call: countWords("  lots   of   spaces  ")
+      gives: '3'
+  - id: clean_name
+    title: 'words/words.js: cleanName(raw)'
+    hints:
+    - Split the name into words first, ignoring extra spaces.
+    - For each word, the first letter goes upper case and the rest lower case.
+    - Glue the words back together with join(" ").
+    examples:
+    - call: cleanName("  riya   SHARMA ")
+      gives: '"Riya Sharma"'
+    - call: cleanName("ARJUN")
+      gives: '"Arjun"'
+- id: 06-arrays
+  title: Arrays
+  file: chapters/06-arrays.md
+  minutes: 16
+  tasks:
+  - id: top_n
+    title: 'arrays/arrays.js: topN(numbers, n)'
+    hints:
+    - sort changes the array it is called on. Whose array is that?
+    - Make a copy with the spread syntax first, then sort the copy, biggest first.
+    - slice(0, n) keeps the first n items, and is fine when n is bigger than the array.
+    examples:
+    - call: topN([72, 45, 90, 66], 2)
+      gives: '[90, 72]'
+      note: the array passed in stays as it was
+    - call: topN([5, 1], 5)
+      gives: '[5, 1]'
+  - id: unique
+    title: 'arrays/arrays.js: unique(items)'
+    hints:
+    - Build a new array and add each item only the first time you meet it.
+    - includes tells you whether an array already holds a value.
+    - Loop over items, and push an item when the new array does not include it yet.
+    examples:
+    - call: unique(["tea", "coffee", "tea", "milk"])
+      gives: '["tea", "coffee", "milk"]'
+    - call: unique([])
+      gives: '[]'
+- id: 07-objects
+  title: Objects
+  file: chapters/07-objects.md
+  minutes: 16
+  tasks:
+  - id: cart_total
+    title: 'objects/cart.js: cartTotal(cart)'
+    hints:
+    - Each line of the cart is an object with a price and a qty.
+    - Keep a running total, and add each line's price times its qty.
+    - Read the fields with a dot, like line.price, inside a for...of loop.
+    examples:
+    - call: 'cartTotal([{ price: 20, qty: 2 }, { price: 15, qty: 1 }])'
+      gives: '55'
+    - call: cartTotal([])
+      gives: '0'
+  - id: with_discount
+    title: 'objects/cart.js: withDiscount(item, percent)'
+    hints:
+    - The item you were given belongs to the caller. Should it change?
+    - '{ ...item } copies every field into a new object.'
+    - After the copy, give the new object a price lowered by percent, rounded to paise.
+    examples:
+    - call: 'withDiscount({ name: "tea", price: 20 }, 10)'
+      gives: '{ name: "tea", price: 18 }'
+      note: the item passed in stays as it was
+- id: 08-objects-and-sets
+  title: Counting with objects, and sets
+  file: chapters/08-objects-and-sets.md
+  minutes: 16
+  tasks:
+  - id: word_counts
+    title: 'counting/counting.js: wordCounts(words)'
+    hints:
+    - Start with an empty object, and lower-case each word before you use it as a key.
+    - counts[key] is undefined the first time; ?? 0 turns that into 0.
+    - For each word, store the count so far plus one under its key.
+    examples:
+    - call: wordCounts(["tea", "Coffee", "TEA", "tea"])
+      gives: '{ tea: 3, coffee: 1 }'
+    - call: wordCounts([])
+      gives: '{}'
+  - id: common_items
+    title: 'counting/counting.js: commonItems(a, b)'
+    hints:
+    - A Set answers "is this in there?" with has, and keeps each value once.
+    - Make a Set from b, then keep the items of a that it has.
+    - Remove the repeats from a with a Set too, then sort the result.
+    examples:
+    - call: commonItems(["tea", "coffee", "milk"], ["milk", "tea", "juice"])
+      gives: '["milk", "tea"]'
+- id: 09-array-methods
+  title: Array methods and arrow functions
+  file: chapters/09-array-methods.md
+  minutes: 16
+  tasks:
+  - id: passing
+    title: 'arraymethods/marks.js: passing(marks)'
+    hints:
+    - filter keeps the items for which your function answers true.
+    - An arrow function looks like m => (a test on m).
+    - The test is "40 or more", and 40 itself passes.
+    examples:
+    - call: passing([72, 30, 90, 40, 39])
+      gives: '[72, 90, 40]'
+  - id: sort_by_length
+    title: 'arraymethods/marks.js: sortByLength(words)'
+    hints:
+    - sort changes the array it is called on, so sort a copy.
+    - A compare function returns a negative number when a should come first.
+    - Compare the lengths first; when they are equal, compare the words alphabetically with localeCompare.
+    examples:
+    - call: sortByLength(["banana", "fig", "apple", "kiwi", "date"])
+      gives: '["fig", "date", "kiwi", "apple", "banana"]'
+      note: ties alphabetical
+- id: 10-errors
+  title: Errors
+  file: chapters/10-errors.md
+  minutes: 16
+  tasks:
+  - id: parse_age
+    title: 'errors/ages.js: parseAge(text)'
+    hints:
+    - Trim the text first, then decide whether it is only digits.
+    - A regular expression like /^\d+$/ matches text made of digits only.
+    - Throw a TypeError when it is not a whole number and a RangeError above 150, and name the value in the message.
+    examples:
+    - call: parseAge(" 42 ")
+      gives: '42'
+    - call: parseAge("abc")
+      gives: TypeError
+      note: 'message: not a whole number: "abc"'
+  - id: safe_sum
+    title: 'errors/ages.js: safeSum(values)'
+    hints:
+    - Number("x") gives NaN, and Number.isNaN tells you when that happened.
+    - Number("") gives 0, so an empty value needs its own check.
+    - Add the good values to a total and push the others into a bad array; return both in one object.
+    examples:
+    - call: safeSum(["10", "x", "2.5", ""])
+      gives: '{ total: 12.5, bad: ["x", ""] }'
+    - call: safeSum([])
+      gives: '{ total: 0, bad: [] }'
+- id: 11-classes
+  title: Classes
+  file: chapters/11-classes.md
+  minutes: 18
+  tasks:
+  - id: bank_account
+    title: 'classes/bank.js: deposit and withdraw'
+    hints:
+    - Check the amount first, and throw before changing anything.
+    - '"Positive" means more than 0; withdraw also needs enough money in the account.'
+    - Throw a RangeError for a bad amount; otherwise add to or take from this.#balance.
+    examples:
+    - call: deposit(500), then withdraw(200)
+      gives: balance is 300
+    - call: withdraw(1000)
+      gives: RangeError
+      note: balance unchanged
+  - id: total_area
+    title: 'classes/bank.js: Circle area() and totalArea(shapes)'
+    hints:
+    - Circle needs a method with the same name as Rect's.
+    - Math.PI times the radius squared; ** 2 squares a number.
+    - totalArea calls area() on each shape and adds them up, then rounds to 2 decimals.
+    examples:
+    - call: totalArea([new Rect(3, 4), new Circle(1)])
+      gives: '15.14'
+    - call: totalArea([])
+      gives: '0'
+- id: 12-async
+  title: Promises and async/await
+  file: chapters/12-async.md
+  minutes: 20
+  tasks:
+  - id: fetch_all
+    title: 'async/prices.js: fetchAll(items, fetchPrice)'
+    hints:
+    - Awaiting inside the loop waits for each price before asking for the next one.
+    - Call fetchPrice for every item first, without await, to get an array of promises.
+    - Promise.all waits for all of them and keeps their order.
+    examples:
+    - call: fetchAll(["coffee", "bun"], fetchPrice)
+      gives: '[30, 15]'
+      note: same order as the items
+    - call: four fetches of about 100 ms
+      gives: about 100 ms in all
+      note: all at once
+  - id: retry
+    title: 'async/prices.js: retry(task, times)'
+    hints:
+    - Loop up to times times, and await the task inside try.
+    - When it works, return its result straight away.
+    - In catch, remember the error; after the loop, throw the last one you saw.
+    examples:
+    - call: retry(failsTwiceThenOk, 5)
+      gives: '"ok"'
+      note: on the third try
+    - call: retry(alwaysFails, 2)
+      gives: throws the last error
+- id: 13-capstone
+  title: 'Capstone: a monthly report'
+  file: chapters/13-capstone.md
+  minutes: 22
+  tasks:
+  - id: read_totals
+    title: 'capstone/report.js: warm-up, readTotals(path)'
+    hints:
+    - fs.readFileSync(path, "utf8") gives the whole file as text; split it into lines.
+    - Skip line 0 (the header) and blank lines, then split each line on commas.
+    - Skip rows with no category or an amount that is not a number; round each total to 2 decimals.
+    examples:
+    - call: readTotals("expenses.csv").rent
+      gives: '18000'
+    - call: readTotals("expenses.csv").shopping
+      gives: '4095'
+  - id: monthly_report
+    title: 'capstone/report.js: monthlyReport(path)'
+    hints:
+    - Read the rows once, keeping each row's line number (its index plus 1).
+    - Sort them into good rows and bad rows; blank lines are neither.
+    - Work out total, count, average (0 when there are no rows), perCategory and badLines from those two groups.
+    examples:
+    - call: monthlyReport(the five lines in Guess first)
+      gives: total 18120, count 2
+      note: badLines [3, 4]
+    - call: monthlyReport("expenses.csv").count
+      gives: '41'

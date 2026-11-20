@@ -45,8 +45,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (16 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (20 November, after Java from zero and the pictures pilot) (265 backend tests on Postgres and Redis,
-  261 on SQLite, 16 browser tests on 4 workers, 16 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (20 November, after JavaScript from zero and pictures in every from-zero course) (266 backend tests on Postgres and Redis,
+  262 on SQLite, 16 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -55,12 +55,12 @@ starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scri
 <lab>` (starter must fail, solution must pass) -> `scripts/labbox cover <lab> --logo <tech>[,<tech>]`
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> add the lab's chapters to a skill map in `tracks/` -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go,
-service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 16; the owner
+service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 17; the owner
 said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 16 labs (Redis is a 13-chapter course; Python, Go and Java from zero are complete 13-chapter courses), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python, Go, Java and JavaScript from zero are complete 13-chapter courses), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).

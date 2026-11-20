@@ -1,5 +1,20 @@
 # Changelog
 
+## JavaScript from zero: a new course (13 chapters, 26 tasks)
+
+- New lab `javascript-basics`, plain style for beginners: functions, values and types (the `"2" + "2"`
+  trap), decisions (`===`, never `==`), loops, strings, arrays (sharing versus copying, sorting numbers),
+  objects (copy then change), counting with objects and Sets, array methods and arrow functions,
+  errors (`TypeError`, `RangeError`, and the quiet `NaN`), classes with private fields, promises and
+  async/await (the event loop, `Promise.all`, retrying), and a capstone report from messy CSV data.
+- "The story of JavaScript" in chapter 1: static pages and round trips before it, Brendan Eich's ten
+  days at Netscape in 1995, ECMAScript and TC39, Ajax, Node.js, ES2015; Mocha and LiveScript.
+- Pictures, task cards and "watch it run" traces from the start. One folder per chapter; each chapter's
+  check loads only its own file. Every task has a pass message that teaches, and typical mistakes
+  (sorting numbers as text, sorting the caller's array, `>` at a boundary, missing lower-casing,
+  `Number("")` being 0, awaiting in a loop, a blank line shifting line numbers) get their own advice.
+- Six nodes on the languages skill map. 17 labs.
+
 ## Pictures everywhere: Python, Go and Java from zero
 
 - **Task cards on all 79 tasks** of the three from-zero courses ("What your code should do": a call

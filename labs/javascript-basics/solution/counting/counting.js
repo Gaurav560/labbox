@@ -1,0 +1,17 @@
+// Chapter 8: objects as dictionaries, and sets.
+
+function wordCounts(words) {
+  const counts = {};
+  for (const w of words) {
+    const key = w.toLowerCase();
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
+  return counts;
+}
+
+function commonItems(a, b) {
+  const inB = new Set(b);
+  return [...new Set(a)].filter((x) => inB.has(x)).sort();
+}
+
+module.exports = { wordCounts, commonItems };
