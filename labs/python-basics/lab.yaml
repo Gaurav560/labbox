@@ -1,18 +1,14 @@
 id: python-basics
 version: 2
-title: Python Basics
-subtitle: Write your first Python functions and see real tests pass.
-description: Write your first Python functions and see real tests pass.
+title: Python from zero
+subtitle: From your first function to files and command-line programs, one small step at a time.
+description: Learn Python from the very first line to real programs that read files, handle bad input and run from the command line. Plain explanations, everyday examples and real tests.
 language: python
 track: languages
-tags: [python]
+tags: [python, beginner]
 level: beginner
-estimated_minutes: 15
-story:
-  company: Dabba Express
-  character: { name: Priya, role: "Founder, Dabba Express" }
-  pitch: "Dabba Express delivers 300 tiffins a day across Pune and needs a few small helpers in Python."
-cover_scene: "Dabba Express in Pune: a tiny street corner with a delivery bicycle stacked high with shiny steel tiffin boxes, each tiffin glowing softly from inside with lines of light like code, a little laptop on a wooden crate beside it, warm street lamp light."
+estimated_minutes: 75
+cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
 image: labbox/python-basics:v1
@@ -52,3 +48,71 @@ chapters:
           - "A number is even when dividing it by 2 leaves nothing over."
           - "n % 2 gives the remainder after dividing n by 2."
           - "Compare that remainder with 0 using == and return the result of the comparison."
+  - id: 02-numbers-and-text
+    title: Numbers and text
+    file: chapters/02-numbers-and-text.md
+    minutes: 15
+    tasks:
+      - id: average
+        title: "numbers_text.py: the average of a list of marks"
+        hints:
+          - "sum() adds up a list and len() counts its items. What should happen when the list is empty?"
+          - "Dividing by zero raises an error, so check for an empty list first and give back zero as a float."
+          - "round(value, 2) keeps two digits after the point. Apply it to the sum divided by the count."
+      - id: format_price
+        title: "numbers_text.py: show an amount as a price"
+        hints:
+          - "An f-string can format a number: inside the braces, a colon starts the format."
+          - "The format ,.2f adds thousands separators and keeps exactly two decimals."
+          - "Put the rupee sign before the braces, inside the same f-string."
+  - id: 03-decisions
+    title: Making decisions
+    file: chapters/03-decisions.md
+    minutes: 15
+    tasks:
+      - id: grade
+        title: "decisions.py: a grade from marks"
+        hints:
+          - "Check the invalid marks first: below 0 or above 100."
+          - "Then test from the highest grade down: 80, then 60, then 40. The first true condition wins."
+          - "Use if, then elif for each grade, and else for F."
+      - id: leap_year
+        title: "decisions.py: is it a leap year?"
+        hints:
+          - "A year divisible by 4 is usually a leap year. Two exceptions follow."
+          - "Years divisible by 100 are not leap years, unless they are also divisible by 400."
+          - "Combine the three tests with and, or and not. 1900 is False, 2000 is True."
+  - id: 04-loops
+    title: Loops
+    file: chapters/04-loops.md
+    minutes: 15
+    tasks:
+      - id: count_above
+        title: "loops.py: count the numbers above a limit"
+        hints:
+          - "Start a counter at 0 before the loop."
+          - "Go through the numbers with a for loop and add 1 when a number is greater than the limit."
+          - "Greater than means a number equal to the limit does not count."
+      - id: first_negative
+        title: "loops.py: the first negative number"
+        hints:
+          - "Return as soon as you find a negative number: the function stops right there."
+          - "If the loop finishes without finding one, there is nothing to return yet."
+          - "After the loop, give back None (Python's way of saying nothing) so the caller knows there was none."
+  - id: 05-strings
+    title: Strings
+    file: chapters/05-strings.md
+    minutes: 15
+    tasks:
+      - id: clean_name
+        title: "text_tools.py: tidy up a name"
+        hints:
+          - "split() with no argument splits on any run of spaces and drops the empty pieces."
+          - "Join the pieces back with a single space between them."
+          - "title() makes the first letter of each word a capital and the rest small."
+      - id: count_words
+        title: "text_tools.py: count the words in a sentence"
+        hints:
+          - "Words are separated by spaces, sometimes several in a row."
+          - "split() without an argument already ignores extra spaces at the ends and in between."
+          - "Count the pieces with len()."

@@ -6,6 +6,14 @@ nodes:
   - id: py-functions
     title: Python functions
     chapters: [python-basics/01-functions]
+  - id: py-numbers-decisions
+    title: Python numbers and decisions
+    requires: [py-functions]
+    chapters: [python-basics/02-numbers-and-text, python-basics/03-decisions]
+  - id: py-loops-strings
+    title: Python loops and strings
+    requires: [py-numbers-decisions]
+    chapters: [python-basics/04-loops, python-basics/05-strings]
   - id: java-methods
     title: Java methods
     chapters: [java-basics/01-methods]

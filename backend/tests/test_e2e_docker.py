@@ -117,7 +117,7 @@ def test_start_workspace(client: TestClient, user):
     assert host["PidsLimit"] == 256 and host["Memory"] == 512 * 1024 * 1024 and not host["Privileged"]
     assert not any("docker.sock" in b for b in host["Binds"])
     tree = client.get("/api/labs/python-basics/files", headers=h).json()
-    assert sorted(n["name"] for n in tree) == ["greet.py", "math_utils.py"]
+    assert {"greet.py", "math_utils.py"} <= {n["name"] for n in tree}  # chapter 1's files (the course grows)
     assert client.get("/api/labs/python-basics/workspace/status", headers=h).json()["status"] == "running"
 
 
@@ -143,7 +143,8 @@ def test_check_fail_then_pass(client: TestClient, user):
     assert res["duration_ms"] < 5000
 
     progress = {lab["id"]: lab["progress"] for lab in client.get("/api/labs", headers=h).json()}
-    assert progress["python-basics"] == {"passed_tasks": 3, "total_tasks": 3}
+    total = sum(len(c.tasks) for c in labs.get_lab("python-basics").chapters)
+    assert progress["python-basics"] == {"passed_tasks": 3, "total_tasks": total}
     assert len(client.get("/api/labs/python-basics/checks?limit=10", headers=h).json()) == 2
     assert docker_cli("ps", "-aq", "--filter", "label=labbox.kind=check", "--filter", "label=labbox.user=" + str(user[1])) == ""
 
@@ -181,8 +182,8 @@ def test_users_are_isolated(client: TestClient, user):
     write(client, h, "python-basics", "secret.py", "alice only\n")
     r = client.get("/api/labs/python-basics/files/content", headers=h2, params={"path": "secret.py"})
     assert r.status_code == 404
-    tree = client.get("/api/labs/python-basics/files", headers=h2).json()
-    assert sorted(n["name"] for n in tree) == ["greet.py", "math_utils.py"]
+    names = {n["name"] for n in client.get("/api/labs/python-basics/files", headers=h2).json()}
+    assert "secret.py" not in names and {"greet.py", "math_utils.py"} <= names
 
 
 def test_terminal_echo(client: TestClient, user):
@@ -252,6 +253,7 @@ def test_real_check_awards_xp_once(client: TestClient):
     for path, content in PY_SOLVED.items():
         write(client, h, "python-basics", path, content)
     first = check(client, h, "python-basics", "01-functions")
-    assert sorted(a["kind"] for a in first["xp_awarded"]) == ["chapter", "lab", "task", "task", "task"]
+    # Chapter 1 of a multi-chapter course: its tasks and the chapter bonus (the lab bonus comes at the end).
+    assert sorted(a["kind"] for a in first["xp_awarded"]) == ["chapter", "task", "task", "task"]
     assert check(client, h, "python-basics", "01-functions")["xp_awarded"] == []
-    assert client.get("/api/me/stats", headers=h).json()["xp_total"] == 3 * 20 + 50 + 200
+    assert client.get("/api/me/stats", headers=h).json()["xp_total"] == 3 * 20 + 50

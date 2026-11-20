@@ -41,7 +41,7 @@ def test_v1_defaults(lab_copy: Path):
     """A lab.yaml without any v2 key still loads, with v2 defaults."""
     def to_v1(d):
         for k in ("version", "subtitle", "track", "tags", "level", "estimated_minutes", "story"):
-            d.pop(k)
+            d.pop(k, None)  # a lab may have no story (plain beginner courses)
         for c in d["chapters"]:
             c.pop("minutes")
 
@@ -175,7 +175,7 @@ def auth(client: TestClient) -> dict:
 
 def test_lab_list_has_catalog_fields(client: TestClient):
     lab = next(x for x in client.get("/api/labs", headers=auth(client)).json() if x["id"] == LAB)
-    assert lab["track"] == "languages" and lab["level"] == "beginner" and lab["estimated_minutes"] == 15
+    assert lab["track"] == "languages" and lab["level"] == "beginner" and lab["estimated_minutes"] >= 15
 
 
 def test_predict_answer_is_not_in_the_chapter(client: TestClient):
@@ -189,7 +189,7 @@ def test_predict_answer_is_not_in_the_chapter(client: TestClient):
 
 def test_outline(client: TestClient):
     out = client.get(f"/api/labs/{LAB}/chapters/{CH}/outline", headers=auth(client)).json()
-    assert out["steps"][0] == {"type": "story", "title": "Lunch orders at Dabba Express", "task": None}
+    assert out["steps"][0] == {"type": "story", "title": "Why start with functions", "task": None}
     assert [s["task"] for s in out["steps"] if s["type"] == "task"] == ["greet", "add", "is_even"]
     assert len(out["steps"]) == 9
     assert client.get(f"/api/labs/{LAB}/chapters/{CH}/outline").status_code == 401

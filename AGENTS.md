@@ -86,6 +86,9 @@ said about 15 is enough for now, so the platform phases come next.
   limiter may pass up to limit * (N + 1) / N a second. Base cut-offs on that (see rate-limiter's check.py).
 - Admin rights: never leave a test account as admin (`scripts/labbox admin list` must stay empty after
   tests); the admin browser test revokes in a finally block. Never grant admin to asha yourself.
+- Growing a lab: keep every existing chapter id and task id (learner progress hangs on them); new
+  starter files reach existing learners through `containers.top_up` (never overwrites). Mark every
+  starter TODO with its task (`# TODO (task <id>): ...`) so each chapter opens its own file.
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
   id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait

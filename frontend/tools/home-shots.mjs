@@ -37,7 +37,7 @@ export const SHOTS = [
   ["express-api", "01-orders-api", 4, "server.js", "node server.js > /tmp/server.log 2>&1 & sleep 3; cat /tmp/server.log; curl -s localhost:3000/; echo; curl -s -i localhost:3000/orders/1 | head -1", 9000],
   ["fastapi-first-api", "01-menu-api", 4, "main.py", "uvicorn main:app --host 0.0.0.0 --port 8000 --reload", 8000],
   ["java-basics", "01-methods", 4, "Greeter.java", "java -version 2>&1 | head -1 && ls -l && javac Greeter.java && echo '$ java Greeter' && java Greeter", 8000],
-  ["python-basics", "01-functions", 4, "greet.py", "python3 --version && ls -l && echo \"greet('Asha') returns:\" && python3 -c \"from greet import greet; print(repr(greet('Asha')))\""],
+  ["python-basics", "02-numbers-and-text", 4, "numbers_text.py", "python3 -c \"print(0.1 + 0.2); print(round(0.1 + 0.2, 2)); print(7 / 2, 7 // 2, 7 % 2)\""],
 ];
 
 const out = process.argv[2];

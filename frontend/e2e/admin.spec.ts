@@ -50,13 +50,13 @@ async function adminTour(page: Page, learner: { username: string; token: string;
   await expect(page.locator(".adm-funnel li")).toHaveCount(5);
 
   await page.getByRole("navigation", { name: "Admin sections" }).getByRole("button", { name: "Labs" }).click();
-  await page.getByRole("button", { name: "Python Basics" }).click();
+  await page.getByRole("button", { name: "Python from zero" }).click();
   await expect(page.getByRole("columnheader", { name: "Confusion" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Your first functions" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Numbers and text" })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Admin sections" }).getByRole("button", { name: "Machines" }).click();
   const row = page.locator("tr", { hasText: learner.username });
-  await expect(row).toContainText("Python Basics");
+  await expect(row).toContainText("Python from zero");
   page.once("dialog", (d) => d.accept());
   await row.getByRole("button", { name: "Stop" }).click();
   await expect(page.getByRole("status")).toContainText(`Stopped lab-u${learner.id}-python-basics`);

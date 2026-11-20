@@ -55,7 +55,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   expect(chapterJson).not.toContain("way of saying");
   await expect(stepCount(page)).toHaveText("Step 1 of 9");
   await expect(page.locator(".step-kind")).toHaveText("Story");
-  await expect(page.locator(".mission")).toContainText("Write three small Python functions");
+  await expect(page.locator(".mission")).toContainText("Write three small functions");
 
   // Keyboard: right arrow to the predict step.
   await page.keyboard.press("ArrowRight");
@@ -94,7 +94,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
 
   // Hint ladder on the greet task (task chip jumps to its step).
   await page.locator(".task-chip", { hasText: "greet" }).click();
-  await expect(page.locator(".step-card h2")).toHaveText("Greet a customer");
+  await expect(page.locator(".step-card h2")).toHaveText("Greet someone");
   await expect(page.locator(".xp-chip")).toHaveText("20 XP");
   await page.locator(".task-box").getByRole("button", { name: "💡 Hint (3 left)" }).click();
   await expect(page.locator(".hint-list li")).toHaveCount(1);
@@ -143,6 +143,9 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.waitForTimeout(600); // the step position is saved shortly after the last move
 
   await page.reload();
+  // A finished chapter 1 means the lab now opens on chapter 2; chapter 1 still remembers its step.
+  await expect(page.locator("#chapter-select")).toHaveValue("02-numbers-and-text");
+  await page.locator("#chapter-select").selectOption("01-functions");
   await expect(stepCount(page)).toHaveText("Step 9 of 9");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));

@@ -1,3 +1,3 @@
 def greet(name: str) -> str:
-    # TODO: return "Hello, <name>!"  e.g. greet("Asha") -> "Hello, Asha!"
+    # TODO (task greet): return "Hello, <name>!"  e.g. greet("Asha") -> "Hello, Asha!"
     pass

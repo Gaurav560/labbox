@@ -1,13 +1,11 @@
-:::step{type=story title="Lunch orders at Dabba Express"}
-:::character{name="Priya" role="Founder, Dabba Express"}
-Every morning we deliver 300 tiffins across Pune. Right now I write every order
-slip by hand and add up the bills on my phone. I need a few small helpers in Python.
-Can you build them for me before the lunch rush?
-:::
+:::step{type=story title="Why start with functions"}
+Every program you will write, from a marks calculator to a web server, is built from small pieces
+that each do one job. In Python those pieces are **functions**. Learn them first and everything
+after this builds on them.
 
 :::mission
-Write three small Python functions: one greets a customer, one adds up a bill,
-and one decides which van an order goes in.
+Write three small functions: one greets a person, one adds two numbers, and one tells whether a
+number is even. Real tests check each one.
 :::
 :::
 
@@ -55,15 +53,15 @@ python3 -c "from greet import greet; print(greet('Asha'))"
 You should see `None`. Keep this command handy: run it again after each change.
 :::
 
-:::step{type=task task=greet title="Greet a customer"}
+:::step{type=task task=greet title="Greet someone"}
 Make `greet(name)` in `greet.py` return `"Hello, <name>!"`.
 
 For example, `greet("Asha")` returns `"Hello, Asha!"`. Mind the comma and the
-exclamation mark: the order slips are printed exactly as you return them.
+exclamation mark: the tests compare the text exactly.
 
 :::why
-Returning the text (instead of printing it) lets other code reuse it: the slip
-printer, the SMS sender, and the tests that check your work.
+Returning the text (instead of printing it) lets other code reuse it: a web page, a
+message, or the tests that check your work.
 :::
 :::
 
@@ -85,15 +83,13 @@ most common bug on day one.
 :::
 :::
 
-:::step{type=task task=add title="Add up a bill"}
+:::step{type=task task=add title="Add two numbers"}
 In `math_utils.py`, make `add(a, b)` return the sum of `a` and `b`.
 
 `add(2, 3)` returns `5`, and `add(-1, 1)` returns `0`.
 :::
 
-:::step{type=task task=is_even title="Pick the right van"}
-Orders with an even number go in the blue van, odd ones in the red van.
-
+:::step{type=task task=is_even title="Even or odd"}
 In `math_utils.py`, make `is_even(n)` return `True` when `n` is even and `False`
 otherwise. Zero and negative numbers count too: `is_even(0)` and `is_even(-4)` are `True`.
 :::

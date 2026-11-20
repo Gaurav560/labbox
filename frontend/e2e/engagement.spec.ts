@@ -40,7 +40,7 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   for (let i = 0; i < 3; i++) await page.locator(".placement-q").nth(i).getByRole("radio").nth(1).click();
   await page.getByRole("button", { name: "See my path →" }).click();
   await expect(page.getByText("You got 3 of 3")).toBeVisible();
-  await expect(page.locator(".start-card")).toContainText("Python Basics");
+  await expect(page.locator(".start-card")).toContainText("Python from zero");
 
   // 3. Into the lab: the editor is open on the first starter file, well within 60 seconds.
   await page.getByRole("button", { name: "Start coding →" }).click();
@@ -88,15 +88,16 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   }
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
-  await expect(page.locator(".toast-info").last()).toContainText("+310 XP");
+  // Chapter 1 of a 5-chapter course: the chapter's XP, no whole-lab bonus yet.
+  await expect(page.locator(".toast-info").last()).toContainText("+110 XP");
   await expect(page.locator(".recap-stats")).toContainText("⭐ 110");
-  await expect(badge(page, /XP$/)).toHaveText("⭐ 330");
-  await expect(badge(page, /Level/)).toHaveText("Lv 3");
+  await expect(badge(page, /XP$/)).toHaveText("⭐ 130");
+  await expect(badge(page, /Level/)).toHaveText("Lv 2");
 
   await page.goto("/tracks/languages");
   await expect(pyNode).toContainText("✓ Done");
   await expect(page.locator(".skill-node", { hasText: "Java methods" })).toContainText("Start");
-  await expect(page.locator(".topbar")).toContainText("1 of 11 skills");
+  await expect(page.locator(".topbar")).toContainText("1 of 13 skills");
 
   // Returning: no onboarding again.
   await page.goto("/labs");

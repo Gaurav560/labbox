@@ -1,5 +1,27 @@
 # Changelog
 
+## Python from zero, chapters 2 to 5 (the first lab growing into a full course)
+
+- `python-basics` is now **Python from zero** (same id, so progress, XP and streaks stay): plain style
+  with everyday examples, no story (the owner's choice for beginner courses). Chapter 1 keeps its tasks
+  and tests; only its old story card became a short plain intro.
+- New chapters, each with a "guess first", a terminal try, two tasks, a Go deeper card and a recap:
+  2. Numbers and text (`average`, `format_price`), 3. Making decisions (`grade`, `is_leap_year`),
+  4. Loops (`count_above`, `first_negative`), 5. Strings (`clean_name`, `count_words`). One file per
+  chapter, so a broken file never breaks another chapter's check.
+- Hidden tests cover the edges beginners miss (an empty list, `999.999` rounding to `₹1,000.00`, 1900
+  and 2000, the limit itself, zero, extra spaces, tabs); typical wrong answers were run and each fails
+  with the exact call, the wrong value and the right one.
+- Labs that grow: learners who opened a lab before it gained chapters now get the new starter files
+  when they next open it (`containers.top_up`). Their own files are never overwritten, a file they
+  deleted stays deleted (a record next to their folder, outside /workspace), and a link they made out of
+  their folder is never followed.
+- Lite editor: the chapter's own file is no longer replaced by "the first file" (which became
+  `decisions.py` once the lab had more files); chapter 1's starter TODOs now name their tasks.
+- Skill map: two new nodes (numbers and decisions, loops and strings). Home screenshot retaken on
+  chapter 2. Tests updated for a 5-chapter course (chapter 1 now earns the chapter's XP, not the whole
+  lab's bonus; the lab reopens on chapter 2 once chapter 1 is done).
+
 ## Phase J, part 2: the admin page
 
 - `/admin` (lazy-loaded; only admins ever download it) with six tabs: Funnel (bars with the share kept

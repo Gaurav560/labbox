@@ -74,6 +74,7 @@ export default function LabPage() {
   const [startedAt, setStartedAt] = useState<string | null>(null);
   const [chapterXp, setChapterXp] = useState(0);
   const autoOpened = useRef(false);
+  const chapterFileOpened = useRef(false); // set once chapter focus opened the chapter's own file
   const [status, setStatus] = useState<UiStatus>("starting");
   const [tree, setTree] = useState<FileNode[]>([]);
   const [tabs, setTabs] = useState<Tab[]>([]);
@@ -316,6 +317,9 @@ export default function LabPage() {
   useEffect(() => {
     if (autoOpened.current || tree.length === 0) return;
     autoOpened.current = true;
+    // The chapter's own file (chapter focus) beats "the first file": skip it once that file is open.
+    // (If the chapter's file is asked for later, it still wins: the last file asked for is shown.)
+    if (chapterFileOpened.current) return;
     const first = firstFile(tree);
     if (first && tabsRef.current.length === 0) openFile(first);
     // Only tree is a dependency on purpose: this runs once per page, when the files first arrive.
@@ -382,6 +386,7 @@ export default function LabPage() {
     api.chapterFocus(labId, chapterId, useIde).then((f) => {
       if (!f.path || useIde) return;
       const path = f.path;
+      chapterFileOpened.current = true;
       openFile(path).then(() => revealLine(path, f.line));
     }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps

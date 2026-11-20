@@ -126,13 +126,24 @@ def test_check_awards_task_chapter_and_lab_once(client: TestClient):
         part = engagement.award_for_check(s, uid, lab, "01-functions", {"greet": True, "add": False, "is_even": False})
         assert [(a.kind, a.amount) for a in part] == [("task", 16)]  # one hint: 80% of 20
         full = engagement.award_for_check(s, uid, lab, "01-functions", {"greet": True, "add": True, "is_even": True})
-        assert [(a.kind, a.amount) for a in full] == [("task", 20), ("task", 20), ("chapter", 50), ("lab", 200)]
+        assert [(a.kind, a.amount) for a in full] == [("task", 20), ("task", 20), ("chapter", 50)]
         assert engagement.award_for_check(s, uid, lab, "01-functions", {"greet": True, "add": True, "is_even": True}) == []
-        assert len(s.exec(select(XpEvent).where(XpEvent.user_id == uid)).all()) == 5
+        assert len(s.exec(select(XpEvent).where(XpEvent.user_id == uid)).all()) == 4
     st = client.get("/api/me/stats", headers=h).json()
-    assert st["xp_total"] == 306 and st["level"] == 3 and st["today_xp"] == 306 and st["streak_current"] == 1
+    assert st["xp_total"] == 106 and st["level"] == 2 and st["today_xp"] == 106 and st["streak_current"] == 1
     prog = client.get("/api/labs/python-basics/chapters/01-functions/progress", headers=h).json()
-    assert prog["xp_earned"] == 106  # this chapter's tasks and completion; the lab bonus is not per chapter
+    assert prog["xp_earned"] == 106  # this chapter's tasks and completion
+
+    # The lab bonus comes once, with the last chapter finished (whatever the course's length).
+    with Session(engine) as s:
+        rest = lab.chapters[1:]
+        for i, ch in enumerate(rest):
+            got = engagement.award_for_check(s, uid, lab, ch.id, {t.id: True for t in ch.tasks})
+            kinds = [a.kind for a in got]
+            assert ("lab" in kinds) == (i == len(rest) - 1), (ch.id, kinds)
+            if "lab" in kinds:
+                assert next(a.amount for a in got if a.kind == "lab") == 200
+        assert engagement.award_for_check(s, uid, lab, rest[-1].id, {t.id: True for t in rest[-1].tasks}) == []
 
 
 def test_predict_first_try_bonus(client: TestClient):
@@ -233,7 +244,8 @@ def test_skill_map_lights_up(client: TestClient):
     nodes = {n["id"]: n for n in client.get("/api/tracks/languages/skills", headers=h).json()["nodes"]}
     assert nodes["py-functions"]["state"] == "done" and nodes["java-methods"]["state"] == "available"
     assert nodes["py-collections"]["state"] == "available"  # unlocked by finishing Python functions
-    assert {"track": "languages", "title": "Programming languages", "nodes": 11, "done": 1} in client.get("/api/tracks", headers=h).json()
+    languages = next(t for t in client.get("/api/tracks", headers=h).json() if t["track"] == "languages")
+    assert languages["done"] == 1 and languages["nodes"] >= 11  # more skills appear as courses grow
     assert client.get("/api/tracks/cooking/skills", headers=h).status_code == 404
 
 

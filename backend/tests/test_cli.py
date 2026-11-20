@@ -208,7 +208,8 @@ def test_generate_with_openai(labs_dir: Path, tmp_path: Path, monkeypatch):
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "python-basics", "--generate", "--count", "1", "--quality", "high"]) == 0
     assert seen["url"] == cli.OPENAI_URL and seen["headers"]["Authorization"] == "Bearer sk-test"
     assert seen["body"]["model"] == "gpt-image-2" and seen["body"]["size"] == "1536x1024" and seen["body"]["quality"] == "high"
-    assert "tiffin" in seen["body"]["prompt"] and "electric violet" in seen["body"]["prompt"]
+    scene = cli.load_lab(labs_dir / "python-basics").cover_scene
+    assert scene and scene in seen["body"]["prompt"] and "electric violet" in seen["body"]["prompt"]
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "python-basics", "--pick", "1"]) == 0
     lab = cli.load_lab(labs_dir / "python-basics")
     assert lab.cover == "cover.webp" and lab.cover_credit.by == "Generated with OpenAI"

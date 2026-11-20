@@ -60,9 +60,9 @@
     "alt": "A LabBox lab, Postgres: transactions and locks (Ch 2, Checkout is frozen): the lesson, VS Code and a live terminal"
   },
   {
-    "src": "/images/labs/python-basics-01-functions.webp",
-    "caption": "labbox \u00b7 Python Basics \u00b7 Ch 1, Your first functions",
-    "alt": "A LabBox lab, Python Basics (Ch 1, Your first functions): the lesson, VS Code and a live terminal"
+    "src": "/images/labs/python-basics-02-numbers-and-text.webp",
+    "caption": "labbox \u00b7 Python from zero \u00b7 Ch 2, Numbers and text",
+    "alt": "A LabBox lab, Python from zero (Ch 2, Numbers and text): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/python-collections-01-lists-and-dicts.webp",

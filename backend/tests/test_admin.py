@@ -141,7 +141,7 @@ def test_admin_sees_and_stops_and_kills_machines(api, admin):
     try:
         assert api.post("/api/labs/python-basics/workspace/start", headers=h).status_code == 200
         machines = api.get("/api/admin/machines", headers=admin).json()
-        assert any(m["container"] == name and m["lab_title"] == "Python Basics" for m in machines)
+        assert any(m["container"] == name and m["lab_title"] == "Python from zero" for m in machines)
 
         assert api.post(f"/api/admin/machines/{name}", json={"action": "stop"}, headers=admin).status_code == 200
         st = api.get("/api/labs/python-basics/workspace/status", headers=h).json()

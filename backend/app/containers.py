@@ -1,4 +1,5 @@
 """ALL docker logic lives here. Every function is blocking: call it via asyncio.to_thread."""
+import json
 import logging
 import shutil
 import shlex
@@ -100,6 +101,8 @@ def get_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
                 ws.seeded = True
                 session.add(ws)
                 session.commit()
+    else:
+        top_up(lab, ws)
     return ws
 
 
@@ -108,7 +111,78 @@ def seed(lab: LabConfig, folder: Path) -> None:
     if lab.starter_dir.is_dir():
         shutil.copytree(lab.starter_dir, folder, dirs_exist_ok=True, symlinks=True)
     workspace_files.chown_tree(folder)
+    _write_record(folder, starter_files(lab))
     log.info("Seeded %s with starter files of %s", folder, lab.id)
+
+
+# ---------- new starter files for labs that grow ----------
+# A lab that gains chapters gains starter files (chapter 2's numbers_text.py...). Learners who opened the
+# lab before only got the old ones. top_up copies the starter files they never received: never over
+# their own files, and never again once received (a file they deleted stays deleted). The record of
+# what each learner received lives next to their folder, outside /workspace.
+
+
+@lru_cache(maxsize=256)
+def _starter_files_cached(starter_dir: str) -> tuple[str, ...]:
+    root = Path(starter_dir)
+    if not root.is_dir():
+        return ()
+    return tuple(sorted(str(p.relative_to(root)) for p in root.rglob("*") if p.is_file() or p.is_symlink()))
+
+
+def starter_files(lab: LabConfig) -> tuple[str, ...]:
+    """The lab's starter files, as paths relative to starter/ (labs load at startup, so this is cached)."""
+    return _starter_files_cached(str(lab.starter_dir))
+
+
+def _record_path(folder: Path) -> Path:
+    return Path(f"{folder}.starter.json")
+
+
+def _write_record(folder: Path, files) -> None:
+    _record_path(folder).write_text(json.dumps(sorted(files)), encoding="utf-8")
+
+
+def _read_record(folder: Path) -> set[str] | None:
+    try:
+        return set(json.loads(_record_path(folder).read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        return None  # a workspace from before the record existed
+
+
+def top_up(lab: LabConfig, ws: Workspace) -> list[str]:
+    """Copy starter files this learner never received. Returns the files copied."""
+    folder = Path(ws.volume_path)
+    files = starter_files(lab)
+    known = _read_record(folder)
+    if known is not None and known.issuperset(files):
+        return []  # the usual case: one small file read
+    added: list[str] = []
+    with shared.lock(f"{ws.container_name}:seed"):
+        known = _read_record(folder) or set()
+        root = folder.resolve()
+        for rel in files:
+            if rel in known:
+                continue
+            dst = folder / rel
+            if dst.exists() or dst.is_symlink():
+                continue  # the learner's own file with that name wins
+            parent = dst.parent
+            # Never follow a link the learner made out of their folder.
+            if parent.exists() and not parent.resolve().is_relative_to(root):
+                log.warning("Not topping up %s in %s: its folder leads outside the workspace", rel, folder)
+                continue
+            parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(lab.starter_dir / rel, dst, follow_symlinks=False)
+            workspace_files.chown(dst)
+            for d in dst.relative_to(folder).parents:
+                if str(d) != ".":
+                    workspace_files.chown(folder / d)
+            added.append(rel)
+        _write_record(folder, known | set(files))
+    if added:
+        log.info("Topped up %s with new starter files of %s: %s", folder, lab.id, ", ".join(added))
+    return added
 
 
 def touch(session: Session, ws: Workspace, force: bool = True) -> None:
