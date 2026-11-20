@@ -108,3 +108,23 @@ def test_task_card_examples_are_served(client: TestClient):
     assert py["examples"][0]["call"] == 'greet("Asha")'
     other = client.get("/api/labs/redis-in-practice", headers=h).json()["chapters"][0]["tasks"][0]
     assert other["examples"] == []  # optional: tasks without a card still work
+
+
+def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
+    h = auth(client)
+    # A new learner with no goal: the coding basics, chapter 1, step 1.
+    first = client.get("/api/me/next", headers=h).json()
+    assert (first["kind"], first["lab_id"], first["chapter_number"], first["step"]) == ("start", "python-basics", 1, 1)
+    assert first["reason"]
+
+    # After moving through a chapter: continue exactly there (steps are 1-based for people).
+    url = "/api/labs/java-basics/chapters/03-decisions/progress"
+    assert client.put(url, json={"current_step": 4}, headers=h).status_code == 200
+    nxt = client.get("/api/me/next", headers=h).json()
+    assert (nxt["kind"], nxt["lab_id"], nxt["chapter_id"], nxt["chapter_number"], nxt["step"]) == ("continue", "java-basics", "03-decisions", 3, 5)
+    assert nxt["steps"] > 5 and nxt["chapters"] == 13
+
+    # The most recently touched chapter wins.
+    client.put(f"/api/labs/{LAB}/chapters/{CH}/progress", json={"current_step": 2}, headers=h)
+    assert client.get("/api/me/next", headers=h).json()["lab_id"] == LAB
+    assert client.get("/api/me/next").status_code == 401

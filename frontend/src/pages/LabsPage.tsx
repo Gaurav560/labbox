@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, type LabSummary, type TrackSummary } from "../api";
+import { api, type LabSummary, type NextStep, type TrackSummary } from "../api";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
 import LabCover from "../components/LabCover";
@@ -26,10 +26,12 @@ export default function LabsPage() {
   const navigate = useNavigate();
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [tracks, setTracks] = useState<TrackSummary[]>([]);
+  const [next, setNext] = useState<NextStep | null>(null);
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
     api.tracks().then(setTracks).catch(() => {});
+    api.next().then(setNext).catch(() => {});
   }, [toast]);
 
   // Brand new learners start with the 60 second onboarding.
@@ -47,6 +49,7 @@ export default function LabsPage() {
         <button className="btn btn-small" onClick={logout}>Log out</button>
       </header>
       <main className="labs-main">
+        {next && <NextCard next={next} />}
         {stats && (
           <section className="progress-strip" aria-label="Your progress">
             <div>
@@ -102,5 +105,33 @@ export default function LabsPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+/** The first thing on the dashboard: one clear next step. */
+function NextCard({ next }: { next: NextStep }) {
+  const cont = next.kind === "continue";
+  const pct = Math.round((100 * (next.step - 1)) / Math.max(1, next.steps));
+  return (
+    <section className={`next-card ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}>
+      <div className="next-text">
+        <div className="next-kicker">{cont ? "Continue where you left off" : "Start here"}</div>
+        <h1 className="next-title">{next.lab_title}</h1>
+        <div className="next-where">
+          Chapter {next.chapter_number} of {next.chapters}: {next.chapter_title}
+          {cont && <> · step {next.step} of {next.steps}</>}
+        </div>
+        {cont ? (
+          <div className="progress next-progress" role="progressbar" aria-label="Progress in this chapter" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+            <span className="progress-fill" style={{ width: `${pct}%` }} />
+          </div>
+        ) : (
+          next.reason && <p className="muted next-reason">{next.reason}</p>
+        )}
+      </div>
+      <Link className="btn btn-primary next-go" to={`/labs/${next.lab_id}?chapter=${encodeURIComponent(next.chapter_id)}`}>
+        {cont ? "Continue →" : "Start the first chapter →"}
+      </Link>
+    </section>
   );
 }

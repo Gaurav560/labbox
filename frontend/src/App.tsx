@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
 import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
@@ -47,7 +47,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<HomeOrDashboard />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/faq" element={<FaqPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
@@ -69,4 +69,13 @@ export default function App() {
       <Route path="*" element={<Navigate to="/labs" replace />} />
     </Routes>
   );
+}
+
+/** Signed-in learners land on their dashboard; the marketing page stays at /?home for everyone. */
+function HomeOrDashboard() {
+  const { user, loading } = useAuth();
+  const { search } = useLocation();
+  if (loading) return null;
+  if (user && !new URLSearchParams(search).has("home")) return <Navigate to="/labs" replace />;
+  return <HomePage />;
 }

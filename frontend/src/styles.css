@@ -587,6 +587,8 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .drawer-list { list-style: none; margin: 0; padding: var(--space-2) var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
 .drawer-list li { border-radius: 10px; padding: var(--space-2) var(--space-3); }
 .res-fail { background: var(--tint-danger); }
+.res-upcoming { background: transparent; border: 1px dashed var(--border); }
+.res-upcoming .res-message { margin: 0; }
 .res-head { display: flex; align-items: center; gap: var(--space-2); }
 .res-message { margin: var(--space-1) 0 0 24px; }
 .expected-got { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: var(--space-2) 0 var(--space-1) 24px; }
@@ -1364,3 +1366,15 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .tc-arrow { color: var(--muted); font-weight: 700; }
 .tc-note { font-size: 12px; color: var(--muted); }
 :root[data-theme="light"] .trace-label { color: #5048b8; }
+
+/* The dashboard's first card: one clear next step */
+.next-card { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; padding: var(--space-6); margin-bottom: var(--space-6);
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); border-left: 4px solid #5048b8; }
+.next-text { flex: 1; min-width: 240px; }
+.next-kicker { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8c84e8; }
+:root[data-theme="light"] .next-kicker { color: #5048b8; }
+.next-title { margin: 4px 0 2px; font-size: 24px; }
+.next-where { color: var(--muted); }
+.next-progress { margin-top: var(--space-3); max-width: 420px; }
+.next-reason { margin: var(--space-2) 0 0; }
+.next-go { font-size: 16px; padding: 12px 22px; }

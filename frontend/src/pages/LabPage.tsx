@@ -1,6 +1,6 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
 import ChapterPanel from "../components/ChapterPanel";
@@ -58,6 +58,7 @@ export default function LabPage() {
 
   const [lab, setLab] = useState<LabDetail | null>(null);
   const [chapterId, setChapterId] = useState("");
+  const [searchParams] = useSearchParams();
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [steps, setSteps] = useState<Step[] | null>(null);
   const [step, setStep] = useState(0);
@@ -155,7 +156,9 @@ export default function LabPage() {
   useEffect(() => {
     loadLab()
       .then((d) => {
-        const firstOpen = d.chapters.find((c) => c.tasks.some((t) => !t.passed)) ?? d.chapters[0];
+        // ?chapter= (from the dashboard's Continue card) wins; otherwise the first unfinished chapter.
+        const wanted = d.chapters.find((c) => c.id === searchParams.get("chapter"));
+        const firstOpen = wanted ?? d.chapters.find((c) => c.tasks.some((t) => !t.passed)) ?? d.chapters[0];
         setChapterId(firstOpen.id);
       })
       .catch((e) => toast(errMsg(e)));
@@ -550,6 +553,11 @@ export default function LabPage() {
   const chapterIndex = lab?.chapters.findIndex((c) => c.id === chapterId) ?? -1;
   const nextChapter = lab && chapterIndex >= 0 ? lab.chapters[chapterIndex + 1] : undefined;
   const current = steps?.[step];
+  // Tasks on steps the learner has not reached yet: a check runs them too, but they are "coming up",
+  // not failures (shown neutral in the results and the task dots).
+  const upcoming: Record<string, number> = Object.fromEntries(
+    (steps ?? []).flatMap((st, i) => (st.type === "task" && st.task && i > Math.max(visited, step) ? [[st.task, i + 1]] : [])),
+  );
   const tasks = chapter?.tasks ?? [];
   const activeTask = tasks.find((t) => t.id === current?.task) ?? tasks.find((t) => !t.passed);
   const activeHintsLeft = activeTask ? activeTask.hint_count - (hints[activeTask.id]?.length ?? 0) : 0;
@@ -657,6 +665,7 @@ export default function LabPage() {
           <div className="left-footer">
             {chapter && (
               <TaskList
+                ahead={upcoming}
                 tasks={chapter.tasks}
                 activeId={activeTask?.id}
                 onSelect={(id) => {
@@ -768,6 +777,7 @@ export default function LabPage() {
             </div>
           </div>
           <CheckDrawer
+            upcoming={upcoming}
             result={result}
             running={checking}
             open={drawerOpen}

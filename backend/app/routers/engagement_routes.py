@@ -3,14 +3,14 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from sqlmodel import Session
+from sqlmodel import Session, col, select
 
 from .. import drills, engagement
 from ..auth import get_current_user
 from ..content import get_content
 from ..db import get_session
 from ..labs import all_labs
-from ..models import User, utcnow
+from ..models import ChapterProgress, User, utcnow
 
 router = APIRouter(prefix="/api", tags=["engagement"])
 
@@ -18,6 +18,56 @@ router = APIRouter(prefix="/api", tags=["engagement"])
 def _uid(user: User) -> int:
     assert user.id is not None
     return user.id
+
+
+# ---------- what to do next ----------
+
+
+class NextOut(BaseModel):
+    """The dashboard's first card: pick up where the learner left off, or where to start."""
+
+    kind: Literal["continue", "start"]
+    lab_id: str
+    lab_title: str
+    chapter_id: str
+    chapter_title: str
+    chapter_number: int
+    chapters: int
+    step: int  # 1-based, the step the learner will land on
+    steps: int
+    reason: str | None = None  # why this lab, for a new learner
+
+
+@router.get("/me/next", response_model=NextOut)
+def my_next(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> NextOut:
+    labs = {lab.id: lab for lab in all_labs()}
+    rows = session.exec(
+        select(ChapterProgress).where(ChapterProgress.user_id == _uid(user)).order_by(col(ChapterProgress.updated_at).desc())
+    ).all()
+    for row in rows:
+        lab = labs.get(row.lab_id)
+        ids = [c.id for c in lab.chapters] if lab else []
+        if row.chapter_id not in ids:
+            continue  # a lab or chapter that no longer exists
+        i, step = ids.index(row.chapter_id), row.current_step
+        if row.completed_at is not None and i + 1 < len(ids):
+            i, step = i + 1, 0  # that chapter is done: the next one
+        ch = lab.chapters[i]
+        total = len(lab.chapter_steps(ch.id))
+        return NextOut(kind="continue", lab_id=lab.id, lab_title=lab.title, chapter_id=ch.id, chapter_title=ch.title,
+                       chapter_number=i + 1, chapters=len(ids), step=min(step, total - 1) + 1, steps=total)
+    # A new learner: the first lab of the goal they picked in onboarding, else the coding basics.
+    goal_id = engagement.get_profile(session, _uid(user)).goal
+    try:
+        goals = _onboarding().goals
+    except HTTPException:
+        goals = []  # onboarding content missing: fall back to the coding basics
+    goal = next((g for g in goals if g.id == goal_id), None)
+    first = next((labs[s] for s in (goal.start if goal else []) if s in labs), None) or labs.get("python-basics") or next(iter(labs.values()))
+    ch = first.chapters[0]
+    return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
+                   chapter_number=1, chapters=len(first.chapters), step=1, steps=len(first.chapter_steps(ch.id)),
+                   reason=f"Picked for your goal: {goal.title}" if goal else "The best first lab: it builds the coding basics every track uses")
 
 
 # ---------- stats and profile ----------

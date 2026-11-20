@@ -6,11 +6,18 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onShowOutput: () => void;
+  /** Tasks the learner has not reached yet, with the step number where each one is taught. A check
+   * runs every task of the chapter, but a task still ahead is not a failure: it is shown as coming up. */
+  upcoming?: Record<string, number>;
 }
 
-export default function CheckDrawer({ result, running, open, onClose, onShowOutput }: Props) {
+export default function CheckDrawer({ result, running, open, onClose, onShowOutput, upcoming = {} }: Props) {
   if (!open || (!running && !result)) return null;
-  const allPass = !!result && result.passed_count === result.total_count;
+  const isAhead = (task: string, passed: boolean) => !passed && upcoming[task] !== undefined;
+  const reached = result ? result.results.filter((r) => !isAhead(r.task, r.passed)) : [];
+  const reachedPassed = reached.filter((r) => r.passed).length;
+  const ahead = result ? result.results.length - reached.length : 0;
+  const allPass = !!result && reached.length > 0 && reachedPassed === reached.length;
   return (
     <section className={`check-drawer ${allPass ? "drawer-pass" : ""}`} aria-label="Check results" aria-live="polite">
       <div className="drawer-head">
@@ -18,9 +25,13 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
           <span className="drawer-title"><span className="spinner" /> Running the hidden checks...</span>
         ) : (
           <>
-            <span className={`drawer-title ${allPass ? "pass" : "fail"}`}>
-              {result.passed_count} of {result.total_count} passed{allPass ? " 🎉" : ""}
-            </span>
+            {reached.length === 0 ? (
+              <span className="drawer-title">Your tasks are coming up</span>
+            ) : (
+              <span className={`drawer-title ${allPass ? "pass" : "fail"}`}>
+                {reachedPassed} of {reached.length} passed{ahead ? " so far" : ""}{allPass ? " 🎉" : ""}
+              </span>
+            )}
             <span className="muted">{(result.duration_ms / 1000).toFixed(1)} s</span>
           </>
         )}
@@ -37,7 +48,16 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
       )}
       {result && !running && (
         <ul className="drawer-list">
-          {result.results.map((r) => (
+          {result.results.map((r) => isAhead(r.task, r.passed) ? (
+            <li key={r.task} className="res-upcoming">
+              <div className="res-head">
+                <span className="task-icon none" aria-hidden="true">○</span>
+                <strong>{r.title || r.task}</strong>
+                <span className="sr-only">not started yet</span>
+              </div>
+              <p className="res-message muted">Coming up in step {upcoming[r.task]}. Nothing to fix yet.</p>
+            </li>
+          ) : (
             <li key={r.task} className={r.passed ? "res-pass" : "res-fail"}>
               <div className="res-head">
                 <span className={`task-icon ${r.passed ? "pass" : "fail"}`} aria-hidden="true">{r.passed ? "✓" : "✗"}</span>

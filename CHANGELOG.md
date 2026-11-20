@@ -1,5 +1,17 @@
 # Changelog
 
+## A confident start: one clear next step, and checks that never fail tasks not reached yet
+
+- **Coming-up tasks are not failures.** A check runs every task of the chapter, so pressing Check early
+  used to show "0 of 2 passed" in red for tasks the learner had not even reached. Those tasks now show in
+  grey as "Coming up in step N. Nothing to fix yet."; the headline counts only reached tasks ("1 of 1
+  passed so far"), and the task dots stay neutral for them.
+- **One clear next step.** The dashboard opens with "Continue where you left off" (lab, chapter, step and
+  a progress bar, from the most recently touched chapter; the next chapter once one is complete) or, for a
+  new learner, a single "Start here" card with the lab their onboarding goal picked. New read-only route
+  `GET /api/me/next`; lab links take `?chapter=` so Continue lands on the exact step.
+- **Signed-in learners land on their dashboard** at `/`; the marketing page stays at `/?home`.
+
 ## VS Code remembers open files per lab
 
 - Opening the Java lab after the Go lab used to reopen the Go files in VS Code: every lab's folder is

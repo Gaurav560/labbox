@@ -48,8 +48,11 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await page.getByRole("button", { name: "Skip" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
 
-  // Logged in, the home page offers to continue instead of signing up.
+  // Logged in, / is the learner's dashboard (owner's UX review, step 2).
   await page.goto("/");
+  await expect(page).toHaveURL(/\/labs$/);
+  // The marketing page is still at /?home, and there it offers to continue instead of signing up.
+  await page.goto("/?home");
   await expect(page.locator(".home-header").getByRole("link", { name: "Continue learning →" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Log in" })).toHaveCount(0);
   await page.locator(".home-header").getByRole("link", { name: "Continue learning →" }).click();

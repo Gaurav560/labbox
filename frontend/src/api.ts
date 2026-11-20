@@ -62,6 +62,8 @@ export interface LabInfo {
   cover_credit: { by: string; url: string; source: string } | null;
 }
 export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
+/** The dashboard's first card: continue where the learner left off, or where to start. */
+export interface NextStep { kind: "continue" | "start"; lab_id: string; lab_title: string; chapter_id: string; chapter_title: string; chapter_number: number; chapters: number; step: number; steps: number; reason: string | null }
 export interface TaskExample { call: string; gives: string; note: string | null }
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number; examples?: TaskExample[] }
 export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; has_setup: boolean }
@@ -177,6 +179,7 @@ export const api = {
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),
   hint: (labId: string, chapterId: string, taskId: string) =>
     request<HintResponse>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/tasks/${q(taskId)}/hint`),
+  next: () => request<NextStep>("GET", "/api/me/next"),
   openIde: (labId: string) => request<{ available: boolean; ready: boolean; url: string }>("POST", `/api/labs/${q(labId)}/ide`),
   aiConfig: () => request<{ completion: boolean }>("GET", "/api/ai/config"),
   complete: (labId: string, path: string, prefix: string, suffix: string) =>
