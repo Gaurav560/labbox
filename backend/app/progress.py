@@ -10,7 +10,7 @@ from sqlmodel import Session, SQLModel, col, select
 from . import engagement
 from .labs import LabConfig
 from .lessons import Step
-from .models import ChapterProgress, PredictAnswer, TaskProgress, utcnow
+from .models import AnalyticsEvent, ChapterProgress, PredictAnswer, TaskProgress, utcnow
 
 # XP share kept after 0, 1, 2 and 3 revealed hints (section 2.4 of the v2 spec).
 HINT_XP_FACTORS = (1.0, 0.8, 0.6, 0.4)
@@ -52,9 +52,13 @@ def task_progress(session: Session, user_id: int, lab_id: str, chapter_id: str, 
 
 def set_step(session: Session, user_id: int, lab: LabConfig, chapter_id: str, step: int) -> ChapterProgress:
     row = chapter_progress(session, user_id, lab.id, chapter_id)
+    before = row.current_step
     row.current_step = max(0, min(step, len(lab.chapter_steps(chapter_id)) - 1))
     row.updated_at = utcnow()
     session.add(row)
+    if row.current_step != before or before == 0:
+        # Phase J: one event per step a learner moves to; the gaps between them are time spent per step.
+        session.add(AnalyticsEvent(user_id=user_id, kind="step", lab_id=lab.id, chapter_id=chapter_id, step_index=row.current_step))
     session.commit()
     return row
 

@@ -12,11 +12,12 @@ import json
 import logging
 import secrets
 import time
+from collections import deque
 from datetime import datetime, timezone
 
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from . import metrics
+from . import metrics, shared
 from .config import get_settings
 
 request_id: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="")
@@ -76,6 +77,33 @@ def setup_sentry() -> bool:
     return True
 
 
+RECENT_ERRORS = 200
+_errors: deque[str] = deque(maxlen=RECENT_ERRORS)
+
+
+def remember_error(method: str, route: str, status: int, rid: str, ms: int, error: str) -> None:
+    """The latest server errors, for the admin page (Phase J); shared by every worker through Redis."""
+    item = json.dumps({"at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "method": method, "route": route,
+                       "status": status, "request_id": rid, "ms": ms, "error": error})
+    try:
+        r = shared.redis_client()
+        if r is None:
+            _errors.appendleft(item)
+            return
+        p = r.pipeline(transaction=False)
+        p.lpush(shared.PREFIX + "errors", item)
+        p.ltrim(shared.PREFIX + "errors", 0, RECENT_ERRORS - 1)
+        p.execute()
+    except Exception:
+        pass
+
+
+def recent_errors(limit: int = 100) -> list[dict]:
+    r = shared.redis_client()
+    raw = list(_errors)[:limit] if r is None else r.lrange(shared.PREFIX + "errors", 0, limit - 1)
+    return [json.loads(x) for x in raw]
+
+
 def _route(scope: Scope) -> str:
     """The route template (/api/labs/{lab_id}/check), never the raw path: metric labels stay few."""
     route = scope.get("route")
@@ -107,8 +135,12 @@ class RequestMiddleware:
                 message["headers"] = [*message["headers"], (b"x-request-id", rid.encode())]
             await send(message)
 
+        error = ""
         try:
             await self.app(scope, receive, send_wrapped)
+        except Exception as e:
+            error = f"{type(e).__name__}: {e}"[:300]
+            raise
         finally:
             took = time.monotonic() - started
             route = _route(scope)
@@ -117,4 +149,6 @@ class RequestMiddleware:
                 metrics.observe("labbox_http_request_duration_seconds", took, route=route)
             if status >= 500 or took > SLOW_SECONDS:
                 log.warning("%s %s -> %s in %d ms", scope.get("method"), route, status, int(took * 1000))
+            if status >= 500:
+                remember_error(scope.get("method", ""), route, status, rid, int(took * 1000), error)
             request_id.reset(token)

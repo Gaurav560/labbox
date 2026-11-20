@@ -1,5 +1,20 @@
 # Changelog
 
+## Phase J, part 1: admin data and routes
+
+- `user.is_admin` and a new `analytics_event` table (migration 0008, additive). `scripts/labbox admin
+  list|grant <name>|revoke <name>` decides who may open /admin; `/api/me` says `is_admin`.
+- `app/analytics.py`, mostly from tables LabBox already keeps, so it covers the past:
+  - funnel: signed up, opened a lab, passed a first check, finished a chapter 1, finished a chapter 2
+    (7, 30, 90 days or all). On the dev data: 418, 336, 168, 164, 0.
+  - per lab: where learners stopped (the step an unfinished chapter was left on for 2+ days), time per
+    step (from "step" events, recorded from now on whenever a learner moves to another step), and tasks
+    ranked by confusion (low pass rate, failed checks and hint use per learner).
+  - learners (search), AI spend per day, by model and top learners.
+- `/api/admin/*` (403 for everyone else): funnel, labs, one lab, learners, AI spend, recent server errors
+  (the middleware keeps the last 200 in Redis), running machines with Stop and Kill (files stay; logged
+  with the admin's name; the learner's lab page says an admin stopped it).
+
 ## Phase H6: operations (metrics, logs, health, error reports, CI)
 
 - `GET /metrics` (Prometheus text format, no extra library): counters in Redis so all workers add up

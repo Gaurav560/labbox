@@ -14,6 +14,7 @@ class User(SQLModel, table=True):
     username: str = Field(unique=True, index=True)
     password_hash: str
     created_at: datetime = Field(default_factory=utcnow)
+    is_admin: bool = False  # Phase J: may open /admin; granted with `scripts/labbox admin grant <name>`
 
 
 class Workspace(SQLModel, table=True):
@@ -169,3 +170,18 @@ class DesignAnswer(SQLModel, table=True):
     score: int
     max_score: int
     created_at: datetime = Field(default_factory=utcnow)
+
+
+class AnalyticsEvent(SQLModel, table=True):
+    # Phase J: what the other tables cannot tell. Today: "step" (a learner moved to a lesson step), which
+    # gives the time spent on each step. Append-only; kind names what happened.
+    __tablename__ = "analytics_event"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    kind: str = Field(index=True)
+    lab_id: str | None = Field(default=None, index=True)
+    chapter_id: str | None = None
+    step_index: int | None = None
+    data_json: str = ""
+    created_at: datetime = Field(default_factory=utcnow, index=True)

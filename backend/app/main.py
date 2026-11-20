@@ -16,6 +16,7 @@ from .content import init_content
 from .labs import init_labs
 from .reaper import reaper_loop
 from .routers import (
+    admin_routes,
     ai_routes,
     auth_routes,
     check_routes,
@@ -68,6 +69,7 @@ app.include_router(progress_routes.router)
 app.include_router(engagement_routes.router)
 app.include_router(preview_routes.router)
 app.include_router(ai_routes.router)
+app.include_router(admin_routes.router)
 
 
 class Health(BaseModel):

@@ -862,6 +862,30 @@ def cmd_jobs(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_admin(args: argparse.Namespace) -> int:
+    """Who may open /admin (Phase J): list, grant or revoke."""
+    from sqlmodel import Session, select
+
+    from app.db import engine, init_db
+    from app.models import User
+
+    init_db()
+    with Session(engine) as s:
+        if args.action == "list":
+            admins = s.exec(select(User).where(User.is_admin == True)).all()  # noqa: E712
+            print("\n".join(f"  {u.username} (id {u.id})" for u in admins) or "  No admins yet: scripts/labbox admin grant <username>")
+            return 0
+        user = s.exec(select(User).where(User.username == args.username)).first() if args.username else None
+        if user is None:
+            print(f"✗ No account named {args.username!r}")
+            return 1
+        user.is_admin = args.action == "grant"
+        s.add(user)
+        s.commit()
+        print(f"✓ {user.username} {'may now open /admin' if user.is_admin else 'is no longer an admin'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox (by Telusko) labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
@@ -874,6 +898,11 @@ def main(argv: list[str] | None = None) -> int:
     n.add_argument("--template", choices=[*TEMPLATES_READY, *TEMPLATE_LATER], default="python")
     n.add_argument("--title")
     n.set_defaults(fn=cmd_new_lab)
+
+    a = sub.add_parser("admin", help="who may open /admin: list, grant <username>, revoke <username>")
+    a.add_argument("action", choices=["list", "grant", "revoke"])
+    a.add_argument("username", nargs="?")
+    a.set_defaults(fn=cmd_admin)
 
     j = sub.add_parser("jobs", help="background jobs: when each last ran, or --run images|networks|backup now")
     j.add_argument("--run", choices=["images", "networks", "backup"])
