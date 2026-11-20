@@ -2,9 +2,9 @@
 
 ## Lab page: a violet Check button
 
-- Check is the one violet button on the lab page (#6b5ffd, taken from the owner's reference), with
-  white text, a lighter edge and a soft glow; hover, pressed, focus and disabled states included. Same in
-  the dark and light themes.
+- Check is the one violet button on the lab page: first #6b5ffd from the owner's reference, which was
+  too bright, then the muted #5048b8 the owner picked from three rendered options. White text, no glow;
+  hover, pressed, focus and disabled states included. Same in the dark and light themes.
 
 ## Python from zero, chapters 6 to 9
 
