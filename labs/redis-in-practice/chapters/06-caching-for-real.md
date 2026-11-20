@@ -20,6 +20,30 @@ Put a cache in front of the slow price lookup, keep it correct when prices chang
 
 The TTL is a promise about staleness: with 60 seconds, a wrong answer can live for at most a minute.
 It is also a safety net: even if every other part of your invalidation fails, the cache heals itself.
+
+:::diagram{name="cache-aside"}
+Ask Redis first; only on a miss ask the slow system, and keep its answer with a TTL.
+:::
+:::
+
+:::step{type=example title="Worked example: caching today's menu"}
+The menu comes from a slow service too. Cache-aside in Python, with a 5 minute TTL:
+
+```python
+def get_menu():
+    cached = r.get("menu:today")
+    if cached is not None:                  # 1. a hit
+        return json.loads(cached)
+    menu = slow_menu_service()              # 2. a miss: the slow way
+    r.set("menu:today", json.dumps(menu), ex=300)   # 3. keep it
+    return menu
+```
+
+1. A hit returns at once, without touching the slow service.
+2. A miss does the slow work once.
+3. `ex=300` stores it for 5 minutes, so it heals itself if anything goes wrong.
+
+Redis stores text, so the menu is stored as JSON and parsed on the way out.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -79,6 +103,16 @@ else gets `None`.
 The winner calls billing, fills the cache and deletes the lock. The others poll the cache every
 50 ms until the answer appears. Give the lock a short TTL (`ex=5`), so a crashed winner cannot block
 everyone forever.
+
+:::trace{title="three requests arrive at an empty cache"}
+| moment | request A | requests B and C | billing calls | note |
+|---|---|---|---|---|
+| 0 ms | cache miss | cache miss | 0 | All three find nothing in Redis. |
+| 1 ms | SET lock NX: wins | SET lock NX: None | 0 | Only one request can create the lock. |
+| 2 ms | calls billing | wait, check the cache every 50 ms | 1 | The losers do not call billing. |
+| 1500 ms | stores the price, deletes the lock | still waiting | 1 | The answer is now in Redis. |
+| 1550 ms | answers | cache hit, answer | 1 | Three answers, one billing call. |
+:::
 :::
 
 :::step{type=task task=stampede_lock title="Survive the stampede"}
@@ -86,6 +120,32 @@ Make sure that when the cache for an item is empty and many requests arrive at o
 them calls `slow_price_lookup`; the others wait and return the same price.
 
 The check sends 30 requests for the same item at the same moment and counts the calls to billing.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+A price changed in billing. What should the app do with the cached copy?
+:::
+- [ ] Wait for the TTL to run out
+- [x] Delete it, so the next read rebuilds it from billing
+- [ ] Write the new price into the cache from the update request
+:::explain
+Deleting is the safe default: the next read fetches the fresh price. Writing the new value directly
+can race with another update and leave an older price cached.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Why does the stampede lock need a TTL, like `SET lock:price:samosa 1 NX EX 5`?
+:::
+- [ ] To make the lock faster
+- [x] So a request that crashes while holding it cannot block everyone forever
+- [ ] Redis requires a TTL on every key
+:::explain
+If the winner dies before deleting the lock, the TTL deletes it anyway after 5 seconds, and the next
+request can rebuild the cache.
+:::
 :::
 
 :::step{type=deep-dive title="What senior engineers add"}

@@ -25,6 +25,29 @@ set it with the value, or add it later:
 which also covers "it already expired". `PERSIST` removes a timer and keeps the key forever.
 :::
 
+:::step{type=example title="Worked example: a session that slides"}
+A session should end 30 minutes after the customer's **last** click, not their first. Refreshing the
+timer on every request does exactly that:
+
+```text
+> SET session:ab12 riya EX 1800        logs in
+> TTL session:ab12                     10 minutes later
+(integer) 1200
+> EXPIRE session:ab12 1800             she clicks again: the clock restarts
+> TTL session:ab12
+(integer) 1800
+```
+
+:::trace{title="a session with a 30 minute sliding timer"}
+| minute | command | TTL after | note |
+|---|---|---|---|
+| 0 | SET session:ab12 riya EX 1800 | 1800 | Logged in, with a 30 minute timer. |
+| 10 | TTL session:ab12 | 1200 | The timer has been counting down. |
+| 10 | EXPIRE session:ab12 1800 | 1800 | She clicked: the clock starts again from 30 minutes. |
+| 40 | TTL session:ab12 | -2 | No clicks for 30 minutes: Redis deleted the key. She is logged out. |
+:::
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 You run `SET greeting hello EX 10`, wait 15 seconds, then `GET greeting`. What comes back?
@@ -77,6 +100,32 @@ Give it a **30 minute** lifetime without changing its value.
 :::step{type=task task=keep_forever title="Rescue the promo"}
 `promo:diwali` was created with a one hour timer, but marketing has just extended the offer
 indefinitely. Make the key **permanent**, keeping its value.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+`TTL promo:diwali` answers `-1`. What does that mean?
+:::
+- [ ] The key has expired
+- [x] The key exists and has no timer: it lives forever
+- [ ] The key has one second left
+:::explain
+`-1` means no timer, `-2` means no such key (which covers "already expired"). Any positive number is
+the seconds left.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+A session key has 600 seconds left. You run `SET session:7f3a newvalue`. How long does it live now?
+:::
+- [ ] 600 more seconds
+- [x] Forever: a plain `SET` removes the timer
+- [ ] It is deleted at once
+:::explain
+Writing a key with plain `SET` replaces it, timer included. Use `SET ... KEEPTTL` to change the value
+and keep the timer.
+:::
 :::
 
 :::step{type=deep-dive title="How Redis expires keys"}

@@ -218,7 +218,9 @@ JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
 learners land on it. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
-courses (49). Next (step 5, part 2): the flagship Redis course and the other labs up to the standard. Python, Go and Java already have the
+courses (49). Redis in practice: chapters 1 to 6 up to the standard (history, diagrams, worked
+examples, traces, quick checks, task cards); next, chapters 7 to 13. The other short labs get the standard
+when each grows into a full course. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.
 

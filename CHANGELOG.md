@@ -1,5 +1,17 @@
 # Changelog
 
+## Redis in practice, chapters 1 to 6, brought up to the standard
+
+- **The story of Redis** in chapter 1: memcached and disk-bound databases before it, Salvatore Sanfilippo
+  in 2009, REmote DIctionary Server, Redis Cluster, streams, the 2024 licence change and the Valkey fork,
+  Redis 8, where it is used; the Tcl prototype.
+- **Three architecture diagrams:** one Redis shared by every outlet (Postgres on disk), round trips
+  versus a pipeline, and cache-aside (hit, miss, store with a TTL).
+- **Five worked examples** (a key from start to finish, a sliding session, stock in a hash, a tasting set,
+  a customer as Python sees it, caching the menu) and **five traces** (two outlets racing on a counter
+  versus INCR, a sliding session timer, a print queue, a snack leaderboard, a cache stampede with a lock).
+- **Two quick checks** per chapter, and **task cards** on all 17 tasks, matched to what the checks expect.
+
 ## A "watch it run" trace on every worked example
 
 - 23 new traces in Python, Go and Java from zero (all worked examples except the three one-line "a

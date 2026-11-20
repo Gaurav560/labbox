@@ -29,6 +29,25 @@ You can read or change one field without touching the others, and `HINCRBY` is t
 from chapter 1, for a single field.
 :::
 
+:::step{type=example title="Worked example: stock at one outlet"}
+The Andheri outlet keeps its stock in one hash, one field per item:
+
+```text
+> HSET stock:andheri milk 12 beans 3
+(integer) 2
+> HINCRBY stock:andheri milk -2
+(integer) 10
+> HGET stock:andheri milk
+"10"
+> HGETALL stock:andheri
+1) "milk"   2) "10"   3) "beans"   4) "3"
+```
+
+1. One `HSET` creates the hash with two fields, and answers how many fields were new.
+2. Two litres of milk were used: `HINCRBY` with a negative number subtracts, in one step.
+3. `HGET` reads one field; `HGETALL` reads the whole object, field and value in turn.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 You want to store a customer's name, visits and tier. Which is the better design?
@@ -74,6 +93,15 @@ LRANGE orders:pending 0 -1   look at all of it, left to right
 Push on one end and pop from the other, and you have a **queue**: first in, first out. Push and pop on
 the same end, and you have a **stack**. Workers usually wait with `BRPOP`, which blocks until an item
 arrives instead of asking again and again.
+
+:::trace{title="a print queue: jobs in, the oldest out"}
+| command | jobs, left to right | note |
+|---|---|---|
+| LPUSH jobs j1 | [j1] | The first job arrives on the left. |
+| LPUSH jobs j2 | [j2, j1] | The newer job goes in front of it, on the left. |
+| LPUSH jobs j3 | [j3, j2, j1] | The oldest job is now on the right. |
+| RPOP jobs | [j3, j2] | RPOP takes from the right: j1, the oldest. First in, first out. |
+:::
 :::
 
 :::step{type=task task=order_queue title="The order queue"}
@@ -82,6 +110,32 @@ Add each one on the **left**.
 
 Then the barista takes the **oldest** order off the queue. Afterwards, `LRANGE orders:pending 0 -1`
 should show the two orders still waiting, newest first.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+`HINCRBY customer:42 visits 1` runs while another app changes Asha's `tier`. What happens to `tier`?
+:::
+- [ ] It is overwritten by the old value
+- [x] Nothing: `HINCRBY` changes only the `visits` field
+- [ ] The command fails because the hash changed
+:::explain
+Hash commands work on single fields, so two apps can change different fields of the same customer
+safely. That is the big advantage over storing the customer as one JSON string.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+You `LPUSH` new orders on the left. Which command takes the **oldest** order?
+:::
+- [ ] `LPOP`
+- [x] `RPOP`
+- [ ] `LRANGE 0 0`
+:::explain
+New items go in on the left, so the oldest is at the right end. Push on one end, pop from the other:
+first in, first out. `LRANGE` only looks; it removes nothing.
+:::
 :::
 
 :::step{type=deep-dive title="Why a list is not always the right queue"}

@@ -55,6 +55,11 @@ chapters:
           - "Each fact is one key with a plain text value. SET stores a value under a key."
           - "Two SET commands, one for shop:name and one for shop:city. A value with a space needs quotes."
           - "Check with GET shop:name and GET shop:city: they should read Brew Point and Pune."
+        examples:
+          - call: "GET shop:name"
+            gives: "\"Brew Point\""
+          - call: "GET shop:city"
+            gives: "\"Pune\""
       - id: cups_counter
         title: "Count cups, take beans off the stock"
         xp: 20
@@ -62,6 +67,11 @@ chapters:
           - "A counter that starts from nothing needs no SET: the first INCR creates it."
           - "INCR adds one. Its cousins INCRBY and DECRBY add or subtract any whole number."
           - "Three INCR on cups:sold, then subtract 250 from beans:grams with the command that decrements by an amount."
+        examples:
+          - call: "GET cups:sold"
+            gives: "\"3\""
+          - call: "GET beans:grams"
+            gives: "250 less than before"
       - id: clean_up
         title: "Delete the leftover tmp:import keys"
         xp: 20
@@ -69,6 +79,11 @@ chapters:
           - "First list them: the scan option of redis-cli shown in the step walks the keys matching a pattern."
           - "DEL accepts several key names at once and tells you how many it removed."
           - "Delete all five tmp:import keys, then scan again: nothing should be left, and beans:grams still there."
+        examples:
+          - call: "redis-cli --scan --pattern 'tmp:import:*'"
+            gives: "(nothing)"
+          - call: "the other keys"
+            gives: "still there"
   - id: 02-expiring-keys
     title: Keys that expire
     file: chapters/02-expiring-keys.md
@@ -82,6 +97,12 @@ chapters:
           - "SET can give a key a timer in the same command, so it disappears on its own."
           - "The EX option takes seconds: 5 minutes is 300."
           - "TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone."
+        examples:
+          - call: "GET otp:9876543210"
+            gives: "\"4821\""
+          - call: "TTL otp:9876543210"
+            gives: "300 or a little less"
+            note: "counting down"
       - id: session_ttl
         title: "Give the session a 30 minute lifetime"
         xp: 20
@@ -89,6 +110,11 @@ chapters:
           - "The session already exists, and its value must not change. Which command adds a timer to an existing key?"
           - "EXPIRE takes a key and a number of seconds. 30 minutes is 1800 seconds."
           - "Do not SET the session again: that would replace its value. Check the result with TTL."
+        examples:
+          - call: "TTL session:7f3a"
+            gives: "1800 or a little less"
+          - call: "GET session:7f3a"
+            gives: "the same value as before"
       - id: keep_forever
         title: "Make the promo permanent"
         xp: 20
@@ -96,6 +122,12 @@ chapters:
           - "TTL promo:diwali shows its timer is counting down. You want the opposite of EXPIRE."
           - "One command removes a key's timer and keeps its value."
           - "After it, TTL promo:diwali should answer -1, and GET still shows the offer."
+        examples:
+          - call: "TTL promo:diwali"
+            gives: "-1"
+            note: "no timer: it stays"
+          - call: "GET promo:diwali"
+            gives: "the same value as before"
   - id: 03-hashes-and-lists
     title: Hashes and lists
     file: chapters/03-hashes-and-lists.md
@@ -108,6 +140,11 @@ chapters:
           - "A hash is one key that holds many field and value pairs. The key is menu, the fields are the item names."
           - "HSET takes the key, then field value, field value, ... in one command. Names with a space need quotes."
           - "Check your work with HGETALL menu: three fields, prices 30, 40 and 25."
+        examples:
+          - call: "HGET menu \"vada pav\""
+            gives: "\"25\""
+          - call: "HLEN menu"
+            gives: "3"
       - id: customer_profile
         title: "Asha's profile, one more visit, a gold tier"
         xp: 20
@@ -115,6 +152,11 @@ chapters:
           - "Start with HSET customer:42 and two field and value pairs: name and visits."
           - "Adding to one numeric field in one step is the hash version of INCRBY."
           - "HINCRBY the visits field by 1, then HSET one more field, tier, to gold. HGETALL shows all three."
+        examples:
+          - call: "HGET customer:42 visits"
+            gives: "\"8\""
+          - call: "HGET customer:42 tier"
+            gives: "\"gold\""
       - id: order_queue
         title: "Run the order queue"
         xp: 20
@@ -122,6 +164,10 @@ chapters:
           - "Orders go in on the left with LPUSH, one at a time or all at once in arrival order."
           - "The oldest order is the one furthest from where you push, so it comes off the right."
           - "LPUSH o1, o2 and o3, then RPOP once. LRANGE orders:pending 0 -1 should show o3 then o2."
+        examples:
+          - call: "LRANGE orders:pending 0 -1"
+            gives: "1) \"o3\"  2) \"o2\""
+            note: "o1 was made first"
   - id: 04-sets-and-sorted-sets
     title: Sets and sorted sets
     file: chapters/04-sets-and-sorted-sets.md
@@ -135,6 +181,11 @@ chapters:
           - "A set never holds the same member twice, so you can add every visit as it happened."
           - "SADD takes the key and any number of members. Duplicates are simply ignored."
           - "Add all five visits to visitors:today; SCARD should then answer 3."
+        examples:
+          - call: "SCARD visitors:today"
+            gives: "3"
+          - call: "SISMEMBER visitors:today meera"
+            gives: "1"
       - id: common_customers
         title: "Customers of both outlets, in customers:both"
         xp: 20
@@ -142,6 +193,9 @@ chapters:
           - "You want the people who are in the first set and also in the second: an intersection."
           - "SINTER shows the intersection; its STORE version saves it under a new key."
           - "The destination key comes first, then the two outlet sets. SMEMBERS customers:both shows the result."
+        examples:
+          - call: "SMEMBERS customers:both"
+            gives: "only people in both outlets' sets"
       - id: top_sellers
         title: "A sorted set of today's sales"
         xp: 20
@@ -149,6 +203,11 @@ chapters:
           - "A sorted set keeps members ordered by a number called the score. ZADD adds members with their scores."
           - "ZADD takes the key, then score member, score member. ZINCRBY adds to one member's score."
           - "ZRANGE sales:today 0 -1 REV WITHSCORES lists them, best seller first: 120, 80, then 50."
+        examples:
+          - call: "ZSCORE sales:today \"cold coffee\""
+            gives: "\"50\""
+          - call: "ZREVRANGE sales:today 0 0"
+            gives: "\"filter coffee\""
   - id: 05-redis-from-python
     title: Redis from Python
     file: chapters/05-redis-from-python.md
@@ -161,6 +220,11 @@ chapters:
           - "One command reads every field of a hash. In Python it returns a dict."
           - "A missing hash comes back as an empty dict: answer 404 when there is nothing."
           - "Build the answer from the dict, and turn the visits field into an int before returning it."
+        examples:
+          - call: "curl -s localhost:8000/customers/42"
+            gives: "{\"id\": 42, \"name\": \"Asha\", \"visits\": 8, \"tier\": \"gold\"}"
+          - call: "curl -s -o /dev/null -w '%{http_code}' localhost:8000/customers/7"
+            gives: "404"
       - id: bulk_import
         title: "POST /import: 2000 rows in a handful of round trips"
         xp: 40
@@ -168,6 +232,10 @@ chapters:
           - "The loop sends one command per row and waits for each answer. That waiting is the cost."
           - "A pipeline queues commands on the client and sends them together. r.pipeline gives you one."
           - "Queue every HSET on the pipeline inside the loop, then run them all with one call after the loop."
+        examples:
+          - call: "curl -s -X POST localhost:8000/import"
+            gives: "the same 2000 rows"
+            note: "in a few round trips"
   - id: 06-caching-for-real
     title: Caching for real
     file: chapters/06-caching-for-real.md
@@ -180,6 +248,12 @@ chapters:
           - "Cache-aside: look in Redis first, and only on a miss call the slow lookup and keep the answer."
           - "r.get returns None on a miss. r.set takes an ex= argument: the number of seconds to keep the value."
           - "Use one key per item, like price:samosa. Redis gives strings back, so turn the price into an int."
+        examples:
+          - call: "curl -s localhost:8000/price/samosa"
+            gives: "{\"item\": \"samosa\", \"price\": 20}"
+            note: "slow once, then instant"
+          - call: "GET billing:calls"
+            gives: "one more per minute at most"
       - id: price_invalidate
         title: "PUT /price/{item}: the next read sees the new price"
         xp: 30
@@ -187,6 +261,9 @@ chapters:
           - "After the price changes, the cached copy is wrong. What should happen to it?"
           - "Removing the cached value is enough: the next read misses and asks billing again."
           - "Delete the price key for that item right after updating PRICES."
+        examples:
+          - call: "PUT price 22, then GET /price/samosa"
+            gives: "{\"item\": \"samosa\", \"price\": 22}"
       - id: stampede_lock
         title: "30 requests on an empty cache, one call to billing"
         xp: 50
@@ -194,6 +271,10 @@ chapters:
           - "Only one request may call billing. The others must notice someone is already on it."
           - "SET with nx=True succeeds for exactly one caller. Give that key a short expiry so a crash cannot block everyone."
           - "The winner fills the cache and deletes its lock; the others sleep 50 ms at a time and read the cache again."
+        examples:
+          - call: "30 requests for an empty cache at once"
+            gives: "1 call to billing"
+            note: "all 30 get the price"
   - id: 07-atomic-operations
     title: Atomic operations
     file: chapters/07-atomic-operations.md

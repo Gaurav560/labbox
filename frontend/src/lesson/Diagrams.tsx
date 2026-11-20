@@ -191,7 +191,71 @@ function ObjectReference() {
   );
 }
 
+/** Redis: one shared dictionary in memory, used by every outlet and worker; the database stays on disk. */
+function RedisShared() {
+  return (
+    <Svg viewBox="0 0 440 200" label="Three apps, two outlets and a worker, all talk to one Redis server that keeps data in memory; Postgres keeps the full records on disk">
+      <Box x={10} y={14} w={118} h={34} label="outlet app" />
+      <Box x={10} y={82} w={118} h={34} label="outlet app" />
+      <Box x={10} y={150} w={118} h={34} label="worker" />
+      <Arrow x1={130} y1={31} x2={232} y2={86} />
+      <Arrow x1={130} y1={99} x2={232} y2={99} />
+      <Arrow x1={130} y1={167} x2={232} y2={112} />
+      <Box x={236} y={74} w={110} h={50} label="Redis" tone="accent" />
+      <text className="dg-note" x={236} y={66}>in memory, shared</text>
+      <text className="dg-note" x={236} y={142}>reads and writes</text>
+      <text className="dg-note" x={236} y={158}>under 1 ms</text>
+      <Box x={356} y={150} w={78} h={34} label="Postgres" />
+      <text className="dg-note" x={356} y={142}>on disk</text>
+    </Svg>
+  );
+}
+
+/** Round trips: 2000 commands one by one wait 2000 times; a pipeline waits once. */
+function RoundTrips() {
+  return (
+    <Svg viewBox="0 0 440 210" label="Without a pipeline every command waits for its own answer, about 0.5 ms each; with a pipeline all commands go together and the answers come back together">
+      <text className="dg-note" x={10} y={18}>one at a time: wait, wait, wait</text>
+      <Box x={10} y={28} w={70} h={30} label="app" />
+      <Box x={360} y={28} w={70} h={30} label="Redis" tone="accent" />
+      {[0, 1, 2].map((i) => (
+        <g key={i}>
+          <Arrow x1={84} y1={66 + i * 18} x2={356} y2={66 + i * 18} />
+        </g>
+      ))}
+      <text className="dg-note" x={150} y={128}>2000 trips x 0.5 ms = about 1 s</text>
+      <text className="dg-note" x={10} y={156}>pipeline: send all, then read all</text>
+      <Box x={10} y={166} w={70} h={30} label="app" />
+      <Box x={360} y={166} w={70} h={30} label="Redis" tone="accent" />
+      <Arrow x1={84} y1={181} x2={356} y2={181} />
+      <text className="dg-note" x={150} y={204}>1 trip, a few ms</text>
+    </Svg>
+  );
+}
+
+/** Cache-aside: ask Redis first; on a miss, ask the slow system and keep the answer with a TTL. */
+function CacheAside() {
+  return (
+    <Svg viewBox="0 0 440 210" label="The app asks Redis first. On a hit it answers at once. On a miss it asks the slow billing system, stores the answer in Redis with a TTL, then answers">
+      <Box x={10} y={84} w={84} h={40} label="app" />
+      <Arrow x1={96} y1={96} x2={196} y2={44} />
+      <Box x={200} y={22} w={110} h={40} label="Redis" tone="accent" />
+      <text className="dg-note" x={318} y={36}>1. hit?</text>
+      <text className="dg-note" x={318} y={52}>answer at once</text>
+      <Arrow x1={96} y1={112} x2={196} y2={166} />
+      <Box x={200} y={148} w={110} h={40} label="billing" />
+      <text className="dg-note" x={318} y={162}>2. miss: slow,</text>
+      <text className="dg-note" x={318} y={178}>1.5 s</text>
+      <Arrow x1={255} y1={146} x2={255} y2={66} />
+      <text className="dg-note" x={262} y={110}>3. store with TTL</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "redis-shared": RedisShared,
+  "round-trips": RoundTrips,
+  "cache-aside": CacheAside,
   "string-equals": StringEquals,
   "object-reference": ObjectReference,
   "shared-list": SharedList,

@@ -37,7 +37,9 @@ every session.
 | 3 | No VS Code white flash; Machine menu; one Check; no ligatures; trace keeps its place | done | `c436f64` |
 | 4 | Phones: reading mode, no machine started | done | `440249f` |
 | 5a | A trace on every worked example in Python, Go and Java from zero (23 new, 49 in all) | done | see git log |
-| 5b | Redis (0 pictures, traces, task cards) and the other labs up to the standard | **next** | |
+| 5b | Redis chapters 1 to 6 up to the standard (history, 3 diagrams, worked examples, traces, quick checks, task cards) | done | see git log |
+| 5c | Redis chapters 7 to 13, the same | **next** | |
+| later | The other short labs get the standard when each grows into a full course (owner agreed) | | |
 | idea | "Run this example" on worked examples and "run your file" on task steps (the owner likes Run in terminal) | proposed | |
 
 ## What was done, file by file (commits `3ffe955` to `ebcde82`)

@@ -22,6 +22,25 @@ but a number is still text: `r.hget("customer:42", "visits")` returns `"8"`. Tur
 A missing key comes back as `None` from `get`, and as an empty dict from `hgetall`.
 :::
 
+:::step{type=example title="Worked example: a customer, as Python sees it"}
+Store a customer, read it back, and turn the visits into a number:
+
+```python
+import redis
+
+r = redis.Redis(decode_responses=True)
+r.hset("customer:7", mapping={"name": "Ravi", "visits": 3})
+data = r.hgetall("customer:7")    # {'name': 'Ravi', 'visits': '3'}
+visits = int(data["visits"])      # 3, a number at last
+r.hgetall("customer:99")          # {}: no such customer
+```
+
+1. `mapping=` sets several fields in one call.
+2. Everything comes back as text: `'3'`, not `3`. Redis only stores strings.
+3. `int(...)` makes it a number; forgetting this is the classic bug.
+4. A missing customer is an empty dict, so test `if not data:`.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `customer:7` does not exist. What does `r.hgetall("customer:7")` return in Python?
@@ -76,6 +95,10 @@ for row in rows:
     pipe.hset("sales:import", row["key"], row["value"])
 pipe.execute()          # one round trip for all of them
 ```
+
+:::diagram{name="round-trips"}
+One command at a time waits for every answer; a pipeline sends them together and waits once.
+:::
 :::
 
 :::step{type=task task=bulk_import title="A fast import"}
@@ -87,6 +110,33 @@ The check counts the round trips your import makes to Redis.
 ```bash
 curl -s -X POST localhost:8000/import
 ```
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+`r.get("cups:sold")` returns `"128"`. What is `r.get("cups:sold") + 1` in Python?
+:::
+- [ ] `129`
+- [x] A `TypeError`: you cannot add a number to a string
+- [ ] `"1281"`
+:::explain
+The value comes back as the string `"128"`. Convert it first: `int(r.get("cups:sold")) + 1`, or let
+Redis do it in one step with `r.incr("cups:sold")`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+Redis needs 5 microseconds per command; the network trip is 0.5 ms. Roughly how long do 1000
+separate `HSET` calls take?
+:::
+- [ ] 5 milliseconds
+- [x] About half a second
+- [ ] One minute
+:::explain
+The waiting dominates: 1000 trips of 0.5 ms is 500 ms. A pipeline sends them in one trip and takes a
+few milliseconds.
+:::
 :::
 
 :::step{type=deep-dive title="Pipelines, transactions and big batches"}

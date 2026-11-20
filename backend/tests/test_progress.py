@@ -106,7 +106,7 @@ def test_task_card_examples_are_served(client: TestClient):
     assert tasks[0]["examples"][0] == {"call": 'greet("Asha")', "gives": '"Hello, Asha!"', "note": None}
     py = client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"][0]["tasks"][0]
     assert py["examples"][0]["call"] == 'greet("Asha")'
-    other = client.get("/api/labs/redis-in-practice", headers=h).json()["chapters"][0]["tasks"][0]
+    other = client.get("/api/labs/sql-from-zero", headers=h).json()["chapters"][0]["tasks"][0]
     assert other["examples"] == []  # optional: tasks without a card still work
 
 

@@ -27,6 +27,26 @@ Sets can also be combined: `SINTER` (in both), `SUNION` (in either) and `SDIFF` 
 not the second). Each has a `...STORE` version that saves the result under a new key.
 :::
 
+:::step{type=example title="Worked example: who tasted the new blend"}
+A tasting event: count each person once, however many cups they try.
+
+```text
+> SADD tasted:blend asha ravi
+(integer) 2
+> SADD tasted:blend ravi
+(integer) 0
+> SCARD tasted:blend
+(integer) 2
+> SISMEMBER tasted:blend meera
+(integer) 0
+```
+
+1. Two new members: `SADD` answers `2`.
+2. Ravi comes back for a second cup: he is already in the set, so `SADD` answers `0` and nothing changes.
+3. `SCARD` counts the members: still `2`.
+4. `SISMEMBER` asks about one person: Meera has not tasted it yet.
+:::
+
 :::step{type=predict title="Guess first"}
 :::question
 `SADD tags coffee tea coffee coffee` on an empty key. What does `SCARD tags` return?
@@ -64,6 +84,15 @@ it at all times:
 
 Adding, updating a score and reading the top N all stay fast even with millions of members, which
 is why sorted sets power leaderboards, "trending now" lists and priority queues.
+
+:::trace{title="votes for today's snack"}
+| command | highest first | note |
+|---|---|---|
+| ZADD votes 12 poha 10 samosa | poha 12, samosa 10 | Each member has a score; Redis keeps them in order. |
+| ZINCRBY votes 5 samosa | samosa 15, poha 12 | Five more votes: samosa moves to the top by itself. |
+| ZADD votes 7 dosa | samosa 15, poha 12, dosa 7 | A new member slots into its place. |
+| ZREVRANGE votes 0 0 | samosa | The top one, read without sorting anything. |
+:::
 :::
 
 :::step{type=task task=top_sellers title="Today's best sellers"}
@@ -71,6 +100,32 @@ Keep today's sales in a **sorted set** called `sales:today`: filter coffee sold 
 cold coffee `45`.
 
 Then the evening rush sells **5 more** cold coffees. Add them to its score without retyping the others.
+:::
+
+:::step{type=predict title="Quick check (1 of 2)"}
+:::question
+Which command answers "customers of Andheri who never visit Bandra"?
+:::
+- [ ] `SINTER customers:andheri customers:bandra`
+- [ ] `SUNION customers:andheri customers:bandra`
+- [x] `SDIFF customers:andheri customers:bandra`
+:::explain
+`SDIFF` keeps what is in the first set but not in the second. `SINTER` is "in both", `SUNION` is
+"in either".
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 2)"}
+:::question
+You need the top 10 players out of a million, many times a second. Which type fits?
+:::
+- [ ] A list, sorted by the app each time
+- [x] A sorted set
+- [ ] A set
+:::explain
+A sorted set keeps members ordered by score at all times, so the top 10 is a quick read, even with
+millions of members. Sorting a big list on every request would be far too slow.
+:::
 :::
 
 :::step{type=deep-dive title="Counting a billion visitors in 12 KB"}
