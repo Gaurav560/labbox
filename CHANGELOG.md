@@ -1,5 +1,29 @@
 # Changelog
 
+## Go from zero: the whole course in one go (13 chapters, 26 tasks)
+
+- `go-basics` is now **Go from zero** (same id; plain style, everyday examples, no story). The two
+  original chapters keep their ids and tasks and sit at positions 5 (slices and errors) and 8 (maps and
+  structs), where they belong in a from-zero course; their story intros became plain, and both gained a
+  Go deeper card.
+- New chapters, each in its **own package** (so code that does not compile in one chapter never breaks
+  another chapter's check): 1. first program (`hello`), 2. numbers and text (`Percent` with the integer
+  division trap, `FormatRupees`), 3. decisions, 4. loops (runes), 6. strings, 7. more slices (shared
+  backing arrays: `TopN` must not sort the caller's slice), 9. methods and interfaces (`shapes`),
+  10. errors in depth (`%w`, `errors.Is`, `errors.As`), 11. pointers (fix a value-receiver `Deposit`),
+  12. files and a CLI (`encoding/csv`, `cmd/summary` with `-top`, stderr and exit code 1),
+  13. goroutines (`FetchAll` concurrent in order, timed; `CountWords` safe under 200 goroutines).
+- Checks: `LABBOX_CHAPTER` and `LABBOX_TASKS` now reach check scripts (additive; `checker.py`), so a
+  big course checks only the chapter asked for: about 1.5 s a check instead of compiling 13 packages.
+  The Go runner fails a chapter that does not compile with the compiler's message, and when a fatal
+  error kills the tests (two goroutines writing one map) it names the crash on every task it left
+  unreported instead of leaving them blank.
+- Typical wrong answers were run and fail with their lesson (integer division, no zero padding, sorting
+  the caller's slice, nil instead of empty, `%v` instead of `%w`, a lost strconv error, results out of
+  order, a map without a lock).
+- Skill map: Go is now a chain of 7 nodes from first steps to files and goroutines. Home screenshot
+  retaken on chapter 13. Tests: 261 on Postgres and Redis, 257 on SQLite, 15 browser tests, 16 labs valid.
+
 ## Python from zero, chapters 10 to 13: the course is complete
 
 - 10. Errors (`to_number` raising a clear `ValueError` that names the bad text, `safe_sum` returning the

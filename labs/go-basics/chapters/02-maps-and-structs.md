@@ -1,11 +1,10 @@
-:::step{type=story title="What sells at the counter"}
-:::character{name="Meera" role="CTO, Tapri Counter"}
-Every evening each outlet sends me its till lines. I want to see how much of each item sold, and
-the one best seller, so the kitchen knows what to prep tomorrow.
-:::
+:::step{type=story title="Why maps and structs"}
+Real data has shape: an order has an item and a quantity, a student has a name and marks. Go groups
+such fields in a **struct**, and looks things up by key in a **map**, the tool for counting and
+grouping.
 
 :::mission
-Count orders per item, and pick the best seller fairly.
+In `till.go`, count how many of each item were ordered, and pick the best seller fairly.
 :::
 :::
 
@@ -56,6 +55,17 @@ No orders give an empty map, not `nil`.
 :::step{type=task task=busiest title="The best seller"}
 Make `Busiest(orders)` return the item with the biggest total quantity. On a tie, the name that sorts
 first wins. No orders give `""`.
+:::
+
+:::step{type=deep-dive title="Why Go shuffles map order on purpose"}
+A Go map is a hash table. Its iteration order depends on how keys land in its buckets, which changes
+as the map grows. Early Go programs came to rely on whatever order they happened to see, then broke
+when the implementation changed. So Go **randomises** the starting point of every `range` over a map:
+code that depends on map order fails right away in testing instead of months later.
+
+When you need an order, collect the keys in a slice and sort it (`slices.Sort(keys)`), or, as in
+`Busiest`, write an explicit rule for ties. Maps are not safe for writes from several goroutines at
+once; chapter 13 shows how to share one safely.
 :::
 
 :::step{type=recap}

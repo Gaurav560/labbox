@@ -15,9 +15,9 @@
     "alt": "A LabBox lab, Git without fear (Ch 2, Undo without fear): the lesson, VS Code and a live terminal"
   },
   {
-    "src": "/images/labs/go-basics-01-slices-and-errors.webp",
-    "caption": "labbox \u00b7 Go basics \u00b7 Ch 1, Rupees, paise and bad input",
-    "alt": "A LabBox lab, Go basics (Ch 1, Rupees, paise and bad input): the lesson, VS Code and a live terminal"
+    "src": "/images/labs/go-basics-13-goroutines.webp",
+    "caption": "labbox \u00b7 Go from zero \u00b7 Ch 13, Goroutines and channels",
+    "alt": "A LabBox lab, Go from zero (Ch 13, Goroutines and channels): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/java-basics-01-methods.webp",

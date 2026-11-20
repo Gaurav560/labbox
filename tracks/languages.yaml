@@ -36,9 +36,17 @@ nodes:
   - id: js-values
     title: JavaScript values
     chapters: [javascript-inside-out/01-values-and-equality]
+  - id: go-first-steps
+    title: Go first steps
+    chapters: [go-basics/01-first-program, go-basics/02-numbers-and-text, go-basics/03-decisions, go-basics/04-loops]
   - id: go-slices
     title: Go slices and errors
+    requires: [go-first-steps]
     chapters: [go-basics/01-slices-and-errors]
+  - id: go-strings-slices
+    title: Go strings and more slices
+    requires: [go-slices]
+    chapters: [go-basics/06-strings, go-basics/07-more-slices]
   - id: py-collections
     title: Lists and dicts
     requires: [py-functions]
@@ -53,8 +61,20 @@ nodes:
     chapters: [javascript-inside-out/02-closures-and-promises]
   - id: go-maps
     title: Go maps and structs
-    requires: [go-slices]
+    requires: [go-strings-slices]
     chapters: [go-basics/02-maps-and-structs]
+  - id: go-interfaces
+    title: Go methods and interfaces
+    requires: [go-maps]
+    chapters: [go-basics/09-methods-and-interfaces]
+  - id: go-errors-pointers
+    title: Go errors and pointers
+    requires: [go-interfaces]
+    chapters: [go-basics/10-errors-in-depth, go-basics/11-pointers]
+  - id: go-files-goroutines
+    title: Go files and goroutines
+    requires: [go-errors-pointers]
+    chapters: [go-basics/12-files-and-cli, go-basics/13-goroutines]
   - id: sql-basics
     title: SQL from zero
     requires: [py-functions, java-methods]

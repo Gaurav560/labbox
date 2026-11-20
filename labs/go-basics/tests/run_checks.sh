@@ -1,11 +1,56 @@
 #!/usr/bin/env bash
-# Hidden checks: the test file joins the learner's package in the copied workspace, prints @@RESULT lines.
+# Hidden checks for Go from zero. Each chapter lives in its own package, so a chapter that does not
+# compile never breaks another chapter's check. LABBOX_CHAPTER (set by LabBox) limits the run to the
+# chapter being checked; without it every chapter runs.
 set -u
 cd /check/workspace
-cp /check/tests/labbox_check_test.go ./labbox_check_test.go
-if ! go vet . > /tmp/vet.log 2>&1; then
-  echo "Build failed:"; cat /tmp/vet.log
-  for t in total parse_amount count_by_item busiest; do echo "@@RESULT {\"task\": \"$t\", \"passed\": false, \"message\": \"Your code does not compile. See Output.\"}"; done
-  exit 0
-fi
-go test -count=1 -v -run 'LabboxCheck' . 2>&1 | grep -E '^@@RESULT|panic|FAIL' || true
+
+# chapter id | package folder | test file | tasks
+CHAPTERS="
+01-first-program|hello|pkg/hello|greeting total_minutes
+02-numbers-and-text|numbers|pkg/numbers|percent format_rupees
+03-decisions|decisions|pkg/decisions|grade leap_year
+04-loops|loops|pkg/loops|sum_to count_vowels
+01-slices-and-errors|.|.|total parse_amount count_by_item busiest
+06-strings|words|pkg/words|clean_name count_words
+07-more-slices|slicetools|pkg/slicetools|top_n unique
+02-maps-and-structs|.|.|total parse_amount count_by_item busiest
+09-methods-and-interfaces|shapes|pkg/shapes|areas total_area
+10-errors-in-depth|bank|pkg/bank|withdraw parse_age
+11-pointers|wallet|pkg/wallet|deposit swap
+12-files-and-cli|expenses|pkg/expenses|read_totals summary_cli
+13-goroutines|concurrent|pkg/concurrent|fetch_all word_counts
+"
+
+fail_all() { # tasks message
+  for t in $1; do echo "@@RESULT {\"task\": \"$t\", \"passed\": false, \"message\": \"$2\"}"; done
+}
+
+echo "$CHAPTERS" | while IFS='|' read -r chapter dir tests tasks; do
+  [ -z "$chapter" ] && continue
+  if [ -n "${LABBOX_CHAPTER:-}" ] && [ "$chapter" != "$LABBOX_CHAPTER" ]; then continue; fi
+  if [ ! -d "$dir" ]; then fail_all "$tasks" "Could not find the folder $dir/ in your workspace."; continue; fi
+  if [ "$tests" = "." ]; then src=/check/tests/labbox_check_test.go; else src=/check/tests/$tests/labbox_check_test.go; fi
+  cp "$src" "$dir/labbox_check_test.go"
+  if ! go vet "./$dir" > /tmp/vet.log 2>&1; then
+    echo "Build failed in $dir/:"; cat /tmp/vet.log
+    fail_all "$tasks" "Your code in $dir/ does not compile. See Output for the exact line."
+    continue
+  fi
+  out=$(go test -count=1 -v -run 'LabboxCheck' "./$dir" 2>&1)
+  echo "$out" | grep -E '^@@RESULT' || true
+  # A fatal error (like two goroutines writing one map) kills the tests before every task reports:
+  # say so for each missing task instead of leaving it blank.
+  crash=$(echo "$out" | grep -m1 -E '^(fatal error|panic):' || true)
+  for t in $tasks; do
+    if ! echo "$out" | grep -q "\"task\":\"$t\""; then
+      case "$crash" in
+        *"concurrent map"*) why="Your program crashed with \\\"$crash\\\": several goroutines wrote to one map at the same time. Protect it with a sync.Mutex (or use a channel)." ;;
+        "") why="The tests stopped before reaching this task. See Output." ;;
+        *) why="Your program crashed before this task could be checked: $crash" ;;
+      esac
+      echo "$out" | grep -E '^(fatal error|panic):' | head -3
+      echo "@@RESULT {\"task\": \"$t\", \"passed\": false, \"message\": \"$why\"}"
+    fi
+  done
+done

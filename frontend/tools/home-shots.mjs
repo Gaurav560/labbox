@@ -28,7 +28,7 @@ export const SHOTS = [
   ["sql-from-zero", "02-group-by", 2, "q3.sql", "psql -c \"SELECT status, COUNT(*) FROM orders GROUP BY status\""],
   ["linux-on-call", "01-reading-logs", 5, "count_5xx.sh", "head -6 access.log"],
   ["linux-on-call", "02-disk-and-permissions", 4, "fix_perms.sh", "du -sh server/var/log/app/* && ls -l server/config"],
-  ["go-basics", "01-slices-and-errors", 5, "till.go", "go run ./cmd"],
+  ["go-basics", "13-goroutines", 4, "concurrent/concurrent.go", "cat > /tmp/c.go <<'GO'\npackage main\nimport (\"fmt\"; \"sync\"; \"time\")\nfunc main() {\n\tstart := time.Now()\n\tvar wg sync.WaitGroup\n\tfor i := range 5 {\n\t\twg.Add(1)\n\t\tgo func() { defer wg.Done(); time.Sleep(200 * time.Millisecond); fmt.Println(\"worker\", i, \"done\") }()\n\t}\n\twg.Wait()\n\tfmt.Println(\"5 x 200ms together:\", time.Since(start).Round(time.Millisecond))\n}\nGO\ngo run /tmp/c.go", 12000],
   ["java-collections", "01-lists-and-maps", 4, "Payments.java", "javac *.java && java Payments"],
   ["javascript-inside-out", "02-closures-and-promises", 2, "bot.js", "node -e \"const s=Date.now(); const w=()=>new Promise(r=>setTimeout(r,300)); (async()=>{await w(); await w(); await w(); console.log(Date.now()-s,'ms')})()\""],
   ["python-collections", "01-lists-and-dicts", 5, "orders.py", "python3 orders.py"],

@@ -173,7 +173,7 @@ def parse_metrics(logs: str) -> list[Metric]:
 # ---------- running ----------
 
 
-def _run_container(lab: LabConfig, user_id: int, tmp: Path, live_ws: Workspace | None = None) -> tuple[str, bool]:
+def _run_container(lab: LabConfig, user_id: int, tmp: Path, live_ws: Workspace | None = None, chapter_id: str = "") -> tuple[str, bool]:
     """Returns (logs, timed_out).
 
     fresh: the lab image, the copied files in /check/workspace, no network at all.
@@ -201,7 +201,12 @@ def _run_container(lab: LabConfig, user_id: int, tmp: Path, live_ws: Workspace |
         labels=containers.labels("check", user_id, lab.id),
         volumes=volumes,
         pids_limit=min(lab.resources.pids_limit, CHECK_PIDS_LIMIT),
-        environment={"HOME": "/tmp", "PYTHONDONTWRITEBYTECODE": "1"},
+        # LABBOX_CHAPTER and LABBOX_TASKS let a check script test only the chapter being checked (a big
+        # course stays fast); scripts that ignore them run everything, as before.
+        environment={
+            "HOME": "/tmp", "PYTHONDONTWRITEBYTECODE": "1", "LABBOX_CHAPTER": chapter_id,
+            "LABBOX_TASKS": ",".join(t.id for t in lab.chapter(chapter_id).tasks) if chapter_id else "",
+        },
         **where,
         **containers.security_options(lab),
     )
@@ -230,7 +235,7 @@ def _grade(lab: LabConfig, chapter_id: str, user_id: int, folder: Path | None = 
             copy_workspace(folder, tmp / "workspace")
         shutil.copytree(lab.tests_dir, tmp / "tests", symlinks=True)
         workspace_files.chown_tree(tmp)
-        logs, timed_out = _run_container(lab, user_id, tmp, live_ws)
+        logs, timed_out = _run_container(lab, user_id, tmp, live_ws, chapter_id)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     duration_ms = int((time.monotonic() - started) * 1000)

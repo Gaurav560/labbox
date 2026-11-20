@@ -1,11 +1,11 @@
-:::step{type=story title="Rupees, paise and bad input"}
-:::character{name="Meera" role="CTO, Tapri Counter"}
-Our old till service crashes when a cashier types "12.5" instead of "12.50". The new one is in Go,
-and I want it to say "that is not an amount" instead of falling over. Start with the money code.
-:::
+:::step{type=story title="Why slices and errors"}
+Most programs work on many values at once (a day of prices, a class of marks), and most input can be
+wrong. Go handles both in its own simple way: **slices** for lists, and **errors** as ordinary values
+that a function returns, instead of exceptions.
 
 :::mission
-Add up prices, and read amounts typed at the till without ever crashing.
+In `till.go`, add up a slice of prices, and read money amounts typed by a person without ever
+crashing.
 :::
 :::
 
@@ -59,8 +59,18 @@ Make `ParseAmount(text)` turn `"12.50"` into `1250` and `"7"` into `700` (paise)
 Anything else, like `""`, `"abc"`, `"1.5"` or `"-3"`, returns `0` and a non-nil error.
 
 :::why
-Returning an error lets the till show "please type an amount like 12.50" instead of crashing at lunch rush.
+Returning an error lets a program show "please type an amount like 12.50" instead of crashing.
 :::
+:::
+
+:::step{type=deep-dive title="Why Go returns errors instead of throwing them"}
+In many languages an error jumps out of the function as an exception and may be caught far away, or
+not at all. Go makes failure part of the function's signature: `(int, error)` tells every caller that
+this can fail, and the `if err != nil` right after the call shows exactly where it is handled.
+
+It is more typing, but control flow stays visible: nothing leaves a function except through a
+`return`. Go does have `panic`, but only for programmer mistakes (an index out of range, a nil map
+write), never for bad input. Chapter 10 shows how to add context to errors and check them precisely.
 :::
 
 :::step{type=recap}
