@@ -33,6 +33,26 @@ nodes:
   - id: java-methods
     title: Java methods
     chapters: [java-basics/01-methods]
+  - id: java-types-decisions
+    title: Java types and decisions
+    requires: [java-methods]
+    chapters: [java-basics/02-variables-and-types, java-basics/03-decisions]
+  - id: java-loops-strings
+    title: Java loops, strings and arrays
+    requires: [java-types-decisions]
+    chapters: [java-basics/04-loops, java-basics/05-strings, java-basics/06-arrays]
+  - id: java-objects
+    title: Java classes and interfaces
+    requires: [java-loops-strings]
+    chapters: [java-basics/07-classes-and-objects, java-basics/08-interfaces]
+  - id: java-collections-errors
+    title: Java collections and exceptions
+    requires: [java-objects]
+    chapters: [java-basics/09-collections, java-basics/10-exceptions]
+  - id: java-programs
+    title: Java streams, files and the capstone
+    requires: [java-collections-errors]
+    chapters: [java-basics/11-lambdas-and-streams, java-basics/12-files-and-cli, java-basics/13-capstone]
   - id: js-values
     title: JavaScript values
     chapters: [javascript-inside-out/01-values-and-equality]

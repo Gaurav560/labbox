@@ -55,6 +55,7 @@ class TaskOut(BaseModel):
     xp: int = 20  # what the task is worth now (hints reduce it)
     hint_count: int = 0
     hints_used: int = 0
+    examples: list[dict[str, str | None]] = []  # the task card: call, gives, note
 
 
 class ChapterOut(BaseModel):
@@ -163,6 +164,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
                         xp=progress.task_xp(t.xp, used.get(t.id, 0)),
                         hint_count=len(t.hints),
                         hints_used=used.get(t.id, 0),
+                        examples=[e.model_dump() for e in t.examples],
                     )
                     for t in c.tasks
                 ],

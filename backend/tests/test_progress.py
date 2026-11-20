@@ -98,3 +98,11 @@ def test_hint_for_task_of_other_chapter_or_lab(client: TestClient):
     h = auth(client)
     assert client.post(f"/api/labs/{LAB}/chapters/{CH}/tasks/longest_word/hint", headers=h).status_code == 404
     assert client.post(f"/api/labs/java-basics/chapters/{CH}/tasks/greet/hint", headers=h).status_code == 404
+
+
+def test_task_card_examples_are_served(client: TestClient):
+    h = auth(client)
+    tasks = client.get("/api/labs/java-basics", headers=h).json()["chapters"][0]["tasks"]
+    assert tasks[0]["examples"][0] == {"call": 'greet("Asha")', "gives": '"Hello, Asha!"', "note": None}
+    py = client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"][0]["tasks"][0]
+    assert py["examples"] == []  # optional: tasks without a card still work

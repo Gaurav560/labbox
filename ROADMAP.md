@@ -54,7 +54,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 
 | Track | Labs |
 |---|---|
-| Languages | python-basics (**Python from zero**, complete: 13 chapters, 27 tasks), python-collections, java-basics, java-collections, javascript-inside-out, go-basics (**Go from zero**, complete: 13 chapters, 26 tasks) |
+| Languages | python-basics (**Python from zero**, complete: 13 chapters, 27 tasks), python-collections, java-basics (**Java from zero**, complete: 13 chapters, 26 tasks), java-collections, javascript-inside-out, go-basics (**Go from zero**, complete: 13 chapters, 26 tasks) |
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
 | Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice** (a full course: 13 chapters, 32 tasks, zero to production), **postgres-transactions-and-locks** |
 | DevOps | **linux-on-call**, **git-without-fear** |
@@ -210,8 +210,11 @@ course, one by one** (order: Python, Java, Spring Boot, SQL, Postgres, JavaScrip
 Linux, Git, system design). Beginner courses are plain; advanced courses start with a story. Every course follows
 `CONTENT_STANDARD.md` (history in chapter 1, worked examples, easy wins, quick checks, kind checks); Python
 from zero and Go from zero follow it in full (20 November). Python from
-zero (13 chapters, 27 tasks) and Go from zero (13 chapters, 26 tasks) are complete; next: Python in
-practice (python-collections, with a story), then the others in order.
+zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
+tasks, written in the "explain, do not just state" style) are complete; next (owner's order): JavaScript
+from zero, then Python in practice (with a story) and the others. **Pictures in lessons** (task cards,
+small drawings, "watch it run" traces) are piloted in Java chapters 1 and 9 (20 November); next, after
+the owner's look: roll them out to every chapter of Python, Go and Java from zero.
 
 ### 4. Platform phases not started (E and G are done)
 

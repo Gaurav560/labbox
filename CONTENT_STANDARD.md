@@ -41,14 +41,50 @@ In this order (each step short, one idea per step):
 10. **Go deeper** (`deep-dive`): optional depth for experienced engineers.
 11. **Recap** (`recap`): four lines to remember.
 
-## 3. Words
+## 3. Explain, do not just state
+
+The owner's verdict on the first Go course: "a little straight, just to the point, very difficult for
+a new learner to grasp". Every new idea is **taught**, not announced, in small steps (each under the
+validator's 120 words of prose; code does not count):
+
+1. **Why it exists**: the problem this idea solves, in one or two sentences, before any syntax.
+2. **Picture it**: an everyday comparison (a list is a numbered shelf, a reference is an address on
+   an envelope, a goroutine is a second cook in the kitchen).
+3. **In code**: a small sample walked through slowly, saying what each part does and why.
+4. **Careful**: the confusion beginners really have, named kindly, with how to spot it.
+5. **Check yourself**: one line the learner can answer in their head before moving on.
+
+More, smaller steps beat fewer, denser ones. Never assume a term is known; define it the first time,
+in place.
+
+### Pictures: small, consistent, always meaningful
+
+Pictures help when they show something words alone cannot. One style everywhere, never decoration:
+
+- **The task card** (every task): two or three `examples` in `lab.yaml` (`call`, `gives`, optional
+  `note`) are drawn at the top of the task as "what your code should do". Use the same examples as
+  the task text, short enough to read at a glance (90 characters at most).
+- **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`): a small line drawing
+  of the everyday comparison (a recipe card, a phone book, a notebook). At most one per step, with a
+  one-line caption that says what to notice.
+- **Watch it run** (`:::trace{title='...'}` around a table): one row per moment of a program, one
+  column per variable, and a `note` column in plain words. The learner steps through it and sees
+  values change. Use it where beginners lose track: loops, a "best so far", a map filling up. Up to
+  12 rows; titles with double quotes use single quotes around them.
+- **Diagrams** (`:::diagram{name=...}`) stay for technical ideas you cannot see (references,
+  memory, concurrency).
+
+No photos or generated images in lessons: they are heavy, drift in style and fight the themes. The
+validator rejects unknown picture and diagram names and traces without a table.
+
+## 4. Words
 
 - Plain words. Explain every new term the first time it appears, right there, in one line.
 - Short sentences. No walls of text: concepts stay under the word limit the validator checks.
 - Never blame. Mistakes are normal: "If you guessed X, you are in good company."
 - Code samples fit the lesson panel (about 50 characters a line): put long comments on their own line.
 
-## 4. Checks
+## 5. Checks
 
 - **A failure says three things**: what happened (the exact call and result), why (the likely
   mistake), and what to try next. Recognise the common wrong answers and name them kindly.
@@ -58,7 +94,7 @@ In this order (each step short, one idea per step):
 - Hints climb a ladder: a nudge, then the tool to use, then nearly the answer (never a solution line;
   the validator refuses those).
 
-## 5. Done means
+## 6. Done means
 
 - `scripts/labbox validate <lab> --strict` passes, and `scripts/labbox test-lab <lab>`: the starter
   fails every task and the solution passes every task.

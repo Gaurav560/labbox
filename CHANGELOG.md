@@ -1,5 +1,44 @@
 # Changelog
 
+## Pictures in lessons: task cards, small drawings and "watch it run" (Java pilot)
+
+- **Task cards**: a task can list up to three `examples` in `lab.yaml` (`call`, `gives`, an optional
+  `note`); the task box draws them as "What your code should do", `greet("Asha")` -> `"Hello, Asha!"`.
+  Additive: tasks without examples look as before (`examples` is an empty list in the API).
+- **Small pictures** (`:::picture{name}`, new `Pictures.tsx`): line drawings in one style and the
+  theme's colours for the everyday comparison a step uses. First three: the recipe card (the parts of
+  a method), a form versus a notebook (array versus ArrayList), the phone book (HashMap).
+- **Watch it run** (`:::trace{title}`, new `Trace.tsx`): a small table the learner steps through with
+  Back and Next, one row at a time, the values that just changed highlighted and a note saying what
+  happened. First two: `shortestWord("big kirana store")` and a map of totals filling up.
+- Pilot in Java chapters 1 and 9. `CONTENT_STANDARD.md` gains the rules (small, consistent, one per
+  step, never decoration). The validator rejects unknown picture or diagram names and traces without
+  a table or with more than 12 rows; table lines no longer count as prose words.
+- A new browser test drives the picture, the trace and the task card.
+
+## Java from zero: the whole course (13 chapters, 26 tasks)
+
+- `java-basics` is now **Java from zero** (same id, chapter 1 and its tasks kept, so progress is safe):
+  methods, variables and types, decisions, loops, strings, arrays, classes and objects, interfaces,
+  ArrayList and HashMap, exceptions, lambdas and streams, files and a command-line program, and a
+  capstone (fix an inherited `Book` class with equals but no hashCode, then a monthly report from
+  messy CSV data).
+- **"The story of Java"** in chapter 1: before Java (C and C++, one build per machine, raw memory),
+  Gosling's team at Sun, "write once, run anywhere", the JVM and garbage collector, a timeline from
+  1991 to the six-month releases, Oracle and OpenJDK, where it is used, Duke.
+- Written in the new **"explain, do not just state"** style (`CONTENT_STANDARD.md` section 3, after the
+  owner's feedback on Go): each idea gets why it exists, an everyday picture (a recipe card, a phone
+  book, a fire alarm, a conveyor belt, library shelves), the code walked through slowly and the common
+  confusion, in more and smaller steps. Every chapter has a worked example, an easy-win warm-up, a
+  try-it, two quick checks, a deep-dive and a recap.
+- Two new pictures: `==` versus `equals` on two String objects, and two variables sharing one object.
+- One package per chapter (`types/`, `decisions/`, ... `capstone/`), compiled on its own, so a compile
+  error fails only that chapter; the runner honours `LABBOX_CHAPTER`. Every task has a pass message
+  that teaches; failures start with "Not yet" and point the way (sorting the caller's list, missing
+  lower-casing, a lost cause, ties without an order).
+- Skill map: five new Java nodes after "Java methods". Tests: 261 on Postgres and Redis, 257 on
+  SQLite, 15 browser tests, 16 labs valid.
+
 ## The teaching standard, applied to all of Python from zero and Go from zero
 
 - Every chapter of both courses now has a **worked example** before its first task (a different problem

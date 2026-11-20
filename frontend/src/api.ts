@@ -62,7 +62,8 @@ export interface LabInfo {
   cover_credit: { by: string; url: string; source: string } | null;
 }
 export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
-export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number }
+export interface TaskExample { call: string; gives: string; note: string | null }
+export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number; examples?: TaskExample[] }
 export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; has_setup: boolean }
 export interface PreviewPort { name: string; port: number; path: string }
 export interface LabDetail extends LabInfo { preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }

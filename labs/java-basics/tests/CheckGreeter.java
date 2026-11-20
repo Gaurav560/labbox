@@ -28,6 +28,7 @@ public class CheckGreeter {
     /** expected and actual are optional v2 fields; the UI shows them side by side. */
     static void report(String task, boolean passed, String message, String expected, String actual) {
         String extra = expected == null ? "" : ", \"expected\": \"" + esc(expected) + "\", \"actual\": \"" + esc(actual) + "\"";
+        if (!passed) message = "Not yet: " + message;
         System.out.println("@@RESULT {\"task\": \"" + esc(task) + "\", \"passed\": " + passed
                 + ", \"message\": \"" + esc(message) + "\"" + extra + "}");
         System.out.flush();
@@ -55,7 +56,7 @@ public class CheckGreeter {
                     return;
                 }
             }
-            report("greet", true, "ok");
+            report("greet", true, "Your first Java method works: typed input, typed output, and a String built from pieces.");
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             report("greet", false, "Could not find a method public static String greet(String) in class Greeter");
         } catch (Throwable t) {
@@ -81,7 +82,7 @@ public class CheckGreeter {
                     return;
                 }
             }
-            report("longest_word", true, "ok");
+            report("longest_word", true, "Nice: split into words, then keep the longest length you have seen. A pattern you will use again and again.");
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             report("longest_word", false, "Could not find a method public static int longestWord(String) in class Greeter");
         } catch (Throwable t) {

@@ -87,3 +87,15 @@ def test_load_labs_fails_loudly(tmp_path: Path, lab_copy: Path):
     edit(lab_copy, lambda d: d.pop("chapters"))
     with pytest.raises(LabError):
         load_labs(lab_copy.parent)
+
+
+def test_task_examples_are_limited(lab_copy: Path):
+    ex = {"call": "greet('Asha')", "gives": "'Hello, Asha!'"}
+    edit(lab_copy, lambda d: d["chapters"][0]["tasks"][0].update(examples=[ex] * 3))
+    assert load_lab(lab_copy).chapters[0].tasks[0].examples[0].gives == "'Hello, Asha!'"
+    edit(lab_copy, lambda d: d["chapters"][0]["tasks"][0].update(examples=[ex] * 4))
+    with pytest.raises(LabError):
+        load_lab(lab_copy)
+    edit(lab_copy, lambda d: d["chapters"][0]["tasks"][0].update(examples=[{"call": "x", "gives": ""}]))
+    with pytest.raises(LabError):
+        load_lab(lab_copy)

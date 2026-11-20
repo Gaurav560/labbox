@@ -192,6 +192,7 @@ def test_profile_validation(client: TestClient):
 
 
 def test_existing_user_is_backfilled_and_skips_onboarding():
+    labs.init_labs(get_settings().LABS_DIR)  # backfill reads the real labs; do not rely on an earlier test
     with Session(engine) as s:
         u = User(username=f"old{random.randint(0, 10**9)}", password_hash="x")
         s.add(u)
@@ -207,10 +208,10 @@ def test_existing_user_is_backfilled_and_skips_onboarding():
         s.commit()
         st = engagement.stats(s, uid)
         assert st.needs_onboarding is False
-        assert st.xp_total == 20 + 20 + 50 + 200 + 10
+        assert st.xp_total == 20 + 20 + 50 + 10  # two tasks, chapter 1, a predict (Java from zero has 13 chapters: no lab bonus yet)
         assert {e.day for e in s.exec(select(XpEvent).where(XpEvent.user_id == uid)).all()} == {date(2026, 10, 1)}
         engagement.backfill(s, uid)  # running again changes nothing
-        assert engagement.stats(s, uid).xp_total == 300
+        assert engagement.stats(s, uid).xp_total == 100
 
 
 def test_daily_drill(client: TestClient):

@@ -305,3 +305,18 @@ def test_hint_that_gives_away_the_answer_is_an_error(labs_dir: Path):
 def test_real_labs_pass_the_strict_gate():
     for folder in sorted(p for p in LABS_DIR.iterdir() if (p / "lab.yaml").is_file()):
         assert cli.validate_lab(folder, check_image=False, strict=True).errors == [], folder.name
+
+
+def test_pictures_and_traces_are_checked(labs_dir: Path):
+    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    good = ch.read_text()
+    assert ':::picture{name="recipe-card"}' in good and ":::trace{" in good
+    ch.write_text(good.replace('picture{name="recipe-card"}', 'picture{name="no-such-picture"}'))
+    assert any("unknown picture 'no-such-picture'" in e for e in errors(labs_dir / "java-basics"))
+    ch.write_text(good + '\n:::step{type=recap}\n:::diagram{name="nope"}\n:::\n- done\n:::\n')
+    assert any("unknown diagram 'nope'" in e for e in errors(labs_dir / "java-basics"))
+    ch.write_text("\n".join(ln for ln in good.splitlines() if not ln.startswith("| ")))  # a trace with no table
+    assert any("a :::trace needs a table" in e for e in errors(labs_dir / "java-basics"))
+    rows = "".join(f"| {i} | {i} | {i} | n |\n" for i in range(13))
+    ch.write_text(good.replace("|---|---|---|---|\n", "|---|---|---|---|\n" + rows, 1))
+    assert any("keep it to 12" in e for e in errors(labs_dir / "java-basics"))

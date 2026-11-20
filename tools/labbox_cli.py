@@ -58,9 +58,42 @@ _CODE_BLOCK_RE = re.compile(r"```.*?```", re.S)
 _DIRECTIVE_LINE_RE = re.compile(r"^\s*:::.*$", re.M)
 
 
+_TABLE_LINE_RE = re.compile(r"^\s*\|.*$", re.M)  # trace and reference tables are not prose
+
+
 def _words(markdown: str) -> int:
-    text = _DIRECTIVE_LINE_RE.sub(" ", _CODE_BLOCK_RE.sub(" ", markdown))
+    text = _TABLE_LINE_RE.sub(" ", _DIRECTIVE_LINE_RE.sub(" ", _CODE_BLOCK_RE.sub(" ", markdown)))
     return len(re.findall(r"[A-Za-z0-9`'_-]+", text))
+
+
+# Built-in pictures live in the frontend; a chapter may only name ones that exist.
+_PICTURE_FILES = {"diagram": "frontend/src/lesson/Diagrams.tsx", "picture": "frontend/src/lesson/Pictures.tsx"}
+_PICTURE_USE_RE = re.compile(r'^\s*:::(diagram|picture)\{name="?([a-z0-9-]+)"?\}', re.M)
+_TRACE_RE = re.compile(r"^\s*:::trace\b[^\n]*\n(.*?)^\s*:::\s*$", re.M | re.S)
+TRACE_MAX_ROWS = 12
+
+
+def _picture_names(kind: str) -> set[str] | None:
+    f = ROOT / _PICTURE_FILES[kind]
+    if not f.is_file():
+        return None  # running outside the repo: skip the check
+    body = f.read_text(encoding="utf-8").split("Record<string, () => JSX.Element> = {", 1)[-1].split("};", 1)[0]
+    return set(re.findall(r'^\s*"?([a-z0-9-]+)"?\s*:', body, re.M))
+
+
+def _picture_errors(file: str, markdown: str) -> list[str]:
+    out = []
+    names = {k: _picture_names(k) for k in _PICTURE_FILES}
+    for kind, name in _PICTURE_USE_RE.findall(markdown):
+        if names[kind] is not None and name not in names[kind]:
+            out.append(f"{file}: unknown {kind} {name!r} (known: {', '.join(sorted(names[kind]))})")
+    for body in _TRACE_RE.findall(markdown):
+        rows = [ln for ln in body.splitlines() if ln.strip().startswith("|")]
+        if len(rows) < 3:
+            out.append(f"{file}: a :::trace needs a table (a header, a separator and at least one row)")
+        elif len(rows) - 2 > TRACE_MAX_ROWS:
+            out.append(f"{file}: a :::trace has {len(rows) - 2} rows, keep it to {TRACE_MAX_ROWS}")
+    return out
 
 
 def _solution_lines(folder: Path) -> set[str]:
@@ -103,6 +136,7 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
         for needed in ("predict", "recap"):
             if needed not in types:
                 warnings.append(f"{ch.file}: no {needed} step")
+        errors.extend(_picture_errors(ch.file, "\n".join(s.markdown for s in steps)))
         for i, s in enumerate(steps, 1):
             if s.type in ("concept", "example") and _words(s.markdown) > CONCEPT_MAX_WORDS:
                 warnings.append(f"{ch.file}: step {i} ({s.type}) has {_words(s.markdown)} words of text, keep it under {CONCEPT_MAX_WORDS}")

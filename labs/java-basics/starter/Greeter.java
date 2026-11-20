@@ -1,10 +1,10 @@
 public class Greeter {
-    // TODO: return "Hello, <name>!"
+    // TODO (task greet): return "Hello, <name>!"
     public static String greet(String name) {
         return null;
     }
 
-    // TODO: return the length of the longest word in the sentence (words split by spaces)
+    // TODO (task longest_word): the length of the longest word in the sentence (words split by spaces)
     public static int longestWord(String sentence) {
         return 0;
     }

@@ -4,6 +4,7 @@ import ChoiceQuestion from "./ChoiceQuestion";
 import Countdown from "./Countdown";
 import HintLadder from "./HintLadder";
 import LessonMarkdown from "./LessonMarkdown";
+import TaskCard from "./TaskCard";
 import TutorBox from "./TutorBox";
 import DesignStep from "./DesignStep";
 
@@ -138,6 +139,7 @@ function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: strin
         <span className="spacer" />
         <span className="xp-chip" title="Each hint you reveal lowers the XP for this task">{task.xp} XP</span>
       </div>
+      <TaskCard examples={task.examples ?? []} />
       <p className="muted small-text">
         {task.passed
           ? "Passed. Nice work."

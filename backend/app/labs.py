@@ -156,12 +156,22 @@ class LLMConfig(_Strict):
     enabled: bool = False
 
 
+class TaskExample(_Strict):
+    """One line of a task card: what goes in, what comes out (Content standard: pictures)."""
+
+    call: str = Field(min_length=1, max_length=90)
+    gives: str = Field(min_length=1, max_length=90)
+    note: str | None = Field(default=None, max_length=60)
+
+
 class Task(_Strict):
     id: str
     title: str
     xp: int = Field(default=20, ge=0, le=1000)
     # Hint ladder: a nudge, a direction, then almost there (never the full solution).
     hints: list[str] = Field(default=[], max_length=3)
+    # The task card: up to three examples drawn as call -> result at the top of the task.
+    examples: list[TaskExample] = Field(default=[], max_length=3)
 
     @field_validator("id")
     @classmethod

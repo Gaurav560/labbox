@@ -43,10 +43,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (15 tests,
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (16 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (20 November, after Phase J admin) (257 backend tests on Postgres and Redis,
-  253 on SQLite, 15 browser tests on 4 workers, 16 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (20 November, after Java from zero and the pictures pilot) (264 backend tests on Postgres and Redis,
+  260 on SQLite, 16 browser tests on 4 workers, 16 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -60,7 +60,7 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 16 labs (Redis is a 13-chapter course), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 16 labs (Redis is a 13-chapter course; Python, Go and Java from zero are complete 13-chapter courses), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).

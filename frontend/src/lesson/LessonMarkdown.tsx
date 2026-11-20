@@ -2,7 +2,8 @@
  * Renders one step's markdown, including the directives of the v2 chapter format:
  * :::character{name role}, :::mission, :::tip, :::warning, :::why, :::mistake,
  * :::deep-dive, :::incident{minutes}, and for history steps :::before, :::solved, :::timeline,
- * :::usedby and :::funfact; :::diagram{name} draws a built-in picture (Diagrams.tsx). A code fence
+ * :::usedby and :::funfact; :::diagram{name} draws a built-in diagram (Diagrams.tsx), :::picture{name} a
+ * small everyday picture (Pictures.tsx), and :::trace{title} turns its table into a step-through. A code fence
  * with the `run` attribute (```bash run) gets a Run in terminal button.
  */
 import type { Element, ElementContent } from "hast";
@@ -13,6 +14,8 @@ import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
 import CodeBlock from "./CodeBlock";
 import Diagram from "./Diagrams";
+import Picture from "./Pictures";
+import Trace, { type TraceData } from "./Trace";
 import Countdown from "./Countdown";
 
 const CALLOUT_LABELS: Record<string, string> = {
@@ -27,7 +30,7 @@ const HISTORY_LABELS: Record<string, string> = {
   funfact: "Fun fact",
 };
 const BLOCKS = new Set([
-  "character", "mission", "deep-dive", "incident", "question", "explain", "timeline", "usedby", "diagram",
+  "character", "mission", "deep-dive", "incident", "question", "explain", "timeline", "usedby", "diagram", "picture", "trace",
   ...Object.keys(CALLOUT_LABELS), ...Object.keys(HISTORY_LABELS),
 ]);
 
@@ -41,6 +44,20 @@ function remarkLessonBlocks() {
         const attrs: Record<string, string> = {};
         // hast properties use camelCase names (dataName renders as data-name).
         for (const [k, v] of Object.entries(node.attributes ?? {})) if (v != null) attrs[`data${k[0].toUpperCase()}${k.slice(1)}`] = v;
+        if (node.type === "containerDirective" && node.name === "trace") {
+          // The table becomes data for the step-through; anything else inside stays as text.
+          // Without GFM tables the pipe rows arrive as one paragraph of text: read them line by line.
+          const table = node.children.find((c) => c.type === "paragraph" && plain(c).trimStart().startsWith("|"));
+          if (table) {
+            const rows = plain(table)
+              .split("\n")
+              .map((ln) => ln.trim())
+              .filter((ln) => ln.startsWith("|") && !/^\|[\s|:-]+\|$/.test(ln)) // drop the |---| separator
+              .map((ln) => ln.replace(/^\||\|$/g, "").split("|").map((c) => c.trim()));
+            attrs.dataTrace = JSON.stringify({ headers: rows[0] ?? [], rows: rows.slice(1) } satisfies TraceData);
+            node.children = node.children.filter((c) => c !== table);
+          }
+        }
         data.hProperties = { ...attrs, dataDirective: BLOCKS.has(node.name) ? node.name : "unknown" };
       } else if (node.type === "textDirective" && parent && index !== undefined) {
         // Text like "ratio 3:a" is not meant as a directive: put the text back.
@@ -50,6 +67,13 @@ function remarkLessonBlocks() {
       }
     });
   };
+}
+
+/** The plain text of an mdast node (a table cell, say), inline code included. */
+function plain(node: unknown): string {
+  const n = node as { value?: string; children?: unknown[] };
+  if (typeof n.value === "string") return n.value;
+  return (n.children ?? []).map(plain).join("");
 }
 
 function textOf(nodes: ElementContent[]): string {
@@ -169,6 +193,22 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
       );
     case "diagram":
       return <Diagram name={p.dataName ?? ""} caption={children} />;
+    case "picture":
+      return <Picture name={p.dataName ?? ""} caption={children} />;
+    case "trace": {
+      let data: TraceData = { headers: [], rows: [] };
+      try {
+        data = JSON.parse(p.dataTrace ?? "");
+      } catch {
+        return <div>{children}</div>;
+      }
+      return (
+        <>
+          <Trace title={p.dataTitle} data={data} />
+          {children}
+        </>
+      );
+    }
     case "question":
     case "explain":
     case "unknown":

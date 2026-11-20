@@ -165,7 +165,46 @@ function Goroutines() {
   );
 }
 
+/** Java strings: == compares addresses, equals compares the letters. */
+function StringEquals() {
+  return (
+    <svg viewBox="0 0 440 200" role="img" aria-label="a and b point to two different String objects that both hold tea; a == b is false, a.equals(b) is true">
+      <Head />
+      <Box x={10} y={30} w={60} h={34} label="a" tone="accent" />
+      <Box x={10} y={110} w={60} h={34} label="b" tone="accent" />
+      <Arrow x1={72} y1={47} x2={196} y2={47} />
+      <Arrow x1={72} y1={127} x2={196} y2={127} />
+      <Box x={200} y={28} w={110} h={38} label='"tea"' />
+      <Box x={200} y={108} w={110} h={38} label='"tea"' />
+      <text className="dg-note" x={320} y={52}>object 1</text>
+      <text className="dg-note" x={320} y={132}>object 2</text>
+      <text className="dg-note" x={10} y={180}>a == b is false (two objects)</text>
+      <text className="dg-note" x={10} y={196}>a.equals(b) is true (same letters)</text>
+    </svg>
+  );
+}
+
+/** Java objects: a variable holds the address of an object, so b = a shares one object. */
+function ObjectReference() {
+  return (
+    <svg viewBox="0 0 440 190" role="img" aria-label="Variables a and b both hold the address of one BankAccount object with balance 150">
+      <Head />
+      <text className="dg-note" x={10} y={20}>BankAccount b = a;</text>
+      <Box x={10} y={36} w={70} h={34} label="a" tone="accent" />
+      <Box x={10} y={100} w={70} h={34} label="b" tone="accent" />
+      <Arrow x1={82} y1={53} x2={226} y2={76} />
+      <Arrow x1={82} y1={117} x2={226} y2={94} />
+      <g className="dg-box"><rect x={230} y={50} width={190} height={70} rx={10} /></g>
+      <text className="dg-note" x={244} y={76}>BankAccount</text>
+      <text className="dg-note" x={244} y={100}>owner: Riya, balance: 150</text>
+      <text className="dg-note" x={10} y={172}>b.deposit(50) changes the one object a also sees</text>
+    </svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "string-equals": StringEquals,
+  "object-reference": ObjectReference,
   "shared-list": SharedList,
   "default-list": DefaultList,
   "slice-array": SliceArray,

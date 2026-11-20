@@ -1,48 +1,279 @@
 id: java-basics
 version: 2
-title: Java Basics
-subtitle: Write your first Java methods and check them against real tests.
-description: Write your first Java methods and check them against real tests.
+title: Java from zero
+subtitle: From your first method to classes, collections, streams, exceptions and a real program.
+description: 'Learn Java from the very first line: types, decisions, loops, strings, arrays, classes and
+  records, interfaces, collections, exceptions, lambdas and streams, files and a command-line program.
+  Plain explanations, everyday examples and real tests.'
 language: java
 track: languages
-tags: [java]
+tags:
+- java
+- beginner
 level: beginner
-estimated_minutes: 15
-story:
-  company: PaySetu
-  character: { name: Kabir, role: "Lead engineer, PaySetu" }
-  pitch: "PaySetu signs up 600 UPI merchants a day and needs two small Java methods it can trust."
-cover_scene: "PaySetu: a tiny Indian kirana shop open late at night, a glowing payment QR stand on the counter, a steaming cup of coffee beside a small glowing terminal screen, shelves of colourful packets, a row of tiny shopfronts behind."
+estimated_minutes: 220
+cover_scene: A calm desk with a laptop showing a few lines of Java and a coffee cup, soft morning light.
 cover: cover.svg
-cover_credit: { by: "Logos: duke-waving,java", source: "devicon (MIT), Duke (BSD)" }
+cover_credit:
+  by: 'Logos: duke-waving,java'
+  source: devicon (MIT), Duke (BSD)
 image: labbox/java-basics:v1
 resources:
   cpus: 0.5
-  memory: 768m
+  memory: 1g
   pids_limit: 256
 workspace:
   mount_path: /workspace
   shell: /bin/bash
   network: bridge
 check:
-  command: ["bash", "/check/tests/run_checks.sh"]
-  timeout_seconds: 30
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 60
   network: none
 chapters:
-  - id: 01-methods
-    title: Your first methods
-    file: chapters/01-methods.md
-    minutes: 15
-    tasks:
-      - id: greet
-        title: "Greeter.greet: return a greeting"
-        hints:
-          - "Look at the return statement in greet: it returns null right now."
-          - "Join Strings with +, putting the name between two pieces of fixed text."
-          - "Return \"Hello, \" joined with name, joined with \"!\"."
-      - id: longest_word
-        title: "Greeter.longestWord: length of the longest word"
-        hints:
-          - "An empty sentence must give 0. What does your method return before it looks at any word?"
-          - "Split the sentence on spaces, then look at the length of each word."
-          - "Keep a variable for the best length so far. In the loop, update it whenever a word is longer."
+- id: 01-methods
+  title: Your first methods
+  file: chapters/01-methods.md
+  minutes: 15
+  tasks:
+  - id: greet
+    title: 'Greeter.greet: return a greeting'
+    hints:
+    - 'Look at the return statement in greet: it returns null right now.'
+    - Join Strings with +, putting the name between two pieces of fixed text.
+    - Return "Hello, " joined with name, joined with "!".
+    examples:
+    - call: greet("Asha")
+      gives: '"Hello, Asha!"'
+    - call: greet("Kabir")
+      gives: '"Hello, Kabir!"'
+  - id: longest_word
+    title: 'Greeter.longestWord: length of the longest word'
+    hints:
+    - An empty sentence must give 0. What does your method return before it looks at any word?
+    - Split the sentence on spaces, then look at the length of each word.
+    - Keep a variable for the best length so far. In the loop, update it whenever a word is longer.
+    examples:
+    - call: longestWord("big kirana store")
+      gives: '6'
+    - call: longestWord("hi")
+      gives: '2'
+- id: 02-variables-and-types
+  title: Variables and types
+  file: chapters/02-variables-and-types.md
+  minutes: 15
+  tasks:
+  - id: percent
+    title: 'types/Numbers.java: percent(scored, total)'
+    hints:
+    - '45 / 50 is 0 in Java: dividing two ints throws the fraction away.'
+    - Cast one side to double before dividing, for example (double) scored.
+    - Check total == 0 first; Math.round(x * 10) / 10.0 rounds to one decimal.
+  - id: format_rupees
+    title: 'types/Numbers.java: formatRupees(paise)'
+    hints:
+    - '1250 paise is 12 rupees and 50 paise: use / and % with 100.'
+    - String.format builds text; %02d pads a number to two digits with a zero.
+    - Put the rupee sign, the rupees, a dot and the two-digit paise in one String.format.
+- id: 03-decisions
+  title: Making decisions
+  file: chapters/03-decisions.md
+  minutes: 15
+  tasks:
+  - id: grade
+    title: 'decisions/Decisions.java: grade(marks)'
+    hints:
+    - 'Check the invalid marks first: below 0 or above 100.'
+    - 'Then test from the highest grade down: 80, then 60, then 40.'
+    - if and else if, or one if per grade that returns straight away, both read well.
+  - id: leap_year
+    title: 'decisions/Decisions.java: isLeapYear(year)'
+    hints:
+    - Divisible by 4 is usually a leap year, with two exceptions.
+    - Divisible by 100 is not, unless it is also divisible by 400.
+    - Combine the tests with &&, || and !; 1900 is false, 2000 is true.
+- id: 04-loops
+  title: Loops
+  file: chapters/04-loops.md
+  minutes: 15
+  tasks:
+  - id: sum_to
+    title: 'loops/Loops.java: sumTo(n)'
+    hints:
+    - 'A classic for loop has three parts: start at 1, keep going while i is at most n, add one each round.'
+    - Add each i to a running total that starts at 0.
+    - When n is 0 or negative the loop never runs, so the total stays 0.
+  - id: count_vowels
+    title: 'loops/Loops.java: countVowels(text)'
+    hints:
+    - text.toCharArray() gives you each character, ready for a for-each loop.
+    - Character.toLowerCase(c) lets you treat A and a the same.
+    - '"aeiou".indexOf(c) is -1 when c is not a vowel.'
+- id: 05-strings
+  title: Strings
+  file: chapters/05-strings.md
+  minutes: 15
+  tasks:
+  - id: count_words
+    title: 'words/Words.java: warm-up, countWords(text)'
+    hints:
+    - trim() removes the spaces at both ends first.
+    - split("\\s+") splits on one or more spaces, tabs or new lines.
+    - 'An empty (or all-space) text has no words at all: check it before splitting.'
+  - id: clean_name
+    title: 'words/Words.java: cleanName(raw)'
+    hints:
+    - Split the trimmed name on runs of spaces, as in the warm-up.
+    - 'For each word: substring(0, 1) upper case, plus substring(1) lower case.'
+    - String.join(" ", parts) puts the words back with single spaces.
+- id: 06-arrays
+  title: Arrays
+  file: chapters/06-arrays.md
+  minutes: 15
+  tasks:
+  - id: array_max
+    title: 'arrays/ArrayTools.java: max(numbers)'
+    hints:
+    - Start with the first number as the best so far.
+    - Loop over the rest and keep the bigger one each time.
+    - 'An empty array has no maximum: throw an IllegalArgumentException with a clear message.'
+  - id: reversed
+    title: 'arrays/ArrayTools.java: reversed(numbers)'
+    hints:
+    - Make a new array of the same length with new int[numbers.length].
+    - Item i of the result is item length - 1 - i of the input.
+    - 'Never write into the array you were given: the caller still needs it.'
+- id: 07-classes-and-objects
+  title: Classes and objects
+  file: chapters/07-classes-and-objects.md
+  minutes: 20
+  tasks:
+  - id: point_distance
+    title: 'objects/Point.java: distanceTo(other)'
+    hints:
+    - The distance is the square root of dx * dx + dy * dy.
+    - 'A record''s fields are read with methods: x() and y(), or other.x().'
+    - Math.sqrt gives the root; Math.round(d * 100) / 100.0 rounds to 2 decimals.
+  - id: bank_account
+    title: 'objects/BankAccount.java: deposit and withdraw'
+    hints:
+    - Keep the balance in a private field, so only the methods can change it.
+    - 'A zero or negative amount is a mistake by the caller: throw IllegalArgumentException.'
+    - A withdrawal bigger than the balance is also refused, and the balance stays as it was.
+- id: 08-interfaces
+  title: Interfaces and inheritance
+  file: chapters/08-interfaces.md
+  minutes: 15
+  tasks:
+  - id: areas
+    title: 'shapes/Rect.java and Circle.java: area()'
+    hints:
+    - A rectangle's area is width times height.
+    - A circle's area is Math.PI times the radius squared.
+    - Both classes implement Shape, so each must have a public double area().
+  - id: total_area
+    title: 'shapes/Shapes.java: totalArea(shapes)'
+    hints:
+    - Any object that implements Shape has area(), whatever its class.
+    - Loop over the list and add up s.area().
+    - Round the total to 2 decimals with Math.round(total * 100) / 100.0.
+- id: 09-collections
+  title: ArrayList and HashMap
+  file: chapters/09-collections.md
+  minutes: 15
+  tasks:
+  - id: top_n
+    title: 'collections/ListTools.java: topN(numbers, n)'
+    hints:
+    - Sorting the list you were given changes the caller's list.
+    - new ArrayList<>(numbers) makes a separate copy you can sort.
+    - Sort the copy biggest first (Comparator.reverseOrder()), then keep at most n with subList.
+    examples:
+    - call: topN([72, 45, 90, 66], 2)
+      gives: '[90, 72]'
+      note: the list passed in stays as it was
+    - call: topN([5, 1], 5)
+      gives: '[5, 1]'
+  - id: word_counts
+    title: 'collections/WordCounter.java: count(words)'
+    hints:
+    - A HashMap<String, Integer> holds one count per word.
+    - getOrDefault(word, 0) gives the count so far, or 0 the first time.
+    - Lower-case each word before counting, so Tea and tea count together.
+    examples:
+    - call: count([tea, Coffee, TEA, tea])
+      gives: '{tea=3, coffee=1}'
+    - call: count([])
+      gives: '{}'
+- id: 10-exceptions
+  title: Exceptions
+  file: chapters/10-exceptions.md
+  minutes: 20
+  tasks:
+  - id: parse_age
+    title: 'errors/Ages.java: parseAge(text)'
+    hints:
+    - Integer.parseInt throws NumberFormatException for text that is not a whole number.
+    - Catch it and throw your InvalidAgeException instead, passing the original as the cause.
+    - After parsing, an age outside 0 to 150 is also an InvalidAgeException.
+  - id: safe_sum
+    title: 'errors/Ages.java: safeSum(values)'
+    hints:
+    - 'Keep two things while you loop: the running total and a list of bad values.'
+    - Put Double.parseDouble inside try; in catch, remember the value and carry on.
+    - Give back both at once in the SumResult record.
+- id: 11-lambdas-and-streams
+  title: Lambdas and streams
+  file: chapters/11-lambdas-and-streams.md
+  minutes: 15
+  tasks:
+  - id: passing
+    title: 'streams/Streams.java: passing(marks)'
+    hints:
+    - marks.stream() turns the list into a stream you can filter.
+    - filter keeps the items for which a lambda like m -> m >= 40 is true.
+    - toList() collects the result into a new list.
+  - id: sort_by_length
+    title: 'streams/Streams.java: sortByLength(words)'
+    hints:
+    - Comparator.comparing(String::length) compares words by their length.
+    - thenComparing(...) breaks ties; the natural order of strings is alphabetical.
+    - Sort a stream with sorted(...) and collect it, so the caller's list is untouched.
+- id: 12-files-and-cli
+  title: Files and a command-line program
+  file: chapters/12-files-and-cli.md
+  minutes: 20
+  tasks:
+  - id: read_totals
+    title: 'files/Expenses.java: readTotals(path)'
+    hints:
+    - Files.readAllLines(path) reads the whole file; it throws NoSuchFileException for a missing file.
+    - Skip the header, blank lines, rows without three parts and amounts Double.parseDouble cannot read.
+    - Add each good amount to its category with merge(category, amount, Double::sum), then round.
+  - id: summary_cli
+    title: 'files/Summary.java: the top categories'
+    hints:
+    - 'args holds the words after the class name: the path, and maybe --top and a number.'
+    - Catch NoSuchFileException, print the message to System.err and end with exit code 1.
+    - 'Sort the categories by total, biggest first, and print category: amount with %.2f.'
+- id: 13-capstone
+  title: 'Capstone: a monthly report'
+  file: chapters/13-capstone.md
+  minutes: 25
+  tasks:
+  - id: fix_book
+    title: 'capstone/Book.java: warm-up, fix the inherited class'
+    hints:
+    - 'Put two equal books in a HashSet: how many does it hold?'
+    - A HashSet asks hashCode first; equal objects must have equal hash codes.
+    - 'Add a hashCode built from the same field equals compares: Objects.hash(...).'
+  - id: monthly_report
+    title: 'capstone/Report.java: monthly(path)'
+    hints:
+    - 'Read the lines and keep their numbers: the header is line 1.'
+    - A row is bad when its category is empty or its amount is not a number; blank lines are skipped,
+      not reported.
+    - From the good rows work out the total, count, average (0 when none), the totals per category and
+      the bad line numbers.

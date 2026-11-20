@@ -180,10 +180,32 @@ test("java lab renders its v2 steps", async ({ page }) => {
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
   await page.goto("/labs/java-basics");
-  await expect(stepCount(page)).toHaveText("Step 1 of 8", { timeout: 60_000 });
-  await expect(page.locator(".character")).toContainText("Kabir");
-  await page.locator(".dot").nth(2).click(); // dots jump straight to a step
+  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
+  await expect(page.getByText("Welcome to Java")).toBeVisible();
+  await page.locator(".dot").nth(6).click(); // dots jump straight to a step
   await expect(page.locator(".step-kind")).toHaveText("Predict");
   await page.locator(".predict-option", { hasText: "null" }).click();
   await expect(page.getByText("Right first time!")).toBeVisible();
+});
+
+test("lessons show pictures, a step-through trace and task cards", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic")));
+  await page.goto("/login");
+  await page.getByLabel("Username").fill(username);
+  await page.getByLabel("Password").fill("secret123");
+  await page.getByRole("button", { name: "Log in" }).click();
+  await expect(page.getByText("Your labs")).toBeVisible();
+  await page.goto("/labs/java-basics");
+  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
+  await page.locator(".dot").nth(2).click(); // Why methods exist: the recipe card
+  await expect(page.locator(".picture svg")).toBeVisible();
+  await page.locator(".dot").nth(10).click(); // Worked example: the shortest word
+  const trace = page.locator(".trace");
+  await expect(trace).toContainText("step 1 of 5");
+  await trace.getByRole("button", { name: "Next ▶" }).click();
+  await expect(trace).toContainText("best becomes 3");
+  await expect(trace.locator(".trace-changed")).toHaveCount(3); // w, w.length() and best all changed
+  await page.locator(".dot").nth(8).click(); // the greet task
+  await expect(page.locator(".task-card")).toContainText('greet("Asha")');
+  await expect(page.locator(".task-card")).toContainText('"Hello, Asha!"');
 });
