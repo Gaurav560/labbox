@@ -7,7 +7,7 @@ language: python
 track: languages
 tags: [python, beginner]
 level: beginner
-estimated_minutes: 140
+estimated_minutes: 220
 cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
@@ -184,3 +184,71 @@ chapters:
           - "*prices collects every positional argument into a tuple, so sum() works on it."
           - "A parameter after *prices can only be given by name, like discount=10."
           - "Take the discount percent off the sum, then round to 2 decimals and make sure it is a float."
+  - id: 10-errors
+    title: Errors
+    file: chapters/10-errors.md
+    minutes: 15
+    tasks:
+      - id: to_number
+        title: "errors.py: turn text into a number, or explain why not"
+        hints:
+          - "float() turns text like \"12.5\" into a number and raises ValueError for text like \"abc\"."
+          - "Catch that ValueError with try and except, then raise your own ValueError with a clearer message."
+          - "The message must include the text that was wrong, for example: 'abc' is not a number."
+      - id: safe_sum
+        title: "errors.py: add up the good values, report the bad ones"
+        hints:
+          - "Keep two things while you loop: the running total and a list of bad values."
+          - "Call your to_number inside try; in except, remember the value and carry on."
+          - "Give back both at once as a tuple: (total, bad)."
+  - id: 11-files
+    title: Files
+    file: chapters/11-files.md
+    minutes: 20
+    tasks:
+      - id: read_totals
+        title: "file_tools.py: totals per category from a CSV file"
+        hints:
+          - "Open the file with a with block and read it with csv.DictReader, which uses the header row for the keys."
+          - "A broken row has a missing or non-numeric amount: put the conversion in try and skip the row on ValueError or TypeError."
+          - "Add each good amount to its category, like total_by_category in chapter 7, and round the totals to 2 decimals."
+      - id: save_lines
+        title: "file_tools.py: write lines to a file"
+        hints:
+          - "Open the file for writing with mode \"w\": it is created, or emptied if it exists."
+          - "write() does not add a new line by itself, so add \"\\n\" after each line."
+          - "Give back how many lines you wrote: len(lines)."
+  - id: 12-running-a-program
+    title: Running a program
+    file: chapters/12-running-a-program.md
+    minutes: 20
+    tasks:
+      - id: summary_top
+        title: "summary.py: print the top categories"
+        hints:
+          - "argparse.ArgumentParser gives you a parser; add_argument(\"path\") and add_argument(\"--top\", type=int, default=3)."
+          - "Get the totals with read_totals from file_tools, then sort the items by amount, biggest first."
+          - "Print each of the first top items as category: amount, with two decimals."
+      - id: summary_errors
+        title: "summary.py: friendly errors, and quiet on import"
+        hints:
+          - "Put the work in a main() function and call it only under if __name__ == \"__main__\"."
+          - "Catch FileNotFoundError around reading the file."
+          - "Print the message to sys.stderr, then end the program with exit code 1 (the sys module has a function for that) instead of letting the traceback show."
+  - id: 13-capstone
+    title: "Capstone: a monthly report"
+    file: chapters/13-capstone.md
+    minutes: 25
+    tasks:
+      - id: monthly_report
+        title: "report.py: the monthly report"
+        hints:
+          - "Read the rows with csv.DictReader. reader.line_num is the row's real line in the file, even after blank lines (csv skips those itself)."
+          - "A row is bad when its amount is not a number or its category is empty: remember its line number and skip it."
+          - "From the good rows work out the total, count, average (0.0 when there are none), the biggest expense and the totals per category."
+      - id: fix_budget
+        title: "budget.py: fix the inherited code"
+        hints:
+          - "Run over_budget with a budget for a category nobody spent on: what happens?"
+          - "A category with no spending has a total of 0: use get with a default."
+          - "list.sort() sorts in place and gives back None. Give back sorted(...) instead."

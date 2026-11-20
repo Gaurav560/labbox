@@ -54,7 +54,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 
 | Track | Labs |
 |---|---|
-| Languages | python-basics (**Python from zero**, growing to 13 chapters: 9 done), python-collections, java-basics, java-collections, javascript-inside-out, go-basics |
+| Languages | python-basics (**Python from zero**, complete: 13 chapters, 27 tasks), python-collections, java-basics, java-collections, javascript-inside-out, go-basics |
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
 | Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice** (a full course: 13 chapters, 32 tasks, zero to production), **postgres-transactions-and-locks** |
 | DevOps | **linux-on-call**, **git-without-fear** |
@@ -208,7 +208,7 @@ services). Decisions needed from you before building:
 The flagship labs should reach 8 to 12 chapters. **Under way (20 November): every lab becomes a full
 course, one by one** (order: Python, Java, Spring Boot, SQL, Postgres, JavaScript, Express, FastAPI, Go,
 Linux, Git, system design). Beginner courses are plain; advanced courses start with a story. Python from
-zero: chapters 1 to 9 done, 10 to 13 next.
+zero is complete (13 chapters, 27 tasks); next: Python in practice (python-collections), with a story.
 
 ### 4. Platform phases not started (E and G are done)
 

@@ -22,6 +22,14 @@ nodes:
     title: Python sets, tuples and functions
     requires: [py-lists-dicts]
     chapters: [python-basics/08-tuples-and-sets, python-basics/09-functions-in-depth]
+  - id: py-errors-files
+    title: Python errors and files
+    requires: [py-sets-functions]
+    chapters: [python-basics/10-errors, python-basics/11-files]
+  - id: py-programs
+    title: Python programs and the capstone
+    requires: [py-errors-files]
+    chapters: [python-basics/12-running-a-program, python-basics/13-capstone]
   - id: java-methods
     title: Java methods
     chapters: [java-basics/01-methods]

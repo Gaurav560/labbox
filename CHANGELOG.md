@@ -1,5 +1,23 @@
 # Changelog
 
+## Python from zero, chapters 10 to 13: the course is complete
+
+- 10. Errors (`to_number` raising a clear `ValueError` that names the bad text, `safe_sum` returning the
+  total and the bad values), 11. Files (`read_totals` from a CSV with the csv module, `save_lines`),
+  12. Running a program (`summary.py` with argparse: the top categories, a friendly "File not found"
+  on stderr with exit code 1, nothing printed on import), 13. Capstone (`monthly_report`: total, count,
+  average, biggest, per category and the real line numbers of bad rows; fix the inherited `budget.py`,
+  which crashes on a category nobody spent on, counts "on budget" as over and returns `None`).
+- A real `expenses.csv` (a month, 6 categories, about 40 good rows) with the messy parts of a real
+  export: a blank line, a missing amount, a word for an amount, an empty category.
+- The checks run `summary.py` as a real program (stdout, stderr, exit code, import) and test files in a
+  temporary folder, including a quoted value with a comma (catches `split(",")`) and a blank line before
+  a bad row (catches counting rows instead of `reader.line_num`). Every typical wrong answer was run;
+  one passed (`(0, [])` for an empty `safe_sum`) and the check now requires a float total.
+- The finished course: 13 chapters, 27 tasks, about 220 minutes, plain style with everyday examples.
+  Skill map: errors and files, then programs and the capstone. Tests: 261 on Postgres and Redis, 257 on
+  SQLite, 15 browser tests, 16 labs valid.
+
 ## Lab page: a violet Check button
 
 - Check is the one violet button on the lab page: first #6b5ffd from the owner's reference, which was

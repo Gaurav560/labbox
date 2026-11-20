@@ -254,3 +254,204 @@ else:
     except Exception as e:
         traceback.print_exc()
         report("total", False, f"total raised {type(e).__name__}: {e}")
+
+# ---------- chapter 10: errors ----------
+import os
+import subprocess
+import tempfile
+
+err_mod, err_mod_err = load("errors")
+
+fn, err = get_func(err_mod, err_mod_err, "to_number")
+if fn is None:
+    report("to_number", False, err)
+else:
+    try:
+        for args, expected in [(("12.5",), 12.5), ((" 7 ",), 7.0), (("-3",), -3.0), (("1e3",), 1000.0)]:
+            got = fn(*args)
+            if got != expected or type(got) is not float:
+                report("to_number", False, f"to_number({args[0]!r}) returned {got!r}, expected {expected!r}", repr(expected), repr(got))
+                break
+        else:
+            for bad in ("abc", "", "12a"):
+                try:
+                    got = fn(bad)
+                except ValueError as e:
+                    if bad and bad not in str(e):
+                        report("to_number", False, f"to_number({bad!r}) raised ValueError({str(e)!r}): the message should include {bad!r}.")
+                        break
+                except Exception as e:
+                    report("to_number", False, f"to_number({bad!r}) raised {type(e).__name__}, expected a ValueError.")
+                    break
+                else:
+                    report("to_number", False, f"to_number({bad!r}) returned {got!r} instead of raising ValueError.")
+                    break
+            else:
+                report("to_number", True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report("to_number", False, f"to_number raised {type(e).__name__}: {e}")
+
+fn, err = get_func(err_mod, err_mod_err, "safe_sum")
+if fn is not None:
+    try:
+        empty = fn([])
+        if not (isinstance(empty, tuple) and len(empty) == 2 and type(empty[0]) is float):
+            fn, err = None, f"safe_sum([]) returned {empty!r}: the total should always be a float, like (0.0, [])"
+    except Exception:
+        pass  # run_cases below reports the error
+run_cases("safe_sum", fn, err, [
+    ((["10", "x", "2.5", ""],), (12.5, ["x", ""])), ((["1", "2"],), (3.0, [])), (([],), (0.0, [])),
+    ((["abc"],), (0.0, ["abc"])), (([" 4 ", "1e1"],), (14.0, [])),
+])
+
+# ---------- chapter 11: files ----------
+TMP = tempfile.mkdtemp(prefix="labbox-check-")
+SAMPLE = "date,category,amount\n2026-03-02,food,120\n2026-03-02,travel,40.50\n\n2026-03-03,food,80\n2026-03-04,food,abc\n2026-03-04,travel,\n"
+
+
+def tmp_file(name: str, text: str) -> str:
+    path = os.path.join(TMP, name)
+    with open(path, "w") as f:
+        f.write(text)
+    return path
+
+
+ft_mod, ft_err = load("file_tools")
+
+fn, err = get_func(ft_mod, ft_err, "read_totals")
+if fn is None:
+    report("read_totals", False, err)
+else:
+    try:
+        cases = [
+            ("sample.csv", SAMPLE, {"food": 200.0, "travel": 40.5}),
+            ("header_only.csv", "date,category,amount\n", {}),
+            ("quoted.csv", 'date,category,amount\n2026-03-05,"snacks, tea",30\n2026-03-06,"snacks, tea",12.25\n', {"snacks, tea": 42.25}),
+        ]
+        for name, text, expected in cases:
+            got = fn(tmp_file(name, text))
+            if got != expected:
+                why = " (a value with a comma inside quotes: use the csv module, not split)" if "quoted" in name else ""
+                report("read_totals", False, f"read_totals on a file like\n{text.strip()}\nreturned {got!r}, expected {expected!r}{why}",
+                       repr(expected), repr(got))
+                break
+        else:
+            report("read_totals", True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report("read_totals", False, f"read_totals raised {type(e).__name__}: {e} (skip rows with a missing or bad amount)")
+
+fn, err = get_func(ft_mod, ft_err, "save_lines")
+if fn is None:
+    report("save_lines", False, err)
+else:
+    try:
+        path = tmp_file("out.txt", "old content that must go\n")
+        n = fn(path, ["food: 200.00", "travel: 40.50"])
+        text = open(path).read()
+        n0 = fn(tmp_file("empty.txt", "x"), [])
+        text0 = open(os.path.join(TMP, "empty.txt")).read()
+        if text != "food: 200.00\ntravel: 40.50\n":
+            report("save_lines", False, f"The file should contain each line followed by a new line, and nothing else; it contains {text!r}.",
+                   repr("food: 200.00\ntravel: 40.50\n"), repr(text))
+        elif n != 2 or n0 != 0:
+            report("save_lines", False, f"save_lines should return how many lines it wrote: got {n!r} for 2 lines and {n0!r} for none.")
+        elif text0 != "":
+            report("save_lines", False, f"save_lines with no lines should leave an empty file; it contains {text0!r}.")
+        else:
+            report("save_lines", True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report("save_lines", False, f"save_lines raised {type(e).__name__}: {e}")
+
+# ---------- chapter 12: a command-line program ----------
+BIG = ("date,category,amount\n2026-03-01,rent,18000\n2026-03-02,food,120\n2026-03-03,shopping,799\n"
+       "2026-03-03,food,abc\n2026-03-04,travel,60\n2026-03-05,food,80.5\n2026-03-06,fun,350\n")
+
+
+def run_py(*args: str) -> subprocess.CompletedProcess:
+    return subprocess.run([sys.executable, *args], cwd="/check/workspace", capture_output=True, text=True, timeout=20)
+
+
+if not os.path.exists("/check/workspace/summary.py"):
+    report("summary_top", False, "Could not find summary.py in your workspace")
+    report("summary_errors", False, "Could not find summary.py in your workspace")
+else:
+    data = tmp_file("big.csv", BIG)
+    try:
+        r2, r3 = run_py("summary.py", data, "--top", "2"), run_py("summary.py", data)
+        want2, want3 = "rent: 18000.00\nshopping: 799.00\n", "rent: 18000.00\nshopping: 799.00\nfun: 350.00\n"
+        if r2.returncode != 0:
+            report("summary_top", False, f"python summary.py big.csv --top 2 failed:\n{(r2.stderr or r2.stdout)[-600:]}")
+        elif r2.stdout != want2:
+            report("summary_top", False, f"python summary.py big.csv --top 2 printed\n{r2.stdout}expected\n{want2}", want2, r2.stdout)
+        elif r3.stdout != want3:
+            report("summary_top", False, f"Without --top it should print the top 3; it printed\n{r3.stdout}", want3, r3.stdout)
+        else:
+            report("summary_top", True, "ok")
+    except subprocess.TimeoutExpired:
+        report("summary_top", False, "summary.py did not finish within 20 seconds (is it waiting for input?)")
+
+    try:
+        missing = os.path.join(TMP, "missing.csv")
+        r = run_py("summary.py", missing)
+        imp = run_py("-c", "import summary")
+        if "Traceback" in r.stderr:
+            report("summary_errors", False, "A missing file should give one friendly line, not a traceback:\n" + r.stderr[-400:])
+        elif f"File not found: {missing}" not in r.stderr:
+            report("summary_errors", False, f"For a missing file, stderr should say 'File not found: {missing}'; it said {r.stderr.strip()!r}"
+                   + (f" and stdout said {r.stdout.strip()!r}" if r.stdout.strip() else ""))
+        elif r.returncode != 1:
+            report("summary_errors", False, f"For a missing file the exit code should be 1; it was {r.returncode}.")
+        elif imp.returncode != 0 or imp.stdout or imp.stderr:
+            report("summary_errors", False, "import summary should print nothing (put the work under if __name__ == \"__main__\"); it printed "
+                   + repr((imp.stdout + imp.stderr)[-300:]))
+        else:
+            report("summary_errors", True, "ok")
+    except subprocess.TimeoutExpired:
+        report("summary_errors", False, "summary.py did not finish within 20 seconds")
+
+# ---------- chapter 13: the capstone ----------
+rep_mod, rep_err = load("report")
+
+fn, err = get_func(rep_mod, rep_err, "monthly_report")
+if fn is None:
+    report("monthly_report", False, err)
+else:
+    try:
+        small = tmp_file("guess.csv", "date,category,amount\n2026-03-02,food,120\n2026-03-03,,45\n2026-03-03,travel,abc\n2026-03-04,rent,18000\n")
+        want = {"total": 18120.0, "count": 2, "average": 9060.0, "biggest": {"category": "rent", "amount": 18000.0},
+                "per_category": {"food": 120.0, "rent": 18000.0}, "bad_lines": [3, 4]}
+        blanky = tmp_file("blank.csv", "date,category,amount\n2026-03-01,food,10\n\n2026-03-02,food,x\n2026-03-03,fun,20.5\n")
+        want_b = {"total": 30.5, "count": 2, "average": 15.25, "biggest": {"category": "fun", "amount": 20.5},
+                  "per_category": {"food": 10.0, "fun": 20.5}, "bad_lines": [4]}
+        empty = tmp_file("none.csv", "date,category,amount\n")
+        want_e = {"total": 0.0, "count": 0, "average": 0.0, "biggest": None, "per_category": {}, "bad_lines": []}
+        for label, path, expected in [("the five lines from the chapter", small, want),
+                                      ("a file with a blank line (line numbers must count it)", blanky, want_b),
+                                      ("a file with only the header", empty, want_e)]:
+            got = fn(path)
+            if not isinstance(got, dict):
+                report("monthly_report", False, f"monthly_report should return a dictionary; it returned {got!r}")
+                break
+            wrong = [k for k in expected if got.get(k) != expected[k]]
+            if wrong:
+                k = wrong[0]
+                report("monthly_report", False, f"For {label}, {k!r} is {got.get(k)!r}, expected {expected[k]!r}", repr(expected[k]), repr(got.get(k)))
+                break
+        else:
+            report("monthly_report", True, "ok")
+    except Exception as e:
+        traceback.print_exc()
+        report("monthly_report", False, f"monthly_report raised {type(e).__name__}: {e}")
+
+bud_mod, bud_err = load("budget")
+fn, err = get_func(bud_mod, bud_err, "over_budget")
+run_cases("fix_budget", fn, err, [
+    (({"food": 500, "travel": 50}, {"food": 400, "travel": 100}), ["food"]),
+    (({"food": 500}, {"food": 400, "fun": 100}), ["food"]),
+    (({"b": 10, "a": 10}, {"b": 5, "a": 5}), ["a", "b"]),
+    (({"food": 400}, {"food": 400}), []),
+    (({}, {}), []),
+])
