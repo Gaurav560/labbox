@@ -1,11 +1,5 @@
 # Changelog
 
-## Dark theme: figures on a lighter surface
-
-- Code blocks, diagrams, pictures, "watch it run" traces, task cards, expected and got boxes and inline
-  code now sit on a slightly lighter surface (#252c28) with a clearer edge in the dark theme, so they no
-  longer melt into the dark page. The light theme is unchanged.
-
 ## JavaScript from zero: a new course (13 chapters, 26 tasks)
 
 - New lab `javascript-basics`, plain style for beginners: functions, values and types (the `"2" + "2"`
