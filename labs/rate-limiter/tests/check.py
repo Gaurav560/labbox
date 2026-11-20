@@ -9,6 +9,13 @@ import requests
 
 LB = "http://lb:8080"
 SECONDS = 3
+
+
+def most_allowed(limit: int) -> float:
+    """The most a correct per-second limiter lets through, per second, over a SECONDS-long run. The run
+    rarely starts on a whole second, so it touches SECONDS + 1 counting windows, each allowing `limit`:
+    a correct solution can pass up to limit * (SECONDS + 1) / SECONDS a second (66.7 for 50 over 3 s)."""
+    return limit * (SECONDS + 1) / SECONDS
 NOT_RUNNING = "Nothing answers behind the load balancer. Start both copies in the terminal: bash run.sh"
 
 PER_KEY = """
@@ -69,7 +76,7 @@ def per_key_limit():
     labbox_k6.report_metric("p95_ms", m["p95_ms"], target=50, better="lower")
     if c.get("other", 0):
         return report("per_key_limit", False, f"{c['other']} request(s) failed with something other than 200 or 429. Look at /tmp/app-8001.log.")
-    if alice > 14:
+    if alice > most_allowed(10) + 1:  # 14.3; each server counting on its own lets 20 through
         return report("per_key_limit", False, f"alice sent 30 a second and got {alice:.0f} a second through. Each server counts on its own.",
                       "about 10 a second", f"{alice:.0f} a second")
     if alice < 8:
@@ -89,7 +96,7 @@ def global_limit():
     labbox_k6.report_metric("total_per_second", round(total, 1), target=50, better="lower")
     if m["counts"].get("other", 0):
         return report("global_limit", False, f"{m['counts']['other']} request(s) failed with something other than 200 or 429.")
-    if total > 60:
+    if total > most_allowed(50) + 3:  # 69.7; no global limit lets all 80 through
         return report("global_limit", False, f"10 partners together sent 80 a second and {total:.0f} a second got through.",
                       "about 50 a second", f"{total:.0f} a second")
     if total < 40:

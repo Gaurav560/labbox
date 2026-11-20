@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix: the rate-limiter lab's load checks were borderline by design
+
+- Both checks average over a 3-second run, but a run rarely starts on a whole second, so it touches 4
+  one-second windows: a correct solution may let up to 4/3 of its limit through (66.7 a second for the
+  global 50, 13.3 for alice's 10). The cut-offs were 60 and 14, so the solution failed whenever the run
+  started early in a second. The cut-offs now come from that worst case plus a small margin (69.7 and
+  14.3). Broken solutions still fail clearly (80 a second with no global limit, 20 for alice when each
+  server counts on its own). Starter fails and solution passes, 5 runs out of 5.
+
 ## Fix: the worker's schedule is in UTC
 
 - arq reads cron times in the machine's own zone unless told otherwise, so on this laptop (India time)
