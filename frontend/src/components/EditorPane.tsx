@@ -119,7 +119,7 @@ export default function EditorPane({ labId, tabs, activePath, onSelect, onClose,
               fontFamily: '"JetBrains Mono", ui-monospace, monospace',
               fontSize: Math.round((15 * editorPct) / 100),
               lineHeight: Math.round((24 * editorPct) / 100),
-              fontLigatures: true,
+              fontLigatures: false, // code shows exactly what to type: `===` stays three characters
               padding: { top: 12, bottom: 12 },
               lineNumbersMinChars: 3,
               renderLineHighlight: "all",

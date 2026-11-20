@@ -8,7 +8,7 @@
  */
 import type { Element, ElementContent } from "hast";
 import type { Root } from "mdast";
-import type { ReactNode } from "react";
+import { useMemo, useRef, type ReactNode } from "react";
 import Markdown, { type Components } from "react-markdown";
 import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
@@ -95,8 +95,16 @@ interface Props {
   inline?: boolean; // render paragraphs as <span> (inside buttons)
 }
 
+const REMARK_PLUGINS = [remarkDirective, remarkLessonBlocks];
+
 export default function LessonMarkdown({ markdown, onRun, inline }: Props) {
-  const components: Components = {
+  // The components must keep the same identity between renders: new ones make React remount every
+  // block, which reset interactive ones (a "watch it run" trace jumped back to its first row whenever
+  // the lab page re-rendered). The run handler is read through a ref so it is always the latest.
+  const runRef = useRef(onRun);
+  runRef.current = onRun;
+  const canRun = Boolean(onRun);
+  const components = useMemo<Components>(() => ({
     ...(inline ? { p: ({ children }) => <span>{children}</span> } : {}),
     div({ node, children }) {
       const p = (node?.properties ?? {}) as Record<string, string | undefined>;
@@ -112,7 +120,7 @@ export default function LessonMarkdown({ markdown, onRun, inline }: Props) {
           code={textOf(code.children).replace(/\n$/, "")}
           language={cls?.slice("language-".length) ?? ""}
           runnable={/(^|\s)run(\s|$)/.test(meta)}
-          onRun={onRun}
+          onRun={canRun ? (command) => runRef.current?.(command) : undefined}
         />
       );
     },
@@ -123,9 +131,9 @@ export default function LessonMarkdown({ markdown, onRun, inline }: Props) {
         </a>
       );
     },
-  };
+  }), [inline, canRun]);
   return (
-    <Markdown remarkPlugins={[remarkDirective, remarkLessonBlocks]} components={components}>
+    <Markdown remarkPlugins={REMARK_PLUGINS} components={components}>
       {markdown}
     </Markdown>
   );

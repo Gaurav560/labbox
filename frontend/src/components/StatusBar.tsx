@@ -3,6 +3,7 @@ import type { Chapter, Progress, ServiceStatus } from "../api";
 import { useTheme } from "../theme";
 import { LogoMark } from "./Logo";
 import StatsBadges from "./StatsBadges";
+import MachineMenu from "./MachineMenu";
 import TextSizeMenu from "./TextSizeMenu";
 
 export type UiStatus = "starting" | "running" | "stopped" | "error";
@@ -64,12 +65,10 @@ export default function StatusBar(p: Props) {
           </span>
         )}
       </span>
-      {p.status === "stopped" || p.status === "error" ? (
+      {(p.status === "stopped" || p.status === "error") && (
         <button className="btn btn-small" onClick={p.onStart}>Start machine</button>
-      ) : (
-        <button className="btn btn-small" onClick={p.onStop} disabled={p.status !== "running"}>Stop machine</button>
       )}
-      <button className="btn btn-small btn-danger" onClick={p.onReset} disabled={p.status === "starting"}>Reset lab</button>
+      <MachineMenu status={p.status} onStop={p.onStop} onReset={p.onReset} />
       <button className="btn btn-small btn-ghost" onClick={p.onFocus} aria-pressed={p.focus} title="Hide the file tree and widen the lesson and editor">
         {p.focus ? "Exit focus" : "Focus"}
       </button>

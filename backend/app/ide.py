@@ -38,7 +38,7 @@ SETTINGS = {
     "terminal.integrated.fontFamily": "'JetBrains Mono', monospace",
     "editor.fontSize": 15,
     "editor.lineHeight": 24,
-    "editor.fontLigatures": True,
+    "editor.fontLigatures": False,  # code shows exactly what to type: `===` stays three characters
     "editor.minimap.renderCharacters": False,
     "editor.bracketPairColorization.enabled": True,
     "editor.stickyScroll.enabled": True,

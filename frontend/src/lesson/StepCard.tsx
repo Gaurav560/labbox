@@ -144,15 +144,11 @@ function TaskBox(p: { labId: string; chapterId: string; task: Task; hints: strin
         {task.passed
           ? "Passed. Nice work."
           : p.live
-            ? "Do it in your machine (the terminal or your files), then press Check: a checker looks at the real, running system."
-            : "Edit your files, then press Check to run the hidden tests on a clean machine."}
+            ? "Do it in your machine (the terminal or your files), then press Check below: a checker looks at the real, running system."
+            : "Edit your files, then press Check below to run the hidden tests on a clean machine."}
       </p>
       <HintLadder task={task} hints={p.hints} busy={p.hintBusy} onReveal={() => p.onHint(task.id)} />
-      {!task.passed && (
-        <button className="btn btn-primary" onClick={p.onCheck} disabled={p.checking}>
-          {p.checking ? <><span className="spinner" /> Checking...</> : "Check"}
-        </button>
-      )}
+      {/* One Check button: the one in the bar below, always in view (the owner's UX review). */}
       <TutorBox key={`${p.labId}/${task.id}/${task.passed}`} labId={p.labId} chapterId={p.chapterId} task={task} />
     </div>
   );

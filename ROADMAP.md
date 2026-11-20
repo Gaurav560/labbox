@@ -216,8 +216,8 @@ tasks, written in the "explain, do not just state" style) and JavaScript from ze
 visualizations (interactive "watch it run" traces) first, real code always, decorative images rarely.
 JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
-learners land on it. Next: the lab page polish (VS Code file and theme, a quieter header, one Check button,
-editor ligatures, the trace that jumps back a row), then phones, then more traces in every course. Python, Go and Java already have the
+learners land on it. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
+button, no ligatures, traces keep their place). Next: phones (a reading mode), then more traces in every course. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.
 

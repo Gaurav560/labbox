@@ -1378,3 +1378,18 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .next-progress { margin-top: var(--space-3); max-width: 420px; }
 .next-reason { margin: var(--space-2) 0 0; }
 .next-go { font-size: 16px; padding: 12px 22px; }
+
+/* The Machine menu: Stop and Reset behind one click */
+.mm-pop { min-width: 300px; padding: 6px; }
+.mm-item { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; text-align: left; background: transparent; border: 0;
+  border-radius: 8px; padding: 8px 10px; color: var(--text); font: inherit; cursor: pointer; }
+.mm-item span { font-size: 12px; color: var(--muted); }
+.mm-item:hover:not(:disabled) { background: var(--hover); }
+.mm-item:disabled { opacity: .5; cursor: default; }
+.mm-danger strong { color: var(--danger); }
+
+/* VS Code waits behind the loading screen until it is drawn in its theme (no white flash) */
+.ide-holder { position: relative; flex: 1; min-height: 0; display: flex; }
+.ide-holder .ide-frame { flex: 1; }
+.ide-frame.ide-hidden { visibility: hidden; }
+.ide-over { position: absolute; inset: 0; }

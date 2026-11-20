@@ -1,5 +1,18 @@
 # Changelog
 
+## The lab page, polished
+
+- **No white flash:** VS Code stays behind "Opening VS Code..." until it is drawn in its dark theme with the
+  chapter's file open (about 4 seconds on a first open), instead of showing a white, empty window first.
+- **A quieter header:** Stop machine and Reset lab moved into a small Machine menu, each with one line
+  on what it does. Reset (which deletes the learner's files) is no longer a red button one slip away from
+  Stop, and still asks to confirm. Start machine stays in view whenever the machine is stopped.
+- **One Check button:** the task box no longer repeats the Check button that is always in the bar below.
+- **Code shows exactly what to type:** ligatures are off in VS Code and the Lite editor, so `===` and
+  `>=` stay separate characters, as in the lessons.
+- **Traces keep their place:** the lesson's markdown components are now stable between renders, so a
+  "watch it run" trace no longer jumps back to row 1 when the lab page re-renders (the audit's open issue).
+
 ## A confident start: one clear next step, and checks that never fail tasks not reached yet
 
 - **Coming-up tasks are not failures.** A check runs every task of the chapter, so pressing Check early
