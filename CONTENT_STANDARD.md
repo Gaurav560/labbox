@@ -64,11 +64,11 @@ Pictures help when they show something words alone cannot. One style everywhere,
 - **The task card** (every task): two or three `examples` in `lab.yaml` (`call`, `gives`, optional
   `note`) are drawn at the top of the task as "what your code should do". Use the same examples as
   the task text, short enough to read at a glance (90 characters at most).
-- **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`): a small hand-drawn
-  picture of the everyday comparison. At most one picture or diagram per step, with a one-line caption
-  that says what to notice. One look, two moods: a sketch in light ink with a violet accent in the dark
-  theme, notebook paper with blue pen and a yellow highlighter in the light theme. Everyday words are
-  handwritten (Caveat). Most pictures hold no code, so one drawing serves every language. The set:
+- **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`) shows an everyday
+  comparison. Use at most one picture or diagram per step, with a one-line caption that says what to
+  notice. Both directives use inline SVG with shared theme colors. Keep the geometry and labels
+  identical on warm off-white and charcoal backgrounds. Use printed Inter for headings and labels,
+  monospace for code, and an outline or label wherever color distinguishes elements. Examples include
   `recipe-card` (functions), `labelled-jars` (variables and types), `fork-in-road` (decisions),
   `running-track` (loops), `beads-on-string` (text), `egg-box` (lists and arrays), `notebook-vs-form`
   (fixed versus growing), `phone-book` (maps), `guest-list` (sets), `blueprint-houses` (classes),

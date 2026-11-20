@@ -5,8 +5,7 @@ import * as js from "./JavaScriptPictures";
 /*
  * Small pictures for the everyday images a lesson uses to explain an idea (Content standard, section 3:
  * "picture it"). A chapter asks for one with :::picture{name="recipe-card"}; the text inside becomes the
- * caption. One hand-drawn look, two moods: a sketch in the dark theme and notebook paper in the light
- * theme (styles.css). Everyday words are handwritten (pc-hand). Most pictures hold no code, so one drawing
+ * caption. Both themes share the same printed labels and SVG layout. Most pictures hold no code, so one drawing
  * serves every language; a picture that shows code takes it from the chapter (code='phones["Riya"]'),
  * draws it in the code font (pc-code), and the validator checks that the same code is in a code block of
  * that step: learners never copy from a drawing. JavaScript chapters also name the teaching concept

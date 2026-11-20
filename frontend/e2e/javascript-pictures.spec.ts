@@ -3,7 +3,7 @@ import type { ChapterContent, LabDetail } from "../src/api";
 
 async function checkLettering(drawing: Locator, name: string, theme: string, code?: string) {
   await expect(drawing.locator(".pc-hand, .pc-label, .pc-title").first())
-    .toHaveCSS("font-family", theme === "light" ? /Inter/ : /Caveat/);
+    .toHaveCSS("font-family", /Inter/);
   if (code) {
     const snippet = drawing.locator(".pc-code");
     await expect(snippet).toHaveText(code);
@@ -65,11 +65,11 @@ test("JavaScript teaches each concept with three distinct pictures in both theme
         const nextTheme = theme === "dark" ? "light" : "dark";
         await checkLettering(drawing, name, theme!, code);
         await expect(drawing).toBeVisible();
-        const ink = () => figure.evaluate(el => getComputedStyle(el).getPropertyValue("--pc-ink"));
-        const firstInk = await ink();
+        const canvas = () => figure.evaluate(el => getComputedStyle(el).backgroundColor);
+        const firstCanvas = await canvas();
         await page.getByRole("button", { name: `Switch to ${nextTheme} theme` }).click();
         await expect(page.locator("html")).toHaveAttribute("data-theme", nextTheme);
-        expect(await ink()).not.toBe(firstInk);
+        expect(await canvas()).not.toBe(firstCanvas);
         await checkLettering(drawing, name, nextTheme, code);
       }
       for (const [concept, count] of concepts) expect(count, concept ?? chapter.title).toBe(3);

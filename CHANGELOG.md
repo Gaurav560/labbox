@@ -1,5 +1,12 @@
 # Changelog
 
+## Lesson diagrams in light and dark themes
+
+- Lesson pictures and technical diagrams now share an opaque charcoal or warm off-white canvas, colored shapes and visible connectors. Printed Inter labels and monospace code keep the same layout in both themes.
+- Branch diagrams place each outcome in its own labeled box. SVG arrowheads belong to their individual drawing.
+- Verified all 158 lesson figure placements in both themes. The production build and strict validation of 17 labs passed. Backend tests passed on Postgres and Redis (266) and SQLite (262, with 4 skipped).
+- All 18 browser tests passed across two runs. The dev server completed 17 before reaching its signup limit. The text-size test passed against the production build with an isolated test database.
+
 ## JavaScript from zero: three pictures per concept
 
 - Each of the 38 concepts now has three distinct captioned drawings, spread across the existing steps in all 13 chapters. The 114 pictures include 15 existing drawings, 26 from the preview, and 73 drawn for this sample.

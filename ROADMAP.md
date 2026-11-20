@@ -215,7 +215,8 @@ tasks, written in the "explain, do not just state" style) and JavaScript from ze
 (with a story) and the others. **JavaScript illustration sample (20 November):** 114 distinct captioned drawings across
 13 chapters, three for each of the 38 named concepts. Review chapter 7 (Objects) in either theme.
 Applying the sample to the other courses is a later batch. Python, Go and Java already have the
-earlier set of task cards, hand-drawn pictures and step-through traces.
+earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
+now use the same printed typography and dedicated light and dark palettes.
 
 ### 4. Platform phases not started (E and G are done)
 

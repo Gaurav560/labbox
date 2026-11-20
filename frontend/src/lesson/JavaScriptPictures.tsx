@@ -50,9 +50,10 @@ function Fork({ label, input, paths }: { label: string; input: string; paths: [[
     {paths.map(([when, result], i) => {
       const y = i === 0 ? 42 : 112;
       return <g key={when}>
-        <Ink d={`M105 75 Q135 75 161 ${y}`} />
-        <Hand x={171} y={y - 8} kind="label">{when}</Hand>
-        <Hand x={171} y={y + 15}>{result}</Hand>
+        <Ink d={`M102 75 Q132 75 162 ${y}`} />
+        <rect className={i === 0 ? "pc-cell" : "pc-bead"} x={164} y={y - 29} width={151} height={54} rx={8} />
+        <Hand x={175} y={y - 7} kind="label">{when}</Hand>
+        <Hand x={175} y={y + 14}>{result}</Hand>
       </g>;
     })}
   </Svg>;

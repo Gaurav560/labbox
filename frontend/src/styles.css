@@ -2,7 +2,6 @@
 :root {
   --font-text: "Inter", system-ui, sans-serif;
   --font-code: "JetBrains Mono", ui-monospace, monospace;
-  --font-hand: "Caveat", "Segoe Print", "Comic Neue", cursive; /* hand-drawn pictures only */
   --brand-red: #d1605a; /* the LabBox logo, everywhere */
 
   --text-size: 16px;
@@ -1266,55 +1265,79 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .history-usedby { margin: 12px 0; }
 .history-usedby ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .history-usedby li { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; background: color-mix(in srgb, var(--panel) 70%, transparent); }
-.diagram { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
-.diagram svg { display: block; width: 100%; height: auto; max-width: 440px; margin: 0 auto; }
-.diagram figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); text-align: center; }
-.diagram figcaption p { margin: 0; }
-.dg-box rect { fill: var(--panel); stroke: var(--border); stroke-width: 1.5; }
-.dg-box.dg-accent rect { fill: color-mix(in srgb, #5048b8 22%, var(--panel)); stroke: #5048b8; }
-.dg-box text { fill: var(--text); font: 600 15px var(--font-code); }
-.dg-arrow { stroke: var(--muted); stroke-width: 1.8; }
-.dg-head { fill: var(--muted); }
-.dg-note { fill: var(--muted); font: 12px var(--font-code); }
 .res-message.res-good { color: var(--text); border-left: 3px solid #3fb950; padding-left: 10px; }
 /* Lesson code shows exactly what to type: no ligatures (">=" must not turn into a single symbol). */
 .code-card pre, .code-card code, .lesson-scroll code, .predict-option code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
-.dg-cells-small .dg-box text { font-size: 13px; }
 
-/* Small everyday pictures (:::picture): hand drawn. Dark theme: a sketch in light ink with a violet
-   accent. Light theme: notebook paper, blue pen and a yellow highlighter. Words are handwritten
-   (--font-hand); code inside a picture stays in the code font. */
-.picture { --pc-ink: #e8e6df; --pc-strong: #ffffff; --pc-accent: #b9b2ff; --pc-mark: none; --pc-mark-stroke: #b9b2ff;
-  --pc-band: url(#pc-hatch); --pc-hatch: #8c84e8; --pc-paper: none; --pc-rule: #3a403b;
-  margin: 14px 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
-:root[data-theme="light"] .picture { --pc-ink: #2b3a8c; --pc-strong: #1f2a6b; --pc-accent: #c2410c; --pc-mark: #ffe98a; --pc-mark-stroke: none;
-  --pc-band: #ffe98a; --pc-hatch: #ffe98a; --pc-paper: #fffdf6; --pc-rule: #c9d3ee; background: #fbf8ef; border-color: #e3dcc6; }
-.picture svg { display: block; width: 100%; height: auto; max-width: 330px; max-height: 160px; margin: 0 auto; }
-.picture figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); text-align: center; }
-:root[data-theme="light"] .picture figcaption { color: #6b6450; }
-.picture figcaption p { margin: 0; }
-.pc-card { fill: var(--pc-paper); stroke: var(--pc-ink); stroke-width: 1.8; filter: url(#pc-wobble); }
-.pc-band { fill: var(--pc-band); opacity: .8; filter: url(#pc-wobble); }
-.pc-hatch-line { stroke: var(--pc-hatch); stroke-width: 1.6; opacity: .7; }
-.pc-cell { fill: none; stroke: var(--pc-accent); stroke-width: 1.6; filter: url(#pc-wobble); }
-.pc-bead { fill: var(--pc-mark-fill, color-mix(in srgb, var(--pc-accent) 22%, transparent)); stroke: var(--pc-accent); stroke-width: 1.6; filter: url(#pc-wobble); }
-.pc-mark { fill: var(--pc-mark); stroke: var(--pc-mark-stroke); stroke-width: 2; opacity: .85; filter: url(#pc-wobble); }
-.pc-ink { fill: none; stroke: var(--pc-ink); stroke-width: 1.6; filter: url(#pc-wobble); }
-.pc-rule { stroke: var(--pc-rule); stroke-width: 1.2; }
-.pc-head { fill: none; stroke: var(--pc-ink); stroke-width: 1.6; }
-.pc-title { fill: var(--pc-strong); font: var(--pc-title-font, 700 23px var(--font-hand)); }
-.pc-hand { fill: var(--pc-ink); font: var(--pc-hand-font, 500 19px var(--font-hand)); }
-.pc-label { fill: var(--pc-accent); font: var(--pc-label-font, 700 20px var(--font-hand)); }
-.pc-code { fill: var(--pc-accent); font: 600 11.5px var(--font-code); font-variant-ligatures: none; }
-
-/* The JavaScript sample prints its labels on the light notebook paper. */
-:root[data-theme="light"] [data-lab="javascript-basics"] .picture {
-  --pc-hand-font: 400 14px var(--font-text);
-  --pc-label-font: 600 14px var(--font-text);
-  --pc-title-font: 600 17px var(--font-text);
+/* Lesson SVGs inherit the active application theme, including their arrow markers. */
+.picture, .diagram {
+  --figure-surface: #202522;
+  --figure-border: #46504a;
+  --figure-text: #f1f5f9;
+  --figure-label: #dfd5fb;
+  --figure-caption: #bdc9c1;
+  --figure-line: #b6c9db;
+  --figure-rule: #889a96;
+  --figure-blue: #293c50;
+  --figure-blue-edge: #87aed4;
+  --figure-purple: #403452;
+  --figure-purple-edge: #b4a0d9;
+  --figure-green: #284538;
+  --figure-green-edge: #8cc4a3;
+  --figure-yellow: #514427;
+  --figure-yellow-edge: #dac17b;
+  /* A saved lesson-panel width can exceed the viewport on a phone. */
+  max-inline-size: calc(100vw / var(--ts-lesson, 1) - 2 * var(--space-6));
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid var(--figure-border);
+  border-radius: 10px;
+  background: var(--figure-surface);
 }
+:root[data-theme="light"] :is(.picture, .diagram) {
+  --figure-surface: #fbf8ef;
+  --figure-border: #e3dcc6;
+  --figure-text: #202b45;
+  --figure-label: #443565;
+  --figure-caption: #625d4f;
+  --figure-line: #425373;
+  --figure-rule: #707e8b;
+  --figure-blue: #e0edfc;
+  --figure-blue-edge: #56759b;
+  --figure-purple: #e9e1f8;
+  --figure-purple-edge: #80699e;
+  --figure-green: #dbefdf;
+  --figure-green-edge: #587e62;
+  --figure-yellow: #fbe9a8;
+  --figure-yellow-edge: #8a702d;
+}
+.picture { padding-block: 10px; }
+:is(.picture, .diagram) svg { display: block; width: 100%; height: auto; margin-inline: auto; font-variant-numeric: tabular-nums; }
+.picture svg { max-width: 330px; max-height: 160px; }
+.diagram svg { max-width: 440px; }
+:is(.picture, .diagram) figcaption { margin-top: 8px; font-size: 13px; color: var(--figure-caption); text-align: center; }
+.picture figcaption { margin-top: 6px; }
+:is(.picture, .diagram) figcaption p { margin: 0; }
 
-:root[data-theme="light"] [data-lab="javascript-basics"] .picture text { font-variant-numeric: tabular-nums; }
+.pc-card, .dg-box rect { fill: var(--figure-blue); stroke: var(--figure-blue-edge); }
+.pc-cell, .dg-box.dg-accent rect { fill: var(--figure-purple); stroke: var(--figure-purple-edge); }
+.pc-bead, .pc-band, .dg-box.dg-copy rect { fill: var(--figure-green); stroke: var(--figure-green-edge); }
+.pc-mark, .dg-box.dg-highlight rect { fill: var(--figure-yellow); stroke: var(--figure-yellow-edge); }
+.pc-card, .pc-cell, .pc-bead, .pc-mark, .dg-box rect { stroke-width: 1.5; }
+.pc-band { stroke-width: 1; }
+.pc-ink, .dg-arrow { fill: none; stroke: var(--figure-line); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.figure-arrowhead { fill: var(--figure-line); }
+.pc-rule { fill: none; stroke: var(--figure-rule); stroke-width: 1.2; }
+.pc-title { fill: var(--figure-text); font: 600 17px var(--font-text); }
+.pc-hand { fill: var(--figure-text); font: 400 14px var(--font-text); }
+.pc-label { fill: var(--figure-label); font: 600 14px var(--font-text); }
+.dg-note { fill: var(--figure-text); font: 400 13px var(--font-text); }
+.dg-box { font-family: var(--font-text); }
+.pc-code, .dg-code { font-family: var(--font-code); font-variant-ligatures: none; }
+.pc-code { fill: var(--figure-label); font-size: 11.5px; font-weight: 600; }
+.dg-box text { fill: var(--figure-text); font-size: 15px; font-weight: 600; }
+.dg-note.dg-code, .dg-note .dg-code { font-size: 12px; }
+.dg-cells-small .dg-box text { font-size: 13px; }
 
 /* Watch it run (:::trace) */
 .trace { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
