@@ -10,6 +10,7 @@ arq runs each scheduled job once. Schedule (UTC):
 """
 import asyncio
 import logging
+from datetime import timezone
 
 from arq import cron
 from arq.connections import RedisSettings
@@ -62,6 +63,9 @@ class WorkerSettings:
         cron(job_networks, minute={15}, run_at_startup=True, timeout=600),
         cron(job_backup, hour={get_settings().BACKUP_HOUR_UTC}, minute={0}, timeout=3600),
     ]
+    # The schedule above is in UTC (arq would otherwise use the machine's own zone: on this laptop India
+    # time, which put the "02:30" backup at 21:00 local).
+    timezone = timezone.utc
     job_timeout = 3600
     keep_result = 7 * 24 * 3600
     queue_name = "labbox:arq"

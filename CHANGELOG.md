@@ -1,5 +1,12 @@
 # Changelog
 
+## Fix: the worker's schedule is in UTC
+
+- arq reads cron times in the machine's own zone unless told otherwise, so on this laptop (India time)
+  the "21:00 UTC" backup was set for 21:00 India time and the daily image check for 03:00 India time.
+  `WorkerSettings.timezone` is now UTC: the backup runs at 21:00 UTC, which is 02:30 in India, as
+  documented. A test pins it.
+
 ## Phase H5: safety limits
 
 - `app/limits.py`, every limit a setting (0 turns it off):

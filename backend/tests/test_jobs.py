@@ -102,3 +102,22 @@ def test_unused_lab_networks_go_and_used_ones_stay():
         stopped.remove(force=True)
         for n in c.networks.list(names=[f"labnet-u{user}-"]):
             n.remove()
+
+
+def test_the_schedule_is_in_utc(monkeypatch):
+    """arq uses the machine's own zone unless told otherwise; the backup hour is a UTC hour."""
+    import importlib
+    from datetime import timezone
+
+    monkeypatch.setenv("REDIS_URL", "redis://127.0.0.1:1/0")  # never connected to: only the settings are read
+    get_settings.cache_clear()
+    try:
+        import app.worker
+
+        WorkerSettings = importlib.reload(app.worker).WorkerSettings
+    finally:
+        get_settings.cache_clear()
+
+    assert WorkerSettings.timezone == timezone.utc
+    backup = next(c for c in WorkerSettings.cron_jobs if c.name == "cron:job_backup")
+    assert backup.hour == {get_settings().BACKUP_HOUR_UTC}
