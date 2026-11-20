@@ -35,17 +35,17 @@ A list answers "what is item number 3?". Often you need "what is Riya's phone nu
 like a **phone book**: you look up a **key** to find its **value**.
 
 ```java
-Map<String, Integer> stock = new HashMap<>();
-stock.put("tea", 40);           // key "tea", value 40
-stock.get("tea")                // 40
-stock.getOrDefault("milk", 0)   // 0: "milk" is not there
-stock.containsKey("tea")        // true
+Map<String, String> phones = new HashMap<>();
+phones.put("Riya", "98201 11111");     // key "Riya", value her number
+phones.get("Riya")                     // "98201 11111"
+phones.getOrDefault("Kabir", "none")   // "none": Kabir is not there
+phones.containsKey("Riya")             // true
 ```
 
 `getOrDefault` is the safe lookup: it gives your default instead of `null` when the key is missing.
 
 :::picture{name="phone-book"}
-You look up a key ("Arjun") to find its value (the number), without reading the whole book.
+Look up a key ("Riya") to find its value, without reading the whole book.
 :::
 :::
 

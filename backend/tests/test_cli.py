@@ -320,3 +320,11 @@ def test_pictures_and_traces_are_checked(labs_dir: Path):
     rows = "".join(f"| {i} | {i} | {i} | n |\n" for i in range(13))
     ch.write_text(good.replace("|---|---|---|---|\n", "|---|---|---|---|\n" + rows, 1))
     assert any("keep it to 12" in e for e in errors(labs_dir / "java-basics"))
+
+
+def test_code_in_a_picture_must_be_in_a_code_block(labs_dir: Path):
+    ch = labs_dir / "java-basics" / "chapters" / "09-collections.md"
+    good = ch.read_text()
+    assert errors(labs_dir / "java-basics") == []
+    ch.write_text(good.replace('phones.get("Riya")', 'phones.get(name)'))
+    assert any("'get(\"Riya\")' in picture 'phone-book'" in e for e in errors(labs_dir / "java-basics"))

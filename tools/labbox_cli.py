@@ -73,7 +73,36 @@ _TRACE_RE = re.compile(r"^\s*:::trace\b[^\n]*\n(.*?)^\s*:::\s*$", re.M | re.S)
 TRACE_MAX_ROWS = 12
 
 
+_PICTURE_CODE_FILE = "frontend/src/lesson/pictures.json"
+_CODE_IN_STEP_RE = re.compile(r"```.*?```", re.S)
+
+
+def _picture_code() -> dict[str, list[str]] | None:
+    """Code shown inside each picture (pictures.json); None outside the repo."""
+    f = ROOT / _PICTURE_CODE_FILE
+    if not f.is_file():
+        return None
+    return {k: v for k, v in json.loads(f.read_text(encoding="utf-8")).items() if not k.startswith("_")}
+
+
+def _picture_code_errors(file: str, step_no: int, markdown: str) -> list[str]:
+    """Learners never copy from a drawing: code in a picture must also be in a code block of its step."""
+    table = _picture_code()
+    if table is None:
+        return []
+    blocks = "\n".join(_CODE_IN_STEP_RE.findall(markdown))
+    out = []
+    for kind, name in _PICTURE_USE_RE.findall(markdown):
+        for snippet in table.get(name, []) if kind == "picture" else []:
+            if snippet not in blocks:
+                out.append(f"{file}: step {step_no} shows {snippet!r} in picture {name!r}; put it in a code block of that step too")
+    return out
+
+
 def _picture_names(kind: str) -> set[str] | None:
+    if kind == "picture":
+        table = _picture_code()
+        return None if table is None else set(table)
     f = ROOT / _PICTURE_FILES[kind]
     if not f.is_file():
         return None  # running outside the repo: skip the check
@@ -138,6 +167,7 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
                 warnings.append(f"{ch.file}: no {needed} step")
         errors.extend(_picture_errors(ch.file, "\n".join(s.markdown for s in steps)))
         for i, s in enumerate(steps, 1):
+            errors.extend(_picture_code_errors(ch.file, i, s.markdown))
             if s.type in ("concept", "example") and _words(s.markdown) > CONCEPT_MAX_WORDS:
                 warnings.append(f"{ch.file}: step {i} ({s.type}) has {_words(s.markdown)} words of text, keep it under {CONCEPT_MAX_WORDS}")
         if ch.minutes is None or not 8 <= ch.minutes <= 25:

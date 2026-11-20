@@ -64,9 +64,13 @@ Pictures help when they show something words alone cannot. One style everywhere,
 - **The task card** (every task): two or three `examples` in `lab.yaml` (`call`, `gives`, optional
   `note`) are drawn at the top of the task as "what your code should do". Use the same examples as
   the task text, short enough to read at a glance (90 characters at most).
-- **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`): a small line drawing
-  of the everyday comparison (a recipe card, a phone book, a notebook). At most one per step, with a
-  one-line caption that says what to notice.
+- **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`): a small hand-drawn
+  picture of the everyday comparison (a recipe card, a phone book, a notebook). At most one per step,
+  with a one-line caption that says what to notice. One look, two moods: a sketch in light ink with a
+  violet accent in the dark theme, notebook paper with blue pen and a yellow highlighter in the light
+  theme. Everyday words are handwritten (Caveat); **code stays in the code font**, is listed in
+  `pictures.json`, and must also appear in a code block of the same step (the validator checks it):
+  learners never copy from a drawing.
 - **Watch it run** (`:::trace{title='...'}` around a table): one row per moment of a program, one
   column per variable, and a `note` column in plain words. The learner steps through it and sees
   values change. Use it where beginners lose track: loops, a "best so far", a map filling up. Up to
@@ -75,7 +79,8 @@ Pictures help when they show something words alone cannot. One style everywhere,
   memory, concurrency).
 
 No photos or generated images in lessons: they are heavy, drift in style and fight the themes. The
-validator rejects unknown picture and diagram names and traces without a table.
+validator rejects unknown picture and diagram names, traces without a table, and code in a picture
+that is not also in a code block of its step.
 
 ## 4. Words
 

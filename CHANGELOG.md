@@ -1,5 +1,14 @@
 # Changelog
 
+## Hand-drawn pictures: a sketch in the dark theme, notebook paper in the light theme
+
+- The lesson pictures are now hand drawn: handwritten words (Caveat, bundled with the app like the
+  other fonts), slightly wobbly ink, a hatched band and a violet circle in the dark theme; blue pen
+  and a yellow highlighter on cream paper in the light theme. Chosen by the owner from four styles.
+- Code inside a picture stays in the code font. `pictures.json` lists it, and the validator checks
+  that the same code is in a code block of the step, so learners always copy from a real code block.
+  Java chapter 9's HashMap step now uses the phone book in its code too (`phones.get("Riya")`).
+
 ## Pictures in lessons: task cards, small drawings and "watch it run" (Java pilot)
 
 - **Task cards**: a task can list up to three `examples` in `lab.yaml` (`call`, `gives`, an optional
