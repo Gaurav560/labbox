@@ -23,6 +23,10 @@ boolean passed = true;   // true or false
 ```
 
 Read the first line as: "make a box for an `int`, call it `marks`, and put 45 in it".
+
+:::picture{name="labelled-jars"}
+A variable is a labelled jar; its shape is its type.
+:::
 :::
 
 :::step{type=concept title="Changing what is in the box"}

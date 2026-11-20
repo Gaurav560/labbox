@@ -18,6 +18,10 @@ strings.Split("a,b,,c", ",")          // []string{"a", "b", "", "c"}
 ```
 
 Strings cannot change: every function returns a **new** string.
+
+:::picture{name="beads-on-string"}
+Every byte of text has a numbered place, starting at 0.
+:::
 :::
 
 :::step{type=example title="Worked example: tidy a product code"}

@@ -44,12 +44,22 @@ chapters:
     - Go joins strings with +, just like numbers are added.
     - The result must be exactly Hello, then a comma and a space, then the name, then an exclamation mark.
     - Return the joined string; Go functions always say what type they return.
+    examples:
+    - call: "Greeting(\"Asha\")"
+      gives: "\"Hello, Asha!\""
+    - call: "Greeting(\"Kabir\")"
+      gives: "\"Hello, Kabir!\""
   - id: total_minutes
     title: 'hello/hello.go: TotalMinutes(hours, minutes)'
     hints:
     - An hour has 60 minutes.
     - Multiply the hours by 60 first, then add the minutes.
     - 'Both inputs are int and so is the result: no conversion is needed.'
+    examples:
+    - call: "TotalMinutes(2, 15)"
+      gives: "135"
+    - call: "TotalMinutes(0, 45)"
+      gives: "45"
 - id: 02-numbers-and-text
   title: Numbers and text
   file: chapters/02-numbers-and-text.md
@@ -61,12 +71,23 @@ chapters:
     - '45 / 50 is 0 in Go: dividing two ints throws the fraction away.'
     - 'Convert both to float64 before dividing: float64(scored).'
     - Check total == 0 first, and round to one decimal with math.Round(x*10) / 10.
+    examples:
+    - call: "Percent(45, 50)"
+      gives: "90"
+    - call: "Percent(1, 3)"
+      gives: "33.3"
+      note: "one decimal"
   - id: format_rupees
     title: 'numbers/numbers.go: FormatRupees(paise)'
     hints:
     - '1250 paise is 12 rupees and 50 paise: use / and % with 100.'
     - fmt.Sprintf builds a string; the verb %02d pads a number to two digits with a zero.
     - Put the rupee sign, the rupees, a dot and the two-digit paise together in one Sprintf.
+    examples:
+    - call: "FormatRupees(1250)"
+      gives: "\"₹12.50\""
+    - call: "FormatRupees(5)"
+      gives: "\"₹0.05\""
 - id: 03-decisions
   title: Making decisions
   file: chapters/03-decisions.md
@@ -78,12 +99,26 @@ chapters:
     - 'Check the invalid marks first: below 0 or above 100.'
     - 'Then test from the highest grade down: 80, then 60, then 40.'
     - 'A switch with nothing after the word switch reads like a list of rules: one case per grade, the highest first.'
+    examples:
+    - call: "Grade(80)"
+      gives: "\"A\""
+    - call: "Grade(79)"
+      gives: "\"B\""
+    - call: "Grade(101)"
+      gives: "\"Invalid\""
   - id: leap_year
     title: 'decisions/decisions.go: IsLeapYear(year)'
     hints:
     - Divisible by 4 is usually a leap year, with two exceptions.
     - Divisible by 100 is not, unless it is also divisible by 400.
     - Combine the tests with &&, || and !; 1900 is false, 2000 is true.
+    examples:
+    - call: "IsLeapYear(2024)"
+      gives: "true"
+    - call: "IsLeapYear(1900)"
+      gives: "false"
+    - call: "IsLeapYear(2000)"
+      gives: "true"
 - id: 04-loops
   title: Loops
   file: chapters/04-loops.md
@@ -95,12 +130,23 @@ chapters:
     - "A classic for loop has three parts: start i at 1, keep going while i is at most n, add one each round."
     - Add each i to a running total that starts at 0.
     - When n is 0 or negative the loop never runs, so the total stays 0.
+    examples:
+    - call: "SumTo(5)"
+      gives: "15"
+      note: "1 + 2 + 3 + 4 + 5"
+    - call: "SumTo(100)"
+      gives: "5050"
   - id: count_vowels
     title: 'loops/loops.go: CountVowels(text)'
     hints:
     - for _, r := range text gives you each character (a rune) in turn.
     - unicode.ToLower(r) lets you treat A and a the same.
     - A switch with case 'a', 'e', 'i', 'o', 'u' counts the vowels.
+    examples:
+    - call: "CountVowels(\"Hello World\")"
+      gives: "3"
+    - call: "CountVowels(\"rhythm\")"
+      gives: "0"
 - id: 01-slices-and-errors
   title: Slices and errors
   file: chapters/01-slices-and-errors.md
@@ -113,6 +159,11 @@ chapters:
     - prices is a slice of ints in paise. You need their sum.
     - range over the slice and add each value to a total.
     - Start a running total at zero, add every price inside a for range loop, then return the total.
+    examples:
+    - call: "Total([]int{1250, 700})"
+      gives: "1950"
+    - call: "Total(nil)"
+      gives: "0"
   - id: parse_amount
     title: 'till.go: ParseAmount(text)'
     xp: 20
@@ -121,6 +172,13 @@ chapters:
     - strings.Cut splits on the dot; strconv.Atoi turns each part into an int and returns an error when it cannot.
     - Allow no dot or exactly two digits after it, return 0 and an error for anything else, otherwise rupees*100
       plus paise.
+    examples:
+    - call: "ParseAmount(\"12.50\")"
+      gives: "1250, nil"
+    - call: "ParseAmount(\"7\")"
+      gives: "700, nil"
+    - call: "ParseAmount(\"abc\")"
+      gives: "0, an error"
 - id: 06-strings
   title: Strings
   file: chapters/06-strings.md
@@ -132,6 +190,11 @@ chapters:
     - Words are separated by one or more spaces, tabs or new lines.
     - strings.Fields already ignores extra spaces at the ends and in between.
     - Count the pieces with len().
+    examples:
+    - call: "CountWords(\"Go is fun\")"
+      gives: "3"
+    - call: "CountWords(\"  lots   of   spaces  \")"
+      gives: "3"
   - id: clean_name
     title: 'words/words.go: CleanName(raw)'
     hints:
@@ -139,6 +202,11 @@ chapters:
     - 'For each word: the first letter upper case, the rest lower case (strings.ToUpper and strings.ToLower on slices
       of the word).'
     - strings.Join puts the words back together with a single space.
+    examples:
+    - call: "CleanName(\"  riya   SHARMA \")"
+      gives: "\"Riya Sharma\""
+    - call: "CleanName(\"ARJUN\")"
+      gives: "\"Arjun\""
 - id: 07-more-slices
   title: More slices
   file: chapters/07-more-slices.md
@@ -150,12 +218,23 @@ chapters:
     - 'Sorting the slice you were given changes the caller''s slice too: they share the same array.'
     - slices.Clone makes a separate copy you can sort safely.
     - Sort the copy from biggest to smallest, then keep at most n items (min(n, len(...))).
+    examples:
+    - call: "TopN([]int{72, 45, 90, 66}, 2)"
+      gives: "[90 72]"
+      note: "the slice passed in stays as it was"
+    - call: "TopN([]int{5, 1}, 5)"
+      gives: "[5 1]"
   - id: unique
     title: 'slicetools/slicetools.go: Unique(items)'
     hints:
     - Keep a map of the items you have already seen.
     - Loop in the original order and append an item only the first time you see it.
     - Start the result as an empty slice, not nil, so an empty input gives an empty slice.
+    examples:
+    - call: "Unique([]string{\"tea\", \"coffee\", \"tea\", \"milk\"})"
+      gives: "[tea coffee milk]"
+    - call: "Unique(nil)"
+      gives: "[]"
 - id: 02-maps-and-structs
   title: Maps and structs
   file: chapters/02-maps-and-structs.md
@@ -168,6 +247,12 @@ chapters:
     - Each Order has an Item and a Qty. Add up Qty per Item.
     - A map[string]int is the counter; a missing key reads as 0, so you can add to it directly.
     - Make the map with make, loop over orders and add o.Qty to the entry for o.Item.
+    examples:
+    - call: "CountByItem([]Order{{\"tea\", 2}, {\"milk\", 1}, {\"tea\", 3}})"
+      gives: "map[milk:1 tea:5]"
+    - call: "CountByItem(nil)"
+      gives: "map[]"
+      note: "empty, not nil"
   - id: busiest
     title: 'till.go: Busiest(orders)'
     xp: 20
@@ -176,6 +261,11 @@ chapters:
     - 'Map order is random in Go, so ties need a rule: the name that sorts first wins.'
     - Loop over the counts and keep the best item, replacing it when a count is bigger, or equal with a smaller
       name.
+    examples:
+    - call: "Busiest([]Order{{\"tea\", 2}, {\"milk\", 1}, {\"tea\", 3}})"
+      gives: "\"tea\""
+    - call: "Busiest(nil)"
+      gives: "\"\""
 - id: 09-methods-and-interfaces
   title: Methods and interfaces
   file: chapters/09-methods-and-interfaces.md
@@ -187,12 +277,24 @@ chapters:
     - 'A method is a function with a receiver: func (r Rect) Area() float64.'
     - A rectangle's area is width times height.
     - 'A circle''s area is pi times the radius squared: math.Pi * c.R * c.R.'
+    examples:
+    - call: "Rect{W: 3, H: 4}.Area()"
+      gives: "12"
+    - call: "Circle{R: 2}.Area()"
+      gives: "12.566..."
+      note: "π times 2 squared"
   - id: total_area
     title: 'shapes/shapes.go: TotalArea(shapes)'
     hints:
     - Any type with an Area() float64 method is a Shape, so the slice can mix rectangles and circles.
     - Loop over the shapes and add up s.Area().
     - Round the total to 2 decimals with math.Round(total*100) / 100.
+    examples:
+    - call: "TotalArea([]Shape{Rect{3, 4}, Circle{1}})"
+      gives: "15.14"
+      note: "rounded"
+    - call: "TotalArea(nil)"
+      gives: "0"
 - id: 10-errors-in-depth
   title: Errors in depth
   file: chapters/10-errors-in-depth.md
@@ -204,12 +306,24 @@ chapters:
     - 'Check the amount first: zero or negative is an error of its own.'
     - For too little money, wrap the sentinel error with fmt.Errorf and the %w verb, so callers can use errors.Is.
     - On success give back the new balance and a nil error.
+    examples:
+    - call: "Withdraw(500, 200)"
+      gives: "300, nil"
+    - call: "Withdraw(100, 250)"
+      gives: "100, ErrInsufficientFunds"
+      note: "balance unchanged"
   - id: parse_age
     title: 'bank/bank.go: ParseAge(text)'
     hints:
     - strconv.Atoi turns text into an int, or returns an error you can wrap.
     - Wrap that error with %w so errors.Is(err, strconv.ErrSyntax) still works for the caller.
     - After parsing, an age outside 0 to 150 is also an error.
+    examples:
+    - call: "ParseAge(\"17\")"
+      gives: "17, nil"
+    - call: "ParseAge(\"abc\")"
+      gives: "0, an error"
+      note: "wraps strconv.ErrSyntax"
 - id: 11-pointers
   title: Pointers
   file: chapters/11-pointers.md
@@ -221,12 +335,20 @@ chapters:
     - 'With a value receiver, the method gets a copy of the wallet: the change is lost when it returns.'
     - A pointer receiver (w *Wallet) lets the method change the caller's wallet.
     - Change only the receiver; Go calls pointer methods on addressable values for you.
+    examples:
+    - call: "w := Wallet{Balance: 100}; w.Deposit(50); w.Deposit(25)"
+      gives: "w.Balance is 175"
   - id: swap
     title: 'wallet/wallet.go: Swap(a, b)'
     hints:
     - 'a and b are pointers: *a reads or writes the int they point to.'
     - 'Go can swap two values in one line: x, y = y, x.'
     - Swap the values the pointers point to, not the pointers themselves.
+    examples:
+    - call: "x, y := 1, 2; Swap(&x, &y)"
+      gives: "x is 2, y is 1"
+    - call: "Swap(&x, &x)"
+      gives: "x unchanged"
 - id: 12-files-and-cli
   title: Files and a command-line program
   file: chapters/12-files-and-cli.md
@@ -238,12 +360,24 @@ chapters:
     - os.Open gives a file and an error; return the error (wrapped) when the file is missing.
     - csv.NewReader reads rows; set FieldsPerRecord to -1 so short rows do not stop the reading.
     - Skip the header and any row whose amount strconv.ParseFloat cannot read; add the rest per category.
+    examples:
+    - call: "ReadTotals(\"expenses.csv\")"
+      gives: "map[...rent:18000 shopping:4095...]"
+    - call: "ReadTotals(\"missing.csv\")"
+      gives: "nil, fs.ErrNotExist"
   - id: summary_cli
     title: 'cmd/summary/main.go: the top categories'
     hints:
     - flag.Int defines -top; flag.Parse, then flag.Arg(0) is the file path.
     - For a missing file, print the message to os.Stderr, then end the program with exit code 1 (the os package has a function for it).
     - 'Sort the categories by total, biggest first, and print category: amount with %.2f.'
+    examples:
+    - call: "go run ./cmd/summary -top 2 expenses.csv"
+      gives: "rent: 18000.00 / shopping: 4095.00"
+      note: "two lines"
+    - call: "go run ./cmd/summary missing.csv"
+      gives: "File not found: missing.csv"
+      note: "stderr, exit 1"
 - id: 13-goroutines
   title: Goroutines and channels
   file: chapters/13-goroutines.md
@@ -255,11 +389,23 @@ chapters:
     - go f() runs f at the same time as the rest of the program.
     - 'Make the result slice first, and let each goroutine write only its own index: the order stays right.'
     - A sync.WaitGroup waits until every goroutine is done before you return.
+    examples:
+    - call: "FetchAll([]string{\"a\", \"b\"}, strings.ToUpper)"
+      gives: "[A B]"
+      note: "same order"
+    - call: "five fetches of 200 ms"
+      gives: "well under 1 s"
+      note: "all at once"
   - id: word_counts
     title: 'concurrent/concurrent.go: CountWords(texts)'
     hints:
     - Several goroutines writing to one map at once crash the program.
     - Protect the map with a sync.Mutex (Lock before writing, Unlock after), or send counts over a channel.
     - Count each text's words in its own goroutine and wait for all of them with a WaitGroup.
+    examples:
+    - call: "CountWords([]string{\"Go is fun\", \"go GO\"})"
+      gives: "map[fun:1 go:3 is:1]"
+    - call: "CountWords(nil)"
+      gives: "map[]"
 cover_scene: A calm desk with a laptop showing a few lines of Go and a small gopher figure beside it, soft morning
   light.

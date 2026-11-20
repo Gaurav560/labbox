@@ -1,6 +1,0 @@
-{
-  "_about": "Code shown inside each picture. The validator checks that each one also appears in a code block of the step that uses the picture, so learners never copy from a drawing.",
-  "recipe-card": [],
-  "notebook-vs-form": ["add(45)"],
-  "phone-book": ["get(\"Riya\")"]
-}

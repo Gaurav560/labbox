@@ -26,6 +26,10 @@ Strings never change in place: methods give you a **new** string.
 "riya".upper()        # 'RIYA'
 "riya sharma".title() # 'Riya Sharma'
 ```
+
+:::picture{name="beads-on-string"}
+Every character has a numbered place, starting at 0.
+:::
 :::
 
 :::step{type=example title="Worked example: tidy a product code"}
@@ -43,6 +47,15 @@ code = "-".join(parts)     # 'AB-12-CD'
 3. `"-".join(parts)` glues the pieces with a dash between them.
 
 Both tasks in this chapter use some of these three moves.
+
+:::trace{title='tidying "  ab-12   cd  "'}
+| step | value | note |
+|---|---|---|
+| raw | "  ab-12   cd  " | The text as it arrives, extra spaces and all. |
+| raw.split() | ['ab-12', 'cd'] | Split with no argument drops every run of spaces. |
+| upper each | ['AB-12', 'CD'] | Each piece is changed on its own. |
+| "-".join(parts) | 'AB-12-CD' | The pieces are glued back with a dash between them. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

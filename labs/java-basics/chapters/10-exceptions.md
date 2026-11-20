@@ -23,6 +23,10 @@ a[5] = 1;                  // throws ArrayIndexOutOfBoundsException
 ```
 
 The exception's name already tells you a lot about what went wrong.
+
+:::picture{name="fire-alarm"}
+An exception stops the work until something handles it.
+:::
 :::
 
 :::step{type=concept title="Catching: try and catch"}

@@ -22,6 +22,10 @@ len(phone)                  # 3
 
 Asking for a key that is not there with `phone["Kabir"]` raises a `KeyError`. `phone.get("Kabir")`
 gives `None` instead, and `phone.get("Kabir", "unknown")` gives your own default.
+
+:::picture{name="phone-book"}
+Look up a key to find its value.
+:::
 :::
 
 :::step{type=example title="Worked example: count the words"}
@@ -43,6 +47,15 @@ count_words(["tea", "coffee", "tea"])
 3. `counts.get(w, 0)` is the count so far, or `0` the first time; add one and store it back.
 
 `count_letters` is this pattern, plus deciding which characters count.
+
+:::trace{title='count_words(["tea", "coffee", "tea"])'}
+| w | counts.get(w, 0) | counts | note |
+|---|---|---|---|
+|  |  | {} | Start with an empty dictionary. |
+| tea | 0 | {'tea': 1} | tea is new, so get gives 0; 0 + 1 is stored. |
+| coffee | 0 | {'tea': 1, 'coffee': 1} | coffee is new too. |
+| tea | 1 | {'tea': 2, 'coffee': 1} | tea is already 1: 1 + 1 = 2, stored back under tea. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

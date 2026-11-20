@@ -68,45 +68,33 @@ def _words(markdown: str) -> int:
 
 # Built-in pictures live in the frontend; a chapter may only name ones that exist.
 _PICTURE_FILES = {"diagram": "frontend/src/lesson/Diagrams.tsx", "picture": "frontend/src/lesson/Pictures.tsx"}
-_PICTURE_USE_RE = re.compile(r'^\s*:::(diagram|picture)\{name="?([a-z0-9-]+)"?\}', re.M)
+_PICTURE_USE_RE = re.compile(r'^\s*:::(diagram|picture)\{name="?([a-z0-9-]+)"?[^}\n]*\}', re.M)
 _TRACE_RE = re.compile(r"^\s*:::trace\b[^\n]*\n(.*?)^\s*:::\s*$", re.M | re.S)
 TRACE_MAX_ROWS = 12
 
 
-_PICTURE_CODE_FILE = "frontend/src/lesson/pictures.json"
 _CODE_IN_STEP_RE = re.compile(r"```.*?```", re.S)
-
-
-def _picture_code() -> dict[str, list[str]] | None:
-    """Code shown inside each picture (pictures.json); None outside the repo."""
-    f = ROOT / _PICTURE_CODE_FILE
-    if not f.is_file():
-        return None
-    return {k: v for k, v in json.loads(f.read_text(encoding="utf-8")).items() if not k.startswith("_")}
+_PICTURE_CODE_RE = re.compile(r"^\s*:::picture\{([^}\n]*)\}", re.M)
+_ATTR_CODE_RE = re.compile(r"""\bcode=(?:'([^']*)'|"([^"]*)")""")
 
 
 def _picture_code_errors(file: str, step_no: int, markdown: str) -> list[str]:
-    """Learners never copy from a drawing: code in a picture must also be in a code block of its step."""
-    table = _picture_code()
-    if table is None:
-        return []
+    """Learners never copy from a drawing: code shown in a picture must also be in a code block of its step."""
     blocks = "\n".join(_CODE_IN_STEP_RE.findall(markdown))
     out = []
-    for kind, name in _PICTURE_USE_RE.findall(markdown):
-        for snippet in table.get(name, []) if kind == "picture" else []:
-            if snippet not in blocks:
-                out.append(f"{file}: step {step_no} shows {snippet!r} in picture {name!r}; put it in a code block of that step too")
+    for attrs in _PICTURE_CODE_RE.findall(markdown):
+        m = _ATTR_CODE_RE.search(attrs)
+        snippet = (m.group(1) or m.group(2)) if m else None
+        if snippet and snippet not in blocks:
+            out.append(f"{file}: step {step_no} shows {snippet!r} in a picture; put it in a code block of that step too")
     return out
 
 
 def _picture_names(kind: str) -> set[str] | None:
-    if kind == "picture":
-        table = _picture_code()
-        return None if table is None else set(table)
     f = ROOT / _PICTURE_FILES[kind]
     if not f.is_file():
         return None  # running outside the repo: skip the check
-    body = f.read_text(encoding="utf-8").split("Record<string, () => JSX.Element> = {", 1)[-1].split("};", 1)[0]
+    body = re.split(r"Record<string, \([^)]*\) => JSX\.Element> = \{", f.read_text(encoding="utf-8"), maxsplit=1)[-1].split("};", 1)[0]
     return set(re.findall(r'^\s*"?([a-z0-9-]+)"?\s*:', body, re.M))
 
 

@@ -212,9 +212,9 @@ Linux, Git, system design). Beginner courses are plain; advanced courses start w
 from zero and Go from zero follow it in full (20 November). Python from
 zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
 tasks, written in the "explain, do not just state" style) are complete; next (owner's order): JavaScript
-from zero, then Python in practice (with a story) and the others. **Pictures in lessons** (task cards,
-small drawings, "watch it run" traces) are piloted in Java chapters 1 and 9 (20 November); next, after
-the owner's look: roll them out to every chapter of Python, Go and Java from zero.
+from zero, then Python in practice (with a story) and the others. **Pictures in lessons** (task cards on
+every task, 18 hand-drawn pictures, "watch it run" traces) are in all three from-zero courses (20
+November); every new course gets them from the start.
 
 ### 4. Platform phases not started (E and G are done)
 

@@ -25,6 +25,10 @@ if (marks >= 40) {
 - The **condition** in brackets is a question with a `true` or `false` answer.
 - When it is `true`, the first block runs; otherwise the `else` block runs.
 - Exactly one of the two blocks runs, never both.
+
+:::picture{name="fork-in-road"}
+One question, and the answer picks the road.
+:::
 :::
 
 :::step{type=concept title="Comparing and combining"}
@@ -90,6 +94,14 @@ public static String ticket(int age) {
 3. Each age matches exactly one branch, because the first true condition wins.
 
 `grade` works the same way: invalid marks first, then 80, 60 and 40.
+
+:::trace{title="ticket(45)"}
+| check | true? | note |
+|---|---|---|
+| age < 0 | no | 45 is not below 0, so go on to the next check. |
+| age >= 60 | no | 45 is not 60 or more: next check. |
+| age >= 18 | yes | 45 is 18 or more: the answer is "Adult", and no later check runs. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

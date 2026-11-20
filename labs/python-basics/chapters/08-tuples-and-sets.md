@@ -44,6 +44,10 @@ came_either_day(["Riya", "Arjun"], ["Arjun", "Meera"])
 2. Sets have no order, so `sorted(...)` turns the result into a predictable list.
 
 `common_items` is the same shape with a different operator (look at the try step).
+
+:::picture{name="guest-list"}
+A set keeps each item once, like a guest list.
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -33,6 +33,10 @@ List<Integer> passed = marks.stream()      // put the items on the belt
 ```
 
 The original `marks` list is never changed: the stream builds a **new** list at the end.
+
+:::picture{name="conveyor-belt"}
+Items ride the belt; stations keep, change or sort them.
+:::
 :::
 
 :::step{type=concept title="map and sorted: two more stations"}

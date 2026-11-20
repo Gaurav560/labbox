@@ -23,6 +23,10 @@ len(marks)           # how many         -> 4
 
 Positions start at **0**, and negative positions count from the end. That is all you need for the
 first task.
+
+:::picture{name="egg-box"}
+A list is a row of numbered slots, starting at 0.
+:::
 :::
 
 :::step{type=example title="Worked example: keep only the passing marks"}
@@ -49,6 +53,16 @@ passing([72, 30, 90, 12])
 
 The original list is never changed: we built a **new** one. Your first task uses exactly this shape,
 with a different rule in step 3.
+
+:::trace{title="passing([72, 30, 90, 12])"}
+| m | m >= 40? | result | note |
+|---|---|---|---|
+|  |  | [] | Start with an empty list to fill. |
+| 72 | yes | [72] | 72 passes: append it. |
+| 30 | no | [72] | 30 does not: the list stays as it is. |
+| 90 | yes | [72, 90] | 90 passes: append it. |
+| 12 | no | [72, 90] | 12 does not. The loop ends and returns [72, 90]. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -25,6 +25,10 @@ total = 0
 for m in marks:
     total = total + m      # or: total += m
 ```
+
+:::picture{name="running-track"}
+A loop runs the same steps again, lap after lap.
+:::
 :::
 
 :::step{type=example title="Worked example: count the passing marks"}
@@ -44,6 +48,17 @@ count_passed([45, 20, 90, 33])
 
 Change only the condition in step 3 and the same five lines count anything you like. That is your
 first task.
+
+:::trace{title="count_passed([45, 20, 90, 33])"}
+| m | m >= 33? | count | note |
+|---|---|---|---|
+|  |  | 0 | Before the loop: count starts at zero. |
+| 45 | yes | 1 | 45 passes, so count goes up by one. |
+| 20 | no | 1 | 20 does not pass: count stays 1. |
+| 90 | yes | 2 | 90 passes: count is 2. |
+| 33 | yes | 3 | 33 is exactly 33, and >= includes it: count is 3. |
+|  |  | 3 | No marks left: the answer is 3. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -27,6 +27,10 @@ if err != nil {
     return 0, err
 }
 ```
+
+:::picture{name="result-and-note"}
+Go hands back a result and an error note.
+:::
 :::
 
 :::step{type=example title="Worked example: parse a whole number safely"}

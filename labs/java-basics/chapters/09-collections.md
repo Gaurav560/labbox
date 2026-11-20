@@ -25,7 +25,7 @@ marks.remove(0);        // [45]
 `List<Integer>` means "a list of whole numbers". The `<Integer>` part tells Java what the list may hold,
 so it can stop you adding text by mistake.
 
-:::picture{name="notebook-vs-form"}
+:::picture{name="notebook-vs-form" code='marks.add(45)'}
 An array is a form with a fixed number of boxes; an ArrayList is a notebook with room for one more line.
 :::
 :::
@@ -44,7 +44,7 @@ phones.containsKey("Riya")             // true
 
 `getOrDefault` is the safe lookup: it gives your default instead of `null` when the key is missing.
 
-:::picture{name="phone-book"}
+:::picture{name="phone-book" code='phones.get("Riya")'}
 Look up a key ("Riya") to find its value, without reading the whole book.
 :::
 :::

@@ -100,6 +100,10 @@ with open("expenses.csv", newline="") as f:
 ```
 
 A short line gives `None` for the missing columns, so expect `None` as well as bad text.
+
+:::picture{name="file-lines"}
+Each line of a CSV file is one row, cut at the commas.
+:::
 :::
 
 :::step{type=task task=read_totals title="Totals from a CSV file"}

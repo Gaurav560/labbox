@@ -21,6 +21,10 @@ word.substring(0, 2) // "Ja"   from 0 up to, not including, 2
 
 Strings **never change**. Every method gives you a **new** string and leaves the original alone:
 `word.toUpperCase()` returns `"JAVA"`, but `word` is still `"Java"`.
+
+:::picture{name="beads-on-string"}
+Every character has a numbered place, starting at 0.
+:::
 :::
 
 :::step{type=concept title="Cleaning tools"}
@@ -58,6 +62,16 @@ public static String code(String raw) {
 3. Glue the pieces back with a dash.
 
 Both tasks in this chapter use some of these moves.
+
+:::trace{title='code("  ab-12   cd ")'}
+| step | value | note |
+|---|---|---|
+| raw | "  ab-12   cd " | The text as it arrives. |
+| raw.trim() | "ab-12   cd" | trim removes the spaces at both ends only. |
+| split("\\\\s+") | {"ab-12", "cd"} | Split on any run of spaces. |
+| toUpperCase each | {"AB-12", "CD"} | The loop changes each slot of the array. |
+| String.join("-", parts) | "AB-12-CD" | The pieces are glued back with a dash. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

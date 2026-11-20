@@ -1297,6 +1297,7 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .pc-band { fill: var(--pc-band); opacity: .8; filter: url(#pc-wobble); }
 .pc-hatch-line { stroke: var(--pc-hatch); stroke-width: 1.6; opacity: .7; }
 .pc-cell { fill: none; stroke: var(--pc-accent); stroke-width: 1.6; filter: url(#pc-wobble); }
+.pc-bead { fill: var(--pc-mark-fill, color-mix(in srgb, var(--pc-accent) 22%, transparent)); stroke: var(--pc-accent); stroke-width: 1.6; filter: url(#pc-wobble); }
 .pc-mark { fill: var(--pc-mark); stroke: var(--pc-mark-stroke); stroke-width: 2; opacity: .85; filter: url(#pc-wobble); }
 .pc-ink { fill: none; stroke: var(--pc-ink); stroke-width: 1.6; filter: url(#pc-wobble); }
 .pc-rule { stroke: var(--pc-rule); stroke-width: 1.2; }
@@ -1304,16 +1305,16 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .pc-title { fill: var(--pc-strong); font: 700 23px var(--font-hand); }
 .pc-hand { fill: var(--pc-ink); font: 500 19px var(--font-hand); }
 .pc-label { fill: var(--pc-accent); font: 700 20px var(--font-hand); }
-.pc-code { fill: var(--pc-accent); font: 600 12.5px var(--font-code); font-variant-ligatures: none; }
+.pc-code { fill: var(--pc-accent); font: 600 11.5px var(--font-code); font-variant-ligatures: none; }
 
 /* Watch it run (:::trace) */
 .trace { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
 .trace-head { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: 8px; flex-wrap: wrap; }
 .trace-label { font-size: 12px; font-weight: 700; color: #8c84e8; text-transform: uppercase; letter-spacing: .04em; }
-.trace-title { font-size: 14px; font-weight: 600; }
+.trace-title { font-size: 14px; font-weight: 600; white-space: pre-wrap; font-family: var(--font-code); font-variant-ligatures: none; }
 .trace-table { width: 100%; border-collapse: collapse; font: 13px var(--font-code); font-variant-ligatures: none; }
 .trace-table th { text-align: left; font: 600 12px var(--font-text); color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--border); }
-.trace-table td { padding: 4px 8px; border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent); color: var(--muted); }
+.trace-table td { white-space: pre-wrap; padding: 4px 8px; border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent); color: var(--muted); }
 .trace-table tr.trace-now td { color: var(--text); background: color-mix(in srgb, #5048b8 14%, transparent); }
 .trace-table td.trace-changed { color: var(--text); font-weight: 700; box-shadow: inset 0 -2px 0 #5048b8; }
 .trace-note { margin: 8px 0 0; font-size: 14px; min-height: 1.4em; }

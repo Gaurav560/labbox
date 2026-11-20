@@ -194,7 +194,7 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
     case "diagram":
       return <Diagram name={p.dataName ?? ""} caption={children} />;
     case "picture":
-      return <Picture name={p.dataName ?? ""} caption={children} />;
+      return <Picture name={p.dataName ?? ""} code={p.dataCode} caption={children} />;
     case "trace": {
       let data: TraceData = { headers: [], rows: [] };
       try {

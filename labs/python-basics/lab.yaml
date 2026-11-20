@@ -36,18 +36,35 @@ chapters:
           - "Look at the last line of greet.py: \"pass\" means the function does nothing yet."
           - "An f-string puts a variable inside text: f\"...{name}...\"."
           - "Return an f-string with name between \"Hello, \" and \"!\". Check the comma and the space after it."
+        examples:
+        - call: "greet(\"Asha\")"
+          gives: "\"Hello, Asha!\""
+        - call: "greet(\"Kabir\")"
+          gives: "\"Hello, Kabir!\""
       - id: add
         title: "math_utils.py: add two numbers"
         hints:
           - "The function receives two inputs, a and b. What should come back?"
           - "Python adds numbers with the + operator."
           - "Replace pass with a single return statement that adds the two inputs."
+        examples:
+        - call: "add(2, 3)"
+          gives: "5"
+        - call: "add(-1, 1)"
+          gives: "0"
       - id: is_even
         title: "math_utils.py: check if a number is even"
         hints:
           - "A number is even when dividing it by 2 leaves nothing over."
           - "n % 2 gives the remainder after dividing n by 2."
           - "Compare that remainder with 0 using == and return the result of the comparison."
+        examples:
+        - call: "is_even(4)"
+          gives: "True"
+        - call: "is_even(7)"
+          gives: "False"
+        - call: "is_even(0)"
+          gives: "True"
   - id: 02-numbers-and-text
     title: Numbers and text
     file: chapters/02-numbers-and-text.md
@@ -59,12 +76,23 @@ chapters:
           - "sum() adds up a list and len() counts its items. What should happen when the list is empty?"
           - "Dividing by zero raises an error, so check for an empty list first and give back zero as a float."
           - "round(value, 2) keeps two digits after the point. Apply it to the sum divided by the count."
+        examples:
+        - call: "average([78, 85, 92])"
+          gives: "85.0"
+        - call: "average([1, 2, 2])"
+          gives: "1.67"
+          note: "rounded to 2 decimals"
       - id: format_price
         title: "numbers_text.py: show an amount as a price"
         hints:
           - "An f-string can format a number: inside the braces, a colon starts the format."
           - "The format ,.2f adds thousands separators and keeps exactly two decimals."
           - "Put the rupee sign before the braces, inside the same f-string."
+        examples:
+        - call: "format_price(1250.5)"
+          gives: "\"₹1,250.50\""
+        - call: "format_price(5)"
+          gives: "\"₹5.00\""
   - id: 03-decisions
     title: Making decisions
     file: chapters/03-decisions.md
@@ -76,12 +104,26 @@ chapters:
           - "Check the invalid marks first: below 0 or above 100."
           - "Then test from the highest grade down: 80, then 60, then 40. The first true condition wins."
           - "Use if, then elif for each grade, and else for F."
+        examples:
+        - call: "grade(80)"
+          gives: "\"A\""
+        - call: "grade(79)"
+          gives: "\"B\""
+        - call: "grade(40)"
+          gives: "\"C\""
       - id: leap_year
         title: "decisions.py: is it a leap year?"
         hints:
           - "A year divisible by 4 is usually a leap year. Two exceptions follow."
           - "Years divisible by 100 are not leap years, unless they are also divisible by 400."
           - "Combine the three tests with and, or and not. 1900 is False, 2000 is True."
+        examples:
+        - call: "is_leap_year(2024)"
+          gives: "True"
+        - call: "is_leap_year(1900)"
+          gives: "False"
+        - call: "is_leap_year(2000)"
+          gives: "True"
   - id: 04-loops
     title: Loops
     file: chapters/04-loops.md
@@ -93,12 +135,23 @@ chapters:
           - "Start a counter at 0 before the loop."
           - "Go through the numbers with a for loop and add 1 when a number is greater than the limit."
           - "Greater than means a number equal to the limit does not count."
+        examples:
+        - call: "count_above([35, 72, 40, 90], 40)"
+          gives: "2"
+          note: "above, not equal"
+        - call: "count_above([], 10)"
+          gives: "0"
       - id: first_negative
         title: "loops.py: the first negative number"
         hints:
           - "Return as soon as you find a negative number: the function stops right there."
           - "If the loop finishes without finding one, there is nothing to return yet."
           - "After the loop, give back None (Python's way of saying nothing) so the caller knows there was none."
+        examples:
+        - call: "first_negative([4, -2, 7, -9])"
+          gives: "-2"
+        - call: "first_negative([1, 2, 3])"
+          gives: "None"
   - id: 05-strings
     title: Strings
     file: chapters/05-strings.md
@@ -110,12 +163,22 @@ chapters:
           - "Words are separated by spaces, sometimes several in a row."
           - "split() without an argument already ignores extra spaces at the ends and in between."
           - "Count the pieces with len()."
+        examples:
+        - call: "count_words(\"Python is fun\")"
+          gives: "3"
+        - call: "count_words(\"  lots   of   spaces  \")"
+          gives: "3"
       - id: clean_name
         title: "text_tools.py: tidy up a name"
         hints:
           - "split() with no argument splits on any run of spaces and drops the empty pieces."
           - "Join the pieces back with a single space between them."
           - "title() makes the first letter of each word a capital and the rest small."
+        examples:
+        - call: "clean_name(\"  riya   SHARMA \")"
+          gives: "\"Riya Sharma\""
+        - call: "clean_name(\"ARJUN\")"
+          gives: "\"Arjun\""
   - id: 06-lists
     title: Lists
     file: chapters/06-lists.md
@@ -127,12 +190,22 @@ chapters:
           - "Build a new list and only add an item if it is not in the new list yet."
           - "The in operator tells you whether an item is already in a list."
           - "A set would lose the order, so loop over the items in their original order."
+        examples:
+        - call: "remove_duplicates([3, 1, 3, 2, 1])"
+          gives: "[3, 1, 2]"
+          note: "first order kept"
       - id: top_n
         title: "lists.py: the n biggest numbers"
         hints:
           - "sorted() gives back a new sorted list and leaves the original alone; list.sort() changes the original."
           - "sorted(numbers, reverse=True) puts the biggest first."
           - "A slice [:n] keeps the first n items, and asking for more than the list has is fine."
+        examples:
+        - call: "top_n([72, 45, 90, 66], 2)"
+          gives: "[90, 72]"
+          note: "the list passed in stays as it was"
+        - call: "top_n([5, 1], 5)"
+          gives: "[5, 1]"
   - id: 07-dictionaries
     title: Dictionaries
     file: chapters/07-dictionaries.md
@@ -144,12 +217,22 @@ chapters:
           - "Make the text lower case first, then look at one character at a time."
           - "Skip characters that are not letters: str.isalpha() tells you."
           - "counts.get(ch, 0) gives the count so far, or 0 the first time: add 1 to it."
+        examples:
+        - call: "count_letters(\"Hello!\")"
+          gives: "{\"h\": 1, \"e\": 1, \"l\": 2, \"o\": 1}"
+        - call: "count_letters(\"A a\")"
+          gives: "{\"a\": 2}"
       - id: total_by_category
         title: "dict_tools.py: total spent per category"
         hints:
           - "Each expense is a small dictionary: read its category and amount with square brackets."
           - "Start with an empty dictionary and add each amount to its category's running total."
           - "get with a default of 0 handles a category you have not seen before."
+        examples:
+        - call: "total_by_category(the three expenses)"
+          gives: "{\"food\": 200, \"travel\": 40}"
+        - call: "total_by_category([])"
+          gives: "{}"
   - id: 08-tuples-and-sets
     title: Tuples and sets
     file: chapters/08-tuples-and-sets.md
@@ -161,12 +244,22 @@ chapters:
           - "Turn both lists into sets: duplicates disappear."
           - "The & operator (or .intersection) keeps what is in both sets."
           - "Sets have no order, so give back sorted(...) of the result."
+        examples:
+        - call: "common_items([\"tea\", \"coffee\", \"milk\"], [\"milk\", \"tea\", \"juice\"])"
+          gives: "[\"milk\", \"tea\"]"
+        - call: "common_items([1, 2, 2, 3], [2, 2, 4])"
+          gives: "[2]"
       - id: min_max
         title: "sets_tuples.py: smallest and largest together"
         hints:
           - "A function can give back two values at once as a tuple: (a, b)."
           - "min() and max() find the smallest and largest of a list."
           - "Handle the empty list first: there is no smallest or largest, so both are None."
+        examples:
+        - call: "min_max([72, 45, 90])"
+          gives: "(45, 90)"
+        - call: "min_max([])"
+          gives: "(None, None)"
   - id: 09-functions-in-depth
     title: Functions in depth
     file: chapters/09-functions-in-depth.md
@@ -178,12 +271,25 @@ chapters:
           - "A default value like [] is created once, when Python reads the def line, and then shared by every call."
           - "Use None as the default instead, because None is never changed."
           - "Inside the function, if basket is still None, make a fresh empty list before appending."
+        examples:
+        - call: "add_item(\"milk\")"
+          gives: "[\"milk\"]"
+        - call: "add_item(\"bread\")"
+          gives: "[\"bread\"]"
+          note: "a fresh basket each time"
       - id: total
         title: "functions.py: any number of prices, with a discount"
         hints:
           - "*prices collects every positional argument into a tuple, so sum() works on it."
           - "A parameter after *prices can only be given by name, like discount=10."
           - "Take the discount percent off the sum, then round to 2 decimals and make sure it is a float."
+        examples:
+        - call: "total(100, 50)"
+          gives: "150.0"
+        - call: "total(100, 50, discount=10)"
+          gives: "135.0"
+        - call: "total()"
+          gives: "0.0"
   - id: 10-errors
     title: Errors
     file: chapters/10-errors.md
@@ -195,12 +301,23 @@ chapters:
           - "float() turns text like \"12.5\" into a number and raises ValueError for text like \"abc\"."
           - "Catch that ValueError with try and except, then raise your own ValueError with a clearer message."
           - "The message must include the text that was wrong, for example: 'abc' is not a number."
+        examples:
+        - call: "to_number(\" 7 \")"
+          gives: "7.0"
+        - call: "to_number(\"abc\")"
+          gives: "ValueError"
+          note: "message: 'abc' is not a number"
       - id: safe_sum
         title: "errors.py: add up the good values, report the bad ones"
         hints:
           - "Keep two things while you loop: the running total and a list of bad values."
           - "Call your to_number inside try; in except, remember the value and carry on."
           - "Give back both at once as a tuple: (total, bad)."
+        examples:
+        - call: "safe_sum([\"10\", \"x\", \"2.5\", \"\"])"
+          gives: "(12.5, [\"x\", \"\"])"
+        - call: "safe_sum([])"
+          gives: "(0.0, [])"
   - id: 11-files
     title: Files
     file: chapters/11-files.md
@@ -212,12 +329,23 @@ chapters:
           - "Open the file for writing with mode \"w\": it is created, or emptied if it exists."
           - "write() does not add a new line by itself, so add \"\\n\" after each line."
           - "Give back how many lines you wrote: len(lines)."
+        examples:
+        - call: "save_lines(\"report.txt\", [\"food: 200.00\", \"travel: 40.50\"])"
+          gives: "2"
+          note: "a file with those two lines"
+        - call: "save_lines(\"empty.txt\", [])"
+          gives: "0"
       - id: read_totals
         title: "file_tools.py: totals per category from a CSV file"
         hints:
           - "Open the file with a with block and read it with csv.DictReader, which uses the header row for the keys."
           - "A broken row has a missing or non-numeric amount: put the conversion in try and skip the row on ValueError or TypeError."
           - "Add each good amount to its category, like total_by_category in chapter 7, and round the totals to 2 decimals."
+        examples:
+        - call: "read_totals(\"expenses.csv\")[\"rent\"]"
+          gives: "18000.0"
+        - call: "read_totals(\"expenses.csv\")[\"shopping\"]"
+          gives: "4095.0"
   - id: 12-running-a-program
     title: Running a program
     file: chapters/12-running-a-program.md
@@ -229,12 +357,22 @@ chapters:
           - "argparse.ArgumentParser gives you a parser; add_argument(\"path\") and add_argument(\"--top\", type=int, default=3)."
           - "Get the totals with read_totals from file_tools, then sort the items by amount, biggest first."
           - "Print each of the first top items as category: amount, with two decimals."
+        examples:
+        - call: "python summary.py expenses.csv --top 2"
+          gives: "rent: 18000.00 / shopping: 4095.00"
+          note: "two lines"
       - id: summary_errors
         title: "summary.py: friendly errors, and quiet on import"
         hints:
           - "Put the work in a main() function and call it only under if __name__ == \"__main__\"."
           - "Catch FileNotFoundError around reading the file."
           - "Print the message to sys.stderr, then end the program with exit code 1 (the sys module has a function for that) instead of letting the traceback show."
+        examples:
+        - call: "python summary.py missing.csv"
+          gives: "File not found: missing.csv"
+          note: "on stderr, exit code 1"
+        - call: "import summary"
+          gives: "prints nothing"
   - id: 13-capstone
     title: "Capstone: a monthly report"
     file: chapters/13-capstone.md
@@ -246,9 +384,21 @@ chapters:
           - "Run over_budget with a budget for a category nobody spent on: what happens?"
           - "A category with no spending has a total of 0: use get with a default."
           - "list.sort() sorts in place and gives back None. Give back sorted(...) instead."
+        examples:
+        - call: "over_budget({\"food\": 500, \"travel\": 50}, {\"food\": 400, \"travel\": 100})"
+          gives: "[\"food\"]"
+        - call: "over_budget({\"food\": 400}, {\"food\": 400})"
+          gives: "[]"
+          note: "on budget is not over"
       - id: monthly_report
         title: "report.py: the monthly report"
         hints:
           - "Read the rows with csv.DictReader. reader.line_num is the row's real line in the file, even after blank lines (csv skips those itself)."
           - "A row is bad when its amount is not a number or its category is empty: remember its line number and skip it."
           - "From the good rows work out the total, count, average (0.0 when there are none), the biggest expense and the totals per category."
+        examples:
+        - call: "monthly_report(the five lines in Guess first)"
+          gives: "total 18120.0, count 2"
+          note: "bad_lines [3, 4]"
+        - call: "monthly_report(\"expenses.csv\")[\"count\"]"
+          gives: "41"

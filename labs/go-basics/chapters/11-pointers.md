@@ -26,6 +26,10 @@ A function that takes a pointer can change the caller's variable:
 func reset(x *int) { *x = 0 }
 reset(&n)     // n is now 0
 ```
+
+:::picture{name="envelope-address"}
+A pointer is an address: two envelopes, one house.
+:::
 :::
 
 :::step{type=example title="Worked example: a counter that really counts"}
@@ -48,6 +52,14 @@ c.Inc()
 2. Go takes the address for you: `c.Inc()` works on a plain variable.
 
 `Deposit` needs exactly this change.
+
+:::trace{title="two calls to c.Inc()"}
+| line | c.N | note |
+|---|---|---|
+| var c Counter | 0 | A new Counter starts with N at 0. |
+| c.Inc() | 1 | Inc gets a pointer to c, so c.N++ changes the real counter. |
+| c.Inc() | 2 | The same counter again: now 2. A value receiver would have left it at 0. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

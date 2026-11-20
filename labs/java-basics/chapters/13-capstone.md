@@ -26,6 +26,10 @@ A `HashSet` (and a `HashMap`) works the same way: it first asks the object for i
 shelf number), then uses `equals` to compare only with the items on that shelf. So the rule is simple:
 **objects that are equal must have the same hash code**. If two equal books report different shelf
 numbers, the set looks on the wrong shelf and never finds the twin.
+
+:::picture{name="library-shelves"}
+First the shelf (hashCode), then the book (equals).
+:::
 :::
 
 :::step{type=task task=fix_book title="Warm-up: fix the inherited Book class"}

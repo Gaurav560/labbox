@@ -21,6 +21,10 @@ int("abc")      # ValueError: invalid literal for int() with base 10: 'abc'
 
 The last line of the error, the **traceback**, names the exception and says why. Reading it calmly is
 half of debugging.
+
+:::picture{name="fire-alarm"}
+An exception stops the work until something handles it.
+:::
 :::
 
 :::step{type=example title="Worked example: a safe percentage"}

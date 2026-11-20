@@ -84,6 +84,10 @@ The `return` keyword sends a value back to whoever called the function.
 :::tip
 Python knows which lines belong to the function from the **indentation**. Use 4 spaces.
 :::
+
+:::picture{name="recipe-card"}
+A function is a recipe card: name, inputs, steps, result.
+:::
 :::
 
 :::step{type=example title="Worked example: a function that builds text"}

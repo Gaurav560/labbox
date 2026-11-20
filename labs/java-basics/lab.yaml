@@ -71,12 +71,25 @@ chapters:
     - '45 / 50 is 0 in Java: dividing two ints throws the fraction away.'
     - Cast one side to double before dividing, for example (double) scored.
     - Check total == 0 first; Math.round(x * 10) / 10.0 rounds to one decimal.
+    examples:
+    - call: "percent(45, 50)"
+      gives: "90.0"
+    - call: "percent(1, 3)"
+      gives: "33.3"
+      note: "one decimal"
+    - call: "percent(7, 0)"
+      gives: "0.0"
   - id: format_rupees
     title: 'types/Numbers.java: formatRupees(paise)'
     hints:
     - '1250 paise is 12 rupees and 50 paise: use / and % with 100.'
     - String.format builds text; %02d pads a number to two digits with a zero.
     - Put the rupee sign, the rupees, a dot and the two-digit paise in one String.format.
+    examples:
+    - call: "formatRupees(1250)"
+      gives: "\"₹12.50\""
+    - call: "formatRupees(5)"
+      gives: "\"₹0.05\""
 - id: 03-decisions
   title: Making decisions
   file: chapters/03-decisions.md
@@ -88,12 +101,26 @@ chapters:
     - 'Check the invalid marks first: below 0 or above 100.'
     - 'Then test from the highest grade down: 80, then 60, then 40.'
     - if and else if, or one if per grade that returns straight away, both read well.
+    examples:
+    - call: "grade(80)"
+      gives: "\"A\""
+    - call: "grade(79)"
+      gives: "\"B\""
+    - call: "grade(101)"
+      gives: "\"Invalid\""
   - id: leap_year
     title: 'decisions/Decisions.java: isLeapYear(year)'
     hints:
     - Divisible by 4 is usually a leap year, with two exceptions.
     - Divisible by 100 is not, unless it is also divisible by 400.
     - Combine the tests with &&, || and !; 1900 is false, 2000 is true.
+    examples:
+    - call: "isLeapYear(2024)"
+      gives: "true"
+    - call: "isLeapYear(1900)"
+      gives: "false"
+    - call: "isLeapYear(2000)"
+      gives: "true"
 - id: 04-loops
   title: Loops
   file: chapters/04-loops.md
@@ -105,12 +132,23 @@ chapters:
     - 'A classic for loop has three parts: start at 1, keep going while i is at most n, add one each round.'
     - Add each i to a running total that starts at 0.
     - When n is 0 or negative the loop never runs, so the total stays 0.
+    examples:
+    - call: "sumTo(5)"
+      gives: "15"
+      note: "1 + 2 + 3 + 4 + 5"
+    - call: "sumTo(100)"
+      gives: "5050"
   - id: count_vowels
     title: 'loops/Loops.java: countVowels(text)'
     hints:
     - text.toCharArray() gives you each character, ready for a for-each loop.
     - Character.toLowerCase(c) lets you treat A and a the same.
     - '"aeiou".indexOf(c) is -1 when c is not a vowel.'
+    examples:
+    - call: "countVowels(\"Hello World\")"
+      gives: "3"
+    - call: "countVowels(\"rhythm\")"
+      gives: "0"
 - id: 05-strings
   title: Strings
   file: chapters/05-strings.md
@@ -122,12 +160,22 @@ chapters:
     - trim() removes the spaces at both ends first.
     - split("\\s+") splits on one or more spaces, tabs or new lines.
     - 'An empty (or all-space) text has no words at all: check it before splitting.'
+    examples:
+    - call: "countWords(\"Java is fun\")"
+      gives: "3"
+    - call: "countWords(\"  lots   of   spaces  \")"
+      gives: "3"
   - id: clean_name
     title: 'words/Words.java: cleanName(raw)'
     hints:
     - Split the trimmed name on runs of spaces, as in the warm-up.
     - 'For each word: substring(0, 1) upper case, plus substring(1) lower case.'
     - String.join(" ", parts) puts the words back with single spaces.
+    examples:
+    - call: "cleanName(\"  riya   SHARMA \")"
+      gives: "\"Riya Sharma\""
+    - call: "cleanName(\"ARJUN\")"
+      gives: "\"Arjun\""
 - id: 06-arrays
   title: Arrays
   file: chapters/06-arrays.md
@@ -139,12 +187,21 @@ chapters:
     - Start with the first number as the best so far.
     - Loop over the rest and keep the bigger one each time.
     - 'An empty array has no maximum: throw an IllegalArgumentException with a clear message.'
+    examples:
+    - call: "max({3, 9, 2})"
+      gives: "9"
+    - call: "max({-5, -2, -9})"
+      gives: "-2"
   - id: reversed
     title: 'arrays/ArrayTools.java: reversed(numbers)'
     hints:
     - Make a new array of the same length with new int[numbers.length].
     - Item i of the result is item length - 1 - i of the input.
     - 'Never write into the array you were given: the caller still needs it.'
+    examples:
+    - call: "reversed({1, 2, 3, 4})"
+      gives: "{4, 3, 2, 1}"
+      note: "the original stays {1, 2, 3, 4}"
 - id: 07-classes-and-objects
   title: Classes and objects
   file: chapters/07-classes-and-objects.md
@@ -156,12 +213,23 @@ chapters:
     - The distance is the square root of dx * dx + dy * dy.
     - 'A record''s fields are read with methods: x() and y(), or other.x().'
     - Math.sqrt gives the root; Math.round(d * 100) / 100.0 rounds to 2 decimals.
+    examples:
+    - call: "new Point(0, 0).distanceTo(new Point(3, 4))"
+      gives: "5.0"
+    - call: "new Point(0, 0).distanceTo(new Point(1, 1))"
+      gives: "1.41"
   - id: bank_account
     title: 'objects/BankAccount.java: deposit and withdraw'
     hints:
     - Keep the balance in a private field, so only the methods can change it.
     - 'A zero or negative amount is a mistake by the caller: throw IllegalArgumentException.'
     - A withdrawal bigger than the balance is also refused, and the balance stays as it was.
+    examples:
+    - call: "deposit(500), then withdraw(200)"
+      gives: "getBalance() is 300"
+    - call: "withdraw(1000)"
+      gives: "IllegalArgumentException"
+      note: "balance unchanged"
 - id: 08-interfaces
   title: Interfaces and inheritance
   file: chapters/08-interfaces.md
@@ -173,12 +241,23 @@ chapters:
     - A rectangle's area is width times height.
     - A circle's area is Math.PI times the radius squared.
     - Both classes implement Shape, so each must have a public double area().
+    examples:
+    - call: "new Rect(3, 4).area()"
+      gives: "12.0"
+    - call: "new Circle(2).area()"
+      gives: "12.566..."
+      note: "π times 2 squared"
   - id: total_area
     title: 'shapes/Shapes.java: totalArea(shapes)'
     hints:
     - Any object that implements Shape has area(), whatever its class.
     - Loop over the list and add up s.area().
     - Round the total to 2 decimals with Math.round(total * 100) / 100.0.
+    examples:
+    - call: "totalArea(List.of(new Rect(3, 4), new Circle(1)))"
+      gives: "15.14"
+    - call: "totalArea(List.of())"
+      gives: "0.0"
 - id: 09-collections
   title: ArrayList and HashMap
   file: chapters/09-collections.md
@@ -218,12 +297,23 @@ chapters:
     - Integer.parseInt throws NumberFormatException for text that is not a whole number.
     - Catch it and throw your InvalidAgeException instead, passing the original as the cause.
     - After parsing, an age outside 0 to 150 is also an InvalidAgeException.
+    examples:
+    - call: "parseAge(\" 42 \")"
+      gives: "42"
+    - call: "parseAge(\"abc\")"
+      gives: "InvalidAgeException"
+      note: "cause: NumberFormatException"
   - id: safe_sum
     title: 'errors/Ages.java: safeSum(values)'
     hints:
     - 'Keep two things while you loop: the running total and a list of bad values.'
     - Put Double.parseDouble inside try; in catch, remember the value and carry on.
     - Give back both at once in the SumResult record.
+    examples:
+    - call: "safeSum([\"10\", \"x\", \"2.5\", \"\"])"
+      gives: "total 12.5, bad [\"x\", \"\"]"
+    - call: "safeSum([])"
+      gives: "total 0, no bad values"
 - id: 11-lambdas-and-streams
   title: Lambdas and streams
   file: chapters/11-lambdas-and-streams.md
@@ -235,12 +325,20 @@ chapters:
     - marks.stream() turns the list into a stream you can filter.
     - filter keeps the items for which a lambda like m -> m >= 40 is true.
     - toList() collects the result into a new list.
+    examples:
+    - call: "passing([72, 30, 90, 40, 39])"
+      gives: "[72, 90, 40]"
+      note: "40 or more, same order"
   - id: sort_by_length
     title: 'streams/Streams.java: sortByLength(words)'
     hints:
     - Comparator.comparing(String::length) compares words by their length.
     - thenComparing(...) breaks ties; the natural order of strings is alphabetical.
     - Sort a stream with sorted(...) and collect it, so the caller's list is untouched.
+    examples:
+    - call: "sortByLength([banana, fig, apple, kiwi, date])"
+      gives: "[fig, date, kiwi, apple, banana]"
+      note: "ties alphabetical"
 - id: 12-files-and-cli
   title: Files and a command-line program
   file: chapters/12-files-and-cli.md
@@ -252,12 +350,24 @@ chapters:
     - Files.readAllLines(path) reads the whole file; it throws NoSuchFileException for a missing file.
     - Skip the header, blank lines, rows without three parts and amounts Double.parseDouble cannot read.
     - Add each good amount to its category with merge(category, amount, Double::sum), then round.
+    examples:
+    - call: "readTotals(Path.of(\"expenses.csv\")).get(\"rent\")"
+      gives: "18000.0"
+    - call: "readTotals(Path.of(\"missing.csv\"))"
+      gives: "NoSuchFileException"
   - id: summary_cli
     title: 'files/Summary.java: the top categories'
     hints:
     - 'args holds the words after the class name: the path, and maybe --top and a number.'
     - Catch NoSuchFileException, print the message to System.err and end with exit code 1.
     - 'Sort the categories by total, biggest first, and print category: amount with %.2f.'
+    examples:
+    - call: "java files.Summary expenses.csv --top 2"
+      gives: "rent: 18000.00 / shopping: 4095.00"
+      note: "two lines"
+    - call: "java files.Summary missing.csv"
+      gives: "File not found: missing.csv"
+      note: "stderr, exit 1"
 - id: 13-capstone
   title: 'Capstone: a monthly report'
   file: chapters/13-capstone.md
@@ -269,6 +379,12 @@ chapters:
     - 'Put two equal books in a HashSet: how many does it hold?'
     - A HashSet asks hashCode first; equal objects must have equal hash codes.
     - 'Add a hashCode built from the same field equals compares: Objects.hash(...).'
+    examples:
+    - call: "set.add(book); set.add(sameIsbnCopy); set.size()"
+      gives: "1"
+      note: "it is 2 now"
+    - call: "map.get(sameIsbnCopy)"
+      gives: "the value stored for book"
   - id: monthly_report
     title: 'capstone/Report.java: monthly(path)'
     hints:
@@ -277,3 +393,7 @@ chapters:
       not reported.
     - From the good rows work out the total, count, average (0 when none), the totals per category and
       the bad line numbers.
+    examples:
+    - call: "monthly(the five lines in Guess first)"
+      gives: "total 18120.0, count 2"
+      note: "badLines [3, 4]"

@@ -25,6 +25,10 @@ division:
 7 // 2    # 3     (whole part only)
 7 % 2     # 1     (the remainder)
 ```
+
+:::picture{name="labelled-jars"}
+A variable is a labelled jar; its shape is its type.
+:::
 :::
 
 :::step{type=example title="Worked example: a bill total, rounded"}

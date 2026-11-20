@@ -23,6 +23,10 @@ BankAccount arjun = new BankAccount("Arjun");
 
 `new` builds an object from the class. `riya` and `arjun` are two separate accounts, each with its own
 balance.
+
+:::picture{name="blueprint-houses"}
+One blueprint, many houses: one class, many objects.
+:::
 :::
 
 :::step{type=concept title="Fields and methods"}

@@ -84,6 +84,10 @@ func double(x int) int {
 ```
 
 Go is **statically typed**: the compiler checks every type before the program runs.
+
+:::picture{name="recipe-card"}
+A function is a recipe card: name, inputs, steps, result.
+:::
 :::
 
 :::step{type=example title="Worked example: a function that builds text"}

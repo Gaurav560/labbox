@@ -23,6 +23,10 @@ marks[1] = 50;     // put 50 in slot 1
 - `int[]` means "an array of `int`".
 - The size is fixed when the array is made: a tray of 3 cups always has 3.
 - The last slot is `length - 1`, because counting starts at 0.
+
+:::picture{name="egg-box"}
+An array is a row of numbered slots, starting at 0.
+:::
 :::
 
 :::step{type=concept title="Visiting every slot"}
@@ -67,6 +71,16 @@ public static int min(int[] numbers) {
 2. Compare each value with the best so far, and keep the winner.
 
 `max` is the mirror image. And an empty array has no first value: decide what to do about that.
+
+:::trace{title="min({72, 45, 90, 38})"}
+| n | n < best? | best | note |
+|---|---|---|---|
+|  |  | 72 | Start with the first value, not 0. |
+| 72 | no | 72 | The first value is compared with itself: no change. |
+| 45 | yes | 45 | 45 is smaller: keep it. |
+| 90 | no | 45 | 90 is not smaller: best stays 45. |
+| 38 | yes | 38 | 38 is smaller: the loop ends and returns 38. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

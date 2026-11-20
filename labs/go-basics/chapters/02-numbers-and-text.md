@@ -23,6 +23,10 @@ Go never mixes types silently. To combine an `int` with a `float64`, convert one
 ```go
 avg := float64(total) / float64(count)
 ```
+
+:::picture{name="labelled-jars"}
+A variable is a labelled jar; its shape is its type.
+:::
 :::
 
 :::step{type=example title="Worked example: an average, without losing the fraction"}

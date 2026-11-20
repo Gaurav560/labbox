@@ -112,6 +112,10 @@ func Describe(s Shape) string {
 ```
 
 That is Go's answer to inheritance: small interfaces, satisfied implicitly.
+
+:::picture{name="plug-socket"}
+Anything with the right plug fits the socket.
+:::
 :::
 
 :::step{type=task task=total_area title="The total area"}

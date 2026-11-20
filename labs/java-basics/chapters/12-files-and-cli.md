@@ -42,6 +42,10 @@ Double.parseDouble(parts[2])      // 120.0
 ```
 
 The `-1` keeps empty parts at the end, so `"2026-03-04,travel,"` gives three parts, the last one empty.
+
+:::picture{name="file-lines"}
+Each line of a CSV file is one row, cut at the commas.
+:::
 :::
 
 :::step{type=example title="Worked example: count the rows per category"}

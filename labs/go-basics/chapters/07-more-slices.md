@@ -111,6 +111,10 @@ if seen["coffee"] {        // a missing key reads as false
 
 `make([]string, 0)` or `[]string{}` is an empty slice; a plain `var s []string` is `nil`, which also
 has length 0 but prints as `[]` and encodes to JSON as `null`.
+
+:::picture{name="guest-list"}
+A set keeps each item once, like a guest list.
+:::
 :::
 
 :::step{type=task task=unique title="Each item once"}

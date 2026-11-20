@@ -22,6 +22,10 @@ public interface Shape {
 
 This says: "anything that is a `Shape` can tell you its area". It does not say how; each shape decides
 that for itself.
+
+:::picture{name="plug-socket"}
+Anything with the right plug fits the socket.
+:::
 :::
 
 :::step{type=concept title="Keeping the promise: implements"}

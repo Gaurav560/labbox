@@ -22,6 +22,10 @@ if marks >= 40 {
 
 Conditions use `== != < <= > >=`, combined with `&&` (and), `||` (or) and `!` (not). An `if` can
 start with a short statement: `if n, err := strconv.Atoi(s); err == nil { ... }`.
+
+:::picture{name="fork-in-road"}
+One question, and the answer picks the road.
+:::
 :::
 
 :::step{type=example title="Worked example: a ticket price by age"}
@@ -47,6 +51,14 @@ func Ticket(age int) string {
 3. `default` catches everything left.
 
 `Grade` uses the same layout with marks.
+
+:::trace{title="Ticket(45)"}
+| case | true? | note |
+|---|---|---|
+| age < 0 | no | 45 is not below 0, so go on to the next check. |
+| age >= 60 | no | 45 is not 60 or more: next check. |
+| age >= 18 | yes | 45 is 18 or more: the answer is "Adult", and no later case runs. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

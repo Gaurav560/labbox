@@ -24,6 +24,10 @@ for {                      // forever, until break or return
 ```
 
 `i++` adds one to `i`. `break` leaves the loop, `continue` skips to the next round.
+
+:::picture{name="running-track"}
+A loop runs the same steps again, lap after lap.
+:::
 :::
 
 :::step{type=example title="Worked example: count the passing marks"}
@@ -46,6 +50,17 @@ func CountPassed(marks []int) int {
 3. `count++` adds one when the mark passes.
 
 `SumTo` is the classic three-part `for` instead, adding instead of counting.
+
+:::trace{title="CountPassed([]int{45, 20, 90, 33})"}
+| m | m >= 33? | count | note |
+|---|---|---|---|
+|  |  | 0 | Before the loop: count starts at zero. |
+| 45 | yes | 1 | 45 passes, so count goes up by one. |
+| 20 | no | 1 | 20 does not pass: count stays 1. |
+| 90 | yes | 2 | 90 passes: count is 2. |
+| 33 | yes | 3 | 33 is exactly 33, and >= includes it: count is 3. |
+|  |  | 3 | No marks left: the answer is 3. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

@@ -26,6 +26,10 @@ wg.Wait()    // wait until all three called Done
 
 `main` does not wait for goroutines by itself: without `wg.Wait()` the program could end before they
 run.
+
+:::picture{name="two-cooks"}
+More cooks, all at once: dinner is ready sooner.
+:::
 :::
 
 :::step{type=example title="Worked example: square numbers in parallel, in order"}

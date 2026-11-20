@@ -1,5 +1,20 @@
 # Changelog
 
+## Pictures everywhere: Python, Go and Java from zero
+
+- **Task cards on all 79 tasks** of the three from-zero courses ("What your code should do": a call
+  and what it gives back, with a short note where it matters). The 50 Python examples that can run
+  were run against the solution; Go and Java examples repeat their task texts, which the checks enforce.
+- **18 hand-drawn pictures** (15 new: labelled jars, a fork in the road, a running track, beads on a
+  thread, an egg box, a guest list, a blueprint and houses, a plug and socket, a fire alarm, a result
+  and an error note, envelopes with one address, a conveyor belt, a file cut into fields, two cooks,
+  library shelves), placed in 33 chapters (Python 10, Go 12, Java 11 plus the pilot's three).
+- **16 "watch it run" traces** in worked examples: the ticket price, counting passing marks, keeping
+  the passing marks, tidying a product code, counting words, the smallest mark, and a pointer counter.
+- A picture that shows code now gets it from the chapter (`code='...'`) instead of a manifest, so one
+  drawing serves every language; the validator still checks the code is in a code block of the step.
+  Trace cells keep their spaces.
+
 ## Hand-drawn pictures: a sketch in the dark theme, notebook paper in the light theme
 
 - The lesson pictures are now hand drawn: handwritten words (Caveat, bundled with the app like the

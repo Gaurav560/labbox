@@ -19,6 +19,10 @@ counts["poha"]      // 0: a missing key reads as the zero value
 ```
 
 Use `make` before writing: writing to a nil map panics.
+
+:::picture{name="phone-book"}
+Look up a key to find its value.
+:::
 :::
 
 :::step{type=example title="Worked example: count words with a map"}
@@ -41,6 +45,15 @@ func CountWords(words []string) map[string]int {
 2. A missing key reads as `0`, so `counts[w]++` works even the first time.
 
 `CountByItem` adds a struct's `Qty` instead of `1`.
+
+:::trace{title='CountWords([]string{"tea", "coffee", "tea"})'}
+| w | counts[w] before | counts | note |
+|---|---|---|---|
+|  |  | map[] | make gives an empty map, ready to use. |
+| tea | 0 | map[tea:1] | A missing key reads as 0, so counts[w]++ makes it 1. |
+| coffee | 0 | map[coffee:1 tea:1] | coffee is new too. |
+| tea | 1 | map[coffee:1 tea:2] | tea was 1: now 2. |
+:::
 :::
 
 :::step{type=predict title="Guess first"}

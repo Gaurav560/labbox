@@ -25,6 +25,10 @@ defer f.Close()           // runs when the function returns, however it returns
 r := csv.NewReader(f)
 row, err := r.Read()      // []string{"2026-03-02", "food", "120"}, or io.EOF at the end
 ```
+
+:::picture{name="file-lines"}
+Each line of a CSV file is one row, cut at the commas.
+:::
 :::
 
 :::step{type=example title="Worked example: read a file line by line"}

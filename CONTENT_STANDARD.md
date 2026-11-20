@@ -65,12 +65,18 @@ Pictures help when they show something words alone cannot. One style everywhere,
   `note`) are drawn at the top of the task as "what your code should do". Use the same examples as
   the task text, short enough to read at a glance (90 characters at most).
 - **Picture it** (`:::picture{name=...}`, `frontend/src/lesson/Pictures.tsx`): a small hand-drawn
-  picture of the everyday comparison (a recipe card, a phone book, a notebook). At most one per step,
-  with a one-line caption that says what to notice. One look, two moods: a sketch in light ink with a
-  violet accent in the dark theme, notebook paper with blue pen and a yellow highlighter in the light
-  theme. Everyday words are handwritten (Caveat); **code stays in the code font**, is listed in
-  `pictures.json`, and must also appear in a code block of the same step (the validator checks it):
-  learners never copy from a drawing.
+  picture of the everyday comparison. At most one picture or diagram per step, with a one-line caption
+  that says what to notice. One look, two moods: a sketch in light ink with a violet accent in the dark
+  theme, notebook paper with blue pen and a yellow highlighter in the light theme. Everyday words are
+  handwritten (Caveat). Most pictures hold no code, so one drawing serves every language. The set:
+  `recipe-card` (functions), `labelled-jars` (variables and types), `fork-in-road` (decisions),
+  `running-track` (loops), `beads-on-string` (text), `egg-box` (lists and arrays), `notebook-vs-form`
+  (fixed versus growing), `phone-book` (maps), `guest-list` (sets), `blueprint-houses` (classes),
+  `plug-socket` (interfaces), `fire-alarm` (exceptions), `result-and-note` (Go errors),
+  `envelope-address` (pointers and references), `conveyor-belt` (streams), `file-lines` (files and
+  CSV), `two-cooks` (concurrency), `library-shelves` (hash codes). A picture that shows code takes it
+  from the chapter (`code='phones.get("Riya")'`), draws it in the code font, and the validator checks
+  that the same code is in a code block of that step: learners never copy from a drawing.
 - **Watch it run** (`:::trace{title='...'}` around a table): one row per moment of a program, one
   column per variable, and a `note` column in plain words. The learner steps through it and sees
   values change. Use it where beginners lose track: loops, a "best so far", a map filling up. Up to
