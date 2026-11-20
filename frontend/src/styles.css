@@ -489,6 +489,12 @@ select option:checked { background: var(--chip); }
 .task-icon.none { color: var(--muted); }
 .footer-actions { display: flex; gap: var(--space-2); }
 .btn-check { flex: 1; justify-content: center; min-height: 44px; font-size: 15px; }
+/* Check: the one violet button on the page (#6b5ffd, the owner's pick), white text, a lighter edge. */
+.btn.btn-check { background: #6b5ffd; border-color: #8178ff; color: #fff; box-shadow: 0 6px 20px -8px rgba(107, 95, 253, 0.7); }
+.btn.btn-check:hover:not(:disabled) { background: #7a6fff; border-color: #938bff; }
+.btn.btn-check:active:not(:disabled) { background: #5b4ff0; }
+.btn.btn-check:focus-visible { outline: 2px solid #b3adff; outline-offset: 2px; }
+.btn.btn-check:disabled { background: color-mix(in srgb, #6b5ffd 45%, var(--panel)); border-color: transparent; color: rgba(255, 255, 255, 0.7); box-shadow: none; }
 .btn-icon { position: relative; width: 44px; min-height: 44px; padding: 0; justify-content: center; font-size: 17px; }
 .btn-badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
   background: var(--text); color: var(--bg); font: 700 11px/18px var(--font-code, monospace); text-align: center; }

@@ -1,5 +1,11 @@
 # Changelog
 
+## Lab page: a violet Check button
+
+- Check is the one violet button on the lab page (#6b5ffd, taken from the owner's reference), with
+  white text, a lighter edge and a soft glow; hover, pressed, focus and disabled states included. Same in
+  the dark and light themes.
+
 ## Python from zero, chapters 6 to 9
 
 - 6. Lists (`top_n` without changing the caller's list, `remove_duplicates` keeping the order),
