@@ -76,6 +76,13 @@ def base_path(lab_id: str) -> str:
     return f"/ide/{lab_id}"
 
 
+def workspace_file(lab_id: str) -> str:
+    """VS Code remembers open tabs per workspace, and every lab's folder is /workspace on the same
+    address, so one lab's tabs used to reopen in the next. A small workspace file named after the lab
+    gives each lab its own memory; the folder, paths and terminal stay exactly the same."""
+    return f"/home/learner/.labbox/{lab_id}.code-workspace"
+
+
 def mounts() -> dict:
     return {str(get_settings().IDE_DIR): {"bind": MOUNT, "mode": "ro"}} if available() else {}
 
@@ -101,8 +108,13 @@ def _command(ws: Workspace) -> list[str]:
     ]
     quoted = " ".join("'" + a.replace("'", "'\\''") + "'" for a in server)
     stamp = setup_stamp()
+    wsf = workspace_file(ws.lab_id)
+    workspace_json = json.dumps({"folders": [{"path": "/workspace"}], "settings": {}})
     return [
         "sh", "-c",
+        # First, every time: the lab's workspace file (cheap, and it must exist even when VS Code is
+        # already running from an earlier visit).
+        f"mkdir -p \"$(dirname '{wsf}')\" && printf '%s' '{workspace_json}' > '{wsf}'; "
         # Already running with the current setup: nothing to do. ([s]: the pattern must not match this
         # shell itself.) Running with an older setup (new extensions or theme): restart it.
         f"[ \"$(cat /tmp/openvscode.stamp 2>/dev/null)\" = '{stamp}' ] && pgrep -u 1000 -f '[s]erver-main.js' >/dev/null && exit 0; "

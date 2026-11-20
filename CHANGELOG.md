@@ -1,5 +1,12 @@
 # Changelog
 
+## VS Code remembers open files per lab
+
+- Opening the Java lab after the Go lab used to reopen the Go files in VS Code: every lab's folder is
+  `/workspace` on the same address, so VS Code saw one project. Each lab now opens VS Code through its
+  own workspace file (`/home/learner/.labbox/<lab>.code-workspace`, the same `/workspace` folder), so
+  tabs are remembered per lab. Files, paths and the terminal are unchanged. Found by the owner.
+
 ## Fewer, better pictures: one per idea, where it is taught
 
 - JavaScript from zero went from 114 pictures (9 per chapter, on tasks, recaps and try steps too) to

@@ -66,7 +66,7 @@ async def open_ide(lab_id: str, response: Response, user: User = Depends(get_cur
     await asyncio.to_thread(ide.start, lab, ws)
     ready = await asyncio.to_thread(ide.wait_ready, lab, ws)
     response.set_cookie(preview.COOKIE, preview.ticket(user), max_age=preview.TICKET_MINUTES * 60, httponly=True, samesite="strict", path="/ide")
-    return IdeInfo(available=True, ready=ready, url=f"{ide.base_path(lab.id)}/?tkn={ide.token(user.id, lab.id)}&folder=/workspace")
+    return IdeInfo(available=True, ready=ready, url=f"{ide.base_path(lab.id)}/?tkn={ide.token(user.id, lab.id)}&workspace={ide.workspace_file(lab.id)}")
 
 
 @router.get("/ide-fonts/{name}", include_in_schema=False)

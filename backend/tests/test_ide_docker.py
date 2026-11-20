@@ -82,6 +82,9 @@ def test_vscode_through_the_proxy(client: TestClient):
     info = r.json()
     assert info["available"] and info["ready"], info
     assert info["url"].startswith("/ide/python-basics/?tkn=")
+    # Each lab opens its own workspace file, so VS Code remembers open tabs per lab (one lab's tabs used
+    # to reopen in the next, because every lab's folder is /workspace on the same address).
+    assert info["url"].endswith("&workspace=/home/learner/.labbox/python-basics.code-workspace")
 
     # The token URL sets VS Code's own cookie, then the start page carries our defaults.
     page = client.get(info["url"], follow_redirects=True)
@@ -89,6 +92,8 @@ def test_vscode_through_the_proxy(client: TestClient):
     assert "security.workspace.trust.enabled" in page.text and "chat.disableAIFeatures" in page.text
 
     name = f"lab-u{uid}-python-basics"
+    wsf = json.loads(sh("docker", "exec", name, "cat", ide.workspace_file("python-basics")).stdout)
+    assert wsf["folders"] == [{"path": "/workspace"}]  # same files, paths and terminal as before
     # VS Code runs inside the machine as the learner; the machine keeps every lockdown.
     procs = sh("docker", "exec", name, "ps", "-o", "user:12,args", "-u", "1000").stdout
     assert "server-main.js" in procs
