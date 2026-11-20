@@ -1,0 +1,11 @@
+# Prometheus for LabBox (Phase H6). Runs on the same server as the backend, so /metrics answers it
+# without a token (the backend serves /metrics only to the machine itself or with METRICS_TOKEN).
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: labbox
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["127.0.0.1:8000"]
+    # From another machine instead: set METRICS_TOKEN in backend/.env and add
+    # authorization: { type: Bearer, credentials_file: /etc/prometheus/labbox-token }

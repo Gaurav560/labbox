@@ -150,6 +150,8 @@ card per chapter for experienced engineers, and verified wrong answers that fail
       `<lab>.ide.<domain>`, together with the item above) or a per-lab folder path fixes it.
 - [ ] Put a real proxy (nginx or Traefik) in front of IDE and Preview websockets instead of the Python
       backend carrying every keystroke.
+- [ ] Before turning on Sentry (`SENTRY_DSN`): add it to the Privacy policy (a third party receives error
+      reports, without personal data). Run Prometheus and Grafana on the server with `deploy/monitoring/`.
 - [ ] Hard disk quotas on the server: XFS project quotas on the volumes folder (this laptop's ext4 has none,
       so H5 measures usage each minute and stops machines over the quota).
 - [ ] Pin and test openvscode-server upgrades (today v1.109.5 in `scripts/openvscode.sh`).
@@ -224,7 +226,7 @@ lab (lab 16) and the `system-design` template.
    accounts linked by verified email). Email verification and password reset wait for Phase K.
 5. **H5 safety (done):** disk quota per learner (default 500 MB), stop machines at 100% CPU for 10+ minutes,
    4 h session limit, at most 2 running labs per learner, per-IP rate limits on signup, login, check.
-6. **H6 operations:** `/metrics` for Prometheus and a Grafana dashboard file, JSON logs option, CI on
+6. **H6 operations (done):** `/metrics` for Prometheus and a Grafana dashboard file, JSON logs option, CI on
    Postgres, Sentry built in but off unless a DSN is added.
 
 | Phase | What | Needs from you |

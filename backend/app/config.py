@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     LOGIN_FAILS_PER_IP_MINUTE: int = 30
     LOGIN_FAILS_PER_USER_MINUTE: int = 10
     CHECKS_PER_IP_MINUTE: int = 120
+    # Operations (Phase H6). LOG_FORMAT: "text" (people) or "json" (one JSON object a line, for log tools).
+    LOG_FORMAT: str = "text"
+    METRICS_TOKEN: str = ""  # /metrics answers the machine itself, or a request with "Authorization: Bearer <this>"
+    SENTRY_DSN: str = ""  # error reports to Sentry; empty: off (nothing is sent anywhere)
+    SENTRY_ENVIRONMENT: str = "development"
     CONTAINER_RUNTIME: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"

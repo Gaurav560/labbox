@@ -164,6 +164,30 @@ PGPASSWORD=... docker run --rm -i --network host -e PGPASSWORD postgres:16 \
 The reaper's round (every minute, one worker) checks running machines. A machine stopped by a limit
 keeps its files, and the lab page shows why it stopped, with a Start button.
 
+### Operations: metrics, logs, errors (Phase H6)
+
+- **Metrics:** `GET /metrics` in Prometheus' text format, only for the machine itself or with
+  `Authorization: Bearer <METRICS_TOKEN>` (nginx never passes it on). Counters live in Redis, so all
+  workers add up: requests by route and status, response times, checks by result and time, logins,
+  sign-ups, rate limits hit, machines stopped by reason (idle, room, session, cpu, disk, database), AI
+  requests. Read when asked: machines running, learners active (15 minutes, 24 hours), accounts, and
+  each background job's last run.
+- **Dashboard:** `deploy/monitoring/prometheus.yml` (scrape config) and
+  `deploy/monitoring/grafana-labbox.json` (import into Grafana: 12 panels, including hours since the last
+  good backup).
+- **Logs:** every request gets an id (`X-Request-ID`, kept from a proxy or made new), returned in the
+  response and added to every log line. `LOG_FORMAT=json` writes one JSON object a line. Failed (5xx) and
+  slow (over 2 s) requests are logged as warnings.
+- **Health:** `GET /api/health` reports Docker, the database and shared state separately.
+- **Errors:** `SENTRY_DSN` turns on Sentry error reports (no cookies, headers, bodies or addresses are
+  sent). Without it nothing is sent anywhere. Turning it on means a third party receives error reports,
+  so the Privacy policy needs a line first.
+- **CI:** `.github/workflows/labs.yml` also runs the fast tests on Postgres 16 and Redis 7.4.
+
+```bash
+curl -s localhost:8000/metrics | grep -v '^#' | head      # on the server
+```
+
 ### Database migrations
 
 The schema is managed with Alembic (`backend/migrations/`). The backend upgrades the database by itself

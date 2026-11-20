@@ -1,5 +1,26 @@
 # Changelog
 
+## Phase H6: operations (metrics, logs, health, error reports, CI)
+
+- `GET /metrics` (Prometheus text format, no extra library): counters in Redis so all workers add up
+  (requests by route template and status, response times, checks by result and time, logins, sign-ups,
+  rate limits hit, machines stopped by reason, AI requests), and live numbers read when asked (machines
+  running, learners active in 15 minutes and 24 hours, accounts, each background job's last run and
+  result). Only the machine itself or a request with `METRICS_TOKEN` gets it; Vite and nginx never pass
+  it on.
+- `deploy/monitoring/`: a Prometheus scrape config and a Grafana dashboard (12 panels: active learners,
+  machines, requests and errors, p95 by route, checks, stops by reason, rate limits, logins, AI, hours
+  since the last good backup).
+- Request ids (`X-Request-ID`, kept from a proxy or made new) in every response and log line;
+  `LOG_FORMAT=json` for one JSON object a line; failed and slow requests logged as warnings.
+- `/api/health` also reports the database and shared state (additive; `ok` keeps its meaning). The old
+  test that compared the whole answer now checks the original fields are unchanged.
+- Sentry error reports, off unless `SENTRY_DSN` is set; no cookies, headers, bodies or addresses are
+  sent. The Privacy policy needs a line before it is turned on (pre-launch list).
+- CI runs the fast tests on Postgres 16 and Redis 7.4 too.
+- Tests: 249 passed on Postgres and Redis, 245 (plus 4 skipped) on SQLite; 14 browser tests (one hit the
+  laptop's `ERR_NETWORK_CHANGED` once and passed 4 of 4 on repeat).
+
 ## Fix: the rate-limiter lab's load checks were borderline by design
 
 - Both checks average over a 3-second run, but a run rarely starts on a whole second, so it touches 4

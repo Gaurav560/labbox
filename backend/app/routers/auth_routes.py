@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlmodel import Session
 
-from .. import auth, limits, shared
+from .. import auth, limits, metrics, shared
 from ..config import get_settings
 from ..db import get_session
 from ..models import User
@@ -39,6 +39,7 @@ def signup(body: Credentials, request: Request, session: Session = Depends(get_s
     limits.too_many(key, s.SIGNUPS_PER_IP_HOUR, 3600, "Too many new accounts from your network. Try again in an hour.")
     out = _token_out(auth.create_user(session, body.username, body.password))
     shared.hit(key, 3600)  # only accounts that were really made count
+    metrics.count("labbox_signups_total")
     return out
 
 
@@ -54,7 +55,9 @@ def login(body: Credentials, request: Request, session: Session = Depends(get_se
     except HTTPException:
         shared.hit(by_ip)  # only failed attempts count: a learner logging in often is never slowed down
         shared.hit(by_name)
+        metrics.count("labbox_logins_total", result="wrong")
         raise
+    metrics.count("labbox_logins_total", result="ok")
     return _token_out(user)
 
 

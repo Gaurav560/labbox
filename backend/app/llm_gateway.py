@@ -278,6 +278,9 @@ def record(ident: Identity, endpoint: str, alias: str, target: tuple[str, str], 
     usage = usage or {}
     prompt = int(usage.get("prompt_tokens") or usage.get("input_tokens") or 0)
     completion = int(usage.get("completion_tokens") or usage.get("output_tokens") or 0)
+    from . import metrics
+
+    metrics.count("labbox_ai_requests_total", alias=str(alias), status=str(status))
     row = LlmRequest(
         user_id=ident.user_id,
         lab_id=ident.lab_id,

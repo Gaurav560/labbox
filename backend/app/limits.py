@@ -49,8 +49,8 @@ def clear_reason(container: str) -> None:
     shared.delete(f"stopped:{container}")
 
 
-def stop_machine(ws: Workspace, reason: str) -> None:
-    """Stop a machine and its services because of a limit; its files stay."""
+def stop_machine(ws: Workspace, reason: str, kind: str = "limit") -> None:
+    """Stop a machine and its services because of a limit; its files stay. kind labels the metric."""
     with shared.lock(ws.container_name, wait=60):
         containers.stop_workspace(ws.container_name)
         try:
@@ -58,6 +58,9 @@ def stop_machine(ws: Workspace, reason: str) -> None:
         except HTTPException:
             pass  # the lab no longer exists
     set_reason(ws.container_name, reason)
+    from . import metrics
+
+    metrics.count("labbox_machines_stopped_total", reason=kind)
     log.info("Limit stopped %s: %s", ws.container_name, reason)
 
 
@@ -143,7 +146,7 @@ def make_room(session: Session, user_id: int, lab: LabConfig) -> list[str]:
         rows = session.exec(select(Workspace).where(Workspace.container_name.in_(others))).all()  # type: ignore[attr-defined]
         rows = sorted(rows, key=lambda w: w.last_active_at)  # least recently used first
         for ws in rows[: len(others) - limit + 1]:
-            stop_machine(ws, f"Stopped to make room for {lab.title}: you can run {limit} labs at once. Your files are kept.")
+            stop_machine(ws, f"Stopped to make room for {lab.title}: you can run {limit} labs at once. Your files are kept.", "room")
             stopped.append(ws.container_name)
     return stopped
 
@@ -198,26 +201,28 @@ def enforce(session: Session) -> list[tuple[str, str]]:
         ws = session.exec(select(Workspace).where(Workspace.container_name == c.name)).first()
         if ws is None:
             continue  # not a learner's machine in this database
-        reason = None
+        reason, kind = None, "limit"
         if s.SESSION_HOURS and now - _started(c) > s.SESSION_HOURS * 3600:
+            kind = "session"
             reason = (f"Stopped after {s.SESSION_HOURS:g} hours of running, so machines stay free for everyone. "
                       "Your files are kept: start it again to continue.")
         elif cpu_stuck(c, now):
+            kind = "cpu"
             reason = (f"Stopped because it used all its CPU for {s.CPU_STUCK_MINUTES:g} minutes (often an endless loop). "
                       "Your files are kept: fix the loop, then start it again.")
         else:
             if ws.user_id not in disk:
                 disk[ws.user_id] = learner_files_mb(ws.user_id, fresh=True)
             if s.DISK_QUOTA_MB and disk[ws.user_id] > s.DISK_QUOTA_MB:
-                reason = disk_message(disk[ws.user_id], s.DISK_QUOTA_MB, stopped=True)
+                kind, reason = "disk", disk_message(disk[ws.user_id], s.DISK_QUOTA_MB, stopped=True)
             else:
                 try:
                     check_service_data(get_lab(ws.lab_id), ws)
                 except HTTPException as e:
-                    reason = "Stopped: " + str(e.detail)
+                    kind, reason = "database", "Stopped: " + str(e.detail)
         if reason:
             try:
-                stop_machine(ws, reason)
+                stop_machine(ws, reason, kind)
                 stopped.append((c.name, reason))
             except (NotFound, shared.Busy):
                 pass
@@ -234,4 +239,7 @@ def client_ip(request: Request) -> str:
 
 def too_many(key: str, limit: int, window: float, message: str) -> None:
     if limit and shared.recent(key, window) >= limit:
+        from . import metrics
+
+        metrics.count("labbox_rate_limited_total", limit=key.split(":")[0])  # signup, loginfail, check
         raise HTTPException(429, message, headers={"Retry-After": str(int(window))})

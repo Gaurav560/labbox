@@ -3,11 +3,13 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
+from sqlalchemy import text
 
-from . import containers, llm_gateway, preview
+from . import containers, llm_gateway, metrics, observability, preview, shared
 from .config import get_settings
 from .db import init_db
 from .content import init_content
@@ -25,7 +27,8 @@ from .routers import (
     terminal_routes,
 )
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+observability.setup_logging()  # LOG_FORMAT=json for one JSON object a line
+observability.setup_sentry()  # only with SENTRY_DSN; otherwise nothing is sent anywhere
 log = logging.getLogger("labbox")
 
 
@@ -54,6 +57,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(observability.RequestMiddleware)  # request ids, metrics, slow and failed requests
 app.include_router(auth_routes.router)
 app.include_router(lab_routes.router)
 app.include_router(lab_routes.public_router)
@@ -69,8 +73,34 @@ app.include_router(ai_routes.router)
 class Health(BaseModel):
     ok: bool
     docker: bool
+    database: bool = True
+    shared_state: bool = True  # Redis (or memory, which is always fine)
+
+
+def _database_ok() -> bool:
+    try:
+        from .db import engine
+
+        with engine.connect() as c:
+            c.execute(text("SELECT 1"))
+        return True
+    except Exception:
+        return False
 
 
 @app.get("/api/health", response_model=Health)
 async def health() -> Health:
-    return Health(ok=True, docker=await asyncio.to_thread(containers.docker_ok))
+    docker, database, state = await asyncio.gather(
+        asyncio.to_thread(containers.docker_ok), asyncio.to_thread(_database_ok), asyncio.to_thread(shared.ping)
+    )
+    # ok keeps its old meaning (the backend answers); each part reports on its own.
+    return Health(ok=True, docker=docker, database=database, shared_state=state)
+
+
+@app.get("/metrics", include_in_schema=False, response_class=PlainTextResponse)
+async def prometheus_metrics(request: Request) -> PlainTextResponse:
+    """Prometheus' text format. Only for this machine or a request with METRICS_TOKEN (Phase H6)."""
+    if not metrics.allowed(request.client.host if request.client else None, request.headers.get("authorization")):
+        raise HTTPException(404)
+    body = await asyncio.to_thread(metrics.render)
+    return PlainTextResponse(body, media_type="text/plain; version=0.0.4")

@@ -14,6 +14,8 @@ psycopg[binary]==3.2.3
 redis==5.2.1
 # background worker (Phase H3): scheduled jobs, app/worker.py
 arq==0.26.3
+# error reports (Phase H6); only used when SENTRY_DSN is set
+sentry-sdk[fastapi]==2.19.2
 tzdata==2026.6
 # preview proxy (also used by the tests)
 httpx==0.28.1

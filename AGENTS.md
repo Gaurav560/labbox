@@ -42,11 +42,11 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 240 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
+- Tests: `cd backend && .venv/bin/pytest` (about 249 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (14 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (20 November, after H5 limits and the rate-limiter check fix) (240 backend tests
-  on Postgres and Redis, 14 browser tests on 4 workers, 16 labs valid).
+- Last known state: green (20 November, after H6 operations) (249 backend tests on Postgres and Redis,
+  245 on SQLite, 14 browser tests on 4 workers, 16 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -64,7 +64,8 @@ said about 15 is enough for now, so the platform phases come next.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).
-- **Now: Phase H** (ROADMAP B.4); the AI track moved to the end.
+- Phase H: H1, H2, H3, H5, H6 done. H4 (Google and GitHub login) waits until the end, by the owner's
+  call; Phase I (payments) comes after the AWS deploy (K); the AI track is last.
 - AI track (later) (`ROADMAP.md` section B.2): two owner decisions first (which model, build
   order), then stage 1. Phase H's plan is in section B.4, also waiting for an OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real

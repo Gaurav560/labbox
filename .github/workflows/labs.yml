@@ -24,6 +24,32 @@ jobs:
       - name: Every lab meets the content standard
         run: python tools/labbox_cli.py validate --no-docker --strict
 
+  backend-on-postgres-and-redis:
+    # The same tests on the real database and shared state (Phase H6). Docker tests need lab images,
+    # so they run on the owner's machine and the server, not here.
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: labbox, POSTGRES_PASSWORD: ci-only-password, POSTGRES_DB: labbox_test }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U labbox" --health-interval 2s --health-timeout 5s --health-retries 20
+      redis:
+        image: redis:7.4
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 2s --health-timeout 5s --health-retries 20
+    env:
+      LABBOX_TEST_DATABASE_URL: postgresql+psycopg://labbox:ci-only-password@127.0.0.1:5432/labbox_test
+      LABBOX_TEST_REDIS_URL: redis://127.0.0.1:6379/15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r backend/requirements.txt
+      - name: Backend tests on Postgres and Redis (no Docker)
+        working-directory: backend
+        run: pytest -q -m "not docker"
+
   frontend:
     runs-on: ubuntu-24.04
     steps:

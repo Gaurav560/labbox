@@ -95,7 +95,9 @@ def check(client: TestClient, h: dict, lab: str, chapter: str) -> dict:
 
 
 def test_health_and_auth(client: TestClient, user):
-    assert client.get("/api/health").json() == {"ok": True, "docker": True}
+    health = client.get("/api/health").json()
+    assert {"ok": True, "docker": True}.items() <= health.items()  # the original fields, unchanged
+    assert health["database"] is True and health["shared_state"] is True  # added in Phase H6
     assert client.get("/api/labs").status_code == 401
     h, uid = user
     assert client.get("/api/me", headers=h).json()["id"] == uid

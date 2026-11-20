@@ -1,10 +1,11 @@
 import asyncio
+import time
 
 from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from .. import checker, limits, shared
+from .. import checker, limits, metrics, shared
 from ..config import get_settings
 from ..auth import get_current_user
 from ..db import get_session
@@ -29,7 +30,15 @@ async def check(
     lab = get_lab(lab_id)
     lab.chapter(body.chapter_id)  # 404 before taking the slot
     async with checker.check_slot(user.id):
-        return await asyncio.to_thread(checker.run_check, session, user, lab, body.chapter_id)
+        started = time.monotonic()
+        try:
+            out = await asyncio.to_thread(checker.run_check, session, user, lab, body.chapter_id)
+        except Exception:
+            metrics.count("labbox_checks_total", result="error")
+            raise
+        metrics.count("labbox_checks_total", result="passed" if out.passed_count == out.total_count else "failed")
+        metrics.observe("labbox_check_duration_seconds", time.monotonic() - started, buckets=metrics.CHECK_BUCKETS)
+        return out
 
 
 @router.get("/checks", response_model=list[checker.CheckRunOut])
