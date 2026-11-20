@@ -6,10 +6,6 @@ A shop's app stores a price, a product name, and whether the item is in stock. T
 :::mission
 In `types/numbers.js`, work out a percentage safely, and show an amount in paise as rupees.
 :::
-
-:::picture{name="price-tags" concept="Variables: names for values"}
-A shop keeps the price as a number, the name as text, and stock status as a yes or no.
-:::
 :::
 
 :::step{type=concept title="Variables: names for values"}
@@ -73,8 +69,14 @@ average(70, 71, 71)   // 70.7
 
 `percent` needs the same rounding, plus one guard you will meet in the next step.
 
-:::picture{name="average-notebook" concept="Variables: names for values"}
-Naming the exact average gives the rounding step a value to work with.
+:::trace{title="average(70, 71, 71)"}
+| step | value | note |
+|---|---|---|
+| a + b + c | 212 | The brackets make the adding happen first. |
+| / 3 | 70.66666666666667 | The exact average, with far too many decimals. |
+| exact * 10 | 706.6666666666667 | Move the decimal point one place to the right. |
+| Math.round(...) | 707 | Round to the nearest whole number. |
+| / 10 | 70.7 | Move the point back: one decimal, as wanted. |
 :::
 :::
 
@@ -98,10 +100,6 @@ node -e 'console.log(2 + 2, "2" + "2", "2" + 2, Number("2") + 2, 10 / 0, typeof 
 ```
 
 `node -e` runs one line of JavaScript, handy for quick experiments.
-
-:::picture{name="type-stamps" concept="typeof, and the + trap"}
-Converting the typed digit changes which operation the plus sign performs.
-:::
 :::
 
 :::step{type=task task=percent title="Warm-up: a safe percentage"}
@@ -135,10 +133,6 @@ Make `formatRupees(paise)` return the amount as text with the ₹ sign and two d
 
 - `formatRupees(1250)` returns `"₹12.50"`
 - `formatRupees(5)` returns `"₹0.05"`
-
-:::picture{name="paise-pockets" concept="Money: whole paise, shown as rupees"}
-The two small places after the decimal point hold tens of paise and single paise.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -174,10 +168,6 @@ symbol. Everything else (arrays, objects, functions) is an **object**.
 `Number("abc")` gives `NaN`, "not a number", which is still of type number. `NaN` is the only value
 not equal to itself, so check for it with `Number.isNaN(x)`. For very large whole numbers, beyond
 about 9 million billion, use **bigint** (`123n`).
-
-:::picture{name="number-sorter" concept="typeof, and the + trap"}
-A failed conversion still produces a value of the number type.
-:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -185,8 +175,4 @@ A failed conversion still produces a value of the number type.
 - `+` adds numbers but joins strings: turn text into numbers with `Number(...)`.
 - Round with `Math.round(x * 10) / 10`; show money with `toFixed(2)`.
 - Guard a division by zero: JavaScript gives `Infinity`, not an error.
-
-:::picture{name="shop-till" concept="Money: whole paise, shown as rupees"}
-The till adds whole paise and formats the total once for the customer.
-:::
 :::

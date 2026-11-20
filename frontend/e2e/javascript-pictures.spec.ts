@@ -20,7 +20,7 @@ async function checkLettering(drawing: Locator, name: string, theme: string, cod
   expect(clipped, `${name} in ${theme}`).toEqual([]);
 }
 
-test("JavaScript teaches each concept with three distinct pictures in both themes", async ({ page, request }) => {
+test("JavaScript teaches each concept with one distinct picture, where it is taught, in both themes", async ({ page, request }) => {
   const lab = "/api/labs/javascript-basics";
   const signup = await request.post("/api/auth/signup", {
     data: { username: `jspics${Date.now()}`, password: "secret123" },
@@ -49,7 +49,11 @@ test("JavaScript teaches each concept with three distinct pictures in both theme
         const [directive, name, concept, caption] = pictures[0];
         const code = /\bcode=(["'])(.*?)\1/.exec(directive)?.[2];
         expect(concepts.has(concept), `${chapter.title}: ${concept}`).toBeTruthy();
-        concepts.set(concept, concepts.get(concept)! + 1);
+        expect(["concept", "example"], `${chapter.title}: a picture on a ${step.type} step`).toContain(step.type);
+        if (step.type === "concept") {
+          expect(concept, `${chapter.title}: the picture belongs to the concept it sits on`).toBe(step.title);
+          concepts.set(concept, concepts.get(concept)! + 1);
+        }
         expect(seen.has(name), name).toBeFalsy();
         seen.add(name);
 
@@ -72,9 +76,9 @@ test("JavaScript teaches each concept with three distinct pictures in both theme
         expect(await canvas()).not.toBe(firstCanvas);
         await checkLettering(drawing, name, nextTheme, code);
       }
-      for (const [concept, count] of concepts) expect(count, concept ?? chapter.title).toBe(3);
+      for (const [concept, count] of concepts) expect(count, concept ?? chapter.title).toBe(1);
     }
-    expect(seen.size).toBe(114);
+    expect(seen.size).toBe(39); // 38 concepts, plus two cooks on the async worked example
   } finally {
     await request.post(`${lab}/workspace/stop`, { headers });
   }

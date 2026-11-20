@@ -5,10 +5,6 @@ you: for every mark, every character, every row of a file. It is where computers
 :::mission
 In `loops/loops.js`, add up the numbers from 1 to n, and count the vowels in a piece of text.
 :::
-
-:::picture{name="marking-pile" concept="for...of: each item, no counter"}
-The teacher picks up one sheet at a time and repeats the same check for each.
-:::
 :::
 
 :::step{type=concept title="Repeating with a counter"}
@@ -75,10 +71,6 @@ function countPassed(marks) {
 | 33 | yes | 3 | 33 is exactly 33, and >= includes it: count is 3. |
 |  |  | 3 | No marks left: the answer is 3. |
 :::
-
-:::picture{name="passing-stamps" concept="for...of: each item, no counter"}
-Four marks go by, but only the three passing marks get a stamp.
-:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -105,10 +97,6 @@ few" mistake is so common it has a name: an **off-by-one** error.
 ```bash run
 node -e 'let total = 0; for (let i = 1; i <= 4; i++) { total += i; console.log("i", i, "total", total); }'
 ```
-
-:::picture{name="total-odometer" concept="Repeating with a counter"}
-The counter advances by one each turn while the running total grows by the value just visited.
-:::
 :::
 
 :::step{type=task task=sum_to title="Warm-up: add up 1 to n"}
@@ -116,10 +104,6 @@ In `loops/loops.js`, make `sumTo(n)` return `1 + 2 + ... + n`, and `0` when `n` 
 
 - `sumTo(5)` returns `15`
 - `sumTo(100)` returns `5050`
-
-:::picture{name="staircase-sum" concept="Repeating with a counter"}
-Add each new stair to the ones already counted. Three stairs hold six blocks.
-:::
 :::
 
 :::step{type=concept title="Looking at text one character at a time"}
@@ -143,10 +127,6 @@ Make `countVowels(text)` return how many of `a, e, i, o, u` the text contains, i
 
 - `countVowels("Hello World")` returns `3`
 - `countVowels("AEIOU")` returns `5`, and `countVowels("rhythm")` returns `0`
-
-:::picture{name="vowel-beads" concept="Looking at text one character at a time"}
-Only the highlighted letters add to the vowel count.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -189,8 +169,4 @@ If your terminal hangs, press Ctrl+C and check that something in the loop moves 
 - A running total starts at 0 and adds inside the loop.
 - Watch the boundary: `<` versus `<=` is the classic off-by-one.
 - Lower-case text before testing characters.
-
-:::picture{name="letter-walk" concept="Looking at text one character at a time"}
-Walk through the letters in order and carry the count into the next turn.
-:::
 :::

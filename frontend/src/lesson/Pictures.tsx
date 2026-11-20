@@ -379,231 +379,6 @@ function LibraryShelves() {
 
 /* ---- Story scenes: one small picture at the start of a chapter ---- */
 
-/** A web page with a button that reacts at once (JavaScript's first job). */
-function WebPage() {
-  return (
-    <Svg label="A browser window with a like button; clicking it updates the count at once, without asking the server">
-      <Card x={10} y={10} w={200} h={128} />
-      <path className="pc-ink" d="M10 34 Q111 35 210 34" />
-      {[22, 36, 50].map((x) => <circle key={x} className="pc-cell" cx={x} cy={22} r={4} />)}
-      <rect className="pc-band" x={30} y={54} width={110} height={14} rx={3} />
-      <rect className="pc-mark" x={30} y={88} width={78} height={30} rx={8} />
-      <Hand x={40} y={109}>{"♥ Like  12"}</Hand>
-      <Ink d="M221 78 Q187 84 113 100" />
-      <Hand x={222} y={50} kind="label">click:</Hand>
-      <Hand x={222} y={70}>12 likes</Hand>
-      <Hand x={222} y={112}>now 13!</Hand>
-    </Svg>
-  );
-}
-
-/** Price tags: some values are numbers, some text, some yes or no. */
-function PriceTags() {
-  const tags: [number, string, string][] = [[14, "₹120", "number"], [118, "masala tea", "text"], [222, "in stock: yes", "true / false"]];
-  return (
-    <Svg label="Three shop tags: a price is a number, a product name is text, in stock is yes or no">
-      {tags.map(([x, v, k]) => (
-        <g key={k}>
-          <path className="pc-card" d={`M${x} 40 L${x + 70} 40 L${x + 88} 66 L${x + 70} 92 L${x} 92 Z`} />
-          <circle className="pc-cell" cx={x + 70} cy={66} r={4} />
-          <Hand x={x + 8} y={71}>{v}</Hand>
-          <Hand x={x + 8} y={124} kind="label">{k}</Hand>
-        </g>
-      ))}
-      <Hand x={14} y={24}>different kinds of value</Hand>
-    </Svg>
-  );
-}
-
-/** A cinema booth: the price depends on the age. */
-function CinemaBooth() {
-  return (
-    <Svg label="A cinema ticket booth with a price board: child, adult and senior prices depend on age">
-      <Ink d="M14 140 L14 40 L120 20 L226 40 L226 140" plain />
-      <rect className="pc-band" x={40} y={46} width={160} height={22} rx={4} />
-      <Hand x={84} y={63} kind="title">TICKETS</Hand>
-      <Card x={40} y={76} w={160} h={56} />
-      <Hand x={52} y={96}>child  under 18</Hand>
-      <Hand x={52} y={120}>adult / senior</Hand>
-      <Hand x={230} y={70} kind="label">age decides</Hand>
-      <Hand x={230} y={92} kind="label">the price</Hand>
-    </Svg>
-  );
-}
-
-/** A pile of papers to mark: the same job, again and again. */
-function MarkingPile() {
-  return (
-    <Svg label="A tall pile of answer sheets; marking each one is the same job, repeated">
-      {[0, 1, 2, 3, 4, 5].map((i) => <rect key={i} className="pc-card" x={30 + i * 3} y={100 - i * 12} width={120} height={30} rx={4} />)}
-      <Hand x={60} y={44 - 12}>{"✓ 45"}</Hand>
-      <Hand x={170} y={60}>40 sheets,</Hand>
-      <Hand x={170} y={82}>same steps</Hand>
-      <Hand x={170} y={104} kind="label">for each one</Hand>
-    </Svg>
-  );
-}
-
-/** A form filled in a hurry: extra spaces and odd capitals. */
-function MessyForm() {
-  return (
-    <Svg label="A form where the name was typed as riya, many spaces, SHARMA; the tidy version is Riya Sharma">
-      <Card x={10} y={16} w={180} h={110} />
-      <Hand x={22} y={42} kind="label">Name:</Hand>
-      <rect className="pc-cell" x={22} y={50} width={156} height={26} rx={4} />
-      <Hand x={28} y={69}><tspan style={{ whiteSpace: "pre" }}>{"  riya     SHARMA "}</tspan></Hand>
-      <Hand x={22} y={102}>typed in a hurry</Hand>
-      <Ink d="M193 65 Q204 62 215 65" />
-      <rect className="pc-mark" x={218} y={50} width={96} height={26} rx={4} />
-      <Hand x={223} y={69}>Riya Sharma</Hand>
-    </Svg>
-  );
-}
-
-/** A playlist: many songs under one name, in order. */
-function Playlist() {
-  return (
-    <Svg label="A playlist called Road trip with numbered songs 0, 1, 2, 3 under one name">
-      <Card x={60} y={10} w={200} h={130} />
-      <rect className="pc-band" x={62} y={12} width={196} height={30} rx={8} />
-      <Hand x={76} y={33} kind="title">Road trip</Hand>
-      {["Song A", "Song B", "Song C", "Song D"].map((t, i) => (
-        <g key={t}>
-          <Hand x={78} y={64 + i * 22} kind="label">{i}</Hand>
-          <Hand x={100} y={64 + i * 22}>{t}</Hand>
-        </g>
-      ))}
-      <Hand x={269} y={70}>one</Hand>
-      <Hand x={269} y={90}>list</Hand>
-    </Svg>
-  );
-}
-
-/** A shopping cart: each line has a name, a price and a quantity. */
-function ShoppingCart() {
-  return (
-    <Svg label="A shopping cart list: tea, price 20, quantity 2; bun, price 15, quantity 1">
-      <Ink d="M14 34 L36 34 L54 104 L136 104 L150 52 L44 52" plain />
-      <circle className="pc-ink" cx={64} cy={120} r={8} />
-      <circle className="pc-ink" cx={126} cy={120} r={8} />
-      <Card x={155} y={20} w={159} h={104} />
-      <Hand x={167} y={45} kind="label">Item</Hand>
-      <Hand x={260} y={45} kind="label" anchor="end">Price</Hand>
-      <Hand x={301} y={45} kind="label" anchor="end">Qty</Hand>
-      <path className="pc-rule" d="M165 52 H304" />
-      {[["Tea", "20", "2"], ["Bun", "15", "1"]].map(([item, price, quantity], index) => (
-        <g key={item}>
-          <Hand x={167} y={80 + 27 * index}>{item}</Hand>
-          <Hand x={260} y={80 + 27 * index} anchor="end">{price}</Hand>
-          <Hand x={301} y={80 + 27 * index} anchor="end">{quantity}</Hand>
-        </g>
-      ))}
-    </Svg>
-  );
-}
-
-/** Tally marks: counting how many times each thing appears. */
-function TallyMarks() {
-  return (
-    <Svg label="Tally marks on paper: tea has five marks, coffee two, milk one">
-      <Card x={30} y={14} w={240} h={122} />
-      {[["tea", 5], ["coffee", 2], ["milk", 1]].map(([w, n], r) => (
-        <g key={String(w)}>
-          <Hand x={46} y={48 + Number(r) * 34} kind="label">{String(w)}</Hand>
-          {Array.from({ length: Math.min(Number(n), 4) }, (_, i) => <path key={i} className="pc-ink" d={`M${130 + i * 12} ${32 + Number(r) * 34} L${131 + i * 12} ${54 + Number(r) * 34}`} />)}
-          {Number(n) === 5 && <path className="pc-ink" d={`M124 ${50 + Number(r) * 34} L176 ${34 + Number(r) * 34}`} />}
-        </g>
-      ))}
-    </Svg>
-  );
-}
-
-/** A sieve: shake the marks, and only the passing ones stay. */
-function Sieve() {
-  return (
-    <Svg label="Marks poured into a sieve: 30 and 12 fall through, 72 and 90 stay in">
-      <path className="pc-card" d="M40 50 L200 50 L170 100 L70 100 Z" />
-      {[60, 80, 100, 120, 140, 160, 180].map((x) => <line key={x} className="pc-rule" x1={x} y1={52} x2={x - 6 + (x - 120) * -0.1} y2={98} />)}
-      <Hand x={84} y={44}>72</Hand>
-      <Hand x={130} y={44}>90</Hand>
-      <Hand x={100} y={128} kind="label">30   12</Hand>
-      <Ink d="M120 104 L120 112" />
-      <Hand x={214} y={60}>stay: 40</Hand>
-      <Hand x={214} y={80}>or more</Hand>
-      <Hand x={214} y={120} kind="label">fall through</Hand>
-    </Svg>
-  );
-}
-
-/** A form that says what went wrong, instead of crashing. */
-function ErrorForm() {
-  return (
-    <Svg label="A form with age typed as abc; a friendly message says please type a whole number">
-      <Card x={10} y={16} w={200} h={112} />
-      <Hand x={24} y={44} kind="label">Age:</Hand>
-      <rect className="pc-cell" x={24} y={52} width={100} height={26} rx={4} />
-      <Hand x={32} y={71}>abc</Hand>
-      <rect className="pc-mark" x={24} y={90} width={176} height={26} rx={4} />
-      <Hand x={30} y={109}>please type a whole number</Hand>
-      <Hand x={222} y={60}>explain,</Hand>
-      <Hand x={222} y={82}>do not crash</Hand>
-    </Svg>
-  );
-}
-
-/** A bank passbook: every account follows the same rules. */
-function Passbook() {
-  return (
-    <Svg label="Two bank passbooks, Riya and Arjun, each with its own balance, both following the same rules">
-      {[[20, "Riya", "500"], [150, "Arjun", "80"]].map(([x, n, b]) => (
-        <g key={String(n)}>
-          <Card x={Number(x)} y={24} w={110} h={86} />
-          <rect className="pc-band" x={Number(x) + 2} y={26} width={106} height={24} rx={8} />
-          <Hand x={Number(x) + 12} y={44} kind="title">{String(n)}</Hand>
-          <Hand x={Number(x) + 12} y={80}>{`balance ${b}`}</Hand>
-        </g>
-      ))}
-      <Hand x={20} y={138}>same rules for every account</Hand>
-    </Svg>
-  );
-}
-
-/** A food counter: order, take a token, and the kitchen works while you wait. */
-function FoodCounter() {
-  return (
-    <Svg label="A food counter: customers take a token and wait while the kitchen cooks several orders at once">
-      <rect className="pc-band" x={10} y={20} width={180} height={24} rx={4} />
-      <Hand x={54} y={38} kind="title">ORDER HERE</Hand>
-      <Card x={10} y={50} w={180} h={50} />
-      <Hand x={22} y={80}>kitchen: 3 orders cooking</Hand>
-      {[30, 80, 130].map((x, i) => (
-        <g key={x}>
-          <circle className="pc-ink" cx={x} cy={118} r={8} />
-          <Hand x={x - 14} y={142} kind="label">{`#${i + 41}`}</Hand>
-        </g>
-      ))}
-      <Hand x={206} y={70}>take a token,</Hand>
-      <Hand x={206} y={92}>wait, carry on</Hand>
-    </Svg>
-  );
-}
-
-/** A pile of receipts to turn into a monthly report. */
-function ReceiptPile() {
-  return (
-    <Svg label="A pile of receipts for a month becomes one neat report with a total">
-      {[0, 1, 2, 3].map((i) => <rect key={i} className="pc-card" x={20 + i * 14} y={40 + (i % 2) * 10} width={60} height={80} rx={3} transform={`rotate(${(i - 1.5) * 6} ${50 + i * 14} 80)`} />)}
-      <Ink d="M150 80 Q180 72 206 80" />
-      <Card x={210} y={24} w={100} h={110} />
-      <Hand x={222} y={48} kind="title">March</Hand>
-      <Hand x={222} y={76}>food 2262</Hand>
-      <Hand x={222} y={98}>rent 18000</Hand>
-      <rect className="pc-mark" x={218} y={106} width={84} height={20} rx={3} />
-      <Hand x={222} y={121}>total</Hand>
-    </Svg>
-  );
-}
-
 /* ---- Main ideas ---- */
 
 /** + adds numbers but glues text. */
@@ -692,27 +467,6 @@ function Postman() {
       <Ink d="M20 128 Q160 140 300 128" />
       <Hand x={20} y={30}>every house, in order:</Hand>
       <Hand x={190} y={30} kind="label">one visit each</Hand>
-    </Svg>
-  );
-}
-
-/** split, change, join: cut a strip, change each piece, glue it back. */
-function CutAndGlue() {
-  return (
-    <Svg label="A paper strip ab-12 cd is cut into pieces, each piece is changed to capitals, and the pieces are glued with a dash">
-      <rect className="pc-cell" x={10} y={20} width={130} height={26} rx={4} />
-      <Hand x={18} y={39}><tspan style={{ whiteSpace: "pre" }}>{"  ab-12   cd "}</tspan></Hand>
-      <Hand x={150} y={39} kind="label">cut</Hand>
-      <rect className="pc-cell" x={20} y={62} width={60} height={26} rx={4} />
-      <rect className="pc-cell" x={96} y={62} width={34} height={26} rx={4} />
-      <Hand x={28} y={81}>ab-12</Hand><Hand x={104} y={81}>cd</Hand>
-      <Hand x={150} y={81} kind="label">change</Hand>
-      <rect className="pc-mark" x={10} y={104} width={130} height={26} rx={4} />
-      <Hand x={22} y={123}>AB-12-CD</Hand>
-      <Hand x={150} y={123} kind="label">glue</Hand>
-      <Hand x={210} y={60}>split,</Hand>
-      <Hand x={210} y={82}>change each,</Hand>
-      <Hand x={210} y={104}>join</Hand>
     </Svg>
   );
 }
@@ -862,25 +616,11 @@ const PICTURES: Record<string, (p: P) => JSX.Element> = {
   "file-lines": FileLines,
   "two-cooks": TwoCooks,
   "library-shelves": LibraryShelves,
-  "web-page": WebPage,
-  "price-tags": PriceTags,
-  "cinema-booth": CinemaBooth,
-  "marking-pile": MarkingPile,
-  "messy-form": MessyForm,
-  playlist: Playlist,
-  "shopping-cart": ShoppingCart,
-  "tally-marks": TallyMarks,
-  sieve: Sieve,
-  "error-form": ErrorForm,
-  passbook: Passbook,
-  "food-counter": FoodCounter,
-  "receipt-pile": ReceiptPile,
   "glue-vs-add": GlueVsAdd,
   "coin-jar": CoinJar,
   "number-vs-text": NumberVsText,
   "two-switches": TwoSwitches,
   postman: Postman,
-  "cut-and-glue": CutAndGlue,
   "form-card": FormCard,
   photocopy: Photocopy,
   "line-up": LineUp,
@@ -888,79 +628,18 @@ const PICTURES: Record<string, (p: P) => JSX.Element> = {
   "bank-counter": BankCounter,
   "token-receipt": TokenReceipt,
   funnel: Funnel,
-  "greeting-counter": js.GreetingCounter,
   "square-tiles": js.SquareTiles,
-  "postcard-slot": js.PostcardSlot,
-  "terminal-handoff": js.TerminalHandoff,
   "remainder-bowls": js.RemainderBowls,
-  "clock-quarter": js.ClockQuarter,
-  "minutes-receipt": js.MinutesReceipt,
-  "average-notebook": js.AverageNotebook,
-  "type-stamps": js.TypeStamps,
-  "number-sorter": js.NumberSorter,
-  "paise-pockets": js.PaisePockets,
-  "shop-till": js.ShopTill,
-  "grade-boundary": js.GradeBoundary,
-  "empty-labels": js.EmptyLabels,
-  "matching-badges": js.MatchingBadges,
-  "adult-interval": js.AdultInterval,
-  "century-calendar": js.CenturyCalendar,
-  "passing-stamps": js.PassingStamps,
-  "total-odometer": js.TotalOdometer,
-  "staircase-sum": js.StaircaseSum,
   "case-lenses": js.CaseLenses,
-  "vowel-beads": js.VowelBeads,
-  "letter-walk": js.LetterWalk,
   "trim-edges": js.TrimEdges,
-  "word-islands": js.WordIslands,
   "initial-and-tail": js.InitialAndTail,
-  "name-register": js.NameRegister,
-  "utf-slots": js.UtfSlots,
-  "unchanged-string": js.UnchangedString,
-  "cheapest-tray": js.CheapestTray,
-  "sorting-lanes": js.SortingLanes,
-  "podium-slots": js.PodiumSlots,
   "search-signs": js.SearchSigns,
-  "first-footprints": js.FirstFootprints,
-  "missing-slot": js.MissingSlot,
-  "missing-field": js.MissingField,
   "cart-shelves": js.CartShelves,
-  "basket-count": js.BasketCount,
-  "line-subtotals": js.LineSubtotals,
-  "two-price-tags": js.TwoPriceTags,
-  "one-price-tag": js.OnePriceTag,
-  "case-tallies": js.CaseTallies,
-  "shared-groceries": js.SharedGroceries,
-  "door-tokens": js.DoorTokens,
   "rule-gate": js.RuleGate,
-  "capital-station": js.CapitalStation,
-  "doubling-machine": js.DoublingMachine,
-  "tie-break": js.TieBreak,
-  "callback-bell": js.CallbackBell,
-  "sorted-notebook": js.SortedNotebook,
-  "quantity-checkpoint": js.QuantityCheckpoint,
-  "catch-detour": js.CatchDetour,
   "spoiled-total": js.SpoiledTotal,
-  "sorting-inputs": js.SortingInputs,
-  "handler-desk": js.HandlerDesk,
-  "empty-number": js.EmptyNumber,
-  "step-turnstile": js.StepTurnstile,
-  "independent-dials": js.IndependentDials,
-  "withdraw-slip": js.WithdrawSlip,
-  "area-tiles": js.AreaTiles,
-  "shape-requests": js.ShapeRequests,
   "parallel-tickets": js.ParallelTickets,
-  "price-tickets": js.PriceTickets,
   "retry-stamps": js.RetryStamps,
-  "last-error-slip": js.LastErrorSlip,
-  "ready-queue": js.ReadyQueue,
-  "retry-exits": js.RetryExits,
   "file-ribbon": js.FileRibbon,
-  "margin-numbers": js.MarginNumbers,
-  "category-bins": js.CategoryBins,
-  "category-book": js.CategoryBook,
-  "report-inboxes": js.ReportInboxes,
-  "fold-notepad": js.FoldNotepad,
 };
 
 export default function Picture({ name, code, caption }: { name: string; code?: string; caption?: ReactNode }) {

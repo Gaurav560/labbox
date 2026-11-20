@@ -6,10 +6,6 @@ a real file, clean it, and work out the numbers, using what you learned in every
 In `capstone/report.js`, first read the totals per category (a warm-up), then build the full monthly
 report.
 :::
-
-:::picture{name="receipt-pile" concept="Reading a file"}
-Each receipt supplies one row of evidence for the monthly report.
-:::
 :::
 
 :::step{type=concept title="Reading a file"}
@@ -63,8 +59,13 @@ lines.forEach((line, i) => {
 `forEach` gives each line with its index. The index counts blank lines too, so `i + 1` always matches
 the line number someone sees in an editor.
 
-:::picture{name="margin-numbers" concept="Reading a file"}
-A blank line still occupies a position on the page. Keep it when numbering the lines.
+:::trace{title="four lines of a file"}
+| i | line | what happens | note |
+|---|---|---|---|
+| 0 | date,category,amount | skipped | The header is not data. |
+| 1 | 2026-03-02,food,120 | prints 2 | Index 1 is line 2 in an editor. |
+| 2 | (blank) | skipped | A blank line is skipped, but it still uses a number. |
+| 3 | 2026-03-03,travel,40 | prints 4 | So this row is line 4, exactly what the editor shows. |
 :::
 :::
 
@@ -96,10 +97,6 @@ wc -l expenses.csv; cut -d, -f2 expenses.csv | sort | uniq -c | sort -rn
 ```
 
 How many lines, which categories, and a hint of the messy ones (an empty category shows as a blank).
-
-:::picture{name="category-bins" concept="CSV: one row per line"}
-In this five-row example, food occurs three times. Counting labels and adding their amounts answer different questions.
-:::
 :::
 
 :::step{type=task task=read_totals title="Warm-up: totals from a CSV"}
@@ -107,10 +104,6 @@ Make `readTotals(path)` return the total per category, **rounded to 2 decimals**
 blank lines, rows without a category, and amounts that are missing or not numbers.
 
 - `readTotals("expenses.csv").rent` is `18000`, and `.shopping` is `4095`
-
-:::picture{name="category-book" concept="CSV: one row per line"}
-Add each valid amount to its own category page.
-:::
 :::
 
 :::step{type=concept title="reduce, and a plan before code"}
@@ -145,10 +138,6 @@ Make `monthlyReport(path)` return an object with:
 
 For the five lines in "Guess first" it gives a total of `18120`, a count of `2`, an average of `9060`
 and bad lines `[3, 4]`.
-
-:::picture{name="report-inboxes" concept="reduce, and a plan before code"}
-After blank lines are skipped, each remaining data row contributes either numbers or a line to investigate.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -194,8 +183,4 @@ array methods, errors, classes, promises and files. The natural next steps:
 - Keep line numbers (index + 1), and report the rows you skip.
 - Plan a multi-part task in steps; `reduce` folds an array into one value.
 - You have built JavaScript from the first function to a real report: well done.
-
-:::picture{name="fold-notepad" concept="reduce, and a plan before code"}
-Carry one total into the next row. The final entry is the result of the fold.
-:::
 :::

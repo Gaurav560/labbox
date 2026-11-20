@@ -6,10 +6,6 @@ and you will see them in almost every modern JavaScript file.
 :::mission
 In `arraymethods/marks.js`, keep only the passing marks, then sort words by length.
 :::
-
-:::picture{name="sieve" concept="filter and map: a conveyor belt"}
-The marks that meet the rule stay in the sieve in their original order.
-:::
 :::
 
 :::step{type=concept title="Arrow functions: small functions, written short"}
@@ -65,8 +61,12 @@ longNames(["Riya", "Arjun", "Meera"])   // ["ARJUN", "MEERA"]
 
 Each line reads like part of the sentence it implements. `passing` needs only step 1.
 
-:::picture{name="capital-station" concept="filter and map: a conveyor belt"}
-The first station keeps long names and the next changes their letters.
+:::trace{title='longNames(["Riya", "Arjun", "Meera"])'}
+| station | result | note |
+|---|---|---|
+| names | ["Riya", "Arjun", "Meera"] | The items as they arrive on the belt. |
+| .filter((n) => n.length > 4) | ["Arjun", "Meera"] | Riya has exactly 4 letters, not more than 4, so it is dropped. |
+| .map((n) => n.toUpperCase()) | ["ARJUN", "MEERA"] | Each kept name is changed. names itself never changed. |
 :::
 :::
 
@@ -94,10 +94,6 @@ node -e 'const m = [72, 30, 90, 45, 12]; console.log(m.filter((x) => x >= 40), m
 ```
 
 `reduce` folds an array into one value, here a total: you will meet it in the capstone.
-
-:::picture{name="doubling-machine" concept="Arrow functions: small functions, written short"}
-The same little function is applied separately to every input.
-:::
 :::
 
 :::step{type=task task=passing title="Warm-up: the passing marks"}
@@ -135,10 +131,6 @@ alphabetical order, without changing the array it was given:
 
 - `sortByLength(["banana", "fig", "apple", "kiwi", "date"])` returns
   `["fig", "date", "kiwi", "apple", "banana"]`
-
-:::picture{name="tie-break" concept="Sorting by your own rule"}
-Length leaves a tie between date and kiwi. The alphabet decides their order.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -174,10 +166,6 @@ page runs one when a button is clicked, and Node runs one when a file has been r
 
 Other useful methods: `find` (the first match), `some` and `every` (does any or every item pass?),
 `reduce` (fold into one value) and `flatMap`.
-
-:::picture{name="callback-bell" concept="Arrow functions: small functions, written short"}
-Hand over a function now so the receiver can call it when the event arrives.
-:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -185,8 +173,4 @@ Hand over a function now so the receiver can call it when the event arrives.
 - `filter` keeps, `map` changes, and both return new arrays.
 - `sort((a, b) => ...)` sorts by your rule; combine rules with `||` for ties.
 - `sort` changes the array: sort a copy when it is not yours.
-
-:::picture{name="sorted-notebook" concept="Sorting by your own rule"}
-Write the sorted order on a fresh page so the caller keeps the original order.
-:::
 :::

@@ -6,10 +6,6 @@ most common jobs in real code.
 :::mission
 In `words/words.js`, count the words in a sentence, then tidy a name typed in a hurry.
 :::
-
-:::picture{name="messy-form" concept="Capital first, the rest small"}
-The cleaned name keeps the same words with one space and a capital at the start of each.
-:::
 :::
 
 :::step{type=concept title="A string is a row of characters"}
@@ -73,10 +69,6 @@ function code(raw) {
 | toUpperCase each | ["AB-12", "CD"] | Each piece is changed on its own. |
 | .join("-") | "AB-12-CD" | The pieces are glued back with a dash. |
 :::
-
-:::picture{name="cut-and-glue" concept="Cleaning tools"}
-Split the product code into words, change each word, then join the pieces with one dash.
-:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -106,10 +98,6 @@ are between them:
 - `countWords("JavaScript is fun")` returns `3`
 - `countWords("  lots   of   spaces  ")` returns `3`
 - `countWords("")` and `countWords("   ")` return `0`
-
-:::picture{name="word-islands" concept="Cleaning tools"}
-Count the islands of letters. A wider gap still separates just two words.
-:::
 :::
 
 :::step{type=concept title="Capital first, the rest small"}
@@ -135,10 +123,6 @@ Make `cleanName(raw)` turn a name typed in a hurry into a tidy one:
 - `cleanName("  riya   SHARMA ")` returns `"Riya Sharma"`
 - `cleanName("ARJUN")` returns `"Arjun"`
 - `cleanName("   ")` returns `""`
-
-:::picture{name="name-register" concept="Capital first, the rest small"}
-Give every word in the name its own initial before writing the whole name on the register.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -175,10 +159,6 @@ why they are safer than counting positions by hand.
 
 For comparing text in human order (with accents and different languages), use `a.localeCompare(b)`
 instead of `<`; you will meet it again when sorting in chapter 9.
-
-:::picture{name="utf-slots" concept="A string is a row of characters"}
-One smiling face takes two UTF-16 code units, even though it is one Unicode code point.
-:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -186,8 +166,4 @@ One smiling face takes two UTF-16 code units, even though it is one Unicode code
 - `trim`, `split(/\s+/)`, `join` and `toUpperCase` clean text.
 - Strings never change in place: methods return new strings.
 - Empty text needs its own care: `"".split(...)` is not empty.
-
-:::picture{name="unchanged-string" concept="A string is a row of characters"}
-Changing the case makes a new string. The original letters remain in their own row.
-:::
 :::

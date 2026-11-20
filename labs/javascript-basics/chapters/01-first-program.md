@@ -7,10 +7,6 @@ this course you start from the very first line, with plain examples and real tes
 Write two small functions in `hello/hello.js`: one builds a greeting, the other turns hours and minutes
 into minutes.
 :::
-
-:::picture{name="web-page" concept="Why functions exist"}
-Clicking the heart calls the same small piece of code each time.
-:::
 :::
 
 :::step{type=history title="The story of JavaScript"}
@@ -115,10 +111,6 @@ welcome("Pune")   // "Welcome to Pune!"
 3. `return` hands the finished text back.
 
 Your first task has exactly this shape, with different words.
-
-:::picture{name="postcard-slot" concept="A function, part by part"}
-The city fills the blank in the postcard. The words on either side stay put.
-:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -144,10 +136,6 @@ node hello/hello.js
 ```
 
 You should see an empty line. Once `greet` works, the same command prints `Hello, Asha!`.
-
-:::picture{name="terminal-handoff" concept="A function, part by part"}
-Running the file calls the function. The caller can print the value it receives.
-:::
 :::
 
 :::step{type=task task=greet title="Warm-up: greet someone"}
@@ -157,10 +145,6 @@ the space and the exclamation mark: the tests compare the text exactly.
 :::why
 Returning the text (instead of printing it) lets other code reuse it: a web page, a message, or the
 tests that check your work.
-:::
-
-:::picture{name="greeting-counter" concept="Why functions exist"}
-One greeting function can serve two callers, each with its own name.
 :::
 :::
 
@@ -190,10 +174,6 @@ Make `totalMinutes(hours, minutes)` return the total number of minutes:
 
 - `totalMinutes(2, 15)` returns `135`
 - `totalMinutes(0, 45)` returns `45`
-
-:::picture{name="clock-quarter" concept="Numbers and arithmetic"}
-One full turn of the minute hand and a quarter turn measure 75 minutes.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -240,8 +220,4 @@ hidden tests. Keep it there.
 - `return` hands a value back to whoever called the function.
 - Template literals use backticks and `${...}` to build text.
 - `node file.js` runs a file in the terminal.
-
-:::picture{name="minutes-receipt" concept="Numbers and arithmetic"}
-Convert the hours first so every amount on the receipt is in minutes.
-:::
 :::

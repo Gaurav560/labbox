@@ -6,10 +6,6 @@ the tool for that is `if`.
 :::mission
 In `decisions/decisions.js`, turn marks into a grade, and decide whether a year is a leap year.
 :::
-
-:::picture{name="cinema-booth" concept="if and else"}
-The age at the ticket window decides which ticket the clerk hands back.
-:::
 :::
 
 :::step{type=concept title="if and else"}
@@ -101,10 +97,6 @@ always try the exact boundary value.
 ```bash run
 node -e 'const t = (a) => a < 0 ? "Invalid" : a >= 60 ? "Senior" : a >= 18 ? "Adult" : "Child"; console.log(t(17), t(18), t(59), t(60), t(-1))'
 ```
-
-:::picture{name="adult-interval" concept="Combining conditions: && and ||"}
-The adult band starts at 18 and ends just before the senior band. Both edges matter.
-:::
 :::
 
 :::step{type=task task=grade title="Warm-up: a grade from marks"}
@@ -113,10 +105,6 @@ for 40 and up, and `"F"` below 40. Marks below 0 or above 100 give `"Invalid"`.
 
 - `grade(80)` returns `"A"`, and `grade(79)` returns `"B"`
 - `grade(101)` returns `"Invalid"`
-
-:::picture{name="grade-boundary" concept="if and else"}
-A single mark can move a score across the edge of a grade band.
-:::
 :::
 
 :::step{type=concept title="Combining conditions: && and ||"}
@@ -147,10 +135,6 @@ Make `isLeapYear(year)` follow the real rule:
 3. **except** years divisible by 400, which are leap years again.
 
 `2024` is `true`, `2023` is `false`, `1900` is `false`, `2000` is `true`.
-
-:::picture{name="century-calendar" concept="Combining conditions: && and ||"}
-Century years reach the extra check. That is where 1900 and 2000 part ways.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -189,10 +173,6 @@ That is handy (`if (name)` checks for a non-empty name) but can surprise you: `i
 when the count is `0`. When in doubt, compare explicitly: `if (count > 0)`.
 
 The **ternary** `cond ? a : b` is an `if` that gives a value, like the one-line ticket in the try step.
-
-:::picture{name="empty-labels" concept="Always ===, never =="}
-An empty label and a label bearing the digit zero behave differently in a condition.
-:::
 :::
 
 :::step{type=recap title="Chapter done"}
@@ -200,8 +180,4 @@ An empty label and a label bearing the digit zero behave differently in a condit
 - Check impossible values first, then ranges from the top down.
 - Use `===` and `!==`, never `==`.
 - Combine tests with `&&`, `||` and `!`; `%` tests "divisible by".
-
-:::picture{name="matching-badges" concept="Always ===, never =="}
-Strict equality needs both the same type and the same value.
-:::
 :::

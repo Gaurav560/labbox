@@ -7,10 +7,6 @@ account made from it follows them.
 In `classes/bank.js`, finish a bank account that protects its balance, then make different shapes
 work together through one method name.
 :::
-
-:::picture{name="passbook" concept="A class is a blueprint"}
-Riya and Arjun have separate balances, even though both accounts follow the same rules.
-:::
 :::
 
 :::step{type=concept title="A class is a blueprint"}
@@ -86,8 +82,12 @@ class Steps {
 
 `deposit` and `withdraw` follow this exact shape.
 
-:::picture{name="step-turnstile" concept="Methods, and a private balance"}
-Check the proposed step before touching the stored total.
+:::trace{title="one Steps object"}
+| call | n > 0? | #total | note |
+|---|---|---|---|
+| new Steps() |  | 0 | A new object starts with its private total at 0. |
+| s.add(5) | yes | 5 | The check passes, then the total changes. |
+| s.add(-1) | no | 5 | The check fails, so it throws before touching #total: still 5. |
 :::
 :::
 
@@ -111,10 +111,6 @@ node -e 'class C { #n = 0; get n() { return this.#n; } inc() { this.#n++; } } co
 ```
 
 Each object has its own private count.
-
-:::picture{name="independent-dials" concept="A class is a blueprint"}
-Turning the first counter twice changes only its own dial.
-:::
 :::
 
 :::step{type=task task=bank_account title="Warm-up: deposit and withdraw"}
@@ -125,10 +121,6 @@ In `classes/bank.js`, finish `deposit` and `withdraw`:
   `RangeError` and leaves the balance exactly as it was
 
 After `deposit(500)` and `withdraw(200)`, `balance` is `300`.
-
-:::picture{name="withdraw-slip" concept="Methods, and a private balance"}
-When a withdrawal is refused, the balance on the slip stays where it was.
-:::
 :::
 
 :::step{type=concept title="Same method name, different classes"}
@@ -159,10 +151,6 @@ In `classes/bank.js`, give `Circle` an `area()` method (`Math.PI` times the radi
 
 - `totalArea([new Rect(3, 4), new Circle(1)])` returns `15.14`
 - `totalArea([])` returns `0`
-
-:::picture{name="area-tiles" concept="Same method name, different classes"}
-Both shapes report areas in the same square units, so their answers can be added.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -205,8 +193,4 @@ object holding the shared methods. `class` (added in 2015) is a clearer way to w
 - Methods work on `this`; `#private` fields can only change through them.
 - Check and throw before changing data, so the object can never go wrong.
 - Different classes with the same method name can be used side by side.
-
-:::picture{name="shape-requests" concept="Same method name, different classes"}
-One request reaches different shapes. Each shape uses its own measurements to answer.
-:::
 :::

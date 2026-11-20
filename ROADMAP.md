@@ -212,9 +212,10 @@ Linux, Git, system design). Beginner courses are plain; advanced courses start w
 from zero and Go from zero follow it in full (20 November). Python from
 zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
 tasks, written in the "explain, do not just state" style) and JavaScript from zero (13 chapters, 26 tasks, 20 November) are complete; next: Python in practice
-(with a story) and the others. **JavaScript illustration sample (20 November):** 114 distinct captioned drawings across
-13 chapters, three for each of the 38 named concepts. Review chapter 7 (Objects) in either theme.
-Applying the sample to the other courses is a later batch. Python, Go and Java already have the
+(with a story) and the others. **Visuals (owner's rules, 20 November):** architecture and conceptual diagrams, execution
+visualizations (interactive "watch it run" traces) first, real code always, decorative images rarely.
+JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
+Next: kinder checks, "start here / continue", the lab page polish, then more traces in every course. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.
 

@@ -57,7 +57,29 @@ validator's 120 words of prose; code does not count):
 More, smaller steps beat fewer, denser ones. Never assume a term is known; define it the first time,
 in place.
 
+### Visuals: the owner's rules (20 November)
+
+| Kind | Use | What it is for |
+|---|---|---|
+| Architecture diagrams | Definitely | API communication, databases, authentication, microservices, system architecture |
+| Conceptual diagrams | Definitely | Functions, loops, memory, objects, inheritance, threads, asynchronous execution |
+| Execution visualizations | **High priority** | How variables change, how functions run, how data moves; prefer interactive (`:::trace`) |
+| Code examples | Essential | Real code in the lesson, highlighted and explained. Never turn code into an image |
+| Decorative images | Sparingly | No generic AI illustrations, stock photos or images that teach nothing |
+
 ### Pictures: small, consistent, always meaningful
+
+**Where pictures go (the validator enforces it).** A picture must carry an idea the words struggle with;
+anything else is an extra thing to look at, and learning research (the coherence principle, and
+"seductive details") shows extra pictures lower what people remember. So:
+
+- One everyday picture per **idea**, on the **concept** step that teaches it (or a worked example
+  when the idea is a mechanism, like two cooks working at once). Never three pictures of one idea.
+- Technical diagrams may also sit on a **try it** step, to explain what the learner just ran.
+- **Never** on task steps (the task, its card and the Check button must stay in view), recaps, quick
+  checks, story steps or go-deeper steps. At most one picture or diagram per step.
+- Prefer a **"watch it run" trace** on the worked example: seeing the program itself run teaches more
+  than a picture of it.
 
 Pictures help when they show something words alone cannot. One style everywhere, never decoration:
 

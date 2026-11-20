@@ -90,6 +90,21 @@ def _picture_code_errors(file: str, step_no: int, markdown: str) -> list[str]:
     return out
 
 
+# Pictures help where they carry an idea and hurt where they are extra things to look at (the coherence
+# principle): everyday pictures belong where an idea is taught, technical diagrams also where a learner
+# has just run something, and never more than one per step. Tasks, recaps and quick checks stay clear.
+PICTURE_STEPS = {"picture": {"concept", "example"}, "diagram": {"concept", "example", "try"}}
+
+
+def _picture_place_errors(file: str, step_no: int, step_type: str, markdown: str) -> list[str]:
+    found = _PICTURE_USE_RE.findall(markdown)
+    out = [f"{file}: step {step_no} ({step_type}) has a {kind}; {kind}s belong on {' or '.join(sorted(PICTURE_STEPS[kind]))} steps"
+           for kind, _ in found if step_type not in PICTURE_STEPS[kind]]
+    if len(found) > 1:
+        out.append(f"{file}: step {step_no} has {len(found)} pictures or diagrams; keep one per step")
+    return out
+
+
 def _picture_names(kind: str) -> set[str] | None:
     f = ROOT / _PICTURE_FILES[kind]
     if not f.is_file():
@@ -156,6 +171,7 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
         errors.extend(_picture_errors(ch.file, "\n".join(s.markdown for s in steps)))
         for i, s in enumerate(steps, 1):
             errors.extend(_picture_code_errors(ch.file, i, s.markdown))
+            errors.extend(_picture_place_errors(ch.file, i, s.type, s.markdown))
             if s.type in ("concept", "example") and _words(s.markdown) > CONCEPT_MAX_WORDS:
                 warnings.append(f"{ch.file}: step {i} ({s.type}) has {_words(s.markdown)} words of text, keep it under {CONCEPT_MAX_WORDS}")
         if ch.minutes is None or not 8 <= ch.minutes <= 25:

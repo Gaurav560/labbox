@@ -328,3 +328,15 @@ def test_code_in_a_picture_must_be_in_a_code_block(labs_dir: Path):
     assert errors(labs_dir / "java-basics") == []
     ch.write_text(good.replace('phones.get("Riya")                     //', 'phones.get(name)                       //'))  # the code block only
     assert any("'phones.get(\"Riya\")' in a picture" in e for e in errors(labs_dir / "java-basics"))
+
+
+def test_pictures_only_where_ideas_are_taught(labs_dir: Path):
+    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    good = ch.read_text()
+    # A picture on a task step pushes the task down: refused.
+    ch.write_text(good.replace(':::step{type=task task=greet title="Warm-up: greet someone"}',
+                               ':::step{type=task task=greet title="Warm-up: greet someone"}\n:::picture{name="fork-in-road"}\nx\n:::'))
+    assert any("(task) has a picture" in e for e in errors(labs_dir / "java-basics"))
+    # Two figures on one step: refused.
+    ch.write_text(good.replace(':::picture{name="recipe-card"}', ':::picture{name="egg-box"}\nx\n:::\n\n:::picture{name="recipe-card"}'))
+    assert any("keep one per step" in e for e in errors(labs_dir / "java-basics"))

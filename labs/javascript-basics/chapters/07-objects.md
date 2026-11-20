@@ -7,10 +7,6 @@ name, each with its own label.
 In `objects/cart.js`, add up a shopping cart, and make a discounted copy of an item without changing
 the original.
 :::
-
-:::picture{name="shopping-cart" concept="An object is a record with labels"}
-The name, price and quantity on one cart line describe one item.
-:::
 :::
 
 :::step{type=concept title="An object is a record with labels"}
@@ -72,8 +68,12 @@ itemCount(cart)   // 3
 
 `cartTotal` is the same loop, adding each line's price times its quantity instead.
 
-:::picture{name="basket-count" concept="Arrays of objects"}
-The item count adds quantities across the cart rows.
+:::trace{title="itemCount(cart)"}
+| line | line.qty | count | note |
+|---|---|---|---|
+|  |  | 0 | Before the loop: count starts at zero. |
+| tea | 2 | 2 | The first line is an object; line.qty reads its quantity. |
+| bun | 1 | 3 | 2 + 1 = 3. No lines left: the answer is 3. |
 :::
 :::
 
@@ -95,10 +95,6 @@ a key name (`item.prcie`) quietly gives `undefined` too.
 ```bash run
 node -e 'const item = { name: "tea", price: 20 }; console.log(item.name, item.colour, Object.keys(item), { ...item, price: 18 }, item)'
 ```
-
-:::picture{name="missing-field" concept="An object is a record with labels"}
-Looking up a field that was never filled in gives a missing value.
-:::
 :::
 
 :::step{type=task task=cart_total title="Warm-up: the cart total"}
@@ -106,10 +102,6 @@ In `objects/cart.js`, make `cartTotal(cart)` add up `price * qty` for every line
 
 - `cartTotal([{ name: "tea", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }])` returns `55`
 - `cartTotal([])` returns `0`
-
-:::picture{name="line-subtotals" concept="Arrays of objects"}
-Work out each line subtotal before adding the next line to the bill.
-:::
 :::
 
 :::step{type=concept title="Copy, then change"}
@@ -137,10 +129,6 @@ Make `withDiscount(item, percent)` return a **new** item with the price lowered 
 to two decimals, keeping every other field, and leaving `item` exactly as it was:
 
 - `withDiscount({ name: "tea", price: 20 }, 10)` returns `{ name: "tea", price: 18 }`
-
-:::picture{name="two-price-tags" concept="Copy, then change"}
-A discount changes the price on the new tag while the other fields come across intact.
-:::
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -182,8 +170,4 @@ It came from JavaScript's object syntax, with stricter rules: keys in double quo
 - Real data is often an array of objects; loop over it with `for...of`.
 - `b = a` shares an object; `{ ...a, key: value }` makes a changed copy.
 - A missing key gives `undefined`, not an error.
-
-:::picture{name="one-price-tag" concept="Copy, then change"}
-Two names that point to the same tag both see a price edit on that tag.
-:::
 :::

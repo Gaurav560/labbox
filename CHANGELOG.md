@@ -1,5 +1,15 @@
 # Changelog
 
+## Fewer, better pictures: one per idea, where it is taught
+
+- JavaScript from zero went from 114 pictures (9 per chapter, on tasks, recaps and try steps too) to
+  39: one per concept, on the step that teaches it, plus two cooks on the async example. Pictures on
+  task steps pushed the task and its Check button out of view; three drawings per idea repeated it.
+- Seven worked examples gained a "watch it run" trace instead (the average, a sorted copy, a cart
+  total, filter then map, three inputs to parseQuantity, a class refusing a bad step, line numbers).
+- The validator enforces where pictures go (concept and example steps; diagrams also on try steps;
+  one per step), and `CONTENT_STANDARD.md` explains why. 75 unused drawings were removed.
+
 ## Product and architecture audit (20 November 2026)
 
 - Reviewed the learning workflow, execution environments, progress tracking and visualizations across 17 labs, 85 chapters and 176 tasks.
