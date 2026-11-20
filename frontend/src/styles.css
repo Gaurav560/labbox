@@ -1249,3 +1249,32 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   .adm-funnel .adm-bar, .adm-funnel-drop { grid-column: 1 / -1; }
   .adm-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- lesson: history cards and diagrams (Content standard) ---------- */
+.step-history .history-box { border-radius: 10px; padding: 12px 14px; margin: 12px 0; border: 1px solid var(--border); background: color-mix(in srgb, var(--panel) 85%, transparent); }
+.history-label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.history-box > :last-child, .history-usedby > :last-child { margin-bottom: 0; }
+.history-before { border-left: 3px solid #8b949e !important; }
+.history-solved { border-left: 3px solid #5048b8 !important; }
+.history-funfact { border-left: 3px solid #d29922 !important; }
+.history-timeline ul, .history-timeline ol { list-style: none; margin: 14px 0; padding: 0 0 0 18px; border-left: 2px solid color-mix(in srgb, #5048b8 55%, var(--border)); }
+.history-timeline li { position: relative; margin: 0 0 12px; padding-left: 6px; line-height: 1.55; }
+.history-timeline li:last-child { margin-bottom: 0; }
+.history-timeline li::before { content: ""; position: absolute; left: -25px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #5048b8; box-shadow: 0 0 0 3px var(--panel); }
+.history-timeline li strong:first-child { display: inline-block; min-width: 3.2em; color: var(--text); font-variant-numeric: tabular-nums; }
+.history-usedby { margin: 12px 0; }
+.history-usedby ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.history-usedby li { padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 13px; background: color-mix(in srgb, var(--panel) 70%, transparent); }
+.diagram { margin: 14px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+.diagram svg { display: block; width: 100%; height: auto; max-width: 440px; margin: 0 auto; }
+.diagram figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); text-align: center; }
+.diagram figcaption p { margin: 0; }
+.dg-box rect { fill: var(--panel); stroke: var(--border); stroke-width: 1.5; }
+.dg-box.dg-accent rect { fill: color-mix(in srgb, #5048b8 22%, var(--panel)); stroke: #5048b8; }
+.dg-box text { fill: var(--text); font: 600 15px var(--font-code); }
+.dg-arrow { stroke: var(--muted); stroke-width: 1.8; }
+.dg-head { fill: var(--muted); }
+.dg-note { fill: var(--muted); font: 12px var(--font-code); }
+.res-message.res-good { color: var(--text); border-left: 3px solid #3fb950; padding-left: 10px; }
+/* Lesson code shows exactly what to type: no ligatures (">=" must not turn into a single symbol). */
+.code-card pre, .code-card code, .lesson-scroll code, .predict-option code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }

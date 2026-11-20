@@ -9,6 +9,64 @@ number is even. Real tests check each one.
 :::
 :::
 
+:::step{type=history title="The story of Python"}
+Python is one of the most used programming languages in the world. It started as one person's
+holiday project.
+
+:::before{title="Before Python"}
+In the late 1980s, programmers mostly chose between **C**, which is fast but needs long, careful code
+where one memory mistake crashes the program, and **shell scripts**, which are quick to write but turn
+messy beyond a few lines. Guido van Rossum, a programmer at the CWI research institute in Amsterdam,
+kept hitting jobs that were too awkward for a shell script and too slow to write in C.
+:::
+
+:::solved
+A language that is as **quick to write** as a script, **powerful enough** for real programs, and above
+all **easy to read**. Python code is read far more often than it is written, so it looks almost like
+plain English, and its indentation is part of the language.
+:::
+
+:::timeline
+- **1989** Guido starts Python as a hobby project over the Christmas holidays.
+- **1991** The first public release, version 0.9.0.
+- **2000** Python 2.0 adds list comprehensions and a new garbage collector.
+- **2008** Python 3.0 cleans up old design mistakes, even though old code needs changes to run.
+- **2020** Python 2 reaches end of life; Python 3 is the only Python.
+:::
+
+Today Python is maintained by the **Python Software Foundation**, a non-profit, and a worldwide team of
+volunteer core developers led by an elected **steering council**. Guido led the language for almost
+30 years as its "Benevolent Dictator For Life" and stepped down from that role in 2018.
+
+:::usedby{title="Industries"}
+- AI and machine learning
+- Data science
+- Web backends
+- Automation and DevOps
+- Science and research
+- Teaching
+:::
+
+:::usedby{title="Used at"}
+- Instagram
+- YouTube
+- Spotify
+- Netflix
+- Dropbox
+- NASA
+:::
+
+:::funfact
+Python is named after the British comedy show *Monty Python's Flying Circus*, not the snake. Type
+`import this` in Python to read "The Zen of Python", the short poem of design rules the language
+follows.
+:::
+
+```bash run
+python3 -c "import this" | head -9
+```
+:::
+
 :::step{type=concept title="What a function is"}
 ## Your first functions
 

@@ -51,6 +51,8 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
                 )}
               </div>
               {!r.passed && <p className="res-message">{r.message}</p>}
+              {/* Passes can teach too (Content standard): show a pass message when the check wrote one. */}
+              {r.passed && r.message && r.message !== "ok" && <p className="res-message res-good">{r.message}</p>}
               {!r.passed && r.expected != null && (
                 <div className="expected-got">
                   <div>

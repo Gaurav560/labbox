@@ -12,7 +12,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-StepType = Literal["story", "concept", "example", "predict", "try", "task", "incident", "recap", "deep-dive", "design"]
+StepType = Literal["story", "concept", "example", "predict", "try", "task", "incident", "recap", "deep-dive", "design", "history"]
 STEP_TYPES: tuple[str, ...] = StepType.__args__  # type: ignore[attr-defined]
 
 _FENCE_RE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")

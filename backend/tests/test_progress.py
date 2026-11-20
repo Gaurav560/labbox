@@ -12,6 +12,16 @@ from app.main import app
 LAB, CH = "python-basics", "01-functions"
 
 
+def _ch1_steps():
+    """Python from zero, chapter 1, parsed from its file: tests find steps by type, not by number, so the
+    lesson can grow (a history step, more examples) without breaking them."""
+    from pathlib import Path
+
+    from app.lessons import parse_steps
+
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+
+
 @pytest.fixture(scope="module")
 def client() -> TestClient:
     # No lifespan (it would start the Docker reaper): load labs and the schema directly.
@@ -48,11 +58,12 @@ def test_step_position(client: TestClient):
     h = auth(client)
     url = f"/api/labs/{LAB}/chapters/{CH}/progress"
     first = client.get(url, headers=h).json()
-    assert first == {"current_step": 0, "step_count": 9, "hints": {}, "predicts": {}, "xp_earned": 0, "designs": {}}
+    n = len(_ch1_steps())
+    assert first == {"current_step": 0, "step_count": n, "hints": {}, "predicts": {}, "xp_earned": 0, "designs": {}}
     assert client.put(url, json={"current_step": 4}, headers=h).json()["current_step"] == 4
     assert client.get(url, headers=h).json()["current_step"] == 4
     # Past the end is clamped to the last step; negative is rejected.
-    assert client.put(url, json={"current_step": 99}, headers=h).json()["current_step"] == 8
+    assert client.put(url, json={"current_step": 99}, headers=h).json()["current_step"] == n - 1  # clamped to the last step
     assert client.put(url, json={"current_step": -1}, headers=h).status_code == 422
     # Another user starts at 0.
     assert client.get(url, headers=auth(client)).json()["current_step"] == 0

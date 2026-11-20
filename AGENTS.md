@@ -1,7 +1,7 @@
 # Notes for coding agents working on LabBox by Telusko
 
 Read this first, then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
-`labbox-v2-upgrade-spec.md` (the full spec). `README.md` explains how to run, test and author labs.
+`labbox-v2-upgrade-spec.md` (the full spec). **Every course follows `CONTENT_STANDARD.md`.** `README.md` explains how to run, test and author labs.
 
 Naming: **LabBox** is the product, **Telusko** the parent company. Write "LabBox by Telusko" in
 titles, "LabBox" in product text, "Telusko" for the company (legal pages, copyright). All names and

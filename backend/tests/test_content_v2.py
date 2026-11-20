@@ -17,7 +17,17 @@ from app.main import app
 
 LABS_DIR = Path(__file__).resolve().parents[2] / "labs"
 LAB, CH = "python-basics", "01-functions"
-PREDICT_STEP = 2  # "Guess first" in python-basics
+
+def _ch1_steps():
+    """Python from zero, chapter 1, parsed from its file: tests find steps by type, not by number, so the
+    lesson can grow (a history step, more examples) without breaking them."""
+    from pathlib import Path
+
+    from app.lessons import parse_steps
+
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+
+PREDICT_STEP = next(i for i, s in enumerate(_ch1_steps()) if s.type == "predict")  # "Guess first"
 EXPLAIN_TEXT = "Python's way of saying"
 
 
@@ -191,7 +201,8 @@ def test_outline(client: TestClient):
     out = client.get(f"/api/labs/{LAB}/chapters/{CH}/outline", headers=auth(client)).json()
     assert out["steps"][0] == {"type": "story", "title": "Why start with functions", "task": None}
     assert [s["task"] for s in out["steps"] if s["type"] == "task"] == ["greet", "add", "is_even"]
-    assert len(out["steps"]) == 9
+    assert out["steps"][1] == {"type": "history", "title": "The story of Python", "task": None}
+    assert len(out["steps"]) == 10
     assert client.get(f"/api/labs/{LAB}/chapters/{CH}/outline").status_code == 401
 
 

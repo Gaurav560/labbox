@@ -1,8 +1,9 @@
 /*
  * Renders one step's markdown, including the directives of the v2 chapter format:
  * :::character{name role}, :::mission, :::tip, :::warning, :::why, :::mistake,
- * :::deep-dive, :::incident{minutes}. A code fence with the `run` attribute
- * (```bash run) gets a Run in terminal button.
+ * :::deep-dive, :::incident{minutes}, and for history steps :::before, :::solved, :::timeline,
+ * :::usedby and :::funfact; :::diagram{name} draws a built-in picture (Diagrams.tsx). A code fence
+ * with the `run` attribute (```bash run) gets a Run in terminal button.
  */
 import type { Element, ElementContent } from "hast";
 import type { Root } from "mdast";
@@ -11,6 +12,7 @@ import Markdown, { type Components } from "react-markdown";
 import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
 import CodeBlock from "./CodeBlock";
+import Diagram from "./Diagrams";
 import Countdown from "./Countdown";
 
 const CALLOUT_LABELS: Record<string, string> = {
@@ -19,7 +21,15 @@ const CALLOUT_LABELS: Record<string, string> = {
   why: "Why this matters",
   mistake: "Common mistake",
 };
-const BLOCKS = new Set(["character", "mission", "deep-dive", "incident", "question", "explain", ...Object.keys(CALLOUT_LABELS)]);
+const HISTORY_LABELS: Record<string, string> = {
+  before: "Before it existed",
+  solved: "The problem it solved",
+  funfact: "Fun fact",
+};
+const BLOCKS = new Set([
+  "character", "mission", "deep-dive", "incident", "question", "explain", "timeline", "usedby", "diagram",
+  ...Object.keys(CALLOUT_LABELS), ...Object.keys(HISTORY_LABELS),
+]);
 
 /** Turn directives into <div data-directive=...> and keep code fence meta (```bash run). */
 function remarkLessonBlocks() {
@@ -138,6 +148,27 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
           {children}
         </div>
       );
+    case "before":
+    case "solved":
+    case "funfact":
+      return (
+        <aside className={`history-box history-${kind}`}>
+          <div className="history-label">{p.dataTitle ?? HISTORY_LABELS[kind]}</div>
+          {children}
+        </aside>
+      );
+    case "timeline":
+      // A plain markdown list ("- **1991**: first release") drawn as a timeline.
+      return <div className="history-timeline">{children}</div>;
+    case "usedby":
+      return (
+        <div className="history-usedby">
+          <div className="history-label">{p.dataTitle ?? "Where it is used"}</div>
+          {children}
+        </div>
+      );
+    case "diagram":
+      return <Diagram name={p.dataName ?? ""} caption={children} />;
     case "question":
     case "explain":
     case "unknown":

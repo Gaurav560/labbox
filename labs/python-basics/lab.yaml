@@ -121,18 +121,18 @@ chapters:
     file: chapters/06-lists.md
     minutes: 15
     tasks:
+      - id: remove_duplicates
+        title: "lists.py: warm-up, each item once"
+        hints:
+          - "Build a new list and only add an item if it is not in the new list yet."
+          - "The in operator tells you whether an item is already in a list."
+          - "A set would lose the order, so loop over the items in their original order."
       - id: top_n
         title: "lists.py: the n biggest numbers"
         hints:
           - "sorted() gives back a new sorted list and leaves the original alone; list.sort() changes the original."
           - "sorted(numbers, reverse=True) puts the biggest first."
           - "A slice [:n] keeps the first n items, and asking for more than the list has is fine."
-      - id: remove_duplicates
-        title: "lists.py: remove duplicates, keep the order"
-        hints:
-          - "Build a new list and only add an item if it is not in the new list yet."
-          - "The in operator tells you whether an item is already in a list."
-          - "A set would lose the order, so loop over the items in their original order."
   - id: 07-dictionaries
     title: Dictionaries
     file: chapters/07-dictionaries.md

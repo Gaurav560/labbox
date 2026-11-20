@@ -207,7 +207,9 @@ services). Decisions needed from you before building:
 
 The flagship labs should reach 8 to 12 chapters. **Under way (20 November): every lab becomes a full
 course, one by one** (order: Python, Java, Spring Boot, SQL, Postgres, JavaScript, Express, FastAPI, Go,
-Linux, Git, system design). Beginner courses are plain; advanced courses start with a story. Python from
+Linux, Git, system design). Beginner courses are plain; advanced courses start with a story. Every course follows
+`CONTENT_STANDARD.md` (history in chapter 1, worked examples, easy wins, quick checks, kind checks); the
+pilot is Python chapters 1 and 6, then the standard is applied to all of Python and Go. Python from
 zero (13 chapters, 27 tasks) and Go from zero (13 chapters, 26 tasks) are complete; next: Python in
 practice (python-collections, with a story), then the others in order.
 

@@ -1,5 +1,24 @@
 # Changelog
 
+## The LabBox teaching standard, and its pilot in Python from zero
+
+- `CONTENT_STANDARD.md`: the owner's bar (world class, yet calm and confidence-building) as a checklist:
+  plain style for beginner courses and a simple story for advanced ones; **history in every course**
+  (the world before, who built it and when, the problem it solved, a timeline, who maintains it, where
+  it is used, a fun fact; accurate facts only); each chapter as why, idea, **worked example**, guess
+  first, try it, **easy-win task**, next idea with a **picture**, stretch task, **two quick checks**, go
+  deeper, recap; failures that say what happened, why and what to try; passes that teach.
+- New `history` step type (additive) with blocks `:::before`, `:::solved`, `:::timeline` (a list drawn
+  as a timeline), `:::usedby` (chips) and `:::funfact`; `:::diagram{name}` draws built-in pictures in
+  the theme's colours (the first: "two names, one list").
+- The results drawer shows a pass message when a check wrote one (green edge), not only failures.
+- Lesson code shows exactly what to type: font ligatures off, so `>=` never turns into one symbol.
+- Pilot: Python chapter 1 gains "The story of Python"; chapter 6 (Lists) is rewritten to the standard
+  (worked example, warm-up first, the diagram, two quick checks, kinder checks that recognise a set
+  losing the order, a list that still has duplicates, sorting the caller's list, smallest first, and
+  a missing return). Tests now find lesson steps by type instead of by number, so lessons can grow.
+  Tests: 261 on Postgres and Redis, 257 on SQLite, 15 browser tests, 16 labs valid.
+
 ## Go from zero: the whole course in one go (13 chapters, 26 tasks)
 
 - `go-basics` is now **Go from zero** (same id; plain style, everyday examples, no story). The two

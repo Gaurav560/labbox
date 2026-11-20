@@ -132,7 +132,37 @@ run_cases("count_words", fn, err, [
 ])
 
 # ---------- chapter 6: lists ----------
+# Content standard: a failure says what happened, why, and what to try; a pass says what went right.
 lst_mod, lst_err = load("lists")
+
+fn, err = get_func(lst_mod, lst_err, "remove_duplicates")
+if fn is None:
+    report("remove_duplicates", False, err)
+else:
+    try:
+        for items, expected in [([3, 1, 3, 2, 1], [3, 1, 2]), (["tea", "coffee", "tea"], ["tea", "coffee"]), ([], []),
+                                ([5, 5, 5], [5]), ([2, 1], [2, 1])]:
+            got = fn(list(items))
+            if got == expected:
+                continue
+            call = f"remove_duplicates({items!r})"
+            if got is None:
+                msg = f"{call} gave None. Nearly there: the function needs to return the new list at the end."
+            elif sorted(map(str, got)) == sorted(map(str, expected)) and got != expected:
+                msg = (f"{call} gave {got!r}: the right items, but in a different order. A set loses the order; "
+                       "build the result with a loop and append, as in the worked example.")
+            elif len(got) > len(expected):
+                msg = f"{call} gave {got!r}: some items appear twice. Append an item only when it is not in the result yet."
+            else:
+                msg = f"{call} gave {got!r}, but it should be {expected!r}."
+            report("remove_duplicates", False, msg, repr(expected), repr(got))
+            break
+        else:
+            report("remove_duplicates", True, "Nice: each item once, and the original order kept. That loop-and-append "
+                   "pattern is one you will use in almost every program.")
+    except Exception as e:
+        traceback.print_exc()
+        report("remove_duplicates", False, f"remove_duplicates raised {type(e).__name__}: {e}. See Output for the line.")
 
 fn, err = get_func(lst_mod, lst_err, "top_n")
 if fn is None:
@@ -142,22 +172,31 @@ else:
         marks = [72, 45, 90, 66]
         got = fn(marks, 2)
         if marks != [72, 45, 90, 66]:
-            report("top_n", False, f"top_n changed the list it was given: it is now {marks}. Use sorted(), not .sort().",
+            report("top_n", False, f"top_n gave the right kind of answer, but it changed the list it was given: the caller's "
+                   f"list is now {marks}. .sort() sorts the list itself; sorted() makes a new one. Try sorted().",
                    "[72, 45, 90, 66]", repr(marks))
         else:
-            run_cases("top_n", fn, None, [
-                (([72, 45, 90, 66], 2), [90, 72]), (([5, 1], 5), [5, 1]), (([3, 1, 2], 0), []), (([], 3), []),
-                (([4, 4, 1], 2), [4, 4]),
-            ])
+            for args, expected in [(([72, 45, 90, 66], 2), [90, 72]), (([5, 1], 5), [5, 1]), (([3, 1, 2], 0), []),
+                                   (([], 3), []), (([4, 4, 1], 2), [4, 4])]:
+                got = fn(*args)
+                if got != expected:
+                    call = f"top_n({args[0]!r}, {args[1]!r})"
+                    if got is None:
+                        msg = f"{call} gave None. .sort() returns None: return the sorted list itself (or use sorted())."
+                    elif isinstance(got, list) and got and got == sorted(args[0])[: args[1]]:
+                        msg = f"{call} gave {got!r}: smallest first. Ask sorted() for the biggest first with reverse=True."
+                    elif isinstance(got, list) and len(got) != len(expected):
+                        msg = f"{call} gave {len(got)} numbers but should give {len(expected)}. A slice like [:n] keeps the first n."
+                    else:
+                        msg = f"{call} gave {got!r}, but it should be {expected!r}."
+                    report("top_n", False, msg, repr(expected), repr(got))
+                    break
+            else:
+                report("top_n", True, "Well done: the biggest first, and the caller's list left exactly as it was. "
+                       "Leaving inputs alone is a habit good developers are known for.")
     except Exception as e:
         traceback.print_exc()
-        report("top_n", False, f"top_n raised {type(e).__name__}: {e}")
-
-fn, err = get_func(lst_mod, lst_err, "remove_duplicates")
-run_cases("remove_duplicates", fn, err, [
-    (([3, 1, 3, 2, 1],), [3, 1, 2]), ((["tea", "coffee", "tea"],), ["tea", "coffee"]), (([],), []),
-    (([5, 5, 5],), [5]), (([2, 1],), [2, 1]),
-])
+        report("top_n", False, f"top_n raised {type(e).__name__}: {e}. See Output for the line.")
 
 # ---------- chapter 7: dictionaries ----------
 dct_mod, dct_err = load("dict_tools")

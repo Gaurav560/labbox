@@ -22,6 +22,17 @@ ROOT = Path(__file__).resolve().parents[2]
 D = date(2026, 11, 18)  # a Wednesday
 
 
+
+def _ch1_steps():
+    """Python from zero, chapter 1, parsed from its file: tests find steps by type, not by number, so the
+    lesson can grow (a history step, more examples) without breaking them."""
+    from pathlib import Path
+
+    from app.lessons import parse_steps
+
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+
+
 def days(*offsets: int, xp: int = 20) -> dict[date, int]:
     return {D + timedelta(days=o): xp for o in offsets}
 
@@ -149,11 +160,12 @@ def test_check_awards_task_chapter_and_lab_once(client: TestClient):
 def test_predict_first_try_bonus(client: TestClient):
     url = "/api/labs/python-basics/chapters/01-functions/predict"
     h, _ = signup(client)
-    right = client.post(url, json={"step": 2, "choice": 2}, headers=h).json()
+    step = next(i for i, s in enumerate(_ch1_steps()) if s.type == "predict")
+    right = client.post(url, json={"step": step, "choice": 2}, headers=h).json()
     assert right["xp_awarded"] == [{"kind": "predict", "amount": 10, "label": "Right first time"}]
     h2, _ = signup(client)
-    client.post(url, json={"step": 2, "choice": 0}, headers=h2)
-    assert client.post(url, json={"step": 2, "choice": 2}, headers=h2).json()["xp_awarded"] == []
+    client.post(url, json={"step": step, "choice": 0}, headers=h2)
+    assert client.post(url, json={"step": step, "choice": 2}, headers=h2).json()["xp_awarded"] == []
     assert client.get("/api/me/stats", headers=h2).json()["xp_total"] == 0
 
 

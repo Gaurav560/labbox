@@ -53,13 +53,17 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   expect(chapterJson).not.toContain("[x]");
   expect(chapterJson).not.toContain('"answer"');
   expect(chapterJson).not.toContain("way of saying");
-  await expect(stepCount(page)).toHaveText("Step 1 of 9");
+  await expect(stepCount(page)).toHaveText("Step 1 of 10");
   await expect(page.locator(".step-kind")).toHaveText("Story");
   await expect(page.locator(".mission")).toContainText("Write three small functions");
 
-  // Keyboard: right arrow to the predict step.
+  // Keyboard: right arrow to the history card, then on to the predict step.
   await page.keyboard.press("ArrowRight");
-  await expect(stepCount(page)).toHaveText("Step 2 of 9");
+  await expect(stepCount(page)).toHaveText("Step 2 of 10");
+  await expect(page.locator(".step-kind")).toHaveText("History");
+  await expect(page.locator(".history-timeline li")).toHaveCount(5);
+  await expect(page.locator(".history-before")).toContainText("Guido van Rossum");
+  await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowRight");
   await expect(page.locator(".step-kind")).toHaveText("Predict");
 
@@ -83,14 +87,14 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
 
   // Step through everything else to the recap with the keyboard (focus back on the page first).
   await page.locator(".step-card").click();
-  for (let i = 5; i <= 9; i++) {
+  for (let i = 6; i <= 10; i++) {
     await page.keyboard.press("ArrowRight");
-    await expect(stepCount(page)).toHaveText(`Step ${i} of 9`);
+    await expect(stepCount(page)).toHaveText(`Step ${i} of 10`);
   }
   await expect(page.locator(".step-kind")).toHaveText("Recap");
   await expect(page.locator(".recap-status")).toContainText("3 tasks still need to pass");
   await page.keyboard.press("ArrowLeft");
-  await expect(stepCount(page)).toHaveText("Step 8 of 9");
+  await expect(stepCount(page)).toHaveText("Step 9 of 10");
 
   // Hint ladder on the greet task (task chip jumps to its step).
   await page.locator(".task-chip", { hasText: "greet" }).click();
@@ -124,7 +128,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
   // A fully passed chapter jumps to the recap.
-  await expect(stepCount(page)).toHaveText("Step 9 of 9");
+  await expect(stepCount(page)).toHaveText("Step 10 of 10");
   await expect(page.locator(".recap-status")).toContainText("Chapter complete");
   await page.getByRole("button", { name: "Close results" }).click();
 
@@ -146,11 +150,11 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   // A finished chapter 1 means the lab now opens on chapter 2; chapter 1 still remembers its step.
   await expect(page.locator("#chapter-select")).toHaveValue("02-numbers-and-text");
   await page.locator("#chapter-select").selectOption("01-functions");
-  await expect(stepCount(page)).toHaveText("Step 9 of 9");
+  await expect(stepCount(page)).toHaveText("Step 10 of 10");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
   // The answered predict is still answered (it comes from the server).
-  await page.getByRole("button", { name: "Step 3: Guess first" }).click();
+  await page.getByRole("button", { name: "Step 4: Guess first" }).click();
   await expect(page.locator(".predict-explain")).toContainText("way of saying");
   await expect(page.locator(".predict-option.is-wrong")).toContainText("An error");
 
