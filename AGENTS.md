@@ -1,6 +1,6 @@
 # Notes for coding agents working on LabBox by Telusko
 
-Read this first, then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
+Read this first, then `HANDOFF.md` (where the last session stopped, file by file), then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
 `labbox-v2-upgrade-spec.md` (the full spec). **Every course follows `CONTENT_STANDARD.md`.** `README.md` explains how to run, test and author labs.
 
 Naming: **LabBox** is the product, **Telusko** the parent company. Write "LabBox by Telusko" in
