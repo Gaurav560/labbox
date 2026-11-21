@@ -57,7 +57,7 @@ function LabTile({ lab, to }: { lab: CatalogLab; to: string }) {
       <div className="h-lab-img">{lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : null}</div>
       <div className="h-lab-text">
         <strong>{lab.title}</strong>
-        <span>{TRACKS.find((t) => t.id === lab.track)?.title ?? lab.track} · {lab.estimated_minutes} min</span>
+        <span>{TRACKS.find((t) => t.id === lab.track)?.title ?? lab.track}</span>
       </div>
     </Link>
   );

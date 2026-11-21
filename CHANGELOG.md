@@ -1,5 +1,17 @@
 # Changelog
 
+## Dashboard: the Continue card as a tape deck; no course times on lab cards
+
+- The owner: lab cards no longer show a course's total time (a long one can feel overwhelming); the dashboard
+  and home page tiles show track and level only. Chapter minutes on skill maps stay.
+- The next-step card is styled after a red-and-silver cassette design the owner shared: a dark dotted panel
+  with red and grey bands on its edge, a bold title with a red italic initial, and a silver tape deck playing a
+  red cassette. The tape winds from the left reel to the right as the chapter goes on, and the reels turn while
+  you are mid-chapter. The keys work: previous chapter, the lab's skill map, Continue (the red play key) and next
+  chapter. It stays a dark device in the light theme. The chapter rail's current chapter is red to match.
+- The dashboard loads the next lab once and shares it between the card and the rail.
+
+
 ## Skill maps: every subtopic opens its lesson step; more depth
 
 - The owner: subtopics a little bigger, more 3D, and every subtopic clickable. Each subtopic on a station card is

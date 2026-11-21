@@ -28,11 +28,16 @@ export default function LabsPage() {
   const navigate = useNavigate();
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [next, setNext] = useState<NextStep | null>(null);
+  const [nextLab, setNextLab] = useState<LabDetail | null>(null);   // the lab of the next step (deck keys, rail)
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
     api.next().then(setNext).catch(() => {});
   }, [toast]);
+
+  useEffect(() => {
+    if (next) api.lab(next.lab_id).then(setNextLab).catch(() => setNextLab(null));
+  }, [next]);
 
   // Brand new learners start with the 60 second onboarding.
   useEffect(() => {
@@ -54,8 +59,8 @@ export default function LabsPage() {
       <div className={`labs-layout ${next ? "has-side" : ""}`}>
       {next && (
         <aside className="labs-side">
-          <NextCard next={next} />
-          <NextRail next={next} />
+          <NextCard next={next} lab={nextLab} />
+          {nextLab && <NextRail next={next} lab={nextLab} />}
         </aside>
       )}
       <main className="labs-main">
@@ -96,7 +101,7 @@ export default function LabsPage() {
                 </div>
                 <div className="h-lab-text">
                   <strong>{lab.title}</strong>
-                  <span>{TRACK_LABEL[lab.track] ?? lab.track}{lab.level ? ` · ${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : ""}{lab.estimated_minutes ? ` · ${lab.estimated_minutes} min` : ""}</span>
+                  <span>{TRACK_LABEL[lab.track] ?? lab.track}{lab.level ? ` · ${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : ""}</span>
                   <div className="h-lab-progress" title={`${done} of ${total} tasks`}>
                     <div className="h-lab-track"><div style={{ width: `${pct}%` }} /></div>
                     <span>{total && done === total ? "✓ Done" : done ? `${done} / ${total} tasks` : `${total} task${total === 1 ? "" : "s"} · ${lab.chapter_count} chapter${lab.chapter_count === 1 ? "" : "s"}`}</span>
@@ -112,31 +117,97 @@ export default function LabsPage() {
   );
 }
 
-/** The first thing on the dashboard: one clear next step. */
-function NextCard({ next }: { next: NextStep }) {
+/*
+ * The first thing on the dashboard: one clear next step, styled as a tape deck (owner, 21 November, after a
+ * red-and-silver cassette design): a dark dotted panel, a bold title with a red initial, and a silver deck playing a
+ * red cassette whose tape winds from the left reel to the right one as the chapter goes on. The keys work:
+ * previous chapter, the lab's skill map, Continue (the red play key) and next chapter.
+ */
+function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const cont = next.kind === "continue";
-  const pct = Math.round((100 * (next.step - 1)) / Math.max(1, next.steps));
+  const pct = cont ? Math.round((100 * (next.step - 1)) / Math.max(1, next.steps)) : 0;
+  const idx = lab?.chapters.findIndex((c) => c.id === next.chapter_id) ?? -1;
+  const prev = idx > 0 ? lab!.chapters[idx - 1] : null;
+  const after = lab && idx >= 0 && idx < lab.chapters.length - 1 ? lab.chapters[idx + 1] : null;
+  const chapterUrl = (id: string) => `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
+  const title = next.lab_title;
   return (
-    <section className={`next-card ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}>
+    <section className={`next-card deck-card ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}>
       <div className="next-text">
         <div className="next-kicker">{cont ? "Continue where you left off" : "Start here"}</div>
-        <h1 className="next-title">{next.lab_title}</h1>
+        <h1 className="next-title"><span className="deck-initial">{title.slice(0, 1)}</span>{title.slice(1)}</h1>
         <div className="next-where">
           Chapter {next.chapter_number} of {next.chapters}: {next.chapter_title}
           {cont && <> · step {next.step} of {next.steps}</>}
         </div>
-        {cont ? (
-          <div className="progress next-progress" role="progressbar" aria-label="Progress in this chapter" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-            <span className="progress-fill" style={{ width: `${pct}%` }} />
-          </div>
-        ) : (
-          next.reason && <p className="muted next-reason">{next.reason}</p>
-        )}
+        {!cont && next.reason && <p className="next-reason">{next.reason}</p>}
       </div>
-      <Link className="btn btn-primary next-go" to={`/labs/${next.lab_id}?chapter=${encodeURIComponent(next.chapter_id)}`}>
-        {cont ? "Continue →" : "Start the first chapter →"}
-      </Link>
+      <div className="deck">
+        <div className="deck-keys">
+          {prev ? <Link className="deck-key" to={chapterUrl(prev.id)} aria-label={`Previous chapter: ${prev.title}`} title={prev.title}>◀◀</Link>
+            : <span className="deck-key is-off" aria-hidden="true">◀◀</span>}
+          <Link className="deck-key" to={`/skills/${next.lab_id}`} aria-label="Skill map" title="Skill map">■</Link>
+          <Link className="deck-key deck-play next-go" to={chapterUrl(next.chapter_id)}>
+            <span aria-hidden="true">▶ </span>{cont ? "Continue →" : "Start the first chapter →"}
+          </Link>
+          {after ? <Link className="deck-key" to={chapterUrl(after.id)} aria-label={`Next chapter: ${after.title}`} title={after.title}>▶▶</Link>
+            : <span className="deck-key is-off" aria-hidden="true">▶▶</span>}
+        </div>
+        <div className="deck-body">
+          <div className="deck-window">
+            <Cassette progress={pct / 100} playing={cont} />
+          </div>
+          <div className="deck-label" role="progressbar" aria-label="Progress in this chapter" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+            <span className="deck-arrows" aria-hidden="true">⇄</span>
+            <span>Chapter {String(next.chapter_number).padStart(2, "0")} / {String(next.chapters).padStart(2, "0")}</span>
+            <span className={`deck-led ${cont ? "is-on" : ""}`} aria-hidden="true" />
+          </div>
+        </div>
+      </div>
     </section>
+  );
+}
+
+/** A red cassette: the tape winds from the left reel (to come) to the right one (done). */
+function Cassette({ progress, playing }: { progress: number; playing: boolean }) {
+  const left = 9 + 13 * (1 - progress);
+  const right = 9 + 13 * progress;
+  const reel = (cx: number, r: number) => (
+    <g>
+      <circle cx={cx} cy={50} r={r} fill="#2b0d10" />
+      <circle cx={cx} cy={50} r={r} fill="none" stroke="#000" strokeOpacity=".35" />
+      <g className={playing ? "deck-spin" : ""} style={{ transformOrigin: `${cx}px 50px` }}>
+        <circle cx={cx} cy={50} r={8.5} fill="#e9e9ea" />
+        <circle cx={cx} cy={50} r={8.5} fill="none" stroke="#9a9a9f" strokeWidth="1" />
+        {[0, 60, 120, 180, 240, 300].map((a) => (
+          <rect key={a} x={cx - 1.3} y={42.8} width={2.6} height={3.4} rx={0.6} fill="#8d8d93" transform={`rotate(${a} ${cx} 50)`} />
+        ))}
+        <circle cx={cx} cy={50} r={3} fill="#3a3a3f" />
+      </g>
+    </g>
+  );
+  return (
+    <svg className="cassette" viewBox="0 0 220 112" aria-hidden="true">
+      <defs>
+        <linearGradient id="cas-red" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f0283a" /><stop offset="1" stopColor="#a8071a" />
+        </linearGradient>
+        <linearGradient id="cas-glass" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity=".16" /><stop offset=".45" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="216" height="108" rx="9" fill="url(#cas-red)" />
+      <rect x="2" y="2" width="216" height="108" rx="9" fill="none" stroke="#5c0410" strokeWidth="2" />
+      <rect x="14" y="12" width="192" height="66" rx="6" fill="#c3121f" stroke="#7d0612" />
+      <rect x="44" y="30" width="132" height="40" rx="20" fill="#16070a" />
+      {reel(78, left)}
+      {reel(142, right)}
+      <rect x="98" y="38" width="24" height="24" rx="2" fill="#24090c" stroke="#5c0410" />
+      <path d="M 44 112 L 58 86 L 162 86 L 176 112 Z" fill="#8f0716" />
+      {[78, 100, 120, 142].map((x) => <circle key={x} cx={x} cy={99} r={3.2} fill="#3d0309" />)}
+      {[[10, 10], [210, 10], [10, 102], [210, 102]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r={2.4} fill="#5c0410" />)}
+      <rect x="2" y="2" width="216" height="108" rx="9" fill="url(#cas-glass)" />
+    </svg>
   );
 }
 
@@ -144,12 +215,7 @@ function NextCard({ next }: { next: NextStep }) {
  * The sidebar's long vertical rail: every chapter of the lab you are in, as a timeline. Done chapters are
  * ticked, the current one glows, upcoming ones are faint; each one opens that chapter.
  */
-function NextRail({ next }: { next: NextStep }) {
-  const [lab, setLab] = useState<LabDetail | null>(null);
-  useEffect(() => {
-    api.lab(next.lab_id).then(setLab).catch(() => setLab(null));
-  }, [next.lab_id]);
-  if (!lab) return null;
+function NextRail({ next, lab }: { next: NextStep; lab: LabDetail }) {
   return (
     <nav className="next-rail" aria-label={`Chapters of ${lab.title}`}>
       <div className="next-rail-head">
