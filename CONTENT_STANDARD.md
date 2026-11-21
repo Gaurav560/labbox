@@ -48,8 +48,11 @@ a new learner to grasp". Every new idea is **taught**, not announced, in small s
 validator's 120 words of prose; code does not count):
 
 1. **Why it exists**: the problem this idea solves, in one or two sentences, before any syntax.
-2. **Picture it**: an everyday comparison (a list is a numbered shelf, a reference is an address on
-   an envelope, a goroutine is a second cook in the kitchen).
+2. **What it is, technically**: a plain, precise definition and what happens at runtime (what the
+   framework, the language or the machine actually does), shown with a diagram or a trace of the real
+   mechanism when it is invisible. **Prefer plain technical explanation to analogy** (owner, 21
+   November: "plain simple technical explanations will be too good to understand"); use an everyday
+   comparison only rarely, where it genuinely makes a hard idea click.
 3. **In code**: a small sample walked through slowly, saying what each part does and why.
 4. **Careful**: the confusion beginners really have, named kindly, with how to spot it.
 5. **Check yourself**: one line the learner can answer in their head before moving on.
