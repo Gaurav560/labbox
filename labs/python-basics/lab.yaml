@@ -2,12 +2,12 @@ id: python-basics
 version: 2
 title: Python from zero
 subtitle: From your very first line of Python to files and command-line programs, one curious step at a time.
-description: Learn Python from the very first line to real programs that read files, handle bad input and run from the command line. Plain explanations, everyday examples and real tests.
+description: 'Learn Python from the very first line, with Pocket, a small money tracker you build chapter by chapter: functions, numbers and text, decisions, loops and finding bugs; strings, lists, dictionaries, sets, sorting and comprehensions; errors, files, classes, modules and pip, testing with pytest and a real command-line program. Every lesson starts with a question, shows real output, and ends with a task that is checked for you.'
 language: python
 track: languages
 tags: [python, beginner]
 level: beginner
-estimated_minutes: 400
+estimated_minutes: 815
 cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
@@ -560,8 +560,10 @@ chapters:
           gives: "prints nothing"
   - id: 13-capstone
     title: "Capstone: a monthly report"
-    file: chapters/13-capstone.md
-    minutes: 25
+    file: chapters/19-capstone.md
+    minutes: 60
+    folder: 19-capstone
+    part: Capstone
     tasks:
       - id: fix_budget
         title: "budget.py: warm-up, fix the inherited code"

@@ -12,18 +12,13 @@ every session.
    `cd backend && SIGNUPS_PER_IP_HOUR=1000 .venv/bin/uvicorn app.main:app --port 8000 --workers 4`.
    Frontend: `cd frontend && npm run dev`. Database and Redis: `scripts/devdb.sh`.
 2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (17 labs valid).
-3. **Next task: Python from zero rewrite, Part 2 "Working with data"** (owner, 22 November: rewrite every
-   language course, Python first, "with curiosity, like teaching a child one on one", animated, cool pictures,
-   fun tasks; CONTENT_STANDARD "Curiosity first"). Agreed syllabus, 19 chapters:
-   Part 1 Starting out (done): 1 first program, 2 functions, 3 numbers and text, 4 decisions, 5 loops, 6 bugs.
-   Part 2 Working with data (done): 7 strings (05-strings), 8 lists (06-lists), 9 dictionaries (07-dictionaries),
-   10 tuples and sets (08-tuples-and-sets), 11 sorting and comprehensions (new), 12 functions in depth (09).
-   Part 3 Real programs (done): 13 errors (10-errors), 14 files (11-files), 15 classes (new), 16 modules, pip and venvs
-   (new), 17 testing with pytest (new, own tests against a planted bug), 18 running a program (12).
-   Part 4: 19 capstone (13). Keep every chapter id and task id; give each chapter its numbered folder
-   (`folder:` in lab.yaml), move its checks from `tests/check.py` to `tests/checks.py`, and add its id to the
-   case list in `tests/run_checks.sh`. Capture every output in `labbox/python-basics:v1`. Then Java,
-   JavaScript, Go (a syllabus each, owner OK first). Python in practice waits (syllabus and name questions).
+3. **Python from zero is COMPLETE** (rewritten overnight 22 November at the owner's request, commits
+   `a731a19` Part 1, `f02beee` photos and notes, `1369412` Part 2, `56d1ebb` Part 3, then Part 4): 19 chapters,
+   39 tasks, one folder per chapter, Pocket as the running project, curiosity-first voice (CONTENT_STANDARD
+   "Curiosity first"), 7 playing diagrams, Wikimedia photos with credits and AI handwritten notes on every recap
+   (OpenAI key approved by the owner for Python lesson notes only). **Next:** the owner reviews Python; then the
+   Java, JavaScript and Go rewrites, each starting with a syllabus for the owner's OK (the overnight "do not ask"
+   was for Python only). Python in practice still waits for its syllabus and name answers.
 4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,
    25 browser tests, 17 labs valid, `scripts/labbox admin list` empty.
 

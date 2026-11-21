@@ -1,5 +1,16 @@
 # Changelog
 
+## 22 November: Python from zero rewrite, Part 4 "Capstone" (chapter 19); the course is complete
+
+- **19. Capstone: a monthly report** (`13-capstone`), in its own folder: fix inherited code first (a real
+  KeyError and a None from `.sort()`, three bugs in all), then build `monthly_report` from a written contract
+  (a table of every key), with a plan that maps each step to the chapter that taught it, and a "where to go
+  from here" Go deeper. Nothing is left at the top of the workspace: every chapter has its own folder.
+- **Python from zero is complete:** 19 chapters in four parts (Starting out, Working with data, Real programs,
+  Capstone), 39 tasks, about 13.5 hours (815 minutes), Pocket as the running project, curiosity-first voice,
+  7 playing diagrams, 3 real photos and 19 pages of handwritten notes. Every chapter id and task id from before
+  is kept, so learners' progress carries over.
+
 ## 22 November: Python from zero rewrite, Part 3 "Real programs" (chapters 13 to 18)
 
 - Overnight, at the owner's request. Each chapter in its own folder, every output captured in the lab image:
