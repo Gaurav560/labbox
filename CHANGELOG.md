@@ -1,5 +1,19 @@
 # Changelog
 
+## Skill maps: a separate section, and a neon 3D road for every lab
+
+- The owner: "keep a skill map section entirely separate, for each lab", in an open-world game style, "when a
+  new learner sees it says wow". An original world (no game's characters, logo or art), drawn in code with
+  three.js: a coastal highway at sunset with a striped sun on the horizon, the sea, palm trees, a lit city, stars,
+  neon pink and teal lane lines and bloom glow; by day in the light theme.
+- **Every lab has its own road** (`/skills/<lab>`): one roadside sign per chapter (number, title, state), a glow
+  ring on the road, and a light beam at "you are here". Our own rider on a scooter (helmet, LabBox backpack) waits
+  at your first unfinished chapter; choosing a stop (sign or list) rides there with a chase camera; the panel shows
+  the chapter with "Enter chapter". An intro swoop on arrival; no motion for people who turn motion off.
+- **The section** (`/skills`, "Skill maps" in the dashboard's top bar): a synthwave banner and a card per lab and
+  per track. Track maps use the same world (topics as stops). The earlier tile board is removed.
+- Tests: a browser test from the landing page to a lab's road and into a chapter.
+
 ## Skill maps become a 3D roadmap, and every topic opens its lab
 
 - The owner: "turn these into a real 3D fun roadmap, and every topic connects to the actual lab and can open it,

@@ -34,7 +34,9 @@ function lazyPage<T extends { default: React.ComponentType }>(load: () => Promis
 
 // The lab page pulls in Monaco and xterm, so load it only when needed.
 const LabPage = lazyPage(() => import("./pages/LabPage"));
-const TrackPage = lazyPage(() => import("./pages/TrackPage")); // React Flow is only needed here
+const TrackPage = lazyPage(() => import("./pages/TrackPage")); // three.js is only needed on map pages
+const SkillsPage = lazyPage(() => import("./pages/SkillsPage"));
+const LabMapPage = lazyPage(() => import("./pages/LabMapPage"));
 const AdminPage = lazyPage(() => import("./pages/AdminPage")); // only admins ever load it
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -58,6 +60,14 @@ export default function App() {
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><LabPage /></Suspense></RequireAuth>}
       />
       <Route path="/welcome" element={<RequireAuth><OnboardingPage /></RequireAuth>} />
+      <Route
+        path="/skills"
+        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><SkillsPage /></Suspense></RequireAuth>}
+      />
+      <Route
+        path="/skills/:labId"
+        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><LabMapPage /></Suspense></RequireAuth>}
+      />
       <Route
         path="/tracks/:track"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><TrackPage /></Suspense></RequireAuth>}

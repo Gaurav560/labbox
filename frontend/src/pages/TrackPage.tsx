@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type SkillMap, type SkillNode } from "../api";
+import type { Stop } from "../components/NeonWorld";
 import { useAuth } from "../auth";
 import { LogoMark } from "../components/Logo";
 import StatsBadges from "../components/StatsBadges";
@@ -16,7 +17,7 @@ import { usePhone } from "../usePhone";
  */
 
 // three.js is large: load it only when a skill map is opened.
-const Roadmap3D = lazy(() => import("../components/Roadmap3D"));
+const NeonWorld = lazy(() => import("../components/NeonWorld"));
 
 const STATE_LABEL = { done: "✓ Done", available: "Start", locked: "Locked", coming_soon: "Coming soon" } as const;
 
@@ -37,6 +38,21 @@ export default function TrackPage() {
   }, [track, toast]);
 
   const nodes = useMemo(() => map?.nodes ?? [], [map]);
+  // Topics in learning order (prerequisites first) as stops on the road; the first one you can start is "you are here".
+  const stops: Stop[] = useMemo(() => {
+    const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+    const depth: Record<string, number> = {};
+    const req = (id: string) => byId[id].requires.filter((r) => byId[r]);
+    const depthOf = (id: string): number => (depth[id] ??= req(id).length ? 1 + Math.max(...req(id).map(depthOf)) : 0);
+    const sorted = nodes.map((n, i) => ({ n, d: depthOf(n.id), i })).sort((a, b) => a.d - b.d || a.i - b.i).map((x) => x.n);
+    const firstOpen = sorted.findIndex((n) => n.state === "available");
+    return sorted.map((n, i) => ({
+      id: n.id,
+      number: String(i + 1).padStart(2, "0"),
+      title: n.title,
+      state: n.state === "done" ? "done" : n.state === "coming_soon" ? "soon" : n.state === "locked" ? "locked" : i === firstOpen ? "next" : "open",
+    }));
+  }, [nodes]);
   const node = nodes.find((n) => n.id === selected) ?? null;
   const done = nodes.filter((n) => n.state === "done").length;
   const show3d = !phone && !noWebGl;
@@ -45,7 +61,7 @@ export default function TrackPage() {
     <div className="track-page">
       <header className="topbar">
         <Link to="/" className="logo" aria-label="LabBox by Telusko home"><LogoMark size={24} /></Link>
-        <Link to="/labs" className="link">← Labs</Link>
+        <Link to="/skills" className="link">← Skill maps</Link>
         <span className="brand">{map?.title ?? track}</span>
         {map && <span className="muted small-text">{done} of {nodes.length} skills</span>}
         <span className="spacer" />
@@ -56,13 +72,10 @@ export default function TrackPage() {
         {map && show3d && (
           <div className="roadmap-stage">
             <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your roadmap...</div>}>
-              <Roadmap3D nodes={nodes} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
+              <NeonWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
             </Suspense>
-            <div className="roadmap-help muted small-text" aria-hidden="true">Drag to turn · scroll to zoom · click a tile</div>
-            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Reset view</button>
-            <div className="roadmap-legend small-text" aria-hidden="true">
-              <span className="lg lg-done" /> Done <span className="lg lg-available" /> Start here <span className="lg lg-locked" /> Locked <span className="lg lg-soon" /> Coming soon
-            </div>
+            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click a sign to ride there</div>
+            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Behind the rider</button>
           </div>
         )}
         {map && (

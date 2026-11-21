@@ -45,6 +45,7 @@ export default function LabsPage() {
     <div className="labs-page">
       <header className="topbar">
         <Logo to="/" />
+        <Link to="/skills" className="btn btn-small btn-ghost nav-skills">🗺 Skill maps</Link>
         <span className="spacer" />
         <ThemeButton />
         {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
