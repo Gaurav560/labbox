@@ -65,9 +65,11 @@ def _find(root: Path, chapter: Chapter, number: int, any_todo: bool = False, tas
 def chapter_focus(lab: LabConfig, chapter: Chapter, folder: Path | None) -> tuple[str, int] | None:
     number = next(i for i, c in enumerate(lab.chapters, 1) if c.id == chapter.id)
     for root in ([folder] if folder else []) + [lab.starter_dir]:
-        hit = _find(root, chapter, number)
-        if hit:
-            return hit
+        # The first task's TODO first: a chapter opens on its first task, not on whichever file sorts first.
+        for task in chapter.tasks:
+            hit = _find(root, chapter, number, task_ids=[task.id])
+            if hit:
+                return hit
     roots = ([folder] if folder else []) + [lab.starter_dir]
     if any((r / "README.md").is_file() for r in roots):
         return "README.md", 1

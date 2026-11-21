@@ -19,7 +19,7 @@ def _ch1_steps():
 
     from app.lessons import parse_steps
 
-    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/02-functions.md").read_text())
 
 
 @pytest.fixture(scope="module")
@@ -78,7 +78,7 @@ def test_unknown_lab_or_chapter(client: TestClient):
 def test_hint_ladder(client: TestClient):
     h = auth(client)
     url = f"/api/labs/{LAB}/chapters/{CH}/tasks/greet/hint"
-    hints = labs.get_lab(LAB).chapters[0].tasks[0].hints
+    hints = labs.get_lab(LAB).chapter(CH).tasks[0].hints
     xp = []
     for i in range(1, 4):
         r = client.post(url, headers=h).json()
@@ -90,7 +90,7 @@ def test_hint_ladder(client: TestClient):
 
     progress = client.get(f"/api/labs/{LAB}/chapters/{CH}/progress", headers=h).json()
     assert progress["hints"] == {"greet": hints}
-    task = client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"][0]["tasks"][0]
+    task = next(c for c in client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"] if c["id"] == CH)["tasks"][0]
     assert (task["id"], task["hint_count"], task["hints_used"], task["xp"]) == ("greet", 3, 3, 8)
 
 
@@ -104,7 +104,7 @@ def test_task_card_examples_are_served(client: TestClient):
     h = auth(client)
     tasks = client.get("/api/labs/java-basics", headers=h).json()["chapters"][0]["tasks"]
     assert tasks[0]["examples"][0] == {"call": 'greet("Asha")', "gives": '"Hello, Asha!"', "note": None}
-    py = client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"][0]["tasks"][0]
+    py = next(c for c in client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"] if c["id"] == CH)["tasks"][0]
     assert py["examples"][0]["call"] == 'greet("Asha")'
     other = client.get("/api/labs/sql-from-zero", headers=h).json()["chapters"][0]["tasks"][0]
     assert other["examples"] == []  # optional: tasks without a card still work

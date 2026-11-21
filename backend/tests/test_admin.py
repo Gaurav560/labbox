@@ -60,8 +60,8 @@ def test_funnel_follows_a_learner_down(api, admin):
     before = {f["key"]: f["count"] for f in api.get("/api/admin/funnel?window=7d", headers=admin).json()}
     with Session(engine) as s:
         s.add(Workspace(user_id=uid, lab_id="python-basics", container_name=f"lab-u{uid}-python-basics", volume_path="/tmp/x"))
-        s.add(TaskProgress(user_id=uid, lab_id="python-basics", task_id="greet", chapter_id="01-functions", passed=True))
-        s.add(ChapterProgress(user_id=uid, lab_id="python-basics", chapter_id="01-functions", completed_at=utcnow()))
+        s.add(TaskProgress(user_id=uid, lab_id="python-basics", task_id="hello_pocket", chapter_id="first-program", passed=True))
+        s.add(ChapterProgress(user_id=uid, lab_id="python-basics", chapter_id="first-program", completed_at=utcnow()))
         s.commit()
     steps = api.get("/api/admin/funnel?window=7d", headers=admin).json()
     after = {f["key"]: f["count"] for f in steps}
@@ -75,7 +75,7 @@ def test_funnel_follows_a_learner_down(api, admin):
 def test_step_events_give_time_per_step_and_quit_points(api, admin):
     h, uid = signup(api, "steps")
     for step in (0, 1, 2):
-        assert api.put("/api/labs/python-basics/chapters/01-functions/progress", json={"current_step": step}, headers=h).status_code == 200
+        assert api.put("/api/labs/python-basics/chapters/first-program/progress", json={"current_step": step}, headers=h).status_code == 200
     with Session(engine) as s:
         events = s.exec(select(AnalyticsEvent).where(AnalyticsEvent.user_id == uid).order_by(AnalyticsEvent.id)).all()
         assert [e.step_index for e in events] == [0, 1, 2]
@@ -83,7 +83,7 @@ def test_step_events_give_time_per_step_and_quit_points(api, admin):
         for i, e in enumerate(events):  # 90 s on step 0, 30 s on step 1
             e.created_at = base + timedelta(seconds=[0, 90, 120][i])
             s.add(e)
-        cp = s.exec(select(ChapterProgress).where(ChapterProgress.user_id == uid, ChapterProgress.chapter_id == "01-functions")).one()
+        cp = s.exec(select(ChapterProgress).where(ChapterProgress.user_id == uid, ChapterProgress.chapter_id == "first-program")).one()
         cp.updated_at = utcnow() - timedelta(days=3)  # left on step 2 three days ago
         s.add(cp)
         s.commit()
@@ -151,7 +151,7 @@ def test_admin_sees_and_stops_and_kills_machines(api, admin):
         assert api.post(f"/api/admin/machines/{name}", json={"action": "kill"}, headers=admin).status_code == 200
         assert api.get("/api/labs/python-basics/workspace/status", headers=h).json()["status"] == "missing"
         files = api.get("/api/labs/python-basics/files", headers=h)  # the learner's files are still there
-        assert files.status_code == 200 and any(f["name"] == "greet.py" for f in files.json())
+        assert files.status_code == 200 and any(f["name"] == "01-first-program" for f in files.json())
         assert api.post("/api/admin/machines/lab-u1-no-such-lab", json={"action": "stop"}, headers=admin).status_code == 404
     finally:
         api.post("/api/labs/python-basics/workspace/stop", headers=h)

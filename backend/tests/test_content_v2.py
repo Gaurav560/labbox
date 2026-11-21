@@ -25,10 +25,10 @@ def _ch1_steps():
 
     from app.lessons import parse_steps
 
-    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/02-functions.md").read_text())
 
 PREDICT_STEP = next(i for i, s in enumerate(_ch1_steps()) if s.type == "predict")  # "Guess first"
-EXPLAIN_TEXT = "Python's way of saying"
+EXPLAIN_TEXT = "Python's special value"
 
 
 @pytest.fixture
@@ -199,9 +199,9 @@ def test_predict_answer_is_not_in_the_chapter(client: TestClient):
 
 def test_outline(client: TestClient):
     out = client.get(f"/api/labs/{LAB}/chapters/{CH}/outline", headers=auth(client)).json()
-    assert out["steps"][0] == {"type": "story", "title": "Why start with functions", "task": None}
+    assert out["steps"][0] == {"type": "story", "title": "Why does every program have functions?", "task": None}
     assert [s["task"] for s in out["steps"] if s["type"] == "task"] == ["greet", "add", "is_even"]
-    assert out["steps"][1] == {"type": "history", "title": "The story of Python", "task": None}
+    assert out["steps"][1] == {"type": "concept", "title": "A function: a name for some instructions", "task": None}
     assert len(out["steps"]) == len(_ch1_steps())
     assert client.get(f"/api/labs/{LAB}/chapters/{CH}/outline").status_code == 401
 
@@ -259,7 +259,7 @@ def test_solution_and_tests_stay_out_of_images():
 def test_no_route_serves_solution_files(client: TestClient):
     h = auth(client)
     lab = labs.get_lab(LAB)
-    solution_text = (lab.root / "solution" / "greet.py").read_text().strip().splitlines()[-1].strip()
+    solution_text = (lab.root / "solution" / "02-functions" / "greet.py").read_text().strip().splitlines()[-1].strip()
     for path in ["", "/chapters/01-functions", "/chapters/01-functions/outline", "/chapters/01-functions/progress"]:
         assert solution_text not in client.get(f"/api/labs/{LAB}{path}", headers=h).text
 
@@ -272,7 +272,7 @@ def test_public_catalog_needs_no_login_and_leaks_nothing(client: TestClient):
     assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count", "cover_url", "cover_credit"}
     lab = labs.get_lab("python-basics")
     hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints]
-    hidden += [(lab.root / "solution" / "greet.py").read_text().strip().splitlines()[-1].strip(), "chapters/", "@@RESULT"]
+    hidden += [(lab.root / "solution" / "02-functions" / "greet.py").read_text().strip().splitlines()[-1].strip(), "chapters/", "@@RESULT"]
     for text in hidden:
         assert text not in r.text
 

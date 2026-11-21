@@ -715,7 +715,66 @@ function CheckoutFlow() {
   );
 }
 
+/** Python from zero, chapter 1: what really happens after "python3 first.py", played step by step. */
+function PythonRunsAFile() {
+  return (
+    <SketchSteps
+      title="python3 first.py"
+      intro="Press Play to watch Python run your file, one step at a time."
+      label="You type python3 first.py and press Enter; Python reads the whole file and checks its grammar, turns it into bytecode, runs the lines from the top one at a time, sends what print gives it to the terminal, and stops at the end of the file"
+      steps={[
+        { label: "1. you press Enter", says: "The terminal starts the program called python3 and hands it one thing: the name of your file, first.py." },
+        { label: "2. read and check the grammar", says: "Python reads the whole file first and checks that every line is written correctly. One missing quote here and nothing runs at all: you get a SyntaxError." },
+        { label: "3. translate to bytecode", says: "Python turns your lines into bytecode: small, simple instructions it can carry out quickly. You never see this step; it takes a few milliseconds." },
+        { label: "4. run line 1, then line 2, ...", says: "Now it runs your program from the top, one line at a time, in order. Lines starting with # are notes for people, so they are skipped." },
+        { label: "5. print sends text to the screen", says: "Each print(...) sends its text to the terminal, followed by a new line. That is the only reason you see anything." },
+        { label: "6. end of the file: stop", says: "After the last line there is nothing left to do, so Python stops and the terminal shows its prompt again, ready for your next command." },
+      ]}
+    />
+  );
+}
+
+/** Python from zero, chapter 3: one function call, from the call to the value coming back. */
+function FunctionCall() {
+  return (
+    <SketchSteps
+      title='message = greet("Asha")'
+      intro="Press Play to follow one function call, from the call to the answer."
+      label="Python evaluates greet with the argument Asha: it jumps into the function, the parameter name gets the value Asha, the body runs and builds the text, return hands the text back, and the caller stores it in message"
+      steps={[
+        { label: '1. the call: greet("Asha")', says: "Python reaches the right-hand side of the = sign first. It sees a name followed by brackets: that means call this function." },
+        { label: "2. jump into the function", says: "Python remembers where it was, then jumps to the def greet line. Your program is now inside the function." },
+        { label: '3. name = "Asha"', says: "The parameter name is given the value from the call. Inside the function, name means \"Asha\" for this call only." },
+        { label: "4. the body runs", says: 'The indented lines run, top to bottom. Here one line builds the text f"Hello, {name}!", which becomes "Hello, Asha!".' },
+        { label: "5. return hands the value back", says: "return ends the function at once and carries the value back to the spot where it was called. The function's own name variable is gone now." },
+        { label: '6. message = "Hello, Asha!"', says: "Back where it started, Python finishes the line: the returned text is stored in message, and the program goes on to the next line." },
+      ]}
+    />
+  );
+}
+
+/** Python from zero, chapter 6: how to read a traceback, from the bottom up. */
+function TracebackBottomUp() {
+  return (
+    <SketchSteps
+      title="reading a traceback"
+      intro="Press Play to read a real traceback the way experienced developers do: from the bottom up."
+      label="Read the last line first: the kind of error and its message. Then the frame just above it: the file, the line number and the code where it happened. Then walk up through the calls that led there, up to your program's own line"
+      steps={[
+        { label: "1. the last line: what went wrong", says: "ZeroDivisionError: division by zero. The kind of error, then a short message. Always read this line first." },
+        { label: "2. the frame above: where", says: 'File "report.py", line 3, in average, and the code: sum(amounts) / len(amounts). The ~~~^~~~ marks show the exact division.' },
+        { label: "3. one call up: who asked", says: "line 7, in summary: summary called average. The traceback lists every call that was still waiting for an answer." },
+        { label: "4. the top: your program's line", says: 'line 11, in <module>: the main program called summary("Tuesday", []). An empty list: there is the real cause.' },
+        { label: "5. fix the cause, not the symptom", says: "The crash is in average, but the question is: what should the average of no amounts be? Decide that, and the error is gone for good." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "python-runs-a-file": PythonRunsAFile,
+  "function-call": FunctionCall,
+  "traceback-bottom-up": TracebackBottomUp,
   "library-vs-framework": LibraryVsFramework,
   "backend-stack": BackendStack,
   "spring-timeline": SpringTimeline,

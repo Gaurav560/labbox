@@ -22,17 +22,17 @@ def test_an_old_workspace_gets_the_new_files_and_keeps_its_own(tmp_path):
     (folder / "notes.txt").write_text("mine")
 
     added = containers.top_up(lab, _ws(folder))
-    assert {"numbers_text.py", "decisions.py", "loops.py", "text_tools.py"} <= set(added)
+    assert {"03-numbers-and-text/numbers_text.py", "04-decisions/decisions.py", "05-loops/loops.py", "text_tools.py"} <= set(added)
     assert "greet.py" not in added and "math_utils.py" not in added
     assert "Hello, {name}!" in (folder / "greet.py").read_text()  # their work, untouched
     assert (folder / "math_utils.py").read_text() == "# my own version\n"
-    assert (folder / "numbers_text.py").read_text() == (lab.starter_dir / "numbers_text.py").read_text()
+    assert (folder / "03-numbers-and-text/numbers_text.py").read_text() == (lab.starter_dir / "03-numbers-and-text/numbers_text.py").read_text()
     assert (folder / "notes.txt").read_text() == "mine"
 
     assert containers.top_up(lab, _ws(folder)) == []  # once is enough
-    (folder / "loops.py").unlink()  # deleted on purpose
+    (folder / "05-loops/loops.py").unlink()  # deleted on purpose
     assert containers.top_up(lab, _ws(folder)) == []
-    assert not (folder / "loops.py").exists()
+    assert not (folder / "05-loops/loops.py").exists()
 
 
 def test_a_learner_file_with_the_same_name_wins(tmp_path):
@@ -40,9 +40,10 @@ def test_a_learner_file_with_the_same_name_wins(tmp_path):
     lab = get_lab("python-basics")
     folder = tmp_path / "ws"
     folder.mkdir()
-    (folder / "decisions.py").write_text("# I wrote this before the chapter existed\n")
+    (folder / "04-decisions").mkdir()
+    (folder / "04-decisions/decisions.py").write_text("# I wrote this before the chapter existed\n")
     containers.top_up(lab, _ws(folder))
-    assert (folder / "decisions.py").read_text() == "# I wrote this before the chapter existed\n"
+    assert (folder / "04-decisions/decisions.py").read_text() == "# I wrote this before the chapter existed\n"
 
 
 def test_a_fresh_seed_records_its_files(tmp_path):
@@ -52,7 +53,7 @@ def test_a_fresh_seed_records_its_files(tmp_path):
     folder.mkdir()
     containers.seed(lab, folder)
     assert containers.top_up(lab, _ws(folder)) == []  # nothing new to add
-    assert set(containers.starter_files(lab)) <= {p.name for p in folder.iterdir()}
+    assert set(containers.starter_files(lab)) <= {p.relative_to(folder).as_posix() for p in folder.rglob("*") if p.is_file()}
 
 
 def test_never_writes_through_a_link_out_of_the_workspace(tmp_path):

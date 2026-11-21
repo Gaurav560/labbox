@@ -1,4 +1,5 @@
-"""Hidden checks for python-basics. Prints one @@RESULT line per task."""
+"""Hidden checks for the chapters of python-basics not rewritten yet (files at the top of the workspace).
+Prints one @@RESULT line per task. The rewritten chapters, one folder each, are in checks.py."""
 import importlib
 import json
 import sys
@@ -134,62 +135,8 @@ def run_cases(task: str, fn, err, cases) -> None:
         report(task, False, f"{fn.__name__} raised {type(e).__name__}: {e}")
 
 
-greet_mod, greet_err = load("greet")
-math_mod, math_err = load("math_utils")
-
-fn, err = get_func(greet_mod, greet_err, "greet")
-run_cases("greet", fn, err, [(("Asha",), "Hello, Asha!"), (("World",), "Hello, World!"), (("",), "Hello, !")])
-
-fn, err = get_func(math_mod, math_err, "add")
-run_cases("add", fn, err, [((2, 3), 5), ((-1, 1), 0), ((0, 0), 0), ((100, 250), 350)])
-
-fn, err = get_func(math_mod, math_err, "is_even")
-run_cases("is_even", fn, err, [((2,), True), ((3,), False), ((0,), True), ((-4,), True), ((-7,), False)])
-
-# ---------- chapter 2: numbers and text ----------
-nt_mod, nt_err = load("numbers_text")
-
-fn, err = get_func(nt_mod, nt_err, "average")
-run_cases("average", fn, err, [
-    (([78, 85, 92],), 85.0), (([70, 71],), 70.5), (([1, 2, 2],), 1.67), (([],), 0.0),
-    (([100],), 100.0), (([0, 0],), 0.0), (([33, 34, 34],), 33.67),
-])
-
-fn, err = get_func(nt_mod, nt_err, "format_price")
-run_cases("format_price", fn, err, [
-    ((1250.5,), "₹1,250.50"), ((5,), "₹5.00"), ((1234567.891,), "₹1,234,567.89"), ((0,), "₹0.00"),
-    ((999.999,), "₹1,000.00"), ((12.3,), "₹12.30"),
-])
-
-# ---------- chapter 3: decisions ----------
-dec_mod, dec_err = load("decisions")
-
-fn, err = get_func(dec_mod, dec_err, "grade")
-run_cases("grade", fn, err, [
-    ((95,), "A"), ((80,), "A"), ((79,), "B"), ((60,), "B"), ((59,), "C"), ((40,), "C"), ((39,), "F"),
-    ((100,), "A"), ((0,), "F"), ((101,), "Invalid"), ((-1,), "Invalid"),
-])
-
-fn, err = get_func(dec_mod, dec_err, "is_leap_year")
-run_cases("leap_year", fn, err, [
-    ((2024,), True), ((2023,), False), ((1900,), False), ((2000,), True), ((2100,), False),
-    ((1600,), True), ((2019,), False),
-])
-
-# ---------- chapter 4: loops ----------
-loop_mod, loop_err = load("loops")
-
-fn, err = get_func(loop_mod, loop_err, "count_above")
-run_cases("count_above", fn, err, [
-    (([35, 72, 40, 90], 40), 2), (([], 10), 0), (([-5, -1, 3], -2), 2), (([40, 40], 40), 0),
-    (([1, 2, 3], 0), 3),
-])
-
-fn, err = get_func(loop_mod, loop_err, "first_negative")
-run_cases("first_negative", fn, err, [
-    (([4, -2, 7, -9],), -2), (([1, 2, 3],), None), (([],), None), (([0, 5],), None), (([-1],), -1),
-    (([0.0, -0.5, -3],), -0.5),
-])
+# Chapters 1 to 6 (first program, numbers and text, functions, decisions, loops, finding bugs) live in
+# their own folders now and are checked by checks.py.
 
 # ---------- chapter 5: strings ----------
 txt_mod, txt_err = load("text_tools")

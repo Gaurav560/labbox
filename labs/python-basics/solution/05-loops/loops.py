@@ -1,16 +1,16 @@
-# Chapter 4: loops.
+# Chapter 5: loops. Pocket goes through a whole list of amounts, one at a time.
 
 
-def count_above(numbers: list, limit: int) -> int:
+def count_above(amounts, limit):
     count = 0
-    for n in numbers:
-        if n > limit:
-            count += 1
+    for amount in amounts:
+        if amount > limit:
+            count = count + 1
     return count
 
 
-def first_negative(numbers: list):
-    for n in numbers:
-        if n < 0:
-            return n
+def first_negative(amounts):
+    for amount in amounts:
+        if amount < 0:
+            return amount
     return None

@@ -51,7 +51,7 @@ RUBRIC = """01-functions:
 def lab(tmp_path: Path):
     folder = tmp_path / "python-basics"
     shutil.copytree(ROOT / "labs" / "python-basics", folder)
-    ch = folder / "chapters" / "01-functions.md"
+    ch = folder / "chapters" / "02-functions.md"
     ch.write_text(ch.read_text() + DESIGN_STEP)
     (folder / "tests" / "rubric.yaml").write_text(RUBRIC)
     return load_lab(folder)

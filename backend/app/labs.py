@@ -190,6 +190,9 @@ class Chapter(_Strict):
     # The course part this chapter starts or belongs to ("Foundations"); later chapters without one stay in it.
     # Skill maps draw each part as its own metro line.
     part: str | None = None
+    # The chapter's own project folder in starter/ when it is not named like the chapter id (Python from zero
+    # keeps its old ids while chapters moved: id 01-functions lives in 03-functions/). The tutor reads only it.
+    folder: str | None = None
     # Runs once, as root, when a learner first opens the chapter (failure injection, seed data).
     # The script lives in the image under /lab/setup/, never in /workspace.
     setup: list[str] | None = None

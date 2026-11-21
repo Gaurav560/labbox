@@ -8,7 +8,7 @@ test("text size: presets, a slider per area, kept after a reload, reset", async 
   await page.goto("/");
   await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
   await page.goto("/labs/python-basics");
-  await page.locator(".tree-row", { hasText: "greet.py" }).click({ timeout: 60_000 });
+  await expect(page.locator(".tab.active")).toContainText("hello.py", { timeout: 60_000 }); // chapter 1 opens its first task's file
   const zoom = (sel: string) => page.locator(sel).first().evaluate((e) => getComputedStyle(e).zoom);
   const editorFont = () => page.locator(".monaco-editor .view-lines").first().evaluate((e) => getComputedStyle(e).fontSize);
   await expect.poll(editorFont).toBe("15px");

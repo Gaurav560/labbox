@@ -6,9 +6,10 @@
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
 
+// Python from zero, chapter 2 (id 01-functions, folder 02-functions since the 22 November rewrite).
 const PY_SOLVED: Record<string, string> = {
-  "greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
-  "math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
+  "02-functions/greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
+  "02-functions/math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
 };
 
 const username = `e2e${Date.now() % 1_000_000_000}`;
@@ -45,24 +46,30 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   const auth = { Authorization: `Bearer ${await token(page)}` };
   userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;
 
-  const chapterResponse = page.waitForResponse((r) => r.url().endsWith("/api/labs/python-basics/chapters/01-functions"));
+  // The lab opens on chapter 1, "Your first program": its story, mission and the history card.
   await page.goto("/labs/python-basics");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
+  await expect(stepCount(page)).toHaveText("Step 1 of 17");
+  await expect(page.locator(".step-kind")).toHaveText("Story");
+  await expect(page.locator(".mission")).toContainText("Make Pocket say its first two sentences");
+  await page.keyboard.press("ArrowRight");
+  await expect(stepCount(page)).toHaveText("Step 2 of 17");
+  await expect(page.locator(".step-kind")).toHaveText("History");
+  await expect(page.locator(".history-timeline li")).toHaveCount(5);
+  await expect(page.locator(".history-before")).toContainText("Guido van Rossum");
+
+  // Chapter 2, functions, by link: the rest of the flow happens there.
+  const chapterResponse = page.waitForResponse((r) => r.url().endsWith("/api/labs/python-basics/chapters/01-functions"));
+  await page.goto("/labs/python-basics?chapter=01-functions");
   // The predict answer is checked on the server: it is not in what the page received.
   const chapterJson = await (await chapterResponse).text();
   expect(chapterJson).not.toContain("[x]");
   expect(chapterJson).not.toContain('"answer"');
-  expect(chapterJson).not.toContain("way of saying");
-  await expect(stepCount(page)).toHaveText("Step 1 of 13");
-  await expect(page.locator(".step-kind")).toHaveText("Story");
-  await expect(page.locator(".mission")).toContainText("Write three small functions");
+  expect(chapterJson).not.toContain("Python's special value");
+  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
+  await expect(page.locator(".mission")).toContainText("which builds a greeting for any name");
 
-  // Keyboard: right arrow to the history card, then on to the predict step.
-  await page.keyboard.press("ArrowRight");
-  await expect(stepCount(page)).toHaveText("Step 2 of 13");
-  await expect(page.locator(".step-kind")).toHaveText("History");
-  await expect(page.locator(".history-timeline li")).toHaveCount(5);
-  await expect(page.locator(".history-before")).toContainText("Guido van Rossum");
+  // Keyboard: right arrow through the concept and the worked example to the predict step.
   await page.keyboard.press("ArrowRight"); // concept
   await page.keyboard.press("ArrowRight"); // worked example
   await expect(page.locator(".step-kind")).toHaveText("Example");
@@ -70,18 +77,18 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(page.locator(".step-kind")).toHaveText("Predict");
 
   // Predict: a wrong guess first, then the right one reveals the explanation.
-  expect(await page.content()).not.toContain("way of saying");
+  expect(await page.content()).not.toContain("Python's special value");
   await page.locator(".predict-option", { hasText: "An error" }).click();
   await expect(page.getByText("Not quite. Have another go.")).toBeVisible();
   await page.locator(".predict-option", { hasText: "None" }).click();
-  await expect(page.locator(".predict-explain")).toContainText("A function without a");
+  await expect(page.locator(".predict-explain")).toContainText("A function that ends without a");
 
   // Try step: Run in terminal pastes the command but does not press Enter.
   await page.keyboard.press("ArrowRight");
   await expect(page.locator(".step-kind")).toHaveText("Try it");
   await expect.poll(() => termText(page), { timeout: 15_000 }).toMatch(/learner@python-basics/);
   await page.getByRole("button", { name: /Run in terminal/ }).click();
-  await expect.poll(() => termText(page)).toContain("print(greet('Asha'))");
+  await expect.poll(() => termText(page)).toContain("from greet import greet"); // the long command wraps in the terminal
   await page.waitForTimeout(800);
   expect((await termText(page)).match(/^None$/m)).toBeNull(); // not run yet
   await page.keyboard.press("Enter"); // the terminal has focus now
@@ -89,18 +96,18 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
 
   // Step through everything else to the recap with the keyboard (focus back on the page first).
   await page.locator(".step-card").click();
-  for (let i = 7; i <= 13; i++) {
+  for (let i = 6; i <= 16; i++) {
     await page.keyboard.press("ArrowRight");
-    await expect(stepCount(page)).toHaveText(`Step ${i} of 13`);
+    await expect(stepCount(page)).toHaveText(`Step ${i} of 16`);
   }
   await expect(page.locator(".step-kind")).toHaveText("Recap");
   await expect(page.locator(".recap-status")).toContainText("3 tasks still need to pass");
   await page.keyboard.press("ArrowLeft");
-  await expect(stepCount(page)).toHaveText("Step 12 of 13");
+  await expect(stepCount(page)).toHaveText("Step 15 of 16");
 
   // Hint ladder on the greet task (task chip jumps to its step).
   await page.locator(".task-chip", { hasText: "greet" }).click();
-  await expect(page.locator(".step-card h2")).toHaveText("Greet someone");
+  await expect(page.locator(".step-card h2")).toHaveText("Your turn: greet someone");
   await expect(page.locator(".xp-chip")).toHaveText("20 XP");
   await page.locator(".task-box").getByRole("button", { name: "💡 Hint (3 left)" }).click();
   await expect(page.locator(".hint-list li")).toHaveCount(1);
@@ -130,7 +137,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
   // A fully passed chapter jumps to the recap.
-  await expect(stepCount(page)).toHaveText("Step 13 of 13");
+  await expect(stepCount(page)).toHaveText("Step 16 of 16");
   await expect(page.locator(".recap-status")).toContainText("Chapter complete");
   await page.getByRole("button", { name: "Close results" }).click();
 
@@ -149,15 +156,14 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.waitForTimeout(600); // the step position is saved shortly after the last move
 
   await page.reload();
-  // A finished chapter 1 means the lab now opens on chapter 2; chapter 1 still remembers its step.
-  await expect(page.locator("#chapter-select")).toHaveValue("02-numbers-and-text");
-  await page.locator("#chapter-select").selectOption("01-functions");
-  await expect(stepCount(page)).toHaveText("Step 13 of 13");
+  // The page reloads on chapter 2 (the URL names it), still on its recap.
+  await expect(page.locator("#chapter-select")).toHaveValue("01-functions");
+  await expect(stepCount(page)).toHaveText("Step 16 of 16");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
   // The answered predict is still answered (it comes from the server).
-  await page.getByRole("button", { name: "Step 5: Guess first" }).click();
-  await expect(page.locator(".predict-explain")).toContainText("way of saying");
+  await page.getByRole("button", { name: "Step 4: Guess first" }).click();
+  await expect(page.locator(".predict-explain")).toContainText("special value");
   await expect(page.locator(".predict-option.is-wrong")).toContainText("An error");
 
   // Double prompt bug: after Stop and Start the terminal shows exactly one prompt.

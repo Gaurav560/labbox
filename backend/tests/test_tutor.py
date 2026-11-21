@@ -145,3 +145,11 @@ def test_a_chapter_folder_lab_sends_only_that_chapters_files(tmp_path):
     files = tutor.learner_files(lab, ws, "20-repositories")
     assert "--- 20-repositories/" in files and "--- 00-what-is-spring-boot/" not in files
     assert "--- 00-what-is-spring-boot/" in tutor.learner_files(lab, ws)  # no chapter: the whole lab, as before
+
+
+def test_a_chapter_with_its_own_folder_name_sends_that_folder(tmp_path):
+    # Python from zero kept its chapter ids when chapters moved: id 01-functions lives in 02-functions/.
+    lab = labs.get_lab("python-basics")
+    ws = type("Ws", (), {"volume_path": str(tmp_path)})()
+    files = tutor.learner_files(lab, ws, "01-functions")
+    assert "--- 02-functions/greet.py" in files and "--- 01-first-program/" not in files

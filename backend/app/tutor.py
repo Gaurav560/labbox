@@ -113,8 +113,9 @@ def learner_files(lab: LabConfig, ws: Workspace | None, chapter_id: str | None =
         return "(no files yet)"
     root = Path(ws.volume_path)
     base = lab.starter_dir
-    if chapter_id and (lab.starter_dir / chapter_id).is_dir():
-        base = lab.starter_dir / chapter_id
+    folder = next((c.folder for c in lab.chapters if c.id == chapter_id and c.folder), chapter_id)
+    if folder and (lab.starter_dir / folder).is_dir():
+        base = lab.starter_dir / folder
     parts, total = [], 0
     for f in sorted(base.rglob("*")) if base.is_dir() else []:
         if not f.is_file() or f.suffix in SKIP_SUFFIXES:

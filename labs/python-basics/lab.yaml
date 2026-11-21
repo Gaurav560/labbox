@@ -1,13 +1,13 @@
 id: python-basics
 version: 2
 title: Python from zero
-subtitle: From your first function to files and command-line programs, one small step at a time.
+subtitle: From your very first line of Python to files and command-line programs, one curious step at a time.
 description: Learn Python from the very first line to real programs that read files, handle bad input and run from the command line. Plain explanations, everyday examples and real tests.
 language: python
 track: languages
 tags: [python, beginner]
 level: beginner
-estimated_minutes: 220
+estimated_minutes: 400
 cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
@@ -25,10 +25,41 @@ check:
   timeout_seconds: 30
   network: none
 chapters:
+  - id: first-program
+    title: Your first program
+    file: chapters/01-first-program.md
+    minutes: 40
+    folder: 01-first-program
+    part: Starting out
+    tasks:
+      - id: hello_pocket
+        title: "hello.py: Pocket says hello"
+        hints:
+          - "Lines that start with # are notes for people. Python skips them, so right now hello.py prints nothing."
+          - "print(...) shows whatever you put between its brackets, and each print starts a new line."
+          - "Write two print lines. Put each sentence in quotes, copied exactly from the TODO, full stops included."
+        examples:
+        - call: "python3 hello.py"
+          gives: "Hello! I am Pocket."
+          note: "first line"
+        - call: "python3 hello.py"
+          gives: "I will help you track your money."
+          note: "second line"
+      - id: fix_first_errors
+        title: "fix_me.py: fix two small mistakes"
+        hints:
+          - "Run python3 fix_me.py and read the last line of what Python says. The ^ mark points at the problem."
+          - "A piece of text needs a quote at the start and a quote at the end. One line is missing its closing quote."
+          - "After that fix, Python reaches the next line and stops at a name it does not know. Its message suggests the right spelling."
+        examples:
+        - call: "python3 fix_me.py"
+          gives: "Pocket is starting..."
+          note: "then two more lines"
   - id: 01-functions
     title: Your first functions
-    file: chapters/01-functions.md
-    minutes: 15
+    file: chapters/02-functions.md
+    minutes: 40
+    folder: 02-functions
     tasks:
       - id: greet
         title: "greet.py: return a greeting"
@@ -67,18 +98,19 @@ chapters:
           gives: "True"
   - id: 02-numbers-and-text
     title: Numbers and text
-    file: chapters/02-numbers-and-text.md
-    minutes: 15
+    file: chapters/03-numbers-and-text.md
+    minutes: 45
+    folder: 03-numbers-and-text
     tasks:
       - id: average
-        title: "numbers_text.py: the average of a list of marks"
+        title: "numbers_text.py: the average of a list of amounts"
         hints:
-          - "sum() adds up a list and len() counts its items. What should happen when the list is empty?"
-          - "Dividing by zero raises an error, so check for an empty list first and give back zero as a float."
+          - "sum() adds up a list and len() counts its items. The average is the total divided by how many there are."
+          - "Use /, not //: // throws away the part after the decimal point."
           - "round(value, 2) keeps two digits after the point. Apply it to the sum divided by the count."
         examples:
-        - call: "average([78, 85, 92])"
-          gives: "85.0"
+        - call: "average([120, 80, 100])"
+          gives: "100.0"
         - call: "average([1, 2, 2])"
           gives: "1.67"
           note: "rounded to 2 decimals"
@@ -95,8 +127,9 @@ chapters:
           gives: "\"₹5.00\""
   - id: 03-decisions
     title: Making decisions
-    file: chapters/03-decisions.md
-    minutes: 15
+    file: chapters/04-decisions.md
+    minutes: 40
+    folder: 04-decisions
     tasks:
       - id: grade
         title: "decisions.py: a grade from marks"
@@ -126,36 +159,68 @@ chapters:
           gives: "True"
   - id: 04-loops
     title: Loops
-    file: chapters/04-loops.md
-    minutes: 15
+    file: chapters/05-loops.md
+    minutes: 45
+    folder: 05-loops
     tasks:
       - id: count_above
-        title: "loops.py: count the numbers above a limit"
+        title: "loops.py: count the amounts above a limit"
         hints:
           - "Start a counter at 0 before the loop."
           - "Go through the numbers with a for loop and add 1 when a number is greater than the limit."
           - "Greater than means a number equal to the limit does not count."
         examples:
-        - call: "count_above([35, 72, 40, 90], 40)"
+        - call: "count_above([350, 720, 400, 900], 400)"
           gives: "2"
           note: "above, not equal"
         - call: "count_above([], 10)"
           gives: "0"
       - id: first_negative
-        title: "loops.py: the first negative number"
+        title: "loops.py: the first refund"
         hints:
           - "Return as soon as you find a negative number: the function stops right there."
           - "If the loop finishes without finding one, there is nothing to return yet."
           - "After the loop, give back None (Python's way of saying nothing) so the caller knows there was none."
         examples:
-        - call: "first_negative([4, -2, 7, -9])"
-          gives: "-2"
+        - call: "first_negative([120, -50, 80, -20])"
+          gives: "-50"
+          note: "the first refund"
         - call: "first_negative([1, 2, 3])"
           gives: "None"
+  - id: finding-bugs
+    title: Finding bugs
+    file: chapters/06-finding-bugs.md
+    minutes: 40
+    folder: 06-finding-bugs
+    tasks:
+      - id: fix_daily_total
+        title: "spending.py: the total that forgets an expense"
+        hints:
+          - "300 should come out, 180 does. 300 - 180 = 120: which expense is missing?"
+          - "Put print(i, amounts[i]) inside the loop and run python3 spending.py. Which positions does the loop visit?"
+          - "Positions in a list start at 0. Look at where range(...) starts counting."
+        examples:
+        - call: "daily_total([120, 80, 100])"
+          gives: "300"
+        - call: "daily_total([])"
+          gives: "0"
+      - id: fix_over_budget
+        title: "spending.py: on budget is not over budget"
+        hints:
+          - "Try over_budget([300, 200], 500) in the terminal. Spending 500 out of 500 should not be over."
+          - "Print left before the return, with print(f\"{left=}\"). What is left when you spend exactly the budget?"
+          - "Over budget means less than nothing left. Compare the two symbols < and <= on the last line."
+        examples:
+        - call: "over_budget([300, 200], 500)"
+          gives: "False"
+          note: "exactly on budget"
+        - call: "over_budget([300, 250], 500)"
+          gives: "True"
   - id: 05-strings
     title: Strings
     file: chapters/05-strings.md
     minutes: 15
+    part: Working with data
     tasks:
       - id: count_words
         title: "text_tools.py: warm-up, count the words"
@@ -294,6 +359,7 @@ chapters:
     title: Errors
     file: chapters/10-errors.md
     minutes: 15
+    part: Real programs
     tasks:
       - id: to_number
         title: "errors.py: turn text into a number, or explain why not"

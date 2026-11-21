@@ -14,9 +14,10 @@ def test_real_labs_load():
     assert {"python-basics", "java-basics"} <= set(labs)  # more labs are added all the time
     py = labs["python-basics"]
     assert py.image == "labbox/python-basics:v1"
-    assert [t.id for t in py.chapters[0].tasks] == ["greet", "add", "is_even"]
+    assert [t.id for t in py.chapters[0].tasks] == ["hello_pocket", "fix_first_errors"]
+    assert [t.id for t in py.chapter("01-functions").tasks] == ["greet", "add", "is_even"]  # ids kept when chapters moved
     assert py.check.network == "none"
-    assert "# Your first functions" in py.chapter_markdown("01-functions")
+    assert "def double(x):" in py.chapter_markdown("01-functions")
     assert [t.id for t in labs["java-basics"].chapters[0].tasks] == ["greet", "longest_word"]
 
 
@@ -59,7 +60,7 @@ def test_duplicate_task_ids(lab_copy: Path):
 
 
 def test_chapter_file_missing(lab_copy: Path):
-    (lab_copy / "chapters" / "01-functions.md").unlink()
+    (lab_copy / "chapters" / "02-functions.md").unlink()
     expect_error(lab_copy, "chapter file missing")
 
 

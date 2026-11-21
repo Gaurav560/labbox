@@ -38,13 +38,13 @@ test("AI completion can be switched off and stays off", async ({ page }) => {
   await page.goto("/");
   await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
   await page.goto("/labs/python-basics");
-  await page.locator(".tree-row", { hasText: "greet.py" }).click({ timeout: 60_000 });
+  await expect(page.locator(".tab.active")).toContainText("hello.py", { timeout: 60_000 }); // chapter 1 opens its first task's file
   const toggle = page.getByRole("button", { name: /✦ AI (on|off)/ });
   await expect(toggle).toHaveText("✦ AI on");
   await toggle.click();
   await expect(toggle).toHaveText("✦ AI off");
   await page.reload();
-  await page.locator(".tree-row", { hasText: "greet.py" }).click({ timeout: 60_000 });
+  await expect(page.locator(".tab.active")).toContainText("hello.py", { timeout: 60_000 });
   await expect(page.getByRole("button", { name: /✦ AI (on|off)/ })).toHaveText("✦ AI off");
 });
 
@@ -56,18 +56,18 @@ test("labs open in real VS Code, and the switch goes back to the classic editor"
   await page.goto("/labs/python-basics");
   const vscode = page.frameLocator("iframe.ide-frame");
   await expect(vscode.locator(".monaco-workbench")).toBeVisible({ timeout: 90_000 });
-  await expect(vscode.locator(".explorer-folders-view")).toContainText("greet.py", { timeout: 30_000 });
+  await expect(vscode.locator(".explorer-folders-view")).toContainText("01-first-program", { timeout: 30_000 });
   await expect(vscode.locator(".monaco-dialog-box")).toHaveCount(0); // no workspace trust prompt
   // Focus hides LabBox's own file tree, so VS Code (its own sidebar, Ctrl+B) has no Focus button; Lite has.
   const focusBtn = page.locator(".topbar").getByRole("button", { name: /^(Focus|Exit focus)$/ });
   await expect(focusBtn).toHaveCount(0);
   await page.getByRole("button", { name: "Lite" }).click();
-  await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
+  await expect(page.locator(".tree-row", { hasText: "01-first-program" })).toBeVisible();
   await expect(focusBtn).toHaveText("Focus");
   await focusBtn.click();
   await expect(page.locator(".tree-row")).toHaveCount(0);
   await focusBtn.click();
-  await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
+  await expect(page.locator(".tree-row", { hasText: "01-first-program" })).toBeVisible();
   await page.getByRole("button", { name: "IDE", exact: true }).click();
   await expect(page.frameLocator("iframe.ide-frame").locator(".monaco-workbench")).toBeVisible({ timeout: 60_000 });
   await expect(focusBtn).toHaveCount(0);

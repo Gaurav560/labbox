@@ -1,7 +1,7 @@
-# Chapter 3: making decisions.
+# Chapter 4: making decisions.
 
 
-def grade(marks: int) -> str:
+def grade(marks):
     if marks < 0 or marks > 100:
         return "Invalid"
     if marks >= 80:
@@ -14,5 +14,5 @@ def grade(marks: int) -> str:
         return "F"
 
 
-def is_leap_year(year: int) -> bool:
+def is_leap_year(year):
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)

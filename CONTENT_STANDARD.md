@@ -116,6 +116,24 @@ three options, and a one- or two-sentence explanation of why.
 never jargon, the same Shop API throughout. No hype words, almost never an exclamation mark (one in 31 chapters);
 calm confidence.
 
+### Curiosity first (owner, 22 November, for the language courses)
+
+The owner, starting the Python rewrite: "always with curiosity, like teaching a child one on one. interesting,
+animated, cool images, tasks and much more." On top of everything above:
+
+- **Open with a question or a small surprise** the learner wants answered: "What happens when you press
+  Enter?", "Can a computer get a sum wrong?" (`0.1 + 0.2`), "Is 2100 a leap year?". Then answer it.
+- **Guess before you tell.** Ask the learner to predict, then run it, then explain: "Surprised? Here is what
+  happened." Celebrate the "aha" without hype.
+- **Animate what is invisible.** A playing timeline (`SketchSteps`) for every process the learner cannot see
+  (how Python runs a file, one function call, reading a traceback), and a trace with Play for every loop.
+- **One small running project, with a name** (Python from zero: **Pocket**, a money tracker): tasks feel like
+  giving it new powers, not exercises.
+- **Invite play.** "Now change `chai = 15.5` to `20` and run it again." The learner changes code and sees
+  what happens long before the task.
+- Still precise: curiosity lives in the questions and reveals, not in piling up analogies. Every output is
+  still captured from the real lab image.
+
 ## 1. The course
 
 - **Style.** Beginner courses ("from zero") are plain, with everyday examples (marks, prices, names).

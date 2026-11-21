@@ -44,7 +44,7 @@ def test_too_few_hints(labs_dir: Path):
     data = yaml.safe_load(path.read_text())
     data["chapters"][0]["tasks"][1]["hints"] = data["chapters"][0]["tasks"][1]["hints"][:2]
     path.write_text(yaml.safe_dump(data))
-    assert errors(labs_dir / "python-basics") == ["chapter 01-functions: task 'add' has 2 hints, needs 3"]
+    assert errors(labs_dir / "python-basics") == ["chapter first-program: task 'fix_first_errors' has 2 hints, needs 3"]
 
 
 def test_em_dash(labs_dir: Path):
@@ -54,7 +54,7 @@ def test_em_dash(labs_dir: Path):
 
 
 def test_task_without_step(labs_dir: Path):
-    ch = labs_dir / "python-basics" / "chapters" / "01-functions.md"
+    ch = labs_dir / "python-basics" / "chapters" / "02-functions.md"
     ch.write_text(ch.read_text().replace(":::step{type=task task=add ", ":::step{type=concept "))
     assert any("'add' has no task step" in e for e in errors(labs_dir / "python-basics"))
 
@@ -105,7 +105,7 @@ def test_test_lab_catches_a_wrong_solution(labs_dir: Path, capsys):
 
     if not _docker_ready():
         pytest.skip("Docker or lab images not available")
-    (labs_dir / "python-basics" / "solution" / "math_utils.py").write_text("def add(a, b):\n    return a - b\n")
+    (labs_dir / "python-basics" / "solution" / "02-functions" / "math_utils.py").write_text("def add(a, b):\n    return a - b\n")
     assert cli.main(["--labs-dir", str(labs_dir), "test-lab", "python-basics", "--no-build"]) == 1
     out = capsys.readouterr().out
     assert "add: should PASS on solution" in out and "is_even: should PASS on solution" in out

@@ -30,7 +30,7 @@ def test_other_comment_styles():
     assert focus("go-basics", slices_ch)[0] == "till.go"  # // TODO (task total)
     assert focus("go-basics", 0)[0] == "hello/hello.go"  # a chapter in its own package folder
     assert focus("sql-from-zero", 0) == ("q1.sql", 1)  # -- q1 (task q_paid_coffee)
-    assert focus("python-basics", 0)[0] == "greet.py"  # no task ids, no README: the first TODO
+    assert focus("python-basics", 0)[0] == "01-first-program/hello.py"  # the first task's TODO, not fix_me.py (sorts first)
 
 
 def test_the_learners_own_copy_wins(tmp_path):

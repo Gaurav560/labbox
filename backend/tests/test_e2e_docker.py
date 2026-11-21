@@ -38,8 +38,8 @@ from app.main import app  # noqa: E402
 from app.models import User  # noqa: E402
 
 PY_SOLVED = {
-    "greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
-    "math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
+    "02-functions/greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
+    "02-functions/math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
 }
 JAVA_SOLVED = """public class Greeter {
     public static String greet(String name) { return "Hello, " + name + "!"; }
@@ -117,15 +117,15 @@ def test_start_workspace(client: TestClient, user):
     assert host["PidsLimit"] == 256 and host["Memory"] == 512 * 1024 * 1024 and not host["Privileged"]
     assert not any("docker.sock" in b for b in host["Binds"])
     tree = client.get("/api/labs/python-basics/files", headers=h).json()
-    assert {"greet.py", "math_utils.py"} <= {n["name"] for n in tree}  # chapter 1's files (the course grows)
+    assert {"01-first-program", "02-functions"} <= {n["name"] for n in tree}  # one folder per chapter (the course grows)
     assert client.get("/api/labs/python-basics/workspace/status", headers=h).json()["status"] == "running"
 
 
 def test_write_file_visible_in_container(client: TestClient, user):
     h, uid = user
-    write(client, h, "python-basics", "greet.py", "# edited from the API\n")
-    assert docker_cli("exec", f"lab-u{uid}-python-basics", "cat", "/workspace/greet.py") == "# edited from the API"
-    r = client.get("/api/labs/python-basics/files/content", headers=h, params={"path": "greet.py"})
+    write(client, h, "python-basics", "02-functions/greet.py", "# edited from the API\n")
+    assert docker_cli("exec", f"lab-u{uid}-python-basics", "cat", "/workspace/02-functions/greet.py") == "# edited from the API"
+    r = client.get("/api/labs/python-basics/files/content", headers=h, params={"path": "02-functions/greet.py"})
     assert r.json()["content"] == "# edited from the API\n"
 
 
@@ -152,7 +152,7 @@ def test_check_fail_then_pass(client: TestClient, user):
 def test_check_timeout_cleans_up(client: TestClient, user, monkeypatch):
     h, uid = user
     monkeypatch.setattr(labs.get_lab("python-basics").check, "timeout_seconds", 3)
-    write(client, h, "python-basics", "greet.py", "while True:\n    pass\n")
+    write(client, h, "python-basics", "02-functions/greet.py", "while True:\n    pass\n")
     res = check(client, h, "python-basics", "01-functions")
     assert res["passed_count"] == 0
     assert all("Timed out after 3 seconds" in t["message"] for t in res["results"])
@@ -183,7 +183,7 @@ def test_users_are_isolated(client: TestClient, user):
     r = client.get("/api/labs/python-basics/files/content", headers=h2, params={"path": "secret.py"})
     assert r.status_code == 404
     names = {n["name"] for n in client.get("/api/labs/python-basics/files", headers=h2).json()}
-    assert "secret.py" not in names and {"greet.py", "math_utils.py"} <= names
+    assert "secret.py" not in names and {"01-first-program", "02-functions"} <= names
 
 
 def test_terminal_echo(client: TestClient, user):

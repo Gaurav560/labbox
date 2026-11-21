@@ -55,7 +55,7 @@ def test_fences_are_stripped_and_similar_code_is_allowed(client: TestClient, mon
     h, _ = login(client)
     monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: "```python\nreturn n % 2 != 0\n```")
     # is_odd is not the task (is_even is), so its line is a fine suggestion.
-    r = client.post("/api/labs/python-basics/complete", headers=h, json={"path": "math_utils.py", "prefix": "def is_odd(n):\n    ", "suffix": ""})
+    r = client.post("/api/labs/python-basics/complete", headers=h, json={"path": "02-functions/math_utils.py", "prefix": "def is_odd(n):\n    ", "suffix": ""})
     assert r.json()["text"] == "return n % 2 != 0"
 
 
@@ -64,11 +64,11 @@ def test_solution_lines_are_never_suggested(client: TestClient, monkeypatch):
     lab = labs.get_lab("python-basics")
     line = next(l for l in tutor.solution_lines(lab) if l.startswith("returnf"))  # the greet solution
     monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: 'return f"Hello, {name}!"')
-    r = client.post(URL, headers=h, json={"path": "greet.py", "prefix": "def greet(name):\n    ", "suffix": ""})
+    r = client.post(URL, headers=h, json={"path": "02-functions/greet.py", "prefix": "def greet(name):\n    ", "suffix": ""})
     assert line and r.json()["text"] == ""
     # The model finishing a line the learner started is caught too.
     monkeypatch.setattr(llm_gateway, "fake_code_completion", lambda p, s: '"Hello, {name}!"')
-    assert client.post(URL, headers=h, json={"path": "greet.py", "prefix": "def greet(name):\n    return f", "suffix": ""}).json()["text"] == ""
+    assert client.post(URL, headers=h, json={"path": "02-functions/greet.py", "prefix": "def greet(name):\n    return f", "suffix": ""}).json()["text"] == ""
 
 
 def test_completion_has_its_own_limits(client: TestClient, monkeypatch):

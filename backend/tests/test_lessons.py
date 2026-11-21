@@ -147,7 +147,7 @@ def test_real_chapters_are_v2():
 def test_step_with_unknown_task_fails_lab_load(tmp_path: Path):
     dst = tmp_path / "python-basics"
     shutil.copytree(LABS_DIR / "python-basics", dst)
-    chapter = dst / "chapters" / "01-functions.md"
+    chapter = dst / "chapters" / "02-functions.md"
     chapter.write_text(chapter.read_text().replace("task=add ", "task=nope "))
     with pytest.raises(LabError, match="'nope'"):
         load_lab(dst)
@@ -156,7 +156,7 @@ def test_step_with_unknown_task_fails_lab_load(tmp_path: Path):
 def test_bad_step_fails_lab_load(tmp_path: Path):
     dst = tmp_path / "python-basics"
     shutil.copytree(LABS_DIR / "python-basics", dst)
-    (dst / "chapters" / "01-functions.md").write_text(":::step{type=banana}\nx\n:::\n")
+    (dst / "chapters" / "02-functions.md").write_text(":::step{type=banana}\nx\n:::\n")
     with pytest.raises(LabError, match="unknown step type"):
         load_lab(dst)
 
@@ -165,7 +165,7 @@ def test_v1_lab_still_loads(tmp_path: Path):
     """A v1 lab (old chapter, no hints or xp in lab.yaml) loads with defaults."""
     dst = tmp_path / "python-basics"
     shutil.copytree(LABS_DIR / "python-basics", dst)
-    shutil.copy(FIXTURES / "python-01-functions.md", dst / "chapters" / "01-functions.md")
+    shutil.copy(FIXTURES / "python-01-functions.md", dst / "chapters" / "02-functions.md")
     yaml_path = dst / "lab.yaml"
     yaml_path.write_text("\n".join(l for l in yaml_path.read_text().splitlines() if not l.startswith("          - ") and "hints:" not in l))
     lab = load_lab(dst)

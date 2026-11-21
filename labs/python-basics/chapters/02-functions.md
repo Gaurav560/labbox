@@ -1,217 +1,329 @@
-:::step{type=story title="Why start with functions"}
-Every program you will write, from a marks calculator to a web server, is built from small pieces
-that each do one job. In Python those pieces are **functions**. Learn them first and everything
-after this builds on them.
+:::step{type=story title="Why does every program have functions?"}
+Count how many times a shop's billing app says "Hello, ..." to a customer, or works out a total. Thousands of
+times a day. Do you think someone wrote those instructions out thousands of times?
+
+No. They wrote them **once**, gave them a name, and then used that name over and over. That named, reusable
+piece of a program is a **function**. Everything big in programming is made of small functions, the way a
+long book is made of sentences.
+
+Today Pocket gets its first three functions: one to greet you, and two little helpers for its sums.
 
 :::mission
-Write three small functions: one greets a person, one adds two numbers, and one tells whether a
-number is even. Real tests check each one.
+Write `greet`, which builds a greeting for any name, then `add` and `is_even`, two helpers Pocket will need.
 :::
 :::
 
-:::step{type=history title="The story of Python"}
-Python is one of the most used programming languages in the world. It started as one person's
-holiday project.
+:::step{type=concept title="A function: a name for some instructions" file="02-functions/greet.py" line="4-6"}
+You have already used a function: `print`. You never saw how `print` works inside; you just wrote its name,
+put something in the brackets, and it did its job. Now you will write your own.
 
-:::before{title="Before Python"}
-In the late 1980s, programmers mostly chose between **C**, which is fast but needs long, careful code
-where one memory mistake crashes the program, and **shell scripts**, which are quick to write but turn
-messy beyond a few lines. Guido van Rossum, a programmer at the CWI research institute in Amsterdam,
-kept hitting jobs that were too awkward for a shell script and too slow to write in C.
-:::
-
-:::solved
-A language that is as **quick to write** as a script, **powerful enough** for real programs, and above
-all **easy to read**. Python code is read far more often than it is written, so it looks almost like
-plain English, and its indentation is part of the language.
-:::
-
-:::timeline
-- **1989** Guido starts Python as a hobby project over the Christmas holidays.
-- **1991** The first public release, version 0.9.0.
-- **2000** Python 2.0 adds list comprehensions and a new garbage collector.
-- **2008** Python 3.0 cleans up old design mistakes, even though old code needs changes to run.
-- **2020** Python 2 reaches end of life; Python 3 is the only Python.
-:::
-
-Today Python is maintained by the **Python Software Foundation**, a non-profit, and a worldwide team of
-volunteer core developers led by an elected **steering council**. Guido led the language for almost
-30 years as its "Benevolent Dictator For Life" and stepped down from that role in 2018.
-
-:::usedby{title="Industries"}
-- AI and machine learning
-- Data science
-- Web backends
-- Automation and DevOps
-- Science and research
-- Teaching
-:::
-
-:::usedby{title="Used at"}
-- Instagram
-- YouTube
-- Spotify
-- Netflix
-- Dropbox
-- NASA
-:::
-
-:::funfact
-Python is named after the British comedy show *Monty Python's Flying Circus*, not the snake. Type
-`import this` in Python to read "The Zen of Python", the short poem of design rules the language
-follows.
-:::
-
-```bash run
-python3 -c "import this" | head -9
-```
-:::
-
-:::step{type=concept title="What a function is"}
-## Your first functions
-
-A **function** is a named block of code that does one job. You define it with `def`,
-give it a name, and list its inputs in brackets:
+Here is a small function that doubles a number:
 
 ```python
-def square(x):
-    return x * x
+def double(x):
+    return x * 2
 ```
 
-The `return` keyword sends a value back to whoever called the function.
-`square(4)` gives back `16`.
+Every part has a job:
 
-:::tip
-Python knows which lines belong to the function from the **indentation**. Use 4 spaces.
-:::
+- `def` means "I am **def**ining a function". It is a keyword: a word Python reserves for itself.
+- `double` is the function's **name**. You choose it, and you use it later to run the function.
+- `(x)` lists the **parameters**: the inputs the function expects. Here there is one, called `x`.
+- The `:` at the end says "the body comes next".
+- The **body** is every line below that is **indented** (pushed right by 4 spaces). Python knows which lines
+  belong to the function only by that indentation.
+- `return x * 2` works out `x * 2` and **hands the answer back**. It is the function's result.
+
+Writing a `def` does not run anything. It only teaches Python a new word. The function runs when you **call**
+it, by writing its name with brackets:
+
+```python
+double(4)     # gives back 8
+double(10)    # gives back 20
+```
+
+The value you put in the brackets, like `4`, is called an **argument**. When the function runs, the parameter
+`x` holds that argument.
 
 :::picture{name="recipe-card"}
-A function is a recipe card: name, inputs, steps, result.
+A function is like a recipe card: a name, the inputs, the steps, and what you get at the end.
 :::
 :::
 
-:::step{type=example title="Worked example: a function that builds text"}
-Here is a complete function, line by line:
+:::step{type=example title="Worked example: follow one call"}
+Let's watch a function that builds text, call by call:
 
 ```python
 def welcome(city):
     return f"Welcome to {city}!"
 
-welcome("Pune")
-# 'Welcome to Pune!'
+message = welcome("Pune")
+print(message)
 ```
 
-1. `def welcome(city):` names the function and its input, `city`.
-2. The indented line is the body. `f"..."` is an **f-string**: `{city}` is replaced by the value.
-3. `return` hands the finished text back to whoever called the function.
+Run it in your head first, then press Play to see what Python really does. The diagram uses `greet`, which is
+exactly the same shape:
+
+:::diagram{name="function-call"}
+The call jumps into the function, the parameter gets the argument, and return carries the answer back.
+:::
+
+Line by line:
+
+1. `def welcome(city):` teaches Python the function. Nothing is printed yet.
+2. `welcome("Pune")` calls it. Inside, `city` now holds `"Pune"`.
+3. `f"Welcome to {city}!"` is an **f-string**: a string with an `f` in front, where anything inside curly
+   braces `{ }` is replaced by its value. So it becomes `"Welcome to Pune!"`.
+4. `return` hands that text back. It lands in `message`.
+5. `print(message)` shows `Welcome to Pune!`.
 
 Your first task has exactly this shape, with different words.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-Open `greet.py`. The function body is just `pass`. What does `greet("Asha")` give back right now?
+Open `greet.py`. The body of `greet` is just `pass`, a word that means "do nothing". What does `greet("Asha")`
+give back right now?
 :::
 - [ ] `"Hello, Asha!"`
 - [ ] An empty string `""`
 - [x] `None`
 - [ ] An error
 :::explain
-A function without a `return` statement gives back `None`, Python's way of saying
-"nothing". That is why the starter code does not pass yet: it only says `pass`.
+A function that ends without a `return` gives back `None`, Python's special value for "nothing". `pass` only
+fills the space so the function is not empty; it returns nothing, so you get `None`.
 :::
 :::
 
-:::step{type=try title="See it for yourself"}
-The terminal at the bottom is a real Linux machine with your files in `/workspace`.
-Ask Python to call `greet` and print what comes back:
+:::step{type=try title="Ask the function yourself" file="02-functions/greet.py" line="4-6"}
+You can call a function straight from the terminal, without writing a new file:
 
 ```bash run
-python3 -c "from greet import greet; print(greet('Asha'))"
+cd /workspace/02-functions && python3 -c "from greet import greet; print(greet('Asha'))"
 ```
 
-You should see `None`. Keep this command handy: run it again after each change.
+It prints `None`, as you guessed. Here is how that long command works:
+
+- `python3 -c "..."` runs the Python code inside the quotes, instead of a file.
+- `from greet import greet` means "from the file `greet.py`, bring in the function `greet`".
+- `print(greet('Asha'))` calls it and prints what comes back.
+
+Keep this command handy: run it again after each change to see your function's answer.
 :::
 
-:::step{type=task task=greet title="Greet someone"}
-Make `greet(name)` in `greet.py` return `"Hello, <name>!"`.
+:::step{type=task task=greet title="Your turn: greet someone"}
+Make `greet(name)` in `greet.py` give back `"Hello, <name>!"`.
 
-For example, `greet("Asha")` returns `"Hello, Asha!"`. Mind the comma and the
-exclamation mark: the tests compare the text exactly.
+1. Replace `pass` with a `return` line.
+2. Build the text with an f-string, putting `name` inside curly braces.
+3. Mind the comma after Hello and the exclamation mark: the check compares the text exactly.
+
+So `greet("Asha")` gives `"Hello, Asha!"`, and `greet("Kabir")` gives `"Hello, Kabir!"`. Run the command from
+the last step to see it, then press **Check**.
 
 :::why
-Returning the text (instead of printing it) lets other code reuse it: a web page, a
-message, or the tests that check your work.
+Returning the text (instead of printing it) lets other code use it: a web page, a message, or the checks that
+test your work.
 :::
 :::
 
-:::step{type=example title="Two tools for the next tasks"}
-Python does arithmetic with the usual operators. One less familiar one is `%`,
-which gives the **remainder** after a division:
+:::step{type=concept title="print shows, return gives back" file="02-functions/shout.py" line="2-13"}
+Here is the most common beginner confusion in all of Python, and you are about to understand it better than
+most people. Open `shout.py`:
 
 ```python
-17 + 5    # 22
-17 % 5    # 2, because 17 = 3 * 5 + 2
-10 % 2    # 0
+def shout_print(word):
+    print(word.upper() + "!")
+
+
+def shout_return(word):
+    return word.upper() + "!"
+
+
+a = shout_print("chai")
+b = shout_return("chai")
+print("a is", a)
+print("b is", b)
 ```
 
-A comparison like `x == 0` is itself a value: it is either `True` or `False`.
+Two functions that *look* like they do the same thing. (`word.upper()` makes the text capital letters, and `+`
+joins two strings.) One **prints** the result. The other **returns** it. What ends up in `a` and `b`?
 
-:::mistake
-`=` stores a value in a variable. `==` compares two values. Mixing them up is the
-most common bug on day one.
+Run it and find out:
+
+```bash run
+cd /workspace/02-functions && python3 shout.py
+```
+
+```text
+CHAI!
+a is None
+b is CHAI!
+```
+
+Surprised? Here is what happened:
+
+- `shout_print("chai")` showed `CHAI!` on the screen right away. But it has no `return`, so it gave back
+  `None`, and `a` is `None`.
+- `shout_return("chai")` showed nothing. It handed `"CHAI!"` back, and that went into `b`.
+
+`print` talks to **the person** at the screen. `return` talks to **the code** that called the function. The
+screen cannot do sums or store answers; only returned values can be used again. That is why almost every
+function you write will `return` its answer.
 :::
 
-:::trace{title="17 % 5, step by step"}
-| step | value | note |
-|---|---|---|
-| 17 // 5 | 3 | 5 fits into 17 three whole times. |
-| 3 * 5 | 15 | Those three fives make 15. |
-| 17 - 15 | 2 | What is left over is the remainder. |
-| 17 % 5 | 2 | % gives exactly that leftover in one step. |
-| 10 % 2 | 0 | Nothing left over: 10 is even, the test you will need for is_even. |
-:::
+:::step{type=example title="Worked example: numbers in, a number out"}
+Functions can take more than one parameter. Separate them with commas:
+
+```python
+def area(width, height):
+    return width * height
+
+area(3, 4)     # gives back 12
+```
+
+The first argument goes to the first parameter, the second to the second: `width` is `3` and `height` is `4`.
+
+Functions can also answer yes-or-no questions. Python has two special values for that, `True` and `False`, and
+a comparison gives back one of them. `==` means "is equal to" (two equal signs: one `=` means "store",
+you will meet it in chapter 3):
+
+```python
+def is_ten(n):
+    return n == 10
+
+is_ten(10)     # gives back True
+is_ten(7)      # gives back False
+```
+
+And one new operator for your next task. `%` gives the **remainder** after dividing:
+
+```python
+7 % 2     # 1, because 7 = 2 * 3 + 1
+8 % 2     # 0, because 8 divides by 2 exactly
+9 % 3     # 0
+```
+
+A remainder of `0` means "divides exactly". Can you see how that helps with even numbers?
 :::
 
-:::step{type=task task=add title="Add two numbers"}
-In `math_utils.py`, make `add(a, b)` return the sum of `a` and `b`.
+:::step{type=task task=add title="Your turn: add two amounts"}
+Open `math_utils.py` and make `add(a, b)` give back the two numbers added together.
 
-`add(2, 3)` returns `5`, and `add(-1, 1)` returns `0`.
+For example, `add(2, 3)` gives `5`, and `add(-1, 1)` gives `0`. Check it in the terminal:
+
+```bash run
+cd /workspace/02-functions && python3 -c "from math_utils import add; print(add(2, 3))"
+```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=is_even title="Even or odd"}
-In `math_utils.py`, make `is_even(n)` return `True` when `n` is even and `False`
-otherwise. Zero and negative numbers count too: `is_even(0)` and `is_even(-4)` are `True`.
+:::step{type=task task=is_even title="Your turn: is it even?"}
+Still in `math_utils.py`, make `is_even(n)` give back `True` when `n` is even and `False` when it is not.
+
+A number is even when dividing it by 2 leaves nothing over. You have two tools from the worked example: `%`
+for the remainder, and `==` to compare.
+
+`is_even(4)` gives `True`, `is_even(7)` gives `False`. And what about `0` and negative numbers like `-4`? Try
+them in the terminal before you press **Check**: the check tries them too.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=try title="When the call does not match" file="02-functions/greet.py" line="4"}
+What happens if you call a function but forget its argument? Try it:
+
+```bash run
+cd /workspace/02-functions && python3 -c "from greet import greet; print(greet())"
+```
+
+```text
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: greet() missing 1 required positional argument: 'name'
+```
+
+Read it from the bottom, as you learned in chapter 1. `TypeError` is the kind of mistake; the message names
+the function, `greet()`, and says exactly what is missing: the argument for the parameter `name`. Python
+does not guess. If a function asks for one input, you must give it one.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-What does `double(5)` give, after `def double(n): return n * 2`?
+What does this program print?
+
+```python
+def triple(n):
+    return n * 3
+
+print(triple(5))
+```
 :::
-- [ ] `5`
-- [x] `10`
+- [ ] `n * 3`
+- [x] `15`
+- [ ] Nothing: the function was only defined
 - [ ] `None`
-- [ ] `25`
 :::explain
-`n` is 5 inside the function, and `return n * 2` gives back `10`.
+`triple(5)` runs the body with `n` set to `5`, returns `15`, and `print` shows it.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-A function has no `return` line. What does calling it give back?
+A function has a `print(...)` line but no `return`. What does calling it give back?
 :::
-- [ ] `0`
-- [ ] An empty string
+- [ ] What it printed
 - [x] `None`
 - [ ] An error
 :::explain
-Without `return`, a function gives back `None`, Python's way of saying "nothing". You saw it in this chapter's try step.
+Printing only shows something on the screen. A function without `return` gives back `None`.
 :::
 :::
 
-:::step{type=recap title="Chapter done"}
-- `def` defines a function; `return` sends a value back to the caller.
-- A function with no `return` gives back `None`.
-- `%` gives the remainder, so `n % 2 == 0` tells you if `n` is even.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+What is `10 % 3`?
+:::
+- [ ] `3`
+- [x] `1`
+- [ ] `3.33`
+:::explain
+`%` gives the remainder: 10 is 3 times 3, with 1 left over.
+:::
+:::
+
+:::step{type=deep-dive title="Go deeper: hints, docstrings and why small functions win"}
+**Type hints.** In other Python code you will see functions written like this:
+
+```python
+def welcome(city: str) -> str:
+    return f"Welcome to {city}!"
+```
+
+`city: str` says "city should be a string", and `-> str` says "this gives back a string". These are **type
+hints**: notes for people and for tools that check your code. Python itself ignores them when it runs. You
+will use them more in Part 3.
+
+**Docstrings.** A string right under the `def` line describes the function. Tools show it as help:
+
+```python
+def double(x):
+    """Give back x times two."""
+    return x * 2
+```
+
+**Why small functions?** A function that does one job is easy to name, easy to test and easy to reuse. When
+you cannot find a short name for a function, it is usually doing too much: split it in two. Professional
+developers follow this rule every day.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Define a function with `def`, a name, parameters and an indented body.
+- Call it with arguments, and give an answer back with `return`.
+- Tell `print` (shows it to a person) from `return` (gives it to the code), and know a function without
+  `return` gives back `None`.
+- Build text with f-strings, compare with `==`, and find a remainder with `%`.
+
+Next, chapter 3: numbers and text in depth, with variables, maths that surprises, and money that looks right.
 :::

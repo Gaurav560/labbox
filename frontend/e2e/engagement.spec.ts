@@ -6,8 +6,9 @@ import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
 
 const PY_SOLVED: Record<string, string> = {
-  "greet.py": 'def greet(name):\n    return f"Hello, {name}!"\n',
-  "math_utils.py": "def add(a, b):\n    return a + b\n\n\ndef is_even(n):\n    return n % 2 == 0\n",
+  // Python from zero, chapter 1 (its own folder since the 22 November rewrite).
+  "01-first-program/hello.py": 'print("Hello! I am Pocket.")\nprint("I will help you track your money.")\n',
+  "01-first-program/fix_me.py": 'print("Pocket is starting...")\nprint("Ready to count your rupees.")\nprint("Today\'s budget is", 500, "rupees.")\n',
 };
 
 let userId: number | null = null;
@@ -49,8 +50,8 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
 
   // 3. Into the lab: the editor is open on the first starter file, well within 60 seconds.
   await page.getByRole("button", { name: "Start coding →" }).click();
-  await expect(page.locator(".tab.active")).toContainText("greet.py", { timeout: 60_000 });
-  await expect(page.locator(".monaco-editor .view-lines")).toContainText("def greet");
+  await expect(page.locator(".tab.active")).toContainText("hello.py", { timeout: 60_000 });
+  await expect(page.locator(".monaco-editor .view-lines")).toContainText("task hello_pocket");
   expect(Date.now() - started).toBeLessThan(60_000);
   const token = await page.evaluate(() => localStorage.getItem("labbox.token") ?? "");
   const auth = { Authorization: `Bearer ${token}` };
@@ -85,7 +86,7 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
 
   // 5. The skill map on the lab's course page, before: chapter 1 is where you are, not done.
   await page.goto("/courses/python-basics");
-  const pyNode = page.locator(".metro-station", { hasText: "Your first functions" });
+  const pyNode = page.locator(".metro-station", { hasText: "Your first program" });
   await expect(pyNode).toHaveClass(/metro-now/);
 
   // 6. Complete the chapter with a real Check: XP, recap, then the node lights up.
@@ -95,12 +96,12 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
     expect((await page.request.put("/api/labs/python-basics/files/content", { headers: auth, data: { path, content } })).ok()).toBeTruthy();
   }
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
-  await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
-  // Chapter 1 of a 5-chapter course: the chapter's XP, no whole-lab bonus yet.
-  await expect(page.locator(".toast-info").last()).toContainText("+110 XP");
-  await expect(page.locator(".recap-stats")).toContainText("⭐ 110");
+  await expect(page.locator(".drawer-title")).toHaveText("2 of 2 passed 🎉", { timeout: 60_000 });
+  // Chapter 1 of the course: two tasks (20 each) and the chapter (50), no whole-lab bonus yet.
+  await expect(page.locator(".toast-info").last()).toContainText("+90 XP");
+  await expect(page.locator(".recap-stats")).toContainText("⭐ 90");
   await openProfile(page);
-  await expect(badge(page, /XP$/)).toHaveText("⭐ 130");
+  await expect(badge(page, /XP$/)).toHaveText("⭐ 110");
   await expect(badge(page, /Level/)).toHaveText("Lv 2");
 
   await page.goto("/courses/python-basics");

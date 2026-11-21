@@ -30,7 +30,7 @@ def _ch1_steps():
 
     from app.lessons import parse_steps
 
-    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/01-functions.md").read_text())
+    return parse_steps((Path(__file__).resolve().parents[2] / "labs/python-basics/chapters/02-functions.md").read_text())
 
 
 def days(*offsets: int, xp: int = 20) -> dict[date, int]:
@@ -147,7 +147,7 @@ def test_check_awards_task_chapter_and_lab_once(client: TestClient):
 
     # The lab bonus comes once, with the last chapter finished (whatever the course's length).
     with Session(engine) as s:
-        rest = lab.chapters[1:]
+        rest = [c for c in lab.chapters if c.id != "01-functions"]  # the chapter finished above
         for i, ch in enumerate(rest):
             got = engagement.award_for_check(s, uid, lab, ch.id, {t.id: True for t in ch.tasks})
             kinds = [a.kind for a in got]
@@ -251,7 +251,7 @@ def test_skill_map_lights_up(client: TestClient):
     assert nodes["py-functions"]["chapters"][0]["title"] == "Your first functions"
     # The 3D roadmap's panel names each chapter's lab and its number as the lab's menu shows it.
     first = nodes["py-functions"]["chapters"][0]
-    assert (first["lab_title"], first["number"]) == ("Python from zero", 1)
+    assert (first["lab_title"], first["number"]) == ("Python from zero", 2)  # chapter 2 since the 22 November rewrite
     spring = {n["id"]: n for n in client.get("/api/tracks/frameworks/skills", headers=h).json()["nodes"]}
     rel = spring["spring-data-deep"]["chapters"][0]
     assert (rel["lab_title"], rel["number"], rel["chapter_id"]) == ("Spring Boot", 21, "21-relationships")  # numbered from 0
