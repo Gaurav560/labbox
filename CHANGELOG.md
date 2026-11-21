@@ -1,5 +1,16 @@
 # Changelog
 
+## A hand-drawn diagram that plays: the sample (Excalidraw look)
+
+- The owner asked for diagrams that look drawn in Excalidraw or eraser.io, and for the six steps of
+  `SpringApplication.run` to animate. `roughjs` (MIT, installed by the owner) draws wobbly outlines,
+  hachure fills and arrows; labels are handwritten (Caveat), code stays in the code font; CSS colours
+  follow the light and dark themes (`lesson/Sketch.tsx`).
+- `SketchSteps`: Play lights the steps one at a time (1.6 s each), a dot moves to the current step, a
+  line under the drawing says what Spring is doing; Back, Next and Restart step by hand. No motion
+  for people who turn motion off. Spring Boot chapter 2's start-up diagram is the first one.
+- Browser test `sketch.spec.ts`: Next, Back and Play light the right steps, without page errors.
+
 ## The lesson and the code stay in sync: each step opens its own file
 
 - The owner, reading Spring Boot as a beginner would: the lesson explained `SpringApplication.run` while

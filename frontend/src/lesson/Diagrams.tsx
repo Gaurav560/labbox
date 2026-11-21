@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Svg } from "./PicturePrimitives";
+import { SketchSteps } from "./Sketch";
 
 /*
  * Built-in pictures for ideas you cannot see (Content standard: "pictures for invisible ideas").
@@ -377,23 +378,20 @@ function SpringTimeline() {
 
 /** What SpringApplication.run does, in order. */
 function StartupSequence() {
-  const steps = [
-    "1. read application.properties",
-    "2. scan com.shop for @Component classes",
-    "3. auto-configure (web, JSON, ...)",
-    "4. create the beans, inject them",
-    "5. start Tomcat on port 8080",
-    "6. Started: ready for requests",
-  ];
+  // Hand-drawn and played step by step (the owner's sample for the Excalidraw look, 21 November).
   return (
-    <Svg viewBox="0 0 440 236" label="SpringApplication.run reads application.properties, scans the package for components, applies auto-configuration, creates and injects the beans, starts Tomcat on port 8080, and is then ready for requests">
-      <Box x={10} y={8} w={420} h={30} label="SpringApplication.run(...)" tone="accent" code />
-      {steps.map((s, i) => (
-        <g key={s}>
-          <Box x={30} y={46 + i * 31} w={380} h={26} label={s} />
-        </g>
-      ))}
-    </Svg>
+    <SketchSteps
+      title="SpringApplication.run(...)"
+      label="SpringApplication.run reads application.properties, scans the package for components, applies auto-configuration, creates and injects the beans, starts Tomcat on port 8080, and is then ready for requests"
+      steps={[
+        { label: "1. read application.properties", says: "Spring reads your settings first: application.properties, then anything given on the command line. spring.application.name=shop-api is read here." },
+        { label: "2. scan com.shop for components", says: "It looks through com.shop and every package under it for classes marked @Component, @Service or @RestController. A class outside com.shop is never found." },
+        { label: "3. auto-configure (web, JSON, ...)", says: "It sees spring-boot-starter-web in your pom.xml, so it sets up a web server, JSON conversion (Jackson) and the part that sends each request to a controller." },
+        { label: "4. create the beans, inject them", says: "It creates one object (a bean) for every class it found, and passes beans into the constructors that ask for them." },
+        { label: "5. start Tomcat on port 8080", says: "It starts the embedded Tomcat web server inside your app. Nothing to install: the server is a library in your jar." },
+        { label: "6. Started: ready for requests", says: "It logs \"Started ShopApiApplication in 1.9 seconds\". Start-up is over; from now on the app only answers requests." },
+      ]}
+    />
   );
 }
 
