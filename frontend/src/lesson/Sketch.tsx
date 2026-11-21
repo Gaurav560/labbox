@@ -4,8 +4,8 @@ import type { Options } from "roughjs/bin/core";
 
 /*
  * Hand-drawn diagrams, in the look of Excalidraw and eraser.io (the owner's choice, 21 November): rough.js
- * draws slightly wobbly outlines, hachure fills and arrows; labels are handwritten (Caveat); code stays in
- * the code font so it reads exactly. Shapes come out as SVG paths with class names, and CSS colours them,
+ * draws slightly wobbly outlines and arrows on plain, calm fills; labels use the normal text font (the
+ * owner found handwriting and hatched fills tiring to read); code stays in the code font. Shapes come out as SVG paths with class names, and CSS colours them,
  * so they follow the light and dark themes. A fixed seed per shape keeps each drawing the same on every render.
  *
  * SketchSteps is a diagram that plays: a list of steps lights up one at a time (Play, Back, Next), a dot
@@ -23,7 +23,7 @@ function paths(drawable: ReturnType<typeof gen.rectangle>) {
   ));
 }
 
-const BASE: Options = { roughness: 1.1, bowing: 1.2, strokeWidth: 1.6, fillStyle: "hachure", hachureGap: 7, fillWeight: 1.1 };
+const BASE: Options = { roughness: 1.1, bowing: 1.2, strokeWidth: 1.6, fillStyle: "solid" }; // plain fills: no lines behind the text (owner)
 
 export function SketchBox({ x, y, w, h, label, tone = "plain", code, seed }: {
   x: number; y: number; w: number; h: number; label: string; tone?: Tone; code?: boolean; seed: number;
@@ -32,7 +32,7 @@ export function SketchBox({ x, y, w, h, label, tone = "plain", code, seed }: {
   return (
     <g className={`sk-box sk-${tone}`}>
       {paths(shape)}
-      <text className={code ? "sk-code" : "sk-hand"} x={x + w / 2} y={y + h / 2 + (code ? 5 : 6)} textAnchor="middle">{label}</text>
+      <text className={code ? "sk-code" : "sk-hand"} x={x + w / 2} y={y + h / 2 + 5} textAnchor="middle">{label}</text>
     </g>
   );
 }

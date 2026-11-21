@@ -1,5 +1,11 @@
 # Changelog
 
+## Hand-drawn diagrams: calmer to read
+
+- The owner found the handwriting font and the hatched fills tiring. Diagrams keep the hand-drawn
+  outlines and arrows, but boxes get plain light fills and labels use the normal text font; the
+  Caveat font is no longer loaded.
+
 ## A hand-drawn diagram that plays: the sample (Excalidraw look)
 
 - The owner asked for diagrams that look drawn in Excalidraw or eraser.io, and for the six steps of

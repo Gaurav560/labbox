@@ -1430,25 +1430,25 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   border: 1px dashed var(--border); background: color-mix(in srgb, #5048b8 8%, transparent); }
 .lab-page.is-phone .kbd-hint { display: none; }
 
-/* ---------- hand-drawn diagrams (rough.js, the Excalidraw look) ---------- */
+/* ---------- hand-drawn diagrams (rough.js outlines, plain fills, normal text) ---------- */
 .sketch { display: block; width: 100%; height: auto; overflow: visible; }
 .sk-line { fill: none; stroke: var(--figure-line); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.sk-fill { fill: none; stroke-width: 1.1; opacity: .55; }
-.sk-solid { stroke: none; }
+.sk-solid { stroke: none; fill: var(--figure-blue); }
 .sk-box .sk-line { stroke: var(--figure-blue-edge); }
-.sk-box .sk-fill { stroke: var(--figure-blue-edge); opacity: .16; }
-.sk-accent .sk-line, .sk-accent .sk-fill { stroke: var(--figure-purple-edge); }
-.sk-now .sk-line, .sk-now .sk-fill { stroke: var(--figure-yellow-edge); }
-.sk-now .sk-fill { opacity: .32; }
-.sk-done .sk-line, .sk-done .sk-fill { stroke: var(--figure-green-edge); }
-.sk-dim { opacity: .45; }
+.sk-accent .sk-solid { fill: var(--figure-purple); }
+.sk-accent .sk-line { stroke: var(--figure-purple-edge); }
+.sk-now .sk-solid { fill: var(--figure-yellow); }
+.sk-now .sk-line { stroke: var(--figure-yellow-edge); stroke-width: 2.2; }
+.sk-done .sk-solid { fill: var(--figure-green); }
+.sk-done .sk-line { stroke: var(--figure-green-edge); }
+.sk-dim { opacity: .5; }
 .sk-arrow .sk-line { stroke: var(--figure-line); stroke-width: 1.5; }
 .sk-arrow.sk-done .sk-line { stroke: var(--figure-green-edge); }
-.sk-hand { fill: var(--figure-text); font: 500 22px "Caveat", var(--font-text); }
+.sk-hand { fill: var(--figure-text); font: 500 15px var(--font-text); }
 .sk-now .sk-hand { font-weight: 700; }
 .sk-code { fill: var(--figure-text); font: 600 14px var(--font-code); font-variant-ligatures: none; }
 .sk-box, .sk-arrow { transition: opacity .35s ease; }
-.sk-box path, .sk-arrow path { transition: stroke .35s ease, opacity .35s ease; }
+.sk-box path, .sk-arrow path { transition: stroke .35s ease, fill .35s ease; }
 .sk-dot { fill: var(--figure-yellow-edge); transition: transform .6s cubic-bezier(.4, 0, .2, 1), opacity .3s; }
 .sketch-says { margin: 10px 2px 0; font-size: 14px; min-height: 2.9em; color: var(--figure-text); }
 @media (prefers-reduced-motion: reduce) {
