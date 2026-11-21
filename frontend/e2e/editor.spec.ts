@@ -58,8 +58,17 @@ test("labs open in real VS Code, and the switch goes back to the classic editor"
   await expect(vscode.locator(".monaco-workbench")).toBeVisible({ timeout: 90_000 });
   await expect(vscode.locator(".explorer-folders-view")).toContainText("greet.py", { timeout: 30_000 });
   await expect(vscode.locator(".monaco-dialog-box")).toHaveCount(0); // no workspace trust prompt
+  // Focus hides LabBox's own file tree, so VS Code (its own sidebar, Ctrl+B) has no Focus button; Lite has.
+  const focusBtn = page.locator(".topbar").getByRole("button", { name: /^(Focus|Exit focus)$/ });
+  await expect(focusBtn).toHaveCount(0);
   await page.getByRole("button", { name: "Lite" }).click();
+  await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
+  await expect(focusBtn).toHaveText("Focus");
+  await focusBtn.click();
+  await expect(page.locator(".tree-row")).toHaveCount(0);
+  await focusBtn.click();
   await expect(page.locator(".tree-row", { hasText: "greet.py" })).toBeVisible();
   await page.getByRole("button", { name: "IDE", exact: true }).click();
   await expect(page.frameLocator("iframe.ide-frame").locator(".monaco-workbench")).toBeVisible({ timeout: 60_000 });
+  await expect(focusBtn).toHaveCount(0);
 });

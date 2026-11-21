@@ -635,6 +635,7 @@ export default function LabPage() {
         username={user?.username ?? ""}
         focus={focus}
         onFocus={() => setFocus((f) => !f)}
+        canFocus={!useIde}
         onStart={startMachine}
         onStop={stopMachine}
         onReset={resetLab}

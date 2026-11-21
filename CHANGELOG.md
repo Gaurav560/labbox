@@ -1,5 +1,11 @@
 # Changelog
 
+## 22 November: Focus only where it works; three and xyflow removed
+
+- The owner: "Exit focus" did nothing in VS Code. Focus hides LabBox's own file tree, which only the Lite editor has,
+  so the button now shows only in Lite (VS Code hides its own sidebar with Ctrl+B). `editor.spec.ts` checks both.
+- `three`, `@types/three` and `@xyflow/react` uninstalled (no longer used after the Skill maps section went).
+
 ## 22 November: the skill map lives on the course page; the Skill maps section is gone
 
 - The owner: a "Skill map" title on the course page, under "What you will learn", and no separate Skill maps

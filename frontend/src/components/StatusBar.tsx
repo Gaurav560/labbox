@@ -19,6 +19,7 @@ interface Props {
   username: string;
   focus: boolean;
   onFocus: () => void;
+  canFocus: boolean;  // Focus hides LabBox's own file tree, so only the Lite editor has it (VS Code: Ctrl+B)
   onStart: () => void;
   onStop: () => void;
   onReset: () => void;
@@ -69,9 +70,11 @@ export default function StatusBar(p: Props) {
         <button className="btn btn-small" onClick={p.onStart}>Start machine</button>
       )}
       <MachineMenu status={p.status} onStop={p.onStop} onReset={p.onReset} />
-      <button className="btn btn-small btn-ghost" onClick={p.onFocus} aria-pressed={p.focus} title="Hide the file tree and widen the lesson and editor">
-        {p.focus ? "Exit focus" : "Focus"}
-      </button>
+      {p.canFocus && (
+        <button className="btn btn-small btn-ghost" onClick={p.onFocus} aria-pressed={p.focus} title="Hide the file tree and widen the lesson and editor">
+          {p.focus ? "Exit focus" : "Focus"}
+        </button>
+      )}
       <TextSizeMenu />
       <button className="btn btn-small btn-ghost" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title="Theme">
         {theme === "dark" ? "☀" : "☾"}
