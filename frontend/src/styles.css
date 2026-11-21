@@ -81,6 +81,12 @@ body {
   font: 15px/1.5 var(--font-text);
   -webkit-font-smoothing: antialiased;
 }
+/* Dark theme: the login page's charcoal with a very faint 32px grid (owner, 21 November) */
+:root:not([data-theme="light"]) body {
+  background-image: linear-gradient(#151916 1px, transparent 1px), linear-gradient(90deg, #151916 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+}
 body.dragging { user-select: none; cursor: grabbing; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }

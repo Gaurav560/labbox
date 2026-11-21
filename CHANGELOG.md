@@ -1,5 +1,10 @@
 # Changelog
 
+## Dark theme: the login page's charcoal with a very faint grid
+
+- In the dark theme, every app page now sits on the login page's charcoal (`#111512`) with a very faint
+  32 px grid (`#151916` lines), as the owner asked. The light theme is unchanged.
+
 ## Spring Boot, block D: chapters 17 to 22; the course is complete
 
 - **Chapter 17, testing the web layer:** `@WebMvcTest`, `MockMvc`, `@MockitoBean`. **Chapter 18, testing the
