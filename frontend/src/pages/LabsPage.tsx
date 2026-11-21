@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, type LabDetail, type LabSummary, type NextStep, type TrackSummary } from "../api";
+import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
 import { chapterNumber } from "../components/StatusBar";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
@@ -27,12 +27,10 @@ export default function LabsPage() {
   const { stats } = useStats();
   const navigate = useNavigate();
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
-  const [tracks, setTracks] = useState<TrackSummary[]>([]);
   const [next, setNext] = useState<NextStep | null>(null);
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
-    api.tracks().then(setTracks).catch(() => {});
     api.next().then(setNext).catch(() => {});
   }, [toast]);
 
@@ -79,12 +77,6 @@ export default function LabsPage() {
               <div className="big-number">{Math.min(stats.today_xp, stats.streak_min_xp)}/{stats.streak_min_xp}</div>
               <div className="muted small-text">XP today for the streak</div>
             </div>
-            {tracks.map((t) => (
-              <Link key={t.track} to={`/tracks/${t.track}`} className="track-link">
-                <span className="big-number">{t.done}/{t.nodes}</span>
-                <span className="muted small-text">{t.title} skill map →</span>
-              </Link>
-            ))}
           </section>
         )}
         <DrillCard />

@@ -1,3 +1,4 @@
+from functools import lru_cache
 import asyncio
 from typing import Literal
 
@@ -58,11 +59,31 @@ class TaskOut(BaseModel):
     examples: list[dict[str, str | None]] = []  # the task card: call, gives, note
 
 
+@lru_cache(maxsize=1024)
+def _topics(path: str, mtime: float) -> tuple[str, ...]:
+    from ..lessons import parse_steps
+
+    with open(path, encoding="utf-8") as f:
+        steps = parse_steps(f.read())
+    return tuple(s.title for s in steps if s.type in ("concept", "deep-dive") and s.title)
+
+
+def chapter_topics(lab, chapter_id: str) -> list[str]:
+    """The subtopics of a chapter: the titles of its concept steps (cached until the file changes)."""
+    try:
+        path = lab.root / lab.chapter(chapter_id).file
+        return list(_topics(str(path), path.stat().st_mtime))
+    except Exception:  # a broken lesson must not break the lab page; validate reports it
+        return []
+
+
 class ChapterOut(BaseModel):
     id: str
     title: str
     tasks: list[TaskOut]
     minutes: int | None = None
+    part: str | None = None  # the course part; null means "same part as the chapter before"
+    topics: list[str] = []  # the lesson's concept step titles (the skill map lists them under the chapter)
     has_setup: bool = False  # the lab page calls .../setup when the chapter opens
 
 
@@ -155,6 +176,8 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
                 id=c.id,
                 title=c.title,
                 minutes=c.minutes,
+                part=c.part,
+                topics=chapter_topics(lab, c.id),
                 has_setup=bool(c.setup),
                 tasks=[
                     TaskOut(

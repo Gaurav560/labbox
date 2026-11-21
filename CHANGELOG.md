@@ -1,5 +1,27 @@
 # Changelog
 
+## Skill maps: a metro map
+
+- The owner found the plain timeline "not cool" and chose a **metro map** from four directions, then asked for
+  more room, the subtopics of every chapter, and a little 3D. Every course part is its own coloured line and
+  every chapter a station; the route snakes down the page, up to four roomy stations a row, turning down at each
+  end with rounded corners outside the cards; where one part ends the colour blends into the next line's. Line
+  names sit at each line's first station, and a legend on top shows each line's progress ("Foundations 5/10").
+- **Every station has a card with the chapter's subtopics** (its concept steps, up to four, then "+N more"),
+  tasks done and minutes. Every card opens its chapter.
+- **A light 3D finish:** tube-like tracks with a highlight and a soft shadow, glossy sphere stations, cards with
+  depth that tilt towards the mouse (off with reduced motion).
+- The route you have travelled is solid, the rest is faded; done stations are filled with a tick, the station you
+  are at is bigger, pulses, and says "You are here". Phones get each line as a vertical list of the same cards.
+- Track maps are metro maps too, in stages of six topics; each card lists the topic's chapters, and choosing a
+  station shows them below the map with Open links.
+- **Course parts in `lab.yaml`:** a chapter can say `part: <name>` (optional, additive); it starts that part, and
+  the chapters after it stay in it. The lab API returns `part` and `topics` (the concept step titles, cached per
+  file) on every chapter. The Spring course has four parts: Foundations, REST APIs, Data, Production basics.
+  Labs without parts get one line.
+- The dashboard's progress card no longer lists skill map counts (owner); it shows level, streak and today's XP.
+- The plain timeline (Roadmap) is removed. New test: `test_chapters_carry_their_course_part`.
+
 ## Skill maps: a plain, simple roadmap (no 3D)
 
 - The owner: "ignore 3D, a plain cool roadmap, simple". Every lab map (`/skills/<lab>`) and track map

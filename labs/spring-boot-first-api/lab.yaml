@@ -28,6 +28,7 @@ check:
   network: none
 chapters:
   - id: 00-what-is-spring-boot
+    part: Foundations
     title: What Spring Boot is, and why it exists
     file: chapters/00-what-is-spring-boot.md
     minutes: 35
@@ -258,6 +259,7 @@ chapters:
           - call: "GET /receipt/tea, then GET /receipt/samosa"
             gives: "[\"1 x samosa\"]"
   - id: 10-how-spring-handles-requests
+    part: REST APIs
     title: How Spring handles a request
     file: chapters/10-how-spring-handles-requests.md
     minutes: 35
@@ -486,6 +488,7 @@ chapters:
           - call: "GET /ping"
             gives: "no X-Handled-By header"
   - id: 19-database
+    part: Data
     title: A real database
     file: chapters/19-database.md
     minutes: 45
@@ -630,6 +633,7 @@ chapters:
           - call: "SELECT sku, category FROM product"
             gives: "TEA-1 drinks, COF-1 drinks, SAM-1 snacks"
   - id: 25-testing-controllers
+    part: Production basics
     title: Testing the web layer
     file: chapters/25-testing-controllers.md
     minutes: 40

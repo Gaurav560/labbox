@@ -25,6 +25,8 @@ What makes it the template, as a checklist for every new course:
 4. **Parts and a running project.** Chapters are grouped in parts (Spring: foundations, REST APIs, data,
    production basics), numbered from 0 when there is an introduction, building one project (the Shop API).
    Each chapter's code lives in its own folder named like the chapter (`11-reading-the-request/`).
+   The first chapter of each part names it in `lab.yaml` (`part: REST APIs`); the skill map draws every part as
+   its own metro line.
 5. **The code follows the lesson.** Every step about project code names its file and lines
    (`file="..." line="..."`); task steps open their own TODO; example code that is not in the project says so.
 6. **Everything quoted is real.** Every log line, curl answer, error message, stack trace line and SQL statement

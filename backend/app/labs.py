@@ -187,6 +187,9 @@ class Chapter(_Strict):
     file: str
     tasks: list[Task] = Field(min_length=1)
     minutes: int | None = Field(default=None, gt=0)
+    # The course part this chapter starts or belongs to ("Foundations"); later chapters without one stay in it.
+    # Skill maps draw each part as its own metro line.
+    part: str | None = None
     # Runs once, as root, when a learner first opens the chapter (failure injection, seed data).
     # The script lives in the image under /lab/setup/, never in /workspace.
     setup: list[str] | None = None

@@ -1,4 +1,4 @@
-/* A track's skill map as a plain roadmap (owner, 21 November): every topic a step in learning order, and every
+/* A track's skill map as a metro map (owner, 21 November): every topic a station in learning order, and every
    topic's chapters opening their lab at that chapter. */
 import { expect, test } from "@playwright/test";
 
@@ -15,8 +15,9 @@ test("the track roadmap: find a topic, open its chapter in the lab", async ({ pa
   await expect(page.getByRole("list", { name: "Roadmap" })).toBeVisible();
   await expect(page.locator(".skill-node", { hasText: "Spring Boot, HTTP and Maven" })).toContainText("Start");
 
-  // Every topic's card lists its chapters, each an Open link into the lab.
-  const panel = page.locator(".road-step", { hasText: "Relationships, paging and N+1" });
+  // Choosing a station shows its topic's chapters below the map, each an Open link into the lab.
+  await page.getByRole("button", { name: /Relationships, paging and N\+1/ }).click();
+  const panel = page.locator(".metro-panel");
   await expect(panel).toContainText("Spring Boot · Ch 21");
   await panel.getByRole("link", { name: "Open Relationships and the N+1 problem" }).click();
   await expect(page).toHaveURL(/\/labs\/spring-boot-first-api\?chapter=21-relationships$/);

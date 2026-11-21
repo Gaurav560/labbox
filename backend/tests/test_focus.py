@@ -107,3 +107,16 @@ def test_a_course_with_a_chapter_0_numbers_chapters_by_their_ids(client: TestCli
     client.put(f"/api/labs/{SPRING}/chapters/11-reading-the-request/progress", json={"current_step": 2}, headers=h)
     nxt = client.get("/api/me/next", headers=h).json()
     assert (nxt["chapter_id"], nxt["chapter_number"], nxt["chapters"]) == ("11-reading-the-request", 11, 30)
+
+
+def test_chapters_carry_their_course_part(client: TestClient):
+    # Skill maps draw each course part as a metro line: a chapter that starts a part names it; the rest are null.
+    r = client.post("/api/auth/signup", json={"username": f"part{random.randint(0, 10**9)}", "password": "secret123"})
+    h = {"Authorization": f"Bearer {r.json()['token']}"}
+    chapters = client.get(f"/api/labs/{SPRING}", headers=h).json()["chapters"]
+    parts = [(c["id"][:2], c["part"]) for c in chapters if c["part"]]
+    assert parts == [("00", "Foundations"), ("10", "REST APIs"), ("19", "Data"), ("25", "Production basics")]
+    assert all("part" in c for c in chapters)
+    beans = next(c for c in chapters if c["id"] == "05-beans")
+    assert "How a class becomes a bean" in beans["topics"]  # concept steps are the chapter's subtopics
+    assert "What you can do now" not in beans["topics"]
