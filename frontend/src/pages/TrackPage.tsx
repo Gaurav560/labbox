@@ -42,7 +42,7 @@ export default function TrackPage() {
       id: n.id,
       number: String(i + 1).padStart(2, "0"),
       title: n.title,
-      topics: n.chapters.map((c) => `${c.done ? "✓ " : ""}${c.title}`),
+      topics: n.chapters.map((c) => ({ title: `${c.done ? "✓ " : ""}${c.title}`, href: `/labs/${c.lab_id}?chapter=${encodeURIComponent(c.chapter_id)}` })),
       meta: `${STATE_LABEL[n.state]} · ${n.chapters.length} chapter${n.chapters.length === 1 ? "" : "s"}`,
       state: n.state === "done" ? "done" : n.state === "coming_soon" ? "soon" : n.state === "locked" ? "locked" : i === firstOpen ? "now" : "open",
     }));

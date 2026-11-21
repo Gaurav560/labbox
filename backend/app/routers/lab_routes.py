@@ -60,19 +60,24 @@ class TaskOut(BaseModel):
 
 
 @lru_cache(maxsize=1024)
-def _topics(path: str, mtime: float) -> tuple[str, ...]:
+def _topics(path: str, mtime: float) -> tuple[tuple[str, int], ...]:
     from ..lessons import parse_steps
 
     with open(path, encoding="utf-8") as f:
         steps = parse_steps(f.read())
-    return tuple(s.title for s in steps if s.type in ("concept", "deep-dive") and s.title)
+    return tuple((s.title, i) for i, s in enumerate(steps) if s.type in ("concept", "deep-dive") and s.title)
 
 
-def chapter_topics(lab, chapter_id: str) -> list[str]:
-    """The subtopics of a chapter: the titles of its concept steps (cached until the file changes)."""
+class TopicOut(BaseModel):
+    title: str
+    step: int  # the lesson step (0-based) it opens: /labs/<lab>?chapter=<id>&step=<step>
+
+
+def chapter_topics(lab, chapter_id: str) -> list[TopicOut]:
+    """The subtopics of a chapter: its concept steps (cached until the file changes)."""
     try:
         path = lab.root / lab.chapter(chapter_id).file
-        return list(_topics(str(path), path.stat().st_mtime))
+        return [TopicOut(title=t, step=i) for t, i in _topics(str(path), path.stat().st_mtime)]
     except Exception:  # a broken lesson must not break the lab page; validate reports it
         return []
 
@@ -83,7 +88,7 @@ class ChapterOut(BaseModel):
     tasks: list[TaskOut]
     minutes: int | None = None
     part: str | None = None  # the course part; null means "same part as the chapter before"
-    topics: list[str] = []  # the lesson's concept step titles (the skill map lists them under the chapter)
+    topics: list[TopicOut] = []  # the lesson's concept steps (the skill map lists them under the chapter)
     has_setup: bool = False  # the lab page calls .../setup when the chapter opens
 
 

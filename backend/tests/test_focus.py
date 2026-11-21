@@ -118,5 +118,7 @@ def test_chapters_carry_their_course_part(client: TestClient):
     assert parts == [("00", "Foundations"), ("10", "REST APIs"), ("19", "Data"), ("25", "Production basics")]
     assert all("part" in c for c in chapters)
     beans = next(c for c in chapters if c["id"] == "05-beans")
-    assert "How a class becomes a bean" in beans["topics"]  # concept steps are the chapter's subtopics
-    assert "What you can do now" not in beans["topics"]
+    topics = {t["title"]: t["step"] for t in beans["topics"]}  # concept steps are the chapter's subtopics
+    assert "What you can do now" not in topics
+    steps = client.get(f"/api/labs/{SPRING}/chapters/05-beans", headers=h).json()["steps"]
+    assert steps[topics["How a class becomes a bean"]]["title"] == "How a class becomes a bean"  # and open that step

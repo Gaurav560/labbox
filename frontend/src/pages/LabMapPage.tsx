@@ -28,7 +28,7 @@ export default function LabMapPage() {
         id: c.id,
         number: String(chapterNumber(lab.chapters, i)).padStart(2, "0"),
         title: c.title,
-        topics: c.topics,
+        topics: c.topics?.map((t) => ({ title: t.title, href: `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}&step=${t.step}` })),
         meta: `${passed} of ${c.tasks.length} task${c.tasks.length === 1 ? "" : "s"}${c.minutes ? ` · ${c.minutes} min` : ""}`,
         state: done(i) ? "done" : i === now ? "now" : "open",
         href: `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}`,

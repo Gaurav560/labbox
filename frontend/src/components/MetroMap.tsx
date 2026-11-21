@@ -16,7 +16,7 @@ export interface Station {
   number: string;
   title: string;
   meta?: string;
-  topics?: string[];        // subtopics shown on the card
+  topics?: { title: string; href?: string }[];   // subtopics on the card, each opening its lesson step
   state: StationState;
   href?: string;            // a link station (a lab chapter)
 }
@@ -37,11 +37,12 @@ export const lineColor = (i: number) => COLORS[i % COLORS.length];
 interface Placed extends Station { x: number; y: number; line: number; first: boolean; edge: "left" | "right"; index: number }
 
 // Card height estimate (px) so rows never overlap: number, title, subtopics, meta, at about 26 characters a line.
-const wrap = (text: string, per = 26) => Math.max(1, Math.ceil(text.length / per));
-const cardHeight = (s: Station) => {
-  const topics = (s.topics ?? []).slice(0, MAX_TOPICS);
-  const more = (s.topics?.length ?? 0) > MAX_TOPICS ? 18 : 0;
-  return 46 + 21 * wrap(s.title, 22) + topics.reduce((h, t) => h + 17 * wrap(t), topics.length ? 10 : 0) + more + (s.meta ? 22 : 0);
+const wrap = (text: string, per = 24) => Math.max(1, Math.ceil(text.length / per));
+const cardHeight = (s: Station, open: boolean) => {
+  const all = s.topics ?? [];
+  const topics = open ? all : all.slice(0, MAX_TOPICS);
+  const more = all.length > MAX_TOPICS ? 24 : 0;
+  return 54 + 22 * wrap(s.title, 20) + topics.reduce((h, t) => h + 20 * wrap(t.title) + 3, topics.length ? 10 : 0) + more + (s.meta ? 24 : 0);
 };
 
 export default function MetroMap({ lines, selected, onSelect }: {
@@ -51,6 +52,8 @@ export default function MetroMap({ lines, selected, onSelect }: {
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());   // cards showing all their subtopics
+  const toggle = (id: string) => setExpanded((e) => { const n = new Set(e); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -86,14 +89,14 @@ export default function MetroMap({ lines, selected, onSelect }: {
           const x = ltr ? PAD + t * span : width - PAD - t * span;
           out.push({ ...s, x, y, line: li, first: k === 0 && j === 0, edge: ltr ? "right" : "left", index: out.length });
         });
-        y += 36 + Math.max(...chunk.map(cardHeight)) + 92;
+        y += 36 + Math.max(...chunk.map((s) => cardHeight(s, expanded.has(s.id)))) + 96;
         row++;
         k += size;
       }
     });
     const gap = perRow > 1 ? span / (perRow - 1) : span;
     return { placed: out, height: y - 60, cardW: Math.min(CARD, gap - 24) };
-  }, [lines, width]);
+  }, [lines, width, expanded]);
 
   const nowRef = useRef<HTMLLIElement>(null);
   useLayoutEffect(() => {
@@ -120,7 +123,7 @@ export default function MetroMap({ lines, selected, onSelect }: {
           <svg className="metro-svg" width={width} height={height} aria-hidden="true">
             <defs>
               <filter id="metro-shadow" x="-10%" y="-10%" width="120%" height="140%">
-                <feGaussianBlur stdDeviation="3" />
+                <feGaussianBlur stdDeviation="4" />
               </filter>
               {placed.slice(1).map((b, i) => {
                 const a = placed[i];
@@ -132,8 +135,8 @@ export default function MetroMap({ lines, selected, onSelect }: {
                 ) : null;
               })}
             </defs>
-            {/* the shadow under the whole route, then each segment as a tube: colour, then a thin highlight */}
-            <g className="metro-shadow" filter="url(#metro-shadow)" transform="translate(0 6)">
+            {/* the shadow under the whole route, then each segment as a tube: colour with a dark rim, then a centred highlight */}
+            <g className="metro-shadow" filter="url(#metro-shadow)" transform="translate(0 9)">
               {placed.slice(1).map((b, i) => <path key={b.id} d={trackPath(placed[i], b)} />)}
             </g>
             {placed.slice(1).map((b, i) => {
@@ -144,7 +147,7 @@ export default function MetroMap({ lines, selected, onSelect }: {
               return (
                 <g key={b.id} className={`metro-track ${travelled ? "is-travelled" : ""}`}>
                   <path d={d} stroke={stroke} className="metro-track-body" />
-                  <path d={d} className="metro-track-shine" transform="translate(0 -2.5)" />
+                  <path d={d} className="metro-track-shine" />
                 </g>
               );
             })}
@@ -156,10 +159,7 @@ export default function MetroMap({ lines, selected, onSelect }: {
                 style={{ left: s.x, top: s.y, ["--c" as string]: lineColor(s.line) }}>
                 {s.first && <span className="metro-line-name" style={{ background: lineColor(s.line) }}>{lines[s.line].name}</span>}
                 {s.state === "now" && <span className="metro-here">You are here</span>}
-                <StationLink s={s} onSelect={onSelect}>
-                  <span className="metro-dot">{s.state === "done" ? "✓" : ""}</span>
-                  <StationCard s={s} />
-                </StationLink>
+                <StationBody s={s} onSelect={onSelect} open={expanded.has(s.id)} onToggle={() => toggle(s.id)} />
               </li>
             ))}
           </ol>
@@ -175,10 +175,7 @@ export default function MetroMap({ lines, selected, onSelect }: {
                 <li key={s.id} ref={s.state === "now" ? nowRef : undefined}
                   className={`metro-station metro-${s.state} ${gi <= nowIdx ? "is-travelled" : ""} ${selected === s.id ? "is-selected" : ""}`}
                   style={{ ["--c" as string]: lineColor(li) }}>
-                  <StationLink s={s} onSelect={onSelect}>
-                    <span className="metro-dot">{s.state === "done" ? "✓" : ""}</span>
-                    <StationCard s={s} here={s.state === "now"} />
-                  </StationLink>
+                  <StationBody s={s} onSelect={onSelect} open={expanded.has(s.id)} onToggle={() => toggle(s.id)} here />
                 </li>
               );
             }),
@@ -189,20 +186,41 @@ export default function MetroMap({ lines, selected, onSelect }: {
   );
 }
 
-function StationCard({ s, here }: { s: Station; here?: boolean }) {
+/*
+ * A station: its dot, and a card whose title opens the chapter (or, on a track map, selects the topic) and whose
+ * subtopics each open their own lesson step. "+N more" shows the rest in place.
+ */
+function StationBody({ s, onSelect, open, onToggle, here }: {
+  s: Station; onSelect?: (id: string) => void; open: boolean; onToggle: () => void; here?: boolean;
+}) {
   const topics = s.topics ?? [];
+  const shown = open ? topics : topics.slice(0, MAX_TOPICS);
+  const dot = <span className="metro-dot">{s.state === "done" ? "✓" : ""}</span>;
   return (
-    <span className="metro-card">
-      <span className="metro-num">{s.number}{here && <span className="metro-here">You are here</span>}</span>
-      <span className="metro-title">{s.title}</span>
-      {topics.length > 0 && (
-        <span className="metro-topics">
-          {topics.slice(0, MAX_TOPICS).map((t) => <span key={t} className="metro-topic">{t}</span>)}
-          {topics.length > MAX_TOPICS && <span className="metro-topic metro-more">+{topics.length - MAX_TOPICS} more</span>}
-        </span>
-      )}
-      {s.meta && <span className="metro-meta">{s.meta}</span>}
-    </span>
+    <div className="metro-hit" onMouseMove={tilt} onMouseLeave={untilt}>
+      <StationLink s={s} onSelect={onSelect} className="metro-dot-link" hidden>{dot}</StationLink>
+      <div className="metro-card">
+        <StationLink s={s} onSelect={onSelect} className="metro-head">
+          <span className="metro-num">{s.number}{here && s.state === "now" && <span className="metro-here">You are here</span>}</span>
+          <span className="metro-title">{s.title}</span>
+        </StationLink>
+        {shown.length > 0 && (
+          <ul className="metro-topics">
+            {shown.map((t) => (
+              <li key={t.title}>
+                {t.href ? <Link className="metro-topic" to={t.href}>{t.title}</Link> : <span className="metro-topic">{t.title}</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+        {topics.length > MAX_TOPICS && (
+          <button type="button" className="metro-more" onClick={onToggle} aria-expanded={open}>
+            {open ? "Show less" : `+${topics.length - MAX_TOPICS} more`}
+          </button>
+        )}
+        {s.meta && <span className="metro-meta">{s.meta}</span>}
+      </div>
+    </div>
   );
 }
 
@@ -218,14 +236,11 @@ function untilt(e: MouseEvent<HTMLElement>) {
   e.currentTarget.style.removeProperty("--ry");
 }
 
-function StationLink({ s, onSelect, children }: { s: Station; onSelect?: (id: string) => void; children: ReactNode }) {
-  const label = `${s.number} ${s.title}`;
-  if (s.href) {
-    return <Link className="metro-hit" to={s.href} aria-label={label} onMouseMove={tilt} onMouseLeave={untilt}>{children}</Link>;
-  }
-  return (
-    <button type="button" className="metro-hit" aria-label={label} onClick={() => onSelect?.(s.id)} onMouseMove={tilt} onMouseLeave={untilt}>
-      {children}
-    </button>
-  );
+// The dot repeats the title's link for the mouse only (hidden from screen readers and the tab order).
+function StationLink({ s, onSelect, className, hidden, children }: {
+  s: Station; onSelect?: (id: string) => void; className: string; hidden?: boolean; children: ReactNode;
+}) {
+  const a11y = hidden ? { "aria-hidden": true, tabIndex: -1 } : { "aria-label": `${s.number} ${s.title}` };
+  if (s.href) return <Link className={className} to={s.href} {...a11y}>{children}</Link>;
+  return <button type="button" className={className} onClick={() => onSelect?.(s.id)} {...a11y}>{children}</button>;
 }

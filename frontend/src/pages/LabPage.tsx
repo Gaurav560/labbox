@@ -158,6 +158,13 @@ export default function LabPage() {
     }
   }, [labId, toast]);
 
+  // ?step= (from a skill map subtopic) opens that lesson step of the ?chapter= once, on arrival.
+  const arrivalStep = useRef<{ chapter: string; step: number } | null>(
+    searchParams.get("chapter") && /^\d+$/.test(searchParams.get("step") ?? "")
+      ? { chapter: searchParams.get("chapter")!, step: Number(searchParams.get("step")) }
+      : null,
+  );
+
   useEffect(() => {
     loadLab()
       .then((d) => {
@@ -187,11 +194,13 @@ export default function LabPage() {
     setPredicts({});
     Promise.all([api.chapter(labId, chapterId), api.chapterProgress(labId, chapterId)])
       .then(([c, p]) => {
-        const at = Math.min(p.current_step, c.steps.length - 1);
+        const jump = arrivalStep.current?.chapter === chapterId ? arrivalStep.current.step : null;
+        arrivalStep.current = null;
+        const at = Math.min(jump ?? p.current_step, c.steps.length - 1);
         setMarkdown(c.markdown);
         setSteps(c.steps);
         setStep(at);
-        setVisited(at);
+        setVisited(Math.max(at, Math.min(p.current_step, c.steps.length - 1)));  // a jump back keeps later steps open
         setHints(p.hints);
         setChapterXp(p.xp_earned);
         setPredicts(Object.fromEntries(Object.entries(p.predicts).map(([k, v]) => [Number(k), v])));

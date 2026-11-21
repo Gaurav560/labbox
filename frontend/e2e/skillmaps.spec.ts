@@ -28,6 +28,14 @@ test("skill maps: from the landing page to a lab's road, into a chapter", async 
   await expect(page.locator(".map-ring")).toContainText("0%");
   await road.getByRole("link", { name: "06 Dependency injection in depth" }).click();
   await expect(page).toHaveURL(/\/labs\/spring-boot-first-api\?chapter=06-dependency-injection$/);
+
+  // Every subtopic opens its own lesson step.
+  await page.goto("/skills/spring-boot-first-api");
+  const beans = page.locator(".metro-station", { hasText: "Beans and the application context" });
+  await beans.getByRole("link", { name: "How a class becomes a bean" }).click();
+  await expect(page).toHaveURL(/chapter=05-beans&step=4$/);
+  await expect(page.locator(".step-count")).toHaveText(/Step 5 of/);
+  await expect(page.getByRole("heading", { name: "How a class becomes a bean" }).first()).toBeVisible();
   expect(errors).toEqual([]);
   await page.request.post("/api/labs/spring-boot-first-api/workspace/stop", auth);
 });

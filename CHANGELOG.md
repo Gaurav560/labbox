@@ -1,5 +1,17 @@
 # Changelog
 
+## Skill maps: every subtopic opens its lesson step; more depth
+
+- The owner: subtopics a little bigger, more 3D, and every subtopic clickable. Each subtopic on a station card is
+  now a link to that exact lesson step (`/labs/<lab>?chapter=<id>&step=<n>`); the card title opens the chapter,
+  and "+N more" shows the rest of the subtopics in place (the map makes room). On track maps, each topic's
+  chapters are links into the lab.
+- The lab page reads `?step=` once on arrival (with `?chapter=`); jumping back keeps later steps open.
+- The lab API's chapter `topics` are now `{title, step}` (the concept step and its index).
+- More depth: thicker tube tracks with a deeper shadow, bigger glossy stations, cards as raised tiles with a
+  coloured edge underneath that lift on hover; subtopics at 13.5 px, titles at 15.5 px.
+
+
 ## Skill maps: a metro map
 
 - The owner found the plain timeline "not cool" and chose a **metro map** from four directions, then asked for
