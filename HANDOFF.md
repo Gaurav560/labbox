@@ -74,7 +74,7 @@ every session.
   session (`0b5d260`).
 - `Trace.tsx`: "watch it run" step-through tables (`:::trace{title='...'}` around a pipe table).
 - `TaskCard.tsx`: "What your code should do" from task `examples`.
-- `LessonMarkdown.tsx`: picture, trace and diagram blocks; trace tables parsed from text (no remark-gfm);
+- `LessonMarkdown.tsx`: picture, trace and diagram blocks; remark-gfm renders tables; trace rows are read from the chapter source;
   components memoised so interactive blocks keep their state across renders (`c436f64`).
 - `StepCard.tsx`: task card in the task box; no duplicate Check button (`c436f64`); `onRun` optional and
   reading-mode text on phones (`440249f`).
@@ -135,8 +135,5 @@ expression (Python's `open(f, "w").write(open(f).read())` empties the file first
 
 ## Known gaps
 
-- Lesson tables (the capstone field tables) show as raw `|` text: `remark-gfm` is not installed and
-  installing npm packages is blocked for the agent; ask the owner to run
-  `cd frontend && npm install --save-exact remark-gfm@4.0.1`.
 - The VS Code explorer shows the lab name as a heading with `workspace` one level below (from the per-lab
   workspace file). Harmless; could be flattened later.

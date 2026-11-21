@@ -1,5 +1,12 @@
 # Changelog
 
+## Lesson tables render as tables (remark-gfm)
+
+- The owner installed `remark-gfm`; lessons now render markdown tables as real tables (bordered, a
+  header row, scroll sideways on narrow screens). Single tildes stay plain text. "Watch it run" traces
+  read GFM tables too and work as before.
+- The diagram-themes browser test now waits for the phone reading mode to settle before it measures.
+
 ## Dark theme: the login page's charcoal with a very faint grid
 
 - In the dark theme, every app page now sits on the login page's charcoal (`#111512`) with a very faint

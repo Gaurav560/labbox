@@ -361,6 +361,10 @@ select option:checked { background: var(--chip); }
 .step-card p, .chapter p { margin: 0 0 var(--space-3); }
 .step-card ul, .step-card ol, .chapter ul, .chapter ol { margin: 0 0 var(--space-3); padding-left: 1.3em; }
 .step-card li, .chapter li { margin: 0 0 var(--space-1); }
+/* markdown tables in lessons (GFM) */
+.step-card table, .chapter table { display: block; overflow-x: auto; max-width: 100%; border-collapse: collapse; margin: 0 0 var(--space-3); font-size: 14px; }
+.step-card th, .step-card td, .chapter th, .chapter td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+.step-card th, .chapter th { background: var(--chip); font-weight: 600; }
 .step-card h1, .chapter h1 { font-size: var(--h1); }
 .step-card h2, .chapter h2 { font-size: var(--h2); margin-top: var(--space-2); }
 .step-card h3, .chapter h3 { font-size: var(--h3); }

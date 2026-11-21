@@ -10,6 +10,8 @@ import type { Element, ElementContent } from "hast";
 import type { Root } from "mdast";
 import { useMemo, useRef, type ReactNode } from "react";
 import Markdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import type { PluggableList } from "unified";
 import remarkDirective from "remark-directive";
 import { visit } from "unist-util-visit";
 import CodeBlock from "./CodeBlock";
@@ -47,8 +49,8 @@ function remarkLessonBlocks() {
         for (const [k, v] of Object.entries(node.attributes ?? {})) if (v != null) attrs[`data${k[0].toUpperCase()}${k.slice(1)}`] = v;
         if (node.type === "containerDirective" && node.name === "trace") {
           // The table becomes data for the step-through; anything else inside stays as text.
-          // Without GFM tables the pipe rows arrive as one paragraph of text: read them line by line.
-          const table = node.children.find((c) => c.type === "paragraph" && plain(c).trimStart().startsWith("|"));
+          // GFM parses it as a table; a table it cannot parse arrives as a paragraph of pipe rows.
+          const table = node.children.find((c) => c.type === "table" || (c.type === "paragraph" && plain(c).trimStart().startsWith("|")));
           if (table) {
             // Read the rows from the chapter's source text, not the parsed nodes: markdown would read
             // "customer:7:cart" as text plus a ":cart" directive and drop part of it.
@@ -105,7 +107,8 @@ interface Props {
   inline?: boolean; // render paragraphs as <span> (inside buttons)
 }
 
-const REMARK_PLUGINS = [remarkDirective, remarkLessonBlocks];
+// GFM for tables; single tildes stay text ("~5 ms" must not become strikethrough).
+const REMARK_PLUGINS: PluggableList = [[remarkGfm, { singleTilde: false }], remarkDirective, remarkLessonBlocks];
 
 export default function LessonMarkdown({ markdown, onRun, inline }: Props) {
   // The components must keep the same identity between renders: new ones make React remount every

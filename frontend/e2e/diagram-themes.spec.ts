@@ -70,6 +70,9 @@ test("technical diagrams keep their geometry and readable arrows when the lesson
     // Also exercise a phone viewport narrower than the saved desktop lesson panel.
     for (const width of [1500, 390]) {
       await page.setViewportSize({ width, height: 800 });
+      // Let the layout settle first: under 760 px the page switches to the phone reading mode (no editor).
+      await expect(page.locator(".work-area")).toHaveCount(width < 760 ? 0 : 1);
+      await expect(figure).toBeVisible();
       const before = await appearance(figure);
       const root = page.locator("html");
       const nextTheme = await root.getAttribute("data-theme") === "dark" ? "light" : "dark";
