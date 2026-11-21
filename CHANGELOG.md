@@ -1,5 +1,16 @@
 # Changelog
 
+## Spring Boot, block B: chapters 6 to 10 (the API grows up)
+
+- **Chapter 6, request bodies and DTOs:** `@RequestBody`, JSON to a record and back, a `ProductView`
+  that hides the cost price. **Chapter 7, status codes:** `ResponseEntity`, 201 with a Location header,
+  204 and 404 for DELETE. **Chapter 8, validation:** Bean Validation on records (`@NotBlank`, `@Size`,
+  `@Positive`, `@Email`, `@Pattern`) and `@Valid`. **Chapter 9, errors:** one `@RestControllerAdvice`
+  answering `ProblemDetail` (RFC 9457) for a missing product and for validation errors.
+  **Chapter 10, configuration:** typed `@ConfigurationProperties`, `application.yml`, a `prod` profile.
+- Three new diagrams: JSON binding, the error flow, profile layering. Every chapter is its own Maven
+  project with hidden JUnit checks; every starter compiles and fails with a kind message.
+
 ## Spring Boot, block A: an introduction chapter and chapters 1 to 5, in plain style
 
 - The Spring lab becomes **Spring Boot**, a plain course (no story) around one running Shop API. The old

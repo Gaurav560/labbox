@@ -163,3 +163,125 @@ chapters:
             gives: "[Masala tea, Samosa]"
           - call: "GET /products/search?sort=price"
             gives: "[Samosa, Masala tea, Filter coffee, Paneer roll]"
+  - id: 06-request-bodies
+    title: Request bodies and DTOs
+    file: chapters/06-request-bodies.md
+    minutes: 20
+    tasks:
+      - id: create_product
+        title: "06-request-bodies: POST /products"
+        hints:
+          - "Add a method with @PostMapping for /products and a NewProduct parameter."
+          - "Mark the parameter with @RequestBody so Spring reads it from the JSON body."
+          - "Store it with the repository's add method, passing the name, the price and NEW_PRODUCT_COST_PAISE, and return what it gives back."
+        examples:
+          - call: "POST /products {\"name\": \"Vada pav\", \"pricePaise\": 2500}"
+            gives: "{\"id\": 4, \"name\": \"Vada pav\", ...}"
+      - id: product_view
+        title: "06-request-bodies: a ProductView without the cost"
+        hints:
+          - "The method returns the whole Product, so costPaise is in the JSON."
+          - "Change the return type to ProductView and build one from the product's id and name."
+          - "Format the price with String.format(\"Rs %d.%02d\", ...) using paise / 100 and paise % 100."
+        examples:
+          - call: "GET /products/1/view"
+            gives: "{\"id\": 1, \"name\": \"Masala tea\", \"price\": \"Rs 20.00\"}"
+            note: "no costPaise"
+  - id: 07-status-codes
+    title: Answers and status codes
+    file: chapters/07-status-codes.md
+    minutes: 18
+    tasks:
+      - id: created_201
+        title: "07-status-codes: 201 Created with a Location"
+        hints:
+          - "A plain return value always answers 200; return a ResponseEntity<Product> instead."
+          - "ResponseEntity.created(uri) sets 201 and the Location header; .body(product) adds the body."
+          - "Build the URI from the new product's id, for example with URI.create and the path /products/ plus the id."
+        examples:
+          - call: "POST /products {\"name\": \"Poha\", \"pricePaise\": 2200}"
+            gives: "201, Location: /products/4"
+      - id: delete_204
+        title: "07-status-codes: DELETE answers 204 or 404"
+        hints:
+          - "repository.delete(id) returns true when it deleted a product."
+          - "Return ResponseEntity<Void> so you can choose the status code."
+          - "Use noContent().build() when it deleted something, and notFound().build() otherwise."
+        examples:
+          - call: "DELETE /products/3"
+            gives: "204"
+          - call: "DELETE /products/3 again"
+            gives: "404"
+  - id: 08-validation
+    title: Validation
+    file: chapters/08-validation.md
+    minutes: 18
+    tasks:
+      - id: validate_product
+        title: "08-validation: validate NewProduct"
+        hints:
+          - "Constraints go on the record's components, and @Valid goes on the controller parameter."
+          - "Use @NotBlank and @Size(max = 40) on the name, and @Positive on the price."
+          - "In ProductController, put @Valid before @RequestBody NewProduct."
+        examples:
+          - call: "POST /products {\"name\": \"\", \"pricePaise\": 2000}"
+            gives: "400"
+          - call: "POST /products {\"name\": \"Tea\", \"pricePaise\": 2000}"
+            gives: "201"
+      - id: validate_customer
+        title: "08-validation: validate NewCustomer"
+        hints:
+          - "Three components, three rules: name, email and phone."
+          - "Use @NotBlank on name, @NotBlank and @Email on email, and @Pattern on phone."
+          - "The phone pattern is the regular expression for exactly ten digits; then add @Valid in CustomerController."
+        examples:
+          - call: "POST /customers with \"phone\": \"98765\""
+            gives: "400"
+          - call: "POST /customers with a valid name, email and phone"
+            gives: "201"
+  - id: 09-errors
+    title: Errors, the same everywhere
+    file: chapters/09-errors.md
+    minutes: 20
+    tasks:
+      - id: not_found_problem
+        title: "09-errors: a ProblemDetail for ProductNotFoundException"
+        hints:
+          - "ApiErrors is already the advice class for every controller; it needs a handler method."
+          - "Mark a method as the exception handler for ProductNotFoundException, and return a ProblemDetail."
+          - "Create it with ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, the message), then set its title."
+        examples:
+          - call: "GET /products/99"
+            gives: "404 {\"title\": \"Product not found\", \"detail\": \"No product 99\"}"
+      - id: validation_problem
+        title: "09-errors: a ProblemDetail for validation errors"
+        hints:
+          - "Validation failures throw MethodArgumentNotValidException."
+          - "Collect getBindingResult().getFieldErrors() into a map of field name to default message."
+          - "Return a 400 ProblemDetail titled Invalid request, and add the map with setProperty(\"errors\", ...)."
+        examples:
+          - call: "POST /products {\"name\": \"\", \"pricePaise\": -1}"
+            gives: "400 {\"title\": \"Invalid request\", \"errors\": {\"name\": ..., \"pricePaise\": ...}}"
+  - id: 10-configuration
+    title: Configuration and profiles
+    file: chapters/10-configuration.md
+    minutes: 18
+    tasks:
+      - id: shop_properties
+        title: "10-configuration: typed shop settings"
+        hints:
+          - "ShopProperties needs @ConfigurationProperties with the prefix shop."
+          - "Add the shop settings to application.yml, with name and free-delivery-above-paise under shop."
+          - "Give ShopInfoController a constructor that takes ShopProperties, and answer with its name and freeDeliveryAbovePaise."
+        examples:
+          - call: "GET /shop/info"
+            gives: "{\"name\": \"Shop API\", \"freeDeliveryAbovePaise\": 50000}"
+      - id: prod_profile
+        title: "10-configuration: production settings in a profile"
+        hints:
+          - "A profile file sits next to application.yml and is named after the profile."
+          - "Create application-prod.yml with only the settings that change in production."
+          - "Set shop.name to Shop API (production) and shop.free-delivery-above-paise to 100000."
+        examples:
+          - call: "GET /shop/info with the prod profile"
+            gives: "{\"name\": \"Shop API (production)\", \"freeDeliveryAbovePaise\": 100000}"

@@ -455,6 +455,133 @@ function RequestMapping() {
   );
 }
 
+/** Jackson binds the JSON body to a record by field name, and writes the return value back as JSON. */
+function JsonBinding() {
+  return (
+    <Svg viewBox="0 0 440 210" label="The JSON body name Vada pav, pricePaise 2500 is read by Jackson into a NewProduct record with the same field names; the method returns a Product, which Jackson writes back as JSON">
+      <Box x={10} y={14} w={190} h={52} label='{"name": "Vada pav", ...}' code />
+      <text className="dg-note" x={10} y={84}>request body (JSON)</text>
+      <Arrow x1={202} y1={40} x2={236} y2={40} />
+      <text className="dg-note" x={204} y={30}>Jackson</text>
+      <Box x={240} y={14} w={190} h={52} label="NewProduct(name, pricePaise)" tone="accent" code />
+      <text className="dg-note" x={240} y={84}>method parameter</text>
+      <Arrow x1={335} y1={92} x2={335} y2={120} />
+      <Box x={240} y={124} w={190} h={40} label="Product (returned)" tone="accent" code />
+      <Arrow x1={238} y1={144} x2={204} y2={144} />
+      <text className="dg-note" x={206} y={136}>Jackson</text>
+      <Box x={10} y={124} w={190} h={40} label='{"id": 4, "name": ...}' code />
+      <text className="dg-note" x={10} y={184}>response body (JSON)</text>
+    </Svg>
+  );
+}
+
+/** Any controller's exception goes to the one @RestControllerAdvice, which answers with a ProblemDetail. */
+function ErrorFlow() {
+  return (
+    <Svg viewBox="0 0 440 210" label="The service throws ProductNotFoundException; it passes up through the controller to the RestControllerAdvice, whose ExceptionHandler builds a ProblemDetail with status 404, which is sent as JSON">
+      <Box x={10} y={14} w={180} h={34} label="ProductService" code />
+      <text className="dg-note" x={200} y={36}>throws ProductNotFoundException</text>
+      <Arrow x1={100} y1={50} x2={100} y2={74} />
+      <Box x={10} y={78} w={180} h={34} label="ProductController" code />
+      <text className="dg-note" x={200} y={100}>does not catch it</text>
+      <Arrow x1={100} y1={114} x2={100} y2={138} />
+      <Box x={10} y={142} w={180} h={40} label="@RestControllerAdvice" tone="accent" code />
+      <Arrow x1={192} y1={162} x2={236} y2={162} />
+      <Box x={240} y={142} w={190} h={40} label="ProblemDetail, 404" tone="accent" code />
+      <text className="dg-note" x={240} y={200}>sent as JSON, same for every endpoint</text>
+    </Svg>
+  );
+}
+
+/** Profiles: application.yml first, then application-prod.yml on top; later values win. */
+function ProfileLayers() {
+  return (
+    <Svg viewBox="0 0 440 200" label="application.yml sets shop.name to Shop API and free delivery to 50000; application-prod.yml, active with the prod profile, overrides both; the effective values are the prod ones">
+      <text className="dg-note" x={10} y={18}>application.yml (always)</text>
+      <Box x={10} y={26} w={250} h={30} label="shop.name: Shop API" code />
+      <Box x={10} y={58} w={250} h={30} label="free-delivery...: 50000" code />
+      <text className="dg-note" x={10} y={110}>application-prod.yml (prod profile)</text>
+      <Box x={10} y={118} w={250} h={30} label="shop.name: Shop API (production)" tone="accent" code />
+      <Box x={10} y={150} w={250} h={30} label="free-delivery...: 100000" tone="accent" code />
+      <Arrow x1={264} y1={150} x2={300} y2={104} />
+      <Box x={304} y={72} w={130} h={56} label="what the app sees" tone="highlight" />
+      <text className="dg-note" x={304} y={146}>the profile wins</text>
+    </Svg>
+  );
+}
+
+/** ORM: a class maps to a table, each field to a column, each object to a row. */
+function OrmMapping() {
+  return (
+    <Svg viewBox="0 0 440 200" label="The Product entity class maps to the product table: id to the id primary key, name to name, pricePaise to price_paise; each Product object is one row">
+      <text className="dg-note" x={10} y={18}>@Entity class Product</text>
+      <Box x={10} y={26} w={170} h={30} label="Long id  (@Id)" code />
+      <Box x={10} y={60} w={170} h={30} label="String name" code />
+      <Box x={10} y={94} w={170} h={30} label="int pricePaise" code />
+      {[41, 75, 109].map((y) => <Arrow key={y} x1={182} y1={y} x2={256} y2={y} />)}
+      <text className="dg-note" x={260} y={18}>table product</text>
+      <Box x={260} y={26} w={170} h={30} label="id  (primary key)" tone="accent" code />
+      <Box x={260} y={60} w={170} h={30} label="name" tone="accent" code />
+      <Box x={260} y={94} w={170} h={30} label="price_paise" tone="accent" code />
+      <text className="dg-note" x={10} y={156}>one object = one row; Hibernate writes the SQL</text>
+      <text className="dg-note" x={10} y={176}>camelCase fields become snake_case columns</text>
+    </Svg>
+  );
+}
+
+/** One-to-many: the foreign key lives in the order_item table. */
+function OneToMany() {
+  return (
+    <Svg viewBox="0 0 440 200" label="The orders table has one row for order 1; the order_item table has two rows whose order_id column is 1, pointing back to it">
+      <text className="dg-note" x={10} y={18}>orders</text>
+      <Box x={10} y={26} w={150} h={30} label="id 1 | Asha" tone="accent" code />
+      <text className="dg-note" x={210} y={18}>order_item</text>
+      <Box x={210} y={26} w={220} h={30} label="Masala tea x2 | order_id 1" code />
+      <Box x={210} y={62} w={220} h={30} label="Samosa x3 | order_id 1" code />
+      <Arrow x1={208} y1={41} x2={162} y2={41} />
+      <Arrow x1={208} y1={77} x2={162} y2={48} />
+      <text className="dg-note" x={10} y={130}>@OneToMany(mappedBy = "order"): CustomerOrder.items</text>
+      <text className="dg-note" x={10} y={150}>@ManyToOne + order_id: OrderItem.order</text>
+      <text className="dg-note" x={10} y={176}>the foreign key is on the "many" side</text>
+    </Svg>
+  );
+}
+
+/** A transaction: every change commits together, or none does. */
+function TransactionFlow() {
+  return (
+    <Svg viewBox="0 0 440 200" label="Inside one transaction, the tea stock goes from 10 to 8, then the samosa check fails; the transaction rolls back and the tea stock is 10 again">
+      <Box x={10} y={10} w={420} h={30} label="@Transactional placeOrder(tea x2, samosa x5)" tone="accent" code />
+      <Box x={30} y={50} w={180} h={30} label="tea: 10 -> 8" />
+      <Arrow x1={212} y1={65} x2={240} y2={65} />
+      <Box x={244} y={50} w={186} h={30} label="samosa: only 1 left!" tone="highlight" />
+      <Arrow x1={337} y1={82} x2={337} y2={110} />
+      <Box x={244} y={114} w={186} h={30} label="exception: roll back" tone="highlight" />
+      <Arrow x1={242} y1={129} x2={212} y2={129} />
+      <Box x={30} y={114} w={180} h={30} label="tea: back to 10" tone="accent" />
+      <text className="dg-note" x={10} y={180}>all the changes commit together, or none of them do</text>
+    </Svg>
+  );
+}
+
+/** Flyway: versioned SQL files, applied once each, in order, recorded in flyway_schema_history. */
+function FlywayVersions() {
+  return (
+    <Svg viewBox="0 0 440 200" label="Flyway applies V1, V2 and V3 in order, once each, and records each one in the flyway_schema_history table; on the next start it only runs files that are not recorded yet">
+      {["V1__create_product.sql", "V2__add_category.sql", "V3__set_categories.sql"].map((f, i) => (
+        <g key={f}>
+          <Box x={10} y={14 + i * 44} w={220} h={32} label={f} code />
+          <Arrow x1={232} y1={30 + i * 44} x2={262} y2={30 + i * 44} />
+        </g>
+      ))}
+      <g className="dg-box"><rect x={266} y={10} width={164} height={132} rx={10} /></g>
+      <text className="dg-note" x={276} y={30}>flyway_schema_history</text>
+      {["1  success", "2  success", "3  success"].map((r, i) => <text key={r} className="dg-note dg-code" x={280} y={58 + i * 28}>{r}</text>)}
+      <text className="dg-note" x={10} y={172}>each file runs once, in version order, on every database</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "library-vs-framework": LibraryVsFramework,
   "backend-stack": BackendStack,
@@ -463,6 +590,13 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "di-container": DiContainer,
   layers: Layers,
   "request-mapping": RequestMapping,
+  "json-binding": JsonBinding,
+  "error-flow": ErrorFlow,
+  "profile-layers": ProfileLayers,
+  "orm-mapping": OrmMapping,
+  "one-to-many": OneToMany,
+  "transaction-flow": TransactionFlow,
+  "flyway-versions": FlywayVersions,
   "consumer-group": ConsumerGroup,
   persistence: Persistence,
   replication: Replication,

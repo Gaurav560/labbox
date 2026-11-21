@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: shop-api
+shop:
+  name: Shop API
+  free-delivery-above-paise: 50000

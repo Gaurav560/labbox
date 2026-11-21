@@ -15,6 +15,11 @@ CHAPTERS="
 03-beans|03-beans|price_service one_counter
 04-layers|04-layers|thin_controller budget_products
 05-reading-the-request|05-reading-the-request|product_by_id search_products
+06-request-bodies|06-request-bodies|create_product product_view
+07-status-codes|07-status-codes|created_201 delete_204
+08-validation|08-validation|validate_product validate_customer
+09-errors|09-errors|not_found_problem validation_problem
+10-configuration|10-configuration|shop_properties prod_profile
 "
 
 fail_all() { # tasks message

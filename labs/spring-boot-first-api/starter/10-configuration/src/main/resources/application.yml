@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: shop-api
+# TODO (task shop_properties): add the shop settings here:
+#   shop.name: Shop API
+#   shop.free-delivery-above-paise: 50000
+# TODO (task prod_profile): create application-prod.yml next to this file, for the "prod" profile, with
+#   shop.name: Shop API (production)
+#   shop.free-delivery-above-paise: 100000

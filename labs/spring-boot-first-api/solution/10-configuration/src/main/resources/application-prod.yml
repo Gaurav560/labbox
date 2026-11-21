@@ -1,0 +1,4 @@
+# Used only when the "prod" profile is active, on top of application.yml.
+shop:
+  name: Shop API (production)
+  free-delivery-above-paise: 100000
