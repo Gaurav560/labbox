@@ -1,45 +1,109 @@
-:::step{type=story title="Why this chapter"}
-A backend rarely works alone. The Shop API asks a supplier how much stock it has, a payment provider
-whether a card was charged, a courier when a parcel will arrive. Each of those calls goes over the
-network, and the network can be slow, or the other side can be down. This chapter calls another service
-with Spring's `RestClient`, and handles the ways it can fail.
+:::step{type=story title="The Shop API is not alone"}
+A real backend talks to other systems all day: a supplier's API for stock levels, a payment provider to charge
+cards, a courier's API for delivery times, an SMS service for order updates. Each of those calls goes over the
+network, to a server you do not control. It can be fast, slow, down, or answer something unexpected.
+
+This chapter calls another service with Spring's **`RestClient`**, and, just as important, handles the ways it can
+fail. You will run a pretend supplier yourself, in its own terminal, make it misbehave, and watch your API stay calm.
+That is a real production skill: most outages in connected systems start with one slow dependency.
 
 :::mission
-In the `29-calling-services` folder: read the supplier's stock over HTTP, treat "not stocked" as 0, and
-answer 503 quickly when the supplier is too slow.
+Read the supplier's stock over HTTP, treat "not stocked" as 0, and answer 503 quickly when the supplier is too slow.
 :::
+:::
+
+:::step{type=concept title="Your app as a client"}
+Since chapter 1, curl has been the client and your app the server. Now your app plays **both** roles in one
+request:
+
+```text
+curl  ->  Shop API (server)  ->  supplier (server)
+          Shop API (client)  <-  supplier's JSON
+curl  <-  Shop API's answer
+```
+
+A customer asks the Shop API "how many teas can the supplier deliver?". The Shop API cannot know; it **asks the
+supplier** with its own HTTP request, waits for the answer, and builds its response from it. Everything you know
+about HTTP (methods, paths, status codes, JSON) applies, from the other side.
+
+The supplier's API (pretend, but realistic) works like this:
+
+```text
+GET /stock/TEA-1     ->  200  {"sku": "TEA-1", "available": 120}
+GET /stock/MISSING   ->  404  (the supplier does not stock it)
+```
 :::
 
 :::step{type=concept title="RestClient"}
-`RestClient` (Spring Framework 6.1 and later) is Spring's HTTP client with a fluent API. Spring Boot
-provides a `RestClient.Builder` bean, already set up with the same JSON handling as your controllers:
+**`RestClient`** (Spring Framework 6.1 and later) is Spring's HTTP client. Spring Boot provides a
+**`RestClient.Builder`** bean, already set up with the same Jackson JSON handling as your controllers:
 
 ```java
 RestClient http = builder.baseUrl("https://supplier.example").build();
 
-SupplierStock s = http.get()
-        .uri("/stock/{sku}", "TEA-1")
-        .retrieve()
-        .body(SupplierStock.class);
+SupplierStock s = http.get()                       // a GET request...
+        .uri("/stock/{sku}", "TEA-1")              // ...to /stock/TEA-1 (the placeholder is filled in, safely encoded)
+        .retrieve()                                // send it, and look at the response
+        .body(SupplierStock.class);                // read the JSON body into a record
 ```
 
-`retrieve()` sends the request; `body(...)` reads the JSON answer into a class or record, the same way
-`@RequestBody` does in a controller. A 4xx answer throws `HttpClientErrorException`, a 5xx answer
-`HttpServerErrorException`, and a network problem or timeout `ResourceAccessException`. All of them are
-`RestClientException`s.
+Read it as a sentence: get, from this URI, retrieve the response, and give me its body as a `SupplierStock`.
+`body(...)` is `@RequestBody` (chapter 12) in reverse: Jackson turns the supplier's JSON into your record, matching
+fields by name. Extra fields are ignored.
 
-:::diagram{name="service-call"}
-The shop waits for the supplier; a timeout limits how long.
+When the answer is **not** a success, `retrieve()` throws:
+
+- **4xx**: `HttpClientErrorException` (for 404 specifically, `HttpClientErrorException.NotFound`);
+- **5xx**: `HttpServerErrorException`;
+- **no answer at all** (connection refused, timeout): `ResourceAccessException`.
+
+All three are kinds of **`RestClientException`**, so you can catch them separately or together.
 :::
+
+:::step{type=try title="Start the pretend supplier" file="29-calling-services/supplier/FakeSupplier.java"}
+The project includes a small **fake supplier**, `supplier/FakeSupplier.java`, on the right. It is a tiny HTTP server
+on port **9099**: any sku has 120 available, `MISSING` answers 404, and `SLOW` takes **3 seconds** to answer.
+
+You need three terminals for this chapter (use **+** to open them). In **Terminal 1**, start the supplier (Java can
+run a single source file directly):
+
+```bash run
+cd 29-calling-services/supplier && java FakeSupplier.java
+```
+
+```text
+Fake supplier listening on port 9099. Stop it with Ctrl+C.
+```
+
+Leave it running. In **Terminal 2**, build and start the Shop API (its `supplier.base-url` setting points to
+`http://localhost:9099`):
+
+```bash run
+cd 29-calling-services && mvn -q -o package -DskipTests && java -jar target/calling-services.jar
+```
+
+In **Terminal 3**, ask the Shop API about tea:
+
+```bash run
+curl -i localhost:8080/supplier-stock/TEA-1
+```
+
+```text
+HTTP/1.1 200
+{"available":-1,"sku":"TEA-1"}
+```
+
+`-1`: the client code is not written yet, and the supplier's terminal shows nobody called it.
 :::
 
 :::step{type=example title="Worked example: a weather client"}
+Here is a complete client for a different service, a weather API:
+
 ```java
 @Component
 public class WeatherClient {
 
-    public record Forecast(String city, int celsius) {
-    }
+    public record Forecast(String city, int celsius) { }
 
     private final RestClient http;
 
@@ -47,88 +111,115 @@ public class WeatherClient {
         this.http = builder.baseUrl(baseUrl).build();
     }
 
-    public Optional<Forecast> today(String city) {
-        try {
-            return Optional.ofNullable(http.get().uri("/today/{city}", city).retrieve().body(Forecast.class));
-        } catch (HttpClientErrorException.NotFound e) {
-            return Optional.empty();
-        }
+    public int celsius(String city) {
+        Forecast f = http.get().uri("/today/{city}", city).retrieve().body(Forecast.class);
+        return f.celsius();
     }
 }
 ```
 
-The base URL is a property, so tests and production can point to different servers. A 404 here means "no
-such city", an expected answer, so it becomes `Optional.empty()` instead of an error.
+- The client is a **bean**, so controllers and services inject it like anything else.
+- The base URL is a **setting** (chapter 7): tests, your laptop and production each point it somewhere else.
+- The constructor builds the `RestClient` once; every call reuses it.
 :::
 
-:::step{type=task task=fetch_stock title="Read the supplier's stock"}
-In `29-calling-services/.../supplier/SupplierClient.java`, make `available(sku)` call
-`GET /stock/{sku}` on the supplier, read the JSON into `SupplierStock`, and return `available`.
+:::step{type=task task=fetch_stock title="Your turn: read the supplier's stock"}
+In `29-calling-services/src/main/java/com/shop/supplier/SupplierClient.java`, make `available(sku)` call
+**`GET /stock/{sku}`** on the supplier, read the JSON into **`SupplierStock`**, and return its **`available`**.
+
+Rebuild and restart the Shop API (Terminal 2), then ask again in Terminal 3:
+
+```bash run
+curl localhost:8080/supplier-stock/TEA-1
+```
+
+```text
+{"available":120,"sku":"TEA-1"}
+```
+
+And in Terminal 1, the supplier says `Supplier: someone asked for TEA-1`. Two servers just talked. Press **Check**.
+:::
+
+:::step{type=concept title="When the other side says no: 404"}
+Now ask about something the supplier does not stock:
+
+```bash run
+curl -i localhost:8080/supplier-stock/MISSING
+```
+
+The supplier answered 404, so `retrieve()` threw `HttpClientErrorException.NotFound`, nobody caught it, and your
+API answered **500**. But for this supplier, 404 is a perfectly normal answer: "we do not stock that". It means
+**0 available**, not "the server broke".
+
+This is a decision you make for every call to another service: **what does each of its answers mean for you?**
+Here: 200 means "use the number", 404 means "0". You express it with a `try`/`catch` around the call:
+
+```java
+try {
+    return http.get().uri("/today/{city}", city).retrieve().body(Forecast.class).celsius();
+} catch (HttpClientErrorException e) {
+    if (e.getStatusCode().value() == 404) {
+        return 0;            // unknown city: a normal answer for this API
+    }
+    throw e;                 // anything else is still an error
+}
+```
 :::
 
 :::step{type=concept title="Timeouts: never wait forever"}
-Without a timeout, a request to a supplier that has stopped answering can wait for minutes. Each waiting
-request holds one of the server's threads (about 200 in Tomcat by default). When enough requests wait,
-the shop stops answering **everyone**, even requests that never call the supplier. One slow service has
-brought down another.
+The most dangerous answer is **no answer**. Try the slow item (the supplier waits 3 seconds):
 
-A **read timeout** limits how long to wait for an answer:
+```bash run
+curl -i localhost:8080/supplier-stock/SLOW
+```
+
+Your request waits the full 3 seconds. Now imagine the supplier is having a bad day and *every* call takes 30
+seconds. Each waiting request holds one of Tomcat's worker threads (about 200, chapter 10). Within a minute, all
+200 are waiting on the supplier, and the Shop API stops answering **everyone**, even customers who just want the
+product list. One slow dependency has taken your whole app down. This is one of the most common real outages.
+
+The defence is a **timeout**: a limit on how long to wait. After that, give up, and answer quickly:
 
 ```java
 SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-factory.setConnectTimeout(Duration.ofSeconds(1));
-factory.setReadTimeout(Duration.ofSeconds(1));
+factory.setConnectTimeout(Duration.ofSeconds(1));   // max time to connect
+factory.setReadTimeout(Duration.ofSeconds(1));      // max time to wait for the answer
 RestClient http = builder.baseUrl(baseUrl).requestFactory(factory).build();
 ```
 
-When the time is up, the call throws `ResourceAccessException`. Your API then answers fast with
-**503 Service Unavailable**: "I am fine, but something I need is not".
+When the time is up, the call throws `ResourceAccessException`. Your API then answers **503 Service Unavailable**,
+which means "I am fine, but something I depend on is not, try again later". That is honest, and fast.
 
 :::trace{title="GET /supplier-stock/SLOW, with and without a timeout"}
 | time | no timeout | 1 second read timeout |
 |---|---|---|
 | 0 s | request sent to the supplier | request sent to the supplier |
-| 1 s | still waiting | timeout: ResourceAccessException |
-| 1 s | still waiting | the shop answers 503 |
-| 3 s | the supplier answers; the thread was held 3 s | (the thread is already free) |
+| 1 s | still waiting, thread busy | timeout: ResourceAccessException |
+| 1 s | still waiting, thread busy | the Shop API answers 503; the thread is free |
+| 3 s | the supplier answers at last | (long done) |
 :::
 :::
 
-:::step{type=predict title="Guess first"}
-:::question
-The supplier answers 404 for an item it does not stock. Without any try/catch, what does `GET /supplier-stock/MISSING` return to your client?
-:::
-- [ ] 404, passed through
-- [x] 500: HttpClientErrorException is not handled, so Spring answers with a server error
-- [ ] 200 with available 0
-:::explain
-An unhandled exception in a controller becomes 500. Decide what each answer from the other service means
-for your API, and handle it.
-:::
-:::
-
-:::step{type=try title="Call the shop"}
-The `supplier.base-url` points to a port where nothing listens, so the call fails. Start the app and see
-what your API answers:
-
-```bash run
-cd 29-calling-services && mvn -q -o package -DskipTests && java -jar target/calling-services.jar
-```
-
-```bash run
-curl -s -w "\n%{http_code}\n" localhost:8080/supplier-stock/TEA-1
-```
-:::
-
-:::step{type=task task=handle_supplier_errors title="Handle the supplier's failures"}
+:::step{type=task task=handle_supplier_errors title="Your turn: not stocked, down, or too slow"}
 Three changes:
 
-- in `SupplierClient`, a 404 from the supplier returns 0 (not stocked);
-- in `SupplierClient`, give the client a read timeout of 1 second;
-- in `SupplierController`, a `RestClientException` (supplier down or too slow) answers 503.
+1. In **`SupplierClient.available`**: when the supplier answers **404**, return **0**.
+2. In **`SupplierClient`'s constructor**: give the client a **1 second** read timeout (and a connect timeout), with
+   a `SimpleClientHttpRequestFactory`.
+3. In **`SupplierController`**: when the client throws a **`RestClientException`** (supplier down or too slow), answer
+   **503** instead of 500.
+
+Rebuild, restart the Shop API, and try all three cases:
+
+```bash run
+curl -i localhost:8080/supplier-stock/MISSING; echo; curl -i -w "\ntook %{time_total}s\n" localhost:8080/supplier-stock/SLOW
+```
+
+`200` with `"available":0`, then `503` after about **1 second**, not 3. Finally, stop the supplier (Ctrl+C in
+Terminal 1) and ask for tea: still a calm `503`, `{"sku":"TEA-1","error":"Supplier unavailable"}`. Press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
 Which exception does RestClient throw when the read timeout passes?
 :::
@@ -136,12 +227,12 @@ Which exception does RestClient throw when the read timeout passes?
 - [x] ResourceAccessException
 - [ ] TimeoutException
 :::explain
-Network problems, refused connections and timeouts are all `ResourceAccessException`. Status codes from
-the other side are `HttpClientErrorException` (4xx) and `HttpServerErrorException` (5xx).
+Network problems, refused connections and timeouts are `ResourceAccessException`. Status codes from the other side
+are `HttpClientErrorException` (4xx) and `HttpServerErrorException` (5xx).
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
 Why is 503 better than 500 when the supplier is down?
 :::
@@ -153,17 +244,44 @@ Why is 503 better than 500 when the supplier is down?
 :::
 :::
 
-:::step{type=deep-dive title="Retries, circuit breakers, and declarative clients"}
-A timeout limits one call. **Retries** (with a growing wait between them) handle short glitches, but only
-for requests that are safe to repeat. A **circuit breaker** (Resilience4j) stops calling a service that
-keeps failing for a while, and answers at once instead. Spring 6 also has **HTTP interfaces**: declare a
-Java interface with `@GetExchange("/stock/{sku}")` and Spring builds the client for you. The "Spring Boot
-in production" course builds all three.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Without timeouts, a supplier starts taking 60 seconds per answer. What happens to `GET /products`, which never calls the supplier?
+:::
+- [ ] Nothing: it does not use the supplier
+- [x] It slows down or stops too, once every worker thread is stuck waiting on the supplier
+- [ ] It answers 503
+:::explain
+Threads are shared. When enough requests wait on the slow supplier, none are left for anything else. Timeouts
+protect the whole app, not just one endpoint.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- `RestClient` sends requests and reads JSON into records, like a controller in reverse.
-- 4xx, 5xx and network failures throw different `RestClientException`s; decide what each means.
-- Always set a timeout on calls to other services.
-- A dependency that fails becomes 503 from your API, quickly.
+:::step{type=deep-dive title="Go deeper: retries, circuit breakers, and declarative clients"}
+**Retries.** A short glitch often succeeds on a second try. Retry with a growing wait (1s, 2s, 4s), a few times at
+most, and only for requests that are safe to repeat (GET, or calls with an idempotency key, chapter 30).
+
+**Circuit breakers.** If a service keeps failing, stop calling it for a while and answer at once instead: a
+**circuit breaker** (Resilience4j) "opens" after repeated failures and "closes" again when the service recovers.
+It stops you from hammering a struggling service.
+
+**HTTP interfaces.** Spring 6 can write the client for you: declare an interface with
+`@GetExchange("/stock/{sku}") SupplierStock stock(@PathVariable String sku);` and Spring builds the implementation,
+much like Spring Data builds repositories.
+
+**Testing clients.** The hidden check for this chapter starts its own fake supplier inside the test (with
+`@DynamicPropertySource` to point `supplier.base-url` at it). WireMock is a popular library for exactly that.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now call other services safely:
+
+- Your app can be a **client**: `RestClient` from Spring Boot's `RestClient.Builder`, with the base URL as a setting.
+- `http.get().uri("/path/{x}", x).retrieve().body(Type.class)` reads the answer into a record.
+- Failures are exceptions: 4xx `HttpClientErrorException`, 5xx `HttpServerErrorException`, no answer
+  `ResourceAccessException`, all `RestClientException`s. Decide what each answer **means** for you (404 = 0 here).
+- **Always set timeouts**; one slow dependency can otherwise use up every thread.
+- A failing dependency becomes a fast **503** from your API.
+
+Next, chapter 30, the capstone: a complete checkout, built by you, using everything from this course.
 :::

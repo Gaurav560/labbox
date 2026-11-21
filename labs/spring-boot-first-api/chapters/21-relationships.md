@@ -1,137 +1,278 @@
-:::step{type=story title="Why this chapter"}
-Data is connected: an order has items, an item belongs to an order. JPA maps these connections to
-foreign keys, so `order.getItems()` loads the related rows for you. It also hides a classic performance
-trap, the **N+1 query problem**, which this chapter shows you how to see and fix.
+:::step{type=story title="Things that belong together"}
+An order is not just a row on its own. Asha's order contains two lines: two masala teas and three samosas.
+In the database, those lines live in their own table, `order_item`, and each one points back to its order. In
+Java, you would like to write `order.getItems()` and get the list. Making those two worlds meet is what JPA
+**relationships** are for.
+
+Relationships are also where JPA has its most famous trap. A completely innocent-looking line of Java can make
+your app run **hundreds of queries** for one page, and it works perfectly in development, then crawls in
+production. It is called the **N+1 problem**, every Spring developer meets it, and in this chapter you will
+see it happen in the SQL log, then fix it.
 
 :::mission
-In the `21-relationships` folder: map orders and their items, then load a list of orders with one query
-instead of six.
+Map orders and their items as a JPA relationship, then load the order list in one query instead of six.
 :::
 :::
 
-:::step{type=concept title="@ManyToOne and @OneToMany"}
-In the database, the connection is one column: `order_item.order_id` points to `orders.id`. In Java, both
-sides can see it:
-
-```java
-// OrderItem: many items belong to one order. This side owns the foreign key.
-@ManyToOne
-@JoinColumn(name = "order_id")
-private CustomerOrder order;
-
-// CustomerOrder: one order has many items, mapped by the field "order" in OrderItem.
-@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-private List<OrderItem> items = new ArrayList<>();
-```
-
-`mappedBy` says the other side owns the column, so it is not mapped twice. `cascade = ALL` saves and
-deletes items together with their order.
+:::step{type=concept title="How databases link rows: foreign keys"}
+In a relational database, an order and its items are two tables. Each item row stores **the id of its order**
+in a column, here `order_id`:
 
 :::diagram{name="one-to-many"}
-The foreign key is in the item table; both classes can navigate it.
-:::
-:::
-
-:::step{type=concept title="Lazy loading"}
-By default `@OneToMany` is **lazy**: loading an order does not load its items. The items are loaded the
-first time code calls `getItems()`, with a separate query. That saves work when items are not needed, but
-it must happen inside a transaction (`@Transactional` on the service method), while the database
-session is still open.
-
-The cost appears with lists. Loading 5 orders is one query; touching each order's items adds one query per
-order: 1 + 5 = 6 queries. With 500 orders, 501 queries. This is the **N+1 problem**.
+The order_id column in order_item points back to a row in orders.
 :::
 
-:::step{type=example title="Worked example: counting the queries"}
-:::trace{title="listing 3 orders with lazy items"}
-| code | SQL sent | queries so far | note |
-|---|---|---|---|
-| repository.findAll() | SELECT * FROM orders | 1 | One query for all the orders. |
-| order 1: getItems().size() | SELECT * FROM order_item WHERE order_id = 1 | 2 | Lazy: the items load only now. |
-| order 2: getItems().size() | SELECT * FROM order_item WHERE order_id = 2 | 3 | Another query, for another order. |
-| order 3: getItems().size() | SELECT * FROM order_item WHERE order_id = 3 | 4 | N orders cost N + 1 queries. |
+```text
+orders                         order_item
++----+----------+              +----+---------------+----------+-------------+----------+
+| id | customer |              | id | product       | quantity | price_paise | order_id |
++----+----------+              +----+---------------+----------+-------------+----------+
+|  1 | Asha     |  <---------  |  1 | Masala tea    |        2 |        2000 |        1 |
+|  2 | Ravi     |  <----+----  |  2 | Samosa        |        3 |        1800 |        1 |
++----+----------+       +----  |  3 | Filter coffee |        1 |        3000 |        2 |
+                               +----+---------------+----------+-------------+----------+
+```
+
+A column that holds another table's primary key is a **foreign key**. The link always lives on the "many"
+side: many items point to one order. An order row knows nothing about its items; you find them by asking
+"which items have `order_id = 1`?".
+
+This is called a **one-to-many** relationship (one order, many items), or seen from the other side,
+**many-to-one** (many items, one order).
 :::
 
-The fix loads the orders and their items in one query with `JOIN FETCH`:
+:::step{type=concept title="Mapping it: @ManyToOne and @OneToMany"}
+JPA maps that foreign key to plain Java references, on both sides. Here it is for a different pair: a blog
+`Post` with many `Comment`s.
+
+**The many side** (the one with the foreign key column):
 
 ```java
-@Query("select distinct o from CustomerOrder o join fetch o.items")
-List<CustomerOrder> findAllWithItems();
+@Entity
+public class Comment {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String text;
+
+    @ManyToOne                                // many comments, one post
+    @JoinColumn(name = "post_id")             // the foreign key column
+    private Post post;
+}
 ```
+
+**The one side** (optional, but handy: it gives you `post.getComments()`):
+
+```java
+@Entity
+public class Post {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+}
+```
+
+Three details to read slowly:
+
+- **`@JoinColumn(name = "post_id")`** names the foreign key column. The `Comment` side **owns** the
+  relationship: it is the side whose table has the column.
+- **`mappedBy = "post"`** on the other side says: "I am not a separate link; I am the same relationship,
+  already mapped by the field called `post` in `Comment`". Without it, JPA would think these are two
+  different relationships and invent an extra table.
+- **`cascade = CascadeType.ALL`** means: whatever you do to the post (save, delete), do it to its comments
+  too. Save a new post with three comments, and all four rows are inserted.
 :::
 
-:::step{type=predict title="Guess first"}
+:::step{type=try title="The project, unmapped" file="21-relationships/src/main/java/com/shop/order/OrderItem.java" line="21-23"}
+This chapter's project has `CustomerOrder` (in a table called `orders`, because `order` is a reserved word in
+SQL) and `OrderItem`. Look at `OrderItem.java` on the right: the `order` field is a plain field, with no
+mapping. Run the app:
+
+```bash run
+cd 21-relationships && mvn -q -o package -DskipTests && java -jar target/relationships.jar
+```
+
+It fails at start-up. Among the error lines:
+
+```text
+Caused by: org.hibernate.MappingException: Basic collection has element type 'com.shop.order.OrderItem' which is not a known basic type
+```
+
+Hibernate looked at `CustomerOrder.items`, a list of `OrderItem`s, and tried to store it like a plain value in
+a column, which is impossible. The same goes for `OrderItem.order`: a whole `CustomerOrder` cannot fit in one
+column of `order_item`. Until you tell JPA "these are two sides of a relationship, linked through the
+`order_id` column", the entities are not valid.
+:::
+
+:::step{type=task task=order_items title="Your turn: map orders and their items"}
+1. In **`OrderItem.java`**, map the `order` field as the **many** side of the relationship, with the foreign
+   key column **`order_id`**.
+2. In **`CustomerOrder.java`**, map the `items` list as the **one** side: mapped by the `order` field of
+   `OrderItem`, with all operations cascading to the items.
+
+The annotations come from `jakarta.persistence`. Rebuild and run, then ask for Asha's order:
+
+```bash run
+curl localhost:8080/orders/1
+```
+
+```text
+{"id":1,"customer":"Asha","items":2,"totalPaise":9400}
+```
+
+Two items: 2 x Rs 20 + 3 x Rs 18 = Rs 94. Press **Check**.
+:::
+
+:::step{type=concept title="Lazy loading: items arrive when you touch them"}
+When JPA loads an order, does it also load its items? By default, for a `@OneToMany` list: **no**. The list is
+**lazy**. JPA puts a placeholder in `items`, and only when your code first *uses* it (`order.getItems().size()`,
+a loop over it) does JPA run a second query to fetch them.
+
+That is usually a good idea. If a screen only shows customer names, loading every item of every order would
+be wasted work.
+
+There is one condition: the lazy loading needs an open connection to the database (a **persistence context**,
+JPA's working session) at the moment you touch the list. That is why `OrderService`'s methods are marked
+`@Transactional(readOnly = true)`: the session stays open for the whole method, so the items can still be
+loaded inside it. Touch a lazy list after the session is closed, and you get the infamous
+`LazyInitializationException`. (Chapter 23 is all about `@Transactional`; for now, read it as "keep the database
+session open for this method".)
+:::
+
+:::step{type=example title="The N+1 problem, in the SQL log"}
+Lazy loading has a trap. Look at `OrderService.summaries()`:
+
+```java
+return repository.findAll().stream().map(OrderService::toSummary).toList();
+```
+
+and `toSummary` calls `o.getItems()` for each order. Run the app with SQL logging, and ask for all orders:
+
+```bash run
+java -jar target/relationships.jar --spring.jpa.show-sql=true
+```
+
+```bash run
+curl localhost:8080/orders
+```
+
+Count the queries in the log:
+
+```text
+Hibernate: select co1_0.id,co1_0.customer from orders co1_0
+Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
+Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
+Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
+Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
+Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
+```
+
+**One** query for the orders, then **one more per order**, as each order's lazy list is touched. Five orders,
+six queries. That is **N+1**: N orders, plus 1.
+
+Six queries sounds harmless. But each one is a round trip to the database server, typically a millisecond or
+more over the network. With 500 orders on an admin page, it is 501 round trips, and the page takes seconds. The
+Java code looks the same either way, which is why this problem hides so well. The SQL log is how you see it.
+:::
+
+:::step{type=concept title="The fix: JOIN FETCH in one query"}
+The fix is to tell JPA, for this particular use: "load the orders **and** their items **together**, in one
+query". That is a **join**, and in JPA you ask for it with **`JOIN FETCH`** in a query you write yourself.
+
+You write it with **`@Query`** on a repository method, in **JPQL** (the JPA query language). JPQL looks like
+SQL, but talks about **entities and fields**, not tables and columns:
+
+```java
+@Query("select distinct p from Post p join fetch p.comments")
+List<Post> findAllWithComments();
+```
+
+- `select p from Post p`: "posts" (the entity `Post`, called `p`).
+- `join fetch p.comments`: "and fetch each post's `comments` in the same query".
+- `distinct`: a join returns one row per comment, so a post with three comments would appear three times;
+  `distinct` removes the duplicates from the result list.
+
+Hibernate turns it into one SQL `select ... from post join comment on ...`, and every post comes back with its
+comments already loaded. No lazy loading, no extra queries.
+:::
+
+:::step{type=task task=fix_n_plus_one title="Your turn: one query for the order list"}
+1. In `OrderRepository`, add a method with a `@Query` that loads **every order with its items** using
+   `join fetch` (and `distinct`). (`Query` is `org.springframework.data.jpa.repository.Query`.)
+2. In `OrderService.summaries()`, call it instead of `findAll()`.
+
+Rebuild, run with `--spring.jpa.show-sql=true`, and request `/orders` again. Now there is **one** query:
+
+```text
+Hibernate: select distinct co1_0.id,co1_0.customer,i1_0.order_id,i1_0.id,... from orders co1_0 join order_item i1_0 on co1_0.id=i1_0.order_id
+```
+
+Same JSON answer, one round trip instead of six. The check counts the SQL statements. Press **Check**.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-An endpoint lists 200 orders and shows each one's item count. With lazy items and `findAll()`, how many queries run?
+In a one-to-many between Order and OrderItem, which table has the foreign key column?
+:::
+- [ ] orders
+- [x] order_item
+- [ ] A third table
+:::explain
+The link lives on the "many" side: each item row stores its order's id. That is why `@JoinColumn` goes on
+`OrderItem.order`, and `mappedBy` on `CustomerOrder.items`.
+:::
+:::
+
+:::step{type=predict title="Quick check (2 of 3)"}
+:::question
+A page lists 200 orders and shows each order's item count, using `findAll()` and lazy items. How many queries run?
 :::
 - [ ] 1
 - [ ] 2
 - [x] 201
 :::explain
-One query for the orders, then one per order for its items. `JOIN FETCH` brings it down to one.
+One for the orders, then one per order when its items are touched: N+1. A `join fetch` query makes it one.
 :::
 :::
 
-:::step{type=try title="Start it"}
-```bash run
-cd 21-relationships && mvn -q -o package -DskipTests && java -jar target/relationships.jar 2>&1 | grep -m3 -E "Started|Caused by"
-```
-
-Until the relationship is mapped, Hibernate cannot store a `CustomerOrder` field in a column, and the
-application does not start.
-:::
-
-:::step{type=task task=order_items title="Warm-up: map orders and items"}
-In `21-relationships`: map `OrderItem.order` with `@ManyToOne` and `@JoinColumn(name = "order_id")`, and
-`CustomerOrder.items` with `@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)`.
-
-`GET /orders/1` then shows 2 items totalling 9400 paise.
-:::
-
-:::step{type=task task=fix_n_plus_one title="One query for the order list"}
-`GET /orders` runs 6 queries for 5 orders. Add `findAllWithItems()` with a `JOIN FETCH` query to
-`OrderRepository`, and use it in `OrderService.summaries()`.
-
-The check counts the SQL statements Hibernate sends.
-:::
-
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (3 of 3)"}
 :::question
-Which side of a one-to-many relationship holds the foreign key column?
+What does `mappedBy = "order"` on `CustomerOrder.items` say?
 :::
-- [ ] The "one" side (`orders`)
-- [x] The "many" side (`order_item.order_id`)
-- [ ] A separate join table, always
+- [ ] Create a column called order in the orders table
+- [x] This list is the same relationship as the order field in OrderItem, which owns the foreign key
+- [ ] Sort the items by order
 :::explain
-Each item row stores which order it belongs to. That is why `@ManyToOne` owns the mapping and
-`@OneToMany` uses `mappedBy`.
+Without `mappedBy`, JPA would treat the list as a second, separate relationship (and create a join table for
+it). With it, both sides describe one link: the `order_id` column.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
-:::question
-Why return a DTO such as `OrderSummary` instead of the `CustomerOrder` entity from the controller?
-:::
-- [ ] Entities cannot be converted to JSON
-- [x] The order points to its items and each item back to the order, so JSON conversion would loop, and lazy data may not be loaded
-- [ ] DTOs are faster to query
-:::explain
-Bidirectional relationships make naive JSON conversion recurse forever, and lazy collections may fail
-outside a transaction. Mapping to a DTO inside the service avoids both.
-:::
+:::step{type=deep-dive title="Go deeper: EAGER, entity graphs, and returning entities as JSON"}
+**Why not make it EAGER?** `@OneToMany(fetch = FetchType.EAGER)` loads items every time an order is loaded,
+everywhere, even where nobody needs them, and often still with extra queries. Keep relationships lazy, and fetch
+what each use case needs (`join fetch`, or `@EntityGraph(attributePaths = "items")` on a repository method).
+
+**@ManyToOne is eager by default.** The other direction (an item loading its order) is eager unless you write
+`@ManyToOne(fetch = FetchType.LAZY)`, which is a good habit on large models.
+
+**Never return entities with relationships as JSON.** Jackson would follow `order.items`, then `item.order`,
+then `order.items`... forever (or until a stack overflow), and touch lazy lists outside the session. That is why
+this project returns an `OrderSummary` DTO (chapter 12): you decide exactly what is loaded and sent.
 :::
 
-:::step{type=deep-dive title="Seeing the SQL"}
-`spring.jpa.show-sql=true` prints every statement, and `logging.level.org.hibernate.SQL=debug` does the
-same through the logger. In tests, Hibernate's statistics (`hibernate.generate_statistics=true`) count
-statements precisely, which is how this chapter's check measures your fix. Other fixes for N+1:
-`@EntityGraph(attributePaths = "items")` on a repository method, or batch fetching
-(`hibernate.default_batch_fetch_size`), which loads lazy collections in groups.
-:::
+:::step{type=recap title="What you can do now"}
+You can now map and load related data, efficiently:
 
-:::step{type=recap title="Chapter done"}
-- `@ManyToOne` with `@JoinColumn` owns the foreign key; `@OneToMany(mappedBy = ...)` is the other side.
-- Collections are lazy: they load on first access, inside a transaction.
-- Lists with lazy collections cause N+1 queries; `JOIN FETCH` loads everything in one.
-- Return DTOs from controllers, not entities with relationships.
+- A **foreign key** column on the "many" side links rows: one order, many items.
+- **`@ManyToOne` + `@JoinColumn(name = "...")`** on the owning (many) side; **`@OneToMany(mappedBy = "...")`** on
+  the other; **`cascade = CascadeType.ALL`** to save and delete them together.
+- Collections are **lazy**: loaded when first touched, inside an open session (`@Transactional`).
+- **N+1**: a list of N entities plus one query per entity for a lazy relationship. Spot it in the SQL log.
+- Fix it with **`@Query("select distinct o from Order o join fetch o.items")`** (JPQL talks about entities and fields).
+- Return **DTOs**, not entities with relationships.
+
+Next, chapter 22: when there are thousands of products, nobody wants them all at once. Paging, sorting and your own queries.
 :::

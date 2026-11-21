@@ -20,8 +20,8 @@ public class CustomerOrder {
 
     private String customer;
 
-    // TODO (task order_items): one order has many items. Map this list with @OneToMany, pointing at the
-    // "order" field of OrderItem (mappedBy), and cascade = CascadeType.ALL so items are saved with it.
+    // TODO (task order_items): one order has many items: map this list as the "one" side of that
+    // relationship, linked to the order field of OrderItem, saved and deleted together with the order.
     private List<OrderItem> items = new ArrayList<>();
 
     protected CustomerOrder() {

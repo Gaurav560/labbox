@@ -1,8 +1,7 @@
 package com.shop.product;
 
-// TODO (task product_entity): make this a JPA entity. Put @Entity on the class, and @Id plus
-// @GeneratedValue(strategy = GenerationType.IDENTITY) on id. JPA also needs a constructor with no
-// arguments; it can be protected.
+// TODO (task product_entity): make this class a JPA entity, stored in a table: the class, its primary key
+// (chosen by the database), and the constructor JPA needs. Chapter 19 shows each piece.
 public class Product {
 
     private Long id;

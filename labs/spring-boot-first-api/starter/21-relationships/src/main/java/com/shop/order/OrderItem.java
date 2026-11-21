@@ -18,8 +18,8 @@ public class OrderItem {
 
     private int pricePaise;
 
-    // TODO (task order_items): many items belong to one order. Map this field with @ManyToOne; its foreign
-    // key column is order_id.
+    // TODO (task order_items): many items belong to one order: map this field as the "many" side, whose
+    // foreign key column is order_id.
     private CustomerOrder order;
 
     protected OrderItem() {

@@ -1,133 +1,241 @@
-:::step{type=story title="Why this chapter"}
-Real queries filter: products in a category, an order by its number, whether an email is already used.
-Spring Data JPA can write those queries from a method's name, so most repositories contain only method
-declarations. This chapter shows how the naming works, and how to use it to keep data consistent.
+:::step{type=story title="Asking the database questions"}
+`findAll` and `findById` are a start, but real screens ask more specific questions: "all the snacks, A to Z",
+"is this SKU already taken?", "customers who signed up this week". You could fetch everything with
+`findAll()` and filter in Java, but with a real catalogue of a hundred thousand products, that would drag every
+row over the network to keep twenty. The database is built to answer exactly these questions, quickly, with
+indexes. You just have to ask it.
+
+Spring Data has a trick that feels like magic the first time and is completely logical once you see it:
+you **name a method** in the repository interface, and Spring Data **writes the query from the name**. This
+chapter teaches that naming language, and uses it to fix a 500 error that the database constraint from
+chapter 19 is now causing.
 
 :::mission
-In the `20-repositories` folder: list products by category with a derived query, and refuse duplicate
-SKUs with a 409.
+List products by category with a derived query, and answer 409 for a duplicate SKU instead of 500.
 :::
 :::
 
-:::step{type=concept title="Derived queries"}
-Spring Data reads a repository method's name and builds the query from it:
+:::step{type=concept title="Derived queries: a method name is a query"}
+Add this method to a repository interface, with **no code**:
 
-```java
-List<Product> findByCategory(String category);
-// SELECT ... FROM product WHERE category = ?
-
-List<Product> findByCategoryOrderByNameAsc(String category);
-// ... WHERE category = ? ORDER BY name ASC
-
-List<Product> findByPricePaiseLessThan(int max);
-// ... WHERE price_paise < ?
-
-boolean existsBySku(String sku);
-// SELECT ... WHERE sku = ? (stops at the first match)
-```
-
-The name is `find`, `exists`, `count` or `delete`, then `By`, then property names with keywords such as
-`And`, `Or`, `LessThan`, `Between`, `Containing`, `OrderBy`. A misspelled property name stops the
-application at start-up, so mistakes are found early.
-:::
-
-:::step{type=example title="Worked example: customers by city"}
 ```java
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    List<Customer> findByCityOrderByNameAsc(String city);       // 1
-    long countByCity(String city);                              // 2
-    Optional<Customer> findByEmail(String email);               // 3
+
+    List<Customer> findByCity(String city);
 }
 ```
 
-1. All customers in a city, sorted by name: a `WHERE` and an `ORDER BY`.
-2. Only the number, computed by the database (`COUNT(*)`), not by loading rows.
-3. At most one result: `Optional` makes "not found" explicit.
+At start-up, Spring Data reads the method's name and builds the query for you:
 
-The service calls these like normal methods; the SQL runs in the database.
-:::
-
-:::step{type=predict title="Guess first"}
-:::question
-What query does `findByCategoryAndPricePaiseLessThan(String c, int p)` run?
-:::
-- [ ] `WHERE category = ? OR price_paise < ?`
-- [x] `WHERE category = ? AND price_paise < ?`
-- [ ] It fails: names cannot combine two properties
-:::explain
-`And` joins the two conditions, and parameters are matched in order: `c` to category, `p` to the price.
-:::
-:::
-
-:::step{type=try title="Filter in the database"}
-```bash run
-cd 20-repositories && mvn -q -o package -DskipTests && java -jar target/repositories.jar
+```text
+findByCity("Pune")   ->   select ... from customer where city = ?   (with ? = 'Pune')
 ```
 
-After the first task, in a second tab:
+It splits the name into parts: **`find`** (fetch entities) **`By`** (here come the conditions) **`City`** (a
+field of `Customer`, compared with the first parameter). The field must exist in the entity, with exactly that
+name (capitalised). A typo, like `findByCitty`, is caught **at start-up** with a clear error ("No property
+'citty' found for type 'Customer'"), not later when a customer clicks something.
 
-```bash run
-curl -s "localhost:8080/products?category=snacks"; echo
-```
+That is what **derived queries** are: the query is derived from the method name. You declare what you want;
+Spring Data writes the SQL.
 :::
 
-:::step{type=task task=find_by_category title="Warm-up: products by category"}
-In `20-repositories`, add `findByCategoryOrderByNameAsc(String category)` to `ProductRepository`, and use
-it in `GET /products` when a `category` parameter is given. Without the parameter, return all products.
-:::
-
-:::step{type=concept title="Check before you save"}
-Some rules depend on data already stored: a SKU must be unique. Check it with a cheap query before
-saving, and answer with a clear status:
+:::step{type=concept title="The naming language"}
+You can combine many pieces. Here are the ones you will use most, all on `Customer`:
 
 ```java
-if (repository.existsBySku(body.sku())) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).build();   // 409
+List<Customer> findByCityAndActive(String city, boolean active);      // where city = ? and active = ?
+List<Customer> findByCityOrState(String city, String state);         // where city = ? or state = ?
+List<Customer> findByAgeGreaterThan(int age);                        // where age > ?
+List<Customer> findByAgeBetween(int from, int to);                   // where age between ? and ?
+List<Customer> findByNameContainingIgnoreCase(String part);          // where lower(name) like %part%
+List<Customer> findByEmailIsNull();                                  // where email is null
+List<Customer> findByCityOrderByNameAsc(String city);                // ... order by name asc
+Optional<Customer> findByEmail(String email);                        // at most one result
+boolean existsByEmail(String email);                                 // is there at least one?
+long countByCity(String city);                                       // how many?
+```
+
+Read each name as an English sentence and you have the query. The **return type** matters too:
+
+- `List<Customer>`: any number of results.
+- `Optional<Customer>`: zero or one (and an error if the database finds two).
+- `boolean` with `existsBy...`: just yes or no. Very cheap: the database stops at the first match.
+- `long` with `countBy...`: a number.
+
+Parameters are matched **in order**: the first parameter goes to the first condition in the name, and so on.
+:::
+
+:::step{type=try title="The project" file="20-repositories/src/main/java/com/shop/product/ProductRepository.java" line="5-10"}
+`ProductRepository` is on the right, with two TODOs. Products now have a **category** (`drinks` or
+`snacks`), and `data.sql` loads five of them. The controller's `GET /products` takes an optional `category`
+parameter, but ignores it for now.
+
+Start the app with SQL logging on, so you can see every query Hibernate runs:
+
+```bash run
+cd 20-repositories && mvn -q -o package -DskipTests && java -jar target/repositories.jar --spring.jpa.show-sql=true
+```
+
+```bash run
+curl "localhost:8080/products?category=snacks"
+```
+
+All five products come back, drinks included, and the log shows one plain `select ... from product`.
+:::
+
+:::step{type=task task=find_by_category title="Your turn: products by category, A to Z"}
+1. In `ProductRepository`, declare a derived query that returns the products **of one category, sorted by
+   name ascending**. (Look at the naming list: you need `findBy`, the field, and `OrderBy...Asc`.)
+2. In `ProductController.list`, call it when a `category` is given, and `findAll()` when it is not.
+
+Rebuild, run, and ask again:
+
+```bash run
+curl "localhost:8080/products?category=snacks"
+```
+
+```text
+[{"id":5,"name":"Bhel puri",...},{"id":4,"name":"Kachori",...},{"id":3,"name":"Samosa",...}]
+```
+
+And the log shows the database doing the work:
+
+```text
+Hibernate: select ... from product p1_0 where p1_0.category=? order by p1_0.name
+```
+
+Only the snacks crossed from the database to Java. Press **Check**.
+:::
+
+:::step{type=example title="Why duplicate SKUs cause a 500 now"}
+Chapter 19 made `sku` unique in the database. Now see what happens when a client creates a product with a SKU
+that is already taken:
+
+```bash run
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Tea again", "pricePaise": 1000, "category": "drinks", "sku": "TEA-1"}'
+```
+
+```text
+HTTP/1.1 500
+{"timestamp":"...","status":500,"error":"Internal Server Error","path":"/products"}
+```
+
+And in the server log, deep in the stack trace:
+
+```text
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'TEA-1' )"
+```
+
+The good news: the database protected the data, as designed. Nothing was saved. The bad news: the **client**
+is told "the server broke" (500), when actually the client asked for something that conflicts with existing
+data. That is a **409 Conflict**, and the client deserves to know which.
+
+The constraint is the safety net. In the normal case, the application should check first and give a clear
+answer.
+:::
+
+:::step{type=concept title="Check first, with existsBy"}
+The clean pattern is: before saving, **ask** whether the SKU exists, and refuse politely if it does.
+
+```java
+@PostMapping("/customers")
+public ResponseEntity<Customer> create(@RequestBody NewCustomer body) {
+    if (customers.existsByEmail(body.email())) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();        // 409, nothing saved
+    }
+    Customer saved = customers.save(new Customer(body.name(), body.email()));
+    return ResponseEntity.created(URI.create("/customers/" + saved.getId())).body(saved);
 }
 ```
 
-`existsBy...` stops at the first match and returns no row data, so it is cheaper than `findBy...`. The
-unique constraint from chapter 11 still matters: two requests at the same instant could both pass the
-check, and the constraint stops the second.
+`existsByEmail` becomes a tiny query, something like:
+
+```text
+select c1_0.id from customer c1_0 where c1_0.email=? fetch first ? rows only
+```
+
+"Fetch first rows only": the database stops at the first match. It does not load the whole customer, only
+checks that one exists. Cheap and fast.
+
+And the database constraint stays, as the net under the trapeze: if two requests with the same SKU arrive at
+exactly the same instant, both may pass the check, and then the constraint stops the second one. (Turning that
+rare case into a 409 as well is what an exception handler from chapter 17 is for.)
 :::
 
-:::step{type=task task=sku_conflict title="409 for a duplicate SKU"}
-Add `existsBySku(String sku)` to `ProductRepository`. In `POST /products`, answer `409 Conflict` without
-saving when the SKU exists; otherwise create the product as before (201).
+:::step{type=task task=sku_conflict title="Your turn: 409 for a duplicate SKU"}
+1. In `ProductRepository`, declare a derived query that answers **whether a product with a given SKU exists**.
+2. In `ProductController.create`, answer **409 Conflict** (without saving) when it does.
+
+Rebuild, run, and try the duplicate again, then a new SKU:
+
+```bash run
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Tea again", "pricePaise": 1000, "category": "drinks", "sku": "TEA-1"}'
+```
+
+```bash run
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi", "pricePaise": 4500, "category": "drinks", "sku": "LAS-1"}'
+```
+
+`409`, then `201`. Press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Which return type fits "the customer with this email, if any"?
+What does `List<Order> findByStatusAndTotalPaiseGreaterThan(String status, int min)` run?
 :::
-- [ ] `List<Customer>`
-- [x] `Optional<Customer>`
-- [ ] `Customer`, or an exception
+- [ ] where status = ? or total_paise > ?
+- [x] where status = ? and total_paise > ?
+- [ ] It does not compile: names that long are not allowed
 :::explain
-`Optional` says "zero or one" in the type, so callers must handle the missing case.
+`And` joins the two conditions; `GreaterThan` compares with `>`. Parameters fill the conditions in order.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-`findByNmae(String name)` has a typo. When is it found?
+You declare `findByCatgory(String c)` (a typo). When do you find out?
 :::
-- [x] At start-up: Spring cannot find a property `nmae` and refuses to start
-- [ ] On the first call
+- [ ] When a customer requests the category list
+- [x] At start-up: Spring Data reports that Product has no property catgory
 - [ ] Never: it returns an empty list
 :::explain
-Spring Data parses method names at start-up and checks them against the entity.
+Derived queries are checked against the entity when the app starts. A wrong name stops the start-up, which is
+exactly when you want to find out.
 :::
 :::
 
-:::step{type=deep-dive title="When names get too long"}
-`findByCategoryAndPricePaiseBetweenAndNameContainingIgnoreCaseOrderByPricePaiseAsc` works, but nobody
-wants to read it. For complex queries use `@Query` with JPQL (next chapter), or Specifications for
-filters built at run time. A good rule: derived queries for one or two conditions, `@Query` beyond that.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Why check with `existsBySku` first, if the unique constraint already stops duplicates?
+:::
+- [ ] The constraint does not work with H2
+- [x] So the client gets a clear 409 instead of a 500; the constraint remains the safety net
+- [ ] existsBy is required before every save
+:::explain
+Both layers have a job: the check gives a good answer in the normal case; the constraint guarantees the data
+even in the rare race.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- Spring Data builds queries from method names: `findBy`, `existsBy`, `countBy`, with `And`, `LessThan`, `OrderBy`.
-- Method names are checked at start-up against the entity's properties.
-- Check stored data with `existsBy...` and answer 409; keep the database constraint as the final guard.
+:::step{type=deep-dive title="Go deeper: when names get too long"}
+Derived queries are perfect for simple questions. When a name grows past three or four conditions
+(`findByCategoryAndPricePaiseBetweenAndActiveTrueOrderByNameAsc`), it becomes hard to read. Then write the
+query yourself with **`@Query`** and JPQL, which chapter 22 introduces. For searches with many optional filters
+(a filter form with ten fields), Spring Data offers **Specifications** and **Query by Example**, which build the
+query from the filters actually given.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now ask the database real questions, without writing SQL:
+
+- A **derived query** is a repository method whose **name** is the query: `findBy` + fields + keywords like
+  `And`, `Or`, `GreaterThan`, `Between`, `ContainingIgnoreCase`, `IsNull`, `OrderBy...Asc/Desc`.
+- The return type chooses the shape: `List`, `Optional`, `boolean` (`existsBy`), `long` (`countBy`).
+- Names are checked against the entity at **start-up**.
+- Let the **database** filter and sort (`where`, `order by`), not Java after `findAll()`.
+- Check with `existsBy...` and answer **409 Conflict** for duplicates; keep the unique constraint as the net.
+
+Next, chapter 21: products are not alone. Orders contain items, items point to products: relationships, and the
+most famous performance trap in JPA.
 :::

@@ -1,5 +1,20 @@
 # Changelog
 
+## Spring Boot rewrite, Parts 3 and 4: data and production basics (chapters 19 to 30); the course is complete
+
+- **Part 3, Data**, rewritten as full lessons with every SQL statement captured from the real projects: 19 a real
+  database (tables, SQL, ORM/JPA/Hibernate, JDBC URLs, the connection pool, entities, the SQL Hibernate writes,
+  constraints), 20 derived queries (the naming language, existsBy and 409), 21 relationships (foreign keys, owning
+  side, lazy loading, the N+1 problem seen as 6 queries, JOIN FETCH), 22 paging and JPQL, 23 transactions (the
+  half-done order seen with curl, checked exceptions, the proxy rule; a new HTTP endpoint to watch it), 24 Flyway.
+- **Part 4, Production basics**: 25 testing controllers (slices, mocks, MockMvc, reading a failure), 26 testing
+  queries (what a mock cannot test, data that proves something, containsExactly), 27 logs and Actuator (a new
+  endpoint to trigger the warning), 28 security (the locked default, Basic, the filter chain, CSRF, roles), 29
+  calling services (a fake supplier the learner runs in its own terminal: 404, 3 s delays and a 1 s timeout seen
+  for real), 30 the capstone checkout, written as a contract first.
+- Starter TODOs in chapters 19 and 21 now describe the goal instead of dictating the annotations.
+- The course: 31 chapters (0 to 30), 61 tasks, every starter fails and every solution passes.
+
 ## Spring Boot rewrite, Part 2: REST APIs (chapters 10 to 18), as full lessons
 
 - **Tutor fix:** in a lab where each chapter has its own folder, the tutor now sees only that chapter's files.

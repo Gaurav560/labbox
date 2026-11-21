@@ -1,126 +1,233 @@
-:::step{type=story title="Why this chapter"}
-So far Hibernate created the tables from the entities at every start. That cannot work in production:
-the database already holds data, and its structure must change in controlled steps that every
-environment applies the same way. This chapter manages the schema with **Flyway**, versioned SQL files
-that run once each, in order.
+:::step{type=story title="The database outlives the app"}
+Until now, Hibernate created the tables every time the app started (`ddl-auto=create-drop`) and threw them
+away when it stopped. Perfect for learning. Impossible in real life: the production database holds every
+customer, every order, every product the shop has ever had. It lives for years, through hundreds of versions
+of your app.
+
+So how does the database change when the app changes? Version 12 of the Shop API adds a `category` to
+products. The production database's `product` table has no such column, and it is full of real data that must
+not be lost. Someone has to run `ALTER TABLE`, exactly once, on every database (your laptop, the test server,
+production), in the right order, and remember that it was done.
+
+That someone is a **migration tool**. In this chapter you use the most common one in the Java world,
+**Flyway**, and change a live schema the way professional teams do.
 
 :::mission
-In the `24-migrations` folder: add a column with a migration, then fill it with a second one.
+Add a category column with a Flyway migration, then fill in the categories with a second one.
 :::
 :::
 
-:::step{type=concept title="Versioned migrations"}
-A **migration** is a SQL file that changes the schema, named with a version:
+:::step{type=concept title="Migrations: the schema has a history, like your code"}
+The idea is simple and powerful: every change to the database structure is a small **SQL script**, numbered in
+order, stored **with your code**:
 
 ```text
 src/main/resources/db/migration/
-  V1__create_product.sql
-  V2__add_category.sql
+  V1__create_product.sql      the first version of the schema
+  V2__add_category.sql        version 2: add a column
+  V3__set_categories.sql      version 3: fill it in
 ```
 
-At start-up, Flyway compares these files with the table `flyway_schema_history` in the database, runs the
-ones not applied yet **in version order**, and records each one. Every database (your laptop, the test
-server, production) reaches the same schema the same way.
-
-Files are never edited once applied: Flyway stores a checksum and refuses to start if an applied file
-changed. To change the schema again, add a new version.
+At start-up, Flyway looks at the database and asks: "which of these scripts have already run here?" It runs
+**only the new ones**, **in version order**, and records each one in a table it manages,
+`flyway_schema_history`. Next start-up, nothing to do. On a brand new database, it runs all of them, from V1,
+and ends up with exactly the same schema as everywhere else.
 
 :::diagram{name="flyway-versions"}
-Each file runs once, in order, and is recorded in the history table.
-:::
+Each file runs once, in version order, on every database.
 :::
 
-:::step{type=concept title="Hibernate validates, Flyway changes"}
-With Flyway, Hibernate no longer creates tables:
+So the schema gets a history, just like your code in git: you can see every change, who made it (git blame on
+the file), and every environment is guaranteed to have the same structure.
+:::
+
+:::step{type=concept title="The rules of a migration file"}
+Flyway is strict about names, and for good reasons:
+
+- **The name** is `V<version>__<description>.sql`: a capital **V**, the version number, **two** underscores,
+  then a description with underscores for spaces. `V2__add_category.sql` is version 2, "add category".
+  A single underscore, or a lower-case `v`, and Flyway ignores the file silently.
+- **Never edit a migration that has run.** Flyway stores a checksum of each applied script. If you change
+  `V1__create_product.sql` after it ran, the next start-up **fails** with a checksum mismatch: the file no longer
+  describes what was actually done. To change something, you always add a **new** version.
+- **Versions only go forward.** You fix a mistake in V2 with a V3, not by rewriting V2.
+
+These rules feel strict at first. They are what makes it safe to run the same scripts, months apart, on
+databases full of real data.
+:::
+
+:::step{type=concept title="Hibernate stops creating tables: ddl-auto=validate" file="24-migrations/src/main/resources/application.properties" line="1-4"}
+With Flyway in charge of the schema, Hibernate must stop creating tables. Look at this project's settings, on the
+right:
 
 ```properties
 spring.jpa.hibernate.ddl-auto=validate
 ```
 
-At start-up Hibernate only **checks** that the tables match the entities. If an entity has a field the table
-does not, start-up fails with "missing column". The fix is always a new migration, never a change to an
-old one.
+**`validate`** means: Hibernate does not create or change anything; it only **checks** at start-up that the
+tables match the entities. If an entity has a field whose column is missing, the app refuses to start. That is a
+safety check: you find out on deploy, not when the first customer opens a product page.
+
+Adding Flyway to a Spring Boot project is one dependency, `org.flywaydb:flyway-core` (it is in this project's
+pom). Spring Boot sees it and runs the migrations from `db/migration` automatically at start-up, before
+Hibernate validates.
+
+The project already has `V1__create_product.sql`, which creates the table and inserts three products (in real
+life, data like that often comes from the app, but a migration can insert rows too).
 :::
 
-:::step{type=example title="Worked example: adding a column to a table with data"}
-```sql
--- V4__add_discount.sql
-ALTER TABLE product ADD COLUMN discount_percent INT DEFAULT 0 NOT NULL;
-```
+:::step{type=try title="The entity is ahead of the database" file="24-migrations/src/main/java/com/shop/product/Product.java" line="21"}
+The `Product` entity, on the right, has a new field: `category`. Version 12 of the app wants it. The database
+(made by V1) does not have that column. Start the app:
 
-1. `ALTER TABLE ... ADD COLUMN` changes the existing table; existing rows stay.
-2. `DEFAULT 0 NOT NULL`: existing rows need a value for a `NOT NULL` column, so the default fills them.
-3. The entity gets `private int discountPercent;`, and `validate` confirms they match.
-:::
-
-:::step{type=predict title="Guess first"}
-:::question
-`V2__add_category.sql` was applied yesterday. Today you edit it to rename the column. What happens at the next start?
-:::
-- [ ] Flyway runs the new version of the file
-- [x] Flyway refuses to start: the applied file's checksum changed
-- [ ] Nothing: the file is ignored
-:::explain
-Applied migrations are history. Flyway detects the change and stops. Rename the column in a new
-migration, `V3__rename_category.sql`.
-:::
-:::
-
-:::step{type=try title="See it refuse to start"}
 ```bash run
-cd 24-migrations && mvn -q -o package -DskipTests && java -jar target/migrations.jar 2>&1 | grep -m2 -E "missing column|Started"
+cd 24-migrations && mvn -q -o package -DskipTests && java -jar target/migrations.jar
 ```
 
-The entity has `category`, the table does not: `validate` stops the application.
+It refuses to start. Look for the cause:
+
+```text
+Schema-validation: missing column [category] in table [product]
+```
+
+That is `validate` doing its job: the code and the database disagree, and it would be wrong to start. Look a
+little higher in the log too, at Flyway's own lines:
+
+```text
+Successfully validated 1 migration
+Migrating schema "PUBLIC" to version "1 - create product"
+Successfully applied 1 migration to schema "PUBLIC", now at version v1
+```
+
+Flyway ran V1. Now you need a V2.
 :::
 
-:::step{type=task task=add_category_column title="Warm-up: a migration that adds a column"}
-In `24-migrations/src/main/resources/db/migration/`, add `V2__add_category.sql` that adds the column
-`category` to `product`: `VARCHAR(40)`, `NOT NULL`, `DEFAULT 'other'`.
+:::step{type=example title="Worked example: a migration that adds a column"}
+Here is a migration that adds a `phone` column to an existing `customer` table full of real customers:
 
-The application starts, and `GET /products` shows a category for each product.
+```sql
+-- V7__add_customer_phone.sql
+-- Customers gain a phone number. Existing customers have none yet.
+ALTER TABLE customer ADD COLUMN phone VARCHAR(15);
+```
+
+And one that adds a **required** column. Existing rows need *some* value, or the `NOT NULL` rule would be broken
+the moment the column appears, so you give a **default**:
+
+```sql
+-- V8__add_customer_tier.sql
+ALTER TABLE customer ADD COLUMN tier VARCHAR(20) DEFAULT 'regular' NOT NULL;
+```
+
+Every existing customer gets `regular`; new ones can be given anything. A comment at the top, saying *why*, is a
+gift to whoever reads the history next year.
 :::
 
-:::step{type=task task=set_categories title="A data migration"}
-Migrations can change data too. Add `V3__set_categories.sql`: the products with SKU `TEA-1` and `COF-1` get
-the category `drinks`, and `SAM-1` gets `snacks`.
+:::step{type=task task=add_category_column title="Your turn: V2 adds the category column"}
+Create **`src/main/resources/db/migration/V2__add_category.sql`** (next to V1) that adds to `product` a column
+**`category`**: `VARCHAR(40)`, **not null**, with the **default** `'other'`.
+
+Mind the name: capital `V`, `2`, **two underscores**. Then rebuild and run. Flyway's lines now say:
+
+```text
+Migrating schema "PUBLIC" to version "1 - create product"
+Migrating schema "PUBLIC" to version "2 - add category"
+Successfully applied 2 migrations to schema "PUBLIC", now at version v2
+```
+
+and the app starts. `curl localhost:8080/products` shows every product with `"category":"other"`. Press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=concept title="Data migrations"}
+A migration does not have to change the structure. It can change **data** too. Now that every product has
+the category `other`, someone has to sort them: the teas and coffees are drinks, the samosa is a snack.
+
+That is also a migration, with the next version number, so it runs exactly once on every database, after the
+column exists:
+
+```sql
+-- V9__tier_for_big_spenders.sql
+UPDATE customer SET tier = 'gold' WHERE total_spent_paise > 5000000;
+```
+
+Why not run that `UPDATE` by hand on production? Because then the test server, every developer's laptop and the
+next new environment would *not* have it. Anything the database needs, it gets through a migration.
+:::
+
+:::step{type=task task=set_categories title="Your turn: V3 sets the categories"}
+Create **`V3__set_categories.sql`**: the two drinks, **TEA-1** and **COF-1**, get the category **`drinks`**,
+and **SAM-1** gets **`snacks`**. (Use `UPDATE ... SET ... WHERE sku ...`; `WHERE sku IN ('A', 'B')` matches
+several values.)
+
+Rebuild and run: Flyway now migrates to version 3, and `curl localhost:8080/products` shows the right
+categories. Press **Check**.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-In which order does Flyway run `V2__a.sql`, `V10__b.sql` and `V3__c.sql`?
+You notice a typo in V2__add_category.sql, which has already run on production. What do you do?
 :::
-- [ ] Alphabetical: V10, V2, V3
-- [x] By version number: V2, V3, V10
-- [ ] By file date
+- [ ] Edit V2 and restart
+- [x] Leave V2 as it is, and add V4 that fixes it
+- [ ] Delete the flyway_schema_history table
 :::explain
-Flyway compares versions as numbers, so 10 comes after 3.
+Editing an applied migration breaks its checksum, and the next start-up fails. History only moves forward: a
+new version fixes it, on every database.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-Where does Flyway record which migrations a database has applied?
+A file is named `V4_add_index.sql` (one underscore). What happens?
 :::
-- [ ] In `application.properties`
-- [x] In the table `flyway_schema_history`, inside that database
-- [ ] In a file on the server
+- [ ] Flyway runs it as version 4
+- [x] Flyway does not recognise it as a migration, and silently skips it
+- [ ] Start-up fails
 :::explain
-Each database keeps its own history, so every environment knows exactly what it still needs.
+The separator is two underscores. With one, the name does not match Flyway's pattern, and the file is ignored:
+one of the most common migration mistakes.
 :::
 :::
 
-:::step{type=deep-dive title="Migrations in a team"}
-Two developers creating `V5` on different branches will clash at merge time, so teams agree on numbering,
-or use timestamps as versions (`V20261121_1200__...`). Make large changes in safe steps: add a new
-column, copy data, switch the code, and only later drop the old column, so the running version of the
-application keeps working during a deployment. Liquibase is the main alternative to Flyway, with the same
-idea in XML, YAML or SQL.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+With `ddl-auto=validate`, an entity has a column the table lacks. What happens?
+:::
+- [ ] Hibernate adds the column
+- [x] The app refuses to start: schema validation fails
+- [ ] The field is always null
+:::explain
+`validate` only checks. It never changes the schema; that is Flyway's job. A mismatch stops the start-up, so it is
+found on deploy, not by a customer.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- Flyway runs versioned SQL files once each, in version order, and records them in `flyway_schema_history`.
-- With `ddl-auto=validate`, Hibernate checks the schema; migrations change it.
-- Never edit an applied migration: add a new version.
-- Migrations can change data as well as structure.
+:::step{type=deep-dive title="Go deeper: production migrations"}
+**Big tables.** On a table with millions of rows, some `ALTER TABLE`s lock it for minutes. Teams then split a
+change into small, safe steps across several releases (add a nullable column, backfill in batches, then add the
+constraint).
+
+**Backward compatible changes.** While a new version is being deployed, old and new copies of the app run side by
+side against the same database. So a migration must not break the old version: add before you remove, rename in
+two steps (add the new column, copy, switch the code, drop the old one later).
+
+**Liquibase** is the other common migration tool, with changes described in XML, YAML or SQL. The ideas are the
+same.
+
+**Undo.** Flyway's free edition has no automatic "down" migrations, on purpose: in production you fix forward with
+a new version, which is tested like any other change.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now change a database that holds real data, safely:
+
+- A **migration tool** (Flyway) runs numbered SQL scripts from `db/migration` in version order, **once each**, and
+  records them in `flyway_schema_history`. Every environment ends up identical.
+- Names: **`V<version>__<description>.sql`** (capital V, two underscores). Never edit an applied migration; fix
+  forward with a new version.
+- **`ddl-auto=validate`**: Hibernate only checks that tables match entities; Flyway owns the schema.
+- New required columns need a **default** for existing rows; **data** changes are migrations too.
+
+That completes Part 3: the Shop API has a real, evolving database. Part 4 makes it production-ready, starting
+with chapter 25: writing your own tests.
 :::

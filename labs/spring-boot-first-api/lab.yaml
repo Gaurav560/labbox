@@ -1,7 +1,7 @@
 id: spring-boot-first-api
 version: 2
 title: "Spring Boot"
-subtitle: From what a framework is to a tested, secure REST API, one plain step at a time.
+subtitle: From zero to a tested, secure, database-backed REST API, explained line by line in 31 chapters.
 description: "Learn Spring Boot from the beginning: what a framework is and why Spring exists, how a Spring Boot
   application starts, beans and dependency injection, controllers, services and repositories, requests and
   responses, validation and errors, databases with Spring Data JPA, transactions, testing and security, by
@@ -10,7 +10,7 @@ language: java
 track: frameworks
 tags: [java, spring-boot]
 level: beginner
-estimated_minutes: 440
+estimated_minutes: 1200
 cover_scene: "A small online shop's backend: a clean server rack with a green leaf on top, product cards and JSON brackets floating beside it."
 cover: cover.svg
 cover_credit: { by: "Logos: spring,java", source: "devicon (MIT)" }
@@ -488,10 +488,10 @@ chapters:
   - id: 19-database
     title: A real database
     file: chapters/19-database.md
-    minutes: 20
+    minutes: 45
     tasks:
       - id: product_entity
-        title: "19-database: make Product a JPA entity"
+        title: "make Product a JPA entity"
         hints:
           - "The application does not start: Spring Data says Product is not a managed type."
           - "Put @Entity on the class. Mark the id field as the primary key, and let the database generate it with the IDENTITY strategy."
@@ -500,7 +500,7 @@ chapters:
           - call: "GET /products"
             gives: "[Masala tea, Filter coffee, Samosa], each with an id"
       - id: unique_sku
-        title: "19-database: one product per SKU"
+        title: "one product per SKU"
         hints:
           - "Rules for a single column go in a @Column annotation on its field."
           - "The column must be unique and must not be null."
@@ -512,10 +512,10 @@ chapters:
   - id: 20-repositories
     title: Repositories and derived queries
     file: chapters/20-repositories.md
-    minutes: 18
+    minutes: 40
     tasks:
       - id: find_by_category
-        title: "20-repositories: products by category"
+        title: "products by category"
         hints:
           - "A derived query is a method declaration whose name describes the query."
           - "Declare findByCategoryOrderByNameAsc with a String parameter, returning a List<Product>."
@@ -524,7 +524,7 @@ chapters:
           - call: "GET /products?category=snacks"
             gives: "[Bhel puri, Kachori, Samosa]"
       - id: sku_conflict
-        title: "20-repositories: 409 for a duplicate SKU"
+        title: "409 for a duplicate SKU"
         hints:
           - "Spring Data can answer yes or no with an existsBy... method."
           - "Declare a method named existsBySku with a String parameter, returning boolean."
@@ -537,10 +537,10 @@ chapters:
   - id: 21-relationships
     title: Relationships and the N+1 problem
     file: chapters/21-relationships.md
-    minutes: 22
+    minutes: 45
     tasks:
       - id: order_items
-        title: "21-relationships: map orders and their items"
+        title: "map orders and their items"
         hints:
           - "Hibernate cannot store a CustomerOrder field as a column until the relationship is mapped."
           - "OrderItem.order is the many-to-one side: it owns the order_id foreign key column (a join column)."
@@ -549,7 +549,7 @@ chapters:
           - call: "GET /orders/1"
             gives: "{\"items\": 2, \"totalPaise\": 9400}"
       - id: fix_n_plus_one
-        title: "21-relationships: one query for the order list"
+        title: "one query for the order list"
         hints:
           - "findAll() loads the orders; each getItems() then runs one more query."
           - "Add a repository method with @Query using JOIN FETCH, so items load with their orders."
@@ -561,10 +561,10 @@ chapters:
   - id: 22-paging
     title: Queries, paging and sorting
     file: chapters/22-paging.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: paged_products
-        title: "22-paging: products a page at a time"
+        title: "products a page at a time"
         hints:
           - "Spring fills a Pageable parameter from ?page, ?size and ?sort by itself."
           - "Add a Pageable parameter to the method and change its return type to Page<Product>."
@@ -573,7 +573,7 @@ chapters:
           - call: "GET /products?page=1&size=2&sort=name"
             gives: "content [Kachori, Masala tea], totalElements 6"
       - id: price_range
-        title: "22-paging: a price range with @Query"
+        title: "a price range with @Query"
         hints:
           - "JPQL works on entity names and fields: Product and pricePaise."
           - "Use between :min and :max and order by the price, with @Param on each parameter."
@@ -584,10 +584,10 @@ chapters:
   - id: 23-transactions
     title: Transactions
     file: chapters/23-transactions.md
-    minutes: 20
+    minutes: 40
     tasks:
       - id: place_order_atomic
-        title: "23-transactions: placing an order is all or nothing"
+        title: "placing an order is all or nothing"
         hints:
           - "Without a transaction, every saveAndFlush commits on its own."
           - "One annotation makes the whole method run in one transaction."
@@ -596,7 +596,7 @@ chapters:
           - call: "placeOrder(tea x2, samosa x5), samosas run out"
             gives: "tea stock unchanged"
       - id: rollback_checked
-        title: "23-transactions: a declined card undoes the order"
+        title: "a declined card undoes the order"
         hints:
           - "PaymentDeclinedException extends Exception: it is checked."
           - "Checked exceptions commit by default; the annotation can list exceptions that roll back."
@@ -607,10 +607,10 @@ chapters:
   - id: 24-migrations
     title: Database migrations with Flyway
     file: chapters/24-migrations.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: add_category_column
-        title: "24-migrations: V2 adds the category column"
+        title: "V2 adds the category column"
         hints:
           - "Hibernate validates the schema and finds no category column in product."
           - "Add a new file next to V1, named with version 2 and two underscores before the description."
@@ -621,7 +621,7 @@ chapters:
           - call: "GET /products"
             gives: "each product has \"category\": \"other\""
       - id: set_categories
-        title: "24-migrations: V3 sets the categories"
+        title: "V3 sets the categories"
         hints:
           - "A data change is a migration too, with the next version number."
           - "Use UPDATE product SET category = ... WHERE sku ..."
@@ -632,10 +632,10 @@ chapters:
   - id: 25-testing-controllers
     title: Testing the web layer
     file: chapters/25-testing-controllers.md
-    minutes: 22
+    minutes: 40
     tasks:
       - id: controller_test
-        title: "25-testing-controllers: test ProductController"
+        title: "test ProductController"
         hints:
           - "The test class needs a MockMvc field and a mocked ProductService field, both filled by Spring."
           - "In each test, first tell the mock what find(...) answers with when(...).thenReturn(...), then perform the request."
@@ -644,7 +644,7 @@ chapters:
           - call: "mvn -q -o test"
             gives: "2 tests, 0 failures"
       - id: catches_bug
-        title: "25-testing-controllers: your tests catch a broken controller"
+        title: "your tests catch a broken controller"
         hints:
           - "The broken controller answers one of the two cases wrongly."
           - "A test that only checks the found product cannot notice a wrong answer for a missing one."
@@ -656,10 +656,10 @@ chapters:
   - id: 26-testing-data
     title: Testing the data layer
     file: chapters/26-testing-data.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: repository_test
-        title: "26-testing-data: test the category query"
+        title: "test the category query"
         hints:
           - "Let Spring inject the repository into a field; @DataJpaTest gives it an empty in-memory database."
           - "Save products of two categories, so the test can see that the other category is left out."
@@ -668,7 +668,7 @@ chapters:
           - call: "findByCategoryOrderByNameAsc(\"snacks\")"
             gives: "[Bhel puri, Kachori, Samosa]"
       - id: catches_query_bug
-        title: "26-testing-data: your test catches a wrong order"
+        title: "your test catches a wrong order"
         hints:
           - "The broken query finds the right products in the wrong order."
           - "contains(...) and hasSize(...) do not look at the order."
@@ -680,10 +680,10 @@ chapters:
   - id: 27-logging-and-health
     title: Logging and health checks
     file: chapters/27-logging-and-health.md
-    minutes: 16
+    minutes: 35
     tasks:
       - id: log_warning
-        title: "27-logging-and-health: a WARN line, not println"
+        title: "a WARN line, not println"
         hints:
           - "SLF4J's Logger and LoggerFactory come from the org.slf4j package."
           - "Keep one private static final Logger for the class, made by LoggerFactory.getLogger with StockService.class."
@@ -692,7 +692,7 @@ chapters:
           - call: "take(\"SAM-1\")"
             gives: "WARN ... c.shop.stock.StockService : Out of stock: SAM-1"
       - id: health_info
-        title: "27-logging-and-health: expose health and info"
+        title: "expose health and info"
         hints:
           - "Endpoints are exposed over HTTP with management.endpoints.web.exposure.include."
           - "List both endpoint names, separated by a comma; then turn on the env info contributor with management.info.env.enabled."
@@ -705,10 +705,10 @@ chapters:
   - id: 28-security
     title: Security
     file: chapters/28-security.md
-    minutes: 22
+    minutes: 45
     tasks:
       - id: public_and_protected
-        title: "28-security: a public list, a protected rest"
+        title: "a public list, a protected rest"
         hints:
           - "Two beans in SecurityConfig: a SecurityFilterChain built from HttpSecurity, and an InMemoryUserDetailsManager."
           - "In authorizeHttpRequests, permit GET on /products first, and require authentication for any other request last."
@@ -721,7 +721,7 @@ chapters:
           - call: "GET /admin/report as staff"
             gives: "200"
       - id: admin_only
-        title: "28-security: only admins delete"
+        title: "only admins delete"
         hints:
           - "A rule can match an HTTP method and a path pattern together."
           - "Match DELETE on /products/** and require the ADMIN role with hasRole."
@@ -734,10 +734,10 @@ chapters:
   - id: 29-calling-services
     title: Calling other services
     file: chapters/29-calling-services.md
-    minutes: 20
+    minutes: 40
     tasks:
       - id: fetch_stock
-        title: "29-calling-services: read the supplier's stock"
+        title: "read the supplier's stock"
         hints:
           - "The RestClient already has the supplier's base URL; start with http.get()."
           - "Give uri(...) the path with a {sku} placeholder and the sku, then retrieve() and read the body as SupplierStock.class."
@@ -746,7 +746,7 @@ chapters:
           - call: "GET /supplier-stock/TEA-1"
             gives: "{\"sku\": \"TEA-1\", \"available\": 120}"
       - id: handle_supplier_errors
-        title: "29-calling-services: not stocked, down, or too slow"
+        title: "not stocked, down, or too slow"
         hints:
           - "A 404 from the supplier throws HttpClientErrorException; catch it in available() and check the status value."
           - "Build a SimpleClientHttpRequestFactory with a read timeout of one second and pass it to the builder's requestFactory(...)."
@@ -759,10 +759,10 @@ chapters:
   - id: 30-capstone
     title: "Capstone: the checkout API"
     file: chapters/30-capstone.md
-    minutes: 20
+    minutes: 60
     tasks:
       - id: checkout
-        title: "30-capstone: POST /checkout"
+        title: "POST /checkout"
         hints:
           - "The service method needs one annotation so all stock changes and the order commit together."
           - "Loop over request.items(): find the StockItem by sku (orElseThrow an OutOfStockException), call take, and add price times quantity."
@@ -771,7 +771,7 @@ chapters:
           - call: "POST /checkout, 2 x TEA-1 and 1 x COF-1"
             gives: "201, Location: /orders/1, totalPaise 7000"
       - id: checkout_errors
-        title: "30-capstone: clear errors, nothing half-done"
+        title: "clear errors, nothing half-done"
         hints:
           - "ApiErrors needs two @ExceptionHandler methods, each returning a ProblemDetail."
           - "For OutOfStockException: status CONFLICT, the title, and setProperty(\"sku\", e.sku())."

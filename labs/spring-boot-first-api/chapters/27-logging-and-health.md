@@ -1,28 +1,63 @@
-:::step{type=story title="Why this chapter"}
-Once the API runs on a server, you cannot watch it in a terminal. You need two things: **logs** that
-tell you what happened, and a **health endpoint** that tells a load balancer (and you) whether the app is
-working. Spring Boot has both built in: SLF4J with Logback for logs, and **Actuator** for health and
-information.
+:::step{type=story title="Seeing a server you cannot see"}
+On your laptop, you watch the app in a terminal. On a production server, nobody watches anything. The app runs on
+a machine you may never log into, maybe ten copies of it behind a load balancer, serving customers at 3 a.m. When a
+customer says "my order failed", you have two ways to find out what happened: the app's **logs**, and its
+**health**.
+
+Spring Boot has both built in. Logging, through **SLF4J** and **Logback**, writes structured, filterable log lines.
+**Actuator**, which you added in chapter 2, exposes operational endpoints like `/actuator/health`. This chapter
+teaches you to use both the way production teams do.
 
 :::mission
-In the `27-logging-and-health` folder: expose the health and info endpoints, and replace a
-`System.out.println` with a proper WARN log line.
+Replace a `System.out.println` with a proper WARN log line, and expose the health and info endpoints.
 :::
 :::
 
-:::step{type=concept title="Why not System.out.println"}
-`System.out.println` writes a bare line. A log line from a logger carries more:
+:::step{type=concept title="Why not System.out.println?"}
+`System.out.println("out of stock " + sku)` writes one bare line. Compare it with a line from a **logger**:
 
 ```text
-2026-11-21T10:15:02.114Z  WARN 4211 --- [shop-api] [nio-8080-exec-3] c.shop.stock.StockService : Out of stock: SAM-1
+2026-11-21T12:20:36.011Z  WARN 142 --- [shop-api] [nio-8082-exec-2] com.shop.stock.StockService : Out of stock: SAM-1
 ```
 
-The time, the **level** (`WARN`), the process, the thread and the class that logged it. With levels you
-can choose what to keep: `DEBUG` while developing, `INFO` and above in production, and alerts on `ERROR`.
-The levels from least to most serious: `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`.
+Every part of it is useful:
+
+- **When**: an exact timestamp, so you can match it with the customer's "at 14:02".
+- **How serious**: the **level**, `WARN`.
+- **Which app** (`[shop-api]`, your `spring.application.name` from chapter 0), and which process (`142`).
+- **Which thread**: `nio-8082-exec-2`, a Tomcat request thread (chapter 10). All lines of one request share it.
+- **Which class** wrote it: `com.shop.stock.StockService`.
+- **The message**.
+
+And because every line has a level, you can **choose** what to keep: everything on your laptop, only warnings and
+errors in production, and an alert to your phone for every `ERROR`. `println` has none of that: no level, no time,
+no class, and no way to switch it off.
 :::
 
-:::step{type=example title="Worked example: logging in a service"}
+:::step{type=concept title="Log levels"}
+There are five levels, from the chattiest to the most serious:
+
+- **TRACE**: extremely detailed, step-by-step internals. You saw Spring's TRACE log in chapter 10.
+- **DEBUG**: details useful while developing or investigating ("loaded 3 prices", "cache miss for TEA-1").
+- **INFO**: normal, important events ("Started ShopApiApplication", "order 4711 placed").
+- **WARN**: something unusual that the app handled, but someone may want to know ("out of stock", "retrying a
+  slow supplier").
+- **ERROR**: something failed and needs attention ("payment provider unreachable", an unexpected exception).
+
+You set a **threshold** per package; only that level and the more serious ones are written. Spring Boot's
+default is `INFO`. In `application.properties`:
+
+```properties
+logging.level.com.shop=DEBUG                # everything from your code, DEBUG and up
+logging.level.org.hibernate.SQL=DEBUG       # Hibernate's SQL statements (like show-sql, but through the logger)
+logging.level.root=WARN                     # everything else: only WARN and ERROR
+```
+
+Choosing the right level is a skill. A good rule: in production, **INFO** should tell the story of what happened,
+**WARN** should be rare enough that someone reads them, and **ERROR** should always mean someone must act.
+:::
+
+:::step{type=example title="Worked example: logging from a class"}
 ```java
 @Service
 public class PaymentService {
@@ -38,45 +73,86 @@ public class PaymentService {
 }
 ```
 
-`Logger` and `LoggerFactory` come from `org.slf4j`. The `{}` placeholders are filled from the arguments,
-and only when the line is actually written, so a disabled `DEBUG` line costs almost nothing. Never
-build the message with `+` inside a log call.
+- **`Logger`** and **`LoggerFactory`** come from **`org.slf4j`**. SLF4J is the logging *interface* every Java
+  library agrees on; **Logback** (from the starter, chapter 2) is the library that actually writes the lines.
+- One logger per class, **`private static final`**, created with the class itself, so every line names its source.
+- **`{}` placeholders**: SLF4J fills them from the arguments, in order. And it only builds the text **if the line
+  will actually be written**, so a `DEBUG` line costs almost nothing when DEBUG is off. Never write
+  `log.debug("total " + total)`: the `+` builds the string every time, even when the line is thrown away.
+- To log an exception with its stack trace, pass it as the **last** argument: `log.error("Payment failed for {}",
+  orderId, e)`.
+:::
 
-You set levels in `application.properties`:
+:::step{type=try title="Find the println" file="27-logging-and-health/src/main/java/com/shop/stock/StockService.java" line="13-20"}
+`StockService.take`, on the right, prints with `System.out.println` when an item is out of stock. Start the app and
+trigger it (the samosa stock starts at 0):
 
-```properties
-logging.level.com.shop=DEBUG
-logging.level.org.hibernate.SQL=DEBUG
+```bash run
+cd 27-logging-and-health && mvn -q -o package -DskipTests && java -jar target/logging-and-health.jar
+```
+
+```bash run
+curl -X POST localhost:8080/stock/SAM-1/take
+```
+
+Look at Terminal 1. Between the neat log lines, there is a bare one:
+
+```text
+out of stock SAM-1
+```
+
+No time, no level, no class. On a server producing thousands of lines a minute, nobody would ever find it, and no
+alert could ever be set on it.
+:::
+
+:::step{type=task task=log_warning title="Your turn: a proper WARN line"}
+In `StockService`:
+
+1. Add a logger for the class: `private static final Logger log = LoggerFactory.getLogger(StockService.class);`
+   (imports `org.slf4j.Logger` and `org.slf4j.LoggerFactory`).
+2. Replace the `println` with a **WARN** line, `Out of stock: <sku>`, using a `{}` placeholder for the sku.
+
+Rebuild, run, take a samosa again, and look at the log:
+
+```text
+WARN 142 --- [shop-api] [nio-8080-exec-2] com.shop.stock.StockService : Out of stock: SAM-1
+```
+
+Press **Check**.
+:::
+
+:::step{type=concept title="Actuator: is the app healthy?"}
+A load balancer sits in front of your app's copies and spreads requests between them. It needs to know, every few
+seconds, which copies are **healthy**, so it stops sending customers to a broken one. Kubernetes does the same to
+decide when to restart a container. They ask the app itself, at **`/actuator/health`**.
+
+:::diagram{name="actuator-endpoints"}
+The load balancer calls health; people and dashboards read info and metrics.
+:::
+
+- **`/actuator/health`** answers `{"status":"UP"}` (with 200) when the app works, and `{"status":"DOWN"}` (with
+  **503**) when it does not. Spring Boot adds a check for each thing the app depends on: with a database, the
+  health includes "can I reach the database?". One part DOWN makes the whole status DOWN.
+- **`/actuator/info`** shows facts you choose: app name, version, git commit, so you know exactly what is running.
+- **`/actuator/metrics`** gives numbers: request counts and times, memory, database connections.
+
+By default, only **health** is reachable over HTTP. The others can reveal internal details, so you expose them on
+purpose. The log tells you how many are exposed:
+
+```text
+o.s.b.a.e.web.EndpointLinksResolver : Exposing 1 endpoint beneath base path '/actuator'
 ```
 :::
 
-:::step{type=task task=log_warning title="Log the out-of-stock warning"}
-In `27-logging-and-health/.../stock/StockService.java`, replace the `System.out.println` with a WARN log
-line `Out of stock: <sku>`, using an SLF4J `Logger` for `StockService`.
-:::
-
-:::step{type=concept title="Actuator: health and info"}
-`spring-boot-starter-actuator` adds operational endpoints under `/actuator`:
-
-- **`/actuator/health`** answers `{"status": "UP"}` when the app and what it depends on (the database,
-  for example) are working, and `DOWN` with status 503 when they are not. Load balancers and Kubernetes
-  call it to decide whether to send traffic to this instance.
-- **`/actuator/info`** shows facts you choose: the app name, its version, the git commit.
-
-Only `health` is reachable over HTTP by default, because the others can reveal internal details. You
-choose what to expose:
+:::step{type=example title="Worked example: exposing and filling info"}
+Exposure is a setting:
 
 ```properties
 management.endpoints.web.exposure.include=health,info
 ```
 
-:::diagram{name="actuator-endpoints"}
-The load balancer calls health; people and dashboards read info and metrics.
-:::
-:::
-
-:::step{type=example title="Worked example: filling /actuator/info"}
-With the **env** contributor turned on, every property that starts with `info.` appears in the info endpoint:
+The info endpoint is empty until something fills it. The simplest source is your own settings: switch on the
+**env** contributor, and every property starting with `info.` appears in it:
 
 ```properties
 management.info.env.enabled=true
@@ -88,72 +164,99 @@ info.app.team=checkout
 curl -s localhost:8080/actuator/info
 {"app":{"name":"Payments API","team":"checkout"}}
 ```
+
+`info.app.name` became the nested JSON `{"app":{"name":...}}`. (Remember chapter 8? These settings switch
+auto-configured features on and off through conditions, just like ShopKit's festival banner.)
 :::
 
-:::step{type=predict title="Guess first"}
-:::question
-You add Actuator and call `GET /actuator/info` without changing any property. What do you get?
-:::
-- [ ] {} with 200
-- [x] 404: info is not exposed over HTTP by default
-- [ ] 401: Actuator needs a login
-:::explain
-Only health is exposed by default. Every other endpoint must be listed in `management.endpoints.web.exposure.include`.
-:::
-:::
+:::step{type=task task=health_info title="Your turn: expose health and info"}
+In `27-logging-and-health/src/main/resources/application.properties`:
 
-:::step{type=try title="Ask the app how it is"}
-```bash run
-cd 27-logging-and-health && mvn -q -o package -DskipTests && java -jar target/logging-and-health.jar
-```
+1. expose **`health`** and **`info`** over HTTP;
+2. switch on the **env** info contributor;
+3. set **`info.app.name`** to `Shop API`.
 
-In a second tab:
+Rebuild, run, and look at all three:
 
 ```bash run
-curl -s localhost:8080/actuator/health; echo; curl -s -o /dev/null -w "%{http_code}\n" localhost:8080/actuator/info
+curl localhost:8080/actuator/health; echo; curl localhost:8080/actuator/info; echo; curl localhost:8080/actuator
 ```
+
+```text
+{"status":"UP"}
+{"app":{"name":"Shop API"}}
+{"_links":{"self":...,"health":...,"info":...}}
+```
+
+`/actuator` on its own lists every exposed endpoint, and the start-up log now says `Exposing 2 endpoints`. Press
+**Check**.
 :::
 
-:::step{type=task task=health_info title="Expose health and info"}
-In `27-logging-and-health/src/main/resources/application.properties`: expose `health` and `info` over
-HTTP, turn on the env info contributor, and set `info.app.name` to `Shop API`.
-:::
-
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Production runs with `logging.level.root=INFO`. Which of these lines are written?
+Production runs with the INFO threshold. Which lines are written?
 :::
 - [ ] Only ERROR
 - [x] INFO, WARN and ERROR
 - [ ] All of them, including DEBUG
 :::explain
-A level writes itself and everything more serious. DEBUG and TRACE are skipped.
+A threshold writes its own level and everything more serious. DEBUG and TRACE are skipped (and, with
+placeholders, cost almost nothing).
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-The database goes down. What does `/actuator/health` answer?
+The database goes down. What does /actuator/health answer?
 :::
 - [ ] 200 UP: the app itself still runs
-- [x] 503 DOWN: the database health check fails
+- [x] 503 DOWN: the database check fails, so the whole status is DOWN
 - [ ] Nothing: the endpoint stops
 :::explain
-Spring Boot adds a health check for each thing it connects to. One DOWN makes the whole status DOWN, so
-the load balancer stops sending traffic to this instance.
+Each dependency adds its own check. One DOWN makes the status DOWN, and the load balancer stops sending customers
+to this copy.
 :::
 :::
 
-:::step{type=deep-dive title="Metrics, and logs as JSON"}
-Actuator also has `/actuator/metrics` (request counts and times, memory, database pool), and with
-Micrometer it exports them to Prometheus at `/actuator/prometheus`. In production, logs usually go out
-as JSON, one object per line, so a log system can search by field: Spring Boot 3.4 does this with
-`logging.structured.format.console=ecs`. The "Spring Boot in production" course goes deep on both.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Why is `log.debug("total {}", total)` better than `log.debug("total " + total)`?
+:::
+- [ ] It prints more nicely
+- [x] With {}, the text is only built if the line is actually written
+- [ ] The + version does not compile
+:::explain
+With `+`, Java builds the string before calling `debug`, even when DEBUG is off and the line is thrown away. In a
+loop running a million times, that adds up.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- Use an SLF4J `Logger`, with `{}` placeholders, not `System.out.println`.
-- Levels: TRACE, DEBUG, INFO, WARN, ERROR; set them per package in properties.
-- Actuator's `/actuator/health` is for load balancers; `/actuator/info` shows facts you choose.
-- Expose endpoints over HTTP on purpose, with `management.endpoints.web.exposure.include`.
+:::step{type=deep-dive title="Go deeper: JSON logs, metrics, request ids, and DevTools"}
+**Logs as JSON.** Log systems (ELK, Loki, Datadog) search logs by field. Spring Boot 3.4 can write each line as a
+JSON object: `logging.structured.format.console=ecs`.
+
+**Request ids in every line.** Put chapter 18's request id into SLF4J's **MDC** in the filter, add it to the log
+pattern, and every line of a request carries it: one search finds a request's whole story.
+
+**Metrics.** With the Micrometer Prometheus registry, `/actuator/prometheus` serves every metric for Prometheus and
+Grafana dashboards: requests per second, the slowest endpoints, database pool usage.
+
+**Health groups.** Kubernetes separates "alive" from "ready for traffic": Spring Boot offers
+`/actuator/health/liveness` and `/actuator/health/readiness` for exactly that.
+
+**DevTools.** While developing, `spring-boot-devtools` restarts the app automatically when you rebuild, so you stop
+pressing Ctrl+C after every change. It switches itself off in a packaged production jar.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now see what a running app is doing:
+
+- Use an **SLF4J `Logger`** (`LoggerFactory.getLogger(YourClass.class)`), never `System.out.println`.
+- **Levels**: TRACE, DEBUG, INFO, WARN, ERROR; set thresholds per package with `logging.level.<package>=...`.
+- **`{}` placeholders** build text only when the line is written; pass exceptions as the last argument.
+- **Actuator**: `/actuator/health` (UP 200 / DOWN 503, for load balancers), `/actuator/info` (facts you choose),
+  `/actuator/metrics`. Expose them on purpose with `management.endpoints.web.exposure.include`.
+- `management.info.env.enabled=true` + `info.*` properties fill the info endpoint.
+
+Next, chapter 28: right now anyone can call any endpoint. Security.
 :::

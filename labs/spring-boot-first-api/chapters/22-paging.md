@@ -1,129 +1,214 @@
-:::step{type=story title="Why this chapter"}
-A shop has thousands of products. Returning all of them in one response is slow for the server, slow
-for the network and useless for a screen that shows twenty. This chapter returns data a page at a time,
-sorted, and writes a custom query when a method name is not enough.
+:::step{type=story title="Thousands of products"}
+The Shop API's catalogue will not stay at six products. A real shop has thousands, a marketplace millions.
+`GET /products` returning **all** of them would send megabytes of JSON, make the database read every row, and
+make the phone app freeze while it draws a list nobody scrolls to the end of. Every shopping app you have used
+shows products **a page at a time**, sorted by what you chose.
+
+Spring Data makes paging and sorting almost free: one parameter, and the database returns exactly one page. This
+chapter adds that, and then teaches you to write your own queries when a method name is not enough: **JPQL**
+with `@Query`.
 
 :::mission
-In the `22-paging` folder: return products a page at a time, and add a price-range query with `@Query`.
+Serve products a page at a time with sorting, and write a price-range query in JPQL.
 :::
+:::
+
+:::step{type=concept title="Paging in the database: offset and limit"}
+To return page 2 of a list sorted by name, with 20 items per page, the database needs three instructions:
+**sort** by name, **skip** the first 20 rows (page 1), and **return** the next 20. In SQL:
+
+```sql
+select ... from product order by name offset 20 rows fetch first 20 rows only
+```
+
+The skip is the **offset**, the size is the **limit**. The important part: the database does it. Only 20 rows
+leave the database, however many products there are.
+
+There is one more thing a client usually wants: **how many pages are there in total?** (To show "page 2 of 47".)
+That needs a second, cheap query: `select count(...) from product`.
+
+Pages are numbered **from 0** in Spring Data: `page=0` is the first page. Keep that in mind; it surprises
+everyone once.
 :::
 
 :::step{type=concept title="Pageable and Page"}
-Spring Data can read paging from the request and apply it in SQL:
+Spring Data wraps all of that in two types:
+
+- **`Pageable`**: "which page, how big, sorted how". It is the *question*.
+- **`Page<T>`**: one page of results, plus the totals. It is the *answer*.
+
+Every `JpaRepository` already has `findAll(Pageable pageable)`. And here is the nice part: if a controller
+method has a **`Pageable` parameter**, Spring **builds it from the query string for you**:
 
 ```java
-@GetMapping("/products")
-public Page<Product> all(Pageable pageable) {
-    return repository.findAll(pageable);
+@GetMapping("/customers")
+public Page<Customer> list(Pageable pageable) {
+    return customers.findAll(pageable);
 }
 ```
 
-`GET /products?page=1&size=20&sort=name` fills the `Pageable` (pages start at 0). The query gets
-`ORDER BY name LIMIT 20 OFFSET 20`, plus a `COUNT(*)` for the total. The `Page` result holds the content
-and the numbers a client needs to show page links:
-
-```json
-{"content": [ ... ], "page": {"size": 20, "number": 1, "totalElements": 1430, "totalPages": 72}}
-```
-:::
-
-:::step{type=example title="Worked example: page 2 of 3"}
-Six products, `size=2`, `sort=name`:
-
-:::trace{title="GET /products?page=1&size=2&sort=name"}
-| step | value | note |
-|---|---|---|
-| sorted by name | Bhel puri, Filter coffee, Kachori, Masala tea, Samosa, Vada pav | ORDER BY name |
-| OFFSET page * size | skip 1 * 2 = 2 rows | Page 0 would be the first two. |
-| LIMIT size | take 2 rows | |
-| content | Kachori, Masala tea | The second page. |
-| COUNT(*) | totalElements 6, totalPages 3 | A second query, for the page links. |
-:::
-:::
-
-:::step{type=predict title="Guess first"}
-:::question
-`GET /products?page=0&size=5` on 12 products. How many products are in `content`, and what is `totalPages`?
-:::
-- [x] 5 products, 3 pages
-- [ ] 12 products, 1 page
-- [ ] 5 products, 2 pages
-:::explain
-Pages start at 0, each holds up to 5. 12 products need 3 pages: 5, 5 and 2.
-:::
-:::
-
-:::step{type=try title="Ask for a page"}
-```bash run
-cd 22-paging && mvn -q -o package -DskipTests && java -jar target/paging.jar
+```text
+GET /customers?page=0&size=20&sort=name           first 20, by name
+GET /customers?page=3&size=10&sort=city,desc      page 4 of 10 per page, by city Z to A
+GET /customers                                    defaults: page 0, size 20, unsorted
 ```
 
-After the first task, in a second tab:
+`sort` takes a field name, and optionally `,asc` or `,desc`. You can even repeat it:
+`sort=city&sort=name` sorts by city, then by name within each city.
+:::
+
+:::step{type=try title="Today: everything, every time" file="22-paging/src/main/java/com/shop/product/ProductController.java" line="18-23"}
+`ProductController.all()`, on the right, returns `findAll()`: every product. Run the app with SQL logging and
+ask for "page 1 of size 2":
 
 ```bash run
-curl -s "localhost:8080/products?page=0&size=2&sort=pricePaise,desc"; echo
+cd 22-paging && mvn -q -o package -DskipTests && java -jar target/paging.jar --spring.jpa.show-sql=true
 ```
 
-`sort=property,desc` sorts the other way.
+```bash run
+curl "localhost:8080/products?page=1&size=2&sort=name"
+```
+
+All six products come back, unsorted. The parameters are ignored, because nothing in the method reads them.
 :::
 
-:::step{type=task task=paged_products title="Warm-up: products a page at a time"}
-In `22-paging`, change `GET /products` to take a `Pageable` parameter and return
-`repository.findAll(pageable)` as a `Page<Product>`.
+:::step{type=task task=paged_products title="Your turn: products a page at a time"}
+Change `all()` so it takes a **`Pageable`** parameter and returns a **`Page<Product>`** from
+`repository.findAll(pageable)`. (Imports: `org.springframework.data.domain.Page` and `Pageable`.)
+
+Rebuild, run, and ask for the second page of two, by name:
+
+```bash run
+curl "localhost:8080/products?page=1&size=2&sort=name"
+```
+
+```text
+{"content":[{"id":4,"name":"Kachori",...},{"id":1,"name":"Masala tea",...}],
+ "page":{"size":2,"number":1,"totalElements":6,"totalPages":3}}
+```
+
+Read the answer: `content` is the page (Kachori and Masala tea: positions 3 and 4 by name, because page 0 held
+Bhel puri and Filter coffee), and `page` tells the client everything it needs for a pager: 6 products, 3 pages,
+this is number 1. And in the log, the two queries from the first step:
+
+```text
+Hibernate: select ... from product p1_0 order by p1_0.name offset ? rows fetch first ? rows only
+Hibernate: select count(p1_0.id) from product p1_0
+```
+
+Press **Check**.
 :::
 
-:::step{type=concept title="@Query with JPQL"}
-When a method name gets long, write the query yourself in **JPQL**, a query language over entities
-(class and field names, not tables and columns):
+:::step{type=concept title="When a name is not enough: @Query and JPQL"}
+Derived queries (chapter 20) cover most simple questions. For anything more, you write the query yourself, with
+**`@Query`** on a repository method. You already used one for `join fetch` in chapter 21.
+
+The language is **JPQL** (Jakarta Persistence Query Language). It looks like SQL, with one big difference: it
+talks about your **entities and their fields**, not tables and columns:
 
 ```java
-@Query("select p from Product p where p.pricePaise between :min and :max order by p.pricePaise")
-List<Product> inPriceRange(@Param("min") int min, @Param("max") int max);
+@Query("select c from Customer c where c.city = :city and c.joinedOn >= :since order by c.name")
+List<Customer> joinedRecently(@Param("city") String city, @Param("since") LocalDate since);
 ```
 
-`:min` and `:max` are named parameters, filled from the `@Param` arguments. Values are always passed as
-parameters, never pasted into the query text, which prevents SQL injection. JPQL is checked at start-up,
-like derived query names.
+- `from Customer c`: the **entity** `Customer` (not the table `customer`), with a short name `c`.
+- `c.city`, `c.joinedOn`: entity **fields**, in Java's camelCase (Hibernate maps `joinedOn` to `joined_on`).
+- `:city`, `:since`: **named parameters**. `@Param("city")` connects each method parameter to its name.
+- `select c`: return whole `Customer` entities.
+
+Why not plain SQL? JPQL keeps working if you rename a column (you only change the entity mapping), it is checked
+when the app starts (a misspelt field stops the start-up), and Hibernate translates it for whichever database you
+use. (For the rare query only plain SQL can express, `@Query(value = "...", nativeQuery = true)` exists.)
+
+Never build a query by gluing strings with user input: `"... where city = '" + city + "'"`. That is how **SQL
+injection** happens. Parameters (`:city`) are always passed safely, separately from the query text.
 :::
 
-:::step{type=task task=price_range title="A price range with @Query"}
-Add `inPriceRange(int min, int max)` to `ProductRepository` with an `@Query`: products whose price is
-between `min` and `max` (both included), cheapest first. Use it in `GET /products/price-range`.
+:::step{type=task task=price_range title="Your turn: a price range in JPQL"}
+1. In `ProductRepository`, write a method **`inPriceRange(int min, int max)`** with a `@Query`: the products
+   whose price is **between** `min` and `max` (both included), **cheapest first**. Use named parameters and
+   `@Param`. (Imports: `org.springframework.data.jpa.repository.Query`, `org.springframework.data.repository.query.Param`,
+   `java.util.List`.)
+2. In `ProductController.priceRange`, return its result.
+
+Hint for JPQL: `between ... and ...` includes both ends, and the entity's field is `pricePaise`.
+
+Rebuild, run, and try:
+
+```bash run
+curl "localhost:8080/products/price-range?min=2000&max=3000"
+```
+
+You should get Masala tea (2000), Kachori (2200), Vada pav (2500) and Filter coffee (3000), in that order. The log
+shows your JPQL, translated:
+
+```text
+Hibernate: select ... from product p1_0 where p1_0.price_paise between ? and ? order by p1_0.price_paise
+```
+
+Press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-In JPQL, what does `Product` in `select p from Product p` refer to?
+A client wants the first 10 products. Which request?
 :::
-- [ ] The table `product`
-- [x] The entity class `Product`
-- [ ] A Java variable named `Product`
+- [x] /products?page=0&size=10
+- [ ] /products?page=1&size=10
+- [ ] /products?size=10&page=first
 :::explain
-JPQL uses entity and field names; Hibernate translates them to table and column names.
+Spring Data numbers pages from 0. `page=1` would be products 11 to 20.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-Why page in the database instead of loading everything and using `subList` in Java?
+In `@Query("select p from Product p where p.pricePaise < :max")`, what is `p.pricePaise`?
 :::
-- [ ] Java cannot sort lists
-- [x] The database sends only the rows of one page, instead of every row over the network and into memory
-- [ ] `subList` is not allowed in controllers
+- [ ] A column of the product table
+- [x] A field of the Product entity (Hibernate maps it to the price_paise column)
+- [ ] A parameter
 :::explain
-With `LIMIT` and `OFFSET`, the database does the work and transfers 20 rows instead of thousands.
+JPQL talks about entities and fields. Hibernate translates them to tables and columns.
 :::
 :::
 
-:::step{type=deep-dive title="Deep pages and limits"}
-`OFFSET 100000` still makes the database walk past 100,000 rows, so very deep pages get slow. Large
-lists use **keyset paging** instead: "the next 20 after the last id I saw" (`WHERE id > ? ORDER BY id`).
-Also cap the page size (`spring.data.web.pageable.max-page-size`, default 2000), so a client cannot ask
-for a million rows in one page.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Why does a paged request run two queries?
+:::
+- [ ] One for each page
+- [x] One for the page's rows, one count for the total number of elements and pages
+- [ ] Spring Data always runs every query twice
+:::explain
+The rows come with offset and limit; the totals need a `count`. If the client does not need totals (infinite
+scroll), a `Slice` instead of a `Page` skips the count.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- `Pageable` reads `page`, `size` and `sort` from the request; `Page` returns content plus totals.
-- Paging and sorting run in SQL (`LIMIT`, `OFFSET`, `ORDER BY`), with a `COUNT` for the totals.
-- `@Query` with JPQL and named parameters handles queries a method name cannot express.
+:::step{type=deep-dive title="Go deeper: page size limits, Slice, and keyset paging"}
+**Limit the size.** Without a limit, a client can ask for `size=1000000`. Spring Boot lets you cap it:
+`spring.data.web.pageable.max-page-size=100`. Set a default with `spring.data.web.pageable.default-page-size`.
+
+**Slice.** Return `Slice<T>` instead of `Page<T>` to skip the count query: you only learn whether there is a next
+page. Good for infinite scrolling.
+
+**Deep pages are slow.** `offset 100000` still makes the database walk past 100,000 rows. For huge tables, APIs
+use **keyset paging**: "the next 20 after id 4711" (`where id > :last order by id`), which stays fast at any
+depth. You will meet it in the production course.
+
+**Pageable with your own queries.** A `@Query` method can also take a `Pageable` and return a `Page`; Spring Data
+adds the sorting, offset and limit to your JPQL.
+:::
+
+:::step{type=recap title="What you can do now"}
+Your API can now serve big catalogues:
+
+- **Paging** is done by the database: `order by`, **offset**, **limit**; plus a `count` for the totals.
+- A **`Pageable`** controller parameter is built from `?page=` (from 0), `&size=` and `&sort=field,asc|desc`;
+  `findAll(pageable)` returns a **`Page<T>`**: `content` plus size, number, totalElements, totalPages.
+- **`@Query`** with **JPQL** writes your own queries about entities and fields, with **named parameters**
+  (`:name` + `@Param`), checked at start-up, safe from SQL injection.
+
+Next, chapter 23: when one action changes several rows, they must all succeed or all fail. Transactions.
 :::
