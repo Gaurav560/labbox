@@ -4,7 +4,7 @@ LabBox (a product of Telusko) is a "hands-on coding labs" platform. Each user ge
 with a Monaco editor, a real terminal (xterm.js) and a Check button that grades their code with hidden
 tests in a fresh, network-less container. Lessons are shown one step at a time (story, concept, predict,
 try, task, recap), with a hint ladder per task. Learners earn XP, keep a daily streak, climb levels,
-answer a daily drill and watch a skill map light up. See `CHANGELOG.md` for what changed in each phase.
+answer a daily drill and watch each course's skill map (on its course page) light up. See `CHANGELOG.md` for what changed in each phase.
 
 ```
 Browser (React: Monaco + xterm)
@@ -77,7 +77,8 @@ npm run test:e2e                   # browser flow in your installed Chrome; need
 
 The browser tests sign up fresh users. One walks a lab with the keyboard, answers a predict, reveals a
 hint, passes Check and checks that step, panel sizes and theme survive a reload. The other goes through
-onboarding into a lab, solves the daily drill and completes a chapter to light up the skill map. They
+onboarding into a lab, solves the daily drill and completes a chapter to light up the skill map on the
+course page. They
 remove the containers they created when they finish.
 
 ### Postgres (Phase H1)
@@ -571,7 +572,7 @@ Besides `@@RESULT`, a check may print `@@METRIC {"name": "p95_ms", "value": 180,
 
 | Folder | What | Checked by |
 |---|---|---|
-| `tracks/<track>.yaml` | Skill map: nodes with `requires` and the `chapters` (`lab-id/chapter-id`) that light them up. Nodes without chapters show as "coming soon". | start-up and `labbox validate`: unknown nodes or chapters, loops |
+| `tracks/<track>.yaml` | Track skill map data: nodes with `requires` and the `chapters` (`lab-id/chapter-id`) that light them up. Nodes without chapters are "coming soon". Served by the API; since 22 November the app shows each lab's own skill map on its course page instead of track maps. | start-up and `labbox validate`: unknown nodes or chapters, loops |
 | `drills/<track>.yaml` | Daily drills: multiple choice (`predict`, `bug`, `command`), checked on the server | answer in range, unique ids |
 | `onboarding/onboarding.yaml` | The 5 goals (with the track and the lab to start from) and 3 placement questions | each goal starts from an existing lab |
 
@@ -582,7 +583,17 @@ and stays the same for the whole day.
 
 `GET /api/me/stats`, `GET` and `PUT /api/me/profile`, `GET /api/drill/today`,
 `POST /api/drill/today/answer`, `GET /api/tracks`, `GET /api/tracks/{track}/skills`, `GET` and
-`POST /api/onboarding`, `POST /api/onboarding/skip`. Check and predict responses include `xp_awarded`.
+`POST /api/onboarding`, `POST /api/onboarding/skip`, `GET /api/me/next` (where to pick up: the chapter
+opened last; `?lab=<id>` for one lab). Check and predict responses include `xp_awarded`.
+
+### Pages
+
+`/labs` is the dashboard: a Continue card (a tape deck in the colour of the lab opened last), that lab's
+chapters, the daily drill and the lab cards. A lab card opens `/courses/<lab>`: the cover, one Continue or
+Start button, the description, and the lab's skill map (a metro map: one line per course part, named by
+`part:` in `lab.yaml`; every subtopic opens its lesson step). Chapters open `/labs/<lab>?chapter=<id>`
+(`&step=<n>` for one step), the lesson with the editor and terminal. Level, streak and XP are in the
+profile panel behind the round button at the top right, with Exit (sign out).
 
 ## 4. AWS deploy (single EC2 host)
 

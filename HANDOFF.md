@@ -1,4 +1,4 @@
-# Handoff: where the work stands (21 November 2026)
+# Handoff: where the work stands (22 November 2026)
 
 Read this first if a session ends mid-work. It lists what was done, file by file, what is left and how to
 pick it up. `AGENTS.md` (rules, how to run and test), `ROADMAP.md` (status) and `CHANGELOG.md` (history,
@@ -12,9 +12,40 @@ every session.
    `cd backend && SIGNUPS_PER_IP_HOUR=1000 .venv/bin/uvicorn app.main:app --port 8000 --workers 4`.
    Frontend: `cd frontend && npm run dev`. Database and Redis: `scripts/devdb.sh`.
 2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (17 labs valid).
-3. **Next task: step 5 of the owner's UX review** (below). Plan first, wait for the owner's OK.
-4. The working tree was clean at handoff. (The audit-entry question is settled: the owner let me decide,
-   and the entry was kept.)
+3. **Next task: Python in practice.** The proposal (story "Dabba Express", 22 chapters, 0 to 21, in four
+   parts) waits for two owner answers: is the syllabus OK, and should the lab stay "Python collections" or
+   be renamed "Python in practice". Do not start writing before both.
+4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,
+   25 browser tests, 17 labs valid, `scripts/labbox admin list` empty.
+
+## 22 November: UI session with the owner (commits `29b27e6` to `b2ad178`)
+
+The owner gave screenshot feedback and each change was built, tested and committed on its own.
+
+- **Continue follows the last chapter opened** (`29b27e6`): opening a chapter now counts, not only moving a
+  step. `backend/app/progress.py` (`opened`), `routers/progress_routes.py` (GET progress calls it),
+  `tests/test_progress.py`.
+- **Course page and lab colours** (`e87838f`): `frontend/src/pages/CoursePage.tsx` (new, `/courses/<lab>`), lab
+  cards on the dashboard and home page open it; `brand.ts` (`LAB_TONES`, `labTone`, `mix`, `inkOn`, moved from
+  `HomeSections.tsx`); the dashboard tape deck, cassette and chapter rail take the lab's colour
+  (`LabsPage.tsx`, `styles.css`); `GET /api/me/next?lab=<id>` (`routers/engagement_routes.py`); `MetroMap.tsx`
+  gained `labLines` and `MetroLegend`; `e2e/course.spec.ts` (new).
+- **Profile panel** (`68daeaf`): `components/ProfileMenu.tsx` replaces `StatsBadges.tsx` in every top bar (an
+  initial in a level ring; the panel has level, XP to next, streak and best, stars, today's goal, Exit).
+  `e2e/profile.spec.ts` (new), `e2e/engagement.spec.ts` reads stats from the panel.
+- **Skill maps section removed** (`718e52c`): `SkillsPage`, `LabMapPage`, `TrackPage`, `roadmap.spec.ts`,
+  `skillmaps.spec.ts` deleted; `App.tsx` redirects `/skills/<lab>` to the course page and `/skills`,
+  `/tracks/<track>` to `/labs`; the course page has a "Skill map" title. Track data and the skills API stay.
+- **Packages** (`753a6fa`): `three`, `@types/three`, `@xyflow/react` uninstalled.
+- **Focus only in Lite** (`594a3b8`): `StatusBar.tsx` `canFocus`, `LabPage.tsx` passes `!useIde`;
+  `e2e/editor.spec.ts` checks it.
+- **Dashboard progress card removed** (`5d6c72b` moved it, `b2ad178` removed it): its numbers are in the
+  profile panel; the daily drill is full width.
+- Earlier the same day (before `29b27e6`): the metro-map skill maps with course parts (`part:` in `lab.yaml`,
+  chapter `topics` in the lab detail), subtopics deep-linking to `?chapter=...&step=n`, and the tape deck.
+
+Flaky browser tests seen today (pass on rerun): `engagement.spec.ts` (drill), `javascript-pictures.spec.ts`
+(times out under full parallel load).
 
 ## The owner's goals (20 to 21 November)
 
@@ -44,7 +75,7 @@ every session.
 | later | The other short labs get the standard when each grows into a full course (owner agreed) | | |
 | idea | "Run this example" on worked examples and "run your file" on task steps (the owner likes Run in terminal) | proposed | |
 
-## What was done, file by file (commits `3ffe955` to `ebcde82`)
+## 21 November: what was done, file by file (commits `3ffe955` to `ebcde82`)
 
 ### Courses (labs/)
 

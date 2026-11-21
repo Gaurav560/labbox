@@ -43,10 +43,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (20 tests,
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (25 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (21 November, Spring rewrite complete) (273 backend tests on Postgres and Redis,
-  269 on SQLite, 23 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (22 November, course pages and profile panel) (274 backend tests on Postgres and Redis,
+  270 on SQLite, 25 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -54,7 +54,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 (every step about project code names it: `file="..." line="..."`, see CONTENT_STANDARD section 3),
 starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scripts/labbox test-lab
 <lab>` (starter must fail, solution must pass) -> `scripts/labbox cover <lab> --logo <tech>[,<tech>]`
-(real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> add the lab's chapters to a skill map in `tracks/` -> add the lab to the `test_test_lab`
+(real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> name each course part on its first chapter (`part: ...`, the lines of the lab's skill map) -> add the lab's
+chapters to a track in `tracks/` (data only since 22 November; the app no longer shows track maps) -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go,
 service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 17; the owner
 said about 15 is enough for now, so the platform phases come next.
@@ -62,6 +63,11 @@ said about 15 is enough for now, so the platform phases come next.
 ## Where we are (keep this current)
 
 - Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python, Go, Java and JavaScript from zero are complete 13-chapter courses; Spring Boot is a 31-chapter course, 0 to 30), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- App shape (owner, 22 November): `/labs` is the dashboard (a Continue tape deck in the colour of the lab last
+  opened, the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
+  lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,
+  editor, terminal). Level, streak and XP sit in the profile panel (top right) with Exit. The separate Skill maps
+  section is gone (`/skills...` and `/tracks/...` redirect). Lab colours: `frontend/src/brand.ts` (`LAB_TONES`).
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - **`spring-boot-first-api` is the template for every course** (owner, 21 November: "save it as template for rest"): see CONTENT_STANDARD section 0. Rewrite or build every other course to that standard.

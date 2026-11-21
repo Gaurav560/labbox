@@ -60,7 +60,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 | DevOps | **linux-on-call**, **git-without-fear** |
 | System design | **rate-limiter** (not on the home grid, which keeps its 15 cards) |
 
-Skill maps: `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`, `tracks/system-design.yaml`.
+Track skill map data (API only since 22 November; each lab shows its own skill map on its course page): `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`, `tracks/system-design.yaml`.
 You chose to stop at 15 labs for now and build the platform phases next.
 
 Every lab passes `validate --strict` and `test-lab` (the starter fails, the solution passes).
