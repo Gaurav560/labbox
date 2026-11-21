@@ -44,6 +44,78 @@ What makes it the template, as a checklist for every new course:
 10. **Honest depth.** Each chapter ends with quick checks and a "Go deeper" step that connects to production
     (what real teams add, and why), so experienced learners are not bored and beginners know what comes next.
 
+### The voice, by example (Spring Boot chapter 14, "Layers")
+
+The checklist says *what*; this says *how it sounds*. Every excerpt is real; copy the shape, not the words.
+
+**A story opens with a concrete pain in the running project**, told in short sentences that build, then says
+why the idea matters for the learner's whole career:
+
+> Picture the Shop API a year from now if every endpoint is written the quick way: the controller reads the
+> request, looks up products in the database, applies the discount rules, calculates GST, checks stock, and
+> builds the response, all in one method. It works. Then the same discount rule is needed by the mobile app's
+> endpoint, the admin endpoint and the nightly report, so it gets copied three times. Then the rule changes,
+> and one copy is forgotten.
+>
+> ... Once you see it, you will recognise it in every Spring project you ever open.
+
+Then a one-line `:::mission`: *Move a calculation out of the controller into the service, and give the
+repository a proper query method.*
+
+**A concept names the thing, bolds the key terms, and states the rule plainly** (in bold, once). It links back
+and forward ("chapter 5", "in Part 3") so the course feels like one story:
+
+> The rule that makes it work: **each layer only calls the layer directly below it.** Controllers call
+> services, services call repositories. A controller never reaches into a repository, and a repository never
+> calls a service.
+
+It also answers the doubt the learner is having: "Three classes instead of one looks like more work. Here is
+what you get back:".
+
+**A worked example shows before and after**, and the comments say what job each line does
+(`// data access`, `// business rule: 1 point per Rs 100`).
+
+**A try step points at the code on screen, names the flaw, runs it, and reads the real output aloud:**
+
+> Look at `averagePrice()` in `ProductController`, on the right. It works, but it breaks the rule twice: ...
+> It answers `3950`: the average of 2000, 3000, 1800 and 9000. The right number, from the wrong place.
+
+**A task step is numbered, concrete actions** naming the file and method, offers a choice where there is one
+("You can move the loop from the controller, or use `mapToInt(...)` with `average()` or `sum()`"), says what
+stays true afterwards, and ends with "Press **Check**." Its title is "Your turn: ...".
+
+**In `lab.yaml`** a task title is a short lowercase action (`move the average into ProductService`). The
+three hints climb: what is wrong now ("ProductService.averagePrice() returns 0, and the controller does the
+work itself."), where to work ("Move the loop from the controller into averagePrice() ..."), nearly the answer
+("In the controller, just return what the service method gives; ..."). `examples` show the call and what it
+gives, with a short note ("worked out by the service").
+
+**A starter TODO states the goal, never the code:**
+
+```java
+// TODO (task thin_controller): this works, but the controller does the service's job and reads the
+// repository itself. Move the calculation into ProductService.averagePrice() and call that here.
+```
+
+**A check fails in the order of the likely mistake**, with expected and actual values, and names the "right
+answer, wrong place" case kindly; **a pass says why it matters**:
+
+> ProductService.averagePrice() is right, but GET /products/average-price does not call it: the controller
+> still does the work itself.
+>
+> The controller only translates HTTP; the rule lives in the service, where any other caller can reuse it
+> and a test can check it.
+
+**Quick checks are real decisions** ("Where does the rule 'orders over Rs 500 get free delivery' belong?"),
+three options, and a one- or two-sentence explanation of why.
+
+**The recap starts "You can now ..."**, lists skills (not topics) in bullets, and ends with the next chapter:
+"Next, chapter 15: changing existing products properly, with PUT and PATCH."
+
+**Everyday, consistent world.** Prices in Rs and paise, masala tea, samosa, GST, a nightly report: familiar,
+never jargon, the same Shop API throughout. No hype words, almost never an exclamation mark (one in 31 chapters);
+calm confidence.
+
 ## 1. The course
 
 - **Style.** Beginner courses ("from zero") are plain, with everyday examples (marks, prices, names).

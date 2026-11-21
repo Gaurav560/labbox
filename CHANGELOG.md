@@ -1,5 +1,13 @@
 # Changelog
 
+## 22 November: the Spring Boot voice, written down
+
+- The owner asked whether the way Spring Boot lessons and tasks are written was recorded. The rules were
+  (CONTENT_STANDARD sections 0, 3 to 5); the voice itself was not. New "The voice, by example" in section 0:
+  real excerpts from chapter 14 showing how a story opens, how a concept states its rule, how try and task
+  steps read, task titles, the hint ladder, starter TODOs, check failure and pass messages, quick checks, the
+  recap, and the everyday world (Rs, paise, the Shop API).
+
 ## 22 November: the dashboard's progress card is gone (it lives in the profile panel)
 
 - The owner first asked for the level, streak and today's XP card on the right, stacked (built in 5d6c72b), then
