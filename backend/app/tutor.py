@@ -105,13 +105,18 @@ def strip_code(reply: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", _FENCE.sub("", reply)).strip()
 
 
-def learner_files(lab: LabConfig, ws: Workspace | None) -> str:
-    """The learner's versions of the starter files, capped."""
+def learner_files(lab: LabConfig, ws: Workspace | None, chapter_id: str | None = None) -> str:
+    """The learner's versions of the starter files, capped. In a lab where each chapter has its own folder
+    (named like the chapter, as in Spring Boot), only that chapter's folder: the files the task is about,
+    instead of the first chapters' files filling the budget."""
     if ws is None:
         return "(no files yet)"
     root = Path(ws.volume_path)
+    base = lab.starter_dir
+    if chapter_id and (lab.starter_dir / chapter_id).is_dir():
+        base = lab.starter_dir / chapter_id
     parts, total = [], 0
-    for f in sorted(lab.starter_dir.rglob("*")) if lab.starter_dir.is_dir() else []:
+    for f in sorted(base.rglob("*")) if base.is_dir() else []:
         if not f.is_file() or f.suffix in SKIP_SUFFIXES:
             continue
         rel = f.relative_to(lab.starter_dir).as_posix()
@@ -163,7 +168,7 @@ async def ask(session: Session, user_id: int, lab: LabConfig, chapter_id: str, t
         f"Lab: {lab.title}\nTask: {task.title}\n\nWhat the task asks:\n{task_text(lab, chapter_id, task_id)}\n\n"
         f"Hints they have already seen:\n" + ("\n".join(f"- {h}" for h in task.hints[:used]) or "(none)") + "\n\n"
         f"Last check for this task:\n{last_check(session, user_id, lab, task_id)}\n\n"
-        f"Their files:\n{learner_files(lab, ws)}\n\n"
+        f"Their files:\n{learner_files(lab, ws, chapter_id)}\n\n"
         f"The learner asks: {question.strip() or 'I am stuck. What should I look at?'}"
     )
     reply = strip_code(await _complete(user_id, lab, TUTOR_RULES, context, "tutor"))
@@ -176,7 +181,7 @@ async def review(session: Session, user_id: int, lab: LabConfig, chapter_id: str
     task = lab.task(chapter_id, task_id)
     if not progress.task_progress(session, user_id, lab.id, chapter_id, task_id).passed:
         raise HTTPException(409, "Pass the task first; the review is for working code.")
-    context = f"Lab: {lab.title}\nTask: {task.title}\n\nWhat the task asked:\n{task_text(lab, chapter_id, task_id)}\n\nTheir passing files:\n{learner_files(lab, ws)}"
+    context = f"Lab: {lab.title}\nTask: {task.title}\n\nWhat the task asked:\n{task_text(lab, chapter_id, task_id)}\n\nTheir passing files:\n{learner_files(lab, ws, chapter_id)}"
     reply = await _complete(user_id, lab, REVIEW_RULES, context, "review")
     return TutorReply(reply=reply, tokens_used_today=llm_gateway.tokens_used_today(user_id))
 

@@ -257,13 +257,38 @@ chapters:
         examples:
           - call: "GET /receipt/tea, then GET /receipt/samosa"
             gives: "[\"1 x samosa\"]"
+  - id: 10-how-spring-handles-requests
+    title: How Spring handles a request
+    file: chapters/10-how-spring-handles-requests.md
+    minutes: 35
+    tasks:
+      - id: class_prefix
+        title: "Move the cart under /api/v1"
+        hints:
+          - "A mapping on the class is joined in front of every method's mapping."
+          - "Put a RequestMapping annotation on CartController with the path /api/v1, and leave the method mappings alone."
+          - "Import org.springframework.web.bind.annotation.RequestMapping; then GET /api/v1/cart works and GET /cart is 404."
+        examples:
+          - call: "GET /api/v1/cart"
+            gives: "[]"
+          - call: "GET /cart"
+            gives: "404"
+      - id: method_routing
+        title: "DELETE empties the cart"
+        hints:
+          - "The same path can have one Java method per HTTP method."
+          - "Add a method with a DeleteMapping for the cart path, the same path the GET uses."
+          - "In it, clear the items list and return it."
+        examples:
+          - call: "DELETE /api/v1/cart"
+            gives: "[]"
   - id: 11-reading-the-request
     title: Reading the request
     file: chapters/11-reading-the-request.md
-    minutes: 20
+    minutes: 40
     tasks:
       - id: product_by_id
-        title: "11-reading-the-request: GET /products/{id}"
+        title: "GET /products/{id}"
         hints:
           - "Map /products/{id} and declare a long parameter with @PathVariable."
           - "Search the repository's list for the product with that id."
@@ -274,7 +299,7 @@ chapters:
           - call: "GET /products/99"
             gives: "404"
       - id: search_products
-        title: "11-reading-the-request: GET /products/search"
+        title: "GET /products/search"
         hints:
           - "Two @RequestParam parameters: an optional Integer maxPrice and a String sort with a default."
           - "Filter with maxPrice only when it is not null, then sort with a Comparator chosen by sort."
@@ -287,10 +312,10 @@ chapters:
   - id: 12-request-bodies
     title: Request bodies and DTOs
     file: chapters/12-request-bodies.md
-    minutes: 20
+    minutes: 40
     tasks:
       - id: create_product
-        title: "12-request-bodies: POST /products"
+        title: "POST /products"
         hints:
           - "Add a method with @PostMapping for /products and a NewProduct parameter."
           - "Mark the parameter with @RequestBody so Spring reads it from the JSON body."
@@ -299,7 +324,7 @@ chapters:
           - call: "POST /products {\"name\": \"Vada pav\", \"pricePaise\": 2500}"
             gives: "{\"id\": 4, \"name\": \"Vada pav\", ...}"
       - id: product_view
-        title: "12-request-bodies: a ProductView without the cost"
+        title: "a ProductView without the cost"
         hints:
           - "The method returns the whole Product, so costPaise is in the JSON."
           - "Change the return type to ProductView and build one from the product's id and name."
@@ -309,12 +334,12 @@ chapters:
             gives: "{\"id\": 1, \"name\": \"Masala tea\", \"price\": \"Rs 20.00\"}"
             note: "no costPaise"
   - id: 13-status-codes
-    title: Answers and status codes
+    title: Status codes and ResponseEntity
     file: chapters/13-status-codes.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: created_201
-        title: "13-status-codes: 201 Created with a Location"
+        title: "201 Created with a Location"
         hints:
           - "A plain return value always answers 200; return a ResponseEntity<Product> instead."
           - "ResponseEntity.created(uri) sets 201 and the Location header; .body(product) adds the body."
@@ -323,7 +348,7 @@ chapters:
           - call: "POST /products {\"name\": \"Poha\", \"pricePaise\": 2200}"
             gives: "201, Location: /products/4"
       - id: delete_204
-        title: "13-status-codes: DELETE answers 204 or 404"
+        title: "DELETE answers 204 or 404"
         hints:
           - "repository.delete(id) returns true when it deleted a product."
           - "Return ResponseEntity<Void> so you can choose the status code."
@@ -336,10 +361,10 @@ chapters:
   - id: 14-layers
     title: "Layers: controller, service, repository"
     file: chapters/14-layers.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: thin_controller
-        title: "14-layers: move the average into ProductService"
+        title: "move the average into ProductService"
         hints:
           - "ProductService.averagePrice() returns 0, and the controller does the work itself."
           - "Move the loop from the controller into averagePrice(), reading products from the service's repository."
@@ -349,7 +374,7 @@ chapters:
             gives: "3950"
             note: "worked out by the service"
       - id: budget_products
-        title: "14-layers: findCheaperThan in the repository"
+        title: "findCheaperThan in the repository"
         hints:
           - "budgetProducts() returns an empty list, and the repository has no findCheaperThan yet."
           - "In ProductRepository, filter the products whose pricePaise is below the parameter."
@@ -358,13 +383,38 @@ chapters:
           - call: "GET /products/budget"
             gives: "Masala tea, Filter coffee, Samosa"
             note: "under Rs 50"
+  - id: 15-updating-and-deleting
+    title: Updating and deleting
+    file: chapters/15-updating-and-deleting.md
+    minutes: 35
+    tasks:
+      - id: put_product
+        title: "PUT /products/{id} replaces a product"
+        hints:
+          - "Add a method with PutMapping for /{id}, taking the id from the path and a ProductInput from the body."
+          - "If findById(id) is empty, answer ResponseEntity.notFound().build()."
+          - "Otherwise save new Product(id, name, price, stock) from the body, and answer ResponseEntity.ok with the saved product."
+        examples:
+          - call: "PUT /products/2 {\"name\": \"Filter coffee (large)\", \"pricePaise\": 3500, \"stock\": 20}"
+            gives: "200 with the new product"
+          - call: "PUT /products/99"
+            gives: "404"
+      - id: patch_price
+        title: "PATCH /products/{id} changes only what is sent"
+        hints:
+          - "Add a method with PatchMapping for /{id}, with a ProductPatch body; its fields are null when not sent."
+          - "Find the old product; for each field, use the patch's value when it is not null, otherwise the old one."
+          - "Save the result and answer 200 with it, or 404 when the product does not exist (the map and orElse shape works well)."
+        examples:
+          - call: "PATCH /products/1 {\"pricePaise\": 2200}"
+            gives: "{\"id\":1,\"name\":\"Masala tea\",\"pricePaise\":2200,\"stock\":40}"
   - id: 16-validation
     title: Validation
     file: chapters/16-validation.md
-    minutes: 18
+    minutes: 35
     tasks:
       - id: validate_product
-        title: "16-validation: validate NewProduct"
+        title: "validate NewProduct"
         hints:
           - "Constraints go on the record's components, and @Valid goes on the controller parameter."
           - "Use @NotBlank and @Size(max = 40) on the name, and @Positive on the price."
@@ -375,7 +425,7 @@ chapters:
           - call: "POST /products {\"name\": \"Tea\", \"pricePaise\": 2000}"
             gives: "201"
       - id: validate_customer
-        title: "16-validation: validate NewCustomer"
+        title: "validate NewCustomer"
         hints:
           - "Three components, three rules: name, email and phone."
           - "Use @NotBlank on name, @NotBlank and @Email on email, and @Pattern on phone."
@@ -388,10 +438,10 @@ chapters:
   - id: 17-errors
     title: Errors, the same everywhere
     file: chapters/17-errors.md
-    minutes: 20
+    minutes: 40
     tasks:
       - id: not_found_problem
-        title: "17-errors: a ProblemDetail for ProductNotFoundException"
+        title: "a ProblemDetail for ProductNotFoundException"
         hints:
           - "ApiErrors is already the advice class for every controller; it needs a handler method."
           - "Mark a method as the exception handler for ProductNotFoundException, and return a ProblemDetail."
@@ -400,7 +450,7 @@ chapters:
           - call: "GET /products/99"
             gives: "404 {\"title\": \"Product not found\", \"detail\": \"No product 99\"}"
       - id: validation_problem
-        title: "17-errors: a ProblemDetail for validation errors"
+        title: "a ProblemDetail for validation errors"
         hints:
           - "Validation failures throw MethodArgumentNotValidException."
           - "Collect getBindingResult().getFieldErrors() into a map of field name to default message."
@@ -408,6 +458,33 @@ chapters:
         examples:
           - call: "POST /products {\"name\": \"\", \"pricePaise\": -1}"
             gives: "400 {\"title\": \"Invalid request\", \"errors\": {\"name\": ..., \"pricePaise\": ...}}"
+  - id: 18-filters-and-interceptors
+    title: Filters and interceptors
+    file: chapters/18-filters-and-interceptors.md
+    minutes: 35
+    tasks:
+      - id: request_id_filter
+        title: "Give every request an id"
+        hints:
+          - "Everything before chain.doFilter runs before the controller; set the header there."
+          - "Read the request's X-Request-Id header; when it is null or blank, use UUID.randomUUID().toString()."
+          - "Then call response.setHeader with the name X-Request-Id and that id, before chain.doFilter."
+        examples:
+          - call: "GET /api/products"
+            gives: "X-Request-Id: a new UUID"
+          - call: "GET /api/products with X-Request-Id: order-42"
+            gives: "X-Request-Id: order-42"
+      - id: handled_by_interceptor
+        title: "Register the interceptor for the API"
+        hints:
+          - "An interceptor does nothing until it is registered in a WebMvcConfigurer."
+          - "Override addInterceptors(InterceptorRegistry registry) in WebConfig."
+          - "Add handledBy to the registry and limit it with addPathPatterns(\"/api/**\")."
+        examples:
+          - call: "GET /api/products"
+            gives: "X-Handled-By: ProductController#all"
+          - call: "GET /ping"
+            gives: "no X-Handled-By header"
   - id: 19-database
     title: A real database
     file: chapters/19-database.md

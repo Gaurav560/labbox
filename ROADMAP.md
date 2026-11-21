@@ -222,8 +222,7 @@ courses (49). Redis in practice is fully up to the standard (history, 6 diagrams
 12 traces, quick checks, 32 task cards). Traces have a Play button.
 **Spring Boot (21 November, rewrite in progress):** the owner asked for a full rewrite as a
 self-sufficient course in a teacher's voice. 31 chapters in four parts, numbered from 0. Part 1
-(foundations, chapters 0 to 9) is done. Next: Part 2 (REST APIs, 10 to 18, with new chapters 10, 15, 18),
-Part 3 (data, 19 to 24), Part 4 (production basics, 25 to 30). Then Python in practice, and later a
+(foundations, 0 to 9) and Part 2 (REST APIs, 10 to 18) are done. Next: Part 3 (data, 19 to 24), Part 4 (production basics, 25 to 30). Then Python in practice, and later a
 "Spring Boot in production" course with a story.
 
 ### 4. Platform phases not started (E and G are done)

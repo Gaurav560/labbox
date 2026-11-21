@@ -136,3 +136,12 @@ def test_tutor_respects_the_budget(client: TestClient, monkeypatch):
 def test_unknown_task_is_404(client: TestClient):
     h, _ = login(client)
     assert client.post(url(LAB, CH, "nope"), headers=h, json={}).status_code == 404
+
+
+def test_a_chapter_folder_lab_sends_only_that_chapters_files(tmp_path):
+    # Spring Boot keeps each chapter in its own folder: the tutor sees that folder, not chapters 0 to 2.
+    lab = labs.get_lab("spring-boot-first-api")
+    ws = type("Ws", (), {"volume_path": str(tmp_path)})()
+    files = tutor.learner_files(lab, ws, "20-repositories")
+    assert "--- 20-repositories/" in files and "--- 00-what-is-spring-boot/" not in files
+    assert "--- 00-what-is-spring-boot/" in tutor.learner_files(lab, ws)  # no chapter: the whole lab, as before

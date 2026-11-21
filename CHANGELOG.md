@@ -1,5 +1,29 @@
 # Changelog
 
+## Spring Boot rewrite, Part 2: REST APIs (chapters 10 to 18), as full lessons
+
+- **Tutor fix:** in a lab where each chapter has its own folder, the tutor now sees only that chapter's files.
+  Before, files were read alphabetically up to a size limit, so a learner stuck in chapter 20 got a tutor that saw
+  chapters 0 to 2, and every question used the maximum context (20 tutor questions then ran past the daily token
+  budget). A new test covers it.
+
+- **10 How Spring handles a request** (new): the journey of one request (a playing timeline: Tomcat thread,
+  DispatcherServlet, handler mapping, arguments, your method, message converter), Spring's own TRACE log
+  read line by line, 404 vs 405 vs 406 and content negotiation, a class-level `/api/v1` prefix, one path
+  with two methods, one controller object shared by every thread.
+- Rewritten in a teacher's voice, every output captured from the real projects: **11** reading the request
+  (path variables, query parameters, headers, conversion and its 400s, Optional and orElseThrow, Comparator),
+  **12** request bodies and DTOs (the cost-price leak, 415 and 400, mass assignment, output DTOs, money in
+  paise), **13** status codes and ResponseEntity, **14** layers (why, a fat controller made thin, data
+  questions vs business questions), **16** validation (the annotations, null and @Valid traps, the real
+  MethodArgumentNotValidException, regular expressions), **17** errors (500 for a missing product,
+  @RestControllerAdvice, ProblemDetail and RFC 9457, field errors, safe 500s).
+- **15 Updating and deleting** (new): PUT replaces everything (a missing field becomes 0), PATCH with nullable
+  fields changes only what is sent, idempotency, soft deletes, the full REST picture.
+- **18 Filters and interceptors** (new): where each sits in the journey, OncePerRequestFilter and the chain,
+  a request id (X-Request-Id, UUID or the caller's), HandlerInterceptor and HandlerMethod, WebMvcConfigurer
+  with path patterns.
+
 ## Spring Boot rewrite, Part 1: the foundations (chapters 0 to 9), as full lessons
 
 - The owner: "rewrite the whole Spring lab, more elaborative, more human-like, self-sufficient: no need of

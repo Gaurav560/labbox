@@ -21,11 +21,15 @@ nodes:
   - id: spring-web
     title: Requests, bodies and status codes
     requires: [spring-core]
-    chapters: [spring-boot-first-api/11-reading-the-request, spring-boot-first-api/12-request-bodies, spring-boot-first-api/13-status-codes]
-  - id: spring-errors
-    title: Validation and errors
+    chapters: [spring-boot-first-api/10-how-spring-handles-requests, spring-boot-first-api/11-reading-the-request, spring-boot-first-api/12-request-bodies, spring-boot-first-api/13-status-codes]
+  - id: spring-layers
+    title: Layers, updating and deleting
     requires: [spring-web]
-    chapters: [spring-boot-first-api/16-validation, spring-boot-first-api/17-errors]
+    chapters: [spring-boot-first-api/14-layers, spring-boot-first-api/15-updating-and-deleting]
+  - id: spring-errors
+    title: Validation, errors, filters and interceptors
+    requires: [spring-layers]
+    chapters: [spring-boot-first-api/16-validation, spring-boot-first-api/17-errors, spring-boot-first-api/18-filters-and-interceptors]
   - id: spring-config
     title: Configuration and profiles
     requires: [spring-core]

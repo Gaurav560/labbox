@@ -415,6 +415,26 @@ function BeanLifecycle() {
   );
 }
 
+/** One request's journey through Spring MVC, played step by step. */
+function RequestJourney() {
+  return (
+    <SketchSteps
+      title="GET /api/v1/cart"
+      intro="Press Play to follow one request from the network to your method and back."
+      label="Tomcat receives the request and gives it a thread; the DispatcherServlet asks the handler mapping which method handles GET /api/v1/cart; Spring prepares the method's arguments; your method runs; Jackson writes the return value as JSON; Tomcat sends the response and the thread is free again"
+      steps={[
+        { label: "1. Tomcat: bytes in, a thread out", says: "Tomcat reads the request from the network and hands it to one of its worker threads (about 200 by default). Each request in progress has its own thread." },
+        { label: "2. DispatcherServlet: the front desk", says: "Every request goes to the same place first: Spring's DispatcherServlet. It does not do the work itself; it finds who should." },
+        { label: "3. handler mapping: which method?", says: "It looks up GET + /api/v1/cart in the table built at start-up, and finds CartController#cart(). No match for the path: 404. Path but not the method: 405." },
+        { label: "4. arguments: fill the parameters", says: "Spring prepares each parameter of your method: path variables, query parameters, the JSON body read by Jackson. cart() has none, so this is quick." },
+        { label: "5. your method runs", says: "Spring calls cart(). This is the only step you wrote. Everything around it is Spring." },
+        { label: "6. converter: return value to JSON", says: "Your List comes back. A message converter (Jackson) writes it as JSON, after checking the client accepts JSON (the Accept header)." },
+        { label: "7. response sent, thread free", says: "Tomcat sends 200 with the JSON body, and the thread goes back to the pool, ready for the next request." },
+      ]}
+    />
+  );
+}
+
 /** The container creates each bean once and passes it to the constructors that ask for it. */
 function DiContainer() {
   return (
@@ -701,6 +721,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
   "bean-lifecycle": BeanLifecycle,
+  "request-journey": RequestJourney,
   "di-container": DiContainer,
   layers: Layers,
   "request-mapping": RequestMapping,

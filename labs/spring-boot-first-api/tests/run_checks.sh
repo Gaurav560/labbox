@@ -19,12 +19,15 @@ CHAPTERS="
 07-configuration-and-profiles|07-configuration-and-profiles|shop_properties prod_profile
 08-auto-configuration|08-auto-configuration|backs_off on_property
 09-bean-lifecycle|09-bean-lifecycle|post_construct prototype_scope
+10-how-spring-handles-requests|10-how-spring-handles-requests|class_prefix method_routing
 11-reading-the-request|11-reading-the-request|product_by_id search_products
 12-request-bodies|12-request-bodies|create_product product_view
 13-status-codes|13-status-codes|created_201 delete_204
 14-layers|14-layers|thin_controller budget_products
+15-updating-and-deleting|15-updating-and-deleting|put_product patch_price
 16-validation|16-validation|validate_product validate_customer
 17-errors|17-errors|not_found_problem validation_problem
+18-filters-and-interceptors|18-filters-and-interceptors|request_id_filter handled_by_interceptor
 19-database|19-database|product_entity unique_sku
 20-repositories|20-repositories|find_by_category sku_conflict
 21-relationships|21-relationships|order_items fix_n_plus_one

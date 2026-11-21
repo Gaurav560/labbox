@@ -1,140 +1,247 @@
-:::step{type=story title="Why this chapter"}
-An API must never trust its input. An empty name, a negative price or a malformed email will otherwise
-reach the database and cause problems much later, far from where they entered. Spring checks input
-declaratively: you write the rules as annotations, and invalid requests are rejected with 400 before
-your method runs.
+:::step{type=story title="Never trust the request"}
+Right now, the Shop API accepts anything. A product with an empty name? Saved. A price of minus five rupees?
+Saved. A customer whose email is "hello" and whose phone is "12"? Saved. Every one of those will cause
+trouble later: an empty line on the menu, a negative bill, an email that bounces, an SMS that never arrives.
+
+Clients make mistakes, and some clients are not friendly at all. The rule every backend lives by is: **check
+everything that comes in, before using it.** Spring makes this almost effortless with **Bean Validation**:
+you write the rules as annotations on your input classes, and Spring checks every request against them
+before your method ever runs.
 
 :::mission
-In the `16-validation` folder: reject invalid products and invalid customers with 400.
+Reject bad products and bad customers with a clear 400, using validation annotations.
 :::
 :::
 
-:::step{type=concept title="Bean Validation annotations"}
-**Bean Validation** (Jakarta Validation) defines constraints as annotations on fields or record
-components. The common ones:
+:::step{type=concept title="See the problem first" file="16-validation/src/main/java/com/shop/product/NewProduct.java" line="3-5"}
+`NewProduct` is on the right: a name and a price, no rules at all. Start the app and send it nonsense:
 
-| annotation | rule |
-|---|---|
-| `@NotNull` | not `null` |
-| `@NotBlank` | a string that is not `null`, empty or only spaces |
-| `@Size(min, max)` | length of a string or size of a list |
-| `@Positive`, `@Min`, `@Max` | numbers |
-| `@Email` | an email address |
-| `@Pattern(regexp = "...")` | the string matches a regular expression |
-
-The `spring-boot-starter-validation` dependency provides them, with Hibernate Validator as the engine.
-:::
-
-:::step{type=concept title="@Valid triggers the check"}
-Annotations on the record only describe the rules. `@Valid` on the parameter tells Spring to apply them:
-
-```java
-public record NewProduct(@NotBlank @Size(max = 40) String name,
-                         @Positive int pricePaise) {}
-
-@PostMapping("/products")
-public ResponseEntity<Product> create(@Valid @RequestBody NewProduct body) { ... }
-```
-
-Spring converts the JSON, validates the object, and if any constraint fails it throws
-`MethodArgumentNotValidException`, answered as **400 Bad Request**. Your method is not called.
-
-:::mistake
-Without `@Valid`, the annotations on the record do nothing and invalid data goes through.
-:::
-:::
-
-:::step{type=example title="Worked example: a delivery address"}
-```java
-public record NewAddress(
-        @NotBlank String line1,
-        @NotBlank String city,
-        @Pattern(regexp = "[0-9]{6}") String pincode) {}
-```
-
-| JSON sent | result |
-|---|---|
-| `{"line1": "12 MG Road", "city": "Pune", "pincode": "411001"}` | valid: the method runs |
-| `{"line1": "", "city": "Pune", "pincode": "411001"}` | 400: `line1` is blank |
-| `{"line1": "12 MG Road", "city": "Pune", "pincode": "4110"}` | 400: `pincode` does not match six digits |
-
-`[0-9]{6}` means "exactly six digits"; `@Pattern` must match the whole string.
-:::
-
-:::step{type=predict title="Guess first"}
-:::question
-`@NotBlank String name` and the JSON has no `"name"` property at all. Is it valid?
-:::
-- [ ] Yes: there is nothing to check
-- [x] No: the missing property is `null`, and `@NotBlank` rejects `null`
-- [ ] The JSON cannot be read
-:::explain
-A missing property becomes `null` in the record. `@NotBlank` rejects `null`, empty and whitespace-only
-strings, which makes it the usual choice for required text.
-:::
-:::
-
-:::step{type=try title="Send an invalid product"}
 ```bash run
 cd 16-validation && mvn -q -o package -DskipTests && java -jar target/validation.jar
 ```
 
-After the first task, in a second tab:
+```bash run
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "", "pricePaise": -5}'
+```
+
+```text
+HTTP/1.1 201
+Location: /products/4
+
+{"id":4,"name":"","pricePaise":-5,"costPaise":0}
+```
+
+`201 Created`. The shop now sells a nameless product for minus five paise. Every client of the API can do
+this. Let's close the door.
+:::
+
+:::step{type=concept title="Rules as annotations: Bean Validation"}
+**Bean Validation** (the `jakarta.validation` standard, provided by a library called Hibernate Validator) lets
+you write rules directly on the fields of a class. The validation starter, `spring-boot-starter-validation`,
+is already in this project's pom.
+
+Here is a customer address with rules:
+
+```java
+public record NewAddress(
+        @NotBlank @Size(max = 100) String line1,
+        @NotBlank String city,
+        @Pattern(regexp = "[0-9]{6}") String pin,
+        @Min(1) @Max(5) int floor) {
+}
+```
+
+Read each annotation as a sentence about its field:
+
+- `line1` must **not be blank** (not null, not empty, not only spaces), and at most **100 characters**.
+- `city` must not be blank.
+- `pin` must **match the pattern** "exactly six digits".
+- `floor` must be **between 1 and 5**.
+
+The rules sit right next to the data they protect, so anyone reading the class sees exactly what a valid
+address is. That is documentation and enforcement in one place.
+:::
+
+:::step{type=concept title="The annotations you will use most"}
+A reference you can come back to. All come from `jakarta.validation.constraints`:
+
+- **`@NotNull`**: must be present (not null). Empty text is allowed.
+- **`@NotBlank`**: text must have at least one non-space character. The usual choice for names.
+- **`@NotEmpty`**: a text, list or map must not be null or empty. Good for "at least one item".
+- **`@Size(min = .., max = ..)`**: length of a text, or size of a list.
+- **`@Min(..)`, `@Max(..)`**: number range (inclusive).
+- **`@Positive`**, **`@PositiveOrZero`**: greater than 0, or 0 and up.
+- **`@Email`**: looks like an email address.
+- **`@Pattern(regexp = "...")`**: matches a regular expression.
+- **`@Past`**, **`@Future`**: a date before or after now.
+
+One subtle point that catches everyone: **most rules accept `null`**. `@Size`, `@Email`, `@Pattern`, `@Min`
+all say "if there is a value, it must...". A missing email passes `@Email`. To make a field required *and*
+checked, combine them: `@NotBlank @Email String email`.
+:::
+
+:::step{type=concept title="Switching it on: @Valid"}
+Annotations on the record only *describe* the rules. Nothing checks them until you ask. You ask with
+**`@Valid`** on the controller parameter:
+
+```java
+@PostMapping("/addresses")
+public ResponseEntity<Address> create(@Valid @RequestBody NewAddress body) { ... }
+```
+
+Now, for every request, Spring:
+
+1. reads the JSON into a `NewAddress` (chapter 12),
+2. **validates** it against every annotation,
+3. if anything fails, **stops**: your method is never called, and the client gets **400 Bad Request**,
+4. if everything passes, calls your method with a body you can trust.
+
+Forgetting `@Valid` is the most common validation bug: the annotations are there, everything looks right,
+and nothing is checked. If your rules "do not work", look for `@Valid` first.
+:::
+
+:::step{type=task task=validate_product title="Your turn: validate new products"}
+Two changes:
+
+1. In `NewProduct.java`: the `name` must not be blank and at most **40** characters; `pricePaise` must be
+   **positive**. (Imports from `jakarta.validation.constraints`.)
+2. In `ProductController.java`, switch validation on for the `create` method's body (import
+   `jakarta.validation.Valid`).
+
+Rebuild, run, and send the same nonsense again:
 
 ```bash run
-curl -si -X POST localhost:8080/products -H 'Content-Type: application/json' -d '{"name": "", "pricePaise": -5}' | head -1
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "", "pricePaise": -5}'
 ```
+
+This time: `400 Bad Request`, and nothing is saved. A valid product still gets `201`. Press **Check**.
 :::
 
-:::step{type=task task=validate_product title="Warm-up: validate a new product"}
-In `16-validation`, add constraints to `NewProduct`: the name must not be blank and at most 40
-characters, and `pricePaise` must be positive. Add `@Valid` in `ProductController`.
+:::step{type=example title="What the server knows, and the client does not (yet)"}
+Look at the 400 the client received:
 
-Invalid products answer 400; valid ones are still created (201).
+```text
+HTTP/1.1 400
+Content-Type: application/json
+
+{"timestamp":"2026-11-21T11:54:01.646+00:00","status":400,"error":"Bad Request","path":"/products"}
+```
+
+It says *something* was wrong, but not what. Now look at the server's log in Terminal 1. Spring logged the
+full story (shortened here):
+
+```text
+Resolved [MethodArgumentNotValidException: Validation failed for argument [0] ... with 2 errors:
+  [Field error in object 'newProduct' on field 'name': rejected value []; ... default message [must not be blank]]
+  [Field error in object 'newProduct' on field 'pricePaise': rejected value [-5]; ... default message [must be greater than 0]]
+```
+
+Everything is there: **which field**, **what value was sent**, and **a message** for each rule that failed.
+`MethodArgumentNotValidException` is the exception Spring throws when `@Valid` fails, and it carries all of
+those errors.
+
+The client deserves that information too: a phone app could highlight the name field and show "must not
+be blank". Turning this exception into a clear JSON answer is exactly what chapter 17 does. For now, the
+important part works: bad data never reaches your code.
 :::
 
-:::step{type=task task=validate_customer title="Validate a new customer"}
-Add constraints to `NewCustomer`: `name` not blank, `email` a valid email address (and not blank), and
-`phone` exactly 10 digits. Add `@Valid` in `CustomerController`.
+:::step{type=concept title="Regular expressions, just enough" file="16-validation/src/main/java/com/shop/customer/NewCustomer.java" line="3-6"}
+The second task validates customers, and an Indian mobile number needs `@Pattern`, which uses a **regular
+expression** (a "regex"): a small language for describing text. You only need a few pieces:
 
-A customer with `"phone": "98765"` answers 400.
+- `[0-9]` matches **one digit** (any character from 0 to 9).
+- `{10}` after something means **exactly 10 times**.
+- So **`[0-9]{10}`** means "exactly ten digits, nothing else".
+
+`@Pattern` checks the **whole** value against the expression, so `98765` (too short), `98765432101` (too
+long) and `98765-43210` (a dash) all fail, and `9876543210` passes.
+
+A few more you will meet: `[A-Z]` one capital letter, `[a-z]+` one or more small letters, `\\d` (written
+with two backslashes in Java) is another way to say a digit. Regexes can get complicated; keep yours short
+and add a comment saying what it means.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=task task=validate_customer title="Your turn: validate new customers"}
+In `NewCustomer.java`: `name` must not be blank; `email` must not be blank and must be an email address;
+`phone` must be exactly 10 digits. Then switch validation on in `CustomerController`.
+
+Rebuild, run, and try a bad phone, then a good customer:
+
+```bash run
+curl -i -X POST localhost:8080/customers -H "Content-Type: application/json" -d '{"name": "Asha", "email": "asha@shop.in", "phone": "98765"}'
+```
+
+```bash run
+curl -i -X POST localhost:8080/customers -H "Content-Type: application/json" -d '{"name": "Asha", "email": "asha@shop.in", "phone": "9876543210"}'
+```
+
+`400`, then `201`. Press **Check**.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Which annotation fits "at least 1 item, at most 20" for a `List` field?
+`NewProduct` has `@NotBlank String name`, but the controller parameter is `@RequestBody NewProduct body` (no `@Valid`). A blank name arrives. What happens?
 :::
-- [ ] `@Positive`
-- [x] `@Size(min = 1, max = 20)`
-- [ ] `@Min(1) @Max(20)`
+- [ ] 400 Bad Request
+- [x] The product is saved with a blank name: nothing triggered the validation
+- [ ] 500 Internal Server Error
 :::explain
-`@Size` measures the length of strings and the size of collections. `@Min` and `@Max` compare numbers.
+The annotations describe rules; `@Valid` makes Spring check them. Without it, the body goes straight to
+your method.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-When validation fails, what happens to your controller method?
+`email` has only `@Email`. A request leaves out the email entirely. Is it valid?
 :::
-- [ ] It runs, with the invalid values
-- [x] It is not called; Spring answers 400
-- [ ] It runs, and you must check a flag
+- [x] Yes: like most rules, @Email accepts null
+- [ ] No: @Email requires a value
+- [ ] It depends on the JSON library
 :::explain
-Validation happens before the call. If any constraint fails, Spring throws `MethodArgumentNotValidException`
-and the method never runs.
+"If there is a value, it must look like an email." To require it, add `@NotBlank` (or `@NotNull`) as well.
 :::
 :::
 
-:::step{type=deep-dive title="Custom messages, groups and custom constraints"}
-Each annotation accepts a message: `@Positive(message = "price must be more than 0")`. Validation also
-works on path and query parameters when the controller class has `@Validated`. For rules no built-in
-annotation covers (for example "end date after start date"), write a custom constraint: an annotation
-plus a `ConstraintValidator` class. Validation in the API layer does not replace database constraints:
-both are needed, because data can also reach the database by other paths.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Which value matches `@Pattern(regexp = "[0-9]{6}")`?
+:::
+- [ ] 56001
+- [x] 560001
+- [ ] 560 001
+:::explain
+Exactly six digits, nothing else: five is too few, and a space is not a digit.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- Constraint annotations (`@NotBlank`, `@Size`, `@Positive`, `@Email`, `@Pattern`) describe valid input.
-- `@Valid` on a `@RequestBody` parameter applies them; invalid requests get 400 and the method does not run.
-- Validate at the edge of the API, so invalid data never reaches the rest of the application.
+:::step{type=deep-dive title="Go deeper: messages, nested objects, and your own rules"}
+**Your own messages.** Every annotation takes a `message`: `@Positive(message = "price must be more than 0")`.
+That text is what the client will see in chapter 17.
+
+**Nested objects and lists.** For a body that contains other objects (an order with a list of lines), put
+`@Valid` on the nested field too, or on the list's type: `List<@Valid OrderLine> lines`. Otherwise the inner
+objects are not checked. The capstone (chapter 30) uses exactly this.
+
+**Path and query parameters.** Put `@Validated` on the controller class, and then rules like
+`@RequestParam @Min(0) int maxPrice` work too.
+
+**Your own rule.** For a rule no annotation covers ("delivery date must be on a working day"), you can write
+a custom constraint annotation with a small validator class. Simple checks that need the database (is this
+email already registered?) usually belong in the service instead.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now keep bad data out of your API:
+
+- **Bean Validation** rules are annotations on input classes: `@NotBlank`, `@NotNull`, `@NotEmpty`, `@Size`,
+  `@Min`/`@Max`, `@Positive`, `@Email`, `@Pattern`, `@Past`/`@Future`.
+- Most rules accept `null`; combine with `@NotBlank` or `@NotNull` to make a field required.
+- **`@Valid`** on the `@RequestBody` parameter switches checking on. A failure means **400**, and your
+  method never runs.
+- The failure is a **`MethodArgumentNotValidException`** carrying every field, value and message, visible in
+  the server log.
+- `[0-9]{10}`: exactly ten digits.
+
+Next, chapter 17: turning that exception, and every other error, into clear and consistent JSON answers.
 :::
