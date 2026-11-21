@@ -5,6 +5,7 @@ import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import LessonMarkdown from "../lesson/LessonMarkdown";
 import { useStats } from "../stats";
+import ThemeButton from "../components/ThemeButton";
 
 // First 60 seconds: pick a goal, answer 3 quick questions, land in the first lab.
 export default function OnboardingPage() {
@@ -53,6 +54,7 @@ export default function OnboardingPage() {
       <header className="topbar">
         <Logo to="/" />
         <span className="spacer" />
+        <ThemeButton />
         <span className="muted small-text">Step {step} of 3</span>
         {!result && <button className="btn btn-small btn-ghost" onClick={skip}>Skip</button>}
       </header>

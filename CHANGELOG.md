@@ -1,5 +1,10 @@
 # Changelog
 
+## The light and dark switch on every page
+
+- The dashboard, skill maps, onboarding and admin pages get the same light and dark button as the lab
+  page (`components/ThemeButton.tsx`); before, the owner could only switch themes inside a lab.
+
 ## Lesson tables render as tables (remark-gfm)
 
 - The owner installed `remark-gfm`; lessons now render markdown tables as real tables (bordered, a

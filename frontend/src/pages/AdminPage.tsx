@@ -6,6 +6,7 @@ import {
 } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
+import ThemeButton from "../components/ThemeButton";
 
 // The admin area (Phase J): what to improve, and what is running. Only for accounts with is_admin;
 // the backend refuses everyone else, this page only hides itself.
@@ -335,6 +336,7 @@ export default function AdminPage() {
         <Logo to="/" />
         <span className="adm-title">Admin</span>
         <span className="spacer" />
+        <ThemeButton />
         <Link className="btn btn-small btn-ghost" to="/labs">Back to labs</Link>
       </header>
       <main className="adm-main">

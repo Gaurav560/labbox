@@ -8,6 +8,7 @@ import StatsBadges from "../components/StatsBadges";
 import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import { useStats } from "../stats";
+import ThemeButton from "../components/ThemeButton";
 
 const TRACK_LABEL: Record<string, string> = {
   languages: "Languages",
@@ -44,6 +45,7 @@ export default function LabsPage() {
       <header className="topbar">
         <Logo to="/" />
         <span className="spacer" />
+        <ThemeButton />
         {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
         <StatsBadges username={user?.username ?? ""} />
         <button className="btn btn-small" onClick={logout}>Log out</button>

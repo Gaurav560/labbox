@@ -8,6 +8,7 @@ import { LogoMark } from "../components/Logo";
 import StatsBadges from "../components/StatsBadges";
 import { useToast } from "../components/Toasts";
 import { useTheme } from "../theme";
+import ThemeButton from "../components/ThemeButton";
 
 const STATE_LABEL = { done: "Done", available: "Start", locked: "Locked", coming_soon: "Coming soon" } as const;
 const COL_W = 240;
@@ -82,6 +83,7 @@ export default function TrackPage() {
         <span className="brand">{map?.title ?? track}</span>
         {map && <span className="muted small-text">{done} of {map.nodes.length} skills</span>}
         <span className="spacer" />
+        <ThemeButton />
         <StatsBadges username={user?.username ?? ""} />
       </header>
       <main className="track-main" aria-label="Skill map">
