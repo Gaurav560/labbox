@@ -643,6 +643,17 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   padding: var(--space-4); margin-bottom: var(--space-4);
 }
 .level-progress { margin: 6px 0; }
+/* Dashboard: the drill on the left, the progress card on the right with its three numbers stacked. */
+.dash-top { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: var(--space-4); align-items: start; margin-bottom: var(--space-6); }
+.dash-top .drill-card, .dash-top .progress-strip { margin: 0; }
+.dash-top .progress-strip { grid-column: 2; grid-row: 1; grid-template-columns: 1fr; gap: 0; padding: 0; }
+.dash-top .progress-strip > div { padding: 16px 18px; }
+.dash-top .progress-strip > div + div { border-top: 1px solid var(--border); }
+@media (max-width: 900px) {
+  .dash-top { grid-template-columns: 1fr; }
+  .dash-top .progress-strip { grid-column: auto; grid-row: auto; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .dash-top .progress-strip > div + div { border-top: 0; }
+}
 
 .drill-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-6); }
 .drill-head { display: flex; align-items: center; gap: var(--space-2); }

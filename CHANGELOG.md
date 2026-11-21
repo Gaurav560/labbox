@@ -1,5 +1,11 @@
 # Changelog
 
+## 22 November: dashboard progress card on the right, stacked
+
+- The owner: the level, streak and today's XP card moves to the right side, vertical. The daily drill and the card
+  now share a row (`.dash-top`): the drill on the left, the card on the right with its three numbers stacked and
+  divided. Under 900 px they stack again and the numbers sit side by side.
+
 ## 22 November: Focus only where it works; three and xyflow removed
 
 - The owner: "Exit focus" did nothing in VS Code. Focus hides LabBox's own file tree, which only the Lite editor has,
