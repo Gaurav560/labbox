@@ -2,8 +2,45 @@
 
 Every LabBox course should be good enough to stand next to the best learning platforms in the world,
 while keeping learners calm, unhurried and confident. Depth is welcome; confusion is not. This page is
-the checklist for every chapter. The pilot is Python from zero: chapter 1 ("The story of Python") and
-chapter 6 (Lists).
+the checklist for every chapter.
+
+## 0. The template: Spring Boot (owner, 21 November)
+
+The owner, after the full rewrite: "this one is much better, save it as template for rest". **The Spring Boot
+course (`labs/spring-boot-first-api`) is the template for every LabBox course from now on.** When in doubt,
+open a Spring chapter and do what it does. Where this page and that course disagree, the course wins. Good
+chapters to copy from: 0 (welcome and history), 1 (HTTP with a running API), 4 (start-up), 6 (dependency
+injection), 21 (relationships and N+1), 29 (calling services), 30 (capstone).
+
+What makes it the template, as a checklist for every new course:
+
+1. **Self-sufficient.** A learner with zero knowledge needs nothing else: no videos, no search engine, no
+   chatbot. Every term is explained where it first appears; every prerequisite gets its own chapter (Spring has
+   "How the web works" and "Maven and the pom.xml" before any Spring code).
+2. **A teacher's voice.** "You", "let's", the problem before the answer, why before how, every line of code read
+   aloud, what the learner will see on screen, the mistakes beginners really make, and a recap of what they
+   *can now do*.
+3. **Full lessons, not notes.** No word limit. One idea per step, explained completely, in short paragraphs.
+   A chapter takes 35 to 60 minutes.
+4. **Parts and a running project.** Chapters are grouped in parts (Spring: foundations, REST APIs, data,
+   production basics), numbered from 0 when there is an introduction, building one project (the Shop API).
+   Each chapter's code lives in its own folder named like the chapter (`11-reading-the-request/`).
+5. **The code follows the lesson.** Every step about project code names its file and lines
+   (`file="..." line="..."`); task steps open their own TODO; example code that is not in the project says so.
+6. **Everything quoted is real.** Every log line, curl answer, error message, stack trace line and SQL statement
+   in a lesson was captured by running the chapter's actual project in the lab image. Never invent output.
+7. **See it, break it, fix it.** Each chapter makes the learner *see* the problem first (a `try` step with the
+   real wrong output: a 404, a 500, six SQL queries, a receipt with someone else's tea), then fix it in a task,
+   then see the right output. If the project has no way to see the problem, add one (a small endpoint, a fake
+   service the learner runs in a second terminal).
+8. **Watch it run.** Processes (start-up, a request's journey, a bean's life, a transaction) get a calm playing
+   timeline (`SketchSteps`); state that changes step by step gets a trace table. Diagrams: hand-drawn outlines,
+   plain fills, normal font.
+9. **Two tasks per chapter, each a real skill**, with a check that runs the learner's code (or their own tests,
+   against a planted bug) and failure messages that say what happened, why, and what to try. Starter TODOs say
+   the goal, not the answer.
+10. **Honest depth.** Each chapter ends with quick checks and a "Go deeper" step that connects to production
+    (what real teams add, and why), so experienced learners are not bored and beginners know what comes next.
 
 ## 1. The course
 
@@ -21,11 +58,12 @@ chapter 6 (Lists).
   - **a fun fact** (`:::funfact`), and something to try if it fits.
 
   Every fact must be accurate and checkable: no invented dates, people or users.
-- **Length.** A full course is 10 to 13 chapters, about 25 tasks, 3 to 5 hours.
+- **Length.** As long as the topic needs (owner: "if it requires 30 lessons, do it"). Spring Boot is 31
+  chapters, 61 tasks, about 20 hours. Beginner language courses are 13 chapters or more.
 
 ## 2. The chapter
 
-In this order (each step short, one idea per step):
+In this order (one idea per step, each a complete lesson; see the Spring chapters for the shape):
 
 1. **Why** (`story`): two or three lines on why this matters, and the mission.
 2. **Idea** (`concept`): one idea, in plain words, with a small code sample.

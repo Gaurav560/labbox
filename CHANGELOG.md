@@ -1,5 +1,12 @@
 # Changelog
 
+## The Spring Boot course is the template for every course
+
+- The owner: "this one is much better. save it as template for rest". CONTENT_STANDARD.md gets a new section 0:
+  the Spring Boot course is the template, with the ten things that make it so (self-sufficient, a teacher's voice,
+  full lessons, parts and a running project, the code following the lesson, only real captured output, see it /
+  break it / fix it, playing timelines, two real tasks per chapter, honest depth). AGENTS.md points to it.
+
 ## Spring Boot rewrite, Parts 3 and 4: data and production basics (chapters 19 to 30); the course is complete
 
 - **Part 3, Data**, rewritten as full lessons with every SQL statement captured from the real projects: 19 a real

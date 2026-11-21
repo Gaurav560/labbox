@@ -64,7 +64,7 @@ said about 15 is enough for now, so the platform phases come next.
 - Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python, Go, Java and JavaScript from zero are complete 13-chapter courses; Spring Boot is a 31-chapter course, 0 to 30), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
-- `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).
+- **`spring-boot-first-api` is the template for every course** (owner, 21 November: "save it as template for rest"): see CONTENT_STANDARD section 0. Rewrite or build every other course to that standard.
 - Phase J (admin and funnel) done. Phase H: H1, H2, H3, H5, H6 done. H4 (Google and GitHub login) waits until the end, by the owner's
   call; Phase I (payments) comes after the AWS deploy (K); the AI track is last.
 - AI track (later) (`ROADMAP.md` section B.2): two owner decisions first (which model, build
