@@ -7,7 +7,7 @@ import LabCover from "../components/LabCover";
 import MetroMap, { labLines, MetroLegend } from "../components/MetroMap";
 import { LogoMark } from "../components/Logo";
 import { chapterNumber } from "../components/StatusBar";
-import StatsBadges from "../components/StatsBadges";
+import ProfileMenu from "../components/ProfileMenu";
 import ThemeButton from "../components/ThemeButton";
 import { useToast } from "../components/Toasts";
 import { TRACK_LABEL } from "./LabsPage";
@@ -108,7 +108,7 @@ function Topbar({ title, username }: { title: string; username: string }) {
       <span className="brand">{title}</span>
       <span className="spacer" />
       <ThemeButton />
-      <StatsBadges username={username} />
+      <ProfileMenu username={username} />
     </header>
   );
 }

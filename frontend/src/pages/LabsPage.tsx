@@ -6,7 +6,7 @@ import { chapterNumber } from "../components/StatusBar";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
 import LabCover from "../components/LabCover";
-import StatsBadges from "../components/StatsBadges";
+import ProfileMenu from "../components/ProfileMenu";
 import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import { useStats } from "../stats";
@@ -23,7 +23,7 @@ export const TRACK_LABEL: Record<string, string> = {
 };
 
 export default function LabsPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const toast = useToast();
   const { stats } = useStats();
   const navigate = useNavigate();
@@ -53,8 +53,7 @@ export default function LabsPage() {
         <span className="spacer" />
         <ThemeButton />
         {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
-        <StatsBadges username={user?.username ?? ""} />
-        <button className="btn btn-small" onClick={logout}>Log out</button>
+        <ProfileMenu username={user?.username ?? ""} />
       </header>
       {/* Wide screens: the next step sits in a sidebar on the left (owner: "ample of space"); narrow ones: on top. */}
       <div className={`labs-layout ${next ? "has-side" : ""}`}>

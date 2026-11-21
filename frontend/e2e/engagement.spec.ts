@@ -18,7 +18,12 @@ test.afterAll(() => {
   if (ids.length) execFileSync("docker", ["rm", "-f", ...ids]);
 });
 
-const badge = (page: Page, label: RegExp) => page.locator(".topbar").getByLabel(label);
+// Level, streak and stars live in the profile panel behind the top bar's profile button.
+const openProfile = async (page: Page) => {
+  const panel = page.getByRole("dialog", { name: "Profile" });
+  if (!(await panel.isVisible())) await page.locator(".topbar").getByRole("button", { name: /^Profile/ }).click();
+};
+const badge = (page: Page, label: RegExp) => page.getByRole("dialog", { name: "Profile" }).getByLabel(label);
 
 test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
@@ -50,8 +55,10 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   const token = await page.evaluate(() => localStorage.getItem("labbox.token") ?? "");
   const auth = { Authorization: `Bearer ${token}` };
   userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;
+  await openProfile(page);
   await expect(badge(page, /day streak/)).toHaveText("🔥 0");
   await expect(badge(page, /Level/)).toHaveText("Lv 1");
+  await page.keyboard.press("Escape");
 
   // 4. The daily drill on the labs page counts for the streak (answers are checked on the server).
   await page.goto("/labs");
@@ -72,6 +79,7 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await expect(drill.locator(".predict-explain")).toBeVisible();
   await expect(drill.locator(".xp-chip")).toHaveText("Done ✓");
   await expect(page.locator(".toast-info")).toContainText("+20 XP");
+  await openProfile(page);
   await expect(badge(page, /day streak/)).toHaveText("🔥 1");
   await expect(badge(page, /XP$/)).toHaveText("⭐ 20");
 
@@ -91,6 +99,7 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   // Chapter 1 of a 5-chapter course: the chapter's XP, no whole-lab bonus yet.
   await expect(page.locator(".toast-info").last()).toContainText("+110 XP");
   await expect(page.locator(".recap-stats")).toContainText("⭐ 110");
+  await openProfile(page);
   await expect(badge(page, /XP$/)).toHaveText("⭐ 130");
   await expect(badge(page, /Level/)).toHaveText("Lv 2");
 

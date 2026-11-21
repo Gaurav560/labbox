@@ -4,7 +4,7 @@ import { api, type SkillMap } from "../api";
 import { useAuth } from "../auth";
 import { LogoMark } from "../components/Logo";
 import MetroMap, { type MetroLine, type Station } from "../components/MetroMap";
-import StatsBadges from "../components/StatsBadges";
+import ProfileMenu from "../components/ProfileMenu";
 import ThemeButton from "../components/ThemeButton";
 import { useToast } from "../components/Toasts";
 
@@ -65,7 +65,7 @@ export default function TrackPage() {
         {map && <span className="muted small-text">{done} of {total} skills</span>}
         <span className="spacer" />
         <ThemeButton />
-        <StatsBadges username={user?.username ?? ""} />
+        <ProfileMenu username={user?.username ?? ""} />
       </header>
       {map && (
         <main className="map-main" aria-label="Skill map">

@@ -1,5 +1,13 @@
 # Changelog
 
+## 22 November: a profile panel; Exit instead of Log out
+
+- The owner: level, streak and stars go in a profile section, and an Exit button replaces "Log out". Every top bar
+  now shows one profile button (the learner's initial in a ring that fills towards the next level) instead of the
+  badges. It opens a panel: name and level, XP to the next level, the streak (and best), total stars (XP), today's
+  streak goal and the streak freeze, and Exit (signs out). `ProfileMenu.tsx` replaces `StatsBadges.tsx`.
+- Tests: new `profile.spec.ts`; `engagement.spec.ts` reads the streak, XP and level from the panel.
+
 ## 22 November: a page for every lab; the deck in the lab's colour
 
 - The owner: a lab card should open a page for that lab, then the lab. New `/courses/<lab>` (`CoursePage.tsx`):

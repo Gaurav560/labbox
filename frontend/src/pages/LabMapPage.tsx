@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, type LabDetail } from "../api";
 import { useAuth } from "../auth";
 import MetroMap, { labLines, MetroLegend, type MetroLine } from "../components/MetroMap";
-import StatsBadges from "../components/StatsBadges";
+import ProfileMenu from "../components/ProfileMenu";
 import ThemeButton from "../components/ThemeButton";
 import { LogoMark } from "../components/Logo";
 
@@ -30,7 +30,7 @@ export default function LabMapPage() {
         <span className="brand">{lab?.title ?? labId}</span>
         <span className="spacer" />
         <ThemeButton />
-        <StatsBadges username={user?.username ?? ""} />
+        <ProfileMenu username={user?.username ?? ""} />
       </header>
       {lab && (
         <main className="map-main">

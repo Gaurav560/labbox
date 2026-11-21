@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import type { Chapter, Progress, ServiceStatus } from "../api";
 import { useTheme } from "../theme";
 import { LogoMark } from "./Logo";
-import StatsBadges from "./StatsBadges";
+import ProfileMenu from "./ProfileMenu";
 import MachineMenu from "./MachineMenu";
 import TextSizeMenu from "./TextSizeMenu";
 
@@ -76,7 +76,7 @@ export default function StatusBar(p: Props) {
       <button className="btn btn-small btn-ghost" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title="Theme">
         {theme === "dark" ? "☀" : "☾"}
       </button>
-      <StatsBadges username={p.username} />
+      <ProfileMenu username={p.username} />
     </header>
   );
 }

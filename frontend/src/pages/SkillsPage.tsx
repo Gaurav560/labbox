@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { api, type LabSummary, type TrackSummary } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
-import StatsBadges from "../components/StatsBadges";
+import ProfileMenu from "../components/ProfileMenu";
 import ThemeButton from "../components/ThemeButton";
 
 /*
@@ -11,7 +11,7 @@ import ThemeButton from "../components/ThemeButton";
  * every lab has its own roadmap (each chapter a step), and every track has one too (each topic a step).
  */
 export default function SkillsPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [tracks, setTracks] = useState<TrackSummary[]>([]);
   useEffect(() => {
@@ -26,8 +26,7 @@ export default function SkillsPage() {
         <span className="brand">Skill maps</span>
         <span className="spacer" />
         <ThemeButton />
-        <StatsBadges username={user?.username ?? ""} />
-        <button className="btn btn-small" onClick={logout}>Log out</button>
+        <ProfileMenu username={user?.username ?? ""} />
       </header>
       <main className="skills-main">
         <section className="skills-hero">
