@@ -6,6 +6,7 @@ not rewritten yet are still checked by check.py, which reads files from the top 
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import traceback
@@ -36,6 +37,15 @@ PASS = {
     "large_expenses": "One line, three parts: what to keep, the loop and the condition. That is a list comprehension, "
                       "and you will see them in every Python codebase.",
     "by_amount": "Biggest first, ties by name, and the original list untouched: a two-rule sort with one key.",
+    "expense_class": "Your first class: __init__ sets each Expense up, and label() lets it describe itself.",
+    "pocket_class": "Each Pocket has its own list, made in __init__, and methods that answer questions about it.",
+    "money_module": "Refactored: the output is exactly the same, but format_price now lives in one place, ready for "
+                    "any program to import.",
+    "median_spend": "The standard library did the maths, and your function handles the one case it cannot: no data.",
+    "first_tests": "Your tests pass on correct code and fail on both broken versions: that is what makes a test worth "
+                   "having.",
+    "edge_tests": "Right on the boundary: 500 of 500 is not over, 501 is. Those two tests catch bugs that dozens of "
+                  "easy cases would miss.",
     "fix_over_budget": "Fixed: spending exactly the budget is fine now. Boundaries (< or <=) are where bugs love "
                        "to hide; printing the values made it visible.",
 }
@@ -332,6 +342,188 @@ def sorting_and_comprehensions() -> None:
         report("by_amount", False, f"by_amount raised {type(ex).__name__}: {ex}. Run it in the terminal to see the line.")
 
 
+# ---------- chapter 15: classes ----------
+
+def classes() -> None:
+    mod, err = load("15-classes", "pocket")
+    Expense = getattr(mod, "Expense", None) if mod else None
+    Pocket = getattr(mod, "Pocket", None) if mod else None
+    if Expense is None:
+        report("expense_class", False, err or "No class named Expense was found in pocket.py.")
+    else:
+        try:
+            e = Expense("lunch", 120, "food")
+            plain = Expense("rent", 18000)
+            missing = [a for a in ("name", "amount", "category") if not hasattr(e, a)]
+            if missing:
+                report("expense_class", False, f"An Expense needs the attributes name, amount and category; missing: "
+                       f"{', '.join(missing)}. Store each one on self in __init__.")
+            elif (e.name, e.amount, e.category) != ("lunch", 120, "food"):
+                report("expense_class", False, f"Expense('lunch', 120, 'food') stored name={e.name!r}, amount={e.amount!r}, "
+                       f"category={e.category!r}.")
+            elif getattr(plain, "category", None) != "other":
+                report("expense_class", False, "Without a category, an Expense's category should be \"other\": give the "
+                       "parameter a default in __init__.")
+            elif not callable(getattr(e, "label", None)):
+                report("expense_class", False, "An Expense needs a method label(self).")
+            elif e.label() != "lunch: ₹120.00 (food)":
+                report("expense_class", False, "Not yet: Expense('lunch', 120, 'food').label() gave "
+                       f"{e.label()!r}.", repr("lunch: ₹120.00 (food)"), repr(e.label()))
+            elif plain.label() != "rent: ₹18,000.00 (other)":
+                report("expense_class", False, "Big amounts need the thousands separator, as in chapter 3.",
+                       repr("rent: ₹18,000.00 (other)"), repr(plain.label()))
+            else:
+                report("expense_class", True)
+        except TypeError as ex:
+            traceback.print_exc()
+            report("expense_class", False, f"Creating an Expense failed: {ex}. __init__ takes self, name, amount and "
+                   "category=\"other\".")
+        except Exception as ex:
+            traceback.print_exc()
+            report("expense_class", False, f"Expense raised {type(ex).__name__}: {ex}")
+
+    if Pocket is None or Expense is None:
+        report("pocket_class", False, err or "No class named Pocket was found in pocket.py.")
+        return
+    try:
+        a, b = Pocket(), Pocket()
+        if not all(callable(getattr(a, m, None)) for m in ("add", "total", "biggest")):
+            report("pocket_class", False, "A Pocket needs three methods: add(expense), total() and biggest().")
+            return
+        if a.biggest() is not None or a.total() != 0:
+            report("pocket_class", False, f"An empty Pocket should have total() 0 and biggest() None; it gave "
+                   f"{a.total()!r} and {a.biggest()!r}.")
+            return
+        lunch, bus = Expense("lunch", 120, "food"), Expense("bus", 30, "travel")
+        a.add(lunch)
+        a.add(bus)
+        if b.total() != 0:
+            report("pocket_class", False, "Two pockets share their expenses: adding to one changed the other. Make the "
+                   "list in __init__ (self.expenses = []), not in the class body.")
+        elif a.total() != 150:
+            report("pocket_class", False, f"With lunch (120) and bus (30), total() gave {a.total()!r}.", "150", repr(a.total()))
+        elif a.biggest() is not lunch:
+            got = a.biggest()
+            report("pocket_class", False, "biggest() should give back the Expense object with the largest amount (here, "
+                   f"lunch); it gave {getattr(got, 'name', got)!r}.")
+        else:
+            report("pocket_class", True)
+    except Exception as ex:
+        traceback.print_exc()
+        report("pocket_class", False, f"Pocket raised {type(ex).__name__}: {ex}")
+
+
+# ---------- chapter 16: modules ----------
+
+def modules() -> None:
+    folder = "16-modules"
+    want = ["₹120.00 = 12000 paise", "₹45.50 = 4550 paise", "₹1,250.00 = 125000 paise"]
+    mod, err = load(folder, "money")
+    tracker = os.path.join(W, folder, "tracker.py")
+    if mod is None:
+        report("money_module", False, err.replace("Could not find", "Create") if err else "money.py could not be loaded.")
+    elif not callable(getattr(mod, "format_price", None)) or not callable(getattr(mod, "to_paise", None)):
+        report("money_module", False, "money.py needs two functions: format_price(amount) and to_paise(amount).")
+    elif mod.format_price(1250) != "₹1,250.00":
+        report("money_module", False, f"money.format_price(1250) gave {mod.format_price(1250)!r}.", repr("₹1,250.00"),
+               repr(mod.format_price(1250)))
+    elif mod.to_paise(45.5) != 4550 or type(mod.to_paise(45.5)) is not int or mod.to_paise(0.1 + 0.2) != 30 \
+            or mod.to_paise(0.29) != 29:
+        got = (mod.to_paise(45.5), mod.to_paise(0.1 + 0.2))
+        report("money_module", False, f"to_paise(45.5) should be the whole number 4550, to_paise(0.1 + 0.2) 30 and "
+               f"to_paise(0.29) 29; they gave {got[0]!r}, {got[1]!r} and {mod.to_paise(0.29)!r}. Multiply by 100, then "
+               "round to a whole number: int() cuts 28.999... down to 28.")
+    else:
+        source = open(tracker, encoding="utf-8").read() if os.path.isfile(tracker) else ""
+        run = run_file(folder, "tracker.py")
+        if "def format_price" in source:
+            report("money_module", False, "tracker.py still defines its own format_price. Delete it and import the one "
+                   "from money instead.")
+        elif "money" not in source:
+            report("money_module", False, "tracker.py does not import from money yet.")
+        elif run.returncode != 0:
+            report("money_module", False, "python3 tracker.py stopped with an error: "
+                   + (run.stderr.strip().splitlines() or ["?"])[-1])
+        elif lines(run.stdout) != want:
+            report("money_module", False, "tracker.py runs, but its output changed. Refactoring keeps the output the same.",
+                   "\n".join(want), run.stdout.strip())
+        else:
+            report("money_module", True)
+
+    mod, err = load(folder, "stats_tools")
+    fn, e = get_func(mod, err, "median_spend")
+    if fn is not None:
+        src = open(os.path.join(W, folder, "stats_tools.py"), encoding="utf-8").read()
+        if "statistics" not in src:
+            report("median_spend", False, "Use the statistics module from the standard library: import statistics.")
+            return
+    run_cases("median_spend", fn, e, [
+        (([120, 45, 900],), 120), (([1, 2, 3, 4],), 2.5), (([],), None), (([5],), 5), (([300, 100],), 200.0),
+    ])
+
+
+# ---------- chapter 17: testing ----------
+
+def _pytest(test_file: str, module: str, module_text: str) -> subprocess.CompletedProcess:
+    """Run the learner's test file against one version of the module, in a fresh folder."""
+    import tempfile
+    d = tempfile.mkdtemp(prefix="t17-")
+    with open(os.path.join(d, test_file), "w", encoding="utf-8") as f:
+        f.write(open(os.path.join(W, "17-testing", test_file), encoding="utf-8").read())
+    with open(os.path.join(d, f"{module}.py"), "w", encoding="utf-8") as f:
+        f.write(module_text)
+    return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", test_file], cwd=d,
+                          capture_output=True, text=True, timeout=60)
+
+
+MONEY_OK = 'def format_price(amount):\n    return f"₹{amount:,.2f}"\n\n\ndef to_paise(amount):\n    return round(amount * 100)\n'
+MONEY_BUGS = {
+    "the one that forgets the thousands separator": MONEY_OK.replace(":,.2f", ":.2f"),
+    "the one that rounds to one decimal": MONEY_OK.replace(":,.2f", ":,.1f"),
+}
+BUDGET_OK = "def over_budget(spent, budget):\n    return spent > budget\n"
+BUDGET_BUGS = {
+    "the one that says exactly the budget is over": "def over_budget(spent, budget):\n    return spent >= budget\n",
+    "the one that only notices when you are more than one rupee over":
+        "def over_budget(spent, budget):\n    return spent > budget + 1\n",
+}
+
+
+def _own_tests(task: str, test_file: str, module: str, ok: str, bugs: dict, min_tests: int) -> None:
+    path = os.path.join(W, "17-testing", test_file)
+    if not os.path.isfile(path):
+        report(task, False, f"Could not find 17-testing/{test_file}.")
+        return
+    good = _pytest(test_file, module, ok)
+    out = good.stdout + good.stderr
+    passed = re.search(r"(\d+) passed", out)
+    if good.returncode == 5 or not passed:
+        if good.returncode == 0 or good.returncode == 5:
+            report(task, False, f"pytest found no tests in {test_file}. Each test is a function whose name starts with test_.")
+        else:
+            report(task, False, f"Your tests fail on the correct {module}.py, so a test expects the wrong answer:\n"
+                   + out.strip()[-500:])
+        return
+    if good.returncode != 0:
+        report(task, False, f"Your tests fail on the correct {module}.py, so a test expects the wrong answer:\n"
+               + out.strip()[-500:])
+        return
+    if int(passed.group(1)) < min_tests:
+        report(task, False, f"Write at least {min_tests} test functions; pytest found {passed.group(1)}.")
+        return
+    for name, text in bugs.items():
+        if _pytest(test_file, module, text).returncode == 0:
+            report(task, False, f"Your tests pass on the correct code, good. But they also pass on a broken version, "
+                   f"{name}, so they would not catch that bug. Add a test that fails on it.")
+            return
+    report(task, True)
+
+
+def testing() -> None:
+    _own_tests("first_tests", "test_money.py", "money", MONEY_OK, MONEY_BUGS, 2)
+    _own_tests("edge_tests", "test_budget.py", "budget", BUDGET_OK, BUDGET_BUGS, 2)
+
+
 CHAPTERS = {
     "first-program": first_program,
     "02-numbers-and-text": numbers_and_text,
@@ -340,6 +532,9 @@ CHAPTERS = {
     "04-loops": loops,
     "finding-bugs": finding_bugs,
     "sorting-and-comprehensions": sorting_and_comprehensions,
+    "classes": classes,
+    "modules-and-packages": modules,
+    "testing": testing,
 }
 
 if __name__ == "__main__":

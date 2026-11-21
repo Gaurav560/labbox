@@ -1,8 +1,8 @@
-# Chapter 11: files.
+# Chapter 14: files. Pocket remembers things after the program ends.
 import csv
 
 
-def read_totals(path: str) -> dict:
+def read_totals(path):
     totals = {}
     with open(path, newline="") as f:
         for row in csv.DictReader(f):
@@ -15,7 +15,7 @@ def read_totals(path: str) -> dict:
     return {k: round(v, 2) for k, v in totals.items()}
 
 
-def save_lines(path: str, lines: list) -> int:
+def save_lines(path, lines):
     with open(path, "w") as f:
         for line in lines:
             f.write(line + "\n")

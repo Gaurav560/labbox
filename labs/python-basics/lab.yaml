@@ -389,8 +389,9 @@ chapters:
           note: "a fresh basket each time"
   - id: 10-errors
     title: Errors
-    file: chapters/10-errors.md
-    minutes: 15
+    file: chapters/13-errors.md
+    minutes: 40
+    folder: 13-errors
     part: Real programs
     tasks:
       - id: to_number
@@ -418,8 +419,9 @@ chapters:
           gives: "(0.0, [])"
   - id: 11-files
     title: Files
-    file: chapters/11-files.md
-    minutes: 20
+    file: chapters/14-files.md
+    minutes: 45
+    folder: 14-files
     tasks:
       - id: save_lines
         title: "file_tools.py: warm-up, write lines to a file"
@@ -444,10 +446,95 @@ chapters:
           gives: "18000.0"
         - call: "read_totals(\"expenses.csv\")[\"shopping\"]"
           gives: "4095.0"
+  - id: classes
+    title: Classes and objects
+    file: chapters/15-classes.md
+    minutes: 45
+    folder: 15-classes
+    tasks:
+      - id: expense_class
+        title: "pocket.py: an Expense"
+        hints:
+          - "__init__ runs when an Expense is made: store each of the three values on self, as an attribute with the same name."
+          - "Give the category parameter a default value in the def line, so Expense(\"rent\", 18000) works."
+          - "label(self) builds an f-string from self.name, self.amount (with the money format) and self.category."
+        examples:
+        - call: "Expense(\"lunch\", 120, \"food\").label()"
+          gives: "\"lunch: ₹120.00 (food)\""
+        - call: "Expense(\"rent\", 18000).category"
+          gives: "\"other\""
+      - id: pocket_class
+        title: "pocket.py: a Pocket full of expenses"
+        hints:
+          - "Each pocket needs its own list of expenses: create it in __init__, on self."
+          - "add appends to that list; total adds up each expense's amount (sum works with a generator)."
+          - "biggest: check for an empty list first, then max(...) with a key that gives back the amount."
+        examples:
+        - call: "p.total()  (lunch 120, bus 30)"
+          gives: "150"
+        - call: "Pocket().biggest()"
+          gives: "None"
+  - id: modules-and-packages
+    title: Modules, packages and pip
+    file: chapters/16-modules.md
+    minutes: 40
+    folder: 16-modules
+    tasks:
+      - id: money_module
+        title: "money.py: Pocket's money helpers, in a module"
+        hints:
+          - "Create the new file money.py next to tracker.py, and move format_price into it."
+          - "to_paise multiplies by 100 and rounds to a whole number, so 0.1 + 0.2 still gives 30."
+          - "In tracker.py, delete its own format_price and import both names with from money import ..."
+        examples:
+        - call: "python3 tracker.py"
+          gives: "₹45.50 = 4550 paise"
+          note: "the second of three lines, unchanged"
+        - call: "to_paise(0.1 + 0.2)"
+          gives: "30"
+      - id: median_spend
+        title: "stats_tools.py: the median spend"
+        hints:
+          - "The statistics module has a function for the middle value."
+          - "Import statistics at the top of the file, then call its median function."
+          - "The statistics module raises an error for an empty list, so check for that first and give back None."
+        examples:
+        - call: "median_spend([120, 45, 900])"
+          gives: "120"
+        - call: "median_spend([1, 2, 3, 4])"
+          gives: "2.5"
+  - id: testing
+    title: Testing your code
+    file: chapters/17-testing.md
+    minutes: 45
+    folder: 17-testing
+    tasks:
+      - id: first_tests
+        title: "test_money.py: tests that catch broken prices"
+        hints:
+          - "A test is a function whose name starts with test_ and that asserts one result."
+          - "A small amount alone cannot reveal a missing thousands separator: test an amount of 1,000 or more."
+          - "To catch rounding to one decimal, test an amount whose second decimal matters, like 1250.5 giving ₹1,250.50."
+        examples:
+        - call: "python3 -m pytest -v test_money.py"
+          gives: "2 passed (or more)"
+          note: "and fails on the planted bugs"
+      - id: edge_tests
+        title: "test_budget.py: tests on the boundary"
+        hints:
+          - "Bugs hide where the answer changes: test right on the budget, and just past it."
+          - "Exactly the budget is not over; one rupee more is."
+          - "Compare with is False and is True, and test over_budget(500, 500) and over_budget(501, 500)."
+        examples:
+        - call: "over_budget(500, 500)"
+          gives: "False"
+        - call: "over_budget(501, 500)"
+          gives: "True"
   - id: 12-running-a-program
     title: Running a program
-    file: chapters/12-running-a-program.md
-    minutes: 20
+    file: chapters/18-running-a-program.md
+    minutes: 40
+    folder: 18-running-a-program
     tasks:
       - id: summary_top
         title: "summary.py: print the top categories"

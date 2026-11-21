@@ -1,14 +1,14 @@
-# Chapter 10: errors.
+# Chapter 13: errors. Pocket meets text that is not a number.
 
 
-def to_number(text: str) -> float:
+def to_number(text):
     try:
         return float(text)
     except ValueError:
         raise ValueError(f"'{text}' is not a number") from None
 
 
-def safe_sum(values: list) -> tuple:
+def safe_sum(values):
     total = 0.0
     bad = []
     for v in values:

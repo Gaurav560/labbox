@@ -1,4 +1,4 @@
-# Chapter 12: a command-line program.
+# Chapter 18: a command-line program.
 #   python summary.py expenses.csv --top 3
 import argparse
 import sys

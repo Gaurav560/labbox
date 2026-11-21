@@ -7,7 +7,8 @@ import traceback
 
 sys.path.insert(0, "/check/workspace")
 # Rewritten chapters live in their own folders (Python from zero rewrite, 22 November).
-for _folder in ("07-strings", "08-lists", "09-dictionaries", "10-tuples-and-sets", "12-functions-in-depth"):
+for _folder in ("07-strings", "08-lists", "09-dictionaries", "10-tuples-and-sets", "12-functions-in-depth",
+                "13-errors", "14-files"):
     sys.path.insert(0, f"/check/workspace/{_folder}")
 sys.dont_write_bytecode = True
 
@@ -435,12 +436,12 @@ BIG = ("date,category,amount\n2026-03-01,rent,18000\n2026-03-02,food,120\n2026-0
 
 
 def run_py(*args: str) -> subprocess.CompletedProcess:
-    return subprocess.run([sys.executable, *args], cwd="/check/workspace", capture_output=True, text=True, timeout=20)
+    return subprocess.run([sys.executable, *args], cwd="/check/workspace/18-running-a-program", capture_output=True, text=True, timeout=20)
 
 
-if not os.path.exists("/check/workspace/summary.py"):
-    report("summary_top", False, "Could not find summary.py in your workspace")
-    report("summary_errors", False, "Could not find summary.py in your workspace")
+if not os.path.exists("/check/workspace/18-running-a-program/summary.py"):
+    report("summary_top", False, "Could not find 18-running-a-program/summary.py in your workspace")
+    report("summary_errors", False, "Could not find 18-running-a-program/summary.py in your workspace")
 else:
     data = tmp_file("big.csv", BIG)
     try:

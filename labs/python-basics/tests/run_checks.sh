@@ -4,6 +4,6 @@
 cd /check/workspace
 python /check/tests/checks.py
 case "${LABBOX_CHAPTER:-}" in
-  first-program|02-numbers-and-text|01-functions|03-decisions|04-loops|finding-bugs|sorting-and-comprehensions) ;;
+  first-program|02-numbers-and-text|01-functions|03-decisions|04-loops|finding-bugs|sorting-and-comprehensions|classes|modules-and-packages|testing) ;;
   *) python /check/tests/check.py ;;
 esac

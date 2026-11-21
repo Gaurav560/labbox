@@ -212,7 +212,7 @@ Linux, Git, system design). Beginner courses are plain; advanced courses start w
 from zero and Go from zero follow it in full (20 November). Python from
 zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
 tasks, written in the "explain, do not just state" style) and JavaScript from zero (13 chapters, 26 tasks, 20 November) are complete; next: Python in practice
-(with a story) and the others. **Language rewrites (22 November, owner):** Python from zero first (19 chapters in four parts, curiosity-first voice, Pocket as the running project): Parts 1 and 2 (chapters 1 to 12) done; Parts 3 and 4 next; then Java, JavaScript, Go. **Visuals (owner's rules, 20 November):** architecture and conceptual diagrams, execution
+(with a story) and the others. **Language rewrites (22 November, owner):** Python from zero first (19 chapters in four parts, curiosity-first voice, Pocket as the running project): Parts 1 to 3 (chapters 1 to 18) done; Part 4 (capstone) next; then Java, JavaScript, Go. **Visuals (owner's rules, 20 November):** architecture and conceptual diagrams, execution
 visualizations (interactive "watch it run" traces) first, real code always, decorative images rarely.
 JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in

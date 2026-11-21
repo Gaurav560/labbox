@@ -790,7 +790,65 @@ function ComprehensionSteps() {
   );
 }
 
+/** Python from zero, chapter 13: what Python does when an error happens inside try, played step by step. */
+function TryExceptFlow() {
+  return (
+    <SketchSteps
+      title='try: amount = float("abc")'
+      intro="Press Play to follow one error from the line that raises it to the except that handles it."
+      label="Python runs the lines inside try one by one; float of abc raises a ValueError; the rest of the try block is skipped; Python looks for an except that matches ValueError and runs it; then the program carries on after the whole try statement"
+      steps={[
+        { label: "1. enter try: watch for errors", says: "Python starts running the indented lines under try, one at a time, ready to react if one of them raises an exception." },
+        { label: '2. float("abc") raises ValueError', says: "The text is not a number, so float raises a ValueError. Normally that would stop the whole program." },
+        { label: "3. skip the rest of try", says: "Nothing after the failing line inside try runs. print(\"ok:\", amount) is skipped: there is no amount to print." },
+        { label: "4. find a matching except", says: "Python looks at the except blocks in order. except ValueError matches the kind of error that was raised." },
+        { label: "5. run the except block", says: "The except block runs instead: print(\"skipped:\", text). The error has been handled." },
+        { label: "6. carry on after try", says: "The program continues with the next line after the whole try statement, as if nothing had crashed. In a loop, that means the next value." },
+      ]}
+    />
+  );
+}
+
+/** Python from zero, chapter 15: what happens in tea = Item("tea", 15), played step by step. */
+function ObjectCreation() {
+  return (
+    <SketchSteps
+      title='tea = Item("tea", 15)'
+      intro="Press Play to watch Python build one object from the class."
+      label="Python makes a new empty Item object, calls __init__ with self set to that object and the arguments tea and 15, __init__ stores name and price on the object, and the finished object is stored in the variable tea"
+      steps={[
+        { label: "1. a new, empty Item", says: "Python makes a brand-new object of the class Item. It has no name and no price yet: nothing has been stored on it." },
+        { label: '2. call __init__(self, "tea", 15)', says: "Python calls __init__ automatically. self is the new object; name is \"tea\" and price is 15." },
+        { label: '3. self.name = "tea"', says: "This stores the name on this object. It is the object's own attribute, separate from every other Item." },
+        { label: "4. self.price = 15", says: "Now the object has both attributes. __init__ is done; it returns nothing, it only set the object up." },
+        { label: "5. tea is the finished object", says: "The new object is the result of Item(\"tea\", 15), and it is stored in tea. tea.name is \"tea\", tea.price is 15." },
+      ]}
+    />
+  );
+}
+
+/** Python from zero, chapter 16: where Python looks when it meets import money, played step by step. */
+function ImportSearch() {
+  return (
+    <SketchSteps
+      title="import money"
+      intro="Press Play to follow Python's search for a module."
+      label="Python first checks whether money was already imported in this program; then looks in the folder of the script it is running; then in the standard library that comes with Python; then in the installed packages, such as a virtual environment's; if it is nowhere, it raises ModuleNotFoundError"
+      steps={[
+        { label: "1. already imported?", says: "If this program imported money before, Python reuses it at once. A module's file runs only the first time it is imported." },
+        { label: "2. the script's own folder", says: "Next, the folder of the program you ran. money.py next to tracker.py is found right here." },
+        { label: "3. the standard library", says: "Then the modules that ship with Python: csv, json, statistics, math and hundreds more." },
+        { label: "4. installed packages", says: "Then the packages installed with pip: in a virtual environment, only that environment's own packages." },
+        { label: "5. nowhere: ModuleNotFoundError", says: "If no step found it, Python stops with ModuleNotFoundError: No module named 'money'. Check the file name and the folder." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "import-search": ImportSearch,
+  "object-creation": ObjectCreation,
+  "try-except-flow": TryExceptFlow,
   "comprehension-steps": ComprehensionSteps,
   "python-runs-a-file": PythonRunsAFile,
   "function-call": FunctionCall,

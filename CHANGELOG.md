@@ -1,5 +1,28 @@
 # Changelog
 
+## 22 November: Python from zero rewrite, Part 3 "Real programs" (chapters 13 to 18)
+
+- Overnight, at the owner's request. Each chapter in its own folder, every output captured in the lab image:
+  13. **Errors** (`10-errors`): a table of every exception met so far, raise with helpful messages, catching
+      only what you expect, and a new playing diagram (`try-except-flow`).
+  14. **Files** (`11-files`): modes table, Pocket's diary (`diary.py`, "w" vs "a" seen by running it twice),
+      why CSV is never split by hand, csv.DictReader on a real month with two broken rows.
+  15. **Classes and objects** (new, tasks `expense_class`, `pocket_class`): blueprint and objects, `self`, a
+      playing diagram of object creation (`object-creation`), and the class-body shared list trap (the check
+      catches it).
+  16. **Modules, packages and pip** (new, tasks `money_module`, `median_spend`): refactoring Pocket into
+      `money.py`, how Python finds a module (`import-search` diagram), the standard library table, venv and pip
+      with the real proof that a venv is private.
+  17. **Testing your code** (new, tasks `first_tests`, `edge_tests`): pytest, a real failure report, boundaries.
+      The learner's own tests must pass on correct code and fail on planted bugs (no thousands separator,
+      one-decimal rounding, `>=`, off by one rupee).
+  18. **Running a program** (`12-running-a-program`): sys.argv, argparse and its free help page, exit codes,
+      stderr, and `if __name__ == "__main__":`; ships with a finished `file_tools.py` so it never depends on
+      chapter 14.
+- Checks for the new chapters in `checks.py` (wrong answers run: class-body list, int() truncation in to_paise,
+  weak tests, a test expecting the wrong answer, median without statistics); `check.py` reads chapters 13, 14 and
+  18 from their folders.
+
 ## 22 November: Python from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
 
 - Overnight, at the owner's request ("finish all parts of python ... do not ask"). Chapters 7 to 12 rewritten in
