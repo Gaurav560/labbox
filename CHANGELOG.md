@@ -1,5 +1,21 @@
 # Changelog
 
+## 22 November: real photos and handwritten notes in lessons
+
+- The owner: "why can't we show a photo of a snake, a photo of Guido van Rossum", then "hand written notes ai
+  generated". New lesson block `:::photo{src alt credit license source}` (or `ai="true"`), drawn as a figure with
+  a caption and a credit line (`LessonMarkdown.tsx`, `styles.css`). Images live in
+  `frontend/public/lesson-images/<course>/` as WebP (55 to 160 KB).
+- Python from zero gets three freely licensed Wikimedia Commons photos: Guido van Rossum (Daniel Stroud, CC BY-SA
+  4.0) in "The story of Python", a ball python (Holger Krisp, CC BY 3.0) in the fun fact, and the 1947 Harvard
+  Mark II logbook page with the moth (public domain) in chapter 6. Each chapter's recap ends with an AI-drawn page
+  of handwritten notes (19 pages, OpenAI image model, medium quality, owner-approved for Python lessons; every page
+  checked letter by letter, including the 15 zeros of 0.30000000000000004).
+- The validator checks photos: a file in frontend/public, alt text, and credit, licence and source (or
+  `ai="true"`); never on task or quick-check steps; one per step, two on a history step. CONTENT_STANDARD's old
+  "no photos" rule is replaced. Tests: `test_photos_need_a_file_alt_text_and_a_credit`, and `lab.spec.ts` checks
+  Guido's photo loads with its credit.
+
 ## 22 November: no line legend above skill maps; full test runs on Postgres and Redis
 
 - The owner: remove the line legend ("Starting out 1/6 ...") above the skill map everywhere. `MetroLegend`

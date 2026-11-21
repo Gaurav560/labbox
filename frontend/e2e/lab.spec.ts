@@ -57,6 +57,11 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(page.locator(".step-kind")).toHaveText("History");
   await expect(page.locator(".history-timeline li")).toHaveCount(5);
   await expect(page.locator(".history-before")).toContainText("Guido van Rossum");
+  // A real photo, loaded and credited (owner, 22 November).
+  const guido = page.locator(".lesson-photo img[alt*='Guido van Rossum']");
+  await expect(guido).toBeVisible();
+  await expect.poll(() => guido.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator(".lesson-photo-credit").first()).toContainText("CC BY-SA 4.0");
 
   // Chapter 2, functions, by link: the rest of the flow happens there.
   const chapterResponse = page.waitForResponse((r) => r.url().endsWith("/api/labs/python-basics/chapters/01-functions"));

@@ -43,6 +43,10 @@ Today Python is maintained by the **Python Software Foundation**, a non-profit, 
 volunteer core developers led by an elected **steering council**. Guido led the language for almost 30 years
 as its "Benevolent Dictator For Life" and stepped down from that role in 2018.
 
+:::photo{src="/lesson-images/python/guido-van-rossum.webp" alt="Guido van Rossum, the creator of Python, in 2014" credit="Daniel Stroud" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Guido-portrait-2014-drc.jpg"}
+Guido van Rossum, who created Python, in 2014.
+:::
+
 :::usedby{title="Industries"}
 - AI and machine learning
 - Data science
@@ -64,6 +68,10 @@ as its "Benevolent Dictator For Life" and stepped down from that role in 2018.
 :::funfact
 Python is named after the British comedy show *Monty Python's Flying Circus*, not the snake. Type
 `import this` in Python to read "The Zen of Python", the short poem of design rules the language follows.
+:::
+
+:::photo{src="/lesson-images/python/ball-python.webp" alt="A close-up of a ball python snake" credit="Holger Krisp" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File:Python-regius-kopf-k%C3%B6nigspython.jpg"}
+Not this python! A ball python, the snake people expect. The language's name comes from a comedy show instead.
 :::
 
 ```bash run
@@ -386,6 +394,10 @@ You can now:
 - Show text and numbers with `print`, and tell a string (in quotes) from a calculation (without).
 - Read an error from the bottom: a `SyntaxError` stops everything before it starts; a `NameError` stops the
   program at the line where it happens.
+
+:::photo{src="/lesson-images/python/py-01-notes.webp" alt="Handwritten notes: how Python runs a file, comments, strings versus sums, and reading errors from the bottom" ai="true"}
+One page of notes for this chapter.
+:::
 
 Next, chapter 2: your first functions, small named pieces that each do one job.
 :::

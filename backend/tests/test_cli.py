@@ -340,3 +340,17 @@ def test_pictures_only_where_ideas_are_taught(labs_dir: Path):
     # Two figures on one step: refused.
     ch.write_text(good.replace(':::picture{name="recipe-card"}', ':::picture{name="egg-box"}\nx\n:::\n\n:::picture{name="recipe-card"}'))
     assert any("keep one per step" in e for e in errors(labs_dir / "java-basics"))
+
+
+def test_photos_need_a_file_alt_text_and_a_credit(labs_dir: Path):
+    ch = labs_dir / "python-basics" / "chapters" / "01-first-program.md"
+    good = ch.read_text()
+    assert 'credit="Daniel Stroud"' in good and errors(labs_dir / "python-basics") == []
+    ch.write_text(good.replace(' credit="Daniel Stroud" license="CC BY-SA 4.0"', ""))
+    assert any("needs credit, license and source" in e for e in errors(labs_dir / "python-basics"))
+    ch.write_text(good.replace("guido-van-rossum.webp", "nobody.webp"))
+    assert any("is not in frontend/public" in e for e in errors(labs_dir / "python-basics"))
+    # Never on a task step: the task, its card and Check stay in view.
+    task = ':::step{type=task task=hello_pocket title="Your turn: Pocket says hello"}\n'
+    ch.write_text(good.replace(task, task + ':::photo{src="/lesson-images/python/py-01-notes.webp" alt="notes" ai="true"}\nx\n:::\n'))
+    assert any("(task) has a photo" in e for e in errors(labs_dir / "python-basics"))

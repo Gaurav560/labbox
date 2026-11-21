@@ -32,7 +32,7 @@ const HISTORY_LABELS: Record<string, string> = {
   funfact: "Fun fact",
 };
 const BLOCKS = new Set([
-  "character", "mission", "deep-dive", "incident", "question", "explain", "timeline", "usedby", "diagram", "picture", "trace",
+  "character", "mission", "deep-dive", "incident", "question", "explain", "timeline", "usedby", "diagram", "picture", "trace", "photo",
   ...Object.keys(CALLOUT_LABELS), ...Object.keys(HISTORY_LABELS),
 ]);
 
@@ -216,6 +216,8 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
       return <Diagram name={p.dataName ?? ""} caption={children} />;
     case "picture":
       return <Picture name={p.dataName ?? ""} code={p.dataCode} caption={children} />;
+    case "photo":
+      return <Photo src={p.dataSrc} alt={p.dataAlt} credit={p.dataCredit} license={p.dataLicense} source={p.dataSource} ai={p.dataAi === "true"} caption={children} />;
     case "trace": {
       let data: TraceData = { headers: [], rows: [] };
       try {
@@ -242,4 +244,32 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
         </aside>
       );
   }
+}
+
+/**
+ * A real photo (a person, a place, a historic object) or an AI-drawn page of handwritten notes, with its
+ * credit (owner, 22 November). Real photos are freely licensed (Wikimedia Commons) and say who took them and
+ * under which licence; AI notes say so. The validator checks every photo has that line.
+ */
+function Photo({ src, alt, credit, license, source, ai, caption }: {
+  src?: string; alt?: string; credit?: string; license?: string; source?: string; ai: boolean; caption: ReactNode;
+}) {
+  if (!src) return null;
+  return (
+    <figure className={`lesson-photo ${ai ? "is-notes" : ""}`}>
+      <img src={src} alt={alt ?? ""} loading="lazy" />
+      <figcaption>
+        <span className="lesson-photo-caption">{caption}</span>
+        <span className="lesson-photo-credit">
+          {ai ? "Handwritten notes drawn with AI for LabBox" : (
+            <>
+              Photo: {credit}
+              {license && <> · {license}</>}
+              {source && <> · <a href={source} target="_blank" rel="noreferrer">Wikimedia Commons</a></>}
+            </>
+          )}
+        </span>
+      </figcaption>
+    </figure>
+  );
 }

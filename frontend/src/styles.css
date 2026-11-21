@@ -1300,6 +1300,14 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .diagram svg { max-width: 440px; }
 :is(.picture, .diagram) figcaption { margin-top: 8px; font-size: 13px; color: var(--figure-caption); text-align: center; }
 .picture figcaption { margin-top: 6px; }
+/* Real photos and AI handwritten notes in lessons (owner, 22 November), always with their credit line. */
+.lesson-photo { margin: 16px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
+.lesson-photo img { display: block; width: 100%; max-height: 420px; object-fit: contain; background: var(--chip); }
+.lesson-photo.is-notes img { max-height: none; object-fit: contain; }
+.lesson-photo figcaption { display: grid; gap: 3px; padding: 9px 12px 10px; font-size: 13.5px; }
+.lesson-photo-caption p { margin: 0; }
+.lesson-photo-credit { color: var(--muted); font-size: 11.5px; }
+.lesson-photo-credit a { color: inherit; text-decoration: underline; }
 :is(.picture, .diagram) figcaption p { margin: 0; }
 
 .pc-card, .dg-box rect { fill: var(--figure-blue); stroke: var(--figure-blue-edge); }

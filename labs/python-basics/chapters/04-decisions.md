@@ -292,5 +292,9 @@ You can now:
 - Combine conditions with `and`, `or` and `not`, with brackets to keep the meaning clear.
 - Return a whole rule as `True` or `False` in one line.
 
+:::photo{src="/lesson-images/python/py-04-notes.webp" alt="Handwritten notes: if, elif and else, the first true condition wins, = stores and == compares, 2100 is not a leap year" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 5: loops, so Pocket can go through a whole list of amounts without you writing a line for each.
 :::

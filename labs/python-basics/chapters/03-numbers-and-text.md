@@ -312,5 +312,9 @@ You can now:
 - Join and repeat strings, and convert with `int()`, `float()` and `str()`.
 - Make numbers look right with f-string formats like `:.2f` and `:,.2f`.
 
+:::photo{src="/lesson-images/python/py-03-notes.webp" alt="Handwritten notes: the three kinds of division, 0.1 plus 0.2, and joining strings" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 4: making decisions, so Pocket can tell when you are over budget.
 :::

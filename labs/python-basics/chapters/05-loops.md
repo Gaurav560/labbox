@@ -287,5 +287,9 @@ You can now:
 - Count with `range`, knowing positions start at 0 and `range(n)` stops before `n`.
 - Stop a search early with `return`, and return `None` when there is nothing to find.
 
+:::photo{src="/lesson-images/python/py-05-notes.webp" alt="Handwritten notes: a for loop with a running total, before, inside and after, and range(3)" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 6: finding bugs. Two of Pocket's functions run without crashing, and give wrong answers anyway.
 :::

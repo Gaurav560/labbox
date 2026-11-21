@@ -259,9 +259,17 @@ Pictures help when they show something words alone cannot. One style everywhere,
 - **Diagrams** (`:::diagram{name=...}`) stay for technical ideas you cannot see (references,
   memory, concurrency).
 
-No photos or generated images in lessons: they are heavy, drift in style and fight the themes. The
-validator rejects unknown picture and diagram names, traces without a table, and code in a picture
-that is not also in a code block of its step.
+**Photos and handwritten notes (owner, 22 November).** Real photos are welcome where they show something real
+and interesting: the person who made the language, the thing a name comes from, a historic object (Python's
+story shows Guido van Rossum, a ball python, and the 1947 logbook page with the moth). Only freely licensed
+photos (Wikimedia Commons), saved in `frontend/public/lesson-images/<course>/` (WebP, about 1000 px wide),
+with the credit shown under them: `:::photo{src="/lesson-images/..." alt="..." credit="..." license="..."
+source="https://commons.wikimedia.org/..."}` and a one-line caption. Never an AI image of a real person.
+Each chapter's recap may end with one AI-drawn page of **handwritten notes** (`ai="true"`): five or six short
+lines of the chapter's key ideas, checked letter by letter before use (image models misspell and miscount
+digits). Photos never go on task or quick-check steps; one per step, two on a history step. The validator
+rejects unknown picture and diagram names, traces without a table, code in a picture that is not also in a
+code block of its step, and photos without a file, alt text or credit.
 
 ## 4. Words
 

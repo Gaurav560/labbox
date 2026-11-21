@@ -325,5 +325,9 @@ You can now:
   `return` gives back `None`.
 - Build text with f-strings, compare with `==`, and find a remainder with `%`.
 
+:::photo{src="/lesson-images/python/py-02-notes.webp" alt="Handwritten notes: def, return gives the answer back, print only shows it, no return gives None" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 3: numbers and text in depth, with variables, maths that surprises, and money that looks right.
 :::

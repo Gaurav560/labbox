@@ -3,6 +3,10 @@ In 1947, the team running the Harvard Mark II computer found it giving wrong ans
 one of its relays they found the cause: a real moth, stuck between the contacts. They taped it into the logbook
 with the note "First actual case of bug being found." That page is now in the Smithsonian museum.
 
+:::photo{src="/lesson-images/python/first-computer-bug-1947.webp" alt="A page of the Harvard Mark II logbook from 9 September 1947, with a moth taped to it and the note First actual case of bug being found" credit="U.S. Naval History and Heritage Command" license="Public domain" source="https://commons.wikimedia.org/wiki/File:First_Computer_Bug,_1947.jpg"}
+The real page, 9 September 1947: the moth is still taped to it.
+:::
+
 Engineers had called problems "bugs" long before that day, but the moth made the word famous. Today your bugs
 will not have wings. They will be quieter, and in a way sneakier: Pocket's `daily_total` runs perfectly, no
 error, no crash, and says you spent ₹180 when you spent ₹300.
@@ -308,6 +312,10 @@ You can now:
 - Read a traceback from the bottom up: what went wrong, where, and which calls led there.
 - Make hidden values visible with `print` and `print(f"{name=}")`.
 - Pause a program with `breakpoint()` and inspect it with `p`, `n`, `c` and `q`.
+
+:::photo{src="/lesson-images/python/py-06-notes.webp" alt="Handwritten notes: errors versus bugs, reading tracebacks bottom up, print with x=, and breakpoint" ai="true"}
+One page of notes for this chapter.
+:::
 
 That is the end of Part 1. Pocket can talk, count, decide and loop, and you can fix it when it misbehaves. Next,
 Part 2: working with data, starting with strings.

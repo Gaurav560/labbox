@@ -96,6 +96,35 @@ def _picture_place_errors(file: str, step_no: int, step_type: str, markdown: str
     return out
 
 
+# Real photos and AI handwritten notes (owner, 22 November): a file in frontend/public, a description for screen
+# readers, and a credit. A real photo also names its licence and source (freely licensed, Wikimedia Commons);
+# ai="true" marks an AI-drawn page of notes. Never on task or quick-check steps; one per step (two on history).
+_PHOTO_RE = re.compile(r"^\s*:::photo\{([^}\n]*)\}", re.M)
+_PHOTO_ATTR_RE = re.compile(r"""(\w+)=(?:"([^"]*)"|'([^']*)')""")
+PHOTO_STEPS = {"story", "history", "concept", "example", "try", "deep-dive", "recap"}
+
+
+def _photo_errors(file: str, step_no: int, step_type: str, markdown: str) -> list[str]:
+    out = []
+    found = _PHOTO_RE.findall(markdown)
+    if found and step_type not in PHOTO_STEPS:
+        out.append(f"{file}: step {step_no} ({step_type}) has a photo; photos belong on {', '.join(sorted(PHOTO_STEPS))} steps")
+    if len(found) > (2 if step_type == "history" else 1):
+        out.append(f"{file}: step {step_no} has {len(found)} photos; keep one per step (two on a history step)")
+    for attrs in found:
+        a = {k: v1 or v2 for k, v1, v2 in _PHOTO_ATTR_RE.findall(attrs)}
+        src = a.get("src", "")
+        if not src.startswith("/lesson-images/"):
+            out.append(f"{file}: step {step_no}: a photo's src must start with /lesson-images/ (got {src!r})")
+        elif (ROOT / "frontend").is_dir() and not (ROOT / "frontend" / "public" / src.lstrip("/")).is_file():
+            out.append(f"{file}: step {step_no}: photo {src} is not in frontend/public")
+        if not a.get("alt"):
+            out.append(f"{file}: step {step_no}: photo {src} needs alt text (what it shows)")
+        if a.get("ai") != "true" and not (a.get("credit") and a.get("license") and a.get("source")):
+            out.append(f"{file}: step {step_no}: photo {src} needs credit, license and source (or ai=\"true\")")
+    return out
+
+
 def _picture_names(kind: str) -> set[str] | None:
     f = ROOT / _PICTURE_FILES[kind]
     if not f.is_file():
@@ -163,6 +192,7 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
         for i, s in enumerate(steps, 1):
             errors.extend(_picture_code_errors(ch.file, i, s.markdown))
             errors.extend(_picture_place_errors(ch.file, i, s.type, s.markdown))
+            errors.extend(_photo_errors(ch.file, i, s.type, s.markdown))
         # Full lessons (owner, 21 November): no word limit on steps, and chapters may take up to an hour.
         if ch.minutes is None or not 8 <= ch.minutes <= 60:
             warnings.append(f"chapter {ch.id}: minutes should be 10 to 60 (is {ch.minutes})")
