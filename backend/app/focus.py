@@ -38,8 +38,8 @@ def _lines(p: Path) -> list[str] | None:
         return None
 
 
-def _find(root: Path, chapter: Chapter, number: int, any_todo: bool = False) -> tuple[str, int] | None:
-    ids = "|".join(re.escape(t.id) for t in chapter.tasks)
+def _find(root: Path, chapter: Chapter, number: int, any_todo: bool = False, task_ids: list[str] | None = None) -> tuple[str, int] | None:
+    ids = "|".join(re.escape(t) for t in (task_ids if task_ids is not None else [t.id for t in chapter.tasks]))
     todo = re.compile(rf"TODO\s*\(\s*(?:task\s+)?(?:{ids})\b|\(\s*task\s+(?:{ids})\b")
     marker = re.compile(rf"\bchapter\s+{number}\b", re.IGNORECASE)
     header = re.compile(r"\bchapter\s+\d+\b", re.IGNORECASE)
@@ -76,3 +76,22 @@ def chapter_focus(lab: LabConfig, chapter: Chapter, folder: Path | None) -> tupl
         if hit:
             return hit
     return None
+
+
+def task_focus(lab: LabConfig, chapter: Chapter, task_id: str, folder: Path | None) -> tuple[str, int] | None:
+    """The TODO for one task (a task step opens its own file, not the chapter's first one)."""
+    number = next(i for i, c in enumerate(lab.chapters, 1) if c.id == chapter.id)
+    for root in ([folder] if folder else []) + [lab.starter_dir]:
+        hit = _find(root, chapter, number, task_ids=[task_id])
+        if hit:
+            return hit
+    return None
+
+
+def step_file(lab: LabConfig, path: str, folder: Path | None) -> bool:
+    """The step's file exists in the learner's workspace or in the starter (and stays inside them)."""
+    for root in ([folder] if folder else []) + [lab.starter_dir]:
+        p = (root / path).resolve()
+        if p.is_relative_to(root.resolve()) and p.is_file():
+            return True
+    return False

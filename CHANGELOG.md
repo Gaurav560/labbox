@@ -1,5 +1,23 @@
 # Changelog
 
+## The lesson and the code stay in sync: each step opens its own file
+
+- The owner, reading Spring Boot as a beginner would: the lesson explained `SpringApplication.run` while
+  the editor showed another file. Now a lesson step can name its file and lines
+  (`file="..." line="10"` or `line="9-12"`); reaching the step opens that file in VS Code or the Lite
+  editor and selects those lines. A task step opens its own task's TODO, not the chapter's first one.
+- The focus route takes an optional step number (an addition; old calls work as before). It only opens
+  paths named in the lab's own content, checked to stay inside the workspace or the starter.
+- The VS Code extension (`tools/vscode-defaults`) selects the step's lines; `scripts/openvscode.sh`
+  reinstalls it. The validator fails a step whose file is not in `starter/` or whose line is past the end.
+- `CONTENT_STANDARD.md`: "talk to one learner" and "the lesson and the code stay in sync".
+- Spring Boot chapter 2 names its files on every step about code. A content test now allows up to 14
+  concept or example steps and 30 steps a chapter, for the smaller steps of the new voice.
+- Tests: step attributes and bad paths, task steps open their own TODO, the focus route by step, and a
+  browser test that moving through chapter 2 opens and highlights the right files.
+- Moving quickly through steps switches files fast, and Monaco then rejects one of its own timers
+  ("Canceled"); the page now drops that one harmless error (`main.tsx`).
+
 ## The light and dark switch on every page
 
 - The dashboard, skill maps, onboarding and admin pages get the same light and dark button as the lab

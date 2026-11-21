@@ -15,6 +15,13 @@ import "@fontsource/jetbrains-mono/700.css";
 import "@xterm/xterm/css/xterm.css";
 import "./styles.css";
 
+// Monaco cancels its own pending timers when the editor switches files quickly (a lesson step opening
+// its file) and rejects a promise nobody awaits, named "Canceled". It is harmless; drop that one only.
+window.addEventListener("unhandledrejection", (e) => {
+  const r = e.reason as { name?: string; message?: string } | undefined;
+  if (r && r.name === "Canceled" && r.message === "Canceled") e.preventDefault();
+});
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>

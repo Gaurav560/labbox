@@ -390,12 +390,14 @@ export default function LabPage() {
   }
 
   // Switching chapters opens that chapter's code (in VS Code through the backend, in Lite here).
+  // A step that is about a file opens that file instead (the effect below), so the two never race.
   const focusedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (status !== "running" || !chapterId) return;
+    if (status !== "running" || !chapterId || !steps) return;
     const key = `${chapterId}/${useIde}`;
     if (focusedRef.current === key) return;
     focusedRef.current = key;
+    if (hasOwnFile(steps[step])) return;
     api.chapterFocus(labId, chapterId, useIde).then((f) => {
       if (!f.path || useIde) return;
       const path = f.path;
@@ -403,7 +405,24 @@ export default function LabPage() {
       openFile(path).then(() => revealLine(path, f.line));
     }).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, chapterId, useIde, labId]);
+  }, [status, chapterId, useIde, labId, steps]);
+
+  // Each lesson step opens the file it talks about (file= and line= in the lesson), and a task step
+  // opens its own task's TODO, so the lesson and the code on the right always match.
+  const stepFocusRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (status !== "running" || !chapterId || !steps || !hasOwnFile(steps[step])) return;
+    const key = `${chapterId}/${step}/${useIde}`;
+    if (stepFocusRef.current === key) return;
+    stepFocusRef.current = key;
+    api.chapterFocus(labId, chapterId, useIde, step).then((f) => {
+      if (!f.path || useIde) return;
+      const path = f.path;
+      chapterFileOpened.current = true;
+      openFile(path).then(() => revealLine(path, f.line, f.end_line ?? undefined));
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, chapterId, step, steps, useIde, labId]);
 
   // The file asked for last is the one shown, whatever order the answers arrive in (the first-file
   // open and the chapter's file can both be loading; with several backend workers either may finish first).
@@ -812,12 +831,25 @@ export default function LabPage() {
 }
 
 /** Put the Lite editor's cursor on a line, near the top, once the file's editor exists. */
-function revealLine(path: string, line: number, tries = 0) {
+/** A step that talks about a file, or a task step (it opens its own task's TODO). */
+function hasOwnFile(s: Step | undefined): boolean {
+  return !!s && (!!s.file || ((s.type === "task" || s.type === "incident") && !!s.task));
+}
+
+/** Scroll to a line; with end, select those whole lines (a step's line or range) so they stand out. */
+function revealLine(path: string, line: number, end?: number, tries = 0) {
   const ed = monaco.editor.getEditors().find((e) => e.getModel()?.uri.toString() === modelUri(path));
   if (!ed) {
-    if (tries < 30) setTimeout(() => revealLine(path, line, tries + 1), 100);
+    if (tries < 30) setTimeout(() => revealLine(path, line, end, tries + 1), 100);
     return;
   }
-  ed.setPosition({ lineNumber: line, column: 1 });
-  ed.revealLineNearTop(line);
+  const model = ed.getModel();
+  if (end !== undefined && model) {
+    const last = Math.min(end, model.getLineCount());
+    ed.setSelection({ startLineNumber: line, startColumn: 1, endLineNumber: last, endColumn: model.getLineMaxColumn(last) });
+    ed.revealLinesNearTop(line, last);
+  } else {
+    ed.setPosition({ lineNumber: line, column: 1 });
+    ed.revealLineNearTop(line);
+  }
 }

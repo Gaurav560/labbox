@@ -50,7 +50,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 
 ## How a lab is made
 
-`specs/<lab>.yaml` -> `scripts/labbox new-lab --from-spec specs/<lab>.yaml` -> write chapters,
+`specs/<lab>.yaml` -> `scripts/labbox new-lab --from-spec specs/<lab>.yaml` -> write chapters
+(every step about project code names it: `file="..." line="..."`, see CONTENT_STANDARD section 3),
 starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scripts/labbox test-lab
 <lab>` (starter must fail, solution must pass) -> `scripts/labbox cover <lab> --logo <tech>[,<tech>]`
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> add the lab's chapters to a skill map in `tracks/` -> add the lab to the `test_test_lab`

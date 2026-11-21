@@ -60,6 +60,25 @@ validator's 120 words of prose; code does not count):
 More, smaller steps beat fewer, denser ones. Never assume a term is known; define it the first time,
 in place.
 
+**Talk to one learner (owner, 21 November):** "the users must have felt like I am talking to him or her
+only, in an interactive way; not taking shortcuts and just finishing the stuff." Write as a teacher
+sitting next to one person: "you" and "let's", start from where the last chapter left them, show the
+problem before the answer, ask them to run, guess or look before you tell, and say what they will see
+on screen. Never squeeze several ideas into one list or table to save space. The goal of a course: a
+learner who starts with zero knowledge finishes able to build the thing alone, and confident.
+
+**The lesson and the code stay in sync (owner, 21 November):** a step about a file in the project names
+it, and reaching the step opens that file in the editor with those lines selected:
+
+```text
+:::step{type=concept title="What SpringApplication.run does" file="02-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="10"}
+```
+
+`line` is one line or a range (`line="9-12"`). Task steps need nothing: they open their own task's
+`TODO (task <id>)`. A step that shows code which is **not** in the project says so in its first lines
+("only to read; it is not in your project"), so nobody hunts for it. The validator fails a `file` that
+is not in `starter/` or a line past its end.
+
 ### Visuals: the owner's rules (20 November)
 
 | Kind | Use | What it is for |

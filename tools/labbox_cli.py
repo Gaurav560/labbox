@@ -229,6 +229,18 @@ def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | 
                     rep.errors.append(f"{ch.file}: task {t.id!r} has no task step (add :::step{{type=task task={t.id}}})")
             if not any(s.type == "recap" for s in steps):
                 rep.warnings.append(f"{ch.file}: no recap step")
+        # A step about a file opens it in the editor: the file must be in the starter, the lines inside it.
+        for i, s in enumerate(steps, 1):
+            if not s.file:
+                continue
+            f = lab.starter_dir / s.file
+            if not f.is_file():
+                rep.errors.append(f"{ch.file}: step {i} names file={s.file!r}, which is not in starter/")
+                continue
+            count = len(f.read_text(encoding="utf-8", errors="replace").splitlines())
+            last = s.end_line or s.line or 1
+            if last > count:
+                rep.errors.append(f"{ch.file}: step {i} points at line {last} of {s.file}, which has {count} lines")
         for t in ch.tasks:
             if len(t.hints) != HINTS_PER_TASK:
                 rep.errors.append(f"chapter {ch.id}: task {t.id!r} has {len(t.hints)} hints, needs {HINTS_PER_TASK}")

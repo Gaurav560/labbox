@@ -9,7 +9,7 @@ the code into `application.properties`.
 :::
 :::
 
-:::step{type=concept title="What SpringApplication.run does"}
+:::step{type=concept title="What SpringApplication.run does" file="02-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="10"}
 `main` calls one method:
 
 ```java
@@ -30,7 +30,7 @@ Everything happens once, at start-up. After that, the application only answers r
 :::
 :::
 
-:::step{type=concept title="@SpringBootApplication and component scanning"}
+:::step{type=concept title="@SpringBootApplication and component scanning" file="02-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="1-7"}
 `@SpringBootApplication` on the main class combines three annotations:
 
 - `@Configuration`: this class may define beans;
@@ -71,7 +71,7 @@ which is why a 404 is the typical symptom.
 :::
 :::
 
-:::step{type=try title="Find the missing controller"}
+:::step{type=try title="Find the missing controller" file="02-app-startup/src/main/java/status/StatusController.java" line="3"}
 Start the app from the chapter folder and call both URLs:
 
 ```bash run
@@ -94,7 +94,7 @@ curl -s localhost:8080/status; echo; curl -s localhost:8080/greeting; echo
 `GET /status` should then answer `ok`.
 :::
 
-:::step{type=concept title="Reading a setting with @Value"}
+:::step{type=concept title="Reading a setting with @Value" file="02-app-startup/src/main/java/com/shop/GreetingController.java" line="10-12"}
 Values that may change between environments (a greeting, a URL, a limit) belong in
 `application.properties`, not in code. `@Value` injects a property into a field when Spring creates the bean:
 

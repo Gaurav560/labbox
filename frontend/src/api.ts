@@ -79,7 +79,7 @@ export interface DesignCriterion { id: string; score: number; max: number; feedb
 export interface DesignQuestionResult { id: string; score: number; max: number; criteria: DesignCriterion[] }
 export interface DesignResult { score: number; max: number; questions: DesignQuestionResult[]; xp_awarded?: XpAward[]; created_at: string }
 export interface DesignAttempt { answers: Record<string, string>; result: DesignResult }
-export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null; questions?: DesignQuestion[] }
+export interface Step { type: StepType; title: string | null; task: string | null; minutes: number | null; markdown: string; predict: Predict | null; questions?: DesignQuestion[]; file?: string | null; line?: number | null; end_line?: number | null }
 export interface ChapterContent { id: string; title: string; markdown: string; steps: Step[] }
 export interface ChapterProgress {
   current_step: number;
@@ -172,8 +172,9 @@ export const api = {
     request<ChapterProgress>("PUT", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/progress`, { current_step: step }),
   predict: (labId: string, chapterId: string, step: number, choice: number) =>
     request<PredictState>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/predict`, { step, choice }),
-  chapterFocus: (labId: string, chapterId: string, ide: boolean) =>
-    request<{ path: string | null; line: number }>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/focus`, { ide }),
+  /** The file a chapter is about, or (with step) the file that lesson step talks about. */
+  chapterFocus: (labId: string, chapterId: string, ide: boolean, step?: number) =>
+    request<{ path: string | null; line: number; end_line: number | null }>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/focus`, step === undefined ? { ide } : { ide, step }),
   chapterSetup: (labId: string, chapterId: string) =>
     request<SetupResult>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/setup`),
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),

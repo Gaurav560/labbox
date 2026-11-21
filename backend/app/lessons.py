@@ -50,6 +50,11 @@ class Step(BaseModel):
     markdown: str  # body, rendered by the frontend
     predict: Predict | None = None
     questions: list[DesignQuestion] = []  # design steps: short written answers, graded with tests/rubric.yaml
+    # The project file this step talks about (file="02-app/src/.../App.java" line="8" or line="8-12"):
+    # reaching the step opens it in the editor at those lines.
+    file: str | None = None
+    line: int | None = None
+    end_line: int | None = None
 
 
 def _closes_fence(line: str, fence: str) -> bool:
@@ -175,6 +180,27 @@ def _int_or_none(v: str | None) -> int | None:
     return int(v) if v and v.isdigit() else None
 
 
+def _parse_file(attrs: dict[str, str]) -> tuple[str | None, int | None, int | None]:
+    """file= must be a plain relative path inside the workspace; line= is "8" or "8-12"."""
+    f = attrs.get("file")
+    if not f:
+        if attrs.get("line"):
+            raise LessonError("line=... needs a file=... on the same step")
+        return None, None, None
+    parts = f.split("/")
+    if f.startswith("/") or "\\" in f or any(x in ("", ".", "..") for x in parts):
+        raise LessonError(f"file={f!r} must be a relative path inside the workspace, without . or ..")
+    raw = attrs.get("line", "")
+    m = re.fullmatch(r"(\d+)(?:-(\d+))?", raw) if raw else None
+    if raw and not m:
+        raise LessonError(f"line={raw!r} must be a number or a range like 8-12")
+    start = int(m.group(1)) if m else None
+    end = int(m.group(2)) if m and m.group(2) else None
+    if start is not None and (start < 1 or (end is not None and end < start)):
+        raise LessonError(f"line={raw!r} is not a valid line or range")
+    return f, start, end
+
+
 def parse_steps(markdown: str) -> list[Step]:
     """Raises LessonError on a malformed v2 chapter."""
     blocks = _blocks(markdown.splitlines())
@@ -199,6 +225,7 @@ def parse_steps(markdown: str) -> list[Step]:
             questions, lines = _parse_design(lines)
         if step_type in ("task", "incident") and not attrs.get("task"):
             raise LessonError(f"{step_type} step needs a task=... attribute")
+        file, line, end_line = _parse_file(attrs)
         steps.append(
             Step(
                 type=step_type,  # type: ignore[arg-type]
@@ -208,6 +235,9 @@ def parse_steps(markdown: str) -> list[Step]:
                 markdown="\n".join(lines).strip(),
                 predict=predict,
                 questions=questions,
+                file=file,
+                line=line,
+                end_line=end_line,
             )
         )
     return steps
@@ -230,6 +260,9 @@ class PublicStep(BaseModel):
     markdown: str
     predict: PublicPredict | None = None
     questions: list[DesignQuestion] = []
+    file: str | None = None  # the page asks the backend to open it when the step is shown
+    line: int | None = None
+    end_line: int | None = None
 
 
 def public_step(step: Step) -> PublicStep:
@@ -241,6 +274,9 @@ def public_step(step: Step) -> PublicStep:
         markdown=step.markdown,
         predict=PublicPredict(question=step.predict.question, options=step.predict.options) if step.predict else None,
         questions=step.questions,
+        file=step.file,
+        line=step.line,
+        end_line=step.end_line,
     )
 
 

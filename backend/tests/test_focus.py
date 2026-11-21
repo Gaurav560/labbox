@@ -37,3 +37,63 @@ def test_the_learners_own_copy_wins(tmp_path):
     # Lines move as the learner writes code; their copy is searched first.
     (tmp_path / "app.py").write_text("\n" * 40 + "# ---------- chapter 6: caching ----------\n# TODO(price_cache): go\n")
     assert focus("redis-in-practice", 5, tmp_path) == ("app.py", 41)
+
+
+# ---------- each lesson step opens the file it talks about ----------
+
+import random  # noqa: E402
+
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+
+from app import labs  # noqa: E402
+from app.config import get_settings  # noqa: E402
+from app.db import init_db  # noqa: E402
+from app.focus import task_focus  # noqa: E402
+from app.lessons import LessonError, parse_steps  # noqa: E402
+from app.main import app  # noqa: E402
+
+SPRING = "spring-boot-first-api"
+
+
+def test_a_step_names_its_file_and_lines():
+    [s] = parse_steps(':::step{type=concept title="Run" file="app/Main.java" line="8-12"}\nText\n:::')
+    assert (s.file, s.line, s.end_line) == ("app/Main.java", 8, 12)
+    [s] = parse_steps(':::step{type=concept title="Run" file="app/Main.java" line="8"}\nText\n:::')
+    assert (s.line, s.end_line) == (8, None)
+    for bad in ('file="/etc/passwd"', 'file="../x.py"', 'file="a/./b.py"', 'file="a.py" line="0"',
+                'file="a.py" line="9-3"', 'file="a.py" line="eight"', 'line="3"'):
+        with pytest.raises(LessonError):
+            parse_steps(f":::step{{type=concept {bad}}}\nText\n:::")
+
+
+def test_a_task_step_opens_its_own_tasks_todo():
+    lab = LABS[SPRING]
+    ch = next(c for c in lab.chapters if c.id == "03-beans")
+    assert task_focus(lab, ch, "price_service", None)[0] == "03-beans/src/main/java/com/shop/pricing/PriceCalculator.java"
+    assert task_focus(lab, ch, "one_counter", None)[0] == "03-beans/src/main/java/com/shop/visits/HomeController.java"
+
+
+@pytest.fixture(scope="module")
+def client() -> TestClient:
+    labs.init_labs(get_settings().LABS_DIR)
+    init_db()
+    return TestClient(app)
+
+
+def test_the_focus_route_follows_the_step(client: TestClient):
+    r = client.post("/api/auth/signup", json={"username": f"focus{random.randint(0, 10**9)}", "password": "secret123"})
+    h = {"Authorization": f"Bearer {r.json()['token']}"}
+    url = f"/api/labs/{SPRING}/chapters/02-app-startup/focus"
+    steps = client.get(f"/api/labs/{SPRING}/chapters/02-app-startup", headers=h).json()["steps"]
+    run = next(i for i, s in enumerate(steps) if s["title"] == "What SpringApplication.run does")
+    assert steps[run]["file"].endswith("ShopApiApplication.java")  # the page knows the step has a file
+    f = client.post(url, json={"step": run}, headers=h).json()
+    assert f == {"path": "02-app-startup/src/main/java/com/shop/ShopApiApplication.java", "line": 10, "end_line": 10}
+    task = next(i for i, s in enumerate(steps) if s["task"] == "greeting_property")
+    assert client.post(url, json={"step": task}, headers=h).json()["path"] == "02-app-startup/src/main/resources/application.properties"
+    story = 0  # a step about no file: nothing to open
+    assert client.post(url, json={"step": story}, headers=h).json()["path"] is None
+    assert client.post(url, json={"step": 999}, headers=h).status_code == 404
+    # Without a step, the chapter's own file, as before.
+    assert client.post(url, json={}, headers=h).json()["path"].startswith("02-app-startup/")

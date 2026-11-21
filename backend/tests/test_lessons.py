@@ -132,9 +132,10 @@ def test_real_chapters_are_v2():
             types = [s.type for s in lab.chapter_steps(ch.id)]
             # Spec section 9: story, concept or example steps, a predict, a try, 1 to 4 tasks (or an
             # incident), a recap; deep-dive and design steps come on top. CONTENT_STANDARD section 3
-            # ("explain, do not just state") allows more, smaller concept steps.
-            assert 6 <= len(types) <= 18, (lab.id, types)
-            assert 1 <= sum(t in ("concept", "example") for t in types) <= 6, (lab.id, ch.id, "1 to 6 concept or example steps")
+            # ("explain, do not just state") allows more, smaller concept steps; the owner's "talk to the
+            # learner, small steps" voice (21 November) needs room for up to 14 of them.
+            assert 6 <= len(types) <= 30, (lab.id, types)
+            assert 1 <= sum(t in ("concept", "example") for t in types) <= 14, (lab.id, ch.id, "1 to 14 concept or example steps")
             assert sum(t in ("task", "incident") for t in types) <= 4, (lab.id, ch.id, "at most 4 tasks")
             for needed in ("story", "predict", "recap"):
                 assert needed in types, (lab.id, needed)

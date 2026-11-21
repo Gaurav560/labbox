@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 from .. import containers, ide, limits, progress, services
-from ..focus import chapter_focus
+from ..focus import chapter_focus, step_file, task_focus
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
@@ -196,11 +196,13 @@ def outline(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)
 
 class FocusIn(BaseModel):
     ide: bool = False  # also open it in the learner's running VS Code
+    step: int | None = None  # 0-based: open what this step talks about instead of the chapter's file
 
 
 class FocusOut(BaseModel):
     path: str | None = None
     line: int = 1
+    end_line: int | None = None  # with a step's line range: the lines to highlight
 
 
 @router.post("/{lab_id}/chapters/{chapter_id}/focus", response_model=FocusOut)
@@ -208,22 +210,38 @@ async def chapter_focus_route(
     lab_id: str, chapter_id: str, body: FocusIn | None = None,
     user: User = Depends(get_current_user), session: Session = Depends(get_session),
 ) -> FocusOut:
-    """The file and line this chapter is about. With ide=true, VS Code opens it too (the
-    labbox-defaults extension watches /tmp/labbox-open.json in the machine)."""
+    """The file and line this chapter (or one of its steps) is about. With ide=true, VS Code opens it
+    too (the labbox-defaults extension watches /tmp/labbox-open.json in the machine). A step names
+    its file in the lesson (file=, line=); a task step opens its own task's TODO. Only paths from the
+    lab's own content are ever opened, never a path sent by the browser."""
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
     ws = containers.get_workspace(session, user, lab)
-    hit = await asyncio.to_thread(chapter_focus, lab, ch, Path(ws.volume_path))
+    folder = Path(ws.volume_path)
+    end: int | None = None
+    if body and body.step is not None:
+        steps = lab.chapter_steps(ch.id)
+        if not 0 <= body.step < len(steps):
+            raise HTTPException(404, f"Step {body.step} not found in chapter {chapter_id!r}")
+        st = steps[body.step]
+        hit = None
+        if st.file and await asyncio.to_thread(step_file, lab, st.file, folder):
+            # A step that names a line highlights it (a range: all of it); the chapter focus only moves there.
+            hit, end = (st.file, st.line or 1), (st.end_line or st.line)
+        elif st.task and not st.file:
+            hit = await asyncio.to_thread(task_focus, lab, ch, st.task, folder)
+    else:
+        hit = await asyncio.to_thread(chapter_focus, lab, ch, folder)
     if not hit:
         return FocusOut()
     path, line = hit
     if body and body.ide and ide.available():
-        await asyncio.to_thread(_tell_ide, ws.container_name, path, line)
-    return FocusOut(path=path, line=line)
+        await asyncio.to_thread(_tell_ide, ws.container_name, path, line, end)
+    return FocusOut(path=path, line=line, end_line=end)
 
 
-def _tell_ide(container: str, path: str, line: int) -> None:
-    request = json.dumps({"path": path, "line": line, "at": time.time()})
+def _tell_ide(container: str, path: str, line: int, end_line: int | None = None) -> None:
+    request = json.dumps({"path": path, "line": line, "end": end_line, "at": time.time()})
     try:
         containers.client().containers.get(container).exec_run(
             ["sh", "-c", 'printf "%s" "$LB_OPEN" > /tmp/labbox-open.json'],
