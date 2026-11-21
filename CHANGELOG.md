@@ -1,5 +1,16 @@
 # Changelog
 
+## Skill maps: sky islands instead of the neon road
+
+- The owner found the neon road's 3D design rubbish and asked for the best 3D roadmap I can make, free, not GTA.
+  The world is now **sky islands**: every chapter (or topic) is a floating island with a wavy grass cap, a sandy lip
+  and a rocky underside, trees, rocks and soft shadows; glowing stepping stones climb from island to island
+  through drifting clouds. Finished islands fly a waving flag; the island you are on has a spinning crystal.
+- **Bit**, our own character (red hoodie, yellow scarf, blue backpack, big eyes), hops stone by stone to the
+  island you choose; the camera swoops in on arrival and follows. Labels are real HTML (crisp, clickable) that fade
+  with distance. Dawn colours in the light theme, twilight with stars and glow in the dark one.
+- The neon road (NeonWorld) is removed; lab and track maps both use the islands.
+
 ## Skill maps: a separate section, and a neon 3D road for every lab
 
 - The owner: "keep a skill map section entirely separate, for each lab", in an open-world game style, "when a

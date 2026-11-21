@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type SkillMap, type SkillNode } from "../api";
-import type { Stop } from "../components/NeonWorld";
+import type { Stop } from "../components/IslandWorld";
 import { useAuth } from "../auth";
 import { LogoMark } from "../components/Logo";
 import StatsBadges from "../components/StatsBadges";
@@ -17,7 +17,7 @@ import { usePhone } from "../usePhone";
  */
 
 // three.js is large: load it only when a skill map is opened.
-const NeonWorld = lazy(() => import("../components/NeonWorld"));
+const IslandWorld = lazy(() => import("../components/IslandWorld"));
 
 const STATE_LABEL = { done: "✓ Done", available: "Start", locked: "Locked", coming_soon: "Coming soon" } as const;
 
@@ -72,10 +72,10 @@ export default function TrackPage() {
         {map && show3d && (
           <div className="roadmap-stage">
             <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your roadmap...</div>}>
-              <NeonWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
+              <IslandWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
             </Suspense>
-            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click a sign to ride there</div>
-            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Behind the rider</button>
+            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click an island to hop there</div>
+            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Back to Bit</button>
           </div>
         )}
         {map && (

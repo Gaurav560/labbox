@@ -17,7 +17,7 @@ test("skill maps: from the landing page to a lab's road, into a chapter", async 
   await expect(page).toHaveURL(/\/skills$/);
   await page.locator(".skill-card", { hasText: "Spring Boot" }).click();
   await expect(page).toHaveURL(/\/skills\/spring-boot-first-api$/);
-  await expect(page.locator(".neon-world canvas")).toBeVisible();
+  await expect(page.locator(".island-world canvas")).toBeVisible();
 
   // You start at the first chapter not done; choosing another stop shows it, and Enter opens it.
   await expect(page.locator(".stop-card")).toContainText("You are here");

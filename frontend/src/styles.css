@@ -1588,3 +1588,22 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .stop-list .stop-next button { border-color: #ff2fa0; }
 .stop-list .stop-next .stop-num, .stop-list .stop-next .skill-state { color: #ff5cb0; }
 .stop-list .is-current button { box-shadow: 0 0 0 2px #21e6ff66; }
+
+/* ---------- Sky islands: labels floating over the 3D world ---------- */
+.island-labels { position: absolute; inset: 0; }
+.island-label { display: flex; align-items: center; gap: 8px; max-width: 240px; padding: 6px 12px 6px 6px; border-radius: 999px; cursor: pointer;
+  font: 600 13px/1.25 var(--font-text); color: #1f2333; background: rgba(255, 255, 255, 0.86); backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px rgba(30, 20, 60, 0.18); border: 1px solid rgba(255, 255, 255, 0.9); transition: transform .2s ease, box-shadow .2s ease, opacity .3s ease; white-space: normal; }
+.island-label:hover, .island-label.is-selected { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 26px rgba(30, 20, 60, 0.28); }
+.il-num { flex: none; display: grid; place-items: center; min-width: 28px; height: 28px; border-radius: 999px; font: 800 12px var(--font-code); background: #ece9f5; color: #4b4470; }
+.il-badge { flex: none; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.island-label.is-done .il-num { background: #3fb950; color: #fff; }
+.island-label.is-done .il-badge { color: #1a7f37; }
+.island-label.is-next { border-color: #ff6fb1; }
+.island-label.is-next .il-num { background: #ff6fb1; color: #fff; }
+.island-label.is-next .il-badge { background: #ff6fb1; color: #fff; }
+.island-label.is-selected { outline: 2px solid #5048b8; }
+:root:not([data-theme="light"]) .island-label { color: #eef0ff; background: rgba(22, 18, 48, 0.78); border-color: rgba(160, 150, 255, 0.3); }
+:root:not([data-theme="light"]) .il-num { background: #2c2660; color: #cfd4ff; }
+:root:not([data-theme="light"]) .island-label.is-next { border-color: #7df9ff; }
+:root:not([data-theme="light"]) .island-label.is-next .il-num, :root:not([data-theme="light"]) .island-label.is-next .il-badge { background: #7df9ff; color: #0b1030; }

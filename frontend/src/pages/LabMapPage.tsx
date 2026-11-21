@@ -6,12 +6,12 @@ import { chapterNumber } from "../components/StatusBar";
 import StatsBadges from "../components/StatsBadges";
 import ThemeButton from "../components/ThemeButton";
 import { LogoMark } from "../components/Logo";
-import type { Stop } from "../components/NeonWorld";
+import type { Stop } from "../components/IslandWorld";
 import { useTheme } from "../theme";
 import { usePhone } from "../usePhone";
 
 // three.js and the world are large: loaded only on map pages.
-const NeonWorld = lazy(() => import("../components/NeonWorld"));
+const IslandWorld = lazy(() => import("../components/IslandWorld"));
 
 /** One lab's road: each chapter a stop; you start at the first chapter not done yet. */
 export default function LabMapPage() {
@@ -57,11 +57,11 @@ export default function LabMapPage() {
       <main className={`track-main ${show3d ? "has-3d" : ""}`} aria-label="Skill map">
         {lab && show3d && (
           <div className="roadmap-stage">
-            <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your road...</div>}>
-              <NeonWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
+            <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your islands...</div>}>
+              <IslandWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
             </Suspense>
-            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click a sign to ride there</div>
-            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Behind the rider</button>
+            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click an island to hop there</div>
+            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Back to Bit</button>
           </div>
         )}
         {lab && (
