@@ -1504,23 +1504,24 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .rail-dot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--font-text);
   border: 1.5px solid var(--border); background: var(--card); color: var(--muted); position: relative; z-index: 1; }
 .rail-step.is-done .rail-dot { background: var(--success); border-color: var(--success); color: #0b1a10; }
-.rail-step.is-now a { background: color-mix(in srgb, #e50914 14%, transparent); color: var(--text); font-weight: 600; }
-.rail-step.is-now .rail-dot { background: #e50914; border-color: #ff5a64; color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, #e50914 25%, transparent); }
+.rail-step.is-now a { background: color-mix(in srgb, var(--deck, #e50914) 14%, transparent); color: var(--text); font-weight: 600; }
+.rail-step.is-now .rail-dot { background: var(--deck, #e50914); border-color: var(--deck-hi, #ff5a64); color: var(--deck-ink, #fff); box-shadow: 0 0 0 4px color-mix(in srgb, var(--deck, #e50914) 25%, transparent); }
 .rail-title { padding-top: 2px; }
 @media (max-width: 1199px) { .next-rail { display: none; } .labs-side { max-height: none; } }
 
-/* The next-step card as a tape deck (owner, 21 November: after a red-and-silver cassette design). It is a dark
+/* The next-step card as a tape deck (owner, 21 November: after a red-and-silver cassette design; 22 November: in the
+   colour of the lab it continues, --deck from brand.ts labTone). It is a dark
    device in both themes: a dotted charcoal panel with red and grey bands on its edge, a bold title with a red
    italic initial, and a silver deck with working keys. */
-.deck-card { position: relative; overflow: hidden; color: #f2f2f2; border: 1px solid #2a2a2a; border-left: none; border-radius: 14px; padding: 22px 22px 22px 30px;
+.deck-card { --deck: #e50914; --deck-ink: #fff; --deck-hi: #ff5a64; --deck-lo: #ac0710; position: relative; overflow: hidden; color: #f2f2f2; border: 1px solid #2a2a2a; border-left: none; border-radius: 14px; padding: 22px 22px 22px 30px;
   background: radial-gradient(circle, rgba(255, 255, 255, .07) 1px, transparent 1.4px) 0 0 / 14px 14px, linear-gradient(160deg, #1d1d1f, #121213);
   box-shadow: 0 18px 40px -20px rgba(0, 0, 0, .7); flex: none; }
 .deck-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px;
-  background: linear-gradient(#e50914 0 28%, #3b3b3d 28% 44%, #e50914 44% 70%, #3b3b3d 70% 84%, #e50914 84%); }
+  background: linear-gradient(var(--deck) 0 28%, #3b3b3d 28% 44%, var(--deck) 44% 70%, #3b3b3d 70% 84%, var(--deck) 84%); }
 .labs-page .next-card.deck-card .next-kicker { color: #9a9aa0; letter-spacing: .14em; font-size: 11px; }
 .deck-card .next-title { margin: 6px 0 4px; font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; color: #fff; }
 .labs-side .deck-card .next-title { font-size: 30px; }
-.deck-initial { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; color: #e50914; margin-right: 1px; }
+.deck-initial { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; color: var(--deck); margin-right: 1px; }
 .deck-card .next-where { color: #b7b7bd; font-size: 14px; }
 .deck-card .next-reason { color: #b7b7bd; margin: 8px 0 0; font-size: 14px; }
 
@@ -1533,8 +1534,9 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .deck-key:hover { text-decoration: none; filter: brightness(1.05); }
 .deck-key:active { transform: translateY(2px); border-bottom-width: 1px; }
 .deck-key.is-off { opacity: .45; }
-.deck-play { color: #fff; letter-spacing: 0; font-size: 13.5px; padding: 0 14px; height: 34px;
-  background: linear-gradient(#ff3346, #c00012); border-color: #7a000b; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 4px 10px rgba(229, 9, 20, .45); }
+.deck-play { color: var(--deck-ink); letter-spacing: 0; font-size: 13.5px; padding: 0 14px; height: 34px;
+  background: linear-gradient(var(--deck-hi), var(--deck-lo)); border-color: color-mix(in srgb, var(--deck) 45%, #000);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 4px 10px color-mix(in srgb, var(--deck) 45%, transparent); }
 .deck-play:hover { filter: brightness(1.08); }
 .deck-key:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
@@ -1549,9 +1551,9 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 @media (prefers-reduced-motion: reduce) { .deck-spin { animation: none; } }
 .deck-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding-top: 7px; color: #5b5b62;
   font: 700 10.5px var(--font-text); letter-spacing: .14em; text-transform: uppercase; }
-.deck-arrows { color: #e50914; font-size: 15px; letter-spacing: 0; }
-.deck-led { width: 7px; height: 7px; border-radius: 50%; background: #6b0a10; box-shadow: inset 0 1px 1px rgba(0, 0, 0, .5); }
-.deck-led.is-on { background: #ff2233; box-shadow: 0 0 6px #ff2233; animation: deck-led 1.6s ease-in-out infinite; }
+.deck-arrows { color: var(--deck-lo); font-size: 15px; letter-spacing: 0; }
+.deck-led { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--deck) 40%, #000); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .5); }
+.deck-led.is-on { background: var(--deck-hi); box-shadow: 0 0 6px var(--deck-hi); animation: deck-led 1.6s ease-in-out infinite; }
 @keyframes deck-led { 50% { opacity: .45; } }
 @media (prefers-reduced-motion: reduce) { .deck-led.is-on { animation: none; } }
 @media (max-width: 1199px) {
@@ -1708,3 +1710,45 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
   .map-hero h1 { font-size: 22px; }
   .map-continue { width: 100%; justify-content: center; text-align: center; }
 }
+
+/* A lab's own page (/courses/<lab>): the step between a lab card and the lab. Coloured by the lab (--tone from
+   brand.ts labTone); text stays in theme colours so bright tones (yellow Linux) still read on a light page. */
+.course-page { --tone: #e50914; --tone-ink: #fff; min-height: 100%; background: var(--bg); }
+.course-main { max-width: 1200px; margin: 0 auto; padding: 32px 16px 80px; }
+.course-hero { position: relative; display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 28px; align-items: center;
+  padding: 22px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--tone) 22%, transparent), transparent 60%), var(--card); }
+.course-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--tone); }
+.course-cover { border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 10; background: var(--chip);
+  box-shadow: 0 18px 36px -18px color-mix(in srgb, var(--tone) 70%, #000); }
+.course-cover img, .course-cover svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.course-hero-text { min-width: 0; }
+.course-kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.course-kicker::before { content: ""; width: 18px; height: 4px; border-radius: 2px; background: var(--tone); }
+.course-hero h1 { margin: 8px 0 6px; font-size: 38px; line-height: 1.05; letter-spacing: -.02em; }
+.course-sub { margin: 0 0 16px; color: var(--muted); font-size: 16px; line-height: 1.5; }
+.course-progress { display: grid; gap: 6px; margin-bottom: 18px; font-size: 13px; color: var(--muted); }
+.course-bar { height: 6px; border-radius: 3px; background: var(--chip); overflow: hidden; }
+.course-bar > div { height: 100%; border-radius: 3px; background: var(--tone); }
+.course-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.course-go { display: inline-flex; align-items: center; height: 42px; padding: 0 20px; border-radius: 10px; font-weight: 700; font-size: 15px;
+  color: var(--tone-ink); background: linear-gradient(var(--tone-hi), var(--tone-lo)); border: 1px solid color-mix(in srgb, var(--tone) 50%, #000);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 8px 20px -8px color-mix(in srgb, var(--tone) 70%, transparent); transition: transform .12s ease, filter .12s ease; }
+.course-go:hover { text-decoration: none; filter: brightness(1.07); transform: translateY(-1px); }
+.course-actions .btn { height: 42px; display: inline-flex; align-items: center; }
+.course-where { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+
+.course-about { display: grid; gap: 16px; margin: 28px 0 8px; }
+.course-about > p { margin: 0; max-width: 760px; font-size: 16px; line-height: 1.65; }
+.course-facts { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
+.course-facts li { display: grid; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); min-width: 110px; }
+.course-facts strong { font-size: 18px; }
+.course-facts span { color: var(--muted); font-size: 12.5px; }
+
+.course-syllabus h2 { margin: 36px 0 4px; font-size: 22px; }
+.course-syllabus > p { margin: 0 0 30px; }
+@media (max-width: 760px) {
+  .course-hero { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
+  .course-hero h1 { font-size: 30px; }
+}
+.course-play { margin-right: 8px; font-size: 12px; }

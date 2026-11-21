@@ -34,7 +34,8 @@ function lazyPage<T extends { default: React.ComponentType }>(load: () => Promis
 
 // The lab page pulls in Monaco and xterm, so load it only when needed.
 const LabPage = lazyPage(() => import("./pages/LabPage"));
-const TrackPage = lazyPage(() => import("./pages/TrackPage")); // three.js is only needed on map pages
+const TrackPage = lazyPage(() => import("./pages/TrackPage"));
+const CoursePage = lazyPage(() => import("./pages/CoursePage"));
 const SkillsPage = lazyPage(() => import("./pages/SkillsPage"));
 const LabMapPage = lazyPage(() => import("./pages/LabMapPage"));
 const AdminPage = lazyPage(() => import("./pages/AdminPage")); // only admins ever load it
@@ -55,6 +56,10 @@ export default function App() {
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/labs" element={<RequireAuth><LabsPage /></RequireAuth>} />
+      <Route
+        path="/courses/:labId"
+        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><CoursePage /></Suspense></RequireAuth>}
+      />
       <Route
         path="/labs/:labId"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><LabPage /></Suspense></RequireAuth>}

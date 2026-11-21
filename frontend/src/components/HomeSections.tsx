@@ -1,35 +1,17 @@
 import { useState, type CSSProperties } from "react";
 import { FAQS } from "../pages/InfoPages";
 import SHOTS from "../homeShots.json";
+import { LAB_TONES } from "../brand";
 
 // Home page sections: a real lab screenshot, the AI track and the FAQs.
 
-// The glow around the screenshot takes the lab's own colour (its cover's brand colour; dark ones such
-// as navy Java or grey Linux use their bright accent instead, so the glow shows on a dark page).
-const TONES: Record<string, string> = {
-  "express-api": "#8b949e",
-  "fastapi-first-api": "#009688",
-  "git-without-fear": "#F05033",
-  "go-basics": "#00ADD8",
-  "java-basics": "#f89820",
-  "java-collections": "#f89820",
-  "javascript-inside-out": "#F7DF1E",
-  "linux-on-call": "#FCC624",
-  "postgres-indexing-incident": "#4a8fd1",
-  "postgres-transactions-and-locks": "#4a8fd1",
-  "python-basics": "#4b8bbe",
-  "python-collections": "#4b8bbe",
-  "rate-limiter": "#00b347",
-  "redis-in-practice": "#DC382D",
-  "spring-boot-first-api": "#6DB33F",
-  "sql-from-zero": "#6366f1",
-};
+// The glow around the screenshot takes the lab's own colour (LAB_TONES in brand.ts).
 
 /** The lab a screenshot belongs to, from its file name (/images/labs/<lab>-<nn>-<chapter>.webp). */
 export function shotTone(src: string): string | undefined {
   const name = src.split("/").pop() ?? "";
-  const lab = Object.keys(TONES).find((id) => name.startsWith(`${id}-`));
-  return lab ? TONES[lab] : undefined;
+  const lab = Object.keys(LAB_TONES).find((id) => name.startsWith(`${id}-`));
+  return lab ? LAB_TONES[lab] : undefined;
 }
 
 /** "Inside a lab": a real screenshot of a lab (a different one on each visit), then six features. */

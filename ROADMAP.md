@@ -216,7 +216,8 @@ tasks, written in the "explain, do not just state" style) and JavaScript from ze
 visualizations (interactive "watch it run" traces) first, real code always, decorative images rarely.
 JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
-learners land on it. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
+learners land on it. Done (22 November): Continue follows the last chapter opened and wears that lab's colour; a lab card opens
+the lab's own course page (`/courses/<lab>`) first, then the lab. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
 courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
 12 traces, quick checks, 32 task cards). Traces have a Play button.

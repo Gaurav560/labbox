@@ -1,5 +1,22 @@
 # Changelog
 
+## 22 November: a page for every lab; the deck in the lab's colour
+
+- The owner: a lab card should open a page for that lab, then the lab. New `/courses/<lab>` (`CoursePage.tsx`):
+  the cover with the lab's colour, track and level, subtitle, progress, one button into the lab ("Continue:
+  Chapter N" or "Start: Chapter N", with the chapter and step), the description, a few facts,
+  and the chapters as a metro map (the skill map's component: a line per course part, "You are here" on the chapter
+  the learner was last in, every subtopic a link to its lesson step). The owner found a plain chapter list too
+  dense; `labLines` and `MetroLegend` now live in `MetroMap.tsx` and the skill map page uses them too. Lab cards on the dashboard
+  and on the home page (signed in) open it; Continue, chapter lists and skill maps still go straight into the lab.
+- The dashboard's tape deck takes the colour of the lab it continues (Go cyan, Spring green, Redis red...): the
+  edge bands, the initial, the play key, the LED, the cassette and the rail's current chapter. Text on bright tones
+  turns dark. Lab colours moved to `brand.ts` (`LAB_TONES`, `labTone`, `mix`, `inkOn`) and the home page uses them.
+- `GET /api/me/next?lab=<id>` (new query, additive): where to pick up in that lab, or its first chapter; 404 for an
+  unknown lab. The course page uses it.
+- Tests: `test_next_starts_new_learners_and_continues_the_rest` covers `?lab=`; new browser test `course.spec.ts`
+  (the deck in Go's colour, card to course page, Continue lands on the saved step, a chapter row opens its chapter).
+
 ## 22 November: Continue follows the last chapter opened
 
 - The dashboard's Continue card picked the lab where the learner last moved a step, so opening a lab

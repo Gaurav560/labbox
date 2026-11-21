@@ -45,27 +45,38 @@ def _id_number(chapter_id: str, fallback: int) -> int:
 
 
 @router.get("/me/next", response_model=NextOut)
-def my_next(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> NextOut:
-    labs = {lab.id: lab for lab in all_labs()}
-    rows = session.exec(
-        select(ChapterProgress).where(ChapterProgress.user_id == _uid(user)).order_by(col(ChapterProgress.updated_at).desc())
-    ).all()
+def my_next(lab: str | None = None, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> NextOut:
+    """Where to pick up. With ?lab=<id>: where to pick up in that lab (its course page), or its first chapter."""
+    labs = {x.id: x for x in all_labs()}
+    if lab is not None and lab not in labs:
+        raise HTTPException(404, "Unknown lab")
+    query = select(ChapterProgress).where(ChapterProgress.user_id == _uid(user))
+    if lab is not None:
+        query = query.where(ChapterProgress.lab_id == lab)
+    rows = session.exec(query.order_by(col(ChapterProgress.updated_at).desc())).all()
     for row in rows:
-        lab = labs.get(row.lab_id)
-        ids = [c.id for c in lab.chapters] if lab else []
+        course = labs.get(row.lab_id)
+        ids = [c.id for c in course.chapters] if course else []
         if row.chapter_id not in ids:
             continue  # a lab or chapter that no longer exists
         i, step = ids.index(row.chapter_id), row.current_step
         if row.completed_at is not None and i + 1 < len(ids):
             i, step = i + 1, 0  # that chapter is done: the next one
-        ch = lab.chapters[i]
-        total = len(lab.chapter_steps(ch.id))
+        ch = course.chapters[i]
+        total = len(course.chapter_steps(ch.id))
         # A course with a chapter 0 numbers chapters by their ids (the menu and the folders agree); "of N" is the last.
         zero = ids[0].startswith("00-")
-        return NextOut(kind="continue", lab_id=lab.id, lab_title=lab.title, chapter_id=ch.id, chapter_title=ch.title,
+        return NextOut(kind="continue", lab_id=course.id, lab_title=course.title, chapter_id=ch.id, chapter_title=ch.title,
                        chapter_number=_id_number(ch.id, i) if zero else i + 1,
                        chapters=_id_number(ids[-1], len(ids) - 1) if zero else len(ids),
                        step=min(step, total - 1) + 1, steps=total)
+    if lab is not None:
+        first = labs[lab]
+        ch = first.chapters[0]
+        return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
+                       chapter_number=0 if ch.id.startswith("00-") else 1,
+                       chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
+                       step=1, steps=len(first.chapter_steps(ch.id)))
     # A new learner: the first lab of the goal they picked in onboarding, else the coding basics.
     goal_id = engagement.get_profile(session, _uid(user)).goal
     try:

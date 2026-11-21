@@ -79,7 +79,7 @@ export default function HomePage() {
     <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
   const live = catalog ?? [];
-  const labLink = (lab: CatalogLab) => (user ? `/labs/${lab.id}` : "/login?signup=1");
+  const labLink = (lab: CatalogLab) => (user ? `/courses/${lab.id}` : "/login?signup=1");
 
   return (
     <div className="home">

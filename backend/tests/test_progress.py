@@ -133,3 +133,10 @@ def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
     back = client.get("/api/me/next", headers=h).json()
     assert (back["lab_id"], back["chapter_id"], back["step"]) == ("java-basics", "03-decisions", 5)
     assert client.get("/api/me/next").status_code == 401
+
+    # One lab's own answer (its course page): where you were in that lab, else its first chapter.
+    assert client.get("/api/me/next?lab=java-basics", headers=h).json()["chapter_id"] == "03-decisions"
+    assert client.get(f"/api/me/next?lab={LAB}", headers=h).json()["chapter_id"] == CH
+    fresh = client.get("/api/me/next?lab=go-basics", headers=h).json()
+    assert (fresh["kind"], fresh["chapter_id"], fresh["step"]) == ("start", "01-first-program", 1)
+    assert client.get("/api/me/next?lab=nope", headers=h).status_code == 404

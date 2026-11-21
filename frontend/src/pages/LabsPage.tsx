@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
+import { inkOn, labTone, mix } from "../brand";
 import { chapterNumber } from "../components/StatusBar";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
@@ -11,7 +12,7 @@ import { useToast } from "../components/Toasts";
 import { useStats } from "../stats";
 import ThemeButton from "../components/ThemeButton";
 
-const TRACK_LABEL: Record<string, string> = {
+export const TRACK_LABEL: Record<string, string> = {
   languages: "Languages",
   frameworks: "Frameworks",
   databases: "Databases",
@@ -93,7 +94,7 @@ export default function LabsPage() {
             const { passed_tasks: done, total_tasks: total } = lab.progress;
             const pct = total ? (100 * done) / total : 0;
             return (
-              <Link key={lab.id} to={`/labs/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
+              <Link key={lab.id} to={`/courses/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
                 <div className="h-lab-img">
                   {lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : (
                     <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
@@ -131,8 +132,10 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const after = lab && idx >= 0 && idx < lab.chapters.length - 1 ? lab.chapters[idx + 1] : null;
   const chapterUrl = (id: string) => `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
   const title = next.lab_title;
+  const tone = labTone(next.lab_id, lab?.cover_credit);
   return (
-    <section className={`next-card deck-card ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}>
+    <section className={`next-card deck-card ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}
+      style={deckVars(tone)}>
       <div className="next-text">
         <div className="next-kicker">{cont ? "Continue where you left off" : "Start here"}</div>
         <h1 className="next-title"><span className="deck-initial">{title.slice(0, 1)}</span>{title.slice(1)}</h1>
@@ -155,7 +158,7 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
         </div>
         <div className="deck-body">
           <div className="deck-window">
-            <Cassette progress={pct / 100} playing={cont} />
+            <Cassette progress={pct / 100} playing={cont} tone={tone} />
           </div>
           <div className="deck-label" role="progressbar" aria-label="Progress in this chapter" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
             <span className="deck-arrows" aria-hidden="true">⇄</span>
@@ -168,13 +171,19 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   );
 }
 
-/** A red cassette: the tape winds from the left reel (to come) to the right one (done). */
-function Cassette({ progress, playing }: { progress: number; playing: boolean }) {
+/** The deck's colours as CSS variables: the lab's tone, and text that reads on it. */
+function deckVars(tone: string): CSSProperties {
+  return { "--deck": tone, "--deck-ink": inkOn(tone), "--deck-hi": mix(tone, "#ffffff", 0.2), "--deck-lo": mix(tone, "#000000", 0.25) } as CSSProperties;
+}
+
+/** A cassette in the lab's colour: the tape winds from the left reel (to come) to the right one (done). */
+function Cassette({ progress, playing, tone }: { progress: number; playing: boolean; tone: string }) {
+  const shade = (t: number) => mix(tone, "#000000", t);
   const left = 9 + 13 * (1 - progress);
   const right = 9 + 13 * progress;
   const reel = (cx: number, r: number) => (
     <g>
-      <circle cx={cx} cy={50} r={r} fill="#2b0d10" />
+      <circle cx={cx} cy={50} r={r} fill={shade(0.82)} />
       <circle cx={cx} cy={50} r={r} fill="none" stroke="#000" strokeOpacity=".35" />
       <g className={playing ? "deck-spin" : ""} style={{ transformOrigin: `${cx}px 50px` }}>
         <circle cx={cx} cy={50} r={8.5} fill="#e9e9ea" />
@@ -189,23 +198,23 @@ function Cassette({ progress, playing }: { progress: number; playing: boolean })
   return (
     <svg className="cassette" viewBox="0 0 220 112" aria-hidden="true">
       <defs>
-        <linearGradient id="cas-red" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f0283a" /><stop offset="1" stopColor="#a8071a" />
+        <linearGradient id="cas-body" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={mix(tone, "#ffffff", 0.12)} /><stop offset="1" stopColor={shade(0.3)} />
         </linearGradient>
         <linearGradient id="cas-glass" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#fff" stopOpacity=".16" /><stop offset=".45" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="216" height="108" rx="9" fill="url(#cas-red)" />
-      <rect x="2" y="2" width="216" height="108" rx="9" fill="none" stroke="#5c0410" strokeWidth="2" />
-      <rect x="14" y="12" width="192" height="66" rx="6" fill="#c3121f" stroke="#7d0612" />
-      <rect x="44" y="30" width="132" height="40" rx="20" fill="#16070a" />
+      <rect x="2" y="2" width="216" height="108" rx="9" fill="url(#cas-body)" />
+      <rect x="2" y="2" width="216" height="108" rx="9" fill="none" stroke={shade(0.62)} strokeWidth="2" />
+      <rect x="14" y="12" width="192" height="66" rx="6" fill={shade(0.12)} stroke={shade(0.5)} />
+      <rect x="44" y="30" width="132" height="40" rx="20" fill={shade(0.9)} />
       {reel(78, left)}
       {reel(142, right)}
-      <rect x="98" y="38" width="24" height="24" rx="2" fill="#24090c" stroke="#5c0410" />
-      <path d="M 44 112 L 58 86 L 162 86 L 176 112 Z" fill="#8f0716" />
-      {[78, 100, 120, 142].map((x) => <circle key={x} cx={x} cy={99} r={3.2} fill="#3d0309" />)}
-      {[[10, 10], [210, 10], [10, 102], [210, 102]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r={2.4} fill="#5c0410" />)}
+      <rect x="98" y="38" width="24" height="24" rx="2" fill={shade(0.86)} stroke={shade(0.62)} />
+      <path d="M 44 112 L 58 86 L 162 86 L 176 112 Z" fill={shade(0.4)} />
+      {[78, 100, 120, 142].map((x) => <circle key={x} cx={x} cy={99} r={3.2} fill={shade(0.76)} />)}
+      {[[10, 10], [210, 10], [10, 102], [210, 102]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r={2.4} fill={shade(0.62)} />)}
       <rect x="2" y="2" width="216" height="108" rx="9" fill="url(#cas-glass)" />
     </svg>
   );
@@ -217,7 +226,7 @@ function Cassette({ progress, playing }: { progress: number; playing: boolean })
  */
 function NextRail({ next, lab }: { next: NextStep; lab: LabDetail }) {
   return (
-    <nav className="next-rail" aria-label={`Chapters of ${lab.title}`}>
+    <nav className="next-rail" aria-label={`Chapters of ${lab.title}`} style={deckVars(labTone(lab.id, lab.cover_credit))}>
       <div className="next-rail-head">
         <span>Chapters</span>
         <span className="muted">{lab.progress.passed_tasks}/{lab.progress.total_tasks} tasks</span>
