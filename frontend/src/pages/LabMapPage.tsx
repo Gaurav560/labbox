@@ -1,93 +1,68 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type LabDetail } from "../api";
 import { useAuth } from "../auth";
+import Roadmap, { type RoadItem } from "../components/Roadmap";
 import { chapterNumber } from "../components/StatusBar";
 import StatsBadges from "../components/StatsBadges";
 import ThemeButton from "../components/ThemeButton";
 import { LogoMark } from "../components/Logo";
-import type { Stop } from "../components/IslandWorld";
-import { useTheme } from "../theme";
-import { usePhone } from "../usePhone";
 
-// three.js and the world are large: loaded only on map pages.
-const IslandWorld = lazy(() => import("../components/IslandWorld"));
-
-/** One lab's road: each chapter a stop; you start at the first chapter not done yet. */
+/** One lab's roadmap: every chapter a step; you are at the first chapter not done yet. */
 export default function LabMapPage() {
   const { labId = "" } = useParams();
   const { user } = useAuth();
-  const { theme } = useTheme();
-  const phone = usePhone();
   const [lab, setLab] = useState<LabDetail | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [reset, setReset] = useState(0);
-  const [noWebGl, setNoWebGl] = useState(false);
   useEffect(() => {
-    setSelected(null);
     api.lab(labId).then(setLab).catch(() => setLab(null));
   }, [labId]);
 
-  const stops: Stop[] = useMemo(() => {
+  const items: RoadItem[] = useMemo(() => {
     if (!lab) return [];
     const done = (i: number) => lab.chapters[i].tasks.length > 0 && lab.chapters[i].tasks.every((t) => t.passed);
-    const next = lab.chapters.findIndex((_, i) => !done(i));
-    return lab.chapters.map((c, i) => ({
-      id: c.id,
-      number: String(chapterNumber(lab.chapters, i)).padStart(2, "0"),
-      title: c.title,
-      state: done(i) ? "done" : i === next ? "next" : "open",
-    }));
+    const now = lab.chapters.findIndex((_, i) => !done(i));
+    return lab.chapters.map((c, i) => {
+      const passed = c.tasks.filter((t) => t.passed).length;
+      return {
+        id: c.id,
+        number: String(chapterNumber(lab.chapters, i)).padStart(2, "0"),
+        title: c.title,
+        meta: `${passed} of ${c.tasks.length} task${c.tasks.length === 1 ? "" : "s"}${c.minutes ? ` · ${c.minutes} min` : ""}`,
+        state: done(i) ? "done" : i === now ? "now" : "open",
+        href: `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}`,
+      };
+    });
   }, [lab]);
-  const stop = stops.find((s) => s.id === selected) ?? stops.find((s) => s.state === "next") ?? null;
-  const chapter = lab?.chapters.find((c) => c.id === stop?.id);
-  const show3d = !phone && !noWebGl;
+  const doneCount = items.filter((i) => i.state === "done").length;
+  const pct = items.length ? Math.round((100 * doneCount) / items.length) : 0;
+  const current = items.find((i) => i.state === "now");
 
   return (
-    <div className="track-page">
+    <div className="map-page">
       <header className="topbar">
         <Link to="/" className="logo" aria-label="LabBox by Telusko home"><LogoMark size={24} /></Link>
         <Link to="/skills" className="link">← Skill maps</Link>
         <span className="brand">{lab?.title ?? labId}</span>
-        {lab && <span className="muted small-text">{stops.filter((s) => s.state === "done").length} of {stops.length} chapters</span>}
         <span className="spacer" />
         <ThemeButton />
         <StatsBadges username={user?.username ?? ""} />
       </header>
-      <main className={`track-main ${show3d ? "has-3d" : ""}`} aria-label="Skill map">
-        {lab && show3d && (
-          <div className="roadmap-stage">
-            <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your islands...</div>}>
-              <IslandWorld stops={stops} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
-            </Suspense>
-            <div className="roadmap-help small-text" aria-hidden="true">Drag to look around · scroll to zoom · click an island to hop there</div>
-            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Back to Bit</button>
-          </div>
-        )}
-        {lab && (
-          <aside className="roadmap-panel" aria-label="Chapters">
-            {stop && chapter && (
-              <div className="stop-card">
-                <div className={`topic-state stop-${stop.state}`}>{stop.state === "done" ? "✓ Done" : stop.state === "next" ? "You are here" : "Chapter"}</div>
-                <h2 className="roadmap-panel-title">Ch {Number(stop.number)} · {chapter.title}</h2>
-                <p className="muted small-text">{chapter.tasks.filter((t) => t.passed).length} of {chapter.tasks.length} tasks{chapter.minutes ? ` · about ${chapter.minutes} min` : ""}</p>
-                <Link className="btn btn-primary stop-enter" to={`/labs/${lab.id}?chapter=${encodeURIComponent(chapter.id)}`}>Enter chapter →</Link>
-              </div>
-            )}
-            <ol className="topic-list stop-list">
-              {stops.map((s) => (
-                <li key={s.id} className={`skill-node stop-${s.state} ${s.id === stop?.id ? "is-current" : ""}`}>
-                  <button onClick={() => setSelected(s.id)} aria-label={`Chapter ${Number(s.number)}: ${s.title}`}>
-                    <span className="stop-num">{s.number}</span>
-                    <span className="skill-title">{s.title}</span>
-                    <span className="skill-state">{s.state === "done" ? "✓" : s.state === "next" ? "▶" : ""}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </aside>
-        )}
-      </main>
+      {lab && (
+        <main className="map-main">
+          <section className="map-hero">
+            <div className="map-ring" style={{ ["--pct" as string]: `${pct}` }} aria-label={`${pct}% done`}>
+              <span>{pct}%</span>
+            </div>
+            <div className="map-hero-text">
+              <div className="map-kicker">Roadmap</div>
+              <h1>{lab.title}</h1>
+              <p className="muted">{doneCount} of {items.length} chapters done{current ? ` · next: ${current.title}` : ""}</p>
+            </div>
+            {current?.href && <Link className="btn btn-primary map-continue" to={current.href}>Continue →</Link>}
+          </section>
+          <Roadmap items={items} />
+        </main>
+      )}
     </div>
   );
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## Skill maps: a plain, simple roadmap (no 3D)
+
+- The owner: "ignore 3D, a plain cool roadmap, simple". Every lab map (`/skills/<lab>`) and track map
+  (`/tracks/<track>`) is now one vertical timeline: a numbered dot per chapter (or topic) on a single line, and a
+  card beside each, alternating left and right on wide screens, one column on phones.
+- Done steps are green with a tick and the line behind them turns green; the step you are on pulses gently and
+  says "You are here" (the page scrolls to it); every card opens its chapter. Track cards list the lab chapters
+  that teach the topic, each a link into the lab.
+- A short header on top: a progress ring, the title, "N of M chapters done, next: ...", and Continue.
+- The Skill maps landing page is plain too (no synthwave hero); cards say "N chapters".
+- The 3D worlds (IslandWorld) are removed; three.js is no longer imported, so `three` and `@types/three` can be
+  uninstalled from `frontend/package.json` when convenient.
+
 ## Skill maps: sky islands instead of the neon road
 
 - The owner found the neon road's 3D design rubbish and asked for the best 3D roadmap I can make, free, not GTA.

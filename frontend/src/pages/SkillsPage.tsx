@@ -8,7 +8,7 @@ import ThemeButton from "../components/ThemeButton";
 
 /*
  * The Skill maps section (owner, 21 November: "keep a skill map section entirely separate, for each lab"):
- * every lab has its own road (each chapter a stop), and every track has one too (each topic a stop).
+ * every lab has its own roadmap (each chapter a step), and every track has one too (each topic a step).
  */
 export default function SkillsPage() {
   const { user, logout } = useAuth();
@@ -32,8 +32,8 @@ export default function SkillsPage() {
       <main className="skills-main">
         <section className="skills-hero">
           <div className="skills-kicker">Skill maps</div>
-          <h1>Every course is a road. Ride it.</h1>
-          <p>Each lab is its own neon highway, one stop per chapter. Pick a road, find where you are, and drive on.</p>
+          <h1>See the whole road, then take the next step.</h1>
+          <p>Every lab is a roadmap, one step per chapter. Open one to see what you have done, where you are, and what comes next.</p>
         </section>
         <h2>Labs</h2>
         <div className="skills-grid">
@@ -44,7 +44,7 @@ export default function SkillsPage() {
                 <div className="skill-card-img">{l.cover_url ? <img src={l.cover_url} alt="" loading="lazy" /> : null}</div>
                 <div className="skill-card-text">
                   <strong>{l.title}</strong>
-                  <span>{l.chapter_count} {l.chapter_count === 1 ? "stop" : "stops"} · {pct}% done</span>
+                  <span>{l.chapter_count} {l.chapter_count === 1 ? "chapter" : "chapters"} · {pct}% done</span>
                   <div className="skill-card-bar"><div style={{ width: `${pct}%` }} /></div>
                 </div>
               </Link>

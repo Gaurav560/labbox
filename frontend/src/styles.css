@@ -1511,99 +1511,85 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .rail-title { padding-top: 2px; }
 @media (max-width: 1199px) { .next-rail { display: none; } .labs-side { max-height: none; } }
 
-/* ---------- the 3D roadmap (skill maps) ---------- */
-.track-main.has-3d { display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
-.track-main:not(.has-3d) { overflow-y: auto; display: flex; justify-content: center; }
-.track-main:not(.has-3d) .roadmap-panel { max-width: 640px; width: 100%; border-left: none; }
-.roadmap-stage { position: relative; min-height: 0; overflow: hidden; }
-.roadmap3d { position: absolute; inset: 0; }
-.roadmap3d canvas { display: block; touch-action: none; cursor: grab; }
-.roadmap-help { position: absolute; left: 16px; top: 12px; pointer-events: none; }
-.roadmap-reset { position: absolute; right: 16px; top: 12px; }
-.roadmap-legend { position: absolute; left: 16px; bottom: 14px; display: flex; align-items: center; gap: 6px; color: var(--muted);
-  background: color-mix(in srgb, var(--panel) 85%, transparent); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); }
-.lg { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-left: 8px; }
-.lg:first-child { margin-left: 0; }
-.lg-done { background: var(--success); }
-.lg-available { background: #7c6ff0; }
-.lg-locked { background: var(--chip); border: 1px solid var(--border); }
-.lg-soon { border: 1px dashed var(--muted); }
-.roadmap-panel { border-left: 1px solid var(--border); background: var(--panel); overflow-y: auto; padding: 20px; }
-.roadmap-panel-title { margin: 4px 0 6px; font-size: 20px; }
-.topic-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
-.topic-list button { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; color: var(--text); cursor: pointer; font: inherit; }
-.topic-list button:hover { border-color: #7c6ff0; }
-.topic-list .skill-title { font-weight: 600; }
-.topic-list .skill-state { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.topic-list .skill-done .skill-state, .topic-state.skill-done { color: var(--success); font-weight: 700; }
-.topic-list .skill-available button { border-color: color-mix(in srgb, #7c6ff0 60%, var(--border)); }
-.topic-list .skill-available .skill-state, .topic-state.skill-available { color: #8c84e8; font-weight: 700; }
-.topic-list .skill-coming_soon button { border-style: dashed; opacity: .75; }
-.topic-back { background: none; border: none; padding: 0; cursor: pointer; font: inherit; }
-.topic-state { margin-top: 14px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
-.topic-chapters { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
-.topic-chapters li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
-.topic-chapters li.is-done { border-color: color-mix(in srgb, var(--success) 50%, var(--border)); }
-.topic-chapter-title { font-weight: 600; }
-.roadmap-loading { display: grid; place-items: center; }
-
-/* ---------- Skill maps: the neon road section ---------- */
+/* ---------- Skill maps: a plain roadmap (owner, 21 November: "a plain cool roadmap, simple") ---------- */
 .nav-skills { font-weight: 600; }
-.skills-page { min-height: 100%; background: var(--bg); }
-.skills-main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; }
-.skills-hero { position: relative; overflow: hidden; border-radius: 18px; padding: 48px 40px; margin-bottom: 28px; color: #fff;
-  background: radial-gradient(120% 140% at 80% 120%, #ff6a5a 0%, #b0237f 35%, #3b1062 65%, #140726 100%); border: 1px solid #ff2fa055; }
-.skills-hero::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: -40%; height: 70%;
-  background: repeating-linear-gradient(90deg, #21e6ff55 0 2px, transparent 2px 60px), repeating-linear-gradient(0deg, #ff2fa055 0 2px, transparent 2px 30px);
-  transform: perspective(300px) rotateX(60deg); transform-origin: top; opacity: .6; }
-.skills-kicker { font: 800 13px var(--font-text); letter-spacing: .2em; text-transform: uppercase; color: #ffe66b; }
-.skills-hero h1 { margin: 8px 0; font-size: 40px; text-shadow: 0 0 24px #ff2fa0aa; }
-.skills-hero p { max-width: 560px; margin: 0; color: #f3dcff; position: relative; z-index: 1; }
-.skills-main h2 { margin: 24px 0 12px; }
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.skill-card { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--card); color: var(--text);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-.skill-card:hover { text-decoration: none; transform: translateY(-3px); border-color: #ff2fa0; box-shadow: 0 10px 30px #ff2fa033, 0 0 0 1px #21e6ff44; }
-.skill-card-img { aspect-ratio: 16 / 7; background: linear-gradient(135deg, #3b1062, #ff2fa0); }
+.skills-page, .map-page { min-height: 100%; background: var(--bg); }
+.skills-main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 60px; }
+.skills-hero { margin-bottom: 24px; }
+.skills-kicker, .map-kicker { font: 700 12px var(--font-text); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.skills-hero h1 { margin: 6px 0; font-size: 32px; }
+.skills-hero p { max-width: 560px; margin: 0; color: var(--muted); }
+.skills-main h2 { margin: 28px 0 12px; font-size: 18px; }
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.skill-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--card); color: var(--text);
+  transition: transform .15s ease, border-color .15s ease; }
+.skill-card:hover { text-decoration: none; transform: translateY(-2px); border-color: var(--accent); }
+.skill-card-img { aspect-ratio: 16 / 7; background: var(--chip); }
 .skill-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .skill-card-text { display: grid; gap: 6px; padding: 14px 16px 16px; }
 .skill-card-text span { color: var(--muted); font-size: 13px; }
 .skill-card-bar { height: 4px; border-radius: 2px; background: var(--chip); overflow: hidden; }
-.skill-card-bar > div { height: 100%; background: linear-gradient(90deg, #21e6ff, #ff2fa0); }
-.skill-card-track { background: linear-gradient(160deg, color-mix(in srgb, #3b1062 30%, var(--card)), var(--card)); }
-/* the map pages */
-.neon-world canvas { cursor: grab; }
-.roadmap-help { color: #f3dcffcc; text-shadow: 0 1px 2px #0008; }
-:root[data-theme="light"] .roadmap-help { color: #1f2328; text-shadow: none; }
-.stop-card { padding: 16px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #ff2fa066;
-  background: linear-gradient(160deg, color-mix(in srgb, #ff2fa0 14%, var(--card)), var(--card)); }
-.stop-enter { display: block; text-align: center; margin-top: 10px; }
-.topic-state.stop-next { color: #ff5cb0; }
-.topic-state.stop-done { color: var(--success); }
-.stop-list button { justify-content: flex-start; }
-.stop-num { font: 800 13px var(--font-code); color: var(--muted); min-width: 24px; }
-.stop-list .skill-title { flex: 1; }
-.stop-list .stop-done .stop-num, .stop-list .stop-done .skill-state { color: var(--success); }
-.stop-list .stop-next button { border-color: #ff2fa0; }
-.stop-list .stop-next .stop-num, .stop-list .stop-next .skill-state { color: #ff5cb0; }
-.stop-list .is-current button { box-shadow: 0 0 0 2px #21e6ff66; }
+.skill-card-bar > div { height: 100%; background: var(--success); }
 
-/* ---------- Sky islands: labels floating over the 3D world ---------- */
-.island-labels { position: absolute; inset: 0; }
-.island-label { display: flex; align-items: center; gap: 8px; max-width: 240px; padding: 6px 12px 6px 6px; border-radius: 999px; cursor: pointer;
-  font: 600 13px/1.25 var(--font-text); color: #1f2333; background: rgba(255, 255, 255, 0.86); backdrop-filter: blur(6px);
-  box-shadow: 0 6px 18px rgba(30, 20, 60, 0.18); border: 1px solid rgba(255, 255, 255, 0.9); transition: transform .2s ease, box-shadow .2s ease, opacity .3s ease; white-space: normal; }
-.island-label:hover, .island-label.is-selected { transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 26px rgba(30, 20, 60, 0.28); }
-.il-num { flex: none; display: grid; place-items: center; min-width: 28px; height: 28px; border-radius: 999px; font: 800 12px var(--font-code); background: #ece9f5; color: #4b4470; }
-.il-badge { flex: none; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
-.island-label.is-done .il-num { background: #3fb950; color: #fff; }
-.island-label.is-done .il-badge { color: #1a7f37; }
-.island-label.is-next { border-color: #ff6fb1; }
-.island-label.is-next .il-num { background: #ff6fb1; color: #fff; }
-.island-label.is-next .il-badge { background: #ff6fb1; color: #fff; }
-.island-label.is-selected { outline: 2px solid #5048b8; }
-:root:not([data-theme="light"]) .island-label { color: #eef0ff; background: rgba(22, 18, 48, 0.78); border-color: rgba(160, 150, 255, 0.3); }
-:root:not([data-theme="light"]) .il-num { background: #2c2660; color: #cfd4ff; }
-:root:not([data-theme="light"]) .island-label.is-next { border-color: #7df9ff; }
-:root:not([data-theme="light"]) .island-label.is-next .il-num, :root:not([data-theme="light"]) .island-label.is-next .il-badge { background: #7df9ff; color: #0b1030; }
+.map-main { max-width: 980px; margin: 0 auto; padding: 32px 16px 80px; }
+.map-hero { display: flex; align-items: center; gap: 20px; padding: 20px 24px; margin-bottom: 36px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.map-hero h1 { margin: 4px 0; font-size: 26px; }
+.map-hero p { margin: 0; }
+.map-hero-text { flex: 1; min-width: 0; }
+.map-ring { --pct: 0; flex: none; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--success) calc(var(--pct) * 1%), var(--chip) 0); }
+.map-ring span { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--card); font: 700 14px var(--font-code); }
+.map-continue { flex: none; }
+
+.road { --line: 3px; --dot: 34px; position: relative; list-style: none; margin: 0; padding: 0; }
+.road-step { position: relative; display: grid; grid-template-columns: 1fr var(--dot) 1fr; column-gap: 24px; padding-bottom: 22px; }
+.road-step::before { content: ""; position: absolute; left: calc(50% - var(--line) / 2); top: 0; bottom: 0; width: var(--line); background: var(--border); }
+.road-step:first-child::before { top: calc(var(--dot) / 2); }
+.road-step:last-child::before { bottom: calc(100% - var(--dot) / 2); }
+.road-step.road-passed::before { background: var(--success); }
+.road-dot { grid-column: 2; grid-row: 1; position: relative; z-index: 1; width: var(--dot); height: var(--dot); border-radius: 50%; display: grid; place-items: center;
+  font: 700 13px var(--font-code); background: var(--bg); color: var(--muted); border: 2px solid var(--border); }
+.road-card { grid-row: 1; min-width: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--card); transition: border-color .15s ease, transform .15s ease; }
+.road-left .road-card { grid-column: 1; }
+.road-right .road-card { grid-column: 3; }
+.road-card:hover { border-color: var(--accent); }
+.road-link { display: block; padding: 14px 16px; color: var(--text); }
+a.road-link:hover { text-decoration: none; }
+.road-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.road-num { font: 700 12px var(--font-code); color: var(--muted); }
+.road-badge { font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--chip); color: var(--muted); }
+.road-title { font-weight: 650; font-size: 15px; line-height: 1.35; }
+.road-meta { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+.road-done .road-dot { background: var(--success); border-color: var(--success); color: #fff; }
+.road-badge-done { background: var(--tint-success); color: var(--success); }
+.road-now .road-dot { background: var(--accent); border-color: var(--accent); color: var(--bg); animation: road-pulse 2.2s ease-out infinite; }
+.road-now .road-card { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.road-badge-now { background: var(--accent); color: var(--bg); }
+.road-locked .road-card, .road-soon .road-card { opacity: .7; }
+.road-soon .road-card { border-style: dashed; }
+@keyframes road-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 12px transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .road-now .road-dot { animation: none; } }
+
+.road-chapters { list-style: none; margin: 0; padding: 0 8px 8px; display: grid; gap: 4px; }
+.road-chapters a { display: grid; gap: 1px; padding: 8px 10px; border-radius: 8px; color: var(--text); background: var(--chip); }
+.road-chapters a:hover { text-decoration: none; outline: 1px solid var(--accent); }
+.road-ch-where { font-size: 12px; color: var(--muted); }
+.road-ch-title { font-size: 14px; font-weight: 600; }
+.road-chapters .is-done .road-ch-title { color: var(--success); }
+
+@media (max-width: 760px) {
+  .map-hero { flex-wrap: wrap; gap: 14px; padding: 16px; }
+  .map-ring { width: 56px; height: 56px; }
+  .map-ring span { width: 44px; height: 44px; font-size: 12px; }
+  .map-hero-text { flex-basis: calc(100% - 70px); }
+  .map-hero h1 { font-size: 22px; }
+  .map-continue { width: 100%; text-align: center; }
+  .road-step { grid-template-columns: var(--dot) 1fr; column-gap: 14px; }
+  .road-step::before { left: calc(var(--dot) / 2 - var(--line) / 2); }
+  .road-dot { grid-column: 1; }
+  .road-left .road-card, .road-right .road-card { grid-column: 2; }
+}

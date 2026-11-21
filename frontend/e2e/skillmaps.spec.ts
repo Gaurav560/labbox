@@ -1,5 +1,5 @@
-/* The Skill maps section (owner, 21 November): a landing page with every lab and track, and every lab its own
-   neon road, one stop per chapter, where choosing a stop shows the chapter and "Enter chapter" opens it. */
+/* The Skill maps section (owner, 21 November): a landing page with every lab and track, and every lab a plain
+   roadmap, one step per chapter, where every step opens its chapter. */
 import { expect, test } from "@playwright/test";
 
 test("skill maps: from the landing page to a lab's road, into a chapter", async ({ page }) => {
@@ -17,13 +17,13 @@ test("skill maps: from the landing page to a lab's road, into a chapter", async 
   await expect(page).toHaveURL(/\/skills$/);
   await page.locator(".skill-card", { hasText: "Spring Boot" }).click();
   await expect(page).toHaveURL(/\/skills\/spring-boot-first-api$/);
-  await expect(page.locator(".island-world canvas")).toBeVisible();
+  const road = page.getByRole("list", { name: "Roadmap" });
+  await expect(road.locator(".road-step")).toHaveCount(31);
 
-  // You start at the first chapter not done; choosing another stop shows it, and Enter opens it.
-  await expect(page.locator(".stop-card")).toContainText("You are here");
-  await page.getByRole("button", { name: "Chapter 6: Dependency injection in depth" }).click();
-  await expect(page.locator(".stop-card")).toContainText("Ch 6 · Dependency injection in depth");
-  await page.getByRole("link", { name: "Enter chapter →" }).click();
+  // You start at the first chapter not done; every step opens its chapter.
+  await expect(road.locator(".road-now")).toContainText("You are here");
+  await expect(page.locator(".map-ring")).toContainText("0%");
+  await road.getByRole("link", { name: "06 Dependency injection in depth" }).click();
   await expect(page).toHaveURL(/\/labs\/spring-boot-first-api\?chapter=06-dependency-injection$/);
   expect(errors).toEqual([]);
   await page.request.post("/api/labs/spring-boot-first-api/workspace/stop", auth);
