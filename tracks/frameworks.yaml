@@ -1,0 +1,61 @@
+# Skill map for the frameworks track (the backend job goal). A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: frameworks
+title: Backend frameworks
+nodes:
+  - id: spring-start
+    title: What Spring Boot is, and a first endpoint
+    chapters: [spring-boot-first-api/00-what-is-a-framework, spring-boot-first-api/01-first-endpoints]
+  - id: spring-core
+    title: Start-up, beans and layers
+    requires: [spring-start]
+    chapters: [spring-boot-first-api/02-app-startup, spring-boot-first-api/03-beans, spring-boot-first-api/04-layers]
+  - id: spring-web
+    title: Requests, bodies and status codes
+    requires: [spring-core]
+    chapters: [spring-boot-first-api/05-reading-the-request, spring-boot-first-api/06-request-bodies, spring-boot-first-api/07-status-codes]
+  - id: spring-errors
+    title: Validation and errors
+    requires: [spring-web]
+    chapters: [spring-boot-first-api/08-validation, spring-boot-first-api/09-errors]
+  - id: spring-config
+    title: Configuration and profiles
+    requires: [spring-core]
+    chapters: [spring-boot-first-api/10-configuration]
+  - id: spring-data
+    title: JPA entities and repositories
+    requires: [spring-web]
+    chapters: [spring-boot-first-api/11-database, spring-boot-first-api/12-repositories]
+  - id: spring-data-deep
+    title: Relationships, paging and N+1
+    requires: [spring-data]
+    chapters: [spring-boot-first-api/13-relationships, spring-boot-first-api/14-paging]
+  - id: spring-transactions
+    title: Transactions and Flyway migrations
+    requires: [spring-data-deep]
+    chapters: [spring-boot-first-api/15-transactions, spring-boot-first-api/16-migrations]
+  - id: spring-testing
+    title: Testing controllers and queries
+    requires: [spring-errors, spring-data]
+    chapters: [spring-boot-first-api/17-testing-controllers, spring-boot-first-api/18-testing-data]
+  - id: spring-ops
+    title: Logs, health and security
+    requires: [spring-config, spring-errors]
+    chapters: [spring-boot-first-api/19-logging-and-health, spring-boot-first-api/20-security]
+  - id: spring-services
+    title: Calling other services
+    requires: [spring-errors]
+    chapters: [spring-boot-first-api/21-calling-services]
+  - id: spring-capstone
+    title: "Capstone: the checkout API"
+    requires: [spring-transactions, spring-testing, spring-ops, spring-services]
+    chapters: [spring-boot-first-api/22-capstone]
+  - id: fastapi-first
+    title: FastAPI, a first API
+    chapters: [fastapi-first-api/01-menu-api]
+  - id: express-first
+    title: Express, an orders API
+    chapters: [express-api/01-orders-api]
+  - id: spring-production
+    title: Spring Boot in production
+    requires: [spring-capstone]

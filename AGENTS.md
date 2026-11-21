@@ -45,7 +45,7 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (20 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (21 November, after the owner's UX review steps 1 to 4) (268 backend tests on Postgres and Redis,
+- Last known state: green (21 November, after Spring Boot was completed) (268 backend tests on Postgres and Redis,
   264 on SQLite, 20 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
@@ -60,7 +60,7 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python, Go, Java and JavaScript from zero are complete 13-chapter courses), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python, Go, Java and JavaScript from zero are complete 13-chapter courses; Spring Boot is a 23-chapter course), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - `redis-in-practice` is the content standard for flagship labs (13 chapters, zero to senior).
@@ -107,6 +107,9 @@ said about 15 is enough for now, so the platform phases come next.
 - Git labs: use live checks with `mount_workspace: ro` (fresh checks copy without `.git`).
 - Postgres services need small memory tuning (see `postgres-indexing-incident/lab.yaml`, 768m).
 - Go images pre-warm `GOCACHE=/opt/gocache`; Spring labs build offline from the Maven repo in `/opt/m2`.
+- Spring Boot chapters where the task is to write tests (17, 18) are checked by running the learner's own tests
+  twice: on the correct code, then with the planted bug from `tests/<chapter>/bug/` (settings in `own.env`).
+  A new Maven dependency must be added to `warm/pom.xml` and the image rebuilt, or the offline build fails.
 
 - Every browser test signs up a fresh account, and the app allows 60 sign-ups per address per hour
   (`SIGNUPS_PER_IP_HOUR`). A busy evening of test runs hits it ("Too many new accounts", tests stuck

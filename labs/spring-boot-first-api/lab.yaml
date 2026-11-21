@@ -10,7 +10,7 @@ language: java
 track: frameworks
 tags: [java, spring-boot]
 level: beginner
-estimated_minutes: 120
+estimated_minutes: 440
 cover_scene: "A small online shop's backend: a clean server rack with a green leaf on top, product cards and JSON brackets floating beside it."
 cover: cover.svg
 cover_credit: { by: "Logos: spring,java", source: "devicon (MIT)" }
@@ -391,7 +391,7 @@ chapters:
         hints:
           - "Without a transaction, every saveAndFlush commits on its own."
           - "One annotation makes the whole method run in one transaction."
-          - "Put @Transactional on placeOrder; OutOfStockException is unchecked, so it rolls back."
+          - "Mark placeOrder as transactional with Spring's annotation; OutOfStockException is unchecked, so it rolls back."
         examples:
           - call: "placeOrder(tea x2, samosa x5), samosas run out"
             gives: "tea stock unchanged"
@@ -400,7 +400,7 @@ chapters:
         hints:
           - "PaymentDeclinedException extends Exception: it is checked."
           - "Checked exceptions commit by default; the annotation can list exceptions that roll back."
-          - "Add rollbackFor = PaymentDeclinedException.class to the @Transactional on placePaidOrder."
+          - "Add rollbackFor = PaymentDeclinedException.class to the transactional annotation on placePaidOrder."
         examples:
           - call: "placePaidOrder(coffee x1, \"DECLINE-4242\")"
             gives: "coffee stock unchanged"
@@ -429,3 +429,155 @@ chapters:
         examples:
           - call: "SELECT sku, category FROM product"
             gives: "TEA-1 drinks, COF-1 drinks, SAM-1 snacks"
+  - id: 17-testing-controllers
+    title: Testing the web layer
+    file: chapters/17-testing-controllers.md
+    minutes: 22
+    tasks:
+      - id: controller_test
+        title: "17-testing-controllers: test ProductController"
+        hints:
+          - "The test class needs a MockMvc field and a mocked ProductService field, both filled by Spring."
+          - "In each test, first tell the mock what find(...) answers with when(...).thenReturn(...), then perform the request."
+          - "For the missing product, the mock answers Optional.empty(), and the test expects status().isNotFound()."
+        examples:
+          - call: "mvn -q -o test"
+            gives: "2 tests, 0 failures"
+      - id: catches_bug
+        title: "17-testing-controllers: your tests catch a broken controller"
+        hints:
+          - "The broken controller answers one of the two cases wrongly."
+          - "A test that only checks the found product cannot notice a wrong answer for a missing one."
+          - "Make sure one test asks for an id the mock does not find, and expects 404."
+        examples:
+          - call: "your tests, on the broken controller"
+            gives: "at least 1 failure"
+            note: "that is a pass for this task"
+  - id: 18-testing-data
+    title: Testing the data layer
+    file: chapters/18-testing-data.md
+    minutes: 18
+    tasks:
+      - id: repository_test
+        title: "18-testing-data: test the category query"
+        hints:
+          - "Let Spring inject the repository into a field; @DataJpaTest gives it an empty in-memory database."
+          - "Save products of two categories, so the test can see that the other category is left out."
+          - "Map the result to names and compare with AssertJ's containsExactly, which also checks the order."
+        examples:
+          - call: "findByCategoryOrderByNameAsc(\"snacks\")"
+            gives: "[Bhel puri, Kachori, Samosa]"
+      - id: catches_query_bug
+        title: "18-testing-data: your test catches a wrong order"
+        hints:
+          - "The broken query finds the right products in the wrong order."
+          - "contains(...) and hasSize(...) do not look at the order."
+          - "Save at least two snacks whose names sort differently, and assert the exact sorted list."
+        examples:
+          - call: "your test, on the broken repository"
+            gives: "1 failure"
+            note: "that is a pass for this task"
+  - id: 19-logging-and-health
+    title: Logging and health checks
+    file: chapters/19-logging-and-health.md
+    minutes: 16
+    tasks:
+      - id: log_warning
+        title: "19-logging-and-health: a WARN line, not println"
+        hints:
+          - "SLF4J's Logger and LoggerFactory come from the org.slf4j package."
+          - "Keep one private static final Logger for the class, made by LoggerFactory.getLogger with StockService.class."
+          - "Call its warn method with the text Out of stock: {} and the sku as the argument."
+        examples:
+          - call: "take(\"SAM-1\")"
+            gives: "WARN ... c.shop.stock.StockService : Out of stock: SAM-1"
+      - id: health_info
+        title: "19-logging-and-health: expose health and info"
+        hints:
+          - "Endpoints are exposed over HTTP with management.endpoints.web.exposure.include."
+          - "List both endpoint names, separated by a comma; then turn on the env info contributor with management.info.env.enabled."
+          - "Properties starting with info. appear in the info endpoint: set info.app.name."
+        examples:
+          - call: "GET /actuator/health"
+            gives: "{\"status\": \"UP\"}"
+          - call: "GET /actuator/info"
+            gives: "{\"app\": {\"name\": \"Shop API\"}}"
+  - id: 20-security
+    title: Security
+    file: chapters/20-security.md
+    minutes: 22
+    tasks:
+      - id: public_and_protected
+        title: "20-security: a public list, a protected rest"
+        hints:
+          - "Two beans in SecurityConfig: a SecurityFilterChain built from HttpSecurity, and an InMemoryUserDetailsManager."
+          - "In authorizeHttpRequests, permit GET on /products first, and require authentication for any other request last."
+          - "Turn on HTTP Basic with Customizer.withDefaults(), turn CSRF off, and build users with User.withUsername(...).password(\"{noop}...\").roles(...)."
+        examples:
+          - call: "GET /products, no login"
+            gives: "200"
+          - call: "GET /admin/report, no login"
+            gives: "401"
+          - call: "GET /admin/report as staff"
+            gives: "200"
+      - id: admin_only
+        title: "20-security: only admins delete"
+        hints:
+          - "A rule can match an HTTP method and a path pattern together."
+          - "Match DELETE on /products/** and require the ADMIN role with hasRole."
+          - "Put that rule before the anyRequest rule; the first match decides."
+        examples:
+          - call: "DELETE /products/1 as staff"
+            gives: "403"
+          - call: "DELETE /products/1 as admin"
+            gives: "204"
+  - id: 21-calling-services
+    title: Calling other services
+    file: chapters/21-calling-services.md
+    minutes: 20
+    tasks:
+      - id: fetch_stock
+        title: "21-calling-services: read the supplier's stock"
+        hints:
+          - "The RestClient already has the supplier's base URL; start with http.get()."
+          - "Give uri(...) the path with a {sku} placeholder and the sku, then retrieve() and read the body as SupplierStock.class."
+          - "Return the record's available() value."
+        examples:
+          - call: "GET /supplier-stock/TEA-1"
+            gives: "{\"sku\": \"TEA-1\", \"available\": 120}"
+      - id: handle_supplier_errors
+        title: "21-calling-services: not stocked, down, or too slow"
+        hints:
+          - "A 404 from the supplier throws HttpClientErrorException; catch it in available() and check the status value."
+          - "Build a SimpleClientHttpRequestFactory with a read timeout of one second and pass it to the builder's requestFactory(...)."
+          - "In the controller, catch RestClientException and answer ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)."
+        examples:
+          - call: "GET /supplier-stock/MISSING"
+            gives: "{\"available\": 0}"
+          - call: "GET /supplier-stock/SLOW"
+            gives: "503 after about 1 second"
+  - id: 22-capstone
+    title: "Capstone: the checkout API"
+    file: chapters/22-capstone.md
+    minutes: 20
+    tasks:
+      - id: checkout
+        title: "22-capstone: POST /checkout"
+        hints:
+          - "The service method needs one annotation so all stock changes and the order commit together."
+          - "Loop over request.items(): find the StockItem by sku (orElseThrow an OutOfStockException), call take, and add price times quantity."
+          - "In the controller, the parameter is @Valid and @RequestBody; answer ResponseEntity.created(...) with the order's id in the URI."
+        examples:
+          - call: "POST /checkout, 2 x TEA-1 and 1 x COF-1"
+            gives: "201, Location: /orders/1, totalPaise 7000"
+      - id: checkout_errors
+        title: "22-capstone: clear errors, nothing half-done"
+        hints:
+          - "ApiErrors needs two @ExceptionHandler methods, each returning a ProblemDetail."
+          - "For OutOfStockException: status CONFLICT, the title, and setProperty(\"sku\", e.sku())."
+          - "For MethodArgumentNotValidException: collect the field errors into a map, as in chapter 9."
+        examples:
+          - call: "POST /checkout with 5 x SAM-1 (1 left)"
+            gives: "409 {\"title\": \"Out of stock\", \"sku\": \"SAM-1\"}"
+          - call: "POST /checkout with a bad email and no items"
+            gives: "400 {\"title\": \"Invalid request\", \"errors\": {...}}"

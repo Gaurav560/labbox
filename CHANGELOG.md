@@ -1,5 +1,23 @@
 # Changelog
 
+## Spring Boot, block D: chapters 17 to 22; the course is complete
+
+- **Chapter 17, testing the web layer:** `@WebMvcTest`, `MockMvc`, `@MockitoBean`. **Chapter 18, testing the
+  data layer:** `@DataJpaTest` against a real in-memory database, `containsExactly`. In both, the learner
+  writes the tests: the check runs them on the correct code (they must pass) and on a planted bug (they
+  must fail), with a clear message for each case (`tests/<chapter>/own.env`, `tests/<chapter>/bug/`).
+- **Chapter 19:** SLF4J logging and levels, Actuator health and info. **Chapter 20:** Spring Security, a
+  `SecurityFilterChain`, HTTP Basic, 401 versus 403, roles, CSRF. **Chapter 21:** `RestClient`, a 404 that
+  means "not stocked", a 1 second read timeout and 503 (the check runs a fake supplier, with a slow item).
+  **Chapter 22, capstone:** `POST /checkout`, validated, one transaction, 201 with a Location, 409 and 400
+  as ProblemDetail, and a failed checkout changes nothing.
+- Five new diagrams (test slices, Actuator, the security chain, a service call with a timeout, the
+  checkout flow); seven older Spring diagrams got shorter labels so nothing spills out of its box (all 20
+  checked in the browser).
+- **Skill map:** `tracks/frameworks.yaml` (Backend frameworks), the track the "backend job" goal already
+  pointed to: 12 Spring nodes, FastAPI and Express, and "Spring Boot in production" as coming soon.
+- The course: 23 chapters, 45 tasks, about 7 hours (`estimated_minutes` 440).
+
 ## Spring Boot, block C: chapters 11 to 16 (a real database)
 
 - **Chapter 11:** JPA entities on H2 (`@Entity`, `@Id`, a unique SKU column). **Chapter 12:** repositories,

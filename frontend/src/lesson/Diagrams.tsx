@@ -459,17 +459,17 @@ function RequestMapping() {
 function JsonBinding() {
   return (
     <Svg viewBox="0 0 440 210" label="The JSON body name Vada pav, pricePaise 2500 is read by Jackson into a NewProduct record with the same field names; the method returns a Product, which Jackson writes back as JSON">
-      <Box x={10} y={14} w={190} h={52} label='{"name": "Vada pav", ...}' code />
+      <Box x={10} y={14} w={190} h={52} label='{"name": ...}' code />
       <text className="dg-note" x={10} y={84}>request body (JSON)</text>
       <Arrow x1={202} y1={40} x2={236} y2={40} />
       <text className="dg-note" x={204} y={30}>Jackson</text>
-      <Box x={240} y={14} w={190} h={52} label="NewProduct(name, pricePaise)" tone="accent" code />
+      <Box x={240} y={14} w={190} h={52} label="NewProduct record" tone="accent" code />
       <text className="dg-note" x={240} y={84}>method parameter</text>
       <Arrow x1={335} y1={92} x2={335} y2={120} />
       <Box x={240} y={124} w={190} h={40} label="Product (returned)" tone="accent" code />
       <Arrow x1={238} y1={144} x2={204} y2={144} />
       <text className="dg-note" x={206} y={136}>Jackson</text>
-      <Box x={10} y={124} w={190} h={40} label='{"id": 4, "name": ...}' code />
+      <Box x={10} y={124} w={190} h={40} label='{"id": 4, ...}' code />
       <text className="dg-note" x={10} y={184}>response body (JSON)</text>
     </Svg>
   );
@@ -485,10 +485,10 @@ function ErrorFlow() {
       <Box x={10} y={78} w={180} h={34} label="ProductController" code />
       <text className="dg-note" x={200} y={100}>does not catch it</text>
       <Arrow x1={100} y1={114} x2={100} y2={138} />
-      <Box x={10} y={142} w={180} h={40} label="@RestControllerAdvice" tone="accent" code />
-      <Arrow x1={192} y1={162} x2={236} y2={162} />
-      <Box x={240} y={142} w={190} h={40} label="ProblemDetail, 404" tone="accent" code />
-      <text className="dg-note" x={240} y={200}>sent as JSON, same for every endpoint</text>
+      <Box x={10} y={142} w={214} h={40} label="@RestControllerAdvice" tone="accent" code />
+      <Arrow x1={226} y1={162} x2={246} y2={162} />
+      <Box x={250} y={142} w={180} h={40} label="ProblemDetail, 404" tone="accent" code />
+      <text className="dg-note" x={10} y={202}>sent as JSON, the same for every endpoint</text>
     </Svg>
   );
 }
@@ -501,10 +501,10 @@ function ProfileLayers() {
       <Box x={10} y={26} w={250} h={30} label="shop.name: Shop API" code />
       <Box x={10} y={58} w={250} h={30} label="free-delivery...: 50000" code />
       <text className="dg-note" x={10} y={110}>application-prod.yml (prod profile)</text>
-      <Box x={10} y={118} w={250} h={30} label="shop.name: Shop API (production)" tone="accent" code />
+      <Box x={10} y={118} w={250} h={30} label="shop.name: ...(production)" tone="accent" code />
       <Box x={10} y={150} w={250} h={30} label="free-delivery...: 100000" tone="accent" code />
       <Arrow x1={264} y1={150} x2={300} y2={104} />
-      <Box x={304} y={72} w={130} h={56} label="what the app sees" tone="highlight" />
+      <Box x={304} y={72} w={130} h={56} label="the app uses" tone="highlight" />
       <text className="dg-note" x={304} y={146}>the profile wins</text>
     </Svg>
   );
@@ -536,8 +536,8 @@ function OneToMany() {
       <text className="dg-note" x={10} y={18}>orders</text>
       <Box x={10} y={26} w={150} h={30} label="id 1 | Asha" tone="accent" code />
       <text className="dg-note" x={210} y={18}>order_item</text>
-      <Box x={210} y={26} w={220} h={30} label="Masala tea x2 | order_id 1" code />
-      <Box x={210} y={62} w={220} h={30} label="Samosa x3 | order_id 1" code />
+      <Box x={210} y={26} w={220} h={30} label="tea x2 | order_id 1" code />
+      <Box x={210} y={62} w={220} h={30} label="samosa x3 | order_id 1" code />
       <Arrow x1={208} y1={41} x2={162} y2={41} />
       <Arrow x1={208} y1={77} x2={162} y2={48} />
       <text className="dg-note" x={10} y={130}>@OneToMany(mappedBy = "order"): CustomerOrder.items</text>
@@ -582,6 +582,101 @@ function FlywayVersions() {
   );
 }
 
+/** Test slices: @WebMvcTest starts the web layer with a mocked service; @DataJpaTest starts repositories and a database. */
+function TestSlices() {
+  return (
+    <Svg viewBox="0 0 440 200" label="Two test slices side by side: @WebMvcTest starts the controller, with a mock in place of the service; @DataJpaTest starts the repository and an in-memory database, with nothing above it">
+      <text className="dg-label" x={10} y={18}>@WebMvcTest</text>
+      <Box x={10} y={28} w={190} h={32} label="controller (real)" tone="accent" />
+      <Arrow x1={105} y1={62} x2={105} y2={86} />
+      <Box x={10} y={90} w={190} h={32} label="service (a mock)" tone="highlight" />
+      <text className="dg-note" x={10} y={146}>repository, database: not started</text>
+      <text className="dg-label" x={240} y={18}>@DataJpaTest</text>
+      <text className="dg-note" x={240} y={46}>controller, service: not started</text>
+      <Box x={240} y={60} w={190} h={32} label="repository (real)" tone="accent" />
+      <Arrow x1={335} y1={94} x2={335} y2={118} />
+      <Box x={240} y={122} w={190} h={32} label="H2 database, in memory" tone="accent" />
+      <text className="dg-note" x={10} y={184}>a slice starts one layer, so tests are fast and precise</text>
+    </Svg>
+  );
+}
+
+/** Actuator: health for the load balancer, info and metrics for people. */
+function ActuatorEndpoints() {
+  return (
+    <Svg viewBox="0 0 440 200" label="A load balancer calls /actuator/health every few seconds and gets UP; a person or a dashboard reads /actuator/info and /actuator/metrics; all three are served by the Shop API">
+      <Box x={10} y={20} w={130} h={34} label="load balancer" />
+      <Box x={10} y={120} w={130} h={34} label="you, a dashboard" />
+      <Arrow x1={142} y1={37} x2={246} y2={37} />
+      <Arrow x1={142} y1={137} x2={246} y2={137} />
+      <text className="dg-note" x={150} y={30}>every few seconds</text>
+      <g className="dg-box"><rect x={250} y={10} width={180} height={160} rx={10} /></g>
+      <text className="dg-label" x={264} y={30}>Shop API</text>
+      <Box x={258} y={42} w={164} h={30} label="/actuator/health" tone="accent" code />
+      <Box x={258} y={88} w={164} h={30} label="/actuator/info" code />
+      <Box x={258} y={128} w={164} h={30} label="/actuator/metrics" code />
+      <text className="dg-note" x={10} y={190}>health: UP or DOWN; info and metrics: facts and numbers</text>
+    </Svg>
+  );
+}
+
+/** The security filter chain: rules first, controller after. */
+function SecurityChain() {
+  return (
+    <Svg viewBox="0 0 440 200" label="A request passes the security filters: first HTTP Basic reads who the caller is (401 if unknown), then the rules decide whether that caller may do this (403 if not); only then does the controller run">
+      <Box x={10} y={20} w={90} h={34} label="request" />
+      <Arrow x1={102} y1={37} x2={124} y2={37} />
+      <Box x={128} y={20} w={140} h={34} label="who? (Basic)" tone="accent" />
+      <Arrow x1={270} y1={37} x2={292} y2={37} />
+      <Box x={296} y={20} w={134} h={34} label="allowed? (rules)" tone="accent" />
+      <Arrow x1={363} y1={56} x2={363} y2={96} />
+      <Box x={296} y={100} w={134} h={34} label="controller" />
+      <Arrow x1={198} y1={56} x2={198} y2={96} />
+      <Box x={128} y={100} w={140} h={34} label="401 Unauthorized" tone="highlight" />
+      <text className="dg-note" x={310} y={160}>or 403 Forbidden</text>
+      <text className="dg-note" x={10} y={186}>the first rule that matches the request decides</text>
+    </Svg>
+  );
+}
+
+/** Calling another service: the shop waits, and a timeout limits the wait. */
+function ServiceCall() {
+  return (
+    <Svg viewBox="0 0 440 200" label="The client calls the Shop API, which calls the supplier with RestClient; with a 1 second read timeout, a slow supplier makes the shop answer 503 after one second instead of waiting">
+      <Box x={10} y={30} w={100} h={34} label="client" />
+      <Arrow x1={112} y1={47} x2={156} y2={47} />
+      <Box x={160} y={30} w={120} h={34} label="Shop API" tone="accent" />
+      <Arrow x1={282} y1={47} x2={326} y2={47} />
+      <Box x={330} y={30} w={100} h={34} label="supplier" />
+      <text className="dg-note dg-code" x={288} y={86}>RestClient</text>
+      <Box x={160} y={110} w={270} h={32} label="no answer in 1 s: timeout" tone="highlight" />
+      <Arrow x1={158} y1={126} x2={112} y2={126} />
+      <Box x={10} y={110} w={100} h={32} label="503" tone="highlight" />
+      <text className="dg-note" x={10} y={180}>fail fast, so one slow service cannot stall the shop</text>
+    </Svg>
+  );
+}
+
+/** The capstone checkout, from request to answer. */
+function CheckoutFlow() {
+  return (
+    <Svg viewBox="0 0 440 200" label="POST /checkout is validated (400 if invalid), then CheckoutService runs in one transaction, taking stock and saving the order; out of stock rolls back and answers 409; success answers 201 with a Location">
+      <Box x={10} y={14} w={130} h={32} label="POST /checkout" code />
+      <Arrow x1={142} y1={30} x2={168} y2={30} />
+      <Box x={172} y={14} w={100} h={32} label="@Valid" tone="accent" code />
+      <Arrow x1={274} y1={30} x2={300} y2={30} />
+      <Box x={304} y={14} w={126} h={32} label="400 problem" tone="highlight" />
+      <Arrow x1={222} y1={48} x2={222} y2={70} />
+      <Box x={16} y={74} w={410} h={34} label="@Transactional checkout: take stock, save order" tone="accent" />
+      <Arrow x1={150} y1={110} x2={110} y2={136} />
+      <Arrow x1={300} y1={110} x2={340} y2={136} />
+      <Box x={10} y={140} w={190} h={32} label="201, Location /orders/1" />
+      <Box x={240} y={140} w={190} h={32} label="409 problem, rollback" tone="highlight" />
+      <text className="dg-note" x={10} y={194}>valid input, one transaction, a clear answer either way</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "library-vs-framework": LibraryVsFramework,
   "backend-stack": BackendStack,
@@ -597,6 +692,11 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "one-to-many": OneToMany,
   "transaction-flow": TransactionFlow,
   "flyway-versions": FlywayVersions,
+  "test-slices": TestSlices,
+  "actuator-endpoints": ActuatorEndpoints,
+  "security-chain": SecurityChain,
+  "service-call": ServiceCall,
+  "checkout-flow": CheckoutFlow,
   "consumer-group": ConsumerGroup,
   persistence: Persistence,
   replication: Replication,
