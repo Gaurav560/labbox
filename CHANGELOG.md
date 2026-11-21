@@ -1,10 +1,10 @@
 # Changelog
 
-## 22 November: dashboard progress card on the right, stacked
+## 22 November: the dashboard's progress card is gone (it lives in the profile panel)
 
-- The owner: the level, streak and today's XP card moves to the right side, vertical. The daily drill and the card
-  now share a row (`.dash-top`): the drill on the left, the card on the right with its three numbers stacked and
-  divided. Under 900 px they stack again and the numbers sit side by side.
+- The owner first asked for the level, streak and today's XP card on the right, stacked (built in 5d6c72b), then
+  to remove it, since the profile panel shows the same: level and XP to the next, the streak and best, and today's
+  streak goal. The daily drill has the full width again; the card's styles are removed.
 
 ## 22 November: Focus only where it works; three and xyflow removed
 

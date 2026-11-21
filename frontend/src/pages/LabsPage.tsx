@@ -63,30 +63,8 @@ export default function LabsPage() {
         </aside>
       )}
       <main className="labs-main">
-        {/* The daily drill, with your level, streak and today's XP stacked on its right (owner, 22 November). */}
-        <div className="dash-top">
-          <DrillCard />
-          {stats && (
-            <section className="progress-strip" aria-label="Your progress">
-              <div>
-                <div className="muted small-text">Level {stats.level}</div>
-                <div className="progress level-progress" role="progressbar" aria-label="Progress to the next level"
-                  aria-valuenow={stats.xp_total - stats.level_xp} aria-valuemin={0} aria-valuemax={stats.next_level_xp - stats.level_xp}>
-                  <span className="progress-fill" style={{ width: `${(100 * (stats.xp_total - stats.level_xp)) / Math.max(1, stats.next_level_xp - stats.level_xp)}%` }} />
-                </div>
-                <div className="muted small-text">{stats.next_level_xp - stats.xp_total} XP to level {stats.level + 1}</div>
-              </div>
-              <div>
-                <div className="big-number">🔥 {stats.streak_current}</div>
-                <div className="muted small-text">day streak · best {stats.streak_best}</div>
-              </div>
-              <div>
-                <div className="big-number">{Math.min(stats.today_xp, stats.streak_min_xp)}/{stats.streak_min_xp}</div>
-                <div className="muted small-text">XP today for the streak</div>
-              </div>
-            </section>
-          )}
-        </div>
+        {/* Level, streak and today's XP live in the profile panel (top right); the drill has the full width. */}
+        <DrillCard />
         <h2>Your labs</h2>
         {!labs && <p className="muted">Loading...</p>}
         {/* The same tile as the home page's lab grid, plus a quiet progress line. */}
