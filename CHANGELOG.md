@@ -1,5 +1,14 @@
 # Changelog
 
+## Calmer playing diagrams, and lessons without a word limit
+
+- The owner wanted the playing diagram "cool, minimal, soothing". It is now a quiet vertical timeline:
+  a thin rail with one small circle per step and the words beside it; the rail fills as the steps
+  run, a soft band slides to the step being run, finished steps get a tick, the rest stay faint, and
+  the current circle breathes gently (no motion when motion is turned off).
+- "Make every lesson an actual lesson": the 120-word limit on concept and example steps is gone
+  (validator, CONTENT_STANDARD, README), and a chapter may take up to 60 minutes.
+
 ## Hand-drawn diagrams: calmer to read
 
 - The owner found the handwriting font and the hatched fills tiring. Diagrams keep the hand-drawn

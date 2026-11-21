@@ -68,9 +68,12 @@ export function SketchSteps({ title, steps, label }: { title: string; steps: Pla
     return () => clearTimeout(t);
   }, [playing, at, last]);
 
-  const W = 440, BOX_H = 30, GAP = 18, TOP = 10, FIRST = TOP + 34 + GAP;
-  const y = (i: number) => FIRST + i * (BOX_H + GAP);
-  const height = y(steps.length) - GAP + 8;
+  // A quiet vertical timeline (owner: "cool, minimal, soothing"): a thin rail with one small circle per
+  // step and the text beside it. The rail fills as the steps run, a soft band slides to the step being
+  // run, finished steps get a tick, and the ones still to come stay faint.
+  const W = 440, ROW = 40, TOP = 50, NODE_X = 26, TEXT_X = 50;
+  const y = (i: number) => TOP + i * ROW + ROW / 2;
+  const height = TOP + steps.length * ROW + 6;
   const done = at === last;
   const play = () => {
     if (playing) return setPlaying(false);
@@ -78,24 +81,29 @@ export function SketchSteps({ title, steps, label }: { title: string; steps: Pla
     setPlaying(true);
   };
   const by = (fn: () => void) => () => { setPlaying(false); fn(); };
-  const dotY = at < 0 ? TOP + 34 : y(at) + BOX_H / 2;
+  const railLen = y(last) - y(0);
+  const filled = at <= 0 ? 0 : (y(at) - y(0)) / railLen;
 
   return (
     <div className="sketch-play">
-      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="sketch">
-        <SketchBox x={10} y={TOP} w={W - 20} h={34} label={title} tone="accent" code seed={7} />
+      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="sketch tl">
+        <text className="tl-title" x={NODE_X - 8} y={24}>{title}</text>
+        <line className="tl-rule" x1={NODE_X - 8} y1={36} x2={W - 12} y2={36} />
+        <rect className="tl-band" x={8} y={0} width={W - 16} height={ROW - 6} rx={9}
+          style={{ transform: `translateY(${(at < 0 ? y(0) : y(at)) - (ROW - 6) / 2}px)`, opacity: at < 0 ? 0 : 1 }} />
+        <rect className="tl-rail" x={NODE_X - 1} y={y(0)} width={2} height={railLen} rx={1} />
+        <rect className="tl-rail tl-rail-done" x={NODE_X - 1} y={y(0)} width={2} height={railLen} rx={1}
+          style={{ transform: `scaleY(${filled})` }} />
         {steps.map((s, i) => {
-          const tone: Tone = i === at ? "now" : i < at ? "done" : at < 0 ? "plain" : "dim";
-          const top = i === 0 ? TOP + 34 : y(i - 1) + BOX_H;
+          const state = i === at ? "now" : i < at ? "done" : at < 0 ? "idle" : "next";
           return (
-            <g key={s.label}>
-              <SketchArrow x1={W / 2} y1={top + 2} x2={W / 2} y2={y(i) - 2} seed={20 + i} tone={i <= at ? "done" : "plain"} />
-              <SketchBox x={30} y={y(i)} w={W - 60} h={BOX_H} label={s.label} tone={tone} seed={40 + i} />
+            <g key={s.label} className={`tl-step tl-${state}`}>
+              <circle className="tl-node" cx={NODE_X} cy={y(i)} r={8} />
+              {state === "done" && <path className="tl-tick" d={`M${NODE_X - 3.5} ${y(i)} l2.5 2.5 l4.5 -5`} />}
+              <text className="tl-text" x={TEXT_X} y={y(i) + 5}>{s.label}</text>
             </g>
           );
         })}
-        {/* The dot that travels down to the step being run (CSS moves it; still when motion is reduced). */}
-        <circle className="sk-dot" cx={18} cy={0} r={6} style={{ transform: `translateY(${dotY}px)`, opacity: at < 0 ? 0 : 1 }} />
       </svg>
       <p className="sketch-says" aria-live="polite">
         {at < 0 ? "Press Play to watch the app start, one step at a time." : <><b>Step {at + 1} of {steps.length}.</b> {steps[at].says}</>}

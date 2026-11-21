@@ -254,7 +254,7 @@ scripts/labbox preview my-lab             # prints a dev login (fresh password e
 
 `validate` with no lab id checks every lab; add `--no-docker` to skip the image check, and `--strict` to
 turn every warning into an error (CI does). Besides the schema it checks the content standard: a story
-first, a predict and a recap in every chapter, concept steps under 120 words, chapters of 10 to 20 minutes,
+first, a predict and a recap in every chapter, no word limit on steps (a step is a real lesson), chapters of 10 to 60 minutes,
 a cover, no `TODO(author)` left, and that no hint contains a line of the solution.
 
 Templates: `python`, `java`, `node`, `go` (code exercises), `service-incident` (Postgres service, injected

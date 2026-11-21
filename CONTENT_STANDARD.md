@@ -44,8 +44,8 @@ In this order (each step short, one idea per step):
 ## 3. Explain, do not just state
 
 The owner's verdict on the first Go course: "a little straight, just to the point, very difficult for
-a new learner to grasp". Every new idea is **taught**, not announced, in small steps (each under the
-validator's 120 words of prose; code does not count):
+a new learner to grasp". Every new idea is **taught**, not announced. There is no word limit on a step
+(owner, 21 November: "make every lesson an actual lesson"); a step is as long as the idea needs:
 
 1. **Why it exists**: the problem this idea solves, in one or two sentences, before any syntax.
 2. **What it is, technically**: a plain, precise definition and what happens at runtime (what the
@@ -57,8 +57,9 @@ validator's 120 words of prose; code does not count):
 4. **Careful**: the confusion beginners really have, named kindly, with how to spot it.
 5. **Check yourself**: one line the learner can answer in their head before moving on.
 
-More, smaller steps beat fewer, denser ones. Never assume a term is known; define it the first time,
-in place.
+Each step is a complete lesson on one idea: everything the learner needs to understand it, in plain
+words and short paragraphs, never cut short to save space. Never assume a term is known; define it the
+first time, in place.
 
 **Talk to one learner (owner, 21 November):** "the users must have felt like I am talking to him or her
 only, in an interactive way; not taking shortcuts and just finishing the stuff." Write as a teacher
@@ -135,7 +136,8 @@ that is not also in a code block of its step.
 ## 4. Words
 
 - Plain words. Explain every new term the first time it appears, right there, in one line.
-- Short sentences. No walls of text: concepts stay under the word limit the validator checks.
+- Short sentences and short paragraphs, so a long lesson still reads easily. There is no word limit:
+  a step is a real lesson, as long as the idea needs, never squeezed to fit a number.
 - Never blame. Mistakes are normal: "If you guessed X, you are in good company."
 - Code samples fit the lesson panel (about 50 characters a line): put long comments on their own line.
 

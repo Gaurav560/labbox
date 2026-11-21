@@ -53,17 +53,8 @@ class Report:
 
 
 AUTHOR_TODO = "TODO(author)"
-CONCEPT_MAX_WORDS = 120
-_CODE_BLOCK_RE = re.compile(r"```.*?```", re.S)
-_DIRECTIVE_LINE_RE = re.compile(r"^\s*:::.*$", re.M)
 
 
-_TABLE_LINE_RE = re.compile(r"^\s*\|.*$", re.M)  # trace and reference tables are not prose
-
-
-def _words(markdown: str) -> int:
-    text = _TABLE_LINE_RE.sub(" ", _DIRECTIVE_LINE_RE.sub(" ", _CODE_BLOCK_RE.sub(" ", markdown)))
-    return len(re.findall(r"[A-Za-z0-9`'_-]+", text))
 
 
 # Built-in pictures live in the frontend; a chapter may only name ones that exist.
@@ -172,10 +163,9 @@ def content_lint(lab: LabConfig, folder: Path) -> tuple[list[str], list[str]]:
         for i, s in enumerate(steps, 1):
             errors.extend(_picture_code_errors(ch.file, i, s.markdown))
             errors.extend(_picture_place_errors(ch.file, i, s.type, s.markdown))
-            if s.type in ("concept", "example") and _words(s.markdown) > CONCEPT_MAX_WORDS:
-                warnings.append(f"{ch.file}: step {i} ({s.type}) has {_words(s.markdown)} words of text, keep it under {CONCEPT_MAX_WORDS}")
-        if ch.minutes is None or not 8 <= ch.minutes <= 25:
-            warnings.append(f"chapter {ch.id}: minutes should be 10 to 20 (is {ch.minutes})")
+        # Full lessons (owner, 21 November): no word limit on steps, and chapters may take up to an hour.
+        if ch.minutes is None or not 8 <= ch.minutes <= 60:
+            warnings.append(f"chapter {ch.id}: minutes should be 10 to 60 (is {ch.minutes})")
     for f in [folder / "lab.yaml", *sorted((folder / "chapters").rglob("*.md"))]:
         if f.is_file() and AUTHOR_TODO in f.read_text(encoding="utf-8"):
             warnings.append(f"{f.relative_to(folder)}: still has {AUTHOR_TODO} markers")

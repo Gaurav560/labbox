@@ -1449,8 +1449,22 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .sk-code { fill: var(--figure-text); font: 600 14px var(--font-code); font-variant-ligatures: none; }
 .sk-box, .sk-arrow { transition: opacity .35s ease; }
 .sk-box path, .sk-arrow path { transition: stroke .35s ease, fill .35s ease; }
-.sk-dot { fill: var(--figure-yellow-edge); transition: transform .6s cubic-bezier(.4, 0, .2, 1), opacity .3s; }
 .sketch-says { margin: 10px 2px 0; font-size: 14px; min-height: 2.9em; color: var(--figure-text); }
+/* the playing timeline: quiet lines, one soft colour for "now" */
+.tl-title { fill: var(--figure-text); font: 600 14px var(--font-code); font-variant-ligatures: none; }
+.tl-rule { stroke: var(--figure-border); stroke-width: 1; }
+.tl-rail { fill: var(--figure-border); transform-box: fill-box; transform-origin: top; }
+.tl-rail-done { fill: var(--figure-green-edge); transition: transform .7s cubic-bezier(.4, 0, .2, 1); }
+.tl-band { fill: color-mix(in srgb, var(--figure-purple-edge) 16%, transparent); transition: transform .5s cubic-bezier(.4, 0, .2, 1), opacity .4s; }
+.tl-node { fill: var(--figure-surface); stroke: var(--figure-border); stroke-width: 1.5; transition: fill .4s, stroke .4s; }
+.tl-text { fill: var(--figure-text); font: 400 15px var(--font-text); transition: fill .4s, opacity .4s; }
+.tl-next .tl-text { opacity: .55; }
+.tl-done .tl-node { fill: var(--figure-green-edge); stroke: var(--figure-green-edge); }
+.tl-tick { fill: none; stroke: var(--figure-surface); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tl-now .tl-node { fill: var(--figure-purple-edge); stroke: var(--figure-purple-edge); }
+.tl-now .tl-text { font-weight: 600; }
+.tl-now .tl-node { animation: tl-breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes tl-breathe { 50% { transform: scale(1.18); } }
 @media (prefers-reduced-motion: reduce) {
-  .sk-dot, .sk-box, .sk-arrow, .sk-box path, .sk-arrow path { transition: none; }
+  .sk-box, .sk-arrow, .sk-box path, .sk-arrow path, .tl-rail-done, .tl-band, .tl-node, .tl-text { transition: none; animation: none; }
 }
