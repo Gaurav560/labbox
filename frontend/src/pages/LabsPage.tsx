@@ -49,7 +49,6 @@ export default function LabsPage() {
     <div className="labs-page">
       <header className="topbar">
         <Logo to="/" />
-        <Link to="/skills" className="btn btn-small btn-ghost nav-skills">🗺 Skill maps</Link>
         <span className="spacer" />
         <ThemeButton />
         {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
@@ -121,7 +120,7 @@ export default function LabsPage() {
  * The first thing on the dashboard: one clear next step, styled as a tape deck (owner, 21 November, after a
  * red-and-silver cassette design): a dark dotted panel, a bold title with a red initial, and a silver deck playing a
  * red cassette whose tape winds from the left reel to the right one as the chapter goes on. The keys work:
- * previous chapter, the lab's skill map, Continue (the red play key) and next chapter.
+ * previous chapter, the lab's course page (with its skill map), Continue (the red play key) and next chapter.
  */
 function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const cont = next.kind === "continue";
@@ -148,7 +147,7 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
         <div className="deck-keys">
           {prev ? <Link className="deck-key" to={chapterUrl(prev.id)} aria-label={`Previous chapter: ${prev.title}`} title={prev.title}>◀◀</Link>
             : <span className="deck-key is-off" aria-hidden="true">◀◀</span>}
-          <Link className="deck-key" to={`/skills/${next.lab_id}`} aria-label="Skill map" title="Skill map">■</Link>
+          <Link className="deck-key" to={`/courses/${next.lab_id}`} aria-label="Course page and skill map" title="Course page and skill map">■</Link>
           <Link className="deck-key deck-play next-go" to={chapterUrl(next.chapter_id)}>
             <span aria-hidden="true">▶ </span>{cont ? "Continue →" : "Start the first chapter →"}
           </Link>

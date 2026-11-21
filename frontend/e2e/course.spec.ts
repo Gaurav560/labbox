@@ -27,6 +27,22 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await expect(page.locator(".step-count")).toHaveText(/^Step 4 of/);
 
   await page.goto("/courses/go-basics");
+  await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();
   await page.getByRole("link", { name: "01 Your first Go program" }).click();
   await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=01-first-program$/);
+
+  // Every subtopic opens its own lesson step; course parts are the map's lines.
+  await page.goto("/courses/spring-boot-first-api");
+  await expect(page.getByRole("list", { name: "Lines" })).toContainText("Production basics");
+  const beans = page.locator(".metro-station", { hasText: "Beans and the application context" });
+  await beans.getByRole("link", { name: "How a class becomes a bean" }).click();
+  await expect(page).toHaveURL(/chapter=05-beans&step=4$/);
+  await expect(page.locator(".step-count")).toHaveText(/^Step 5 of/);
+
+  // The old Skill maps section is gone; its links land on the course page or the dashboard.
+  await page.goto("/skills/go-basics");
+  await expect(page).toHaveURL(/\/courses\/go-basics$/);
+  await page.goto("/tracks/languages");
+  await expect(page).toHaveURL(/\/labs$/);
+  await expect(page.locator(".topbar").getByRole("link", { name: /Skill maps/ })).toHaveCount(0);
 });

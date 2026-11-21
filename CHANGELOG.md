@@ -1,5 +1,17 @@
 # Changelog
 
+## 22 November: the skill map lives on the course page; the Skill maps section is gone
+
+- The owner: a "Skill map" title on the course page, under "What you will learn", and no separate Skill maps
+  section now that each lab's map is on its course page. Removed: the dashboard's "Skill maps" button, the `/skills`
+  landing page, the per-lab map pages and the track maps (`SkillsPage`, `LabMapPage`, `TrackPage`) with their styles
+  and the old react-flow skill-node styles. Old links still land: `/skills/<lab>` opens the course page,
+  `/skills` and `/tracks/<track>` the dashboard. The deck's ■ key opens the course page.
+- Kept: the track data (`tracks/*.yaml`) and `GET /api/tracks/<track>/skills` (routes are only added, never removed),
+  so a track view can come back. `@xyflow/react` and `three` are no longer used by the app.
+- Tests: `roadmap.spec.ts` and `skillmaps.spec.ts` removed; their checks (parts as lines, subtopic to lesson step)
+  moved into `course.spec.ts` with the redirects; `engagement.spec.ts` sees chapter 1 light up on the course page.
+
 ## 22 November: a profile panel; Exit instead of Log out
 
 - The owner: level, streak and stars go in a profile section, and an Exit button replaces "Log out". Every top bar

@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
 import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
@@ -34,10 +34,7 @@ function lazyPage<T extends { default: React.ComponentType }>(load: () => Promis
 
 // The lab page pulls in Monaco and xterm, so load it only when needed.
 const LabPage = lazyPage(() => import("./pages/LabPage"));
-const TrackPage = lazyPage(() => import("./pages/TrackPage"));
 const CoursePage = lazyPage(() => import("./pages/CoursePage"));
-const SkillsPage = lazyPage(() => import("./pages/SkillsPage"));
-const LabMapPage = lazyPage(() => import("./pages/LabMapPage"));
 const AdminPage = lazyPage(() => import("./pages/AdminPage")); // only admins ever load it
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -45,6 +42,11 @@ function RequireAuth({ children }: { children: ReactNode }) {
   if (loading) return <div className="center-screen">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
+}
+
+function SkillsRedirect() {
+  const { labId = "" } = useParams();
+  return <Navigate to={`/courses/${labId}`} replace />;
 }
 
 export default function App() {
@@ -65,18 +67,10 @@ export default function App() {
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><LabPage /></Suspense></RequireAuth>}
       />
       <Route path="/welcome" element={<RequireAuth><OnboardingPage /></RequireAuth>} />
-      <Route
-        path="/skills"
-        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><SkillsPage /></Suspense></RequireAuth>}
-      />
-      <Route
-        path="/skills/:labId"
-        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><LabMapPage /></Suspense></RequireAuth>}
-      />
-      <Route
-        path="/tracks/:track"
-        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><TrackPage /></Suspense></RequireAuth>}
-      />
+      {/* The Skill maps section was folded into each lab's course page (owner, 22 November); old links still land. */}
+      <Route path="/skills/:labId" element={<SkillsRedirect />} />
+      <Route path="/skills" element={<Navigate to="/labs" replace />} />
+      <Route path="/tracks/:track" element={<Navigate to="/labs" replace />} />
       <Route
         path="/admin"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><AdminPage /></Suspense></RequireAuth>}

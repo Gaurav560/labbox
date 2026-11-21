@@ -217,7 +217,7 @@ visualizations (interactive "watch it run" traces) first, real code always, deco
 JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
 Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
 learners land on it. Done (22 November): Continue follows the last chapter opened and wears that lab's colour; a lab card opens
-the lab's own course page (`/courses/<lab>`) first, then the lab. Level, streak and stars moved into a profile panel with an Exit button. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
+the lab's own course page (`/courses/<lab>`) first, then the lab. Level, streak and stars moved into a profile panel with an Exit button. The skill map is on each course page; the separate Skill maps section (lab and track maps) was removed. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
 courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
 12 traces, quick checks, 32 task cards). Traces have a Play button.

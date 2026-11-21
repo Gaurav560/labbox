@@ -671,24 +671,6 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .start-title { font-size: var(--h2); }
 .onboarding-main pre, .onboarding-main .code-card pre { margin: 0; }
 
-/* ---------- skill map ---------- */
-.track-page { height: 100%; display: flex; flex-direction: column; }
-.track-main { flex: 1; min-height: 0; background: var(--bg); }
-.track-main .react-flow { --xy-background-color: var(--bg); --xy-edge-stroke: var(--border); --xy-edge-stroke-width: 2; }
-.react-flow__node.skill-node {
-  width: 180px; padding: var(--space-3); border-radius: var(--radius); font: 14px/1.4 var(--font-text);
-  background: var(--panel); color: var(--text); border: 2px solid var(--border); cursor: pointer; text-align: left;
-}
-.skill-title { font-weight: 700; }
-.skill-state { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.react-flow__node.skill-done { border-color: var(--success); background: var(--tint-success); }
-.react-flow__node.skill-done .skill-state { color: var(--success); font-weight: 700; }
-.react-flow__node.skill-available { border-color: var(--accent); }
-.react-flow__node.skill-available .skill-state { color: var(--accent); font-weight: 700; }
-.react-flow__node.skill-locked, .react-flow__node.skill-coming_soon { cursor: default; opacity: 0.75; border-style: dashed; }
-.react-flow__edge.edge-done path { stroke: var(--success); }
-.skill-node .react-flow__handle { opacity: 0; pointer-events: none; }
-
 /* ---------- home page ---------- */
 /* Its own palette: black and greys, a cool crimson red, a little white, a touch of lemon yellow. */
 .home {
@@ -1558,37 +1540,8 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   .labs-side .deck-card .deck { margin: 0; }
 }
 
-/* ---------- Skill maps: a metro map (owner, 21 November) ---------- */
-.nav-skills { font-weight: 600; }
-.skills-page, .map-page { min-height: 100%; background: var(--bg); }
-.skills-main { max-width: 1100px; margin: 0 auto; padding: 32px 16px 60px; }
-.skills-hero { margin-bottom: 24px; }
-.skills-kicker, .map-kicker { font: 700 12px var(--font-text); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
-.skills-hero h1 { margin: 6px 0; font-size: 32px; }
-.skills-hero p { max-width: 560px; margin: 0; color: var(--muted); }
-.skills-main h2 { margin: 28px 0 12px; font-size: 18px; }
-.skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
-.skill-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--card); color: var(--text);
-  transition: transform .15s ease, border-color .15s ease; }
-.skill-card:hover { text-decoration: none; transform: translateY(-2px); border-color: var(--accent); }
-.skill-card-img { aspect-ratio: 16 / 7; background: var(--chip); }
-.skill-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.skill-card-text { display: grid; gap: 6px; padding: 14px 16px 16px; }
-.skill-card-text span { color: var(--muted); font-size: 13px; }
-.skill-card-bar { height: 4px; border-radius: 2px; background: var(--chip); overflow: hidden; }
-.skill-card-bar > div { height: 100%; background: var(--success); }
-
-.map-main { max-width: 1200px; margin: 0 auto; padding: 32px 16px 80px; }
-.map-hero { display: flex; align-items: center; gap: 20px; padding: 20px 24px; margin-bottom: 36px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
-.map-hero h1 { margin: 4px 0; font-size: 26px; }
-.map-hero p { margin: 0; }
-.map-hero-text { flex: 1; min-width: 0; }
-.map-ring { --pct: 0; flex: none; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center;
-  background: conic-gradient(var(--success) calc(var(--pct) * 1%), var(--chip) 0); }
-.map-ring span { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--card); font: 700 14px var(--font-code); }
-.map-continue { flex: none; }
-
-.metro-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: -18px 0 14px; padding: 0; font-size: 13px; font-weight: 600; }
+/* ---------- the skill map on a course page: a metro map (owner, 21 November) ---------- */
+.metro-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 14px; padding: 0; font-size: 13px; font-weight: 600; }
 .metro-legend li { display: flex; align-items: center; gap: 8px; }
 .metro-legend-bar { width: 22px; height: 6px; border-radius: 3px; background: var(--c); }
 
@@ -1688,24 +1641,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .metro-list .metro-here { position: static; transform: none; box-shadow: none; }
 .metro-list .metro-here::after { display: none; }
 
-.metro-panel { margin-top: 12px; padding: 18px 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
-.metro-panel h2 { margin: 4px 0 12px; font-size: 20px; }
-.metro-chapters { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.metro-chapters a { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "where open" "title open"; align-items: center; gap: 2px 12px;
-  padding: 10px 14px; border-radius: 10px; background: var(--chip); color: var(--text); }
-.metro-chapters a:hover { text-decoration: none; outline: 1px solid var(--accent); }
-.metro-chapters a > :first-child { grid-area: where; }
-.metro-ch-title { grid-area: title; font-weight: 600; }
-.metro-open-link { grid-area: open; font-weight: 700; font-size: 13px; }
-.metro-chapters .is-done .metro-ch-title { color: var(--success); }
-
-@media (max-width: 760px) {
-  .map-hero { flex-wrap: wrap; gap: 14px; padding: 16px; }
-  .map-ring { width: 56px; height: 56px; }
-  .map-ring span { width: 44px; height: 44px; font-size: 12px; }
-  .map-hero-text { flex-basis: calc(100% - 70px); }
-  .map-hero h1 { font-size: 22px; }
-  .map-continue { width: 100%; justify-content: center; text-align: center; }
 }
 
 /* A lab's own page (/courses/<lab>): the step between a lab card and the lab. Coloured by the lab (--tone from
@@ -1743,7 +1678,8 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .course-facts span { color: var(--muted); font-size: 12.5px; }
 
 .course-syllabus h2 { margin: 36px 0 4px; font-size: 22px; }
-.course-syllabus > p { margin: 0 0 30px; }
+.course-syllabus > p { margin: 0 0 14px; }
+.course-map-title { margin: 22px 0 4px; font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 @media (max-width: 760px) {
   .course-hero { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
   .course-hero h1 { font-size: 30px; }

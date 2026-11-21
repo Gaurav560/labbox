@@ -1,6 +1,6 @@
 /*
  * Phase C acceptance: onboarding lands a new user in a lab with the editor open, the daily drill
- * counts for the streak, and the skill map lights up after a chapter is completed.
+ * counts for the streak, and the course page's skill map lights up after a chapter is completed.
  */
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
@@ -83,10 +83,10 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await expect(badge(page, /day streak/)).toHaveText("🔥 1");
   await expect(badge(page, /XP$/)).toHaveText("⭐ 20");
 
-  // 5. Skill map before: Python functions is available, not done.
-  await page.goto("/tracks/languages");
-  const pyNode = page.locator(".skill-node", { hasText: "Python functions" });
-  await expect(pyNode).toContainText("Start");
+  // 5. The skill map on the lab's course page, before: chapter 1 is where you are, not done.
+  await page.goto("/courses/python-basics");
+  const pyNode = page.locator(".metro-station", { hasText: "Your first functions" });
+  await expect(pyNode).toHaveClass(/metro-now/);
 
   // 6. Complete the chapter with a real Check: XP, recap, then the node lights up.
   await page.goto("/labs/python-basics");
@@ -103,10 +103,10 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await expect(badge(page, /XP$/)).toHaveText("⭐ 130");
   await expect(badge(page, /Level/)).toHaveText("Lv 2");
 
-  await page.goto("/tracks/languages");
-  await expect(pyNode).toContainText("✓ Done");
-  await expect(page.locator(".skill-node", { hasText: "Java methods" })).toContainText("Start");
-  await expect(page.locator(".topbar")).toContainText(/1 of \d+ skills/);  // more skills appear as courses grow
+  await page.goto("/courses/python-basics");
+  await expect(pyNode).toHaveClass(/metro-done/);  // the station lights up
+  await expect(page.locator(".metro-now")).toContainText("You are here");  // and you move on to chapter 2
+  await expect(page.locator(".course-progress")).toContainText("1 of");
 
   // Returning: no onboarding again.
   await page.goto("/labs");
