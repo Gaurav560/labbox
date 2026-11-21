@@ -1,5 +1,42 @@
 # Changelog
 
+## 22 November: no line legend above skill maps; full test runs on Postgres and Redis
+
+- The owner: remove the line legend ("Starting out 1/6 ...") above the skill map everywhere. `MetroLegend`
+  and its styles are gone; each part still names its line on the map itself.
+- The owner: test completely on Postgres and Redis, as in production. Full runs now use
+  `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL`; the SQLite and in-memory pass runs only when a change
+  touches the database, migrations or the no-Redis fallbacks (AGENTS.md "Running and testing").
+
+## 22 November: Python from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
+
+- The owner: rewrite the language courses, starting with Python, "always with curiosity, like teaching a child
+  one on one. interesting, animated, cool images, tasks". New CONTENT_STANDARD section "Curiosity first".
+- **Part 1, Starting out**, as full lessons with every output captured from the lab image, a running project
+  (**Pocket**, a money tracker) and a folder per chapter:
+  1. **Your first program** (new): what a program is, the terminal (`pwd`, `ls`, `cd`), `print`, strings vs
+     calculations, Python's story, a playing timeline of how Python runs a file, a SyntaxError and a NameError
+     read from the bottom. Tasks `hello_pocket`, `fix_first_errors` (new).
+  2. **Your first functions** (id `01-functions`, moved from 1st): def, parameters, arguments, return, a
+     playing timeline of one call, print vs return seen with real output, `%` and `==`. Tasks unchanged.
+  3. **Numbers and text** (id `02-numbers-and-text`): variables, int and float, the five ways to divide,
+     `0.1 + 0.2`, conversions, f-string formats. `average` no longer takes an empty list (chapter 6 uses that
+     crash to teach tracebacks).
+  4. **Making decisions** (`03-decisions`): booleans, comparisons (text vs numbers), if/elif/else, and/or/not.
+  5. **Loops** (`04-loops`): for, a running total traced with Play, range and positions from 0, early return.
+  6. **Finding bugs** (new): errors vs bugs, a three-frame traceback played bottom-up, print and `f"{x=}"`
+     debugging, a real pdb session. Tasks `fix_daily_total` (off by one), `fix_over_budget` (`<=` vs `<`) (new).
+- Chapter ids and task ids are kept; chapters 1 to 6 moved into numbered folders (`01-first-program/` ...
+  `06-finding-bugs/`), chapters 7 to 15 keep their files at the top until their part is rewritten. New
+  optional `folder:` on a chapter (the tutor reads only that folder). Type hints left out of the beginner
+  starters (introduced in chapter 2's Go deeper).
+- New playing diagrams: `python-runs-a-file`, `function-call`, `traceback-bottom-up`.
+- New checks in `tests/checks.py` (per chapter, kind failure messages; print-instead-of-return is named);
+  `check.py` keeps the chapters not rewritten yet.
+- A chapter now opens on its **first task's** file (`focus.py`), not whichever TODO file sorts first.
+- Tests: backend and browser tests follow the new chapter 1 (lab, engagement, editor, text size, top-up,
+  admin, focus, tutor folder); new `test_a_chapter_with_its_own_folder_name_sends_that_folder`.
+
 ## 22 November: the Spring Boot voice, written down
 
 - The owner asked whether the way Spring Boot lessons and tasks are written was recorded. The rules were

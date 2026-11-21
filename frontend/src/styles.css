@@ -1534,9 +1534,6 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 }
 
 /* ---------- the skill map on a course page: a metro map (owner, 21 November) ---------- */
-.metro-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 14px; padding: 0; font-size: 13px; font-weight: 600; }
-.metro-legend li { display: flex; align-items: center; gap: 8px; }
-.metro-legend-bar { width: 22px; height: 6px; border-radius: 3px; background: var(--c); }
 
 .metro { position: relative; width: 100%; }
 .metro-svg { position: absolute; inset: 0; overflow: visible; }

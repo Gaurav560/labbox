@@ -4,7 +4,7 @@ import { api, type LabDetail, type NextStep } from "../api";
 import { useAuth } from "../auth";
 import { inkOn, labTone, mix } from "../brand";
 import LabCover from "../components/LabCover";
-import MetroMap, { labLines, MetroLegend } from "../components/MetroMap";
+import MetroMap, { labLines } from "../components/MetroMap";
 import { LogoMark } from "../components/Logo";
 import { chapterNumber } from "../components/StatusBar";
 import ProfileMenu from "../components/ProfileMenu";
@@ -93,7 +93,6 @@ export default function CoursePage() {
           <h2>What you will learn</h2>
           <h3 className="course-map-title">Skill map</h3>
           <p className="muted">Every chapter on its line; each subtopic opens its lesson.</p>
-          <MetroLegend lines={lines} />
           <MetroMap lines={lines} />
         </section>
       </main>

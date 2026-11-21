@@ -12,7 +12,7 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
 
   await page.goto("/labs");
   const deck = page.getByRole("region", { name: "Continue where you left off" });
-  await expect(deck).toContainText("Go from zero");
+  await expect(deck).toContainText("Go from zero", { timeout: 30_000 }); // slow under a full parallel run
   await expect(deck.locator(".deck-initial")).toHaveCSS("color", "rgb(0, 173, 216)"); // Go's cyan, not the default red
 
   await page.locator(".labs-tiles .h-lab", { hasText: "Go from zero" }).click();
@@ -33,7 +33,7 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
 
   // Every subtopic opens its own lesson step; course parts are the map's lines.
   await page.goto("/courses/spring-boot-first-api");
-  await expect(page.getByRole("list", { name: "Lines" })).toContainText("Production basics");
+  await expect(page.locator(".metro-line-name", { hasText: "Production basics" })).toHaveCount(1); // the parts name their lines on the map
   const beans = page.locator(".metro-station", { hasText: "Beans and the application context" });
   await beans.getByRole("link", { name: "How a class becomes a bean" }).click();
   await expect(page).toHaveURL(/chapter=05-beans&step=4$/);

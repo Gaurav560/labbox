@@ -42,7 +42,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
   Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
-- Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
+- Tests: **full runs use Postgres and Redis, as in production** (owner, 22 November): `cd backend &&
+  LABBOX_TEST_DATABASE_URL=... LABBOX_TEST_REDIS_URL=... .venv/bin/pytest` (see README; about 275 tests,
+  Docker ones included, about 11 minutes). Plain `.venv/bin/pytest` runs on SQLite and in-memory locks (the
+  quick-start mode); run it only when a change touches the database, migrations or the no-Redis fallbacks;
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (25 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
 - Last known state: green (22 November, course pages and profile panel) (274 backend tests on Postgres and Redis,

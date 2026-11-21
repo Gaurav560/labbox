@@ -73,21 +73,6 @@ export function labLines(lab: LabDetail, nowIdx?: number): MetroLine[] {
   return out;
 }
 
-/** The lines' names with how many stations are done, above a map with more than one line. */
-export function MetroLegend({ lines }: { lines: MetroLine[] }) {
-  if (lines.length < 2) return null;
-  return (
-    <ul className="metro-legend" aria-label="Lines">
-      {lines.map((l, i) => (
-        <li key={l.name} style={{ ["--c" as string]: lineColor(i) }}>
-          <span className="metro-legend-bar" />{l.name}
-          <span className="muted">{l.stations.filter((s) => s.state === "done").length}/{l.stations.length}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export default function MetroMap({ lines, selected, onSelect }: {
   lines: MetroLine[];
   selected?: string | null;
