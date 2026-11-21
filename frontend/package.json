@@ -15,10 +15,8 @@
     "@fontsource/inter": "5.3.0",
     "@fontsource/jetbrains-mono": "5.3.0",
     "@monaco-editor/react": "4.6.0",
-    "@types/three": "^0.187.0",
     "@xterm/addon-fit": "0.10.0",
     "@xterm/xterm": "5.5.0",
-    "@xyflow/react": "12.12.1",
     "canvas-confetti": "1.9.4",
     "monaco-editor": "0.52.0",
     "react": "18.3.1",
@@ -28,7 +26,6 @@
     "remark-directive": "4.0.0",
     "remark-gfm": "^4.0.1",
     "roughjs": "^4.6.6",
-    "three": "^0.187.0",
     "unist-util-visit": "5.2.0"
   },
   "devDependencies": {
