@@ -159,6 +159,8 @@ class NodeChapter(BaseModel):
     chapter_id: str
     title: str
     done: bool
+    lab_title: str = ""  # for the 3D roadmap's panel: "Spring Boot, Ch 21"
+    number: int = 0      # the chapter's number as the lab's menu shows it
 
 
 class NodeOut(BaseModel):
@@ -193,8 +195,13 @@ def _skill_map(session: Session, user_id: int, track: str) -> SkillMap:
         chapters[n.id] = []
         for ref in n.chapters:
             lab_id, chapter_id = ref.split("/", 1)
-            ch = labs[lab_id].chapter(chapter_id)
-            chapters[n.id].append(NodeChapter(lab_id=lab_id, chapter_id=chapter_id, title=ch.title, done=chapter_id in done_by_lab[lab_id]))
+            lab = labs[lab_id]
+            ch = lab.chapter(chapter_id)
+            ids = [c.id for c in lab.chapters]
+            i = ids.index(chapter_id)
+            number = _id_number(chapter_id, i) if ids[0].startswith("00-") else i + 1
+            chapters[n.id].append(NodeChapter(lab_id=lab_id, chapter_id=chapter_id, title=ch.title, done=chapter_id in done_by_lab[lab_id],
+                                              lab_title=lab.title, number=number))
     done = {n.id for n in t.nodes if chapters[n.id] and all(c.done for c in chapters[n.id])}
     nodes = []
     for n in t.nodes:

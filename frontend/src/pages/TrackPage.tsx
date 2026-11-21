@@ -1,115 +1,127 @@
-import { Background, Position, ReactFlow, type Edge, type Node } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { api, type SkillMap, type SkillNode } from "../api";
 import { useAuth } from "../auth";
 import { LogoMark } from "../components/Logo";
 import StatsBadges from "../components/StatsBadges";
+import ThemeButton from "../components/ThemeButton";
 import { useToast } from "../components/Toasts";
 import { useTheme } from "../theme";
-import ThemeButton from "../components/ThemeButton";
+import { usePhone } from "../usePhone";
 
-const STATE_LABEL = { done: "Done", available: "Start", locked: "Locked", coming_soon: "Coming soon" } as const;
-const COL_W = 240;
-const ROW_H = 110;
+/*
+ * A track's skill map as a 3D roadmap (owner, 21 November): the board on the left, and on the right every topic,
+ * in order. Choosing a topic (on the board or in the list) shows its chapters, each opening its lab at that
+ * chapter. Phones, and browsers without WebGL, get the list on its own.
+ */
 
-// Simple layered layout: a node's column is the length of its longest prerequisite chain.
-function layout(nodes: SkillNode[]): Record<string, { x: number; y: number }> {
-  const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
-  const depth: Record<string, number> = {};
-  const depthOf = (id: string): number =>
-    (depth[id] ??= byId[id].requires.length ? 1 + Math.max(...byId[id].requires.map(depthOf)) : 0);
-  const rows: Record<number, number> = {};
-  const pos: Record<string, { x: number; y: number }> = {};
-  for (const n of nodes) {
-    const d = depthOf(n.id);
-    const r = (rows[d] = (rows[d] ?? -1) + 1);
-    pos[n.id] = { x: d * COL_W, y: r * ROW_H };
-  }
-  return pos;
-}
+// three.js is large: load it only when a skill map is opened.
+const Roadmap3D = lazy(() => import("../components/Roadmap3D"));
+
+const STATE_LABEL = { done: "✓ Done", available: "Start", locked: "Locked", coming_soon: "Coming soon" } as const;
 
 export default function TrackPage() {
   const { track = "" } = useParams();
   const { user } = useAuth();
   const { theme } = useTheme();
-  const navigate = useNavigate();
   const toast = useToast();
+  const phone = usePhone();
   const [map, setMap] = useState<SkillMap | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [reset, setReset] = useState(0);
+  const [noWebGl, setNoWebGl] = useState(false);
 
   useEffect(() => {
+    setSelected(null);
     api.skills(track).then(setMap).catch((e) => toast(e.message));
   }, [track, toast]);
 
-  const { nodes, edges } = useMemo(() => {
-    if (!map) return { nodes: [] as Node[], edges: [] as Edge[] };
-    const pos = layout(map.nodes);
-    const nodes: Node[] = map.nodes.map((n) => ({
-      id: n.id,
-      position: pos[n.id],
-      className: `skill-node skill-${n.state}`,
-      data: {
-        label: (
-          <div aria-label={`${n.title}: ${STATE_LABEL[n.state]}`}>
-            <div className="skill-title">{n.title}</div>
-            <div className="skill-state">{n.state === "done" ? "✓ Done" : STATE_LABEL[n.state]}</div>
-          </div>
-        ),
-      },
-      sourcePosition: Position.Right, // the map reads left to right
-      targetPosition: Position.Left,
-      draggable: false,
-      connectable: false,
-    }));
-    const edges: Edge[] = map.nodes.flatMap((n) =>
-      n.requires.map((r) => ({ id: `${r}-${n.id}`, source: r, target: n.id, className: `skill-edge ${n.state === "done" ? "edge-done" : ""}` })),
-    );
-    return { nodes, edges };
-  }, [map]);
+  const nodes = useMemo(() => map?.nodes ?? [], [map]);
+  const node = nodes.find((n) => n.id === selected) ?? null;
+  const done = nodes.filter((n) => n.state === "done").length;
+  const show3d = !phone && !noWebGl;
 
-  function open(id: string) {
-    const n = map?.nodes.find((x) => x.id === id);
-    const ch = n?.chapters.find((c) => !c.done) ?? n?.chapters[0];
-    if (n && ch && n.state !== "locked") navigate(`/labs/${ch.lab_id}`);
-  }
-
-  const done = map?.nodes.filter((n) => n.state === "done").length ?? 0;
   return (
     <div className="track-page">
       <header className="topbar">
         <Link to="/" className="logo" aria-label="LabBox by Telusko home"><LogoMark size={24} /></Link>
         <Link to="/labs" className="link">← Labs</Link>
         <span className="brand">{map?.title ?? track}</span>
-        {map && <span className="muted small-text">{done} of {map.nodes.length} skills</span>}
+        {map && <span className="muted small-text">{done} of {nodes.length} skills</span>}
         <span className="spacer" />
         <ThemeButton />
         <StatsBadges username={user?.username ?? ""} />
       </header>
-      <main className="track-main" aria-label="Skill map">
-        {map && (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            fitView
-            fitViewOptions={{ padding: 0.25 }}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            onNodeClick={(_, node) => open(node.id)}
-            proOptions={{ hideAttribution: false }}
-            colorMode={theme}
-          >
-            <Background gap={24} />
-          </ReactFlow>
+      <main className={`track-main ${show3d ? "has-3d" : ""}`} aria-label="Skill map">
+        {map && show3d && (
+          <div className="roadmap-stage">
+            <Suspense fallback={<div className="roadmap3d muted small-text roadmap-loading">Building your roadmap...</div>}>
+              <Roadmap3D nodes={nodes} selected={selected} onSelect={setSelected} resetSignal={reset} theme={theme} onFail={() => setNoWebGl(true)} />
+            </Suspense>
+            <div className="roadmap-help muted small-text" aria-hidden="true">Drag to turn · scroll to zoom · click a tile</div>
+            <button className="btn btn-small roadmap-reset" onClick={() => setReset((r) => r + 1)}>Reset view</button>
+            <div className="roadmap-legend small-text" aria-hidden="true">
+              <span className="lg lg-done" /> Done <span className="lg lg-available" /> Start here <span className="lg lg-locked" /> Locked <span className="lg lg-soon" /> Coming soon
+            </div>
+          </div>
         )}
         {map && (
-          <ul className="sr-only" aria-label="Skills">
-            {map.nodes.map((n) => (
-              <li key={n.id}>{n.title}: {STATE_LABEL[n.state]}</li>
-            ))}
-          </ul>
+          <aside className="roadmap-panel" aria-label={node ? node.title : "Topics"}>
+            {node ? (
+              <TopicDetails node={node} nodes={nodes} onBack={() => setSelected(null)} />
+            ) : (
+              <>
+                <h2 className="roadmap-panel-title">{map.title}</h2>
+                <p className="muted small-text">Each topic opens the lab chapters that teach it.</p>
+                <ol className="topic-list">
+                  {nodes.map((n) => (
+                    <li key={n.id} className={`skill-node skill-${n.state}`}>
+                      <button onClick={() => setSelected(n.id)} aria-label={`${n.title}: ${STATE_LABEL[n.state]}`}>
+                        <span className="skill-title">{n.title}</span>
+                        <span className="skill-state">{STATE_LABEL[n.state]}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )}
+          </aside>
         )}
       </main>
+    </div>
+  );
+}
+
+function TopicDetails({ node, nodes, onBack }: { node: SkillNode; nodes: SkillNode[]; onBack: () => void }) {
+  const needs = node.requires.map((r) => nodes.find((n) => n.id === r)).filter((n): n is SkillNode => !!n);
+  const notYet = needs.filter((n) => n.state !== "done");
+  return (
+    <div className="topic-details">
+      <button className="link topic-back" onClick={onBack}>← All topics</button>
+      <div className={`topic-state skill-${node.state}`}>{STATE_LABEL[node.state]}</div>
+      <h2 className="roadmap-panel-title">{node.title}</h2>
+      {node.state === "coming_soon" ? (
+        <p className="muted">This topic is coming soon.</p>
+      ) : (
+        <>
+          {notYet.length > 0 && (
+            <p className="muted small-text">Best after: {notYet.map((n) => n.title).join(", ")}. You can still open it.</p>
+          )}
+          <ol className="topic-chapters">
+            {node.chapters.map((c) => (
+              <li key={`${c.lab_id}/${c.chapter_id}`} className={c.done ? "is-done" : ""}>
+                <div>
+                  <div className="muted small-text">{c.lab_title}{c.number !== undefined ? ` · Ch ${c.number}` : ""}</div>
+                  <div className="topic-chapter-title">{c.done ? "✓ " : ""}{c.title}</div>
+                </div>
+                <Link className="btn btn-small btn-primary" to={`/labs/${c.lab_id}?chapter=${encodeURIComponent(c.chapter_id)}`} aria-label={`Open ${c.title}`}>
+                  Open
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
     </div>
   );
 }

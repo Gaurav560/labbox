@@ -1,5 +1,20 @@
 # Changelog
 
+## Skill maps become a 3D roadmap, and every topic opens its lab
+
+- The owner: "turn these into a real 3D fun roadmap, and every topic connects to the actual lab and can open it,
+  for all labs". With three.js (installed by the owner), every skill map is a 3D journey: topics in learning
+  order stand as raised tiles along a winding road that leads away from the camera; the camera starts low behind
+  the topic you are on. Done tiles are green (and the road behind them), the ones you can start float and pulse,
+  locked ones are grey, coming-soon ones see-through. Drag to turn, scroll to zoom, right-drag to pan, Reset view.
+- A side panel lists every topic; choosing one (on the board or in the list) flies the camera there and shows its
+  chapters ("Spring Boot · Ch 21"), each with an Open button into the lab at that chapter, plus "Best after" for
+  unfinished prerequisites (locked topics can still be opened).
+- Phones and browsers without WebGL get the list alone. three.js loads only on skill-map pages. Colours follow the
+  light and dark themes; no motion for people who turn motion off.
+- The skill-map API adds each chapter's lab title and its number as the lab's menu shows it (additive).
+- Tests: the skill-map API's new fields, and a browser test that chooses a topic and opens its chapter.
+
 ## Dashboard: the next step in a left sidebar on wide screens
 
 - Then, at the owner's request ("long vertical bar, cool aesthetic"): the sidebar is a full-height rail. Under the

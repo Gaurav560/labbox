@@ -249,6 +249,12 @@ def test_skill_map_lights_up(client: TestClient):
     assert nodes["py-collections"]["state"] == "locked"  # needs py-functions first
     assert nodes["py-traps"]["state"] == "coming_soon"
     assert nodes["py-functions"]["chapters"][0]["title"] == "Your first functions"
+    # The 3D roadmap's panel names each chapter's lab and its number as the lab's menu shows it.
+    first = nodes["py-functions"]["chapters"][0]
+    assert (first["lab_title"], first["number"]) == ("Python from zero", 1)
+    spring = {n["id"]: n for n in client.get("/api/tracks/frameworks/skills", headers=h).json()["nodes"]}
+    rel = spring["spring-data-deep"]["chapters"][0]
+    assert (rel["lab_title"], rel["number"], rel["chapter_id"]) == ("Spring Boot", 21, "21-relationships")  # numbered from 0
     with Session(engine) as s:
         s.add(ChapterProgress(user_id=uid, lab_id="python-basics", chapter_id="01-functions"))
         s.commit()

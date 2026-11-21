@@ -141,7 +141,7 @@ export interface SkillNode {
   id: string;
   title: string;
   requires: string[];
-  chapters: { lab_id: string; chapter_id: string; title: string; done: boolean }[];
+  chapters: { lab_id: string; chapter_id: string; title: string; done: boolean; lab_title?: string; number?: number }[];
   state: NodeState;
 }
 export interface SkillMap { track: string; title: string; nodes: SkillNode[] }
