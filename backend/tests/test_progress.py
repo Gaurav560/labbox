@@ -127,4 +127,9 @@ def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
     # The most recently touched chapter wins.
     client.put(f"/api/labs/{LAB}/chapters/{CH}/progress", json={"current_step": 2}, headers=h)
     assert client.get("/api/me/next", headers=h).json()["lab_id"] == LAB
+
+    # Opening a chapter counts too, even without moving a step (reading only).
+    assert client.get("/api/labs/java-basics/chapters/03-decisions/progress", headers=h).status_code == 200
+    back = client.get("/api/me/next", headers=h).json()
+    assert (back["lab_id"], back["chapter_id"], back["step"]) == ("java-basics", "03-decisions", 5)
     assert client.get("/api/me/next").status_code == 401

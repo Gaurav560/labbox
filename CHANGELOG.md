@@ -1,5 +1,13 @@
 # Changelog
 
+## 22 November: Continue follows the last chapter opened
+
+- The dashboard's Continue card picked the lab where the learner last moved a step, so opening a lab
+  and reading without pressing Next never counted (Redis opened last, Spring Boot still shown).
+  Opening a chapter now marks it as the latest (`progress.opened`), and Continue follows it.
+- Test: `test_next_starts_new_learners_and_continues_the_rest` opens a chapter without moving and
+  expects Continue to point there.
+
 ## Dashboard: the Continue card as a tape deck; no course times on lab cards
 
 - The owner: lab cards no longer show a course's total time (a long one can feel overwhelming); the dashboard

@@ -68,6 +68,7 @@ def get_progress(
     assert user.id is not None
     lab = get_lab(lab_id)
     lab.chapter(chapter_id)  # 404 if unknown
+    progress.opened(session, user.id, lab.id, chapter_id)
     return _out(session, user.id, lab, chapter_id)
 
 

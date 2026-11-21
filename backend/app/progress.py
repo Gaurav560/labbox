@@ -45,6 +45,15 @@ def chapter_progress(session: Session, user_id: int, lab_id: str, chapter_id: st
     return _get_or_create(session, ChapterProgress, key, lambda: ChapterProgress(**key))
 
 
+def opened(session: Session, user_id: int, lab_id: str, chapter_id: str) -> None:
+    """Opening a chapter counts as working on it: the dashboard's Continue card follows the latest one,
+    even when the learner reads without moving a step."""
+    row = chapter_progress(session, user_id, lab_id, chapter_id)
+    row.updated_at = utcnow()
+    session.add(row)
+    session.commit()
+
+
 def task_progress(session: Session, user_id: int, lab_id: str, chapter_id: str, task_id: str) -> TaskProgress:
     key = {"user_id": user_id, "lab_id": lab_id, "task_id": task_id}
     return _get_or_create(session, TaskProgress, key, lambda: TaskProgress(**key, chapter_id=chapter_id))
