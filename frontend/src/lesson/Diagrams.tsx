@@ -310,7 +310,159 @@ function Replication() {
   );
 }
 
+/** A library is called by your code; a framework calls your code (inversion of control). */
+function LibraryVsFramework() {
+  return (
+    <Svg viewBox="0 0 440 210" label="With a library, your code is in charge and calls the library. With a framework, the framework is in charge and calls your code when something happens, such as a request arriving">
+      <text className="dg-note" x={10} y={18}>a library: you call it</text>
+      <Box x={10} y={28} w={150} h={36} label="your code" tone="accent" />
+      <Arrow x1={162} y1={46} x2={272} y2={46} />
+      <text className="dg-note" x={176} y={38}>calls</text>
+      <Box x={276} y={28} w={150} h={36} label="library (Jackson)" />
+      <text className="dg-note" x={10} y={118}>a framework: it calls you</text>
+      <Box x={10} y={128} w={150} h={36} label="Spring" />
+      <Arrow x1={162} y1={146} x2={272} y2={146} />
+      <text className="dg-note" x={166} y={138}>request arrives,</text>
+      <text className="dg-note" x={166} y={180}>calls your method</text>
+      <Box x={276} y={128} w={150} h={36} label="your controller" tone="accent" />
+    </Svg>
+  );
+}
+
+/** What a web backend has to do, and which parts Spring Boot does for you. */
+function BackendStack() {
+  const rows: [string, boolean][] = [
+    ["your endpoints and rules", true],
+    ["turn JSON into objects and back", false],
+    ["route URLs to methods", false],
+    ["handle many requests at once (threads)", false],
+    ["read HTTP from the network", false],
+    ["open a port and accept connections", false],
+  ];
+  return (
+    <Svg viewBox="0 0 440 236" label="A stack of six jobs every web backend needs. You write only the top one, your endpoints and rules; Spring Boot and its embedded Tomcat server do the five below">
+      {rows.map(([label, yours], i) => (
+        <Box key={label} x={10} y={8 + i * 36} w={300} h={30} label={label} tone={yours ? "accent" : "plain"} />
+      ))}
+      <text className="dg-note" x={320} y={28}>you write</text>
+      <text className="dg-note" x={320} y={120}>Spring Boot</text>
+      <text className="dg-note" x={320} y={136}>does these</text>
+      <line className="dg-arrow" x1={316} y1={48} x2={316} y2={222} />
+    </Svg>
+  );
+}
+
+/** The history of Spring as a timeline. */
+function SpringTimeline() {
+  const events: [number, string, string][] = [
+    [2002, "Rod Johnson's book", "simpler Java is possible"],
+    [2004, "Spring 1.0", "plain objects, injection"],
+    [2014, "Spring Boot 1.0", "just run it, no XML"],
+    [2018, "Spring Boot 2", "reactive web, Java 8+"],
+    [2022, "Spring Boot 3", "Java 17, Jakarta EE"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 226" label="A timeline: 2002 Rod Johnson's book, 2004 Spring 1.0, 2014 Spring Boot 1.0, 2018 Spring Boot 2, 2022 Spring Boot 3">
+      <line className="dg-arrow" x1={30} y1={24} x2={30} y2={212} />
+      {events.map(([year, what, why], i) => (
+        <g key={year}>
+          <Box x={46} y={8 + i * 42} w={60} h={30} label={String(year)} tone="accent" code />
+          <text className="dg-label" x={118} y={21 + i * 42}>{what}</text>
+          <text className="dg-note" x={118} y={36 + i * 42}>{why}</text>
+        </g>
+      ))}
+    </Svg>
+  );
+}
+
+/** What SpringApplication.run does, in order. */
+function StartupSequence() {
+  const steps = [
+    "1. read application.properties",
+    "2. scan com.shop for @Component classes",
+    "3. auto-configure (web, JSON, ...)",
+    "4. create the beans, inject them",
+    "5. start Tomcat on port 8080",
+    "6. Started: ready for requests",
+  ];
+  return (
+    <Svg viewBox="0 0 440 236" label="SpringApplication.run reads application.properties, scans the package for components, applies auto-configuration, creates and injects the beans, starts Tomcat on port 8080, and is then ready for requests">
+      <Box x={10} y={8} w={420} h={30} label="SpringApplication.run(...)" tone="accent" code />
+      {steps.map((s, i) => (
+        <g key={s}>
+          <Box x={30} y={46 + i * 31} w={380} h={26} label={s} />
+        </g>
+      ))}
+    </Svg>
+  );
+}
+
+/** The container creates each bean once and passes it to the constructors that ask for it. */
+function DiContainer() {
+  return (
+    <Svg viewBox="0 0 440 210" label="The Spring container creates one VisitCounter and one PriceCalculator, then passes the same VisitCounter to HomeController and StatsController through their constructors">
+      <g className="dg-box"><rect x={6} y={6} width={428} height={196} rx={12} /></g>
+      <text className="dg-note" x={18} y={26}>the Spring container (application context)</text>
+      <Box x={20} y={44} w={150} h={34} label="VisitCounter" tone="accent" code />
+      <Box x={20} y={140} w={150} h={34} label="PriceCalculator" tone="accent" code />
+      <Arrow x1={172} y1={55} x2={262} y2={44} />
+      <Arrow x1={172} y1={67} x2={262} y2={96} />
+      <Arrow x1={172} y1={157} x2={262} y2={157} />
+      <Box x={266} y={28} w={156} h={30} label="HomeController" code />
+      <Box x={266} y={82} w={156} h={30} label="StatsController" code />
+      <Box x={266} y={142} w={156} h={30} label="PriceController" code />
+      <text className="dg-note" x={20} y={104}>one object each,</text>
+      <text className="dg-note" x={20} y={120}>passed to constructors</text>
+    </Svg>
+  );
+}
+
+/** Controller, service, repository: each layer calls only the one below it. */
+function Layers() {
+  const rows: [string, string][] = [
+    ["ProductController", "HTTP: paths, status codes, JSON"],
+    ["ProductService", "the rules: averages, budgets, checks"],
+    ["ProductRepository", "the data: find, save, delete"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 200" label="Three layers: the controller handles HTTP and calls the service, the service holds the rules and calls the repository, and the repository reads and writes the data">
+      {rows.map(([name, job], i) => (
+        <g key={name}>
+          <Box x={10} y={10 + i * 62} w={170} h={36} label={name} tone={i === 1 ? "accent" : "plain"} code />
+          <text className="dg-note" x={192} y={33 + i * 62}>{job}</text>
+          {i < 2 && <Arrow x1={95} y1={48 + i * 62} x2={95} y2={70 + i * 62} />}
+        </g>
+      ))}
+      <text className="dg-note" x={10} y={196}>each layer calls only the one below it</text>
+    </Svg>
+  );
+}
+
+/** How the parts of a URL become method parameters. */
+function RequestMapping() {
+  return (
+    <Svg viewBox="0 0 440 200" label="In GET /products/3?sort=price, the 3 in the path goes to the @PathVariable id parameter, and sort=price in the query goes to the @RequestParam sort parameter">
+      <Box x={10} y={14} w={420} h={36} label="GET /products/3?sort=price" tone="accent" code />
+      <Arrow x1={140} y1={52} x2={110} y2={120} />
+      <Arrow x1={300} y1={52} x2={330} y2={120} />
+      <text className="dg-note" x={64} y={92}>the path part</text>
+      <text className="dg-note" x={300} y={92}>the query part</text>
+      <Box x={10} y={124} w={200} h={34} label="@PathVariable id" code />
+      <Box x={230} y={124} w={200} h={34} label="@RequestParam sort" code />
+      <text className="dg-note" x={60} y={180}>id = 3</text>
+      <text className="dg-note" x={290} y={180}>sort = "price"</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "library-vs-framework": LibraryVsFramework,
+  "backend-stack": BackendStack,
+  "spring-timeline": SpringTimeline,
+  "startup-sequence": StartupSequence,
+  "di-container": DiContainer,
+  layers: Layers,
+  "request-mapping": RequestMapping,
   "consumer-group": ConsumerGroup,
   persistence: Persistence,
   replication: Replication,

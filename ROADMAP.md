@@ -219,7 +219,9 @@ Done: kinder checks (coming-up tasks are not failures), "start here / continue" 
 learners land on it. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
 courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
-12 traces, quick checks, 32 task cards). Traces have a Play button. The other short labs get the standard
+12 traces, quick checks, 32 task cards). Traces have a Play button.
+**Spring Boot (21 November, in progress):** plain style, one Shop API, an introduction chapter plus
+22 chapters planned (owner approved); block A (chapters 0 to 5) done. The other short labs get the standard
 when each grows into a full course. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.

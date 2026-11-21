@@ -1,18 +1,17 @@
 id: spring-boot-first-api
 version: 2
-title: "Spring Boot: your first API"
-subtitle: Build a merchant API with Spring Boot and see it live in the Preview tab.
-description: Build a merchant API with Spring Boot and see it live in the Preview tab.
+title: "Spring Boot"
+subtitle: From what a framework is to a tested, secure REST API, one plain step at a time.
+description: "Learn Spring Boot from the beginning: what a framework is and why Spring exists, how a Spring Boot
+  application starts, beans and dependency injection, controllers, services and repositories, requests and
+  responses, validation and errors, databases with Spring Data JPA, transactions, testing and security, by
+  building one Shop API chapter by chapter."
 language: java
 track: frameworks
 tags: [java, spring-boot]
 level: beginner
-estimated_minutes: 20
-story:
-  company: PaySetu
-  character: { name: Kabir, role: "Lead engineer, PaySetu" }
-  pitch: "PaySetu's merchant dashboard needs its first real backend endpoint."
-cover_scene: "PaySetu headquarters: a tiny rooftop fintech office at night with a glowing server rack sprouting a small green leaf, floating holographic dashboard panels showing merchant cards, city lights far below."
+estimated_minutes: 120
+cover_scene: "A small online shop's backend: a clean server rack with a green leaf on top, product cards and JSON brackets floating beside it."
 cover: cover.svg
 cover_credit: { by: "Logos: spring,java", source: "devicon (MIT)" }
 image: labbox/spring-boot-first-api:v1
@@ -22,12 +21,26 @@ workspace:
   shell: /bin/bash
   network: bridge
 preview:
-  - { name: "Merchant API", port: 8080, path: "/hello" }
+  - { name: "Shop API", port: 8080, path: "/hello" }
 check:
   command: ["bash", "/check/tests/run_checks.sh"]
   timeout_seconds: 240
   network: none
 chapters:
+  - id: 00-what-is-a-framework
+    title: What a framework is, and why Spring Boot
+    file: chapters/00-what-is-a-framework.md
+    minutes: 15
+    tasks:
+      - id: app_name
+        title: "application.properties: name the application"
+        hints:
+          - "Open src/main/resources/application.properties: there is a TODO line for this task."
+          - "A setting is one line: the property name, an equals sign, then the value."
+          - "The property is spring.application.name; the value is shop-api, with no quotes."
+        examples:
+          - call: "spring.application.name in application.properties"
+            gives: "shop-api"
   - id: 01-first-endpoints
     title: Your first endpoints
     file: chapters/01-first-endpoints.md
@@ -38,10 +51,115 @@ chapters:
         hints:
           - "MerchantController has no methods yet, so every URL returns 404."
           - "Add a method to MerchantController with a mapping annotation for the /hello path, like the status example in the lesson."
-          - "Return the String \"Hello from PaySetu!\" from that method; Spring sends it as plain text."
+          - "Return the String Hello from the Shop API! from that method; Spring sends it as plain text."
+        examples:
+          - call: "GET /hello"
+            gives: "Hello from the Shop API!"
       - id: merchants
         title: "GET /merchants: names A to Z, as JSON"
         hints:
           - "MERCHANTS is already there, but it is not in A to Z order."
           - "Return a List<String> from a @GetMapping method: Spring turns it into a JSON array."
           - "Copy the list and sort it (for example with stream().sorted().toList()) before returning it."
+        examples:
+          - call: "GET /merchants"
+            gives: "[\"Annapurna Mess\",\"Brew Point\",\"Kirana King\"]"
+  - id: 02-app-startup
+    title: How a Spring Boot app starts
+    file: chapters/02-app-startup.md
+    minutes: 18
+    tasks:
+      - id: component_scan
+        title: "02-app-startup: make Spring find StatusController"
+        hints:
+          - "Look at the folder StatusController.java is in, and compare it with ShopApiApplication's package."
+          - "Component scanning only searches com.shop and the packages below it."
+          - "Move the file to src/main/java/com/shop/status/ and change its first line to that package."
+        examples:
+          - call: "GET /status"
+            gives: "ok"
+      - id: greeting_property
+        title: "02-app-startup: the greeting from application.properties"
+        hints:
+          - "GreetingController reads the property shop.greeting with @Value."
+          - "Add one line to 02-app-startup/src/main/resources/application.properties."
+          - "The line is the property name, an equals sign, and the text Welcome to the Shop API."
+        examples:
+          - call: "GET /greeting"
+            gives: "Welcome to the Shop API"
+  - id: 03-beans
+    title: Beans and dependency injection
+    file: chapters/03-beans.md
+    minutes: 20
+    tasks:
+      - id: price_service
+        title: "03-beans: inject PriceCalculator into PriceController"
+        hints:
+          - "Spring can only inject beans, and PriceCalculator is not one yet."
+          - "Put @Service on PriceCalculator, then add a constructor to PriceController with a PriceCalculator parameter."
+          - "In the constructor, assign the parameter to the calculator field."
+        examples:
+          - call: "GET /tea/price"
+            gives: "2360"
+            note: "2000 paise plus 18% GST"
+      - id: one_counter
+        title: "03-beans: share one VisitCounter"
+        hints:
+          - "HomeController creates its own VisitCounter, so StatsController never sees its visits."
+          - "Ask for the VisitCounter in HomeController's constructor, like StatsController does."
+          - "Remove the new VisitCounter() and make the field final, set from the constructor parameter."
+        examples:
+          - call: "GET / twice, then GET /stats"
+            gives: "2 more than before"
+  - id: 04-layers
+    title: "Layers: controller, service, repository"
+    file: chapters/04-layers.md
+    minutes: 18
+    tasks:
+      - id: thin_controller
+        title: "04-layers: move the average into ProductService"
+        hints:
+          - "ProductService.averagePrice() returns 0, and the controller does the work itself."
+          - "Move the loop from the controller into averagePrice(), reading products from the service's repository."
+          - "In the controller, just return what the service method gives; the repository field is then no longer needed there."
+        examples:
+          - call: "GET /products/average-price"
+            gives: "3950"
+            note: "worked out by the service"
+      - id: budget_products
+        title: "04-layers: findCheaperThan in the repository"
+        hints:
+          - "budgetProducts() returns an empty list, and the repository has no findCheaperThan yet."
+          - "In ProductRepository, filter the products whose pricePaise is below the parameter."
+          - "In ProductService.budgetProducts(), return the repository's result for BUDGET_PAISE."
+        examples:
+          - call: "GET /products/budget"
+            gives: "Masala tea, Filter coffee, Samosa"
+            note: "under Rs 50"
+  - id: 05-reading-the-request
+    title: Reading the request
+    file: chapters/05-reading-the-request.md
+    minutes: 20
+    tasks:
+      - id: product_by_id
+        title: "05-reading-the-request: GET /products/{id}"
+        hints:
+          - "Map /products/{id} and declare a long parameter with @PathVariable."
+          - "Search the repository's list for the product with that id."
+          - "When there is none, throw new ResponseStatusException with HttpStatus.NOT_FOUND."
+        examples:
+          - call: "GET /products/3"
+            gives: "{\"id\":3,\"name\":\"Samosa\",\"pricePaise\":1800}"
+          - call: "GET /products/99"
+            gives: "404"
+      - id: search_products
+        title: "05-reading-the-request: GET /products/search"
+        hints:
+          - "Two @RequestParam parameters: an optional Integer maxPrice and a String sort with a default."
+          - "Filter with maxPrice only when it is not null, then sort with a Comparator chosen by sort."
+          - "For sort=price use Comparator.comparingInt on the price; otherwise compare the names."
+        examples:
+          - call: "GET /products/search?maxPrice=2000"
+            gives: "[Masala tea, Samosa]"
+          - call: "GET /products/search?sort=price"
+            gives: "[Samosa, Masala tea, Filter coffee, Paneer roll]"

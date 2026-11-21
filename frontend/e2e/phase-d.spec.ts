@@ -62,7 +62,7 @@ test("Spring Boot app in the Preview tab", async ({ page }) => {
   test.setTimeout(240_000);
   await login(page);
   // Use the finished controller so /hello answers (writing Java in the editor is not what is tested here).
-  const controller = `package com.paysetu;
+  const controller = `package com.shop;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,26 +71,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MerchantController {
     @GetMapping("/hello")
-    public String hello() { return "Hello from PaySetu!"; }
+    public String hello() { return "Hello from the Shop API!"; }
 
     @GetMapping("/merchants")
     public List<String> merchants() { return List.of("Annapurna Mess", "Brew Point", "Kirana King"); }
 }
 `;
-  await page.goto("/labs/spring-boot-first-api");
+  await page.goto("/labs/spring-boot-first-api?chapter=01-first-endpoints");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
   const r = await page.request.put("/api/labs/spring-boot-first-api/files/content", {
     headers: auth,
-    data: { path: "src/main/java/com/paysetu/MerchantController.java", content: controller },
+    data: { path: "src/main/java/com/shop/MerchantController.java", content: controller },
   });
   expect(r.ok()).toBeTruthy();
   await expect(term(page)).toContainText("learner", { timeout: 20_000 });
-  await runInTerminal(page, /Step 4: Build and run/, "java -jar target/merchant-api.jar");
-  await expect(term(page)).toContainText("Started MerchantApiApplication", { timeout: 180_000 });
+  await runInTerminal(page, /Step 4: Build and run/, "java -jar target/shop-api.jar");
+  await expect(term(page)).toContainText("Started ShopApiApplication", { timeout: 180_000 });
 
   await page.getByRole("tab", { name: "Preview" }).click();
   await expect(page.getByLabel("Path")).toHaveValue("/hello");
-  await expect(page.frameLocator("iframe.preview-frame").locator("body")).toHaveText("Hello from PaySetu!", { timeout: 20_000 });
+  await expect(page.frameLocator("iframe.preview-frame").locator("body")).toHaveText("Hello from the Shop API!", { timeout: 20_000 });
 });
 
 test("Postgres incident: setup, timer, fix, live check", async ({ page }) => {

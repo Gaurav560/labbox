@@ -1,5 +1,25 @@
 # Changelog
 
+## Spring Boot, block A: an introduction chapter and chapters 1 to 5, in plain style
+
+- The Spring lab becomes **Spring Boot**, a plain course (no story) around one running Shop API. The old
+  PaySetu story is gone; task ids `hello` and `merchants` are kept, and their checks still accept the old
+  greeting and the old `com.paysetu` package, so nobody loses progress.
+- **Chapter 0, "What a framework is, and why Spring Boot":** inversion of control, what a backend must
+  do, Spring versus Spring Boot (starters, auto-configuration, embedded Tomcat), the history of Spring
+  with a timeline drawing, where it is used; first task: name the app in `application.properties`.
+- **Chapters 2 to 5:** how the app starts (component scanning, `@Value`), beans and dependency injection
+  (a bean injected, one bean shared by two controllers), layers (controller, service, repository; the
+  check spies on the service to confirm the controller delegates), and reading the request (path
+  variables, optional query parameters). Each chapter is its own Maven project folder.
+- Seven technical diagrams (library versus framework, the backend stack, the Spring timeline, the start-up
+  sequence, the container, the layers, request mapping). Plain technical explanations, analogies rarely.
+- **Checks:** hidden JUnit and MockMvc tests copied into a copy of the chapter's project and run offline;
+  one `@@RESULT` per task, compile errors and start-up failures named per chapter. The image now caches
+  JPA, H2, validation, Flyway, Actuator, security and the test runner for later chapters. About 4
+  seconds per chapter check.
+- The validator allows pictures on history steps (the owner asked for pictures of history).
+
 ## Redis in practice, chapters 7 to 13, and a "watch it run" player
 
 - **Redis chapters 7 to 13 up to the standard:** three diagrams (a consumer group with its pending

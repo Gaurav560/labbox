@@ -93,7 +93,7 @@ def _picture_code_errors(file: str, step_no: int, markdown: str) -> list[str]:
 # Pictures help where they carry an idea and hurt where they are extra things to look at (the coherence
 # principle): everyday pictures belong where an idea is taught, technical diagrams also where a learner
 # has just run something, and never more than one per step. Tasks, recaps and quick checks stay clear.
-PICTURE_STEPS = {"picture": {"concept", "example"}, "diagram": {"concept", "example", "try"}}
+PICTURE_STEPS = {"picture": {"concept", "example", "history"}, "diagram": {"concept", "example", "try", "history"}}  # history: the owner asked for pictures of history
 
 
 def _picture_place_errors(file: str, step_no: int, step_type: str, markdown: str) -> list[str]:

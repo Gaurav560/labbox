@@ -39,7 +39,8 @@ every session.
 | 5a | A trace on every worked example in Python, Go and Java from zero (23 new, 49 in all) | done | see git log |
 | 5b | Redis chapters 1 to 6 up to the standard (history, 3 diagrams, worked examples, traces, quick checks, task cards) | done | see git log |
 | 5c | Redis chapters 7 to 13, the same; traces get a Play button; trace cells read from the source | done | see git log |
-| next | Python in practice (the next course in the owner's order, with a story): propose story and syllabus first | **next** | |
+| next | **Spring Boot** (owner: "first finish Spring Boot"): plain, one Shop API, intro chapter + 22 chapters. Block A (0 to 5) done; next block B (6 to 10: DTOs, status codes, validation, errors, config), then C (11 to 16: JPA, repositories, relationships, paging, transactions, Flyway), D (17 to 22: testing x2, logging/Actuator, security, RestClient, capstone). Projects per chapter folder; checks = JUnit/MockMvc in tests/<chapter>/ via tests/run_checks.sh (add each chapter to its CHAPTERS table); generator script pattern in scratch | **in progress** | |
+| after | Python in practice (story), then a later "Spring Boot in production" lab with a story and scenarios | | |
 | later | The other short labs get the standard when each grows into a full course (owner agreed) | | |
 | idea | "Run this example" on worked examples and "run your file" on task steps (the owner likes Run in terminal) | proposed | |
 
