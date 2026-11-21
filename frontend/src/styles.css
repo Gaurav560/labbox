@@ -1491,3 +1491,22 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   .labs-side .next-card { flex-direction: row; align-items: center; }
   .labs-side .next-go { text-align: left; }
 }
+
+/* The sidebar's long vertical rail: the current lab's chapters as a timeline */
+.labs-side { display: flex; flex-direction: column; gap: var(--space-4); max-height: calc(100vh - 40px); }
+.next-rail { flex: 1; min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius); background: var(--panel); overflow: hidden; }
+.next-rail-head { display: flex; justify-content: space-between; padding: 12px 16px; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.next-rail ol { list-style: none; margin: 0; padding: 10px 8px 14px; overflow-y: auto; position: relative; }
+.rail-step a { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 7px 8px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 14px; line-height: 1.35; }
+.rail-step a:hover { background: var(--hover); color: var(--text); }
+/* the vertical line joining the dots */
+.rail-step a::before { content: ""; position: absolute; left: 20px; top: 30px; bottom: -8px; width: 2px; background: var(--border); }
+.rail-step:last-child a::before { display: none; }
+.rail-step.is-done a::before { background: color-mix(in srgb, var(--success) 60%, var(--border)); }
+.rail-dot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 600 11px var(--font-text);
+  border: 1.5px solid var(--border); background: var(--card); color: var(--muted); position: relative; z-index: 1; }
+.rail-step.is-done .rail-dot { background: var(--success); border-color: var(--success); color: #0b1a10; }
+.rail-step.is-now a { background: color-mix(in srgb, #5048b8 16%, transparent); color: var(--text); font-weight: 600; }
+.rail-step.is-now .rail-dot { background: #5048b8; border-color: #8c84e8; color: #fff; box-shadow: 0 0 0 4px color-mix(in srgb, #5048b8 25%, transparent); }
+.rail-title { padding-top: 2px; }
+@media (max-width: 1199px) { .next-rail { display: none; } .labs-side { max-height: none; } }

@@ -2,6 +2,10 @@
 
 ## Dashboard: the next step in a left sidebar on wide screens
 
+- Then, at the owner's request ("long vertical bar, cool aesthetic"): the sidebar is a full-height rail. Under the
+  Continue card, every chapter of the lab you are in, as a vertical timeline (done ticked, the current one
+  glowing, upcoming faint), each opening its chapter; it scrolls inside itself and the current chapter is in view.
+
 - The owner: "place this vertically on left side, there is ample of space". On screens 1200 px and wider, the
   "Continue where you left off" (or "Start here") card is a vertical card in a sticky left sidebar, next to the
   progress, drill and labs; on narrower screens it stays on top, as before.

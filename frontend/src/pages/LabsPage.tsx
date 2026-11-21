@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, type LabSummary, type NextStep, type TrackSummary } from "../api";
+import { api, type LabDetail, type LabSummary, type NextStep, type TrackSummary } from "../api";
+import { chapterNumber } from "../components/StatusBar";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
 import LabCover from "../components/LabCover";
@@ -55,6 +56,7 @@ export default function LabsPage() {
       {next && (
         <aside className="labs-side">
           <NextCard next={next} />
+          <NextRail next={next} />
         </aside>
       )}
       <main className="labs-main">
@@ -142,5 +144,39 @@ function NextCard({ next }: { next: NextStep }) {
         {cont ? "Continue →" : "Start the first chapter →"}
       </Link>
     </section>
+  );
+}
+
+/**
+ * The sidebar's long vertical rail: every chapter of the lab you are in, as a timeline. Done chapters are
+ * ticked, the current one glows, upcoming ones are faint; each one opens that chapter.
+ */
+function NextRail({ next }: { next: NextStep }) {
+  const [lab, setLab] = useState<LabDetail | null>(null);
+  useEffect(() => {
+    api.lab(next.lab_id).then(setLab).catch(() => setLab(null));
+  }, [next.lab_id]);
+  if (!lab) return null;
+  return (
+    <nav className="next-rail" aria-label={`Chapters of ${lab.title}`}>
+      <div className="next-rail-head">
+        <span>Chapters</span>
+        <span className="muted">{lab.progress.passed_tasks}/{lab.progress.total_tasks} tasks</span>
+      </div>
+      <ol>
+        {lab.chapters.map((c, i) => {
+          const done = c.tasks.length > 0 && c.tasks.every((t) => t.passed);
+          const now = c.id === next.chapter_id;
+          return (
+            <li key={c.id} className={`rail-step ${done ? "is-done" : ""} ${now ? "is-now" : ""}`}>
+              <Link to={`/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}`} ref={now ? (el) => el?.scrollIntoView({ block: "nearest" }) : undefined}>
+                <span className="rail-dot" aria-hidden="true">{done ? "✓" : chapterNumber(lab.chapters, i)}</span>
+                <span className="rail-title">{c.title}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }
