@@ -1,0 +1,12 @@
+INSERT INTO orders (customer) VALUES ('Asha');
+INSERT INTO orders (customer) VALUES ('Ravi');
+INSERT INTO orders (customer) VALUES ('Meera');
+INSERT INTO orders (customer) VALUES ('Kabir');
+INSERT INTO orders (customer) VALUES ('Zoya');
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Masala tea', 2, 2000, 1);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Samosa', 3, 1800, 1);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Filter coffee', 1, 3000, 2);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Samosa', 2, 1800, 3);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Masala tea', 1, 2000, 3);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Kachori', 4, 2200, 4);
+INSERT INTO order_item (product, quantity, price_paise, order_id) VALUES ('Filter coffee', 2, 3000, 5);

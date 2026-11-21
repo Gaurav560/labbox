@@ -285,3 +285,147 @@ chapters:
         examples:
           - call: "GET /shop/info with the prod profile"
             gives: "{\"name\": \"Shop API (production)\", \"freeDeliveryAbovePaise\": 100000}"
+  - id: 11-database
+    title: A real database
+    file: chapters/11-database.md
+    minutes: 20
+    tasks:
+      - id: product_entity
+        title: "11-database: make Product a JPA entity"
+        hints:
+          - "The application does not start: Spring Data says Product is not a managed type."
+          - "Put @Entity on the class. Mark the id field as the primary key, and let the database generate it with the IDENTITY strategy."
+          - "JPA also needs a constructor with no arguments; make it protected so other code keeps using the real one."
+        examples:
+          - call: "GET /products"
+            gives: "[Masala tea, Filter coffee, Samosa], each with an id"
+      - id: unique_sku
+        title: "11-database: one product per SKU"
+        hints:
+          - "Rules for a single column go in a @Column annotation on its field."
+          - "The column must be unique and must not be null."
+          - "Use @Column with nullable = false and unique = true on the sku field."
+        examples:
+          - call: "save a second product with sku TEA-1"
+            gives: "DataIntegrityViolationException"
+            note: "the database refuses it"
+  - id: 12-repositories
+    title: Repositories and derived queries
+    file: chapters/12-repositories.md
+    minutes: 18
+    tasks:
+      - id: find_by_category
+        title: "12-repositories: products by category"
+        hints:
+          - "A derived query is a method declaration whose name describes the query."
+          - "Declare findByCategoryOrderByNameAsc with a String parameter, returning a List<Product>."
+          - "In the controller, call it when category is not null, and findAll() otherwise."
+        examples:
+          - call: "GET /products?category=snacks"
+            gives: "[Bhel puri, Kachori, Samosa]"
+      - id: sku_conflict
+        title: "12-repositories: 409 for a duplicate SKU"
+        hints:
+          - "Spring Data can answer yes or no with an existsBy... method."
+          - "Declare a method named existsBySku with a String parameter, returning boolean."
+          - "In POST /products, return ResponseEntity.status(HttpStatus.CONFLICT).build() before saving when it is true."
+        examples:
+          - call: "POST /products with sku TEA-1"
+            gives: "409"
+          - call: "POST /products with sku LAS-1"
+            gives: "201"
+  - id: 13-relationships
+    title: Relationships and the N+1 problem
+    file: chapters/13-relationships.md
+    minutes: 22
+    tasks:
+      - id: order_items
+        title: "13-relationships: map orders and their items"
+        hints:
+          - "Hibernate cannot store a CustomerOrder field as a column until the relationship is mapped."
+          - "OrderItem.order is the many-to-one side: it owns the order_id foreign key column (a join column)."
+          - "CustomerOrder.items is the one-to-many side, mapped by the order field; cascade all operations so saving an order saves its items."
+        examples:
+          - call: "GET /orders/1"
+            gives: "{\"items\": 2, \"totalPaise\": 9400}"
+      - id: fix_n_plus_one
+        title: "13-relationships: one query for the order list"
+        hints:
+          - "findAll() loads the orders; each getItems() then runs one more query."
+          - "Add a repository method with @Query using JOIN FETCH, so items load with their orders."
+          - "The JPQL is select distinct o from CustomerOrder o join fetch o.items; call that method in summaries()."
+        examples:
+          - call: "GET /orders"
+            gives: "1 SQL query"
+            note: "it was 6"
+  - id: 14-paging
+    title: Queries, paging and sorting
+    file: chapters/14-paging.md
+    minutes: 18
+    tasks:
+      - id: paged_products
+        title: "14-paging: products a page at a time"
+        hints:
+          - "Spring fills a Pageable parameter from ?page, ?size and ?sort by itself."
+          - "Add a Pageable parameter to the method and change its return type to Page<Product>."
+          - "JpaRepository already has findAll(Pageable): return its result."
+        examples:
+          - call: "GET /products?page=1&size=2&sort=name"
+            gives: "content [Kachori, Masala tea], totalElements 6"
+      - id: price_range
+        title: "14-paging: a price range with @Query"
+        hints:
+          - "JPQL works on entity names and fields: Product and pricePaise."
+          - "Use between :min and :max and order by the price, with @Param on each parameter."
+          - "Declare inPriceRange(int min, int max) with that @Query, and return it from the controller."
+        examples:
+          - call: "GET /products/price-range?min=2000&max=3000"
+            gives: "[Masala tea, Kachori, Vada pav, Filter coffee]"
+  - id: 15-transactions
+    title: Transactions
+    file: chapters/15-transactions.md
+    minutes: 20
+    tasks:
+      - id: place_order_atomic
+        title: "15-transactions: placing an order is all or nothing"
+        hints:
+          - "Without a transaction, every saveAndFlush commits on its own."
+          - "One annotation makes the whole method run in one transaction."
+          - "Put @Transactional on placeOrder; OutOfStockException is unchecked, so it rolls back."
+        examples:
+          - call: "placeOrder(tea x2, samosa x5), samosas run out"
+            gives: "tea stock unchanged"
+      - id: rollback_checked
+        title: "15-transactions: a declined card undoes the order"
+        hints:
+          - "PaymentDeclinedException extends Exception: it is checked."
+          - "Checked exceptions commit by default; the annotation can list exceptions that roll back."
+          - "Add rollbackFor = PaymentDeclinedException.class to the @Transactional on placePaidOrder."
+        examples:
+          - call: "placePaidOrder(coffee x1, \"DECLINE-4242\")"
+            gives: "coffee stock unchanged"
+  - id: 16-migrations
+    title: Database migrations with Flyway
+    file: chapters/16-migrations.md
+    minutes: 18
+    tasks:
+      - id: add_category_column
+        title: "16-migrations: V2 adds the category column"
+        hints:
+          - "Hibernate validates the schema and finds no category column in product."
+          - "Add a new file next to V1, named with version 2 and two underscores before the description."
+          - "In it, ALTER TABLE product ADD COLUMN category VARCHAR(40) with a default of 'other', NOT NULL."
+        examples:
+          - call: "flyway_schema_history"
+            gives: "versions 1, 2"
+          - call: "GET /products"
+            gives: "each product has \"category\": \"other\""
+      - id: set_categories
+        title: "16-migrations: V3 sets the categories"
+        hints:
+          - "A data change is a migration too, with the next version number."
+          - "Use UPDATE product SET category = ... WHERE sku ..."
+          - "TEA-1 and COF-1 are drinks; SAM-1 is snacks."
+        examples:
+          - call: "SELECT sku, category FROM product"
+            gives: "TEA-1 drinks, COF-1 drinks, SAM-1 snacks"

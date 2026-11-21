@@ -1,5 +1,16 @@
 # Changelog
 
+## Spring Boot, block C: chapters 11 to 16 (a real database)
+
+- **Chapter 11:** JPA entities on H2 (`@Entity`, `@Id`, a unique SKU column). **Chapter 12:** repositories,
+  derived queries, 409 for a duplicate SKU. **Chapter 13:** one-to-many relationships and the N+1 problem,
+  fixed with `JOIN FETCH` (the check counts SQL statements). **Chapter 14:** paging and sorting with
+  `Pageable`, a price range with `@Query`. **Chapter 15:** `@Transactional`, and why checked exceptions
+  commit unless listed in `rollbackFor`. **Chapter 16:** Flyway migrations, V2 adds a column, V3 sets data.
+- Four new diagrams: ORM mapping, one-to-many, a transaction rolling back, Flyway versions.
+- The Spring checks now show the deepest cause when an app does not start (for example
+  "Schema-validation: missing column [category] in table [product]") instead of "Application run failed".
+
 ## Spring Boot, block B: chapters 6 to 10 (the API grows up)
 
 - **Chapter 6, request bodies and DTOs:** `@RequestBody`, JSON to a record and back, a `ProductView`

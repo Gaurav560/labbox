@@ -221,7 +221,7 @@ button, no ligatures, traces keep their place). Done: phones (a reading mode tha
 courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
 12 traces, quick checks, 32 task cards). Traces have a Play button.
 **Spring Boot (21 November, in progress):** plain style, one Shop API, an introduction chapter plus
-22 chapters planned (owner approved); blocks A (chapters 0 to 5) and B (6 to 10) done. The other short labs get the standard
+22 chapters planned (owner approved); blocks A (chapters 0 to 5), B (6 to 10) and C (11 to 16) done. The other short labs get the standard
 when each grows into a full course. Python, Go and Java already have the
 earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
 now use the same printed typography and dedicated light and dark palettes.

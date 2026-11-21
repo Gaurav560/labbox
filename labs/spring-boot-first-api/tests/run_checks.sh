@@ -20,6 +20,12 @@ CHAPTERS="
 08-validation|08-validation|validate_product validate_customer
 09-errors|09-errors|not_found_problem validation_problem
 10-configuration|10-configuration|shop_properties prod_profile
+11-database|11-database|product_entity unique_sku
+12-repositories|12-repositories|find_by_category sku_conflict
+13-relationships|13-relationships|order_items fix_n_plus_one
+14-paging|14-paging|paged_products price_range
+15-transactions|15-transactions|place_order_atomic rollback_checked
+16-migrations|16-migrations|add_category_column set_categories
 "
 
 fail_all() { # tasks message
@@ -55,7 +61,9 @@ echo "$CHAPTERS" | while IFS='|' read -r chapter dir tasks; do
       why=$(grep -m1 -E "\[ERROR\] .*\.java:\[[0-9]+" "$log" | sed 's/.*\/src\/main\/java\///; s/^\[ERROR\] //')
       fail_all "$missing" "the project does not compile: ${why:-see Output}."
     else
-      why=$(grep -m1 -E "Caused by: |Application run failed|APPLICATION FAILED TO START" -A2 "$log" | grep -m1 -vE "^\s*$" | cut -c1-220)
+      # The deepest "Caused by" is the real reason; drop its exception class name so it reads plainly.
+      why=$(grep -E "^Caused by: " "$log" | tail -1 | sed -E 's/^Caused by: [A-Za-z0-9_.$]+: //' | cut -c1-220)
+      [ -n "$why" ] || why=$(grep -m1 -E "Application run failed|APPLICATION FAILED TO START" -A2 "$log" | grep -m1 -vE "^\s*$" | cut -c1-220)
       fail_all "$missing" "the app did not start in the check: ${why:-see Output}."
     fi
     echo "---- $chapter: the last lines of the build ----"; tail -25 "$log"
