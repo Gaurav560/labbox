@@ -57,13 +57,13 @@ test("technical diagrams keep their geometry and readable arrows when the lesson
     await page.goto("/labs/python-basics");
     await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
     await page.getByLabel("Chapter", { exact: true }).selectOption("06-lists");
-    await page.getByRole("button", { name: /Step 6: Sorting, and a list with two names/ }).click();
+    await page.getByRole("button", { name: /Step 8: Sorting, and a list with two names/ }).click();
     const figure = page.locator("figure.diagram");
     await expect(figure.getByRole("img")).toHaveAccessibleName(/same list/);
     await expect(figure.getByText("its own list")).toHaveCSS("font-family", /Inter/);
     await expect(figure.getByText("c = a.copy()", { exact: true })).toHaveCSS("font-family", /JetBrains Mono/);
 
-    await expect(page.locator(".monaco-editor .view-lines")).toContainText("def remove_duplicates");
+    await expect(page.locator(".monaco-editor .view-lines")).toContainText("yours = mine"); // the step opens the file it talks about
     page.on("pageerror", e => errors.push(e.message));
     page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
 

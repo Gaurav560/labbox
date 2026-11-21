@@ -218,8 +218,9 @@ chapters:
           gives: "True"
   - id: 05-strings
     title: Strings
-    file: chapters/05-strings.md
-    minutes: 15
+    file: chapters/07-strings.md
+    minutes: 40
+    folder: 07-strings
     part: Working with data
     tasks:
       - id: count_words
@@ -246,8 +247,9 @@ chapters:
           gives: "\"Arjun\""
   - id: 06-lists
     title: Lists
-    file: chapters/06-lists.md
-    minutes: 15
+    file: chapters/08-lists.md
+    minutes: 45
+    folder: 08-lists
     tasks:
       - id: remove_duplicates
         title: "lists.py: warm-up, each item once"
@@ -273,8 +275,9 @@ chapters:
           gives: "[5, 1]"
   - id: 07-dictionaries
     title: Dictionaries
-    file: chapters/07-dictionaries.md
-    minutes: 15
+    file: chapters/09-dictionaries.md
+    minutes: 45
+    folder: 09-dictionaries
     tasks:
       - id: count_letters
         title: "dict_tools.py: count each letter"
@@ -294,26 +297,16 @@ chapters:
           - "Start with an empty dictionary and add each amount to its category's running total."
           - "get with a default of 0 handles a category you have not seen before."
         examples:
-        - call: "total_by_category(the three expenses)"
+        - call: "total_by_category(the three expenses in the lesson)"
           gives: "{\"food\": 200, \"travel\": 40}"
         - call: "total_by_category([])"
           gives: "{}"
   - id: 08-tuples-and-sets
     title: Tuples and sets
-    file: chapters/08-tuples-and-sets.md
-    minutes: 15
+    file: chapters/10-tuples-and-sets.md
+    minutes: 40
+    folder: 10-tuples-and-sets
     tasks:
-      - id: common_items
-        title: "sets_tuples.py: the items two lists share"
-        hints:
-          - "Turn both lists into sets: duplicates disappear."
-          - "The & operator (or .intersection) keeps what is in both sets."
-          - "Sets have no order, so give back sorted(...) of the result."
-        examples:
-        - call: "common_items([\"tea\", \"coffee\", \"milk\"], [\"milk\", \"tea\", \"juice\"])"
-          gives: "[\"milk\", \"tea\"]"
-        - call: "common_items([1, 2, 2, 3], [2, 2, 4])"
-          gives: "[2]"
       - id: min_max
         title: "sets_tuples.py: smallest and largest together"
         hints:
@@ -325,23 +318,50 @@ chapters:
           gives: "(45, 90)"
         - call: "min_max([])"
           gives: "(None, None)"
+      - id: common_items
+        title: "sets_tuples.py: the items two lists share"
+        hints:
+          - "Turn both lists into sets: duplicates disappear."
+          - "The & operator (or .intersection) keeps what is in both sets."
+          - "Sets have no order, so give back sorted(...) of the result."
+        examples:
+        - call: "common_items([\"tea\", \"coffee\", \"milk\"], [\"milk\", \"tea\", \"juice\"])"
+          gives: "[\"milk\", \"tea\"]"
+        - call: "common_items([1, 2, 2, 3], [2, 2, 4])"
+          gives: "[2]"
+  - id: sorting-and-comprehensions
+    title: Sorting and comprehensions
+    file: chapters/11-sorting-and-comprehensions.md
+    minutes: 40
+    folder: 11-sorting-and-comprehensions
+    tasks:
+      - id: large_expenses
+        title: "sorting.py: the big ones, in one line"
+        hints:
+          - "Each expense is a dictionary: the amount is e[\"amount\"] and the name is e[\"name\"]."
+          - "A list comprehension has three parts: what to keep, the loop, and the condition after if."
+          - "Keep the name, loop over the expenses, and test the amount against limit with >."
+        examples:
+        - call: "large_expenses(WEEK, 500)"
+          gives: "[\"rent\", \"phone\"]"
+        - call: "large_expenses([], 10)"
+          gives: "[]"
+      - id: by_amount
+        title: "sorting.py: biggest first, ties by name"
+        hints:
+          - "sorted() makes a new list; .sort() would change the list you were given."
+          - "A key function can give back a tuple: Python compares the first parts, then the second."
+          - "Use a minus sign on the amount so the biggest comes first, and the name as the second part of the tuple."
+        examples:
+        - call: "[e[\"name\"] for e in by_amount(WEEK)]"
+          gives: "[\"rent\", \"phone\", \"chai\", \"lunch\", \"bus\"]"
+          note: "chai and lunch tie on 120"
   - id: 09-functions-in-depth
     title: Functions in depth
-    file: chapters/09-functions-in-depth.md
-    minutes: 20
+    file: chapters/12-functions-in-depth.md
+    minutes: 40
+    folder: 12-functions-in-depth
     tasks:
-      - id: add_item
-        title: "functions.py: fix the basket that never empties"
-        hints:
-          - "A default value like [] is created once, when Python reads the def line, and then shared by every call."
-          - "Use None as the default instead, because None is never changed."
-          - "Inside the function, if basket is still None, make a fresh empty list before appending."
-        examples:
-        - call: "add_item(\"milk\")"
-          gives: "[\"milk\"]"
-        - call: "add_item(\"bread\")"
-          gives: "[\"bread\"]"
-          note: "a fresh basket each time"
       - id: total
         title: "functions.py: any number of prices, with a discount"
         hints:
@@ -355,6 +375,18 @@ chapters:
           gives: "135.0"
         - call: "total()"
           gives: "0.0"
+      - id: add_item
+        title: "functions.py: fix the basket that never empties"
+        hints:
+          - "A default value like [] is created once, when Python reads the def line, and then shared by every call."
+          - "Use None as the default instead, because None is never changed."
+          - "Inside the function, if basket is still None, make a fresh empty list before appending."
+        examples:
+        - call: "add_item(\"milk\")"
+          gives: "[\"milk\"]"
+        - call: "add_item(\"bread\")"
+          gives: "[\"bread\"]"
+          note: "a fresh basket each time"
   - id: 10-errors
     title: Errors
     file: chapters/10-errors.md

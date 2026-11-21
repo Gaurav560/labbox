@@ -16,7 +16,7 @@ every session.
    language course, Python first, "with curiosity, like teaching a child one on one", animated, cool pictures,
    fun tasks; CONTENT_STANDARD "Curiosity first"). Agreed syllabus, 19 chapters:
    Part 1 Starting out (done): 1 first program, 2 functions, 3 numbers and text, 4 decisions, 5 loops, 6 bugs.
-   Part 2 Working with data: 7 strings (05-strings), 8 lists (06-lists), 9 dictionaries (07-dictionaries),
+   Part 2 Working with data (done): 7 strings (05-strings), 8 lists (06-lists), 9 dictionaries (07-dictionaries),
    10 tuples and sets (08-tuples-and-sets), 11 sorting and comprehensions (new), 12 functions in depth (09).
    Part 3 Real programs: 13 errors (10-errors), 14 files (11-files), 15 classes (new), 16 modules, pip and venvs
    (new), 17 testing with pytest (new, own tests against a planted bug), 18 running a program (12).

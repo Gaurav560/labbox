@@ -22,7 +22,7 @@ def test_an_old_workspace_gets_the_new_files_and_keeps_its_own(tmp_path):
     (folder / "notes.txt").write_text("mine")
 
     added = containers.top_up(lab, _ws(folder))
-    assert {"03-numbers-and-text/numbers_text.py", "04-decisions/decisions.py", "05-loops/loops.py", "text_tools.py"} <= set(added)
+    assert {"03-numbers-and-text/numbers_text.py", "04-decisions/decisions.py", "05-loops/loops.py", "07-strings/text_tools.py"} <= set(added)
     assert "greet.py" not in added and "math_utils.py" not in added
     assert "Hello, {name}!" in (folder / "greet.py").read_text()  # their work, untouched
     assert (folder / "math_utils.py").read_text() == "# my own version\n"

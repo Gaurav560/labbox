@@ -1,11 +1,11 @@
-# Chapter 6: lists.
+# Chapter 8: lists.
 
 
-def top_n(numbers: list, n: int) -> list:
+def top_n(numbers, n):
     return sorted(numbers, reverse=True)[:n]
 
 
-def remove_duplicates(items: list) -> list:
+def remove_duplicates(items):
     result = []
     for item in items:
         if item not in result:

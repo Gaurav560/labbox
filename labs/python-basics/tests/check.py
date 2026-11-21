@@ -6,6 +6,9 @@ import sys
 import traceback
 
 sys.path.insert(0, "/check/workspace")
+# Rewritten chapters live in their own folders (Python from zero rewrite, 22 November).
+for _folder in ("07-strings", "08-lists", "09-dictionaries", "10-tuples-and-sets", "12-functions-in-depth"):
+    sys.path.insert(0, f"/check/workspace/{_folder}")
 sys.dont_write_bytecode = True
 
 

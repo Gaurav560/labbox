@@ -1,5 +1,26 @@
 # Changelog
 
+## 22 November: Python from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
+
+- Overnight, at the owner's request ("finish all parts of python ... do not ask"). Chapters 7 to 12 rewritten in
+  the curiosity-first voice, every output captured in the lab image, each in its own folder with a runnable
+  example file:
+  7. **Strings** (`05-strings`): a table of positions from both ends, methods tidying a real receipt line,
+     immutability, split with and without an argument, join, Hindi text in Unicode.
+  8. **Lists** (`06-lists`): a cart, the list toolbox table, building a new list, sort vs sorted, two names for
+     one list (`same_list.py`, the shared-list diagram).
+  9. **Dictionaries** (`07-dictionaries`): a price list with a real KeyError, get / in / items, the counting
+     pattern traced with Play, records as dictionaries.
+  10. **Tuples and sets** (`08-tuples-and-sets`): unpacking, returning two answers, set maths on shop visitors,
+      and a timing table (1,000 lookups: 0.015 ms in a set, 421 ms in a list).
+  11. **Sorting and comprehensions** (new, tasks `large_expenses`, `by_amount`): key=, lambda, two-rule sorts,
+      list comprehensions with a new playing diagram (`comprehension-steps`).
+  12. **Functions in depth** (`09-functions-in-depth`): defaults, named and name-only arguments, *args, scope,
+      and the mutable default trap.
+- Task ids and behaviour kept; task order follows the lessons. Each recap ends with its handwritten notes.
+- Checks: chapter 11 in `checks.py` (with a tie case, since a stable sort hid the missing tie rule); `check.py`
+  reads the other moved chapters from their folders. Tests follow the new layout (top-up, diagram themes).
+
 ## 22 November: real photos and handwritten notes in lessons
 
 - The owner: "why can't we show a photo of a snake, a photo of Guido van Rossum", then "hand written notes ai

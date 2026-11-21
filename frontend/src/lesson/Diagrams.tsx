@@ -771,7 +771,27 @@ function TracebackBottomUp() {
   );
 }
 
+/** Python from zero, chapter 11: how Python works through a list comprehension, played step by step. */
+function ComprehensionSteps() {
+  return (
+    <SketchSteps
+      title="[a * 2 for a in [120, 45, 900] if a > 100]"
+      intro="Press Play to watch Python build the new list, one item at a time."
+      label="Python starts an empty result list, takes each item in turn, tests the if condition, works out the expression at the front for the items that pass, appends each answer, and gives back the new list 240 and 1800"
+      steps={[
+        { label: "1. an empty new list", says: "Behind the scenes Python starts a new, empty list. The original list is never touched." },
+        { label: "2. a = 120: is 120 > 100?", says: "It takes the first item and tests the if part. 120 is over 100: yes." },
+        { label: "3. work out a * 2: 240", says: "The expression at the front runs for the item that passed, and 240 is added to the new list." },
+        { label: "4. a = 45: is 45 > 100?", says: "No. The item is skipped: the expression does not even run for it." },
+        { label: "5. a = 900: yes, add 1800", says: "900 passes the test, so 900 * 2 = 1800 joins the new list." },
+        { label: "6. the answer: [240, 1800]", says: "No items left. The whole comprehension becomes the new list, [240, 1800]." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "comprehension-steps": ComprehensionSteps,
   "python-runs-a-file": PythonRunsAFile,
   "function-call": FunctionCall,
   "traceback-bottom-up": TracebackBottomUp,

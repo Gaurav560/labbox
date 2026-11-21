@@ -1,4 +1,4 @@
-# Chapter 9: functions in depth.
+# Chapter 12: functions in depth.
 
 
 # TODO (task add_item): this has a famous bug. Every call without a basket shares one list.

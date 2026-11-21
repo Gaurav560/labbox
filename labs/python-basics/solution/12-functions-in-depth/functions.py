@@ -1,4 +1,4 @@
-# Chapter 9: functions in depth.
+# Chapter 12: functions in depth.
 
 
 def add_item(item, basket=None):

@@ -1,11 +1,11 @@
-# Chapter 8: tuples and sets.
+# Chapter 10: tuples and sets.
 
 
-def common_items(a: list, b: list) -> list:
+def common_items(a, b):
     return sorted(set(a) & set(b))
 
 
-def min_max(numbers: list) -> tuple:
+def min_max(numbers):
     if not numbers:
         return (None, None)
     return (min(numbers), max(numbers))

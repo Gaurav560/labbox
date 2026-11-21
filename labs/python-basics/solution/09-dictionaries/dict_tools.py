@@ -1,7 +1,7 @@
-# Chapter 7: dictionaries.
+# Chapter 9: dictionaries.
 
 
-def count_letters(text: str) -> dict:
+def count_letters(text):
     counts = {}
     for ch in text.lower():
         if ch.isalpha():
@@ -9,7 +9,7 @@ def count_letters(text: str) -> dict:
     return counts
 
 
-def total_by_category(expenses: list) -> dict:
+def total_by_category(expenses):
     totals = {}
     for e in expenses:
         totals[e["category"]] = totals.get(e["category"], 0) + e["amount"]

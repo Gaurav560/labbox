@@ -33,6 +33,9 @@ PASS = {
     "first_negative": "Good: you stop at the first match and say None when there is nothing to find.",
     "fix_daily_total": "Found it: the loop started at position 1 and quietly skipped the first expense. Off-by-one "
                        "bugs are among the most common in the world, and now you know how to catch one.",
+    "large_expenses": "One line, three parts: what to keep, the loop and the condition. That is a list comprehension, "
+                      "and you will see them in every Python codebase.",
+    "by_amount": "Biggest first, ties by name, and the original list untouched: a two-rule sort with one key.",
     "fix_over_budget": "Fixed: spending exactly the budget is fine now. Boundaries (< or <=) are where bugs love "
                        "to hide; printing the values made it visible.",
 }
@@ -276,6 +279,59 @@ def finding_bugs() -> None:
     ])
 
 
+# ---------- chapter 11: sorting and comprehensions ----------
+
+WEEK = [
+    {"name": "chai", "amount": 120}, {"name": "rent", "amount": 9000}, {"name": "bus", "amount": 40},
+    {"name": "lunch", "amount": 120}, {"name": "phone", "amount": 599},
+]
+
+
+def sorting_and_comprehensions() -> None:
+    import copy
+    mod, err = load("11-sorting-and-comprehensions", "sorting")
+    fn, e = get_func(mod, err, "large_expenses")
+    run_cases("large_expenses", fn, e, [
+        ((copy.deepcopy(WEEK), 500), ["rent", "phone"]), ((copy.deepcopy(WEEK), 100), ["chai", "rent", "lunch", "phone"]),
+        ((copy.deepcopy(WEEK), 120), ["rent", "phone"]), (([], 10), []), ((copy.deepcopy(WEEK), 9000), []),
+    ])
+    fn, e = get_func(mod, err, "by_amount")
+    if fn is None:
+        report("by_amount", False, e)
+        return
+    try:
+        week = copy.deepcopy(WEEK)
+        got = fn(week)
+        names = [x["name"] for x in got] if isinstance(got, list) else got
+        want = ["rent", "phone", "chai", "lunch", "bus"]
+        if week != WEEK:
+            report("by_amount", False, "The order is one thing, but the list you were given changed: its order is now "
+                   f"{[x['name'] for x in week]}. .sort() sorts the list itself; sorted() makes a new one.")
+        elif got is None:
+            report("by_amount", False, "by_amount gave back None. .sort() returns None: return sorted(...) instead.")
+        elif names == ["bus", "chai", "lunch", "phone", "rent"]:
+            report("by_amount", False, "Smallest first. Biggest first needs reverse=True, or a minus sign in the key.",
+                   repr(want), repr(names))
+        elif names == ["rent", "phone", "lunch", "chai", "bus"]:
+            report("by_amount", False, "Biggest first, well done, but chai and lunch both cost 120: the same amount should "
+                   "come in alphabetical order of name. A key can give back a tuple: (first rule, second rule).",
+                   repr(want), repr(names))
+        elif names != want:
+            report("by_amount", False, f"Not yet: the names come out as {names}, but they should be {want}.", repr(want), repr(names))
+        elif [x["name"] for x in fn([{"name": "tea", "amount": 15}, {"name": "bun", "amount": 15},
+                                     {"name": "cake", "amount": 40}])] != ["cake", "bun", "tea"]:
+            report("by_amount", False, "Biggest first works, but tea and bun both cost 15 and came out as tea, bun: the "
+                   "same amount should come in alphabetical order of name. A key can give back a tuple: (first rule, "
+                   "second rule).", repr(["cake", "bun", "tea"]))
+        elif fn([]) != []:
+            report("by_amount", False, "by_amount([]) should give back an empty list.")
+        else:
+            report("by_amount", True)
+    except Exception as ex:
+        traceback.print_exc()
+        report("by_amount", False, f"by_amount raised {type(ex).__name__}: {ex}. Run it in the terminal to see the line.")
+
+
 CHAPTERS = {
     "first-program": first_program,
     "02-numbers-and-text": numbers_and_text,
@@ -283,6 +339,7 @@ CHAPTERS = {
     "03-decisions": decisions,
     "04-loops": loops,
     "finding-bugs": finding_bugs,
+    "sorting-and-comprehensions": sorting_and_comprehensions,
 }
 
 if __name__ == "__main__":
