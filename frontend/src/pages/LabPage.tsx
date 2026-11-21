@@ -114,7 +114,10 @@ export default function LabPage() {
     setEditorKind(kind);
   };
 
-  const terminalRef = useRef<TerminalHandle>(null);
+  // Up to three terminals (Terminal 1 runs a server, Terminal 2 sends it requests); each is its own shell.
+  const [terms, setTerms] = useState<number[]>([1]);
+  const [activeTerm, setActiveTerm] = useState(1);
+  const terminalRefs = useRef(new Map<number, TerminalHandle>());
   const stepTimer = useRef(0);
 
   // Latest tabs for timers and save chains, which outlive a render.
@@ -300,7 +303,7 @@ export default function LabPage() {
     setBottomTab("terminal");
     // Let the terminal tab become visible first, then paste (no Enter: the learner presses it).
     window.setTimeout(() => {
-      if (!terminalRef.current?.paste(command)) toast("The terminal is not connected yet");
+      if (!terminalRefs.current.get(activeTerm)?.paste(command)) toast("The terminal is not connected yet");
     }, 0);
   }
 
@@ -777,9 +780,26 @@ export default function LabPage() {
           <Splitter direction="horizontal" label="Resize terminal" onDrag={(d) => setTermH((h) => clamp(h - d, 80, 800))} />
           <div style={{ height: termH }} className="terminal-wrap">
             <div className="bottom-tabs" role="tablist" aria-label="Bottom panel">
-              <button role="tab" aria-selected={bottomTab === "terminal"} className="bottom-tab" onClick={() => setBottomTab("terminal")}>
-                Terminal
-              </button>
+              {terms.map((n) => (
+                <span key={n} className="bottom-tab-wrap">
+                  <button role="tab" aria-selected={bottomTab === "terminal" && activeTerm === n} className="bottom-tab"
+                    onClick={() => { setBottomTab("terminal"); setActiveTerm(n); }}>
+                    {terms.length === 1 ? "Terminal" : `Terminal ${n}`}
+                  </button>
+                  {n !== 1 && (
+                    <button className="bottom-tab-close" aria-label={`Close terminal ${n}`} title="Close this terminal"
+                      onClick={() => { setTerms((ts) => ts.filter((x) => x !== n)); terminalRefs.current.delete(n); if (activeTerm === n) setActiveTerm(1); }}>
+                      ×
+                    </button>
+                  )}
+                </span>
+              ))}
+              {terms.length < 3 && (
+                <button className="bottom-tab bottom-tab-add" aria-label="Open another terminal" title="Open another terminal (for example: one runs the server, one sends it requests)"
+                  onClick={() => { const n = Math.max(...terms) + 1; setTerms((ts) => [...ts, n]); setActiveTerm(n); setBottomTab("terminal"); }}>
+                  +
+                </button>
+              )}
               {!!lab?.preview.length && (
                 <button role="tab" aria-selected={bottomTab === "preview"} className="bottom-tab" onClick={() => setBottomTab("preview")}>
                   Preview
@@ -794,15 +814,17 @@ export default function LabPage() {
                 <button aria-pressed={!useIde} onClick={() => switchEditor("classic")} title="The light built-in editor, with AI completion">Lite</button>
               </div>
             </div>
-            <div className="bottom-body" hidden={bottomTab !== "terminal"}>
-              <TerminalPane
-                ref={terminalRef}
-                labId={labId}
-                enabled={status === "running"}
-                connectKey={terminalKey}
-                onConnected={() => setStatus("running")}
-              />
-            </div>
+            {terms.map((n) => (
+              <div key={n} className="bottom-body" hidden={bottomTab !== "terminal" || activeTerm !== n}>
+                <TerminalPane
+                  ref={(h) => { if (h) terminalRefs.current.set(n, h); }}
+                  labId={labId}
+                  enabled={status === "running"}
+                  connectKey={terminalKey}
+                  onConnected={() => setStatus("running")}
+                />
+              </div>
+            ))}
             {!!lab?.preview.length && (
               <div className="bottom-body" hidden={bottomTab !== "preview"}>
                 <PreviewPane labId={labId} ports={lab.preview} visible={bottomTab === "preview"} />

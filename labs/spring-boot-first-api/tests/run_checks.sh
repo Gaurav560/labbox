@@ -9,29 +9,34 @@ T=/check/tests
 
 # chapter id | project folder | tasks
 CHAPTERS="
-00-what-is-a-framework|.|app_name
-01-first-endpoints|.|hello merchants
-02-app-startup|02-app-startup|component_scan greeting_property
-03-beans|03-beans|price_service one_counter
-04-layers|04-layers|thin_controller budget_products
-05-reading-the-request|05-reading-the-request|product_by_id search_products
-06-request-bodies|06-request-bodies|create_product product_view
-07-status-codes|07-status-codes|created_201 delete_204
-08-validation|08-validation|validate_product validate_customer
-09-errors|09-errors|not_found_problem validation_problem
-10-configuration|10-configuration|shop_properties prod_profile
-11-database|11-database|product_entity unique_sku
-12-repositories|12-repositories|find_by_category sku_conflict
-13-relationships|13-relationships|order_items fix_n_plus_one
-14-paging|14-paging|paged_products price_range
-15-transactions|15-transactions|place_order_atomic rollback_checked
-16-migrations|16-migrations|add_category_column set_categories
-17-testing-controllers|17-testing-controllers|controller_test catches_bug
-18-testing-data|18-testing-data|repository_test catches_query_bug
-19-logging-and-health|19-logging-and-health|health_info log_warning
-20-security|20-security|public_and_protected admin_only
-21-calling-services|21-calling-services|fetch_stock handle_supplier_errors
-22-capstone|22-capstone|checkout checkout_errors
+00-what-is-spring-boot|00-what-is-spring-boot|app_name
+01-how-the-web-works|01-how-the-web-works|http_status http_methods
+02-maven-and-the-project|02-maven-and-the-project|add_actuator project_identity
+03-first-endpoints|03-first-endpoints|hello merchants
+04-app-startup|04-app-startup|component_scan greeting_property
+05-beans|05-beans|price_service one_counter
+06-dependency-injection|06-dependency-injection|primary_gateway all_gateways
+07-configuration-and-profiles|07-configuration-and-profiles|shop_properties prod_profile
+08-auto-configuration|08-auto-configuration|backs_off on_property
+09-bean-lifecycle|09-bean-lifecycle|post_construct prototype_scope
+11-reading-the-request|11-reading-the-request|product_by_id search_products
+12-request-bodies|12-request-bodies|create_product product_view
+13-status-codes|13-status-codes|created_201 delete_204
+14-layers|14-layers|thin_controller budget_products
+16-validation|16-validation|validate_product validate_customer
+17-errors|17-errors|not_found_problem validation_problem
+19-database|19-database|product_entity unique_sku
+20-repositories|20-repositories|find_by_category sku_conflict
+21-relationships|21-relationships|order_items fix_n_plus_one
+22-paging|22-paging|paged_products price_range
+23-transactions|23-transactions|place_order_atomic rollback_checked
+24-migrations|24-migrations|add_category_column set_categories
+25-testing-controllers|25-testing-controllers|controller_test catches_bug
+26-testing-data|26-testing-data|repository_test catches_query_bug
+27-logging-and-health|27-logging-and-health|health_info log_warning
+28-security|28-security|public_and_protected admin_only
+29-calling-services|29-calling-services|fetch_stock handle_supplier_errors
+30-capstone|30-capstone|checkout checkout_errors
 "
 
 fail_all() { # tasks message

@@ -69,9 +69,9 @@ def test_a_step_names_its_file_and_lines():
 
 def test_a_task_step_opens_its_own_tasks_todo():
     lab = LABS[SPRING]
-    ch = next(c for c in lab.chapters if c.id == "03-beans")
-    assert task_focus(lab, ch, "price_service", None)[0] == "03-beans/src/main/java/com/shop/pricing/PriceCalculator.java"
-    assert task_focus(lab, ch, "one_counter", None)[0] == "03-beans/src/main/java/com/shop/visits/HomeController.java"
+    ch = next(c for c in lab.chapters if c.id == "05-beans")
+    assert task_focus(lab, ch, "price_service", None)[0] == "05-beans/src/main/java/com/shop/pricing/PriceCalculator.java"
+    assert task_focus(lab, ch, "one_counter", None)[0] == "05-beans/src/main/java/com/shop/visits/HomeController.java"
 
 
 @pytest.fixture(scope="module")
@@ -84,16 +84,26 @@ def client() -> TestClient:
 def test_the_focus_route_follows_the_step(client: TestClient):
     r = client.post("/api/auth/signup", json={"username": f"focus{random.randint(0, 10**9)}", "password": "secret123"})
     h = {"Authorization": f"Bearer {r.json()['token']}"}
-    url = f"/api/labs/{SPRING}/chapters/02-app-startup/focus"
-    steps = client.get(f"/api/labs/{SPRING}/chapters/02-app-startup", headers=h).json()["steps"]
+    url = f"/api/labs/{SPRING}/chapters/04-app-startup/focus"
+    steps = client.get(f"/api/labs/{SPRING}/chapters/04-app-startup", headers=h).json()["steps"]
     run = next(i for i, s in enumerate(steps) if s["title"] == "What SpringApplication.run does")
     assert steps[run]["file"].endswith("ShopApiApplication.java")  # the page knows the step has a file
     f = client.post(url, json={"step": run}, headers=h).json()
-    assert f == {"path": "02-app-startup/src/main/java/com/shop/ShopApiApplication.java", "line": 10, "end_line": 10}
+    assert f == {"path": "04-app-startup/src/main/java/com/shop/ShopApiApplication.java", "line": 10, "end_line": 10}
     task = next(i for i, s in enumerate(steps) if s["task"] == "greeting_property")
-    assert client.post(url, json={"step": task}, headers=h).json()["path"] == "02-app-startup/src/main/resources/application.properties"
+    assert client.post(url, json={"step": task}, headers=h).json()["path"] == "04-app-startup/src/main/resources/application.properties"
     story = 0  # a step about no file: nothing to open
     assert client.post(url, json={"step": story}, headers=h).json()["path"] is None
     assert client.post(url, json={"step": 999}, headers=h).status_code == 404
     # Without a step, the chapter's own file, as before.
-    assert client.post(url, json={}, headers=h).json()["path"].startswith("02-app-startup/")
+    assert client.post(url, json={}, headers=h).json()["path"].startswith("04-app-startup/")
+
+
+def test_a_course_with_a_chapter_0_numbers_chapters_by_their_ids(client: TestClient):
+    # The Spring course starts at chapter 0, so "Continue" shows the number in the chapter's id (the folder's
+    # number), not its position: the dashboard, the chapter menu and the folders agree.
+    r = client.post("/api/auth/signup", json={"username": f"num{random.randint(0, 10**9)}", "password": "secret123"})
+    h = {"Authorization": f"Bearer {r.json()['token']}"}
+    client.put(f"/api/labs/{SPRING}/chapters/11-reading-the-request/progress", json={"current_step": 2}, headers=h)
+    nxt = client.get("/api/me/next", headers=h).json()
+    assert (nxt["chapter_id"], nxt["chapter_number"], nxt["chapters"]) == ("11-reading-the-request", 11, 30)

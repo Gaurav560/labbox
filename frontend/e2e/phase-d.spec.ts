@@ -36,7 +36,7 @@ const term = (page: Page) => page.locator(".xterm-rows");
 
 async function runInTerminal(page: Page, stepName: RegExp, expectPasted: string) {
   await page.getByRole("button", { name: stepName }).click();
-  await page.getByRole("button", { name: /Run in terminal/ }).click();
+  await page.getByRole("button", { name: /Run in terminal/ }).first().click();
   // The command is pasted (not run) and the terminal takes focus; then the learner presses Enter.
   await expect(term(page)).toContainText(expectPasted);
   await page.keyboard.press("Enter");
@@ -77,15 +77,15 @@ public class MerchantController {
     public List<String> merchants() { return List.of("Annapurna Mess", "Brew Point", "Kirana King"); }
 }
 `;
-  await page.goto("/labs/spring-boot-first-api?chapter=01-first-endpoints");
+  await page.goto("/labs/spring-boot-first-api?chapter=03-first-endpoints");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
   const r = await page.request.put("/api/labs/spring-boot-first-api/files/content", {
     headers: auth,
-    data: { path: "src/main/java/com/shop/MerchantController.java", content: controller },
+    data: { path: "03-first-endpoints/src/main/java/com/shop/MerchantController.java", content: controller },
   });
   expect(r.ok()).toBeTruthy();
   await expect(term(page)).toContainText("learner", { timeout: 20_000 });
-  await runInTerminal(page, /Step 4: Build and run/, "java -jar target/shop-api.jar");
+  await runInTerminal(page, /Step 7: Build and run/, "java -jar target/shop-api.jar");
   await expect(term(page)).toContainText("Started ShopApiApplication", { timeout: 180_000 });
 
   await page.getByRole("tab", { name: "Preview" }).click();

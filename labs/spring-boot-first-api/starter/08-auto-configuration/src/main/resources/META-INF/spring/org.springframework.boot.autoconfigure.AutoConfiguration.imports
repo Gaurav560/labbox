@@ -1,0 +1,2 @@
+# The auto-configurations in this jar. Spring Boot reads this file at start-up, the same way it finds its own.
+com.shopkit.greeting.GreetingAutoConfiguration

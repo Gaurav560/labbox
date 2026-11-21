@@ -1468,3 +1468,9 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 @media (prefers-reduced-motion: reduce) {
   .sk-box, .sk-arrow, .sk-box path, .sk-arrow path, .tl-rail-done, .tl-band, .tl-node, .tl-text { transition: none; animation: none; }
 }
+
+/* terminal tabs: Terminal 1, Terminal 2, + */
+.bottom-tab-wrap { display: inline-flex; align-items: center; }
+.bottom-tab-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 6px 0 0; margin-left: -6px; }
+.bottom-tab-close:hover { color: var(--text); }
+.bottom-tab-add { font-size: 17px; padding-inline: 10px; color: var(--muted); }

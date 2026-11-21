@@ -1,5 +1,27 @@
 # Changelog
 
+## Spring Boot rewrite, Part 1: the foundations (chapters 0 to 9), as full lessons
+
+- The owner: "rewrite the whole Spring lab, more elaborative, more human-like, self-sufficient: no need of
+  videos, Google or ChatGPT after it". The course becomes **31 chapters in four parts**, numbered from 0, and
+  every chapter is rewritten as a full lesson in a teacher's voice (why before how, every line read, what
+  you will see on screen, the mistakes beginners make), with each step opening its own file.
+- **Part 1, Foundations:** 0 What Spring Boot is (history), **1 How the web works** (new: HTTP, URLs, status
+  codes, methods, REST, JSON, curl against a running menu API; the learner records the real answers),
+  **2 Maven and the pom.xml** (new: coordinates, the parent, starters and transitive dependencies, folders,
+  phases, the fat jar; add the Actuator, name the project), 3 First endpoints, 4 How the app starts (real
+  log read line by line, the scanning rule), 5 Beans and the application context, **6 Dependency
+  injection in depth** (new: interfaces, Spring's real "2 beans found" error, @Primary, @Qualifier, lists),
+  7 Configuration and profiles (YAML, typed settings, sources and their order, profiles), **8 How
+  auto-configuration works** (new: @Bean, a small library with its own auto-configuration, conditions, the
+  --debug report), **9 The life of a bean** (new: @PostConstruct, scopes, the shared-receipt bug,
+  @PreDestroy). Every quoted log and curl output was captured from the real projects.
+- Chapters, folders and checks renamed to their new numbers; task ids kept. Each chapter is its own Maven
+  project (the root project is split into chapters 0 and 3). A playing timeline for the bean lifecycle.
+- **Terminal tabs:** + opens up to three terminals (one runs the server, one sends requests); x closes one.
+- Courses with a chapter 0 number chapters by their ids, in the menu and on the dashboard.
+- Tests: chapter numbering by id, terminal tabs (browser), and the updated Spring browser tests.
+
 ## Calmer playing diagrams, and lessons without a word limit
 
 - The owner wanted the playing diagram "cool, minimal, soothing". It is now a quiet vertical timeline:

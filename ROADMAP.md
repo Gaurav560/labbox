@@ -220,12 +220,11 @@ learners land on it. Done: the lab page polish (no VS Code white flash, a Machin
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
 courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
 12 traces, quick checks, 32 task cards). Traces have a Play button.
-**Spring Boot (21 November, complete):** plain style, one Shop API, an introduction chapter plus
-22 chapters (23 chapters, 45 tasks, about 7 hours); blocks A to D done. Next: Python in practice (story), and later
-a "Spring Boot in production" course with a story and scenarios. The other short labs get the standard
-when each grows into a full course. Python, Go and Java already have the
-earlier set of task cards, pictures and step-through traces. All lesson pictures and technical diagrams
-now use the same printed typography and dedicated light and dark palettes.
+**Spring Boot (21 November, rewrite in progress):** the owner asked for a full rewrite as a
+self-sufficient course in a teacher's voice. 31 chapters in four parts, numbered from 0. Part 1
+(foundations, chapters 0 to 9) is done. Next: Part 2 (REST APIs, 10 to 18, with new chapters 10, 15, 18),
+Part 3 (data, 19 to 24), Part 4 (production basics, 25 to 30). Then Python in practice, and later a
+"Spring Boot in production" course with a story.
 
 ### 4. Platform phases not started (E and G are done)
 

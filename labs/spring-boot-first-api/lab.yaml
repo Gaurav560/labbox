@@ -27,122 +27,243 @@ check:
   timeout_seconds: 240
   network: none
 chapters:
-  - id: 00-what-is-a-framework
-    title: What a framework is, and why Spring Boot
-    file: chapters/00-what-is-a-framework.md
-    minutes: 15
+  - id: 00-what-is-spring-boot
+    title: What Spring Boot is, and why it exists
+    file: chapters/00-what-is-spring-boot.md
+    minutes: 35
     tasks:
       - id: app_name
-        title: "application.properties: name the application"
+        title: "Name the application"
         hints:
-          - "Open src/main/resources/application.properties: there is a TODO line for this task."
-          - "A setting is one line: the property name, an equals sign, then the value."
-          - "The property is spring.application.name; the value is shop-api, with no quotes."
+          - "Open 00-what-is-spring-boot/src/main/resources/application.properties: the TODO line is there."
+          - "A setting is one line: the property name, an equals sign, then the value, with no spaces around it."
+          - "The property is spring.application.name and the value is shop-api, with no quotes. Replace the TODO comment with it."
         examples:
-          - call: "spring.application.name in application.properties"
+          - call: "spring.application.name"
             gives: "shop-api"
-  - id: 01-first-endpoints
+          - call: "the start-up log"
+            gives: "[shop-api] in every line"
+  - id: 01-how-the-web-works
+    title: How the web works
+    file: chapters/01-how-the-web-works.md
+    minutes: 40
+    tasks:
+      - id: http_status
+        title: "Read the answers to GET requests"
+        hints:
+          - "Start the menu API in Terminal 1, open Terminal 2 with +, and run curl -i on /menu and on /menu/42."
+          - "The status code is the number on the first line of the answer, after HTTP/1.1."
+          - "The Content-Type line is among the headers; write only the part before any semicolon."
+        examples:
+          - call: "curl -i localhost:8080/menu"
+            gives: "a status, headers, a blank line, then JSON"
+      - id: http_methods
+        title: "Create and remove menu items"
+        hints:
+          - "Use the POST command from the lesson exactly, with -i so the headers are shown."
+          - "The status and the Location header are both in the answer to that POST."
+          - "For the delete, run curl -i -X DELETE localhost:8080/menu/2 and read its first line."
+        examples:
+          - call: "POST /menu with a JSON body"
+            gives: "a status, and a Location header"
+  - id: 02-maven-and-the-project
+    title: Maven and the pom.xml
+    file: chapters/02-maven-and-the-project.md
+    minutes: 35
+    tasks:
+      - id: add_actuator
+        title: "Add the Actuator starter"
+        hints:
+          - "A new library means a new dependency block inside dependencies in pom.xml."
+          - "Copy the shape of the spring-boot-starter-web block: a groupId and an artifactId, and no version."
+          - "The groupId is org.springframework.boot and the artifactId is spring-boot-starter-actuator."
+        examples:
+          - call: "GET /actuator/health"
+            gives: "{\"status\":\"UP\"}"
+      - id: project_identity
+        title: "Name the project shop-api"
+        hints:
+          - "Two values in pom.xml still say demo."
+          - "Change the project's own artifactId (not the one inside parent), then look inside build."
+          - "Both the artifactId under groupId com.shop and the finalName inside build should read shop-api."
+        examples:
+          - call: "mvn -q -o package -DskipTests"
+            gives: "target/shop-api.jar"
+  - id: 03-first-endpoints
     title: Your first endpoints
-    file: chapters/01-first-endpoints.md
-    minutes: 20
+    file: chapters/03-first-endpoints.md
+    minutes: 35
     tasks:
       - id: hello
         title: "GET /hello: a plain text greeting"
         hints:
           - "MerchantController has no methods yet, so every URL returns 404."
-          - "Add a method to MerchantController with a mapping annotation for the /hello path, like the status example in the lesson."
-          - "Return the String Hello from the Shop API! from that method; Spring sends it as plain text."
+          - "Add a public method with a mapping annotation for GET on the /hello path, like StatusController in the lesson."
+          - "The method returns a String: Hello from the Shop API! with exactly those capitals and the exclamation mark."
         examples:
           - call: "GET /hello"
             gives: "Hello from the Shop API!"
       - id: merchants
         title: "GET /merchants: names A to Z, as JSON"
         hints:
-          - "MERCHANTS is already there, but it is not in A to Z order."
-          - "Return a List<String> from a @GetMapping method: Spring turns it into a JSON array."
-          - "Copy the list and sort it (for example with stream().sorted().toList()) before returning it."
+          - "MERCHANTS is already there, but it is not in A to Z order, and you should not change the constant."
+          - "Return a List<String> from a GET method for /merchants: Spring turns it into a JSON array."
+          - "Build a sorted copy with a stream: take MERCHANTS, sort it, collect it to a list, and return that."
         examples:
           - call: "GET /merchants"
             gives: "[\"Annapurna Mess\",\"Brew Point\",\"Kirana King\"]"
-  - id: 02-app-startup
+  - id: 04-app-startup
     title: How a Spring Boot app starts
-    file: chapters/02-app-startup.md
-    minutes: 18
+    file: chapters/04-app-startup.md
+    minutes: 35
     tasks:
       - id: component_scan
-        title: "02-app-startup: make Spring find StatusController"
+        title: "Make Spring find StatusController"
         hints:
-          - "Look at the folder StatusController.java is in, and compare it with ShopApiApplication's package."
+          - "Compare the package of StatusController with the package of ShopApiApplication."
           - "Component scanning only searches com.shop and the packages below it."
-          - "Move the file to src/main/java/com/shop/status/ and change its first line to that package."
+          - "Move the file to src/main/java/com/shop/status/ and change its package line to match that folder."
         examples:
           - call: "GET /status"
             gives: "ok"
       - id: greeting_property
-        title: "02-app-startup: the greeting from application.properties"
+        title: "Set the greeting in application.properties"
         hints:
-          - "GreetingController reads the property shop.greeting with @Value."
-          - "Add one line to 02-app-startup/src/main/resources/application.properties."
+          - "GreetingController reads the property shop.greeting with @Value, and falls back to not set."
+          - "Add one line to 04-app-startup/src/main/resources/application.properties."
           - "The line is the property name, an equals sign, and the text Welcome to the Shop API."
         examples:
           - call: "GET /greeting"
             gives: "Welcome to the Shop API"
-  - id: 03-beans
-    title: Beans and dependency injection
-    file: chapters/03-beans.md
-    minutes: 20
+  - id: 05-beans
+    title: Beans and the application context
+    file: chapters/05-beans.md
+    minutes: 40
     tasks:
       - id: price_service
-        title: "03-beans: inject PriceCalculator into PriceController"
+        title: "Inject the price calculator"
         hints:
           - "Spring can only inject beans, and PriceCalculator is not one yet."
-          - "Put @Service on PriceCalculator, then add a constructor to PriceController with a PriceCalculator parameter."
-          - "In the constructor, assign the parameter to the calculator field."
+          - "Mark PriceCalculator as a service, then give PriceController a constructor with a PriceCalculator parameter."
+          - "In the constructor, assign the parameter to the calculator field, and make the field final."
         examples:
           - call: "GET /tea/price"
             gives: "2360"
             note: "2000 paise plus 18% GST"
       - id: one_counter
-        title: "03-beans: share one VisitCounter"
+        title: "One visit counter for everyone"
         hints:
-          - "HomeController creates its own VisitCounter, so StatsController never sees its visits."
-          - "Ask for the VisitCounter in HomeController's constructor, like StatsController does."
-          - "Remove the new VisitCounter() and make the field final, set from the constructor parameter."
+          - "HomeController creates its own VisitCounter, so StatsController never sees those visits."
+          - "Ask for the VisitCounter in HomeController's constructor, the way StatsController does."
+          - "Remove the creation with new, keep the field final, and set it from the constructor parameter."
         examples:
           - call: "GET / twice, then GET /stats"
             gives: "2 more than before"
-  - id: 04-layers
-    title: "Layers: controller, service, repository"
-    file: chapters/04-layers.md
-    minutes: 18
+  - id: 06-dependency-injection
+    title: Dependency injection in depth
+    file: chapters/06-dependency-injection.md
+    minutes: 35
     tasks:
-      - id: thin_controller
-        title: "04-layers: move the average into ProductService"
+      - id: primary_gateway
+        title: "Make UPI the main payment gateway"
         hints:
-          - "ProductService.averagePrice() returns 0, and the controller does the work itself."
-          - "Move the loop from the controller into averagePrice(), reading products from the service's repository."
-          - "In the controller, just return what the service method gives; the repository field is then no longer needed there."
+          - "Two beans implement PaymentGateway, so Spring cannot choose one for CheckoutService."
+          - "One annotation on a bean marks it as the default when several fit."
+          - "Put @Primary on UpiGateway, with the import org.springframework.context.annotation.Primary."
         examples:
-          - call: "GET /products/average-price"
-            gives: "3950"
-            note: "worked out by the service"
-      - id: budget_products
-        title: "04-layers: findCheaperThan in the repository"
+          - call: "GET /pay/5000"
+            gives: "Paid Rs 50 by UPI"
+      - id: all_gateways
+        title: "List every payment gateway"
         hints:
-          - "budgetProducts() returns an empty list, and the repository has no findCheaperThan yet."
-          - "In ProductRepository, filter the products whose pricePaise is below the parameter."
-          - "In ProductService.budgetProducts(), return the repository's result for BUDGET_PAISE."
+          - "A constructor can ask Spring for every bean of a type at once."
+          - "Take a List<PaymentGateway> in a GatewayController constructor and keep it in a final field."
+          - "In gateways(), stream the list, map each gateway to its name(), sort, and collect to a list."
         examples:
-          - call: "GET /products/budget"
-            gives: "Masala tea, Filter coffee, Samosa"
-            note: "under Rs 50"
-  - id: 05-reading-the-request
+          - call: "GET /gateways"
+            gives: "[\"card\",\"upi\"]"
+  - id: 07-configuration-and-profiles
+    title: Configuration and profiles
+    file: chapters/07-configuration-and-profiles.md
+    minutes: 40
+    tasks:
+      - id: shop_properties
+        title: "The shop's settings, typed"
+        hints:
+          - "Three files: the settings in application.yml, the binding on ShopProperties, and the controller."
+          - "Bind the record with @ConfigurationProperties and the prefix shop; in YAML, put name and free-delivery-above-paise under shop."
+          - "Give ShopInfoController a constructor that takes ShopProperties, and answer with its name and freeDeliveryAbovePaise."
+        examples:
+          - call: "GET /shop/info"
+            gives: "{\"name\": \"Shop API\", \"freeDeliveryAbovePaise\": 50000}"
+      - id: prod_profile
+        title: "Production settings in a profile"
+        hints:
+          - "A profile file sits next to application.yml and is named after the profile."
+          - "Create application-prod.yml with only the settings that differ in production."
+          - "Under shop, set the name to Shop API (production) and free-delivery-above-paise to 100000."
+        examples:
+          - call: "GET /shop/info with --spring.profiles.active=prod"
+            gives: "{\"name\": \"Shop API (production)\", \"freeDeliveryAbovePaise\": 100000}"
+  - id: 08-auto-configuration
+    title: How auto-configuration works
+    file: chapters/08-auto-configuration.md
+    minutes: 40
+    tasks:
+      - id: backs_off
+        title: "Make ShopKit's default greeter back off"
+        hints:
+          - "Two Greeter beans exist: the shop's own and ShopKit's default; the default should step aside."
+          - "Spring Boot's defaults use a condition that only applies when no bean of that type exists yet."
+          - "On the defaultGreeter method, add the condition named ConditionalOnMissingBean (import it from org.springframework.boot.autoconfigure.condition)."
+        examples:
+          - call: "GET /greeting"
+            gives: "Welcome to the Shop API"
+          - call: "an app without its own Greeter"
+            gives: "Hello from ShopKit"
+      - id: on_property
+        title: "A festival switch in the settings"
+        hints:
+          - "A condition can look at a setting: the banner should exist only when shop.festival.enabled is true."
+          - "Use @ConditionalOnProperty with the prefix shop.festival, the name enabled, and havingValue true."
+          - "Then switch it on for the shop: add shop.festival.enabled with the value true to application.properties."
+        examples:
+          - call: "GET /banner"
+            gives: "Diwali sale: 20% off sweets!"
+          - call: "GET /banner with --shop.festival.enabled=false"
+            gives: "No festival today"
+  - id: 09-bean-lifecycle
+    title: The life of a bean
+    file: chapters/09-bean-lifecycle.md
+    minutes: 35
+    tasks:
+      - id: post_construct
+        title: "Load the prices at start-up"
+        hints:
+          - "load() reads prices.csv, but nothing ever calls it."
+          - "Spring can call a method once, right after it creates the bean, if you mark it."
+          - "The annotation is PostConstruct, from jakarta.annotation; it goes on the line above load()."
+        examples:
+          - call: "GET /prices/TEA-1"
+            gives: "2000"
+          - call: "GET /prices/count"
+            gives: "3"
+      - id: prototype_scope
+        title: "A fresh receipt for every customer"
+        hints:
+          - "ReceiptPrinter keeps state, but it is a singleton, so every customer shares one."
+          - "A bean's scope decides how many copies Spring makes."
+          - "Use the Scope annotation (org.springframework.context.annotation.Scope) on ReceiptPrinter, with the value prototype."
+        examples:
+          - call: "GET /receipt/tea, then GET /receipt/samosa"
+            gives: "[\"1 x samosa\"]"
+  - id: 11-reading-the-request
     title: Reading the request
-    file: chapters/05-reading-the-request.md
+    file: chapters/11-reading-the-request.md
     minutes: 20
     tasks:
       - id: product_by_id
-        title: "05-reading-the-request: GET /products/{id}"
+        title: "11-reading-the-request: GET /products/{id}"
         hints:
           - "Map /products/{id} and declare a long parameter with @PathVariable."
           - "Search the repository's list for the product with that id."
@@ -153,7 +274,7 @@ chapters:
           - call: "GET /products/99"
             gives: "404"
       - id: search_products
-        title: "05-reading-the-request: GET /products/search"
+        title: "11-reading-the-request: GET /products/search"
         hints:
           - "Two @RequestParam parameters: an optional Integer maxPrice and a String sort with a default."
           - "Filter with maxPrice only when it is not null, then sort with a Comparator chosen by sort."
@@ -163,13 +284,13 @@ chapters:
             gives: "[Masala tea, Samosa]"
           - call: "GET /products/search?sort=price"
             gives: "[Samosa, Masala tea, Filter coffee, Paneer roll]"
-  - id: 06-request-bodies
+  - id: 12-request-bodies
     title: Request bodies and DTOs
-    file: chapters/06-request-bodies.md
+    file: chapters/12-request-bodies.md
     minutes: 20
     tasks:
       - id: create_product
-        title: "06-request-bodies: POST /products"
+        title: "12-request-bodies: POST /products"
         hints:
           - "Add a method with @PostMapping for /products and a NewProduct parameter."
           - "Mark the parameter with @RequestBody so Spring reads it from the JSON body."
@@ -178,7 +299,7 @@ chapters:
           - call: "POST /products {\"name\": \"Vada pav\", \"pricePaise\": 2500}"
             gives: "{\"id\": 4, \"name\": \"Vada pav\", ...}"
       - id: product_view
-        title: "06-request-bodies: a ProductView without the cost"
+        title: "12-request-bodies: a ProductView without the cost"
         hints:
           - "The method returns the whole Product, so costPaise is in the JSON."
           - "Change the return type to ProductView and build one from the product's id and name."
@@ -187,13 +308,13 @@ chapters:
           - call: "GET /products/1/view"
             gives: "{\"id\": 1, \"name\": \"Masala tea\", \"price\": \"Rs 20.00\"}"
             note: "no costPaise"
-  - id: 07-status-codes
+  - id: 13-status-codes
     title: Answers and status codes
-    file: chapters/07-status-codes.md
+    file: chapters/13-status-codes.md
     minutes: 18
     tasks:
       - id: created_201
-        title: "07-status-codes: 201 Created with a Location"
+        title: "13-status-codes: 201 Created with a Location"
         hints:
           - "A plain return value always answers 200; return a ResponseEntity<Product> instead."
           - "ResponseEntity.created(uri) sets 201 and the Location header; .body(product) adds the body."
@@ -202,7 +323,7 @@ chapters:
           - call: "POST /products {\"name\": \"Poha\", \"pricePaise\": 2200}"
             gives: "201, Location: /products/4"
       - id: delete_204
-        title: "07-status-codes: DELETE answers 204 or 404"
+        title: "13-status-codes: DELETE answers 204 or 404"
         hints:
           - "repository.delete(id) returns true when it deleted a product."
           - "Return ResponseEntity<Void> so you can choose the status code."
@@ -212,13 +333,38 @@ chapters:
             gives: "204"
           - call: "DELETE /products/3 again"
             gives: "404"
-  - id: 08-validation
+  - id: 14-layers
+    title: "Layers: controller, service, repository"
+    file: chapters/14-layers.md
+    minutes: 18
+    tasks:
+      - id: thin_controller
+        title: "14-layers: move the average into ProductService"
+        hints:
+          - "ProductService.averagePrice() returns 0, and the controller does the work itself."
+          - "Move the loop from the controller into averagePrice(), reading products from the service's repository."
+          - "In the controller, just return what the service method gives; the repository field is then no longer needed there."
+        examples:
+          - call: "GET /products/average-price"
+            gives: "3950"
+            note: "worked out by the service"
+      - id: budget_products
+        title: "14-layers: findCheaperThan in the repository"
+        hints:
+          - "budgetProducts() returns an empty list, and the repository has no findCheaperThan yet."
+          - "In ProductRepository, filter the products whose pricePaise is below the parameter."
+          - "In ProductService.budgetProducts(), return the repository's result for BUDGET_PAISE."
+        examples:
+          - call: "GET /products/budget"
+            gives: "Masala tea, Filter coffee, Samosa"
+            note: "under Rs 50"
+  - id: 16-validation
     title: Validation
-    file: chapters/08-validation.md
+    file: chapters/16-validation.md
     minutes: 18
     tasks:
       - id: validate_product
-        title: "08-validation: validate NewProduct"
+        title: "16-validation: validate NewProduct"
         hints:
           - "Constraints go on the record's components, and @Valid goes on the controller parameter."
           - "Use @NotBlank and @Size(max = 40) on the name, and @Positive on the price."
@@ -229,7 +375,7 @@ chapters:
           - call: "POST /products {\"name\": \"Tea\", \"pricePaise\": 2000}"
             gives: "201"
       - id: validate_customer
-        title: "08-validation: validate NewCustomer"
+        title: "16-validation: validate NewCustomer"
         hints:
           - "Three components, three rules: name, email and phone."
           - "Use @NotBlank on name, @NotBlank and @Email on email, and @Pattern on phone."
@@ -239,13 +385,13 @@ chapters:
             gives: "400"
           - call: "POST /customers with a valid name, email and phone"
             gives: "201"
-  - id: 09-errors
+  - id: 17-errors
     title: Errors, the same everywhere
-    file: chapters/09-errors.md
+    file: chapters/17-errors.md
     minutes: 20
     tasks:
       - id: not_found_problem
-        title: "09-errors: a ProblemDetail for ProductNotFoundException"
+        title: "17-errors: a ProblemDetail for ProductNotFoundException"
         hints:
           - "ApiErrors is already the advice class for every controller; it needs a handler method."
           - "Mark a method as the exception handler for ProductNotFoundException, and return a ProblemDetail."
@@ -254,7 +400,7 @@ chapters:
           - call: "GET /products/99"
             gives: "404 {\"title\": \"Product not found\", \"detail\": \"No product 99\"}"
       - id: validation_problem
-        title: "09-errors: a ProblemDetail for validation errors"
+        title: "17-errors: a ProblemDetail for validation errors"
         hints:
           - "Validation failures throw MethodArgumentNotValidException."
           - "Collect getBindingResult().getFieldErrors() into a map of field name to default message."
@@ -262,36 +408,13 @@ chapters:
         examples:
           - call: "POST /products {\"name\": \"\", \"pricePaise\": -1}"
             gives: "400 {\"title\": \"Invalid request\", \"errors\": {\"name\": ..., \"pricePaise\": ...}}"
-  - id: 10-configuration
-    title: Configuration and profiles
-    file: chapters/10-configuration.md
-    minutes: 18
-    tasks:
-      - id: shop_properties
-        title: "10-configuration: typed shop settings"
-        hints:
-          - "ShopProperties needs @ConfigurationProperties with the prefix shop."
-          - "Add the shop settings to application.yml, with name and free-delivery-above-paise under shop."
-          - "Give ShopInfoController a constructor that takes ShopProperties, and answer with its name and freeDeliveryAbovePaise."
-        examples:
-          - call: "GET /shop/info"
-            gives: "{\"name\": \"Shop API\", \"freeDeliveryAbovePaise\": 50000}"
-      - id: prod_profile
-        title: "10-configuration: production settings in a profile"
-        hints:
-          - "A profile file sits next to application.yml and is named after the profile."
-          - "Create application-prod.yml with only the settings that change in production."
-          - "Set shop.name to Shop API (production) and shop.free-delivery-above-paise to 100000."
-        examples:
-          - call: "GET /shop/info with the prod profile"
-            gives: "{\"name\": \"Shop API (production)\", \"freeDeliveryAbovePaise\": 100000}"
-  - id: 11-database
+  - id: 19-database
     title: A real database
-    file: chapters/11-database.md
+    file: chapters/19-database.md
     minutes: 20
     tasks:
       - id: product_entity
-        title: "11-database: make Product a JPA entity"
+        title: "19-database: make Product a JPA entity"
         hints:
           - "The application does not start: Spring Data says Product is not a managed type."
           - "Put @Entity on the class. Mark the id field as the primary key, and let the database generate it with the IDENTITY strategy."
@@ -300,7 +423,7 @@ chapters:
           - call: "GET /products"
             gives: "[Masala tea, Filter coffee, Samosa], each with an id"
       - id: unique_sku
-        title: "11-database: one product per SKU"
+        title: "19-database: one product per SKU"
         hints:
           - "Rules for a single column go in a @Column annotation on its field."
           - "The column must be unique and must not be null."
@@ -309,13 +432,13 @@ chapters:
           - call: "save a second product with sku TEA-1"
             gives: "DataIntegrityViolationException"
             note: "the database refuses it"
-  - id: 12-repositories
+  - id: 20-repositories
     title: Repositories and derived queries
-    file: chapters/12-repositories.md
+    file: chapters/20-repositories.md
     minutes: 18
     tasks:
       - id: find_by_category
-        title: "12-repositories: products by category"
+        title: "20-repositories: products by category"
         hints:
           - "A derived query is a method declaration whose name describes the query."
           - "Declare findByCategoryOrderByNameAsc with a String parameter, returning a List<Product>."
@@ -324,7 +447,7 @@ chapters:
           - call: "GET /products?category=snacks"
             gives: "[Bhel puri, Kachori, Samosa]"
       - id: sku_conflict
-        title: "12-repositories: 409 for a duplicate SKU"
+        title: "20-repositories: 409 for a duplicate SKU"
         hints:
           - "Spring Data can answer yes or no with an existsBy... method."
           - "Declare a method named existsBySku with a String parameter, returning boolean."
@@ -334,13 +457,13 @@ chapters:
             gives: "409"
           - call: "POST /products with sku LAS-1"
             gives: "201"
-  - id: 13-relationships
+  - id: 21-relationships
     title: Relationships and the N+1 problem
-    file: chapters/13-relationships.md
+    file: chapters/21-relationships.md
     minutes: 22
     tasks:
       - id: order_items
-        title: "13-relationships: map orders and their items"
+        title: "21-relationships: map orders and their items"
         hints:
           - "Hibernate cannot store a CustomerOrder field as a column until the relationship is mapped."
           - "OrderItem.order is the many-to-one side: it owns the order_id foreign key column (a join column)."
@@ -349,7 +472,7 @@ chapters:
           - call: "GET /orders/1"
             gives: "{\"items\": 2, \"totalPaise\": 9400}"
       - id: fix_n_plus_one
-        title: "13-relationships: one query for the order list"
+        title: "21-relationships: one query for the order list"
         hints:
           - "findAll() loads the orders; each getItems() then runs one more query."
           - "Add a repository method with @Query using JOIN FETCH, so items load with their orders."
@@ -358,13 +481,13 @@ chapters:
           - call: "GET /orders"
             gives: "1 SQL query"
             note: "it was 6"
-  - id: 14-paging
+  - id: 22-paging
     title: Queries, paging and sorting
-    file: chapters/14-paging.md
+    file: chapters/22-paging.md
     minutes: 18
     tasks:
       - id: paged_products
-        title: "14-paging: products a page at a time"
+        title: "22-paging: products a page at a time"
         hints:
           - "Spring fills a Pageable parameter from ?page, ?size and ?sort by itself."
           - "Add a Pageable parameter to the method and change its return type to Page<Product>."
@@ -373,7 +496,7 @@ chapters:
           - call: "GET /products?page=1&size=2&sort=name"
             gives: "content [Kachori, Masala tea], totalElements 6"
       - id: price_range
-        title: "14-paging: a price range with @Query"
+        title: "22-paging: a price range with @Query"
         hints:
           - "JPQL works on entity names and fields: Product and pricePaise."
           - "Use between :min and :max and order by the price, with @Param on each parameter."
@@ -381,13 +504,13 @@ chapters:
         examples:
           - call: "GET /products/price-range?min=2000&max=3000"
             gives: "[Masala tea, Kachori, Vada pav, Filter coffee]"
-  - id: 15-transactions
+  - id: 23-transactions
     title: Transactions
-    file: chapters/15-transactions.md
+    file: chapters/23-transactions.md
     minutes: 20
     tasks:
       - id: place_order_atomic
-        title: "15-transactions: placing an order is all or nothing"
+        title: "23-transactions: placing an order is all or nothing"
         hints:
           - "Without a transaction, every saveAndFlush commits on its own."
           - "One annotation makes the whole method run in one transaction."
@@ -396,7 +519,7 @@ chapters:
           - call: "placeOrder(tea x2, samosa x5), samosas run out"
             gives: "tea stock unchanged"
       - id: rollback_checked
-        title: "15-transactions: a declined card undoes the order"
+        title: "23-transactions: a declined card undoes the order"
         hints:
           - "PaymentDeclinedException extends Exception: it is checked."
           - "Checked exceptions commit by default; the annotation can list exceptions that roll back."
@@ -404,13 +527,13 @@ chapters:
         examples:
           - call: "placePaidOrder(coffee x1, \"DECLINE-4242\")"
             gives: "coffee stock unchanged"
-  - id: 16-migrations
+  - id: 24-migrations
     title: Database migrations with Flyway
-    file: chapters/16-migrations.md
+    file: chapters/24-migrations.md
     minutes: 18
     tasks:
       - id: add_category_column
-        title: "16-migrations: V2 adds the category column"
+        title: "24-migrations: V2 adds the category column"
         hints:
           - "Hibernate validates the schema and finds no category column in product."
           - "Add a new file next to V1, named with version 2 and two underscores before the description."
@@ -421,7 +544,7 @@ chapters:
           - call: "GET /products"
             gives: "each product has \"category\": \"other\""
       - id: set_categories
-        title: "16-migrations: V3 sets the categories"
+        title: "24-migrations: V3 sets the categories"
         hints:
           - "A data change is a migration too, with the next version number."
           - "Use UPDATE product SET category = ... WHERE sku ..."
@@ -429,13 +552,13 @@ chapters:
         examples:
           - call: "SELECT sku, category FROM product"
             gives: "TEA-1 drinks, COF-1 drinks, SAM-1 snacks"
-  - id: 17-testing-controllers
+  - id: 25-testing-controllers
     title: Testing the web layer
-    file: chapters/17-testing-controllers.md
+    file: chapters/25-testing-controllers.md
     minutes: 22
     tasks:
       - id: controller_test
-        title: "17-testing-controllers: test ProductController"
+        title: "25-testing-controllers: test ProductController"
         hints:
           - "The test class needs a MockMvc field and a mocked ProductService field, both filled by Spring."
           - "In each test, first tell the mock what find(...) answers with when(...).thenReturn(...), then perform the request."
@@ -444,7 +567,7 @@ chapters:
           - call: "mvn -q -o test"
             gives: "2 tests, 0 failures"
       - id: catches_bug
-        title: "17-testing-controllers: your tests catch a broken controller"
+        title: "25-testing-controllers: your tests catch a broken controller"
         hints:
           - "The broken controller answers one of the two cases wrongly."
           - "A test that only checks the found product cannot notice a wrong answer for a missing one."
@@ -453,13 +576,13 @@ chapters:
           - call: "your tests, on the broken controller"
             gives: "at least 1 failure"
             note: "that is a pass for this task"
-  - id: 18-testing-data
+  - id: 26-testing-data
     title: Testing the data layer
-    file: chapters/18-testing-data.md
+    file: chapters/26-testing-data.md
     minutes: 18
     tasks:
       - id: repository_test
-        title: "18-testing-data: test the category query"
+        title: "26-testing-data: test the category query"
         hints:
           - "Let Spring inject the repository into a field; @DataJpaTest gives it an empty in-memory database."
           - "Save products of two categories, so the test can see that the other category is left out."
@@ -468,7 +591,7 @@ chapters:
           - call: "findByCategoryOrderByNameAsc(\"snacks\")"
             gives: "[Bhel puri, Kachori, Samosa]"
       - id: catches_query_bug
-        title: "18-testing-data: your test catches a wrong order"
+        title: "26-testing-data: your test catches a wrong order"
         hints:
           - "The broken query finds the right products in the wrong order."
           - "contains(...) and hasSize(...) do not look at the order."
@@ -477,13 +600,13 @@ chapters:
           - call: "your test, on the broken repository"
             gives: "1 failure"
             note: "that is a pass for this task"
-  - id: 19-logging-and-health
+  - id: 27-logging-and-health
     title: Logging and health checks
-    file: chapters/19-logging-and-health.md
+    file: chapters/27-logging-and-health.md
     minutes: 16
     tasks:
       - id: log_warning
-        title: "19-logging-and-health: a WARN line, not println"
+        title: "27-logging-and-health: a WARN line, not println"
         hints:
           - "SLF4J's Logger and LoggerFactory come from the org.slf4j package."
           - "Keep one private static final Logger for the class, made by LoggerFactory.getLogger with StockService.class."
@@ -492,7 +615,7 @@ chapters:
           - call: "take(\"SAM-1\")"
             gives: "WARN ... c.shop.stock.StockService : Out of stock: SAM-1"
       - id: health_info
-        title: "19-logging-and-health: expose health and info"
+        title: "27-logging-and-health: expose health and info"
         hints:
           - "Endpoints are exposed over HTTP with management.endpoints.web.exposure.include."
           - "List both endpoint names, separated by a comma; then turn on the env info contributor with management.info.env.enabled."
@@ -502,13 +625,13 @@ chapters:
             gives: "{\"status\": \"UP\"}"
           - call: "GET /actuator/info"
             gives: "{\"app\": {\"name\": \"Shop API\"}}"
-  - id: 20-security
+  - id: 28-security
     title: Security
-    file: chapters/20-security.md
+    file: chapters/28-security.md
     minutes: 22
     tasks:
       - id: public_and_protected
-        title: "20-security: a public list, a protected rest"
+        title: "28-security: a public list, a protected rest"
         hints:
           - "Two beans in SecurityConfig: a SecurityFilterChain built from HttpSecurity, and an InMemoryUserDetailsManager."
           - "In authorizeHttpRequests, permit GET on /products first, and require authentication for any other request last."
@@ -521,7 +644,7 @@ chapters:
           - call: "GET /admin/report as staff"
             gives: "200"
       - id: admin_only
-        title: "20-security: only admins delete"
+        title: "28-security: only admins delete"
         hints:
           - "A rule can match an HTTP method and a path pattern together."
           - "Match DELETE on /products/** and require the ADMIN role with hasRole."
@@ -531,13 +654,13 @@ chapters:
             gives: "403"
           - call: "DELETE /products/1 as admin"
             gives: "204"
-  - id: 21-calling-services
+  - id: 29-calling-services
     title: Calling other services
-    file: chapters/21-calling-services.md
+    file: chapters/29-calling-services.md
     minutes: 20
     tasks:
       - id: fetch_stock
-        title: "21-calling-services: read the supplier's stock"
+        title: "29-calling-services: read the supplier's stock"
         hints:
           - "The RestClient already has the supplier's base URL; start with http.get()."
           - "Give uri(...) the path with a {sku} placeholder and the sku, then retrieve() and read the body as SupplierStock.class."
@@ -546,7 +669,7 @@ chapters:
           - call: "GET /supplier-stock/TEA-1"
             gives: "{\"sku\": \"TEA-1\", \"available\": 120}"
       - id: handle_supplier_errors
-        title: "21-calling-services: not stocked, down, or too slow"
+        title: "29-calling-services: not stocked, down, or too slow"
         hints:
           - "A 404 from the supplier throws HttpClientErrorException; catch it in available() and check the status value."
           - "Build a SimpleClientHttpRequestFactory with a read timeout of one second and pass it to the builder's requestFactory(...)."
@@ -556,13 +679,13 @@ chapters:
             gives: "{\"available\": 0}"
           - call: "GET /supplier-stock/SLOW"
             gives: "503 after about 1 second"
-  - id: 22-capstone
+  - id: 30-capstone
     title: "Capstone: the checkout API"
-    file: chapters/22-capstone.md
+    file: chapters/30-capstone.md
     minutes: 20
     tasks:
       - id: checkout
-        title: "22-capstone: POST /checkout"
+        title: "30-capstone: POST /checkout"
         hints:
           - "The service method needs one annotation so all stock changes and the order commit together."
           - "Loop over request.items(): find the StockItem by sku (orElseThrow an OutOfStockException), call take, and add price times quantity."
@@ -571,7 +694,7 @@ chapters:
           - call: "POST /checkout, 2 x TEA-1 and 1 x COF-1"
             gives: "201, Location: /orders/1, totalPaise 7000"
       - id: checkout_errors
-        title: "22-capstone: clear errors, nothing half-done"
+        title: "30-capstone: clear errors, nothing half-done"
         hints:
           - "ApiErrors needs two @ExceptionHandler methods, each returning a ProblemDetail."
           - "For OutOfStockException: status CONFLICT, the title, and setProperty(\"sku\", e.sku())."

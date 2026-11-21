@@ -38,6 +38,12 @@ class NextOut(BaseModel):
     reason: str | None = None  # why this lab, for a new learner
 
 
+def _id_number(chapter_id: str, fallback: int) -> int:
+    """The number at the start of a chapter id ("11-reading-the-request" is 11)."""
+    head = chapter_id.split("-", 1)[0]
+    return int(head) if head.isdigit() else fallback
+
+
 @router.get("/me/next", response_model=NextOut)
 def my_next(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> NextOut:
     labs = {lab.id: lab for lab in all_labs()}
@@ -54,8 +60,12 @@ def my_next(user: User = Depends(get_current_user), session: Session = Depends(g
             i, step = i + 1, 0  # that chapter is done: the next one
         ch = lab.chapters[i]
         total = len(lab.chapter_steps(ch.id))
+        # A course with a chapter 0 numbers chapters by their ids (the menu and the folders agree); "of N" is the last.
+        zero = ids[0].startswith("00-")
         return NextOut(kind="continue", lab_id=lab.id, lab_title=lab.title, chapter_id=ch.id, chapter_title=ch.title,
-                       chapter_number=i + 1, chapters=len(ids), step=min(step, total - 1) + 1, steps=total)
+                       chapter_number=_id_number(ch.id, i) if zero else i + 1,
+                       chapters=_id_number(ids[-1], len(ids) - 1) if zero else len(ids),
+                       step=min(step, total - 1) + 1, steps=total)
     # A new learner: the first lab of the goal they picked in onboarding, else the coding basics.
     goal_id = engagement.get_profile(session, _uid(user)).goal
     try:
@@ -66,7 +76,9 @@ def my_next(user: User = Depends(get_current_user), session: Session = Depends(g
     first = next((labs[s] for s in (goal.start if goal else []) if s in labs), None) or labs.get("python-basics") or next(iter(labs.values()))
     ch = first.chapters[0]
     return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
-                   chapter_number=1, chapters=len(first.chapters), step=1, steps=len(first.chapter_steps(ch.id)),
+                   chapter_number=0 if ch.id.startswith("00-") else 1,
+                   chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
+                   step=1, steps=len(first.chapter_steps(ch.id)),
                    reason=f"Picked for your goal: {goal.title}" if goal else "The best first lab: it builds the coding basics every track uses")
 
 

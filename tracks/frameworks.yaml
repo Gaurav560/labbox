@@ -4,52 +4,60 @@ track: frameworks
 title: Backend frameworks
 nodes:
   - id: spring-start
-    title: What Spring Boot is, and a first endpoint
-    chapters: [spring-boot-first-api/00-what-is-a-framework, spring-boot-first-api/01-first-endpoints]
-  - id: spring-core
-    title: Start-up, beans and layers
+    title: Spring Boot, HTTP and Maven
+    chapters: [spring-boot-first-api/00-what-is-spring-boot, spring-boot-first-api/01-how-the-web-works, spring-boot-first-api/02-maven-and-the-project]
+  - id: spring-first-api
+    title: Your first endpoints
     requires: [spring-start]
-    chapters: [spring-boot-first-api/02-app-startup, spring-boot-first-api/03-beans, spring-boot-first-api/04-layers]
+    chapters: [spring-boot-first-api/03-first-endpoints]
+  - id: spring-core
+    title: Start-up, beans and dependency injection
+    requires: [spring-first-api]
+    chapters: [spring-boot-first-api/04-app-startup, spring-boot-first-api/05-beans, spring-boot-first-api/06-dependency-injection]
+  - id: spring-inside
+    title: Auto-configuration and the bean lifecycle
+    requires: [spring-config]
+    chapters: [spring-boot-first-api/08-auto-configuration, spring-boot-first-api/09-bean-lifecycle]
   - id: spring-web
     title: Requests, bodies and status codes
     requires: [spring-core]
-    chapters: [spring-boot-first-api/05-reading-the-request, spring-boot-first-api/06-request-bodies, spring-boot-first-api/07-status-codes]
+    chapters: [spring-boot-first-api/11-reading-the-request, spring-boot-first-api/12-request-bodies, spring-boot-first-api/13-status-codes]
   - id: spring-errors
     title: Validation and errors
     requires: [spring-web]
-    chapters: [spring-boot-first-api/08-validation, spring-boot-first-api/09-errors]
+    chapters: [spring-boot-first-api/16-validation, spring-boot-first-api/17-errors]
   - id: spring-config
     title: Configuration and profiles
     requires: [spring-core]
-    chapters: [spring-boot-first-api/10-configuration]
+    chapters: [spring-boot-first-api/07-configuration-and-profiles]
   - id: spring-data
     title: JPA entities and repositories
     requires: [spring-web]
-    chapters: [spring-boot-first-api/11-database, spring-boot-first-api/12-repositories]
+    chapters: [spring-boot-first-api/19-database, spring-boot-first-api/20-repositories]
   - id: spring-data-deep
     title: Relationships, paging and N+1
     requires: [spring-data]
-    chapters: [spring-boot-first-api/13-relationships, spring-boot-first-api/14-paging]
+    chapters: [spring-boot-first-api/21-relationships, spring-boot-first-api/22-paging]
   - id: spring-transactions
     title: Transactions and Flyway migrations
     requires: [spring-data-deep]
-    chapters: [spring-boot-first-api/15-transactions, spring-boot-first-api/16-migrations]
+    chapters: [spring-boot-first-api/23-transactions, spring-boot-first-api/24-migrations]
   - id: spring-testing
     title: Testing controllers and queries
     requires: [spring-errors, spring-data]
-    chapters: [spring-boot-first-api/17-testing-controllers, spring-boot-first-api/18-testing-data]
+    chapters: [spring-boot-first-api/25-testing-controllers, spring-boot-first-api/26-testing-data]
   - id: spring-ops
     title: Logs, health and security
     requires: [spring-config, spring-errors]
-    chapters: [spring-boot-first-api/19-logging-and-health, spring-boot-first-api/20-security]
+    chapters: [spring-boot-first-api/27-logging-and-health, spring-boot-first-api/28-security]
   - id: spring-services
     title: Calling other services
     requires: [spring-errors]
-    chapters: [spring-boot-first-api/21-calling-services]
+    chapters: [spring-boot-first-api/29-calling-services]
   - id: spring-capstone
     title: "Capstone: the checkout API"
     requires: [spring-transactions, spring-testing, spring-ops, spring-services]
-    chapters: [spring-boot-first-api/22-capstone]
+    chapters: [spring-boot-first-api/30-capstone]
   - id: fastapi-first
     title: FastAPI, a first API
     chapters: [fastapi-first-api/01-menu-api]

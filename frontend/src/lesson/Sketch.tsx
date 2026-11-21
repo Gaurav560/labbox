@@ -54,7 +54,7 @@ const PLAY_MS = 1600; // one step every 1.6 seconds: time to read the line under
 export interface PlayStep { label: string; says: string }
 
 /** A header box, then the steps one under the other; Play lights them up in order. */
-export function SketchSteps({ title, steps, label }: { title: string; steps: PlayStep[]; label: string }) {
+export function SketchSteps({ title, steps, label, intro = "Press Play to watch it happen, one step at a time." }: { title: string; steps: PlayStep[]; label: string; intro?: string }) {
   const [at, setAt] = useState(-1); // -1: nothing started yet
   const [playing, setPlaying] = useState(false);
   const last = steps.length - 1;
@@ -106,7 +106,7 @@ export function SketchSteps({ title, steps, label }: { title: string; steps: Pla
         })}
       </svg>
       <p className="sketch-says" aria-live="polite">
-        {at < 0 ? "Press Play to watch the app start, one step at a time." : <><b>Step {at + 1} of {steps.length}.</b> {steps[at].says}</>}
+        {at < 0 ? intro : <><b>Step {at + 1} of {steps.length}.</b> {steps[at].says}</>}
       </p>
       <div className="trace-controls">
         <button className="trace-play" onClick={play} aria-pressed={playing}>{playing ? "⏸ Pause" : done ? "↻ Watch again" : "▶ Play"}</button>

@@ -382,6 +382,7 @@ function StartupSequence() {
   return (
     <SketchSteps
       title="SpringApplication.run(...)"
+      intro="Press Play to watch the app start, one step at a time."
       label="SpringApplication.run reads application.properties, scans the package for components, applies auto-configuration, creates and injects the beans, starts Tomcat on port 8080, and is then ready for requests"
       steps={[
         { label: "1. read application.properties", says: "Spring reads your settings first: application.properties, then anything given on the command line. spring.application.name=shop-api is read here." },
@@ -389,7 +390,26 @@ function StartupSequence() {
         { label: "3. auto-configure (web, JSON, ...)", says: "It sees spring-boot-starter-web in your pom.xml, so it sets up a web server, JSON conversion (Jackson) and the part that sends each request to a controller." },
         { label: "4. create the beans, inject them", says: "It creates one object (a bean) for every class it found, and passes beans into the constructors that ask for them." },
         { label: "5. start Tomcat on port 8080", says: "It starts the embedded Tomcat web server inside your app. Nothing to install: the server is a library in your jar." },
-        { label: "6. Started: ready for requests", says: "It logs \"Started ShopApiApplication in 1.9 seconds\". Start-up is over; from now on the app only answers requests." },
+        { label: "6. Started: ready for requests", says: "It logs \"Started ShopApiApplication in 0.9 seconds\" (about one second). Start-up is over; from now on the app only answers requests." },
+      ]}
+    />
+  );
+}
+
+/** A singleton bean's life, played step by step. */
+function BeanLifecycle() {
+  return (
+    <SketchSteps
+      title="the life of a bean"
+      intro="Press Play to follow one bean, PriceCatalog, from start-up to shutdown."
+      label="Spring creates the bean with its constructor, passing its dependencies, then calls its @PostConstruct method; the bean then serves requests until shutdown, when Spring calls its @PreDestroy method"
+      steps={[
+        { label: "1. dependencies first", says: "Before creating PriceController, Spring creates what its constructor needs: here, PriceCatalog. Beans are created in dependency order." },
+        { label: "2. constructor: new PriceCatalog(...)", says: "Spring calls the constructor, passing the beans it asks for. The object exists now, but nothing has prepared it yet." },
+        { label: "3. @PostConstruct: load()", says: "Right after creating it, Spring calls the method marked @PostConstruct, once. Here it reads prices.csv into memory." },
+        { label: "4. in use: serving requests", says: "The bean sits in the application context. Every request uses this same object, for as long as the app runs." },
+        { label: "5. Ctrl+C: @PreDestroy", says: "When the app shuts down, Spring calls each bean's @PreDestroy method, so it can close files and connections cleanly." },
+        { label: "6. gone", says: "The application context is closed, and the bean with it. Next start-up, everything happens again from step 1." },
       ]}
     />
   );
@@ -680,6 +700,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "backend-stack": BackendStack,
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
+  "bean-lifecycle": BeanLifecycle,
   "di-container": DiContainer,
   layers: Layers,
   "request-mapping": RequestMapping,

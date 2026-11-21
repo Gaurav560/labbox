@@ -45,8 +45,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - Tests: `cd backend && .venv/bin/pytest` (about 257 tests, Docker ones included, about 4 minutes; `LABBOX_TEST_DATABASE_URL` and `LABBOX_TEST_REDIS_URL` run them on Postgres and Redis, see README);
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (20 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (21 November, after Spring Boot was completed) (268 backend tests on Postgres and Redis,
-  264 on SQLite, 20 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (21 November, after Spring rewrite Part 1) (272 backend tests on Postgres and Redis,
+  268 on SQLite, 23 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 

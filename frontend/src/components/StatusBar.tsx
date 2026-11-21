@@ -38,7 +38,7 @@ export default function StatusBar(p: Props) {
       <label className="sr-only" htmlFor="chapter-select">Chapter</label>
       <select id="chapter-select" className="chapter-select" value={p.chapterId} onChange={(e) => p.onChapter(e.target.value)}>
         {p.chapters.map((c, i) => (
-          <option key={c.id} value={c.id}>Ch {i + 1} · {c.title}</option>
+          <option key={c.id} value={c.id}>Ch {chapterNumber(p.chapters, i)} · {c.title}</option>
         ))}
       </select>
       {p.progress && (
@@ -79,4 +79,12 @@ export default function StatusBar(p: Props) {
       <StatsBadges username={p.username} />
     </header>
   );
+}
+
+/** A course that opens with a chapter 0 (an introduction, id "00-...") numbers chapters by their ids, so the
+ * menu matches the chapter folders; others count from 1. */
+export function chapterNumber(chapters: { id: string }[], i: number): number {
+  if (!chapters[0]?.id.startsWith("00-")) return i + 1;
+  const n = /^(\d+)-/.exec(chapters[i]?.id ?? "");
+  return n ? Number(n[1]) : i;  // the number in the id ("11-reading-the-request" is Ch 11), so the folders agree
 }
