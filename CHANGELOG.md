@@ -1,5 +1,11 @@
 # Changelog
 
+## Dashboard: the next step in a left sidebar on wide screens
+
+- The owner: "place this vertically on left side, there is ample of space". On screens 1200 px and wider, the
+  "Continue where you left off" (or "Start here") card is a vertical card in a sticky left sidebar, next to the
+  progress, drill and labs; on narrower screens it stays on top, as before.
+
 ## The Spring Boot course is the template for every course
 
 - The owner: "this one is much better. save it as template for rest". CONTENT_STANDARD.md gets a new section 0:

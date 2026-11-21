@@ -1474,3 +1474,20 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .bottom-tab-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 6px 0 0; margin-left: -6px; }
 .bottom-tab-close:hover { color: var(--text); }
 .bottom-tab-add { font-size: 17px; padding-inline: 10px; color: var(--muted); }
+
+/* Dashboard: on wide screens the next step is a sticky card in a left sidebar */
+.labs-layout.has-side { max-width: 1320px; margin: 0 auto; padding: 28px 16px; display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 28px; align-items: start; }
+.labs-layout.has-side .labs-main { max-width: none; margin: 0; padding: 0; }
+.labs-side { position: sticky; top: 20px; }
+.labs-side .next-card { flex-direction: column; align-items: stretch; gap: var(--space-4); margin-bottom: 0; }
+.labs-side .next-text { min-width: 0; }
+.labs-side .next-title { font-size: 22px; }
+.labs-side .next-progress { max-width: none; }
+.labs-side .next-go { text-align: center; }
+@media (max-width: 1199px) {
+  .labs-layout.has-side { display: block; max-width: 960px; padding-bottom: 0; }
+  .labs-layout.has-side .labs-main { padding: 0 0 28px; }
+  .labs-side { position: static; margin-bottom: var(--space-6); }
+  .labs-side .next-card { flex-direction: row; align-items: center; }
+  .labs-side .next-go { text-align: left; }
+}

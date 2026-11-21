@@ -50,8 +50,14 @@ export default function LabsPage() {
         <StatsBadges username={user?.username ?? ""} />
         <button className="btn btn-small" onClick={logout}>Log out</button>
       </header>
+      {/* Wide screens: the next step sits in a sidebar on the left (owner: "ample of space"); narrow ones: on top. */}
+      <div className={`labs-layout ${next ? "has-side" : ""}`}>
+      {next && (
+        <aside className="labs-side">
+          <NextCard next={next} />
+        </aside>
+      )}
       <main className="labs-main">
-        {next && <NextCard next={next} />}
         {stats && (
           <section className="progress-strip" aria-label="Your progress">
             <div>
@@ -106,6 +112,7 @@ export default function LabsPage() {
           })}
         </div>
       </main>
+      </div>
     </div>
   );
 }
