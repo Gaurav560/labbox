@@ -5,6 +5,10 @@ Most people say yes. The answer is **no**. And the year 2000, which was also div
 year. The calendar has rules inside rules, and a computer gets them right every time, but only if someone
 writes the rules down exactly.
 
+:::photo{src="/lesson-images/python/pope-gregory-xiii.webp" alt="A portrait of Pope Gregory XIII in red robes" credit="Unknown artist" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Pope_Gregory_XIII_portrait.jpg"}
+Pope Gregory XIII. His calendar reform of 1582 added the rule about years divisible by 100 and 400, and most of the world still uses it.
+:::
+
 Rules like these are everywhere in programs: *if* you spent more than your budget, warn me; *if* the password
 is wrong, say so; *otherwise*, carry on. Today Pocket learns to make decisions.
 

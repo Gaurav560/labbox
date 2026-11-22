@@ -24,9 +24,9 @@ Open `today.py`. It keeps track of one day of spending:
 ```python
 lunch = 120
 bus = 30
-chai = 15.5
+juice = 15.5
 
-total = lunch + bus + chai
+total = lunch + bus + juice
 print("Spent today:", total)
 print(f"That is {total / 3:.2f} rupees per thing on average.")
 ```
@@ -66,7 +66,7 @@ That is 55.17 rupees per thing on average.
 `total` is `120 + 30 + 15.5`, which is `165.5`. The second line uses an f-string you will understand fully
 later in this chapter.
 
-Now be curious: change `chai = 15.5` to `chai = 20` in the editor, save, and run it again. Only one number
+Now be curious: change `juice = 15.5` to `juice = 20` in the editor, save, and run it again. Only one number
 changed, yet both lines changed, because everything after it was worked out from the variables. That is the
 power of names.
 :::
@@ -182,7 +182,7 @@ Text in Python is a **string** (type `str`), and strings have their own rules. T
 ```python
 "5" + "5"      # "55"   + joins two strings
 "5" * 3        # "555"  * repeats a string
-len("chai")    # 4      len counts the characters
+len("book")    # 4      len counts the characters
 ```
 
 `"5"` in quotes is not the number five; it is the *character* 5, like a letter. So `"5" + "5"` glues two

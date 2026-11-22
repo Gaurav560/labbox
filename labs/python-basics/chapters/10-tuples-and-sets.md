@@ -1,5 +1,5 @@
 :::step{type=story title="Which customers came on both days?"}
-A chai shop keeps a list of who visited on Monday and who visited on Tuesday. The owner asks a simple question:
+A small bookshop keeps a list of who visited on Monday and who visited on Tuesday. The owner asks a simple question:
 "Who came on **both** days?" With what you know, you would write a loop inside a loop, checking every Monday name
 against every Tuesday name. It works. It is also slow and fiddly.
 
@@ -16,7 +16,7 @@ Write `common_items`, which finds what two lists share, and `min_max`, which giv
 A **tuple** is like a list in round brackets, with one difference: it can never change. Open `receipt_line.py`:
 
 ```python
-line = ("Masala chai", 2, 15.0)
+line = ("Veg sandwich", 2, 45.0)
 name, quantity, price = line
 print(name, "x", quantity, "=", quantity * price)
 print(line[0], len(line))
@@ -36,8 +36,8 @@ cd /workspace/10-tuples-and-sets && python3 receipt_line.py
 ```
 
 ```text
-Masala chai x 2 = 30.0
-Masala chai 3
+Veg sandwich x 2 = 90.0
+Veg sandwich 3
 Traceback (most recent call last):
   File "/workspace/10-tuples-and-sets/receipt_line.py", line 6, in <module>
     line[1] = 3
@@ -93,7 +93,7 @@ curly braces, or make one from a list with `set(...)`:
 
 ```python
 {1, 2, 2, 3}           # {1, 2, 3}: the extra 2 simply vanishes
-set(["tea", "tea"])    # {'tea'}
+set(["pen", "pen"])    # {'pen'}
 ```
 
 Three things make sets special:
@@ -131,6 +131,10 @@ only Monday: ['Asha']
 
 The first line says it all: four visits on Monday, but only three different people, because Asha came twice.
 Every question after that is one line. Try adding a Wednesday list and asking who came on all three days.
+
+:::photo{src="/lesson-images/python/venn-window.webp" alt="A stained glass window with three overlapping coloured circles, in memory of John Venn" credit="Schutz (window by Maria McClafferty)" license="CC BY-SA 2.5" source="https://commons.wikimedia.org/wiki/File:Venn-stainedglass-gonville-caius.jpg"}
+John Venn drew overlapping circles like these in 1880 to show what belongs to both groups, to either, or to only one: exactly what &, | and - just did. His Cambridge college remembers him with this window.
+:::
 :::
 
 :::step{type=predict title="Guess first"}
@@ -151,13 +155,13 @@ from chapter 8 instead.
 In `sets_tuples.py`, make `common_items(a, b)` give back a **sorted list** of the items that appear in both
 lists, each once.
 
-`common_items(["tea", "coffee", "milk"], ["milk", "tea", "juice"])` gives `["milk", "tea"]`, and
+`common_items(["bread", "coffee", "milk"], ["milk", "bread", "juice"])` gives `["bread", "milk"]`, and
 `common_items([1, 2, 2, 3], [2, 2, 4])` gives `[2]`.
 
 Three moves: turn both into sets, keep what is in both, and give back a sorted list.
 
 ```bash run
-cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import common_items; print(common_items(['tea', 'coffee', 'milk'], ['milk', 'tea', 'juice']))"
+cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import common_items; print(common_items(['bread', 'coffee', 'milk'], ['milk', 'bread', 'juice']))"
 ```
 
 Then press **Check**.
@@ -194,12 +198,12 @@ Tuples cannot change, so assigning to `t[0]` raises a `TypeError`. Reading and u
 
 :::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What is `len({"tea", "tea", "milk"})`?
+What is `len({"pen", "pen", "milk"})`?
 :::
 - [x] `2`
 - [ ] `3`
 :::explain
-A set keeps each item once, so the second `"tea"` disappears: two items.
+A set keeps each item once, so the second `"pen"` disappears: two items.
 :::
 :::
 

@@ -809,19 +809,19 @@ function TryExceptFlow() {
   );
 }
 
-/** Python from zero, chapter 15: what happens in tea = Item("tea", 15), played step by step. */
+/** Python from zero, chapter 15: what happens in pen = Item("pen", 15), played step by step. */
 function ObjectCreation() {
   return (
     <SketchSteps
-      title='tea = Item("tea", 15)'
+      title='pen = Item("pen", 15)'
       intro="Press Play to watch Python build one object from the class."
-      label="Python makes a new empty Item object, calls __init__ with self set to that object and the arguments tea and 15, __init__ stores name and price on the object, and the finished object is stored in the variable tea"
+      label="Python makes a new empty Item object, calls __init__ with self set to that object and the arguments pen and 15, __init__ stores name and price on the object, and the finished object is stored in the variable pen"
       steps={[
         { label: "1. a new, empty Item", says: "Python makes a brand-new object of the class Item. It has no name and no price yet: nothing has been stored on it." },
-        { label: '2. call __init__(self, "tea", 15)', says: "Python calls __init__ automatically. self is the new object; name is \"tea\" and price is 15." },
-        { label: '3. self.name = "tea"', says: "This stores the name on this object. It is the object's own attribute, separate from every other Item." },
+        { label: '2. call __init__(self, "pen", 15)', says: "Python calls __init__ automatically. self is the new object; name is \"pen\" and price is 15." },
+        { label: '3. self.name = "pen"', says: "This stores the name on this object. It is the object's own attribute, separate from every other Item." },
         { label: "4. self.price = 15", says: "Now the object has both attributes. __init__ is done; it returns nothing, it only set the object up." },
-        { label: "5. tea is the finished object", says: "The new object is the result of Item(\"tea\", 15), and it is stored in tea. tea.name is \"tea\", tea.price is 15." },
+        { label: "5. pen is the finished object", says: "The new object is the result of Item(\"pen\", 15), and it is stored in pen. pen.name is \"pen\", pen.price is 15." },
       ]}
     />
   );

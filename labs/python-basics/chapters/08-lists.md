@@ -16,9 +16,9 @@ spoiling the original list.
 A list is written with square brackets, items separated by commas:
 
 ```python
-cart = ["tea", "milk", "bread"]
+cart = ["rice", "milk", "bread"]
 amounts = [120, 45, 900]
-mixed = ["tea", 15, True]      # allowed, but rarely a good idea
+mixed = ["rice", 15, True]      # allowed, but rarely a good idea
 empty = []
 ```
 
@@ -26,10 +26,10 @@ Everything you learned about strings in chapter 7 works on lists too, because bo
 
 ```python
 len(cart)        # 3
-cart[0]          # "tea": positions start at 0
+cart[0]          # "rice": positions start at 0
 cart[-1]         # "bread": the last one
 cart[1:3]        # ["milk", "bread"]: a slice is a new list
-"tea" in cart    # True
+"rice" in cart   # True
 ```
 
 But there is one big difference. Strings never change. Lists **can**: you can add, remove and replace items in
@@ -48,29 +48,29 @@ cd /workspace/08-lists && python3 cart.py
 ```
 
 ```text
-['tea', 'milk', 'bread'] 3
-['tea', 'milk', 'bread', 'eggs']
-['tea', 'bread', 'eggs']
-tea eggs ['bread', 'eggs']
+['rice', 'milk', 'bread'] 3
+['rice', 'milk', 'bread', 'eggs']
+['rice', 'bread', 'eggs']
+rice eggs ['bread', 'eggs']
 True False
 ```
 
 Follow the cart as it changes: `append("eggs")` added at the end, `remove("milk")` took the milk out, and the
 whole time it was the **same list**, changing in place. Now add a line of your own, like
-`cart.insert(0, "rice")`, and guess what it prints before you run it.
+`cart.insert(0, "salt")`, and guess what it prints before you run it.
 :::
 
 :::step{type=concept title="The list toolbox"}
 Here are the tools you will use every day. All of them change the list in place:
 
-| Code | Does | `cart` afterwards (from `["tea", "milk"]`) |
+| Code | Does | `cart` afterwards (from `["rice", "milk"]`) |
 |---|---|---|
-| `cart.append("eggs")` | adds at the end | `["tea", "milk", "eggs"]` |
-| `cart.insert(0, "rice")` | adds at a position | `["rice", "tea", "milk"]` |
-| `cart.remove("tea")` | removes the first match | `["milk"]` |
-| `cart.pop()` | removes the last and gives it back | `["tea"]`, and gives back `"milk"` |
+| `cart.append("eggs")` | adds at the end | `["rice", "milk", "eggs"]` |
+| `cart.insert(0, "salt")` | adds at a position | `["salt", "rice", "milk"]` |
+| `cart.remove("rice")` | removes the first match | `["milk"]` |
+| `cart.pop()` | removes the last and gives it back | `["rice"]`, and gives back `"milk"` |
 | `cart[0] = "coffee"` | replaces one item | `["coffee", "milk"]` |
-| `cart.extend(["jam", "salt"])` | adds several | `["tea", "milk", "jam", "salt"]` |
+| `cart.extend(["jam", "salt"])` | adds several | `["rice", "milk", "jam", "salt"]` |
 
 Two things to know:
 
@@ -122,8 +122,8 @@ item lands there once, in the order it first appeared.
 Open `lists.py` and make `remove_duplicates(items)` give back a new list with each item once, in the order
 they first appeared.
 
-`remove_duplicates([3, 1, 3, 2, 1])` gives `[3, 1, 2]`, and `remove_duplicates(["tea", "coffee", "tea"])` gives
-`["tea", "coffee"]`.
+`remove_duplicates([3, 1, 3, 2, 1])` gives `[3, 1, 2]`, and `remove_duplicates(["rice", "coffee", "rice"])` gives
+`["rice", "coffee"]`.
 
 ```bash run
 cd /workspace/08-lists && python3 -c "from lists import remove_duplicates; print(remove_duplicates([3, 1, 3, 2, 1]))"
@@ -147,13 +147,13 @@ Add `reverse=True` to either one for biggest first. And remember the classic bug
 Now the famous surprise. Open `same_list.py`:
 
 ```python
-mine = ["tea", "milk"]
+mine = ["rice", "milk"]
 yours = mine
 yours.append("cake")
 print(mine)
 ```
 
-Did you expect `["tea", "milk"]`? It prints `['tea', 'milk', 'cake']`. The line `yours = mine` does **not**
+Did you expect `["rice", "milk"]`? It prints `['rice', 'milk', 'cake']`. The line `yours = mine` does **not**
 copy the list. It gives the **same** list a second name. Both names point at one list in memory, so a change
 through one name shows through the other.
 
@@ -174,10 +174,10 @@ cd /workspace/08-lists && python3 same_list.py
 ```
 
 ```text
-['tea', 'milk', 'cake']
+['rice', 'milk', 'cake']
 ```
 
-Now change `yours = mine` to `yours = mine.copy()` and run it again: `mine` stays `['tea', 'milk']`. One method
+Now change `yours = mine` to `yours = mine.copy()` and run it again: `mine` stays `['rice', 'milk']`. One method
 call, two completely different programs.
 :::
 

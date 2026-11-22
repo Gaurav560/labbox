@@ -1,6 +1,6 @@
 # Chapter 11: sorting and comprehensions. One week of Pocket's expenses.
 WEEK = [
-    {"name": "chai", "amount": 120},
+    {"name": "books", "amount": 120},
     {"name": "rent", "amount": 9000},
     {"name": "bus", "amount": 40},
     {"name": "lunch", "amount": 120},

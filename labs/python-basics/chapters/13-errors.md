@@ -184,7 +184,7 @@ Then press **Check**.
 
 :::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Which exception does `{"tea": 15}["coffee"]` raise?
+Which exception does `{"juice": 15}["coffee"]` raise?
 :::
 - [ ] `ValueError`
 - [x] `KeyError`

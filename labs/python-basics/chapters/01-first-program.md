@@ -9,6 +9,10 @@ very, very fast.
 In this course *you* write those lists, in a language called **Python**. By the end you will have built
 **Pocket**, a small program that keeps track of where your money goes. Today Pocket learns to talk.
 
+:::photo{src="/lesson-images/python/ball-python.webp" alt="A close-up of a ball python snake" credit="Holger Krisp" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File:Python-regius-kopf-k%C3%B6nigspython.jpg"}
+Meet a python. The language you are about to learn has the same name, but it was not named after this snake. The story of Python, in the next step, tells you what it was named after.
+:::
+
 :::mission
 Make Pocket say its first two sentences, then find and fix two mistakes in a program that refuses to run.
 :::
@@ -70,9 +74,6 @@ Python is named after the British comedy show *Monty Python's Flying Circus*, no
 `import this` in Python to read "The Zen of Python", the short poem of design rules the language follows.
 :::
 
-:::photo{src="/lesson-images/python/ball-python.webp" alt="A close-up of a ball python snake" credit="Holger Krisp" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File:Python-regius-kopf-k%C3%B6nigspython.jpg"}
-Not this python! A ball python, the snake people expect. The language's name comes from a comedy show instead.
-:::
 
 ```bash run
 python3 -c "import this" | head -9
@@ -92,6 +93,10 @@ learner@python-basics:/workspace$
 
 Read it from left to right: you are the user `learner`, on a machine called `python-basics`, in the folder
 `/workspace`. The `$` means "your turn, type something".
+
+:::photo{src="/lesson-images/python/vt100-terminal.webp" alt="A DEC VT100 computer terminal from 1978: a beige screen and keyboard" credit="Jason Scott" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg"}
+A DEC VT100 from 1978: a screen and a keyboard wired to one big shared computer. Your terminal window is named after machines like this, and still behaves like one.
+:::
 
 Three commands are enough to find your way around:
 

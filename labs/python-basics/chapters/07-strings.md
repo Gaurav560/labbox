@@ -1,5 +1,5 @@
-:::step{type=story title="Why does a shop's computer think chai and CHAI are different?"}
-Search for "chai" in some shop apps and nothing comes up, because the menu says "CHAI". Type your name with a
+:::step{type=story title="Why does a shop's computer think samosa and SAMOSA are different?"}
+Search for "samosa" in some shop apps and nothing comes up, because the menu says "SAMOSA". Type your name with a
 space at the end into a form, and suddenly the site says it does not know you. Have you ever wondered why
 computers are so fussy about text?
 
@@ -20,19 +20,19 @@ You have used strings since chapter 1. Now look inside one. A string is a **sequ
 order, each with a position number, its **index**. As with lists in chapter 5, positions start at **0**. And
 Python lets you count from the end too, with negative numbers:
 
-| Character | `M` | `a` | `s` | `a` | `l` | `a` |
+| Character | `S` | `a` | `m` | `o` | `s` | `a` |
 |---|---|---|---|---|---|---|
 | Index from the start | 0 | 1 | 2 | 3 | 4 | 5 |
 | Index from the end | -6 | -5 | -4 | -3 | -2 | -1 |
 
 ```python
-word = "Masala"
+word = "Samosa"
 len(word)      # 6: six characters
-word[0]        # "M": the first
+word[0]        # "S": the first
 word[-1]       # "a": the last
-word[0:3]      # "Mas": a slice, from 0 up to (not including) 3
-word[2:]       # "sala": from 2 to the end
-word[::-1]     # "alasaM": the whole string, backwards
+word[0:3]      # "Sam": a slice, from 0 up to (not including) 3
+word[2:]       # "mosa": from 2 to the end
+word[::-1]     # "asomaS": the whole string, backwards
 ```
 
 A **slice** `[start:stop]` gives a new string from `start` up to, but not including, `stop`, just like
@@ -45,7 +45,7 @@ A string is beads on a thread: each bead a character, each with its place in the
 
 :::step{type=predict title="Guess first"}
 :::question
-`word = "Masala"` has 6 characters. What happens with `word[6]`?
+`word = "Samosa"` has 6 characters. What happens with `word[6]`?
 :::
 - [ ] It gives `"a"`, the last character
 - [ ] It gives an empty string `""`
@@ -65,11 +65,11 @@ cd /workspace/07-strings && python3 receipt.py
 ```
 
 ```text
-'   MASALA chai x2   '
-'MASALA chai x2'
-masala chai x2
-Masala Chai X2
-['MASALA', 'chai', 'x2']
+'   PANEER roll x2   '
+'PANEER roll x2'
+paneer roll x2
+Paneer Roll X2
+['PANEER', 'roll', 'x2']
 20 14
 ```
 
@@ -77,10 +77,10 @@ Masala Chai X2
 
 | Method | Does | Result |
 |---|---|---|
-| `.strip()` | removes spaces at both ends | `'MASALA chai x2'` |
-| `.lower()` | all small letters | `masala chai x2` |
-| `.title()` | a capital at the start of each word | `Masala Chai X2` |
-| `.split()` | cuts into a list of words | `['MASALA', 'chai', 'x2']` |
+| `.strip()` | removes spaces at both ends | `'PANEER roll x2'` |
+| `.lower()` | all small letters | `paneer roll x2` |
+| `.title()` | a capital at the start of each word | `Paneer Roll X2` |
+| `.split()` | cuts into a list of words | `['PANEER', 'roll', 'x2']` |
 
 And `len` says the line was 20 characters, and only 14 without the spaces around it. Six invisible spaces:
 exactly the kind of thing that makes a computer say "user not found".
@@ -90,8 +90,8 @@ exactly the kind of thing that makes a computer say "user not found".
 Try to change one letter of a string:
 
 ```python
-text = "chai"
-text[0] = "C"
+text = "book"
+text[0] = "B"
 ```
 
 ```text
@@ -110,7 +110,7 @@ name = name.strip()   # now name is "asha"
 Because each method gives back a string, you can **chain** them, left to right:
 
 ```python
-"  MASALA chai  ".strip().lower()    # "masala chai"
+"  PANEER roll  ".strip().lower()    # "paneer roll"
 ```
 
 Python works it out step by step: first `.strip()`, then `.lower()` on that result.
@@ -134,7 +134,7 @@ python3 -c "print('  lots   of   spaces  '.split(' ')); print('  lots   of   spa
    ignores them at both ends. Three real words, three pieces.
 
 When the text comes from people, `split()` with no argument is almost always what you want. You can split at
-anything else, too: `"tea,milk,,bread".split(",")` gives `['tea', 'milk', '', 'bread']`.
+anything else, too: `"rice,milk,,bread".split(",")` gives `['rice', 'milk', '', 'bread']`.
 :::
 
 :::step{type=task task=count_words title="Your turn: count the words"}
@@ -159,7 +159,7 @@ first.
 ```python
 " ".join(["Riya", "Sharma"])        # "Riya Sharma"
 "-".join(["2026", "11", "22"])      # "2026-11-22"
-", ".join(["tea", "milk"])          # "tea, milk"
+", ".join(["rice", "milk"])         # "rice, milk"
 ```
 
 So a classic way to fix messy spacing is to take the text apart with `split()` (which throws the extra spaces
@@ -167,10 +167,10 @@ away), then put it back with `" ".join(...)`, one space between each word.
 
 Two more tools you will reach for:
 
-- `"Chai" in "Masala Chai"` is `True`: `in` asks whether one string appears inside another. It is
-  case-sensitive, so `"chai" in "Masala Chai"` is `False`. Compare lowered text when case should not matter:
-  `"chai" == "Chai".lower()` is `True`.
-- f-strings can line text up in columns: `f"{'tea':<8}|{15:>5}|"` gives `tea     |   15|`. `<8` pads to 8
+- `"Roll" in "Paneer Roll"` is `True`: `in` asks whether one string appears inside another. It is
+  case-sensitive, so `"roll" in "Paneer Roll"` is `False`. Compare lowered text when case should not matter:
+  `"roll" == "Roll".lower()` is `True`.
+- f-strings can line text up in columns: `f"{'rice':<8}|{15:>5}|"` gives `rice    |   15|`. `<8` pads to 8
   characters on the left side, `>5` to 5 on the right. Receipts love this.
 :::
 
@@ -232,14 +232,14 @@ Python strings are **Unicode**: they hold characters from every writing system i
 letters. Try it:
 
 ```bash run
-python3 -c "print(len('चाय'), 'चाय'[0])"
+python3 -c "print(len('दाल'), 'दाल'[0])"
 ```
 
 ```text
-3 च
+3 द
 ```
 
-The Hindi word for chai, चाय, is 3 characters to Python: च, the vowel sign ा, and य. On screen the vowel sign
+The Hindi word for lentils, दाल (dal), is 3 characters to Python: द, the vowel sign ा, and ल. On screen the vowel sign
 joins its letter, so it *looks* like two letters, but Python counts what is stored. Emojis, Tamil, Chinese,
 Arabic: they are all just characters to Python.
 

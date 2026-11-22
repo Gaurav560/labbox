@@ -8,10 +8,10 @@ class Item:
         return round(self.price * (100 + percent) / 100, 2)
 
 
-tea = Item("tea", 15)
+pen = Item("pen", 15)
 cake = Item("cake", 40)
-print(tea.name, tea.price)
+print(pen.name, pen.price)
 print(cake.name, cake.with_tax(5))
 cake.price = 45
-print(cake.price, tea.price)
-print(type(tea))
+print(cake.price, pen.price)
+print(type(pen))

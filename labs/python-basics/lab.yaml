@@ -325,8 +325,8 @@ chapters:
           - "The & operator (or .intersection) keeps what is in both sets."
           - "Sets have no order, so give back sorted(...) of the result."
         examples:
-        - call: "common_items([\"tea\", \"coffee\", \"milk\"], [\"milk\", \"tea\", \"juice\"])"
-          gives: "[\"milk\", \"tea\"]"
+        - call: "common_items([\"bread\", \"coffee\", \"milk\"], [\"milk\", \"bread\", \"juice\"])"
+          gives: "[\"bread\", \"milk\"]"
         - call: "common_items([1, 2, 2, 3], [2, 2, 4])"
           gives: "[2]"
   - id: sorting-and-comprehensions
@@ -354,8 +354,8 @@ chapters:
           - "Use a minus sign on the amount so the biggest comes first, and the name as the second part of the tuple."
         examples:
         - call: "[e[\"name\"] for e in by_amount(WEEK)]"
-          gives: "[\"rent\", \"phone\", \"chai\", \"lunch\", \"bus\"]"
-          note: "chai and lunch tie on 120"
+          gives: "[\"rent\", \"phone\", \"books\", \"lunch\", \"bus\"]"
+          note: "books and lunch tie on 120"
   - id: 09-functions-in-depth
     title: Functions in depth
     file: chapters/12-functions-in-depth.md

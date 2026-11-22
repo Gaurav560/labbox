@@ -169,7 +169,7 @@ All three calls share the one default list made when `def` ran, so it keeps ever
 Fix `add_item` in `functions.py`, so every call without a basket starts with its own, new, empty basket.
 
 - `add_item("milk")` gives `["milk"]`, and then `add_item("bread")` gives `["bread"]`.
-- With a basket given, it still adds to that basket: `add_item("tea", ["milk"])` gives `["milk", "tea"]`.
+- With a basket given, it still adds to that basket: `add_item("juice", ["milk"])` gives `["milk", "juice"]`.
 
 Use the pattern from the trap step.
 

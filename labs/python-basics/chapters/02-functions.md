@@ -140,8 +140,8 @@ def shout_return(word):
     return word.upper() + "!"
 
 
-a = shout_print("chai")
-b = shout_return("chai")
+a = shout_print("hello")
+b = shout_return("hello")
 print("a is", a)
 print("b is", b)
 ```
@@ -156,16 +156,16 @@ cd /workspace/02-functions && python3 shout.py
 ```
 
 ```text
-CHAI!
+HELLO!
 a is None
-b is CHAI!
+b is HELLO!
 ```
 
 Surprised? Here is what happened:
 
-- `shout_print("chai")` showed `CHAI!` on the screen right away. But it has no `return`, so it gave back
+- `shout_print("hello")` showed `HELLO!` on the screen right away. But it has no `return`, so it gave back
   `None`, and `a` is `None`.
-- `shout_return("chai")` showed nothing. It handed `"CHAI!"` back, and that went into `b`.
+- `shout_return("hello")` showed nothing. It handed `"HELLO!"` back, and that went into `b`.
 
 `print` talks to **the person** at the screen. `return` talks to **the code** that called the function. The
 screen cannot do sums or store answers; only returned values can be used again. That is why almost every

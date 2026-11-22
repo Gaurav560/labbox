@@ -3,7 +3,7 @@ Scroll through five hundred contacts looking for "Ravi" and it takes a while. Ty
 he appears at once. The phone did not read every contact from the top: it looked him up **by name**.
 
 Lists find things by position: item 0, item 1, item 2. But real life is full of things you find by a name or a
-label: the price of tea, the phone number of Ravi, how much you spent on food. For those, Python has the
+label: the price of juice, the phone number of Ravi, how much you spent on food. For those, Python has the
 **dictionary**, and it is so useful that big Python programs are mostly made of them.
 
 :::mission
@@ -17,15 +17,15 @@ A dictionary (a **dict**) stores pairs: a **key**, and the **value** that belong
 braces, a colon between each key and its value:
 
 ```python
-prices = {"tea": 15, "samosa": 20, "coffee": 30}
+prices = {"juice": 15, "samosa": 20, "coffee": 30}
 ```
 
 Now you look things up by key, in square brackets:
 
 ```python
-prices["tea"]          # 15
+prices["juice"]          # 15
 prices["vada"] = 25    # adds a new pair
-prices["tea"] = 18     # the key exists, so its value is replaced
+prices["juice"] = 18     # the key exists, so its value is replaced
 len(prices)            # 4 pairs
 ```
 
@@ -50,8 +50,8 @@ cd /workspace/09-dictionaries && python3 prices.py
 
 ```text
 15
-{'tea': 18, 'samosa': 20, 'coffee': 30, 'vada': 25}
-tea      ₹18
+{'juice': 18, 'samosa': 20, 'coffee': 30, 'vada': 25}
+juice    ₹18
 samosa   ₹20
 coffee   ₹30
 vada     ₹25
@@ -63,7 +63,7 @@ Traceback (most recent call last):
 KeyError: 'cake'
 ```
 
-Read it top to bottom. Tea cost 15, then the price list grew a `vada` and tea went up to 18. The loop printed a
+Read it top to bottom. Juice cost 15, then the price list grew a `vada` and juice went up to 18. The loop printed a
 neat menu (the `<8` from chapter 7 lines up the names). `prices.get("cake", 0)` gave `0`. And the last line
 crashed: asking for a key that does not exist with square brackets raises a **KeyError**, which names the
 missing key. Which brings us to the most useful method of all.
@@ -78,7 +78,7 @@ prices.get("cake", 0)     # 0: you choose what "missing" means
 "cake" in prices          # False: in checks the KEYS
 ```
 
-Careful: `in` looks at **keys** only. `15 in {"tea": 15}` is `False`, because 15 is a value, not a key.
+Careful: `in` looks at **keys** only. `15 in {"juice": 15}` is `False`, because 15 is a value, not a key.
 
 To go through a dictionary, loop over its pairs with `.items()`. Each lap gives you a key and its value, and
 you can name them both at once:
@@ -96,11 +96,11 @@ remembers the **order** you added things in, so your loops come out in a predict
 Here is the most famous dictionary pattern in Python: **counting**. How many of each drink did the shop sell?
 
 ```python
-orders = ["tea", "coffee", "tea", "vada", "tea"]
+orders = ["juice", "coffee", "juice", "vada", "juice"]
 counts = {}
 for o in orders:
     counts[o] = counts.get(o, 0) + 1
-print(counts)    # {'tea': 3, 'coffee': 1, 'vada': 1}
+print(counts)    # {'juice': 3, 'coffee': 1, 'vada': 1}
 ```
 
 The middle line does all the work: "look up the count so far, or 0 if this is the first time; add 1; store it
@@ -110,11 +110,11 @@ back". Press Play and watch the dictionary fill up:
 | o | counts.get(o, 0) | counts | note |
 |---|---|---|---|
 |  |  | {} | Before the loop: an empty dictionary. |
-| tea | 0 | {'tea': 1} | First tea: not there yet, so 0 + 1. |
-| coffee | 0 | {'tea': 1, 'coffee': 1} | A new key appears. |
-| tea | 1 | {'tea': 2, 'coffee': 1} | tea was 1, now 2. |
-| vada | 0 | {'tea': 2, 'coffee': 1, 'vada': 1} | Another new key. |
-| tea | 2 | {'tea': 3, 'coffee': 1, 'vada': 1} | tea reaches 3. |
+| juice | 0 | {'juice': 1} | First juice: not there yet, so 0 + 1. |
+| coffee | 0 | {'juice': 1, 'coffee': 1} | A new key appears. |
+| juice | 1 | {'juice': 2, 'coffee': 1} | juice was 1, now 2. |
+| vada | 0 | {'juice': 2, 'coffee': 1, 'vada': 1} | Another new key. |
+| juice | 2 | {'juice': 3, 'coffee': 1, 'vada': 1} | juice reaches 3. |
 :::
 
 One line, any number of different things to count. Your first task counts letters the same way.
@@ -122,7 +122,7 @@ One line, any number of different things to count. Your first task counts letter
 
 :::step{type=predict title="Guess first"}
 :::question
-With `counts = {"tea": 3}`, what does `counts.get("milk", 0) + 1` give?
+With `counts = {"juice": 3}`, what does `counts.get("milk", 0) + 1` give?
 :::
 - [ ] A `KeyError`
 - [x] `1`
@@ -189,7 +189,7 @@ Then press **Check**.
 
 :::step{type=predict title="Quick check (1 of 3)"}
 :::question
-What does `{"tea": 15}["coffee"]` do?
+What does `{"juice": 15}["coffee"]` do?
 :::
 - [ ] Gives `None`
 - [ ] Gives `0`
@@ -202,11 +202,11 @@ or `"coffee" in ...` when a key might not be there.
 
 :::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What is `prices` after `prices = {"tea": 15}` and `prices["tea"] = 20`?
+What is `prices` after `prices = {"juice": 15}` and `prices["juice"] = 20`?
 :::
-- [x] `{"tea": 20}`
-- [ ] `{"tea": 15, "tea": 20}`
-- [ ] `{"tea": [15, 20]}`
+- [x] `{"juice": 20}`
+- [ ] `{"juice": 15, "juice": 20}`
+- [ ] `{"juice": [15, 20]}`
 :::explain
 Keys are unique: storing under an existing key replaces its value.
 :::
@@ -214,19 +214,19 @@ Keys are unique: storing under an existing key replaces its value.
 
 :::step{type=predict title="Quick check (3 of 3)"}
 :::question
-What does `15 in {"tea": 15}` give?
+What does `15 in {"juice": 15}` give?
 :::
 - [ ] `True`
 - [x] `False`
 :::explain
-`in` checks the keys. `"tea" in {"tea": 15}` is `True`; to search the values, use `15 in d.values()`.
+`in` checks the keys. `"juice" in {"juice": 15}` is `True`; to search the values, use `15 in d.values()`.
 :::
 :::
 
 :::step{type=deep-dive title="Go deeper: why dictionaries are so fast"}
 A dictionary does not search its keys one by one. When you store a key, Python works out a number from it, its
 **hash**, and uses that number to decide where in memory the pair goes. Looking a key up repeats the same
-calculation and goes straight there. That is why a dictionary with ten million keys answers `prices["tea"]` as
+calculation and goes straight there. That is why a dictionary with ten million keys answers `prices["juice"]` as
 quickly as one with three. It is also why keys must never change: a key that changed would have a different
 hash, and Python would look for it in the wrong place.
 

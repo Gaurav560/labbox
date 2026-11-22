@@ -27,7 +27,7 @@ class Item:
 ```
 
 A **class** is a blueprint: it describes what every item has and can do. An **object** (also called an
-**instance**) is one real item built from it: `Item("tea", 15)` builds one, `Item("cake", 40)` builds another.
+**instance**) is one real item built from it: `Item("pen", 15)` builds one, `Item("cake", 40)` builds another.
 
 - `__init__` (two underscores on each side, said "dunder init") is the special method Python runs **when an object
   is created**. Its job is to set the object up.
@@ -49,14 +49,14 @@ cd /workspace/15-classes && python3 shop.py
 ```
 
 ```text
-tea 15
+pen 15
 cake 42.0
 45 15
 <class '__main__.Item'>
 ```
 
-Line by line: `tea.name` and `tea.price` read the tea's own attributes. `cake.with_tax(5)` calls the method on the
-cake: 40 plus 5% is 42.0. Then `cake.price = 45` changed the cake, and the tea still costs 15: **each object keeps
+Line by line: `pen.name` and `pen.price` read the pen's own attributes. `cake.with_tax(5)` calls the method on the
+cake: 40 plus 5% is 42.0. Then `cake.price = 45` changed the cake, and the pen still costs 15: **each object keeps
 its own values**. The last line shows you have truly made a new type: Python calls it `Item`.
 :::
 
@@ -151,7 +151,7 @@ class Bag:
         self.items.append(x)
 ```
 
-Make two bags, add tea to the first, and look in the second: `['tea']`. A list in the class body belongs to the
+Make two bags, add a pen to the first, and look in the second: `['pen']`. A list in the class body belongs to the
 class itself, so all its objects share it. Anything that should be separate for each object goes in `__init__`,
 on `self`.
 :::
@@ -209,7 +209,7 @@ The class body runs once, so a list there is shared by all objects. `__init__` r
 :::
 
 :::step{type=deep-dive title="Go deeper: printing objects, dataclasses and inheritance"}
-**Printing an object.** `print(tea)` shows something like `<__main__.Item object at 0x7f...>` (the number changes
+**Printing an object.** `print(pen)` shows something like `<__main__.Item object at 0x7f...>` (the number changes
 every run: it is where the object lives in memory). Teach your class to describe itself with a special method:
 
 ```python
@@ -217,7 +217,7 @@ def __repr__(self):
     return f"Item({self.name!r}, {self.price})"
 ```
 
-Now `print(tea)` shows `Item('tea', 15)`. Methods with double underscores are how your classes plug into Python's
+Now `print(pen)` shows `Item('pen', 15)`. Methods with double underscores are how your classes plug into Python's
 own features: `__len__` makes `len(...)` work, `__eq__` makes `==` work.
 
 **dataclasses.** For classes that mostly hold data, Python can write `__init__` and `__repr__` for you:

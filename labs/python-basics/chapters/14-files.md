@@ -6,6 +6,10 @@ So how does a notes app remember yesterday's notes? How does a bank remember you
 somewhere that survives: a **file** on disk (or a database, which is files underneath). Today Pocket learns to
 write its records to a file and to read a whole month of real expenses back.
 
+:::photo{src="/lesson-images/python/hard-drive.webp" alt="An opened laptop hard drive showing its shiny disk and the arm that reads it" credit="Evan-Amos" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:Laptop-hard-drive-exposed.jpg"}
+Inside a hard drive: the shiny disk keeps your files as tiny magnetic patterns, even with the power off. Memory forgets when a program ends; this does not.
+:::
+
 :::mission
 Write `save_lines`, which saves lines of text to a file, and `read_totals`, which reads a real CSV file of
 expenses, survives its messy rows, and adds up each category.
@@ -18,7 +22,7 @@ statement does the opening and, crucially, the closing for you:
 
 ```python
 with open("diary.txt", "w") as f:
-    f.write("chai 15\n")
+    f.write("juice 15\n")
 ```
 
 `open(path, mode)` gives back a file object, here named `f`. The **mode** says what you want to do:
@@ -48,7 +52,7 @@ cd /workspace/14-files && python3 diary.py
 ```
 
 ```text
-['chai', '15']
+['juice', '15']
 ['bus', '30']
 ['lunch', '120']
 ```
@@ -125,11 +129,11 @@ comma between the values. Spreadsheets, banks and shops export data like this ev
 It looks like `line.split(",")` would be enough. It is not. A value can itself contain a comma, inside quotes:
 
 ```text
-2026,"snacks, tea",30
+2026,"snacks, juice",30
 ```
 
-`split(",")` cuts that into `['2026', '"snacks', ' tea"', '30']`: four pieces, quotes and all. Python's `csv`
-module understands the quoting rules and gives `['2026', 'snacks, tea', '30']`. Never split CSV by hand.
+`split(",")` cuts that into `['2026', '"snacks', ' juice"', '30']`: four pieces, quotes and all. Python's `csv`
+module understands the quoting rules and gives `['2026', 'snacks, juice', '30']`. Never split CSV by hand.
 
 The best tool is `csv.DictReader`: it reads the header line and gives you every row as a **dictionary** (chapter
 9), with the column names as keys:
@@ -204,12 +208,12 @@ Everything in a text file is text. Convert it yourself with `float(...)`, and ha
 
 :::step{type=predict title="Quick check (3 of 3)"}
 :::question
-What does `f.write("chai")` followed by `f.write("bus")` put in the file?
+What does `f.write("rice")` followed by `f.write("bus")` put in the file?
 :::
-- [ ] Two lines: `chai` and `bus`
-- [x] One line: `chaibus`
+- [ ] Two lines: `rice` and `bus`
+- [x] One line: `ricebus`
 :::explain
-`write` adds no new line of its own. Write `"chai\n"` and `"bus\n"` to get two lines.
+`write` adds no new line of its own. Write `"rice\n"` and `"bus\n"` to get two lines.
 :::
 :::
 

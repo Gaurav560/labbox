@@ -7,7 +7,7 @@ def shout_return(word):
     return word.upper() + "!"
 
 
-a = shout_print("chai")
-b = shout_return("chai")
+a = shout_print("hello")
+b = shout_return("hello")
 print("a is", a)
 print("b is", b)

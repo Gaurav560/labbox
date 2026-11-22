@@ -17,8 +17,8 @@ You know `sorted(amounts)` and `reverse=True` from chapter 8. Python sorts numbe
 alphabetically. But what if you want words by their **length**?
 
 ```python
-words = ["samosa", "tea", "biryani"]
-sorted(words, key=len)      # ['tea', 'samosa', 'biryani']
+words = ["samosa", "pav", "biryani"]
+sorted(words, key=len)      # ['pav', 'samosa', 'biryani']
 ```
 
 `key=len` means: "before comparing two items, pass each one through `len`, and compare **those** answers". Python
@@ -37,7 +37,7 @@ cd /workspace/11-sorting-and-comprehensions && python3 spends.py
 [120, 45, 900, 300, 80]
 [240, 90, 1800, 600, 160]
 [120, 900, 300]
-['tea', 'samosa', 'biryani']
+['pav', 'samosa', 'biryani']
 ```
 
 Line three proves `sorted` left the original list alone. Lines four and five are comprehensions, coming next.
@@ -75,18 +75,18 @@ Here is a sort with two rules, on a list of shop items:
 
 ```python
 items = [
-    {"name": "tea", "price": 15},
+    {"name": "toast", "price": 15},
     {"name": "cake", "price": 40},
     {"name": "bun", "price": 15},
 ]
 sorted(items, key=lambda i: (-i["price"], i["name"]))
-# cake (40), then bun and tea (both 15, so alphabetical)
+# cake (40), then bun and toast (both 15, so alphabetical)
 ```
 
-1. The key gives each item a tuple: cake becomes `(-40, "cake")`, tea `(-15, "tea")`, bun `(-15, "bun")`.
+1. The key gives each item a tuple: cake becomes `(-40, "cake")`, toast `(-15, "toast")`, bun `(-15, "bun")`.
 2. Python compares the first parts: -40 is the smallest, so cake comes first (the minus made "biggest price"
    come first).
-3. Tea and bun tie on -15, so Python looks at the second part: `"bun"` comes before `"tea"`.
+3. Toast and bun tie on -15, so Python looks at the second part: `"bun"` comes before `"toast"`.
 
 Two rules in one key. Your second task uses exactly this idea with expenses.
 :::
@@ -150,8 +150,8 @@ In `sorting.py`, make `by_amount(expenses)` give back a **new** list of the expe
 first, and expenses with the same amount in alphabetical order of their name. The list it was given must not
 change.
 
-`[e["name"] for e in by_amount(WEEK)]` gives `["rent", "phone", "chai", "lunch", "bus"]`: chai and lunch both cost
-120, so chai comes first.
+`[e["name"] for e in by_amount(WEEK)]` gives `["rent", "phone", "books", "lunch", "bus"]`: books and lunch both cost
+120, so books comes first.
 
 ```bash run
 cd /workspace/11-sorting-and-comprehensions && python3 -c "from sorting import by_amount, WEEK; print([e['name'] for e in by_amount(WEEK)])"
@@ -186,10 +186,10 @@ What is `[n * n for n in range(4)]`?
 
 :::step{type=predict title="Quick check (3 of 3)"}
 :::question
-What does `lambda e: e["amount"]` give back for `{"name": "tea", "amount": 15}`?
+What does `lambda e: e["amount"]` give back for `{"name": "juice", "amount": 15}`?
 :::
 - [x] `15`
-- [ ] `"tea"`
+- [ ] `"juice"`
 - [ ] The whole dictionary
 :::explain
 A lambda returns whatever comes after its colon: here, the value under `"amount"`.

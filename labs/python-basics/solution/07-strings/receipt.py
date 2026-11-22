@@ -1,5 +1,5 @@
 # Chapter 7: a messy line from a shop receipt. Run it and watch each method tidy it a little more.
-line = "   MASALA chai x2   "
+line = "   PANEER roll x2   "
 
 print(repr(line))
 print(repr(line.strip()))

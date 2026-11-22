@@ -11,5 +11,5 @@ print(doubled)
 big = [a for a in amounts if a > 100]
 print(big)
 
-words = ["samosa", "tea", "biryani"]
+words = ["samosa", "pav", "biryani"]
 print(sorted(words, key=len))

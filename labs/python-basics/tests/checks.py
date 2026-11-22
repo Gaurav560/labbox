@@ -292,7 +292,7 @@ def finding_bugs() -> None:
 # ---------- chapter 11: sorting and comprehensions ----------
 
 WEEK = [
-    {"name": "chai", "amount": 120}, {"name": "rent", "amount": 9000}, {"name": "bus", "amount": 40},
+    {"name": "books", "amount": 120}, {"name": "rent", "amount": 9000}, {"name": "bus", "amount": 40},
     {"name": "lunch", "amount": 120}, {"name": "phone", "amount": 599},
 ]
 
@@ -302,7 +302,7 @@ def sorting_and_comprehensions() -> None:
     mod, err = load("11-sorting-and-comprehensions", "sorting")
     fn, e = get_func(mod, err, "large_expenses")
     run_cases("large_expenses", fn, e, [
-        ((copy.deepcopy(WEEK), 500), ["rent", "phone"]), ((copy.deepcopy(WEEK), 100), ["chai", "rent", "lunch", "phone"]),
+        ((copy.deepcopy(WEEK), 500), ["rent", "phone"]), ((copy.deepcopy(WEEK), 100), ["books", "rent", "lunch", "phone"]),
         ((copy.deepcopy(WEEK), 120), ["rent", "phone"]), (([], 10), []), ((copy.deepcopy(WEEK), 9000), []),
     ])
     fn, e = get_func(mod, err, "by_amount")
@@ -313,26 +313,26 @@ def sorting_and_comprehensions() -> None:
         week = copy.deepcopy(WEEK)
         got = fn(week)
         names = [x["name"] for x in got] if isinstance(got, list) else got
-        want = ["rent", "phone", "chai", "lunch", "bus"]
+        want = ["rent", "phone", "books", "lunch", "bus"]
         if week != WEEK:
             report("by_amount", False, "The order is one thing, but the list you were given changed: its order is now "
                    f"{[x['name'] for x in week]}. .sort() sorts the list itself; sorted() makes a new one.")
         elif got is None:
             report("by_amount", False, "by_amount gave back None. .sort() returns None: return sorted(...) instead.")
-        elif names == ["bus", "chai", "lunch", "phone", "rent"]:
+        elif names == ["bus", "books", "lunch", "phone", "rent"]:
             report("by_amount", False, "Smallest first. Biggest first needs reverse=True, or a minus sign in the key.",
                    repr(want), repr(names))
-        elif names == ["rent", "phone", "lunch", "chai", "bus"]:
-            report("by_amount", False, "Biggest first, well done, but chai and lunch both cost 120: the same amount should "
+        elif names == ["rent", "phone", "lunch", "books", "bus"]:
+            report("by_amount", False, "Biggest first, well done, but books and lunch both cost 120: the same amount should "
                    "come in alphabetical order of name. A key can give back a tuple: (first rule, second rule).",
                    repr(want), repr(names))
         elif names != want:
             report("by_amount", False, f"Not yet: the names come out as {names}, but they should be {want}.", repr(want), repr(names))
-        elif [x["name"] for x in fn([{"name": "tea", "amount": 15}, {"name": "bun", "amount": 15},
-                                     {"name": "cake", "amount": 40}])] != ["cake", "bun", "tea"]:
-            report("by_amount", False, "Biggest first works, but tea and bun both cost 15 and came out as tea, bun: the "
+        elif [x["name"] for x in fn([{"name": "toast", "amount": 15}, {"name": "bun", "amount": 15},
+                                     {"name": "cake", "amount": 40}])] != ["cake", "bun", "toast"]:
+            report("by_amount", False, "Biggest first works, but toast and bun both cost 15 and came out as toast, bun: the "
                    "same amount should come in alphabetical order of name. A key can give back a tuple: (first rule, "
-                   "second rule).", repr(["cake", "bun", "tea"]))
+                   "second rule).", repr(["cake", "bun", "toast"]))
         elif fn([]) != []:
             report("by_amount", False, "by_amount([]) should give back an empty list.")
         else:

@@ -1,5 +1,20 @@
 # Changelog
 
+## 22 November: four more real photos in Python from zero; the snake opens chapter 1
+
+- Also: no chai examples anywhere (owner: "dont use masala chai and chai related stuff as an example ... anywhere").
+  Python from zero now uses juice, rice, bread, books, pen, pav, toast, a paneer roll, a veg sandwich and दाल (dal)
+  instead, keeping every output, length and sort order the same (books still ties with lunch and sorts first). The
+  handwritten notes for chapters 7 to 9 were redrawn, and the object-creation animation uses a pen. Every example
+  file was rerun in the lab image and each printed line checked against its lesson.
+
+- The owner loved the images, asked for at least three more where they genuinely fit, and the snake on the first
+  page instead of next to Guido. Added (Wikimedia Commons, credited): a DEC VT100 terminal from 1978 in "Meet the
+  terminal" (Jason Scott, CC BY 2.0), Pope Gregory XIII with the leap-year question (public domain; his 1582
+  reform made the 100 and 400 rule), John Venn's stained-glass window after the set maths (CC BY-SA 2.5), and an
+  opened hard drive in "Where does your data go?" (Evan-Amos, CC BY-SA 3.0). The ball python moved to chapter 1's
+  first step. Python from zero now has 7 real photos and 19 pages of handwritten notes.
+
 ## 22 November: Python from zero rewrite, Part 4 "Capstone" (chapter 19); the course is complete
 
 - **19. Capstone: a monthly report** (`13-capstone`), in its own folder: fix inherited code first (a real
