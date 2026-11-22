@@ -65,13 +65,15 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); JavaScript from zero was rewritten the same way (22 November: 18 chapters, Mixtape the playlist app, node:test for testing); Go from zero was rewritten the same way (22 November: 18 chapters, Parcel the parcel tracker, go test for testing); Spring Boot is a 31-chapter course, 0 to 30; Redis, SQL from zero and Git without fear were rebuilt to the full standard the same night), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); JavaScript from zero was rewritten the same way (22 November: 18 chapters, Mixtape the playlist app, node:test for testing); Go from zero was rewritten the same way (22 November: 18 chapters, Parcel the parcel tracker, go test for testing); Spring Boot is a 31-chapter course, 0 to 30; Redis, SQL from zero and Git without fear were rebuilt to the full standard the same night; Linux on call followed on 23 November, 15 chapters about Tara, a radio telescope observatory), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - App shape (owner, 22 November): `/labs` is the dashboard (a Continue card in the colour of the lab last opened: a retro
   computer showing the step for coding labs, a tape deck for the rest; the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
   lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,
   editor, terminal). Level, streak and XP sit in the profile panel (top right) with Exit. The separate Skill maps
   section is gone (`/skills...` and `/tracks/...` redirect). Lab colours: `frontend/src/brand.ts` (`LAB_TONES`).
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
+- Examples (owner, 22 November): never chai, tea or any drink, never Dabba Express, and nothing that resembles the Chai aur Code
+  platform (its themes or its usual tutorial projects). Pick distinctive running projects.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - **`spring-boot-first-api` is the template for every course** (owner, 21 November: "save it as template for rest"): see CONTENT_STANDARD section 0. Rewrite or build every other course to that standard.
 - Phase J (admin and funnel) done. Phase H: H1, H2, H3, H5, H6 done. H4 (Google and GitHub login) waits until the end, by the owner's

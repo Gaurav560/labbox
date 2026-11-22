@@ -1,18 +1,21 @@
 id: linux-on-call
 version: 2
 title: Linux on call
-subtitle: Read logs with grep, awk and sort, free a full disk, and fix permissions, like on a real pager shift.
-description: Read logs with grep, awk and sort, free a full disk, and fix permissions, like on a real pager shift.
+subtitle: From your first command to scripts, processes, networking and services, on a real server you look after.
+description: "Learn Linux from the beginning: why it runs the world's servers, the terminal, files, reading files, pipes,
+  logs, finding things, permissions, processes, a full disk, shell scripts, loops, the environment, networking,
+  services and cron, by looking after the server of Tara, a small radio telescope observatory near Pune, up to a
+  real on-call night."
 language: bash
 track: devops
 tags: [linux, bash]
 level: beginner
-estimated_minutes: 35
+estimated_minutes: 680
 story:
-  company: Dabba Express
-  character: { name: Priya, role: "Founder, Dabba Express" }
-  pitch: "Dabba Express's only server engineer is on leave, and the pager is now yours."
-cover_scene: "A small server rack at night with a glowing terminal and a pager on top."
+  company: Tara Observatory
+  character: { name: Anjali, role: "Astronomer, Tara Observatory" }
+  pitch: "Tara's three dishes listen to the sky every night, and their Linux server is now yours to look after."
+cover_scene: "A radio telescope dish under a starry night sky, with a glowing terminal window in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logos: linux", source: "devicon (MIT)" }
 image: labbox/linux-on-call:v1
@@ -20,54 +23,470 @@ resources: xs
 workspace:
   mount_path: /workspace
   shell: /bin/bash
-  network: none
+  network: lab
 check:
+  mode: live
   command: ["bash", "/check/tests/run_checks.sh"]
-  timeout_seconds: 60
+  timeout_seconds: 90
   network: none
+  mount_workspace: ro
 chapters:
-  - id: 01-reading-logs
-    title: Reading the logs
-    file: chapters/01-reading-logs.md
-    minutes: 20
-    tasks:
-      - id: count_5xx
-        title: "count_5xx.sh: how many requests failed"
-        xp: 20
-        hints:
-          - "The status is the 5th field on every line. You need the lines where it is from 500 to 599, then count them."
-          - "awk can test a field with a condition, like $5 >= 500, and print only the lines that match. wc -l counts lines."
-          - "Use \"$1\" for the log file, so the script works on any log, not just access.log."
-      - id: top_ips
-        title: "top_ips.sh: the three busiest IPs"
-        xp: 30
-        hints:
-          - "First keep only the IP column, the 2nd field. Then count how often each one appears."
-          - "uniq -c counts repeats, but only next to each other, so sort before it. Then sort the counts from high to low."
-          - "After sorting the counts, head keeps the top 3 lines; one more awk keeps just the IP column."
-      - id: slowest
-        title: "slowest.sh: the three slowest requests"
-        xp: 20
-        hints:
-          - "The duration is the 6th field, like 35ms. You want whole lines, sorted by that field."
-          - "sort -k picks the field to sort by, -n sorts by number (35ms still counts as 35), -r flips the order."
-          - "Sort by the 6th field as a number, biggest first, and keep the first 3 lines with head."
-  - id: 02-disk-and-permissions
-    title: Disk full, permissions wrong
-    file: chapters/02-disk-and-permissions.md
-    minutes: 15
-    tasks:
-      - id: free_disk
-        title: "Free the disk without breaking the app"
-        xp: 30
-        hints:
-          - "du -sh shows how big each file or folder is. Start in server/var/log/app."
-          - "The app still holds its log open. Deleting the file does not give the space back until the app restarts."
-          - "Empty the file instead of deleting it: truncate -s 0 sets its size to zero and keeps the same file."
-      - id: fix_perms
-        title: "fix_perms.sh: scripts that run, secrets that stay secret"
-        xp: 30
-        hints:
-          - "ls -l shows permissions. x means executable; r means readable. Three groups: owner, group, others."
-          - "chmod +x makes a file executable. A number like 600 means owner read and write, nobody else anything."
-          - "Use \"$1\" for the folder, and a * pattern so every .sh file in its bin folder gets fixed, even new ones."
+- id: why-linux
+  title: Why Linux runs the world
+  file: chapters/01-why-linux.md
+  minutes: 40
+  folder: 01-why-linux
+  part: Starting out
+  setup:
+  - bash
+  - /lab/setup/01.sh
+  setup_user: learner
+  tasks:
+  - id: hidden_file
+    title: find the hidden welcome note
+    xp: 10
+    hints:
+    - 'Files whose names start with a dot are hidden: plain ls does not show them.'
+    - ls has an option that shows every file, hidden ones too. Try it inside the tara folder.
+    - cat the file you find, then write just the secret word with echo WORD > answer-hidden.txt in 01-why-linux.
+    examples:
+    - call: ls -a tara
+      gives: shows a file starting with a dot
+  - id: deep_file
+    title: find tonight's first target
+    xp: 20
+    hints:
+    - The observing plans are inside observations, several folders deep.
+    - cd can go down one folder at a time, or take the whole path at once. ls at each level shows the next folder.
+    - Read plan.txt in the folder for 23 November, then write the first target's name into answer-target.txt in 01-why-linux.
+    examples:
+    - call: cat answer-target.txt
+      gives: the name of one target
+- id: files
+  title: Files and folders
+  file: chapters/02-files.md
+  minutes: 40
+  folder: 02-files
+  setup:
+  - bash
+  - /lab/setup/02.sh
+  setup_user: learner
+  tasks:
+  - id: tidy_folder
+    title: tidy the downloads folder
+    xp: 20
+    hints:
+    - Two new folders first, invoices and photos, inside downloads.
+    - A pattern like *.pdf stands for every name that ends in .pdf, spaces and all. mv takes many files and one folder.
+    - Move the .pdf files to invoices, the .jpg files to photos, then remove the .tmp files. Leave notes.txt alone.
+    examples:
+    - call: ls downloads
+      gives: invoices  notes.txt  photos
+  - id: backup_copy
+    title: back up the targets folder
+    xp: 20
+    hints:
+    - cp copies files. A folder with folders inside needs one more option.
+    - cp -r copies a folder and everything in it. The original stays where it is.
+    - Inside 02-files, copy targets to a new folder called targets-backup (it must not exist before you copy).
+    examples:
+    - call: diff -r targets targets-backup
+      gives: 'prints nothing: they are the same'
+- id: reading-files
+  title: Reading files
+  file: chapters/03-reading-files.md
+  minutes: 40
+  folder: 03-reading-files
+  setup:
+  - bash
+  - /lab/setup/03.sh
+  setup_user: learner
+  tasks:
+  - id: count_observations
+    title: count the observations
+    xp: 20
+    hints:
+    - wc -l counts the lines of a file.
+    - The first line of observations.csv is the header (the column names), not an observation.
+    - Count the lines, take one away, and write just the number into answer-observations.txt.
+    examples:
+    - call: head -2 observations.csv
+      gives: the header, then the first observation
+  - id: last_lines
+    title: save the last 20 log lines
+    xp: 20
+    hints:
+    - tail shows the end of a file; -n says how many lines.
+    - '> sends what a command prints into a file instead of the screen.'
+    - 'Inside 03-reading-files: the last 20 lines of app.log, sent into recent.log.'
+    examples:
+    - call: wc -l recent.log
+      gives: 20 recent.log
+- id: pipes
+  title: Pipes and redirection
+  file: chapters/04-pipes.md
+  minutes: 45
+  folder: 04-pipes
+  setup:
+  - bash
+  - /lab/setup/04.sh
+  setup_user: learner
+  tasks:
+  - id: errors_only
+    title: keep only the errors
+    xp: 20
+    hints:
+    - 'Every program has two output streams: standard output (1) for results, standard error (2) for problems.'
+    - '> redirects stream 1; 2> redirects stream 2. Each can go to a different place.'
+    - Run ./build.sh with its standard error sent into errors.txt (the progress lines can go to the screen or /dev/null).
+    examples:
+    - call: cat errors.txt
+      gives: one warning and two errors
+  - id: target_list
+    title: last night's targets, each once
+    xp: 20
+    hints:
+    - sort puts lines in order; uniq removes repeats that sit next to each other.
+    - A pipe | sends one command's output into the next. sort -u sorts and removes repeats in one go.
+    - Send targets.txt through sort and uniq (or sort -u), into tonight-targets.txt.
+    examples:
+    - call: wc -l tonight-targets.txt
+      gives: 9 tonight-targets.txt
+- id: 01-reading-logs
+  title: Reading logs like an engineer
+  file: chapters/05-logs.md
+  minutes: 50
+  folder: 05-logs
+  part: Everyday tools
+  tasks:
+  - id: count_5xx
+    title: 'count_5xx.sh: how many requests failed'
+    xp: 20
+    hints:
+    - The status is the 5th field on every line. You need the lines where it is from 500 to 599, then count them.
+    - awk can test a field with a condition, like $5 >= 500, and print only the lines that match. wc -l counts lines.
+    - Use "$1" for the log file, so the script works on any log, not just access.log.
+    examples:
+    - call: bash count_5xx.sh access.log
+      gives: just a number
+  - id: top_ips
+    title: 'top_ips.sh: the three busiest IPs'
+    xp: 30
+    hints:
+    - First keep only the IP column, the 2nd field. Then count how often each one appears.
+    - uniq -c counts repeats, but only next to each other, so sort before it. Then sort the counts from high to low.
+    - After sorting the counts, head keeps the top 3 lines; one more awk keeps just the IP column.
+    examples:
+    - call: bash top_ips.sh access.log
+      gives: three IPs, busiest first
+  - id: slowest
+    title: 'slowest.sh: the three slowest requests'
+    xp: 20
+    hints:
+    - The duration is the 6th field, like 35ms. You want whole lines, sorted by that field.
+    - sort -k picks the field to sort by, -n sorts by number (35ms still counts as 35), -r flips the order.
+    - Sort by the 6th field as a number, biggest first, and keep the first 3 lines with head.
+    examples:
+    - call: bash slowest.sh access.log
+      gives: three whole lines
+- id: finding
+  title: Finding files and text
+  file: chapters/06-finding.md
+  minutes: 40
+  folder: 06-finding
+  setup:
+  - bash
+  - /lab/setup/06.sh
+  setup_user: learner
+  tasks:
+  - id: find_big
+    title: list the files bigger than 1 MB
+    xp: 20
+    hints:
+    - find walks a folder and everything under it. -type f keeps only files.
+    - '-size +1M means bigger than 1 megabyte. Careful: one file is just under.'
+    - 'Inside 06-finding: find the files under server bigger than 1 MB, and send the list into big-files.txt.'
+    examples:
+    - call: cat big-files.txt
+      gives: three paths
+  - id: find_secret
+    title: find the forgotten password
+    xp: 20
+    hints:
+    - grep searches inside files. -r searches every file in a folder, -l prints only the file names.
+    - Search for the exact text DB_PASSWORD= (with the equals sign).
+    - Write the path of the file that has it into answer-secret.txt.
+    examples:
+    - call: cat answer-secret.txt
+      gives: one path under server/
+- id: permissions
+  title: Users and permissions
+  file: chapters/07-permissions.md
+  minutes: 45
+  folder: 07-permissions
+  setup:
+  - bash
+  - /lab/setup/07.sh
+  setup_user: learner
+  tasks:
+  - id: make_executable
+    title: make hello.sh a program
+    xp: 10
+    hints:
+    - ls -l shows the permissions. x means a file may be run as a program.
+    - chmod +x adds the x. Do not give everyone the right to change the file (w for others).
+    - Make hello.sh executable, then run it with ./hello.sh.
+    examples:
+    - call: ./hello.sh
+      gives: Hello from the Tara Observatory server, learner!
+  - id: private_key
+    title: lock up the deploy key
+    xp: 20
+    hints:
+    - Each digit of a mode is r=4 + w=2 + x=1, for owner, group and others.
+    - 'For the key: read and write for you, nothing for anyone else. For the folder: everything for you, nothing for others.'
+    - chmod the key file to 600 and the keys folder to 700.
+    examples:
+    - call: ls -l keys
+      gives: -rw------- deploy-key.pem
+- id: processes
+  title: Processes and signals
+  file: chapters/08-processes.md
+  minutes: 50
+  folder: 08-processes
+  setup:
+  - bash
+  - /lab/setup/08.sh
+  setup_user: learner
+  tasks:
+  - id: stop_hog
+    title: 'stop.sh: stop a runaway program properly'
+    xp: 30
+    hints:
+    - pkill sends a signal to processes by name; pgrep only lists them. -x matches the exact process name.
+    - Without -x, pkill -f matches whole command lines, including the line that runs your own script.
+    - Send TERM, check with pgrep every half second for up to 3 seconds, then send KILL to whatever is left.
+    examples:
+    - call: ./hogger &
+      gives: starts a runaway; then bash stop.sh hogger
+  - id: run_background
+    title: 'start-report.sh: run the report in the background'
+    xp: 20
+    hints:
+    - A command with & at the end runs in the background; the shell comes back at once.
+    - nohup keeps a command running when the terminal closes. $! is the process id of the last background command.
+    - Start ./slow-report.sh with nohup, its output sent to report.log (both streams), and save $! into report.pid.
+    examples:
+    - call: bash start-report.sh; cat report.pid
+      gives: a process id, right away
+- id: 02-disk-and-permissions
+  title: Disk full, permissions wrong
+  file: chapters/09-disk-full.md
+  minutes: 40
+  folder: 09-disk-full
+  setup:
+  - bash
+  - /lab/setup/09.sh
+  setup_user: learner
+  tasks:
+  - id: free_disk
+    title: free the disk without breaking the app
+    xp: 20
+    hints:
+    - du -sh shows how big each file or folder is. Start in server/var/log/app.
+    - The app still holds its log open. Deleting the file does not give the space back until the app restarts.
+    - 'Empty the file instead of deleting it: truncate -s 0 sets its size to zero and keeps the same file.'
+    examples:
+    - call: du -sh server/var/log/app/*
+      gives: debug.log is 0
+  - id: fix_perms
+    title: 'fix_perms.sh: scripts that run, secrets that stay secret'
+    xp: 30
+    hints:
+    - 'ls -l shows permissions. x means executable; r means readable. Three groups: owner, group, others.'
+    - chmod +x makes a file executable. A number like 600 means owner read and write, nobody else anything.
+    - Use "$1" for the folder, and a * pattern so every .sh file in its bin folder gets fixed, even new ones.
+    examples:
+    - call: bash fix_perms.sh server
+      gives: then ls -l server/bin
+- id: scripts
+  title: Shell scripts
+  file: chapters/10-scripts.md
+  minutes: 50
+  folder: 10-scripts
+  part: Automating
+  setup:
+  - bash
+  - /lab/setup/10.sh
+  setup_user: learner
+  tasks:
+  - id: check_file
+    title: 'check_file.sh: OK, MISSING or EMPTY'
+    xp: 20
+    hints:
+    - '[ -e FILE ] tests that a file exists, [ -s FILE ] that it exists and is not empty. ! turns a test around.'
+    - echo ... >&2 writes to standard error. exit N ends the script with exit code N.
+    - 'Quote the name everywhere ("$1"): file names may contain spaces.'
+    examples:
+    - call: bash check_file.sh deploy.sh; echo $?
+      gives: 'OK: deploy.sh, then 0'
+  - id: safe_deploy
+    title: 'deploy.sh: stop at the first failure'
+    xp: 20
+    hints:
+    - By default a script keeps going after a command fails. One line near the top changes that.
+    - set -e stops at the first failing command; -u makes an unset variable an error; -o pipefail catches failures inside
+      pipes.
+    - Add those options as the first command of deploy.sh. Try BUILD_FAILS=1 TARGET=live bash deploy.sh.
+    examples:
+    - call: TARGET=live bash deploy.sh
+      gives: Deployed to live
+- id: loops
+  title: Loops and functions
+  file: chapters/11-loops.md
+  minutes: 45
+  folder: 11-loops
+  setup:
+  - bash
+  - /lab/setup/11.sh
+  setup_user: learner
+  tasks:
+  - id: rename_photos
+    title: rename twelve photos with one loop
+    xp: 20
+    hints:
+    - for f in photos/IMG_*.JPG runs the loop body once for each file, with its name in $f.
+    - ${f#IMG_} cuts IMG_ from the front of a name; ${f%.JPG} cuts .JPG from the end.
+    - 'Inside photos, in the loop: move each IMG_0001.JPG to sky-0001.jpg, keeping the number.'
+    examples:
+    - call: ls photos | head -2
+      gives: sky-0001.jpg sky-0002.jpg
+  - id: daily_report
+    title: 'report.sh: captures per day'
+    xp: 30
+    hints:
+    - 'Loop over "$1"/captures-*.csv: the shell sorts the names, and the dates in them sort oldest first.'
+    - basename strips the folder (and an ending you give it); ${name#captures-} strips the front.
+    - wc -l < file counts lines; $((n - 1)) does arithmetic. Print the date and the count on one line.
+    examples:
+    - call: bash report.sh captures
+      gives: 2026-11-17 212 and five more lines
+- id: environment
+  title: The environment and PATH
+  file: chapters/12-environment.md
+  minutes: 40
+  folder: 12-environment
+  setup:
+  - bash
+  - /lab/setup/12.sh
+  setup_user: learner
+  tasks:
+  - id: env_defaults
+    title: 'start.sh: settings from the environment'
+    xp: 20
+    hints:
+    - $PORT is the value of the PORT variable, or nothing when it is not set.
+    - '${PORT:-8080} means: the value of PORT, or 8080 when it is not set.'
+    - One echo with two of those, for PORT and APP_ENV. Try PORT=9000 bash start.sh.
+    examples:
+    - call: APP_ENV=production bash start.sh
+      gives: Starting Tara on port 8080 in production mode
+  - id: path_tool
+    title: make tara-status a command
+    xp: 20
+    hints:
+    - A command is found by looking in each folder of $PATH, in order. It also needs to be executable.
+    - Make bin/tara-status executable. Then add the bin folder's full path to the front of PATH, keeping the old PATH after
+      a colon.
+    - 'Write that export line into env.sh, then: source env.sh; cd /; tara-status.'
+    examples:
+    - call: source env.sh; tara-status
+      gives: 'Tara: 2 of 3 dishes online, ...'
+- id: networking
+  title: Networking for servers
+  file: chapters/13-networking.md
+  minutes: 50
+  folder: 13-networking
+  part: Servers
+  setup:
+  - bash
+  - /lab/setup/13.sh
+  setup_user: learner
+  tasks:
+  - id: health_check
+    title: 'health.sh: UP or DOWN'
+    xp: 30
+    hints:
+    - curl -s -o /dev/null -w '%{http_code}' URL prints only the HTTP status code.
+    - --max-time 3 makes curl give up after 3 seconds. A closed port gives status 000.
+    - 'Compare the status with 200 in an if: print UP, or print DOWN and exit 1.'
+    examples:
+    - call: bash health.sh http://localhost:8080/health
+      gives: UP (with the app running)
+  - id: fetch_tonight
+    title: fetch tonight's plan from the running app
+    xp: 20
+    hints:
+    - 'Start the app in the background first: python3 server.py 8080 with an & at the end.'
+    - curl URL prints the body of the answer. ss -ltn shows which ports are listening.
+    - Fetch http://localhost:8080/tonight and send the answer into tonight-fetched.json.
+    examples:
+    - call: head -3 tonight-fetched.json
+      gives: '{ "date": ...'
+- id: services
+  title: Services, logs and cron
+  file: chapters/14-services.md
+  minutes: 45
+  folder: 14-services
+  tasks:
+  - id: unit_file
+    title: 'tara.service: a systemd unit'
+    xp: 20
+    hints:
+    - 'A unit file has three sections in square brackets: [Unit], [Service] and [Install], each with Key=value lines.'
+    - 'systemd needs full paths in ExecStart. Never run an app as root: User= names its own user.'
+    - Copy the settings from the lesson's table, one per line, into the right sections.
+    examples:
+    - call: grep -c = tara.service
+      gives: 8 settings
+  - id: cron_lines
+    title: 'crontab.txt: three schedules'
+    xp: 20
+    hints:
+    - 'Five time fields: minute, hour, day of month, month, day of week. * means every.'
+    - '*/5 in the minute field means every 5 minutes. Day of week: Sunday is 0, Monday is 1.'
+    - One line each for backup.sh (daily 02:30), report.sh (Mondays 09:00), health.sh (every 5 minutes), full paths.
+    examples:
+    - call: grep -v '^#' crontab.txt
+      gives: three lines
+- id: capstone
+  title: 'On call: the eclipse night'
+  file: chapters/15-capstone.md
+  minutes: 60
+  folder: 15-capstone
+  setup:
+  - bash
+  - /lab/setup/15.sh
+  setup_user: learner
+  tasks:
+  - id: capstone_fix
+    title: get the app serving again
+    xp: 40
+    hints:
+    - Try ./start.sh in app/, then read every error message. The app's own errors go to logs/app.log.
+    - 'There are three problems: one about permissions on a script, one about a missing folder, one in the app''s log.'
+    - ls -l app shows the permissions of each file. When the app answers, curl localhost:8090/tonight shows the plan.
+    examples:
+    - call: curl -s localhost:8090/health
+      gives: ok
+  - id: capstone_watch
+    title: 'watchdog.sh: restart it when it falls over'
+    xp: 40
+    hints:
+    - 'curl -sf --max-time 3 URL succeeds (exit code 0) only for a good answer: use it in an if.'
+    - cron runs scripts from another folder, so cd to the capstone folder (full path) first.
+    - 'When it is down: run app/start.sh, then add the date with date ''+%Y-%m-%d %H:%M:%S'' and the words to watchdog.log
+      with >>.'
+    examples:
+    - call: bash watchdog.sh; cat watchdog.log
+      gives: one line when the app was down

@@ -1,0 +1,14 @@
+# tara.service: the systemd unit that runs the Tara observatory app on the real server.
+[Unit]
+Description=Tara observatory app
+After=network.target
+
+[Service]
+User=tara
+WorkingDirectory=/srv/tara
+Environment=APP_ENV=production
+ExecStart=/usr/bin/python3 /srv/tara/server.py 8080
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

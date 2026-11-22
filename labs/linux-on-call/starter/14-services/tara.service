@@ -1,0 +1,2 @@
+# tara.service: the systemd unit that runs the Tara observatory app on the real server.
+# TODO (task unit_file): write the three sections here ([Unit], [Service], [Install]), as the lesson describes.

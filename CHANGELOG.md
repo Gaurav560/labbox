@@ -1,5 +1,27 @@
 # Changelog
 
+## 23 November: Linux on call rewritten to the full standard (15 chapters, Tara)
+
+- Owner's order after Git: Linux, then a new Spring AI course. The old course was 2 chapters and 5 tasks about a lunchbox
+  delivery company; at the owner's request (never Dabba Express, nothing that resembles the Chai aur Code platform)
+  it now follows **Tara**, a small radio telescope observatory near Pune whose Linux server records the sky every
+  night. 15 chapters, 31 tasks, about 11 hours. The old ids (`01-reading-logs`, `02-disk-and-permissions` and their
+  five tasks) are kept, as chapters 5 and 9.
+- Part 1 Starting out: why Linux (Unix 1969, GNU 1983, Linus Torvalds 1991, why servers run it and what it saves),
+  files and folders with globs, reading files and man pages, pipes and redirection. Part 2 Everyday tools: logs with
+  grep and awk, find and grep -r, users and permissions, processes and signals, a full disk (a deleted file that is
+  still open, shown for real with lsof). Part 3 Automating: scripts in strict mode (the 2015 Steam `rm -rf` accident),
+  loops with dry runs, the environment and PATH. Part 4 Servers: networking with ss and curl, systemd units and cron,
+  and a capstone on the night of a lunar eclipse (three planted faults, then a watchdog).
+- Live checks (read-only workspace); scripts run in scratch copies on inputs the learner has never seen: a stop.sh is
+  tested on real processes (one ignores TERM, and pkill -f stopping itself is caught), a background job must survive a
+  hang-up, a health check must say DOWN for a 500, a closed port and a slow answer. The lab image now has man pages,
+  tree, lsof, ss, jq, htop, psmisc and nc. Every quoted output was captured on the lab machine (systemctl status from a
+  real Ubuntu server).
+- Real photos (Ken Thompson and Dennis Ritchie, a young Linus Torvalds, Jocelyn Bell Burnell in 1967, a radio
+  telescope near Pune, the IBM 350 disk, a 1786 ship's log, a Jacquard loom and more), handwritten notes on all 15
+  recaps, 11 playing diagrams; the devops track has five Linux nodes.
+
 ## 22 November: Git without fear rewritten to the full standard (14 chapters, Trails)
 
 - Owner's order: Git, then Linux, then a new Spring AI course (OpenAI as its model). For Git: "you decide best. It

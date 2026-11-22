@@ -36,7 +36,10 @@ its own checks for the right reason. Photos (15, Wikimedia, `frontend/public/les
 standard next, without waiting; write its syllabus here first.
 **Owner's order after SQL: Git, then Linux, then a new Spring AI course (OpenAI as its model, through the gateway).**
 **Git without fear: COMPLETE (22 November night)**: 14 chapters, 28 tasks, Trails (a trekking website), a practice
-repository per chapter built by its setup with fixed authors and dates. **Next: Linux on call** (syllabus first, here).
+repository per chapter built by its setup with fixed authors and dates.
+**Linux on call: COMPLETE (23 November)**: 15 chapters, 31 tasks, Tara (a radio telescope observatory near Pune;
+owner: never Dabba Express, nothing resembling Chai aur Code). Live checks; setups build each chapter folder.
+**Next: Spring AI** (new course, OpenAI through the gateway): propose the syllabus to the owner first.
 **SQL from zero: COMPLETE (22 November evening)**, as below (14 chapters, 28 tasks, Safar). Next: ask the owner which
 lab comes next (the other ten labs are still 1 or 2 chapters). **SQL from zero syllabus** (22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
 coffee stall: a full rewrite with a new running project, **Safar**, a bus ticket booking app (cities, routes,

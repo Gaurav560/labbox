@@ -1406,7 +1406,201 @@ function GitObjects() {
   );
 }
 
+function LinuxTree() {
+  return (
+    <SketchSteps
+      title="one tree of folders"
+      intro="Press Play to walk from the root down to tonight's plan."
+      label="everything starts at the root, slash; the system's folders hang from it; workspace holds this course; a path names each folder on the way down; dot dot goes one level up"
+      steps={[
+        { label: "1. The root, /", says: "One tree for the whole machine: no drive letters." },
+        { label: "2. System folders", says: "/etc for settings, /var/log for logs, /home for people, /tmp for scratch." },
+        { label: "3. /workspace/01-why-linux", says: "Your work for this course, one folder per chapter." },
+        { label: "4. tara/observations/2026/november/23", says: "Each slash is one more folder down: that is a path." },
+        { label: "5. cd ..", says: "Two dots climb one level back up. A path starting with / always starts from the root." },
+      ]}
+    />
+  );
+}
+
+function LinuxGlob() {
+  return (
+    <SketchSteps
+      title="the shell expands the pattern"
+      intro="Press Play to see what rm really receives."
+      label="you type rm downloads star dot tmp; the shell looks in the folder for names that match; it replaces the pattern with the three matching names; rm runs with three names and never sees the star"
+      steps={[
+        { label: "1. You type", says: "rm downloads/*.tmp" },
+        { label: "2. The shell looks", says: "Which names in downloads end in .tmp? cache-1.tmp, cache-2.tmp, upload.tmp." },
+        { label: "3. The pattern is replaced", says: "rm downloads/cache-1.tmp downloads/cache-2.tmp downloads/upload.tmp" },
+        { label: "4. rm runs", says: "rm gets three names. It never sees the star. echo shows the same list first, safely." },
+      ]}
+    />
+  );
+}
+
+function LinuxStreams() {
+  return (
+    <SketchSteps
+      title="three streams"
+      intro="Press Play to send each stream somewhere new."
+      label="a program reads from stream 0 and writes results to stream 1 and problems to stream 2; normally both go to the screen; greater than sends stream 1 to a file; two greater than sends stream 2 to another file; two greater than ampersand one joins them"
+      steps={[
+        { label: "1. One program, three streams", says: "0 in (keyboard), 1 out (results), 2 out (problems)." },
+        { label: "2. Normally", says: "Streams 1 and 2 both land on the screen, mixed together." },
+        { label: "3. > out.txt", says: "Stream 1 goes into a file. Problems still show on the screen." },
+        { label: "4. 2> errors.txt", says: "Stream 2 goes into its own file: only the problems." },
+        { label: "5. > all.txt 2>&1", says: "Stream 2 follows stream 1: everything in one file." },
+      ]}
+    />
+  );
+}
+
+function LinuxPipe() {
+  return (
+    <SketchSteps
+      title="a pipeline"
+      intro="Press Play to follow the lines through four tools."
+      label="awk prints the IP field of every line; sort puts equal addresses next to each other; uniq dash c squeezes each group into a count; sort dash rn puts the biggest count first; head keeps the top three"
+      steps={[
+        { label: "1. awk '{print $2}'", says: "400 log lines become 400 IP addresses." },
+        { label: "2. sort", says: "Equal addresses now sit next to each other." },
+        { label: "3. uniq -c", says: "Each group becomes one line with its count in front." },
+        { label: "4. sort -rn", says: "Biggest count first." },
+        { label: "5. head -3", says: "The top three. Every tool ran at the same time, passing lines along." },
+      ]}
+    />
+  );
+}
+
+function LinuxPermissions() {
+  return (
+    <SketchSteps
+      title="rwx, three times"
+      intro="Press Play to read -rwxr-xr-x as a number."
+      label="the first character is the type; then three letters for the owner, three for the group, three for everyone else; r is 4, w is 2, x is 1; add them per group to get 755"
+      steps={[
+        { label: "1. -rwxr-xr-x", says: "One type character, then three groups of three." },
+        { label: "2. Owner: rwx", says: "4 + 2 + 1 = 7: read, write and run." },
+        { label: "3. Group: r-x", says: "4 + 0 + 1 = 5: read and run." },
+        { label: "4. Others: r-x", says: "4 + 0 + 1 = 5: read and run." },
+        { label: "5. 755", says: "chmod 755 sets all nine at once. A private key wants 600: rw for you, nothing for others." },
+      ]}
+    />
+  );
+}
+
+function LinuxSignals() {
+  return (
+    <SketchSteps
+      title="TERM, wait, KILL"
+      intro="Press Play to stop two programs properly."
+      label="TERM is sent to both programs; the polite one cleans up and exits; the stubborn one ignores TERM; after a few seconds of waiting, KILL is sent; the kernel ends it at once, without any clean-up"
+      steps={[
+        { label: "1. pkill -TERM -x hogger", says: "Both programs are asked to finish." },
+        { label: "2. The polite one", says: "Closes its files and exits cleanly." },
+        { label: "3. The stubborn one", says: "Ignores TERM and keeps running." },
+        { label: "4. Wait a few seconds", says: "pgrep -x hogger, every half second." },
+        { label: "5. pkill -KILL -x hogger", says: "The kernel ends it on the spot. No clean-up, so KILL comes last." },
+      ]}
+    />
+  );
+}
+
+function LinuxOpenFile() {
+  return (
+    <SketchSteps
+      title="a name, the data, and an open file"
+      intro="Press Play to see why rm does not free the space."
+      label="a folder entry, the name, points at the file's data; the running app also holds the data open; rm removes the name but the app still holds the data, so the space stays used; truncate empties the data itself, and the space comes back"
+      steps={[
+        { label: "1. Name and data", says: "debug.log is a name in a folder, pointing at 620 KB of data." },
+        { label: "2. The app holds it open", says: "The app writes into the data directly." },
+        { label: "3. rm debug.log", says: "The name is gone. The app still holds the data: the space stays used." },
+        { label: "4. truncate -s 0 instead", says: "The same file, emptied. The app keeps writing; the space is back at once." },
+      ]}
+    />
+  );
+}
+
+function LinuxForLoop() {
+  return (
+    <SketchSteps
+      title="one body, many files"
+      intro="Press Play to watch the loop run."
+      label="the glob makes a list of six file names; the loop takes the first name into the variable f and runs the body; then the next name, and the next; after the last name the loop ends"
+      steps={[
+        { label: "1. for f in captures/*.csv", says: "The shell makes the list: six names, in order." },
+        { label: "2. First pass", says: "f is captures-2026-11-17.csv; the body runs." },
+        { label: "3. Second pass", says: "f is captures-2026-11-18.csv; the same body runs again." },
+        { label: "4. ... and so on", says: "One pass per name, whether there are six or six thousand." },
+        { label: "5. done", says: "After the last name, the loop ends." },
+      ]}
+    />
+  );
+}
+
+function LinuxEnv() {
+  return (
+    <SketchSteps
+      title="copies go down"
+      intro="Press Play to follow a variable from shell to child."
+      label="the shell sets a variable; without export the child does not get it; after export, every child gets a copy; when the child changes its copy, the parent's value stays the same"
+      steps={[
+        { label: "1. colour=blue", says: "A variable in your shell only." },
+        { label: "2. Start a child", says: "bash -c ... sees nothing: it was not exported." },
+        { label: "3. export colour", says: "Now every program started from this shell gets a copy." },
+        { label: "4. The child changes its copy", says: "Only the copy changes. Nothing ever travels back up to the parent." },
+      ]}
+    />
+  );
+}
+
+function LinuxPorts() {
+  return (
+    <SketchSteps
+      title="one address, many ports"
+      intro="Press Play to connect to the right program."
+      label="the machine has one address; port 22 leads to ssh, port 5432 to the database, port 8080 to the observatory app; a client names the address and the port; with nothing listening on a port, the connection is refused"
+      steps={[
+        { label: "1. One machine, one address", says: "127.0.0.1 when you talk to yourself." },
+        { label: "2. Many listeners", says: "22: ssh. 5432: the database. 8080: the observatory app." },
+        { label: "3. curl localhost:8080", says: "The address picks the machine; the port picks the program." },
+        { label: "4. curl localhost:9999", says: "Nothing listens there: Connection refused, exit code 7." },
+      ]}
+    />
+  );
+}
+
+function LinuxCron() {
+  return (
+    <SketchSteps
+      title="five fields"
+      intro="Press Play to read 30 2 * * * field by field."
+      label="minute thirty; hour two; any day of the month; any month; any day of the week; so every day at two thirty in the morning; a job runs when all five fields match the clock"
+      steps={[
+        { label: "1. Minute: 30", says: "At half past." },
+        { label: "2. Hour: 2", says: "Two in the morning (24-hour clock)." },
+        { label: "3. Day of month: *", says: "Any day." },
+        { label: "4. Month: *", says: "Any month." },
+        { label: "5. Day of week: *", says: "Any day of the week. So: every day at 02:30. With 1 here instead, only Mondays." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "linux-tree": LinuxTree,
+  "linux-glob": LinuxGlob,
+  "linux-streams": LinuxStreams,
+  "linux-pipe": LinuxPipe,
+  "linux-permissions": LinuxPermissions,
+  "linux-signals": LinuxSignals,
+  "linux-open-file": LinuxOpenFile,
+  "linux-for-loop": LinuxForLoop,
+  "linux-env": LinuxEnv,
+  "linux-ports": LinuxPorts,
+  "linux-cron": LinuxCron,
   "git-three-areas": GitThreeAreas,
   "git-branch-pointer": GitBranchPointer,
   "git-merge": GitMerge,

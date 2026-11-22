@@ -3,13 +3,25 @@
 track: devops
 title: DevOps
 nodes:
+  - id: linux-basics
+    title: The terminal and files
+    chapters: [linux-on-call/why-linux, linux-on-call/files, linux-on-call/reading-files, linux-on-call/pipes]
   - id: linux-logs
-    title: Reading logs
-    chapters: [linux-on-call/01-reading-logs]
+    title: Logs and finding things
+    requires: [linux-basics]
+    chapters: [linux-on-call/01-reading-logs, linux-on-call/finding]
   - id: linux-disk
-    title: Disk and permissions
+    title: Permissions, processes, disks
     requires: [linux-logs]
-    chapters: [linux-on-call/02-disk-and-permissions]
+    chapters: [linux-on-call/permissions, linux-on-call/processes, linux-on-call/02-disk-and-permissions]
+  - id: linux-scripts
+    title: Scripts and the environment
+    requires: [linux-disk]
+    chapters: [linux-on-call/scripts, linux-on-call/loops, linux-on-call/environment]
+  - id: linux-servers
+    title: Networking, services, on call
+    requires: [linux-scripts]
+    chapters: [linux-on-call/networking, linux-on-call/services, linux-on-call/capstone]
   - id: git-basics
     title: Commit, branch, merge
     chapters: [git-without-fear/why-version-control, git-without-fear/01-commit-branch-merge, git-without-fear/history, git-without-fear/branches, git-without-fear/merge-conflicts]
@@ -26,7 +38,7 @@ nodes:
     requires: [linux-disk, git-basics]
   - id: nginx
     title: Nginx and 502s
-    requires: [linux-disk]
+    requires: [linux-servers]
   - id: kubernetes
     title: Kubernetes
     requires: [docker]
