@@ -14,11 +14,12 @@ first-program|01-first-program|first|SelfCheckFirstProgram|hello_shelf fix_first
 03-decisions|04-decisions|decisions|CheckDecisions|grade leap_year
 04-loops|05-loops|loops|CheckLoops|sum_to count_vowels
 finding-bugs|06-finding-bugs|fines|CheckFines|fix_total_fines fix_can_borrow
-05-strings|words|words|CheckWords|count_words clean_name
-06-arrays|arrays|arrays|CheckArrays|array_max reversed
-07-classes-and-objects|objects|objects|CheckObjects|point_distance bank_account
-08-interfaces|shapes|shapes|CheckShapes|areas total_area
-09-collections|collections|collections|CheckCollections|top_n word_counts
+05-strings|07-strings|words|CheckWords|count_words clean_name
+06-arrays|08-arrays|arrays|CheckArrays|array_max reversed
+07-classes-and-objects|09-classes-and-objects|objects|CheckObjects|point_distance bank_account
+08-interfaces|10-interfaces|shapes|CheckShapes|areas total_area
+09-collections|11-collections|collections|CheckCollections|top_n word_counts
+generics-records-enums|12-generics-records-enums|modern|CheckModern|loan_record genre_enum
 10-exceptions|errors|errors|CheckErrors|parse_age safe_sum
 11-lambdas-and-streams|streams|streams|CheckStreams|passing sort_by_length
 12-files-and-cli|files|files|CheckFiles|read_totals summary_cli

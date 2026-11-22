@@ -11,7 +11,7 @@ tags:
 - java
 - beginner
 level: beginner
-estimated_minutes: 220
+estimated_minutes: 595
 cover_scene: A calm desk with a laptop showing a few lines of Java and a coffee cup, soft morning light.
 cover: cover.svg
 cover_credit:
@@ -214,14 +214,15 @@ chapters:
       note: at the limit
 - id: 05-strings
   title: Strings
-  file: chapters/05-strings.md
-  minutes: 15
+  file: chapters/07-strings.md
+  minutes: 40
+  folder: 07-strings
   part: Working with data
   tasks:
   - id: count_words
-    title: 'words/Words.java: warm-up, countWords(text)'
+    title: 'Words.java: countWords(text)'
     hints:
-    - trim() removes the spaces at both ends first.
+    - strip() removes the spaces at both ends first.
     - split("\\s+") splits on one or more spaces, tabs or new lines.
     - 'An empty (or all-space) text has no words at all: check it before splitting.'
     examples:
@@ -230,9 +231,9 @@ chapters:
     - call: "countWords(\"  lots   of   spaces  \")"
       gives: "3"
   - id: clean_name
-    title: 'words/Words.java: cleanName(raw)'
+    title: 'Words.java: cleanName(raw)'
     hints:
-    - Split the trimmed name on runs of spaces, as in the warm-up.
+    - Split the stripped name on runs of spaces, as in the warm-up.
     - 'For each word: substring(0, 1) upper case, plus substring(1) lower case.'
     - String.join(" ", parts) puts the words back with single spaces.
     examples:
@@ -242,11 +243,12 @@ chapters:
       gives: "\"Arjun\""
 - id: 06-arrays
   title: Arrays
-  file: chapters/06-arrays.md
-  minutes: 15
+  file: chapters/08-arrays.md
+  minutes: 40
+  folder: 08-arrays
   tasks:
   - id: array_max
-    title: 'arrays/ArrayTools.java: max(numbers)'
+    title: 'ArrayTools.java: max(numbers)'
     hints:
     - Start with the first number as the best so far.
     - Loop over the rest and keep the bigger one each time.
@@ -257,7 +259,7 @@ chapters:
     - call: "max({-5, -2, -9})"
       gives: "-2"
   - id: reversed
-    title: 'arrays/ArrayTools.java: reversed(numbers)'
+    title: 'ArrayTools.java: reversed(numbers)'
     hints:
     - Make a new array of the same length with new int[numbers.length].
     - Item i of the result is item length - 1 - i of the input.
@@ -268,22 +270,12 @@ chapters:
       note: "the original stays {1, 2, 3, 4}"
 - id: 07-classes-and-objects
   title: Classes and objects
-  file: chapters/07-classes-and-objects.md
-  minutes: 20
+  file: chapters/09-classes-and-objects.md
+  minutes: 45
+  folder: 09-classes-and-objects
   tasks:
-  - id: point_distance
-    title: 'objects/Point.java: distanceTo(other)'
-    hints:
-    - The distance is the square root of dx * dx + dy * dy.
-    - 'A record''s fields are read with methods: x() and y(), or other.x().'
-    - Math.sqrt gives the root; Math.round(d * 100) / 100.0 rounds to 2 decimals.
-    examples:
-    - call: "new Point(0, 0).distanceTo(new Point(3, 4))"
-      gives: "5.0"
-    - call: "new Point(0, 0).distanceTo(new Point(1, 1))"
-      gives: "1.41"
   - id: bank_account
-    title: 'objects/BankAccount.java: deposit and withdraw'
+    title: 'BankAccount.java: deposit and withdraw'
     hints:
     - Keep the balance in a private field, so only the methods can change it.
     - 'A zero or negative amount is a mistake by the caller: throw IllegalArgumentException.'
@@ -294,13 +286,25 @@ chapters:
     - call: "withdraw(1000)"
       gives: "IllegalArgumentException"
       note: "balance unchanged"
+  - id: point_distance
+    title: 'Point.java: distanceTo(other)'
+    hints:
+    - The distance is the square root of dx * dx + dy * dy.
+    - 'A record''s fields are read with methods: x() and y(), or other.x().'
+    - Math.sqrt gives the root; Math.round(d * 100) / 100.0 rounds to 2 decimals.
+    examples:
+    - call: "new Point(0, 0).distanceTo(new Point(3, 4))"
+      gives: "5.0"
+    - call: "new Point(0, 0).distanceTo(new Point(1, 1))"
+      gives: "1.41"
 - id: 08-interfaces
   title: Interfaces and inheritance
-  file: chapters/08-interfaces.md
-  minutes: 15
+  file: chapters/10-interfaces.md
+  minutes: 45
+  folder: 10-interfaces
   tasks:
   - id: areas
-    title: 'shapes/Rect.java and Circle.java: area()'
+    title: 'Rect.java and Circle.java: area()'
     hints:
     - A rectangle's area is width times height.
     - A circle's area is Math.PI times the radius squared.
@@ -312,7 +316,7 @@ chapters:
       gives: "12.566..."
       note: "π times 2 squared"
   - id: total_area
-    title: 'shapes/Shapes.java: totalArea(shapes)'
+    title: 'Shapes.java: totalArea(shapes)'
     hints:
     - Any object that implements Shape has area(), whatever its class.
     - Loop over the list and add up s.area().
@@ -323,12 +327,13 @@ chapters:
     - call: "totalArea(List.of())"
       gives: "0.0"
 - id: 09-collections
-  title: ArrayList and HashMap
-  file: chapters/09-collections.md
-  minutes: 15
+  title: Lists, maps and sets
+  file: chapters/11-collections.md
+  minutes: 40
+  folder: 11-collections
   tasks:
   - id: top_n
-    title: 'collections/ListTools.java: topN(numbers, n)'
+    title: 'ListTools.java: topN(numbers, n)'
     hints:
     - Sorting the list you were given changes the caller's list.
     - new ArrayList<>(numbers) makes a separate copy you can sort.
@@ -340,7 +345,7 @@ chapters:
     - call: topN([5, 1], 5)
       gives: '[5, 1]'
   - id: word_counts
-    title: 'collections/WordCounter.java: count(words)'
+    title: 'WordCounter.java: count(words)'
     hints:
     - A HashMap<String, Integer> holds one count per word.
     - getOrDefault(word, 0) gives the count so far, or 0 the first time.
@@ -350,9 +355,39 @@ chapters:
       gives: '{coffee=1, juice=3}'
     - call: count([])
       gives: '{}'
+- id: generics-records-enums
+  title: Generics, records and enums
+  file: chapters/12-generics-records-enums.md
+  minutes: 45
+  folder: 12-generics-records-enums
+  tasks:
+  - id: loan_record
+    title: 'Loan.java: a loan that refuses nonsense'
+    hints:
+    - The compact constructor runs every time a Loan is made. Tidy the title there first.
+    - After stripping, isEmpty() tells you the title was blank.
+    - 'Days are allowed from 1 to 60: refuse anything below 1 or above 60 with an IllegalArgumentException.'
+    examples:
+    - call: new Loan("  Dune ", 14).title()
+      gives: '"Dune"'
+    - call: new Loan("Dune", 0)
+      gives: IllegalArgumentException
+  - id: genre_enum
+    title: 'Genre.java: fromText(text)'
+    hints:
+    - Genre.valueOf("FANTASY") turns exact text into a genre, and throws for anything else.
+    - 'Make the text match first: strip it and put it in capitals.'
+    - 'For two words: split on runs of spaces, then join the pieces with "_".'
+    examples:
+    - call: fromText("Fantasy")
+      gives: FANTASY
+    - call: fromText("  science   fiction ")
+      gives: SCIENCE_FICTION
+    - call: fromText("Fantsy")
+      gives: IllegalArgumentException
 - id: 10-exceptions
   title: Exceptions
-  file: chapters/10-exceptions.md
+  file: chapters/13-exceptions.md
   minutes: 20
   tasks:
   - id: parse_age
@@ -380,7 +415,7 @@ chapters:
       gives: "total 0, no bad values"
 - id: 11-lambdas-and-streams
   title: Lambdas and streams
-  file: chapters/11-lambdas-and-streams.md
+  file: chapters/14-lambdas-and-streams.md
   minutes: 15
   tasks:
   - id: passing
@@ -405,7 +440,7 @@ chapters:
       note: "ties alphabetical"
 - id: 12-files-and-cli
   title: Files and a command-line program
-  file: chapters/12-files-and-cli.md
+  file: chapters/15-files-and-cli.md
   minutes: 20
   tasks:
   - id: read_totals
@@ -434,7 +469,7 @@ chapters:
       note: "stderr, exit 1"
 - id: 13-capstone
   title: 'Capstone: a monthly report'
-  file: chapters/13-capstone.md
+  file: chapters/18-capstone.md
   minutes: 25
   tasks:
   - id: fix_book

@@ -24,9 +24,9 @@ every session.
    a small `main`, run with `java File.java`; `tests/run_checks.sh` maps chapter | folder | check folder | check
    class | tasks; a check class named `Self...` compiles the learner's files itself (chapter 1 checks Hello.java
    and the deliberately broken FixMe.java separately). Java photos are in `frontend/public/lesson-images/java/`
-   (Duke, James Gosling, a California oak for the "Oak" name). Part 1 (chapters 1 to 6) DONE. Next: Part 2
-   (7 strings, 8 arrays, 9 classes and objects, 10 interfaces, 11 ArrayList and HashMap, 12 generics, records and
-   enums new), Part 3 (13 exceptions, 14 lambdas and streams, 15 files and a CLI, 16 packages, jars and Maven new,
+   (Duke, James Gosling, a California oak for the "Oak" name). Part 1 (chapters 1 to 6) DONE. Part 2 (7 strings,
+   8 arrays, 9 classes and objects, 10 interfaces, 11 collections, 12 generics, records and enums new) DONE: chapter 10
+   teaches `javac -d out *.java && java -cp out Shapes` (Java 21 has no multi-file launcher). Next: Part 3 (13 exceptions, 14 lambdas and streams, 15 files and a CLI, 16 packages, jars and Maven new,
    17 testing with JUnit new: JUnit must be added to the Java image), Part 4 (18 capstone). After Java: Spring Boot gets photos and handwritten notes (owner chose
    Java first). Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
 4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,

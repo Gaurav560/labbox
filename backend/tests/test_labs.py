@@ -20,6 +20,9 @@ def test_real_labs_load():
     assert "def double(x):" in py.chapter_markdown("01-functions")
     assert [t.id for t in labs["java-basics"].chapters[0].tasks] == ["hello_shelf", "fix_first_errors"]
     assert [t.id for t in labs["java-basics"].chapter("01-methods").tasks] == ["greet", "longest_word"]  # ids kept
+    java = labs["java-basics"]
+    assert [t.id for t in java.chapter("generics-records-enums").tasks] == ["loan_record", "genre_enum"]
+    assert java.chapter("07-classes-and-objects").folder == "09-classes-and-objects"
 
 
 @pytest.fixture

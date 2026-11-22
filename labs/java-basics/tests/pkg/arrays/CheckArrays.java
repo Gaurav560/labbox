@@ -1,4 +1,3 @@
-import arrays.ArrayTools;
 import java.util.Arrays;
 
 public class CheckArrays {

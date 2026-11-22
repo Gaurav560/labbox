@@ -1,5 +1,25 @@
 # Changelog
 
+## 22 November: Java from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
+
+- Chapters 7 to 11 moved into numbered folders (`07-strings` to `11-collections`), `package` lines dropped, a
+  `main` in every task file and new demo files, every output captured in `labbox/java-basics:v1`. Chapter and
+  task ids kept.
+  7. **Strings**: the `==` puzzle (`"riya" == new String("riya")` is false), immutability, the `split("\\s+")`
+     empty-string trap, StringBuilder.
+  8. **Arrays**: what `[I@4e50df2e` means, default values, two names for one array, copy before you change.
+  9. **Classes and objects**: Shelf's first `Book` class, encapsulation, a playing `java-object-creation`
+     diagram, records.
+  10. **Interfaces and inheritance**: a `Lendable` book and DVD in one loop, polymorphism, compiling several
+      files with `javac -d out *.java` and `java -cp out`, `extends` and `super`.
+  11. **Lists, maps and sets**: ArrayList, `List<Integer>` and the `remove(1)` trap, sort a copy, HashMap and
+      HashSet with the phone-book picture.
+  12. **Generics, records and enums** (new): a generic record, compact constructors, enums with switch
+      expressions, a sealed family with pattern-matching switch (Java 21). Tasks `loan_record` and `genre_enum`,
+      checked by `tests/pkg/modern/CheckModern.java`.
+- Six handwritten notes pages (chapter 7's regenerated once: the first showed `\s+` with one backslash).
+- The picture-code validator test now uses chapter 11.
+
 ## 22 November: Java from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
 
 - The owner approved the Java syllabus (18 chapters, running project **Shelf**, a small library app) and the

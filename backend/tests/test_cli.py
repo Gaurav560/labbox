@@ -323,11 +323,11 @@ def test_pictures_and_traces_are_checked(labs_dir: Path):
 
 
 def test_code_in_a_picture_must_be_in_a_code_block(labs_dir: Path):
-    ch = labs_dir / "java-basics" / "chapters" / "09-collections.md"
+    ch = labs_dir / "java-basics" / "chapters" / "11-collections.md"
     good = ch.read_text()
     assert errors(labs_dir / "java-basics") == []
-    ch.write_text(good.replace('phones.get("Riya")                     //', 'phones.get(name)                       //'))  # the code block only
-    assert any("'phones.get(\"Riya\")' in a picture" in e for e in errors(labs_dir / "java-basics"))
+    ch.write_text(good.replace('System.out.println(shelfOf.get("Dune")', 'System.out.println(shelfOf.get(name)'))  # the code block only
+    assert any("'shelfOf.get(\"Dune\")' in a picture" in e for e in errors(labs_dir / "java-basics"))
 
 
 def test_pictures_only_where_ideas_are_taught(labs_dir: Path):

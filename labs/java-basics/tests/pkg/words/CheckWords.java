@@ -1,4 +1,3 @@
-import words.Words;
 
 public class CheckWords {
     public static void main(String[] a) {

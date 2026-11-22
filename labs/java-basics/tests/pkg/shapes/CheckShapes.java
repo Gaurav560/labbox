@@ -1,8 +1,4 @@
 import java.util.List;
-import shapes.Circle;
-import shapes.Rect;
-import shapes.Shape;
-import shapes.Shapes;
 
 public class CheckShapes {
     public static void main(String[] a) {

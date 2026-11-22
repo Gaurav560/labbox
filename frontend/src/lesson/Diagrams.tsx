@@ -901,7 +901,26 @@ function JavaStackTrace() {
   );
 }
 
+/** Java from zero, chapter 9: what new Book("The Hobbit", 2) does, played step by step. */
+function JavaObjectCreation() {
+  return (
+    <SketchSteps
+      title='Book hobbit = new Book("The Hobbit", 2);'
+      intro="Press Play to watch Java build one object."
+      label="new makes an empty Book object with default field values; the constructor runs with this pointing at the new object; it stores the title and the copies; new gives back a reference, which is stored in hobbit"
+      steps={[
+        { label: "1. new: an empty Book", says: "Java finds room in memory for one Book and fills its fields with defaults: title is null, copies is 0." },
+        { label: '2. the constructor runs', says: 'Java calls Book("The Hobbit", 2). Inside it, this means the brand-new object; title and copies are the parameters.' },
+        { label: '3. this.title = title', says: 'The object\'s own title field now holds "The Hobbit". Because it is final, it can never change again.' },
+        { label: "4. this.copies = copies", says: "The object's copies field holds 2. The constructor ends: the object is ready." },
+        { label: "5. hobbit holds a reference", says: "new gives back a reference to the object, and it is stored in hobbit. hobbit.borrow() now works on this book and no other." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "java-object-creation": JavaObjectCreation,
   "java-stack-trace": JavaStackTrace,
   "java-method-call": JavaMethodCall,
   "java-runs-a-file": JavaRunsAFile,

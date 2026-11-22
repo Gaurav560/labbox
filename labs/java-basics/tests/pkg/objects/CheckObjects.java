@@ -1,5 +1,3 @@
-import objects.BankAccount;
-import objects.Point;
 
 public class CheckObjects {
     public static void main(String[] a) {
