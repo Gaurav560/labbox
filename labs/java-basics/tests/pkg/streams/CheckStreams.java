@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import streams.Streams;
 
 public class CheckStreams {
     public static void main(String[] a) {

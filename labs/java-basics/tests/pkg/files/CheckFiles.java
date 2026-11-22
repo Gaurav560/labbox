@@ -1,4 +1,3 @@
-import files.Expenses;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -17,7 +16,7 @@ public class CheckFiles {
 
     static String[] run(String... args) throws Exception {
         String java = Path.of(System.getProperty("java.home"), "bin", "java").toString();
-        List<String> cmd = new java.util.ArrayList<>(List.of(java, "-cp", System.getProperty("labbox.build"), "files.Summary"));
+        List<String> cmd = new java.util.ArrayList<>(List.of(java, "-cp", System.getProperty("labbox.build"), "Summary"));
         cmd.addAll(List.of(args));
         Process p = new ProcessBuilder(cmd).start();
         if (!p.waitFor(20, TimeUnit.SECONDS)) {

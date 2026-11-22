@@ -23,6 +23,8 @@ def test_real_labs_load():
     java = labs["java-basics"]
     assert [t.id for t in java.chapter("generics-records-enums").tasks] == ["loan_record", "genre_enum"]
     assert java.chapter("07-classes-and-objects").folder == "09-classes-and-objects"
+    assert [t.id for t in java.chapter("packages-and-maven").tasks] == ["package_catalog", "runnable_jar"]
+    assert [t.id for t in java.chapter("testing").tasks] == ["fix_renewal", "test_late_fee"]
 
 
 @pytest.fixture

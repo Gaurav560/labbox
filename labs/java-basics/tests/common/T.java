@@ -24,12 +24,18 @@ public class T {
         Map.entry("total_area", "One method for every Shape, including shapes nobody has written yet. That is the power of an interface."),
         Map.entry("top_n", "Biggest first, and the caller's list untouched: you sorted a copy."),
         Map.entry("word_counts", "Correct counts: getOrDefault is the classic way to count with a map."),
+        Map.entry("loan_record", "Your Loan refuses nonsense the moment it is made: a tidy title and sensible days, for its whole life."),
+        Map.entry("genre_enum", "Typed text becomes a real Genre, or a loud refusal. A typo can no longer hide in Shelf's data."),
         Map.entry("parse_age", "Clear, checked exceptions with the original cause kept inside. Callers know exactly what went wrong."),
         Map.entry("safe_sum", "Robust: good values added, bad ones reported, nothing crashes."),
         Map.entry("passing", "Filtered with a lambda: the stream reads almost like the sentence it implements."),
         Map.entry("sort_by_length", "Shortest first and ties alphabetical: comparators chain neatly."),
         Map.entry("read_totals", "You read a messy real file without crashing, and a missing file comes back as a proper exception."),
         Map.entry("summary_cli", "A real command-line program: clean output, a friendly message and exit code 1 when the file is missing."),
+        Map.entry("package_catalog", "Catalog has a proper address now: package shelf.catalog in shelf/catalog/, and Maven builds the project."),
+        Map.entry("runnable_jar", "java -jar target/shelf.jar starts Shelf by itself: the manifest knows the main class."),
+        Map.entry("fix_renewal", "Red to green: the test told you exactly what was wrong, and now it guards that rule for good."),
+        Map.entry("test_late_fee", "Your tests pass on the real lateFee and caught all three planted bugs. That is what good tests do."),
         Map.entry("fix_book", "Fixed one of Java's most famous bugs: equal objects now have equal hash codes, so HashSet and HashMap work."),
         Map.entry("monthly_report", "A complete report from messy data, with the right line numbers. You have finished Java from zero: well done.")
     );

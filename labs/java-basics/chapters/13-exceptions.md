@@ -1,77 +1,78 @@
-:::step{type=story title="Why exceptions"}
-Real input is never perfect. Someone types "abc" as their age, a file is missing, a value is out of
-range. A good program does not crash on the first surprise: it explains what went wrong, or skips the
-bad value and carries on. Java's tool for this is the **exception**.
+:::step{type=story title="What happens when someone types twelve?"}
+A new member fills in Shelf's sign-up form. In the age box, they type `twelve`. Not `12`: the word.
+
+Shelf calls `Integer.parseInt("twelve")`, and the whole program stops with a stack trace. Every member in the queue
+behind them is stuck, because one person typed a word.
+
+Real input is never perfect: words where numbers should be, files that are missing, values far out of range. A
+good program does not die on the first surprise. It explains what went wrong, or puts the bad value aside and
+carries on. Java's tool for this is the **exception**, and Java has one idea about exceptions that almost no other
+popular language has. You will meet it today.
 
 :::mission
-In `errors/Ages.java`, read an age with clear errors for bad input, and add up a list of values while
-collecting the ones that are not numbers.
+Make `parseAge` turn bad input into a clear error of Shelf's own, and make `safeSum` add up the good values while
+collecting the bad ones.
 :::
 :::
 
-:::step{type=concept title="An exception is an alarm"}
-Picture a fire alarm in a building. When something goes wrong in one room, the alarm goes off and
-everyone stops what they are doing, until someone whose job it is deals with it.
-
-When Java cannot continue, it **throws** an exception: normal work stops, and Java looks for code that
-will **catch** it. If nobody does, the program ends with a stack trace.
+:::step{type=try title="One bad value, and the rest carry on" file="13-exceptions/Catch.java" line="4-13"}
+Open `Catch.java`:
 
 ```java
-Integer.parseInt("abc");   // throws NumberFormatException
-int[] a = new int[2];
-a[5] = 1;                  // throws ArrayIndexOutOfBoundsException
-```
-
-The exception's name already tells you a lot about what went wrong.
-
-:::picture{name="fire-alarm"}
-An exception stops the work until something handles it.
-:::
-:::
-
-:::step{type=concept title="Catching: try and catch"}
-Code that might throw goes in a `try` block. If it throws, Java jumps to the matching `catch`:
-
-```java
-try {
-    int age = Integer.parseInt(text);
-    System.out.println("age " + age);
-} catch (NumberFormatException e) {
-    System.out.println("please type a whole number");
+for (String text : typed) {
+    try {
+        int age = Integer.parseInt(text);
+        System.out.println(text + " -> " + age);
+    } catch (NumberFormatException e) {
+        System.out.println(text + " -> problem: " + e.getMessage());
+    }
 }
-System.out.println("carrying on");
+System.out.println("all done");
 ```
 
-- If parsing works, the `catch` block is skipped.
-- If it fails, the rest of `try` is skipped and the `catch` block runs.
-- Either way, the program **carries on** after the `catch`.
+```bash run
+cd /workspace/13-exceptions && java Catch.java
+```
+
+```text
+42 -> 42
+twelve -> problem: For input string: "twelve"
+7 -> 7
+all done
+```
+
+`twelve` did not stop the program. The risky line sits inside `try { }`; when it **throws** an exception, Java jumps
+to the `catch` block that matches, runs it, and carries on. `7` was still read, and `all done` still printed.
 :::
 
-:::step{type=concept title="Throwing your own"}
-Your methods can throw exceptions too, with a message in your own words:
+:::step{type=concept title="Where does the exception go?"}
+Press Play and follow the exception:
 
-```java
-if (amount <= 0) {
-    throw new IllegalArgumentException("amount must be positive: " + amount);
-}
-```
-
-You can also define your own exception class, like the `InvalidAgeException` in your workspace. When
-you catch one exception and throw another, pass the first as the **cause** so nothing is lost:
-
-```java
-throw new InvalidAgeException("not a whole number: " + text, e);
-```
+:::diagram{name="java-try-catch"}
+A line inside try throws; the rest of try is skipped; the matching catch runs; the program carries on.
 :::
 
-:::step{type=example title="Worked example: a safe quantity"}
-A method that turns bad input into a clear exception:
+An exception is a real **object**, made with `new` like any other, and `e` is the variable holding it.
+`e.getMessage()` is its message. Its **class** says what kind of problem it is, and the name usually says it all:
+
+| Exception | When |
+|---|---|
+| `NumberFormatException` | `parseInt` was given text that is not a number |
+| `ArrayIndexOutOfBoundsException` | `a[5]` on an array of length 2 |
+| `NullPointerException` | calling a method on `null` (chapter 9) |
+| `ArithmeticException` | dividing an `int` by zero (chapter 6) |
+| `IllegalArgumentException` | a method refused its input (chapters 8 to 12) |
+:::
+
+:::step{type=example title="Worked example: an error in your own words, with its cause"}
+`For input string: "twelve"` is Java's message, not Shelf's. Good code turns a low-level error into one that
+makes sense to the caller, and keeps the original inside it as the **cause**:
 
 ```java
-public static int parseQuantity(String text) {
+static int parseQuantity(String text) {
     int q;
     try {
-        q = Integer.parseInt(text.trim());
+        q = Integer.parseInt(text.strip());
     } catch (NumberFormatException e) {
         throw new IllegalArgumentException("not a quantity: \"" + text + "\"", e);
     }
@@ -82,19 +83,29 @@ public static int parseQuantity(String text) {
 }
 ```
 
-1. The risky line goes inside `try`.
-2. The low-level error becomes one in our own words, with the original kept as the cause.
-3. A value that parsed but makes no sense gets its own clear message.
-
-`parseAge` follows this exact shape with `InvalidAgeException`.
-
 :::trace{title="parseQuantity with three inputs"}
-| text | parseInt | q < 1? | result |
+| text | parseInt gives | q < 1? | result |
 |---|---|---|---|
-| " 3 " | 3 | no | returns 3 (trim removed the spaces) |
-| "2.5" | NumberFormatException |  | IllegalArgumentException: not a quantity: "2.5" |
-| "0" | 0 | yes | IllegalArgumentException: quantity must be at least 1: 0 |
+| " 3 " | 3 | no | returns 3 |
+| "2.5" | NumberFormatException |  | throws: not a quantity: "2.5" |
+| "0" | 0 | yes | throws: quantity must be at least 1: 0 |
 :::
+
+1. Only the risky line goes inside `try`.
+2. The `catch` throws a **new** exception with a clear message, and passes `e` as the second argument: the cause.
+3. A number that parsed but makes no sense gets its own message.
+
+If nobody catches it, the stack trace shows **both**, the cause under the words `Caused by:`:
+
+```text
+Exception in thread "main" java.lang.IllegalArgumentException: not a quantity: "2.5"
+	at Cause.parseQuantity(Cause.java:7)
+	at Cause.main(Cause.java:20)
+Caused by: java.lang.NumberFormatException: For input string: "2.5"
+```
+
+Nothing is lost: the caller reads your words, and whoever debugs it later still sees exactly what went wrong
+underneath.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -114,99 +125,170 @@ System.out.println("done");
 - [ ] `got 12` then `done`
 - [x] `not a number` then `done`
 - [ ] Only `not a number`
-- [ ] A stack trace and nothing else
 :::explain
-Parsing `"12a"` throws, so Java skips the rest of `try`, runs the `catch` block, and then carries on
-normally: `done` is printed too.
+Parsing `"12a"` throws, so Java skips the rest of `try`, runs the `catch` block, and then carries on normally:
+`done` is printed too.
 :::
 :::
 
-:::step{type=try title="Catch one, carry on"}
+:::step{type=task task=parse_age title="Your turn: read an age, or refuse it clearly"}
+Open `Ages.java` and finish `parseAge(text)`:
+
+- spaces around the number are fine: `parseAge(" 42 ")` gives `42`;
+- text that is not a whole number throws an `InvalidAgeException`, with the `NumberFormatException` as its
+  **cause**;
+- a number outside 0 to 150 also throws an `InvalidAgeException`.
+
+`InvalidAgeException.java` is Shelf's own exception, already written for you: it has a constructor that takes a
+message and one that takes a message and a cause.
+
 ```bash run
-cat > /tmp/Catch.java <<'JAVA'
-public class Catch {
-    public static void main(String[] args) {
-        for (String text : new String[] {"42", "abc", "7"}) {
-            try {
-                System.out.println(text + " -> " + Integer.parseInt(text));
-            } catch (NumberFormatException e) {
-                System.out.println(text + " -> problem: " + e.getMessage());
-            }
-        }
-    }
-}
-JAVA
-java /tmp/Catch.java
+cd /workspace/13-exceptions && javac -d out *.java && java -cp out Ages
 ```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=parse_age title="Warm-up: read an age"}
-In `errors/Ages.java`, make `parseAge(text)` return a whole number from 0 to 150, ignoring spaces at the
-ends:
+:::step{type=concept title="Java's unusual idea: checked exceptions"}
+Look at the first line of `parseAge`:
 
-- `parseAge("17")` returns `17`, and `parseAge(" 42 ")` returns `42`
-- `parseAge("abc")` throws `InvalidAgeException` with the `NumberFormatException` as its cause
-- `parseAge("-1")`, `parseAge("151")` and `parseAge("12.5")` throw `InvalidAgeException`
+```java
+public static int parseAge(String text) throws InvalidAgeException {
+```
+
+`throws InvalidAgeException` is a warning label: "calling me may throw this". And Java **enforces** the label.
+Here is a program that opens a file and ignores what could go wrong:
+
+```java
+FileReader in = new FileReader("members.txt");
+```
+
+```text
+Unreported.java:5: error: unreported exception FileNotFoundException; must be caught or declared to be thrown
+        FileReader in = new FileReader("members.txt");
+                        ^
+```
+
+It does not even compile. A missing file is not a bug in your code; it **will** happen one day, so Java makes you
+decide now: catch it, or put `throws` on your own method and pass the decision to your caller.
+
+Those are **checked** exceptions: classes that extend `Exception`, like `InvalidAgeException` and the file errors.
+The others, which extend `RuntimeException` (`NumberFormatException`, `IllegalArgumentException`,
+`NullPointerException`), are **unchecked**: they usually mean a bug, and the compiler does not force you to handle
+them. Java is nearly alone in this: Python, JavaScript, Go and even Kotlin have no checked exceptions at all.
 :::
 
-:::step{type=concept title="Checked exceptions and throws"}
-Look at `parseAge`'s first line: `throws InvalidAgeException`. Our exception is **checked**: Java forces
-every caller to either catch it or declare it too. It is Java's way of making sure nobody forgets that
-reading an age can fail.
+:::step{type=task task=safe_sum title="Your turn: add the good, report the bad"}
+In `Ages.java`, make `safeSum(values)` add up every value that is a number (with `Double.parseDouble`, so `2.5`
+counts too), and collect the ones that are not. Give back both at once, in the `SumResult` record.
 
-`IllegalArgumentException` and `NumberFormatException` are **unchecked**: Java does not force you to
-handle them. They usually mean a programming mistake rather than bad outside input.
+`safeSum(["10", "x", "2.5", ""])` gives a total of `12.5` and the bad values `["x", ""]`. An empty list gives a
+total of 0 and no bad values.
+
+The loop from `Catch.java` is the shape: try each value, and in the `catch`, remember it and carry on.
+
+```bash run
+cd /workspace/13-exceptions && javac -d out *.java && java -cp out Ages
+```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=safe_sum title="Add the good, report the bad"}
-In `errors/Ages.java`, make `safeSum(values)` add up the values that are numbers and collect the ones
-that are not, returning both in a `SumResult`:
+:::step{type=concept title="finally: the clean-up that always runs" file="13-exceptions/Finally.java" line="5-26"}
+Sometimes code must run whatever happens: close a file, close the desk. That is `finally`. Open `Finally.java`:
 
-- `safeSum(["10", "x", "2.5", ""])` returns a total of `12.5` with bad values `["x", ""]`
-- `safeSum([])` returns a total of `0` with no bad values
+```java
+try {
+    if (title.isBlank()) {
+        throw new IllegalArgumentException("no title");
+    }
+    System.out.println("lent " + title);
+} finally {
+    open--;
+    System.out.println("desk closed");
+}
+```
 
-`Double.parseDouble` reads decimals and throws `NumberFormatException` for anything else.
+```bash run
+cd /workspace/13-exceptions && java Finally.java
+```
+
+```text
+desk open for Dune
+lent Dune
+desk closed
+desk open for  
+desk closed
+refused: no title
+desks still open: 0
+```
+
+Look at the order for the blank title: `desk closed` comes **before** `refused`. The exception was on its way out of
+`lend`, and Java stopped to run `finally` first. Whether the work succeeded or threw, the desk was closed, and the
+count is back to 0.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-When does a `finally` block run?
+Why pass `e` when you write `throw new InvalidAgeException("not a whole number", e)`?
 :::
-- [ ] Only when an exception happened
-- [ ] Only when no exception happened
-- [x] Always, whether or not an exception happened
-- [ ] Never, unless you call it
-:::explain
-`finally` always runs, which makes it the place for clean-up like closing files.
-:::
-:::
-
-:::step{type=predict title="Quick check (2 of 2)"}
-:::question
-Why pass the original exception as the **cause** when you throw your own?
-:::
-- [ ] It makes the program faster
-- [x] So the full story (and the original stack trace) is kept for whoever investigates
 - [ ] Java requires it
-- [ ] To hide the original error
+- [x] So the original exception is kept as the cause, and shows under `Caused by:`
+- [ ] To catch it a second time
 :::explain
-The cause chain shows both what your code decided and what really went wrong underneath.
+The cause keeps the full story: your clear message on top, Java's detailed one underneath.
 :::
 :::
 
-:::step{type=deep-dive title="try-with-resources and catching too much"}
-Files, network connections and database connections must be closed even when something fails.
-**try-with-resources** does it for you: `try (var reader = Files.newBufferedReader(path)) { ... }` closes
-the reader automatically at the end, however the block ends.
-
-Catch only the exceptions you expect and can handle. `catch (Exception e) { }` with an empty body
-swallows every problem, including real bugs, and makes failures silent: one of the most common causes
-of "it just stopped working" in production systems.
+:::step{type=predict title="Quick check (2 of 3)"}
+:::question
+Which exception must be caught or declared with `throws`, or the code does not compile?
+:::
+- [ ] `NumberFormatException`
+- [ ] `NullPointerException`
+- [x] `FileNotFoundException`
+:::explain
+`FileNotFoundException` is checked: it extends `Exception` but not `RuntimeException`. The other two are unchecked.
+:::
 :::
 
-:::step{type=recap}
-- An exception is an alarm: work stops until some code catches it.
-- `try { } catch (SomeException e) { }` handles the cases you expect, then the program carries on.
-- `throw new ...Exception("clear message", cause)` reports a problem in your own words.
-- Checked exceptions must be caught or declared with `throws`.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+A `try` block throws and nothing catches it in this method. Does its `finally` block run?
+:::
+- [x] Yes, before the exception leaves the method
+- [ ] No, the program stops at once
+:::explain
+`finally` always runs, whether `try` finished normally, returned, or threw.
+:::
+:::
+
+:::step{type=deep-dive title="Go deeper: try-with-resources, catching too much, and the great debate"}
+**try-with-resources.** Since Java 7, things that must be closed (files, network connections) go in brackets after
+`try`, and Java closes them for you, even when an exception flies: `try (var in = new FileReader("a.txt")) { ... }`.
+Chapter 15 uses it to read files.
+
+**Do not catch everything.** `catch (Exception e) { }` with an empty block swallows every problem, including real
+bugs, silently. Catch the exact exception you expect, and do something useful with it.
+
+**Several kinds at once.** `catch (NumberFormatException | NullPointerException e)` handles two kinds in one block.
+
+**The great debate.** Checked exceptions arrived with Java 1.0 in 1996. Many developers love that the compiler
+reminds them about missing files; others find the `throws` labels tiring, and every language designed since has
+left them out. Spring Boot mostly uses unchecked exceptions. Now you know both sides.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Catch an exception with `try` and `catch`, and let the program carry on.
+- Throw your own exception with a clear message, and keep the original as the cause.
+- Tell checked exceptions (must be caught or declared with `throws`) from unchecked ones.
+- Use `finally` for clean-up that must always run.
+
+:::photo{src="/lesson-images/java/java-13-notes.webp" alt="Handwritten notes about Java exceptions: try and catch, carry on, throw new with a cause, checked must be caught or declared, unchecked usually a bug, finally always runs" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 14: lambdas and streams, small functions you can pass around, and pipelines that read like sentences.
 :::

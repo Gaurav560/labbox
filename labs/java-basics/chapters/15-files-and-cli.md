@@ -1,177 +1,268 @@
-:::step{type=story title="Why files and command-line programs"}
-So far every value lived only while your program ran. Real programs read data that already exists, like
-a month of expenses, and are started from a terminal by other people or by scripts. In this chapter you
-build exactly that: a program someone runs with a file and gets an answer.
+:::step{type=story title="What happens to Shelf's data when you close it?"}
+Everything Shelf has learned so far vanishes the moment the program ends. Every list, every map, every `Book`
+object lives in memory, and memory is wiped when `main` returns. Run it again, and Shelf remembers nothing.
+
+Real programs keep their data in **files**, and the most popular kind of data file in the world is the humble
+CSV: plain text, one record per line, values separated by commas. Every bank, spreadsheet and shop till can export
+one.
+
+Today Shelf reads a real CSV, a month of the library's spending, and becomes a **command-line program**: a tool
+people run from the terminal with their own file and options, like `javac` and `git`.
 
 :::mission
-In `files/Expenses.java`, read `expenses.csv` (a real, messy file in your workspace) into totals per
-category, then finish `files/Summary.java`, a program that prints the biggest categories.
+Write `readTotals`, which adds up a messy CSV per category, and the `Summary` program, which prints the top
+categories, with a friendly message when the file is missing.
 :::
 :::
 
-:::step{type=concept title="Paths and reading a whole file"}
-A **path** is a file's address, like `expenses.csv` or `/workspace/expenses.csv`. Java's modern file
-tools live in `java.nio.file`:
+:::step{type=try title="Read a whole file" file="15-files-and-cli/Members.java" line="9-18"}
+Open `Members.java`, and look at `members.txt` next to it: a name and a number of books on each line, and one
+blank line.
 
 ```java
-Path path = Path.of("expenses.csv");
+Path path = Path.of("members.txt");
 List<String> lines = Files.readAllLines(path);
-lines.get(0)       // "date,category,amount" (the header)
-lines.size()       // how many lines
+System.out.println(lines.size() + " lines");
+for (String line : lines) {
+    if (line.isBlank()) {
+        continue;
+    }
+    String[] parts = line.split(",");
+    System.out.println(parts[0] + " has " + parts[1] + " books");
+}
 ```
 
-`readAllLines` gives you the file as a list, one String per line, ready for the loops and string tools
-you already know. If the file does not exist, it throws a `NoSuchFileException`.
+```bash run
+cd /workspace/15-files-and-cli && java Members.java
+```
+
+```text
+4 lines
+Asha has 2 books
+Kabir has 0 books
+Riya has 5 books
+```
+
+- `Path.of("members.txt")` names a file. A bare name means "in the folder I am running in".
+- `Files.readAllLines(path)` reads the whole file into a `List<String>`, one string per line.
+- `continue` skips the rest of this lap of the loop: the blank line is counted in the 4, but never printed.
+:::
+
+:::step{type=concept title="When the file is not there"}
+`main` says `throws IOException`. Chapter 13 explained why: reading a file can fail for reasons that are not
+bugs, so Java makes you decide what to do. Here, `main` passes the problem on, and when nobody handles it:
+
+```text
+Exception in thread "main" java.nio.file.NoSuchFileException: nobody.txt
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+```
+
+A stack trace is fine for you. For someone who just ran your tool with a typo in the file name, it is frightening.
+A good command-line program catches `NoSuchFileException` and says one clear sentence instead. That is half of
+your second task.
 :::
 
 :::step{type=concept title="CSV: one record per line"}
-A **CSV** file stores a table as text: one row per line, the columns separated by commas.
+Open `expenses.csv`. It starts like this:
 
 ```text
 date,category,amount
-2026-03-02,food,120
-2026-03-02,travel,40.50
+2026-03-01,rent,18000
+2026-03-01,fun,600
 ```
 
-To use a row, split it on commas and convert the parts you need:
+The first line is the **header**: the names of the columns, not data. Every other line is one record, and
+`split(",")` cuts it into its three values.
+
+But this file is real, which means it is messy. Scroll down, and you will find a blank line, an amount that says
+`abc`, a row with no amount, and a row with no category. And here is a trap in `split`:
 
 ```java
-String[] parts = "2026-03-02,food,120".split(",", -1);
-parts[1]                          // "food"
-Double.parseDouble(parts[2])      // 120.0
+"2026-03-07,food,".split(",")        // [2026-03-07, food]
+"2026-03-07,food,".split(",", -1)    // [2026-03-07, food, ]
 ```
 
-The `-1` keeps empty parts at the end, so `"2026-03-04,travel,"` gives three parts, the last one empty.
+By default, `split` silently **drops empty pieces at the end**, so the missing amount makes the row look like it
+has only two columns. Passing `-1` keeps them, so every row has three pieces and you can check each one.
 
 :::picture{name="file-lines"}
-Each line of a CSV file is one row, cut at the commas.
+A file is a ribbon of lines: the header first, then one record on each line.
 :::
 :::
 
 :::step{type=example title="Worked example: count the rows per category"}
-Read, skip the header, split, and count per key:
+Not the totals (that is your task), but the same skeleton: how many good rows does each category have?
 
 ```java
-public static Map<String, Integer> rowsPerCategory(Path path) throws IOException {
+static Map<String, Integer> rowsPerCategory(Path path) throws IOException {
     List<String> lines = Files.readAllLines(path);
-    Map<String, Integer> out = new HashMap<>();
-    for (int i = 1; i < lines.size(); i++) {      // 1. skip the header
+    Map<String, Integer> counts = new HashMap<>();
+    for (int i = 1; i < lines.size(); i++) {
         String[] parts = lines.get(i).split(",", -1);
-        if (parts.length != 3) {                  // 2. skip broken rows
+        if (parts.length != 3 || parts[1].isBlank()) {
             continue;
         }
-        out.merge(parts[1], 1, Integer::sum);     // 3. count
+        counts.merge(parts[1], 1, Integer::sum);
     }
-    return out;
+    return counts;
 }
 ```
 
-`merge(key, 1, Integer::sum)` is a compact "add 1 to this key's count". `readTotals` adds amounts
-instead, and skips amounts that are not numbers.
-
-:::trace{title="four lines of a file"}
-| i | line | parts | out | note |
-|---|---|---|---|---|
-| 0 | date,category,amount |  | {} | The loop starts at 1, so the header is skipped. |
-| 1 | 2026-03-02,food,120 | 3 parts | {food=1} | merge adds 1 to food's count (0 the first time). |
-| 2 | 2026-03-02,travel | 2 parts | {food=1} | A broken row: continue skips it. |
-| 3 | 2026-03-03,food,80 | 3 parts | {food=2} | food again: 1 + 1. |
-:::
+1. The loop starts at 1: line 0 is the header.
+2. Rows without exactly three pieces (like the blank line) and rows with no category are skipped.
+3. `merge(key, 1, Integer::sum)` is the modern way to count: put 1 if the key is new, otherwise add 1 to the old
+   value with `Integer::sum`. It does the work of chapter 11's `getOrDefault` in one call.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-`expenses.csv` has a row `2026-03-07,food,` with no amount. What does `Double.parseDouble("")` do?
+What is `"a,b,".split(",").length`?
 :::
-- [ ] Returns `0.0`
-- [x] Throws a `NumberFormatException`
-- [ ] Returns `null`
-- [ ] Returns `NaN`
+- [ ] `3`
+- [x] `2`
+- [ ] `1`
 :::explain
-An empty string is not a number, so `parseDouble` throws. Catch it and skip that row: one broken line
-should never stop a whole report.
+Empty pieces at the end are dropped, so you get `[a, b]`. `"a,b,".split(",", -1)` keeps the empty piece and has
+length 3.
 :::
 :::
 
-:::step{type=try title="Look at the real file"}
-```bash run
-head -5 expenses.csv; echo ...; grep -n -v -E '^[0-9-]+,[a-z]+,[0-9.]+$' expenses.csv
-```
+:::step{type=task task=read_totals title="Your turn: totals from a messy CSV"}
+Open `Expenses.java` and make `readTotals(path)` give back a map of each category to its total amount, rounded to two
+decimals:
 
-The second command lists the lines that do not look like `date,category,amount`: the header, a blank
-line, a missing amount, a word for an amount, an empty category. Your code must survive all of them.
-:::
+- skip the header, blank lines, rows without three pieces, rows with no category, and amounts that
+  `Double.parseDouble` cannot read (chapter 13's try and catch);
+- a file with only the header gives an empty map;
+- a missing file throws `NoSuchFileException`, which `Files.readAllLines` already does for you.
 
-:::step{type=task task=read_totals title="Warm-up: totals from a CSV"}
-In `files/Expenses.java`, make `readTotals(path)` return the total per category, **rounded to 2
-decimals**. Skip the header, blank lines, rows without three parts, and amounts that are not numbers.
-A missing file throws `NoSuchFileException` (`Files.readAllLines` already does that for you).
-:::
-
-:::step{type=concept title="A program people can run"}
-Every Java program starts at `main`, and the words typed after the class name arrive in `args`:
-
-```java
-public static void main(String[] args) {
-    // java files.Summary expenses.csv --top 2
-    // args[0] is "expenses.csv", args[1] "--top", args[2] "2"
-}
-```
-
-A good program reports problems to **standard error** (`System.err.println(...)`), separate from its
-normal output, and ends with an **exit code**: `0` means success, anything else failure.
-`System.exit(1)` stops the program and reports failure, so scripts can tell something went wrong.
-:::
-
-:::step{type=task task=summary_cli title="The Summary program"}
-In `files/Summary.java`, make the program print the biggest categories, biggest first, one per line as
-`category: amount` with two decimals (`%.2f`). `--top N` says how many; the default is 3. For a missing
-file it prints `File not found: <path>` to `System.err` and exits with code `1`, with no stack trace.
+On `expenses.csv`, `rent` is `18000.0`.
 
 ```bash run
-javac -d /tmp/out files/*.java && java -cp /tmp/out files.Summary expenses.csv --top 2
+cd /workspace/15-files-and-cli && javac -d out *.java && java -cp out Expenses
 ```
+
+Then press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=concept title="A program people can run" file="15-files-and-cli/Args.java" line="3-12"}
+`main` has had a parameter all along: `String[] args`. It holds the **words typed after the program's name**. Open
+`Args.java`:
+
+```bash run
+cd /workspace/15-files-and-cli && java Args.java expenses.csv --top 2
+```
+
+```text
+3 words
+args[0] = expenses.csv
+args[1] = --top
+args[2] = 2
+```
+
+Every word arrives as a `String`, even `2`: turn it into a number with `Integer.parseInt`. Now run it with no
+words at all, and then ask the terminal how it ended:
+
+```bash run
+cd /workspace/15-files-and-cli && java Args.java; echo "exit $?"
+```
+
+```text
+0 words
+Usage: java Args.java <words>
+exit 2
+```
+
+Two more habits of real command-line tools:
+
+- **Problems go to `System.err`**, not `System.out`. Both show in the terminal, but when someone saves the output
+  to a file (`> out.txt`), errors still appear on their screen instead of hiding in the file.
+- **The exit code** says how it went: `System.exit(0)` (or just ending) means success; any other number means
+  failure. `$?` in the terminal shows the last one. Scripts, and LabBox's own checks, read it.
+:::
+
+:::step{type=task task=summary_cli title="Your turn: the Summary program"}
+Open `Summary.java` and make it a real tool:
+
+- `args[0]` is the CSV file; `--top N` after it chooses how many categories to print, and the default is 3;
+- print the categories with the biggest totals first, one per line, as `category: amount` with two decimals
+  (`%.2f`);
+- for a missing file, print `File not found: <the path>` to `System.err` (no stack trace) and end with exit code 1.
+
+```bash run
+cd /workspace/15-files-and-cli && javac -d out *.java && java -cp out Summary expenses.csv --top 2
+```
+
+```text
+rent: 18000.00
+shopping: 4095.00
+```
+
+Then try `java -cp out Summary missing.csv; echo "exit $?"`, and press **Check**.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Why print errors with `System.err` instead of `System.out`?
+You run `java Report.java june.csv 5`. What is `args[1]`?
 :::
-- [ ] It is faster
-- [x] So errors stay visible even when normal output goes to a file or another program
-- [ ] `System.out` cannot print errors
-- [ ] To make them red
+- [ ] `june.csv`
+- [x] `"5"`, a String
+- [ ] the number 5
 :::explain
-Normal output is often redirected (`> report.txt`); errors on stderr still reach the person.
+`args[0]` is the first word after the file name of the program. Every word is a String; parse it to get a number.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What does exit code `1` tell the shell?
+Why do error messages go to `System.err`?
 :::
-- [ ] Success
-- [x] The program failed
-- [ ] The program printed one line
-- [ ] The program needs one argument
+- [ ] They print in red
+- [x] They stay on screen even when the normal output is saved to a file
+- [ ] Java requires it
 :::explain
-`0` means success and anything else failure. Scripts check it to decide what to do next.
+`>` redirects only the normal output, so errors written to `System.err` still reach the person.
 :::
 :::
 
-:::step{type=deep-dive title="Big files, encodings and jar files"}
-`readAllLines` loads the whole file into memory, which is fine for a month of expenses but not for a
-10 GB log. For big files, read line by line with `Files.lines(path)` (a stream) or a `BufferedReader`
-in a try-with-resources block.
-
-Text in files is stored in an **encoding**; Java 18 and later read and write UTF-8 by default, so names
-in any language work. Real Java tools are packaged as a `.jar` file (a zip of compiled classes) and run
-with `java -jar tool.jar`, which is exactly how Spring Boot applications start.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+A program ends with `System.exit(1)`. What does that tell a script that ran it?
+:::
+- [ ] It printed one line
+- [x] Something went wrong
+- [ ] It succeeded
+:::explain
+0 means success; any other exit code means failure.
+:::
 :::
 
-:::step{type=recap}
-- `Path.of` names a file; `Files.readAllLines` reads it as a list of lines.
-- A CSV row is split on commas; skip rows you cannot read instead of crashing.
-- `main(String[] args)` receives the command-line words.
-- Errors go to `System.err`; `System.exit(1)` reports failure.
+:::step{type=deep-dive title="Go deeper: big files, writing files and text encodings"}
+**Big files.** `readAllLines` loads the whole file into memory. For a file of 10 GB, read it a line at a time with
+`Files.lines(path)`, which gives a lazy stream (chapter 14), inside try-with-resources so the file is closed.
+
+**Writing.** `Files.writeString(Path.of("report.txt"), text)` writes a file in one line; `Files.write(path, lines)`
+writes a list of lines.
+
+**Encodings.** A file is bytes, not letters. Java 18 and later read and write **UTF-8** by default, the encoding
+that can hold every script in the world: Hindi, Tamil and emoji included. Older programs sometimes guessed the
+encoding from the computer and garbled anything that was not English.
+
+**Real CSV is harder.** A value can contain a comma inside quotes (`"Mumbai, India"`), which a plain `split` cuts
+in half. Production code uses a CSV library for that.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Read a text file with `Path.of` and `Files.readAllLines`, and handle a missing file.
+- Parse a messy CSV: skip the header and bad rows, and use `split(",", -1)` to keep empty values.
+- Count and add per key with `merge`.
+- Write a command-line program: read `args`, send errors to `System.err`, and end with a meaningful exit code.
+
+:::photo{src="/lesson-images/java/java-15-notes.webp" alt="Handwritten notes about files and command-line programs: Files.readAllLines, skip the header, split with -1 keeps empty values, merge to add per key, args holds the words, errors to System.err, exit code 0 means OK" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 16: packages, jar files and Maven, so Shelf can grow from a folder of files into a real project.
 :::

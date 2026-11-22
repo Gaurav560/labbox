@@ -30,7 +30,7 @@ check:
   command:
   - bash
   - /check/tests/run_checks.sh
-  timeout_seconds: 60
+  timeout_seconds: 200
   network: none
 chapters:
 - id: first-program
@@ -388,10 +388,12 @@ chapters:
 - id: 10-exceptions
   title: Exceptions
   file: chapters/13-exceptions.md
-  minutes: 20
+  minutes: 45
+  folder: 13-exceptions
+  part: Real programs
   tasks:
   - id: parse_age
-    title: 'errors/Ages.java: parseAge(text)'
+    title: 'Ages.java: parseAge(text)'
     hints:
     - Integer.parseInt throws NumberFormatException for text that is not a whole number.
     - Catch it and throw your InvalidAgeException instead, passing the original as the cause.
@@ -403,7 +405,7 @@ chapters:
       gives: "InvalidAgeException"
       note: "cause: NumberFormatException"
   - id: safe_sum
-    title: 'errors/Ages.java: safeSum(values)'
+    title: 'Ages.java: safeSum(values)'
     hints:
     - 'Keep two things while you loop: the running total and a list of bad values.'
     - Put Double.parseDouble inside try; in catch, remember the value and carry on.
@@ -416,10 +418,11 @@ chapters:
 - id: 11-lambdas-and-streams
   title: Lambdas and streams
   file: chapters/14-lambdas-and-streams.md
-  minutes: 15
+  minutes: 45
+  folder: 14-lambdas-and-streams
   tasks:
   - id: passing
-    title: 'streams/Streams.java: passing(marks)'
+    title: 'Streams.java: passing(marks)'
     hints:
     - marks.stream() turns the list into a stream you can filter.
     - filter keeps the items for which a lambda like m -> m >= 40 is true.
@@ -429,7 +432,7 @@ chapters:
       gives: "[72, 90, 40]"
       note: "40 or more, same order"
   - id: sort_by_length
-    title: 'streams/Streams.java: sortByLength(words)'
+    title: 'Streams.java: sortByLength(words)'
     hints:
     - Comparator.comparing(String::length) compares words by their length.
     - thenComparing(...) breaks ties; the natural order of strings is alphabetical.
@@ -441,10 +444,11 @@ chapters:
 - id: 12-files-and-cli
   title: Files and a command-line program
   file: chapters/15-files-and-cli.md
-  minutes: 20
+  minutes: 50
+  folder: 15-files-and-cli
   tasks:
   - id: read_totals
-    title: 'files/Expenses.java: readTotals(path)'
+    title: 'Expenses.java: readTotals(path)'
     hints:
     - Files.readAllLines(path) reads the whole file; it throws NoSuchFileException for a missing file.
     - Skip the header, blank lines, rows without three parts and amounts Double.parseDouble cannot read.
@@ -455,18 +459,70 @@ chapters:
     - call: "readTotals(Path.of(\"missing.csv\"))"
       gives: "NoSuchFileException"
   - id: summary_cli
-    title: 'files/Summary.java: the top categories'
+    title: 'Summary.java: the top categories'
     hints:
     - 'args holds the words after the class name: the path, and maybe --top and a number.'
     - Catch NoSuchFileException, print the message to System.err and end with exit code 1.
     - 'Sort the categories by total, biggest first, and print category: amount with %.2f.'
     examples:
-    - call: "java files.Summary expenses.csv --top 2"
+    - call: "java -cp out Summary expenses.csv --top 2"
       gives: "rent: 18000.00 / shopping: 4095.00"
       note: "two lines"
-    - call: "java files.Summary missing.csv"
+    - call: "java -cp out Summary missing.csv"
       gives: "File not found: missing.csv"
       note: "stderr, exit 1"
+- id: packages-and-maven
+  title: Packages, jar files and Maven
+  file: chapters/16-packages-and-maven.md
+  minutes: 50
+  folder: 16-packages-and-maven
+  tasks:
+  - id: package_catalog
+    title: 'Catalog.java: into the package shelf.catalog'
+    hints:
+    - mvn -o -q package says package shelf.catalog does not exist. Which folder would that package live in?
+    - The folders under src/main/java must spell the package, one folder per dot.
+    - Move the file with mkdir -p and mv, then give it a package line at the very top.
+    examples:
+    - call: mvn -o -q package
+      gives: target/shelf.jar
+      note: no errors
+  - id: runnable_jar
+    title: 'pom.xml: a jar that runs with java -jar'
+    hints:
+    - java -jar target/shelf.jar says no main manifest attribute. The jar does not know where main is.
+    - The maven-jar-plugin in pom.xml has an empty mainClass element.
+    - A class's full name includes its package, with dots.
+    examples:
+    - call: java -jar target/shelf.jar
+      gives: 'Shelf 1.0: 2 books'
+- id: testing
+  title: Testing with JUnit
+  file: chapters/17-testing.md
+  minutes: 50
+  folder: 17-testing
+  tasks:
+  - id: fix_renewal
+    title: 'Renewals.java: make the red test green'
+    hints:
+    - mvn -o -q test shows which test failed, with its message and the line.
+    - noThirdRenewal calls canRenew(2, false). Two renewals have already happened.
+    - Compare the symbols < and <= on the return line.
+    examples:
+    - call: canRenew(1, false)
+      gives: 'true'
+    - call: canRenew(2, false)
+      gives: 'false'
+  - id: test_late_fee
+    title: 'FinesTest.java: tests that catch a broken late fee'
+    hints:
+    - 'Read the rules in Fines.java: 2 rupees a day for the first week, 5 a day after that, at most 100.'
+    - Test the edges, where bugs live. The last day of the first week, the first day after it, and the day the fee reaches 100.
+    - A negative number of days must throw. assertThrows checks that.
+    examples:
+    - call: mvn -o -q test
+      gives: your tests pass on the real lateFee
+      note: and fail on three broken copies of it
 - id: 13-capstone
   title: 'Capstone: a monthly report'
   file: chapters/18-capstone.md

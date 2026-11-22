@@ -20,9 +20,11 @@ finding-bugs|06-finding-bugs|fines|CheckFines|fix_total_fines fix_can_borrow
 08-interfaces|10-interfaces|shapes|CheckShapes|areas total_area
 09-collections|11-collections|collections|CheckCollections|top_n word_counts
 generics-records-enums|12-generics-records-enums|modern|CheckModern|loan_record genre_enum
-10-exceptions|errors|errors|CheckErrors|parse_age safe_sum
-11-lambdas-and-streams|streams|streams|CheckStreams|passing sort_by_length
-12-files-and-cli|files|files|CheckFiles|read_totals summary_cli
+10-exceptions|13-exceptions|errors|CheckErrors|parse_age safe_sum
+11-lambdas-and-streams|14-lambdas-and-streams|streams|CheckStreams|passing sort_by_length
+12-files-and-cli|15-files-and-cli|files|CheckFiles|read_totals summary_cli
+packages-and-maven|16-packages-and-maven|maven|SelfCheckMaven|package_catalog runnable_jar
+testing|17-testing|testing|SelfCheckTesting|test_late_fee fix_renewal
 13-capstone|capstone|capstone|CheckCapstone|fix_book monthly_report
 "
 
@@ -37,7 +39,7 @@ echo "$CHAPTERS" | while IFS='|' read -r chapter dir checkdir check tasks; do
   mkdir -p "$build"
   if [ "$checkdir" = "." ]; then checks=/check/tests/$check.java; else checks="/check/tests/common/T.java /check/tests/pkg/$checkdir/$check.java"; fi
   if [[ "$check" == Self* ]]; then
-    javac -d "$build" $checks && timeout 60 java -cp "$build" "$check" "$W/$dir"
+    javac -d "$build" $checks && timeout 170 java -cp "$build" "$check" "$W/$dir"
     continue
   fi
   src=$(find "$W/$dir" -name '*.java' 2>/dev/null)

@@ -919,7 +919,27 @@ function JavaObjectCreation() {
   );
 }
 
+/** Java from zero, chapter 13: what happens when a line inside try throws, played step by step. */
+function JavaTryCatch() {
+  return (
+    <SketchSteps
+      title='Integer.parseInt("twelve")'
+      intro="Press Play to follow an exception from the line that throws to the catch that handles it."
+      label="Java runs the try block line by line; parseInt cannot read twelve and throws a NumberFormatException; the rest of the try block is skipped; Java finds the catch whose type matches and runs it; the program carries on after the catch; if no catch matches, the exception travels up to the caller, and if nobody catches it the program stops with a stack trace"
+      steps={[
+        { label: "1. run the try block", says: "Java runs the lines inside try { } from the top, as usual." },
+        { label: '2. parseInt("twelve") throws', says: "parseInt cannot read twelve as a number. It creates a NumberFormatException object and throws it." },
+        { label: "3. skip the rest of try", says: "The println after parseInt never runs. Java leaves the try block at once." },
+        { label: "4. find a matching catch", says: "catch (NumberFormatException e) matches, so e is the exception object and the catch block runs." },
+        { label: "5. carry on", says: "After the catch, the loop continues with the next value. One bad value did not stop the others." },
+        { label: "6. no catch? up to the caller", says: "With no matching catch, the exception leaves the method and goes to its caller, then its caller. If nobody catches it, the program stops with a stack trace." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "java-try-catch": JavaTryCatch,
   "java-object-creation": JavaObjectCreation,
   "java-stack-trace": JavaStackTrace,
   "java-method-call": JavaMethodCall,

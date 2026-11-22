@@ -1,6 +1,3 @@
-import errors.Ages;
-import errors.InvalidAgeException;
-import errors.SumResult;
 import java.util.List;
 
 public class CheckErrors {

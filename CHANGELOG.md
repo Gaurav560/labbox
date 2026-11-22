@@ -1,5 +1,24 @@
 # Changelog
 
+## 22 November: Java from zero rewrite, Part 3 "Real programs" (chapters 13 to 17)
+
+- Exceptions, lambdas and streams, files and the command line moved into `13-exceptions` to `15-files-and-cli`
+  without packages, rewritten curiosity-first with captured outputs: an exception's journey (new playing diagram
+  `java-try-catch`), `Caused by:`, Java's unusual checked exceptions (a real "unreported exception" error),
+  `finally` running before the exception leaves; one rule in three eras of Java (anonymous class, lambda, method
+  reference), a stream pipeline over Shelf's books, lazy streams; `members.txt`, the `split(",", -1)` trap, `args`,
+  `System.err` and exit codes. Summary now runs as `java -cp out Summary`.
+- 16. **Packages, jar files and Maven** (new): Shelf becomes a Maven project. Tasks `package_catalog` (move Catalog
+  into `shelf.catalog` so `mvn -o -q package` builds) and `runnable_jar` (fill in `<mainClass>`), checked by
+  `SelfCheckMaven`.
+- 17. **Testing with JUnit** (new): red to green (`fix_renewal`), then `test_late_fee`: the learner's own tests must
+  pass on the real `lateFee` and catch three planted bugs (mutation testing), checked by `SelfCheckTesting` with
+  JUnit's console launcher.
+- The Java image (`labbox/java-basics:v1`) now carries an offline Maven repository (`warm/` pom: JUnit 5.11.4,
+  the console launcher, the jar plugin); builds take 5 to 7 seconds at half a CPU. Check timeout 200 s.
+- Pass messages for `loan_record` and `genre_enum` (chapter 12 said only "ok") and the four new tasks. Five
+  handwritten notes pages.
+
 ## 22 November: Java from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
 
 - Chapters 7 to 11 moved into numbered folders (`07-strings` to `11-collections`), `package` lines dropped, a

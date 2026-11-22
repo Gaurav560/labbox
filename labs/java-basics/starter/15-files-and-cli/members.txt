@@ -1,0 +1,4 @@
+Asha,2
+Kabir,0
+
+Riya,5

@@ -26,8 +26,13 @@ every session.
    and the deliberately broken FixMe.java separately). Java photos are in `frontend/public/lesson-images/java/`
    (Duke, James Gosling, a California oak for the "Oak" name). Part 1 (chapters 1 to 6) DONE. Part 2 (7 strings,
    8 arrays, 9 classes and objects, 10 interfaces, 11 collections, 12 generics, records and enums new) DONE: chapter 10
-   teaches `javac -d out *.java && java -cp out Shapes` (Java 21 has no multi-file launcher). Next: Part 3 (13 exceptions, 14 lambdas and streams, 15 files and a CLI, 16 packages, jars and Maven new,
-   17 testing with JUnit new: JUnit must be added to the Java image), Part 4 (18 capstone). After Java: Spring Boot gets photos and handwritten notes (owner chose
+   teaches `javac -d out *.java && java -cp out Shapes` (Java 21 has no multi-file launcher). Part 3 "Real
+   programs" (13 exceptions, 14 lambdas and streams, 15 files and a CLI, 16 packages, jars and Maven new, 17 testing
+   with JUnit new) DONE: the Java image now has an offline Maven repository in /opt/m2 (`labs/java-basics/warm/`,
+   keep its versions in step with the chapter poms: JUnit 5.11.4, jar plugin 3.4.2); chapters 16 and 17 are Maven
+   projects checked by `SelfCheckMaven` (offline `mvn package`, then `java -jar`) and `SelfCheckTesting` (the
+   learner's FinesTest must pass on the real lateFee and fail on three planted bugs in `tests/pkg/testing/fines/`,
+   run with JUnit's console launcher). Self checks get 170 s, the lab's check 200 s. Next: Part 4 (18 capstone). After Java: Spring Boot gets photos and handwritten notes (owner chose
    Java first). Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
 4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,
    25 browser tests, 17 labs valid, `scripts/labbox admin list` empty.

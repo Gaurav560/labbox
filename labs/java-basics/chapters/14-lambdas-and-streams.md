@@ -1,194 +1,267 @@
-:::step{type=story title="Why lambdas and streams"}
-"Give me the passing marks." "Sort these words by length." Written with loops, each takes several lines
-of bookkeeping. Since Java 8 you can often say exactly what you want in one readable line, with
-**lambdas** and **streams**. They are everywhere in modern Java code.
+:::step{type=story title="How many lines does it take to say 'sort by length'?"}
+Before 2014, telling Java "sort these titles by their length" took six lines of ceremony: a whole unnamed class,
+an `@Override`, a method signature, all to say one small thing, `a.length() - b.length()`.
+
+Then Java 8 arrived with **lambdas**, and the same rule shrank to one line. It was the biggest change to the
+language since it was born, and it brought **streams** with it: a way to say "the overdue books, titles in
+capitals, sorted" almost exactly as you would say it in English.
+
+Today Shelf learns to talk like that.
 
 :::mission
-In `streams/Streams.java`, keep only the passing marks, and sort words by length.
+Write `passing`, which keeps the marks of 40 or more with one stream, and `sortByLength`, which sorts words by
+length with a tie rule of its own.
 :::
 :::
 
-:::step{type=concept title="A lambda is a small unnamed method"}
-Sometimes a method needs to be told **how** to do part of its job: which items to keep, how to compare
-two things. A **lambda** is a tiny method you write right where it is needed, with no name:
+:::step{type=try title="One rule, three eras of Java" file="14-lambdas-and-streams/OldAndNew.java" line="8-22"}
+Open `OldAndNew.java`. It sorts the same list three times:
 
 ```java
-m -> m >= 40
+titles.sort(new Comparator<String>() {
+    @Override
+    public int compare(String a, String b) {
+        return a.length() - b.length();
+    }
+});
+
+titles.sort((a, b) -> b.length() - a.length());
+
+titles.sort(Comparator.comparing(String::length));
 ```
 
-Read it as "given `m`, answer whether `m` is at least 40". Left of the arrow are the inputs, right of it
-the result. `(a, b) -> a.length() - b.length()` takes two inputs.
+```bash run
+cd /workspace/14-lambdas-and-streams && java OldAndNew.java
+```
+
+```text
+[It, Emma, Dune, Ulysses]
+[Ulysses, Emma, Dune, It]
+[It, Emma, Dune, Ulysses]
+```
+
+1. **2004 style**: an *anonymous class* that implements the `Comparator` interface (chapter 10) on the spot.
+2. **A lambda**: `(a, b) -> b.length() - a.length()` is the same `compare` method with everything obvious left out.
+   This one sorts longest first.
+3. **A method reference**: `String::length` means "call `length()` on each one", and `Comparator.comparing` builds
+   the whole comparator from it.
 :::
 
-:::step{type=concept title="A stream is a conveyor belt"}
-Picture a factory **conveyor belt**: items ride along, and stations on the way filter some out,
-change others, and at the end a box collects what is left.
-
-A **stream** is that belt for a collection:
+:::step{type=concept title="A lambda is a method without a name"}
+Read a lambda in two halves, around the arrow:
 
 ```java
-List<Integer> passed = marks.stream()      // put the items on the belt
-        .filter(m -> m >= 40)              // a station that keeps some
-        .toList();                         // the box at the end
+(a, b) -> b.length() - a.length()
 ```
 
-The original `marks` list is never changed: the stream builds a **new** list at the end.
+- Left of `->`: the **parameters**. Java works out their types from where the lambda is used.
+- Right of `->`: the **body**. One expression is returned automatically; longer bodies use `{ }` and `return`.
+- `m -> m >= 40` has one parameter, so it needs no brackets.
+
+Where can a lambda go? Anywhere Java expects an interface with exactly **one** method to fill in, like
+`Comparator` (`compare`) or `Predicate` (`test`). The lambda *is* that one method. That is the whole trick: lambdas
+are built on the interfaces you met in chapter 10.
+:::
+
+:::step{type=concept title="A stream is a conveyor belt" file="14-lambdas-and-streams/Pipeline.java" line="14-20"}
+Open `Pipeline.java`. Shelf has four books, some overdue:
+
+```java
+List<String> late = books.stream()
+        .filter(b -> b.overdue())
+        .map(b -> b.title().toUpperCase())
+        .sorted()
+        .toList();
+```
+
+Read it top to bottom, like a sentence: *take the books; keep the overdue ones; turn each into its title in capitals;
+sort them; make a list.*
 
 :::picture{name="conveyor-belt"}
-Items ride the belt; stations keep, change or sort them.
-:::
+A stream is a conveyor belt: each station does one small job, and items flow through them in order.
 :::
 
-:::step{type=concept title="map and sorted: two more stations"}
-```java
-names.stream()
-     .map(n -> n.toUpperCase())    // change each item
-     .sorted()                     // put them in order
-     .toList();
+- `stream()` puts the items on the belt.
+- `filter` keeps the items for which the lambda says `true`.
+- `map` turns each item into something else: here a `Book` becomes a `String`.
+- `sorted` puts them in order, and `toList()` collects what reaches the end into a new list.
+:::
+
+:::step{type=try title="Run the pipeline" file="14-lambdas-and-streams/Pipeline.java" line="14-25"}
+```bash run
+cd /workspace/14-lambdas-and-streams && java Pipeline.java
 ```
 
-- `map` changes each item into something new (here, upper-case text).
-- `sorted()` sorts in natural order (numbers small to large, text alphabetically).
-- `sorted(comparator)` sorts by your own rule.
-
-`String::toUpperCase` is a shorter way to write `n -> n.toUpperCase()`, called a **method reference**.
-:::
-
-:::step{type=example title="Worked example: the long names, in capitals"}
-A whole pipeline, one station per line:
-
-```java
-public static List<String> longNames(List<String> names) {
-    return names.stream()
-            .filter(n -> n.length() > 4)    // 1. keep long ones
-            .map(String::toUpperCase)       // 2. change each
-            .sorted()                       // 3. alphabetical
-            .toList();                      // 4. collect
-}
-
-// longNames(["Riya", "Arjun", "Meera"]) gives [ARJUN, MEERA]
+```text
+[DUNE, IT, ULYSSES]
+3 overdue, 2954 pages in all
+4
 ```
 
-Each line reads like a step of the sentence it implements. `passing` needs only steps 1 and 4.
+The second line used two more stations that end a stream with a single value: `count()`, and `mapToInt(...)`
+followed by `sum()`. `Book::overdue` and `Book::pages` are method references again.
 
-:::trace{title='longNames(["Riya", "Arjun", "Meera"])'}
-| station | items on the belt | note |
-|---|---|---|
-| stream() | [Riya, Arjun, Meera] | The items as they arrive. |
-| filter(n -> n.length() > 4) | [Arjun, Meera] | Riya has exactly 4 letters, not more than 4: dropped. |
-| map(String::toUpperCase) | [ARJUN, MEERA] | Each kept name is changed. |
-| sorted() | [ARJUN, MEERA] | Already alphabetical, so nothing moves. |
-| toList() | [ARJUN, MEERA] | The box at the end. The original list never changed. |
+And the last line matters most: `books` still has 4 books. A stream never changes the list it came from. It
+builds something **new**, which is exactly the habit chapters 8 and 11 taught by hand.
 :::
+
+:::step{type=example title="Worked example: the long titles, shortest first"}
+Keep the titles longer than 3 letters, shortest first:
+
+```java
+List<String> titles = List.of("Ulysses", "It", "Emma", "Dune");
+List<String> longOnes = titles.stream()
+        .filter(t -> t.length() > 3)
+        .sorted(Comparator.comparing(String::length))
+        .toList();
+// [Emma, Dune, Ulysses]
+```
+
+1. `filter` drops `It`.
+2. `sorted(...)` takes a comparator: by length.
+3. Look at the tie. `Emma` and `Dune` both have 4 letters, and they stay in the order they arrived. Java's sort is
+   **stable**: it never swaps equal items. If you want ties in a particular order, you must say so with
+   `thenComparing(...)`. Your second task needs exactly that.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-After this code, what is `marks`?
+What does this print?
 
 ```java
-List<Integer> marks = List.of(72, 30, 90);
-List<Integer> kept = marks.stream().filter(m -> m >= 40).toList();
+List<Integer> marks = new ArrayList<>(List.of(72, 30, 90));
+List<Integer> high = marks.stream().filter(m -> m > 50).toList();
+System.out.println(marks.size() + " " + high.size());
 ```
 :::
-- [x] `[72, 30, 90]`
-- [ ] `[72, 90]`
-- [ ] `[]`
-- [ ] It does not compile
+- [ ] `2 2`
+- [x] `3 2`
+- [ ] `3 3`
 :::explain
-Streams never change the collection they came from: `kept` is a new list `[72, 90]`, and `marks` stays
-exactly as it was.
+`filter` builds a new list with 72 and 90; the original list still has all 3 marks.
 :::
 :::
 
-:::step{type=try title="A pipeline in action"}
+:::step{type=task task=passing title="Your turn: the passing marks"}
+Open `Streams.java` and make `passing(marks)` give back the marks of **40 or more**, in their original order, with
+one stream.
+
+`passing([72, 30, 90, 40, 39])` gives `[72, 90, 40]`.
+
 ```bash run
-cat > /tmp/Pipe.java <<'JAVA'
-import java.util.List;
-
-public class Pipe {
-    public static void main(String[] args) {
-        List<Integer> marks = List.of(72, 30, 90, 45, 12);
-        System.out.println(marks.stream().filter(m -> m >= 40).toList());
-        System.out.println(marks.stream().map(m -> m + 5).sorted().toList());
-        System.out.println(marks);
-    }
-}
-JAVA
-java /tmp/Pipe.java
+cd /workspace/14-lambdas-and-streams && java Streams.java
 ```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=passing title="Warm-up: the passing marks"}
-In `streams/Streams.java`, make `passing(marks)` return the marks of **40 or more**, in their original
-order.
-
-- `passing([72, 30, 90, 40, 39])` returns `[72, 90, 40]`
-:::
-
-:::step{type=concept title="Comparators: sorting by your own rule"}
-To sort by something other than natural order, give `sorted` a **comparator**, a rule for which of two
-items comes first. `Comparator` builds them for you:
+:::step{type=concept title="Lazy: nothing happens until you ask" file="14-lambdas-and-streams/Lazy.java" line="7-13"}
+Here is something curious. Open `Lazy.java`: its `filter` prints every title it checks.
 
 ```java
-Comparator.comparing(String::length)              // shorter first
-Comparator.comparing(String::length).reversed()   // longer first
-Comparator.comparing(String::length)
-          .thenComparing(Comparator.naturalOrder())  // ties: alphabetical
+Stream<String> s = List.of("Dune", "Emma", "It").stream()
+        .filter(t -> {
+            System.out.println("  checking " + t);
+            return t.length() > 2;
+        });
+System.out.println("pipeline built");
+System.out.println(s.findFirst().get());
 ```
 
-`thenComparing` decides only the ties left by the first rule, like sorting students by marks and then
-by name.
+```bash run
+cd /workspace/14-lambdas-and-streams && java Lazy.java
+```
+
+```text
+pipeline built
+  checking Dune
+Dune
+```
+
+`pipeline built` came **first**: building the pipeline checked nothing at all. Streams are **lazy**. The work only
+starts when a final step (`toList`, `count`, `findFirst`) asks for a result. And `Emma` and `It` were never checked,
+because `findFirst` had its answer after one item. With a million books, that laziness is a gift.
 :::
 
-:::step{type=task task=sort_by_length title="Sort words by length"}
-In `streams/Streams.java`, make `sortByLength(words)` return the words **shortest first**, with words
-of the same length in alphabetical order, without changing the list it was given.
+:::step{type=task task=sort_by_length title="Your turn: shortest first, ties alphabetical"}
+In `Streams.java`, make `sortByLength(words)` give back the words **shortest first**, and words of the same length in
+**alphabetical** order. The list it was given must not change.
 
-- `sortByLength([banana, fig, apple, kiwi, date])` returns `[fig, date, kiwi, apple, banana]`
+`sortByLength([banana, fig, apple, kiwi, date])` gives `[fig, date, kiwi, apple, banana]`: `date` comes before
+`kiwi` because d comes before k.
+
+`Comparator.comparing(String::length)` sorts by length; `.thenComparing(Comparator.naturalOrder())` adds the
+alphabetical tie rule.
+
+```bash run
+cd /workspace/14-lambdas-and-streams && java Streams.java
+```
+
+Then press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-What does `List.of(1, 2, 3).stream().map(n -> n * 10).toList()` give?
+What does `map` do in a stream?
 :::
-- [ ] `[1, 2, 3]`
-- [x] `[10, 20, 30]`
-- [ ] `60`
-- [ ] `[11, 12, 13]`
+- [ ] Keeps some items and drops others
+- [x] Turns each item into a new value
+- [ ] Builds a HashMap
 :::explain
-`map` changes every item with the lambda: each number times ten.
+`filter` keeps or drops; `map` transforms each item, like a `Book` into its title.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-In `Comparator.comparing(String::length).thenComparing(Comparator.naturalOrder())`, when does the second
-rule matter?
+Where can a lambda be used?
 :::
-- [ ] Always
-- [x] Only for words of the same length
-- [ ] Only for the first word
-- [ ] Never
+- [ ] Anywhere a value is expected
+- [x] Where Java expects an interface with exactly one method to fill in
+- [ ] Only inside streams
 :::explain
-`thenComparing` only decides ties left by the first rule.
+A lambda fills in that single method: `compare` for a `Comparator`, `test` for a `Predicate`.
 :::
 :::
 
-:::step{type=deep-dive title="Streams under the hood"}
-Streams are **lazy**: nothing happens until a final step such as `toList()`, `count()` or `forEach`.
-Then each item flows through all the stations one at a time, so `filter` followed by `findFirst()` can
-stop after the first match without looking at the rest.
-
-`parallelStream()` spreads the work over several CPU cores, which can help for very large data and big
-computations, but adds overhead for small lists. And a lambda can be used wherever Java expects a
-**functional interface** (an interface with one method), such as `Runnable`, `Comparator` or
-`Predicate`.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+A stream pipeline has `filter` and `map`, but no final step like `toList()`. How many items does it process?
+:::
+- [ ] All of them
+- [x] None
+- [ ] Only the first
+:::explain
+Streams are lazy: without a final step that asks for a result, nothing runs at all.
+:::
 :::
 
-:::step{type=recap}
-- A lambda `x -> ...` is a small unnamed method passed where it is needed.
-- A stream is a conveyor belt: `filter`, `map`, `sorted`, then `toList()`.
-- Streams never change their source collection.
-- `Comparator.comparing(...).thenComparing(...)` sorts by your own rules.
+:::step{type=deep-dive title="Go deeper: collectors, Optional and parallel streams"}
+**Collectors.** `collect(Collectors.groupingBy(Book::overdue))` splits books into a map of `true` and `false` lists;
+`Collectors.joining(", ")` glues strings together. Chapter 11's word counter is one line with
+`groupingBy(w -> w, Collectors.counting())`.
+
+**Optional.** `findFirst()` gives an `Optional<String>`: a box that may be empty, because a stream can have no items.
+`.get()` on an empty one throws; `.orElse("none")` is safer. It is Java's answer to the `null` problem from chapter 9.
+
+**Parallel streams.** `parallelStream()` splits the work across processor cores. It only pays off for big, slow work,
+and only when the lambdas do not change shared variables.
+
+**Where lambdas came from.** The idea is from mathematics: Alonzo Church's lambda calculus, in the 1930s. The Greek
+letter λ is why they are called lambdas, in Java, Python and nearly every language today.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Write lambdas (`m -> m >= 40`, `(a, b) -> ...`) and method references (`String::length`).
+- Build stream pipelines with `filter`, `map`, `sorted`, `toList`, `count` and `mapToInt(...).sum()`.
+- Sort with `Comparator.comparing` and give ties a rule with `thenComparing`.
+- Explain why streams never change their source, and why they are lazy.
+
+:::photo{src="/lesson-images/java/java-14-notes.webp" alt="Handwritten notes about lambdas and streams: a lambda is a method with no name, String::length, a stream is a conveyor belt, filter keeps, map turns, sorted then toList, the source never changes, lazy until a final step" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 15: files and a command-line program, so Shelf can read real data from disk.
 :::

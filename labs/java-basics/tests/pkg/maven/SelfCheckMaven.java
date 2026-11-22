@@ -59,7 +59,7 @@ public class SelfCheckMaven {
         } catch (Throwable e) { T.crashed("package_catalog", e); }
         try {
             if (!built) {
-                T.fail("runnable_jar", "The project has to build first: finish the package task, then mvn package makes target/shelf.jar.");
+                T.fail("runnable_jar", "the project has to build first: finish the package task, then mvn package makes target/shelf.jar.");
                 return;
             }
             String[] r = run(work, 30, Path.of(System.getProperty("java.home"), "bin", "java").toString(), "-jar", "target/shelf.jar");
