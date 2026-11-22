@@ -1,5 +1,25 @@
 # Changelog
 
+## 22 November: JavaScript from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
+
+- Same treatment as Python and Java (owner: "the same tone and style"): curiosity-first openings, a running project
+  (**Mixtape**, a small playlist app), a folder per chapter, a runnable demo in every file, every output captured
+  in `labbox/javascript-basics:v1`, credited photos, a handwritten notes page on every recap, playing diagrams.
+  Chapter and task ids kept.
+  1. **Your first JavaScript program** (new `hello-js`): `node file.js`, top to bottom, the history (Brendan Eich,
+     CC BY-SA 3.0; Netscape Navigator 2, CC0, cropped), a TypeError while running versus a SyntaxError where nothing
+     runs (new playing diagram `node-runs-a-file`). Tasks `hello_mixtape` and `fix_first_errors`.
+  2. **Functions** (`01-first-program`): a missing argument gives `NaN min`, not an error; the missing-`return` bug.
+  3. **Values and types**: five surprising lines run for real (`0.1 + 0.2`, `"5" + 5`, `typeof null`, `==`,
+     `Infinity` and `NaN`), each explained.
+  4. **Decisions**: a ticket price from the top down, truthy and falsy (an empty list is truthy), Pope Gregory XIII.
+  5. **Loops**: a running total song by song, the counting `for` and `for...of`, a trace.
+  6. **Finding bugs** (new): a real Node stack trace read from the top (new diagram `js-stack-trace`), labelled
+     `console.log`, the Node REPL. Tasks `fix_total_length` and `fix_can_add` (planted bugs).
+- Checks: `tests/check.js` runs `node` on the learner's file for chapter 1 (exact output, a kind message for each
+  error kind). The JavaScript pictures browser test now allows concept steps without a picture (at most one, never
+  repeated), as in the Python and Java rewrites.
+
 ## 22 November: Spring Boot gets handwritten notes on every recap and two real photos
 
 - 31 handwritten notes pages (`frontend/public/lesson-images/spring/spring-00-notes.webp` to `spring-30-notes.webp`),

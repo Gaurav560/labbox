@@ -938,7 +938,46 @@ function JavaTryCatch() {
   );
 }
 
+/** JavaScript from zero, chapter 1: what happens after "node first.js", played step by step. */
+function NodeRunsAFile() {
+  return (
+    <SketchSteps
+      title="node first.js"
+      intro="Press Play to watch Node turn your file into a running program."
+      label="You type node first.js; Node reads the whole file; it checks the grammar, and a SyntaxError stops everything before any line runs; then it runs the lines from top to bottom; a line that goes wrong while running stops the program at that line, after the lines before it already ran; when the last line is done, the program ends"
+      steps={[
+        { label: "1. you press Enter", says: "The terminal starts node and hands it your file, first.js." },
+        { label: "2. read the whole file", says: "Node reads every line before running any of them." },
+        { label: "3. check the grammar", says: "Every bracket closed, every quote ended? One grammar mistake is a SyntaxError, and not a single line runs." },
+        { label: "4. run from the top", says: "The V8 engine runs the lines one at a time, top to bottom. Each console.log prints a line." },
+        { label: "5. a line goes wrong?", says: "A ReferenceError or a TypeError stops the program at that line. The lines before it already ran and already printed." },
+        { label: "6. the last line: done", says: "When the last line has run, the program is over and the terminal is yours again." },
+      ]}
+    />
+  );
+}
+
+/** JavaScript from zero, chapter 6: reading a Node stack trace, played step by step. */
+function JsStackTrace() {
+  return (
+    <SketchSteps
+      title="TypeError: Cannot read properties of undefined"
+      intro="Press Play to read a stack trace the way JavaScript developers do."
+      label="The first lines show the file, the line and a caret under the exact spot; the error line says what kind of problem it is; the first at line names the function and line where it happened; the next at line shows who called it; lines from node internal are Node's own machinery and can be skipped"
+      steps={[
+        { label: "1. report.js:13 and a ^", says: "The file, the line, and a little arrow under the exact spot that failed." },
+        { label: "2. TypeError: ...", says: "What went wrong, in one sentence: something was undefined, and code asked it for toUpperCase." },
+        { label: "3. at headline (report.js:13)", says: "The newest call comes first: it failed inside headline, on line 13." },
+        { label: "4. at Object.<anonymous> (report.js:17)", says: "Who called headline: the top of the file itself, line 17. Read upward to follow the story forward." },
+        { label: "5. at Module._compile ... node:internal", says: "Node's own machinery that started your file. Skip it: the first lines that name your file are the ones that matter." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "js-stack-trace": JsStackTrace,
+  "node-runs-a-file": NodeRunsAFile,
   "java-try-catch": JavaTryCatch,
   "java-object-creation": JavaObjectCreation,
   "java-stack-trace": JavaStackTrace,

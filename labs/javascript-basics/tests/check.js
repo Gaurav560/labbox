@@ -17,6 +17,10 @@ function report(task, passed, message, expected, actual) {
 
 // What each task teaches when it passes (Content standard: passes teach too).
 const PASS = {
+  hello_mixtape: "Mixtape said its first words: two console.log lines, run from top to bottom. Every program starts like this.",
+  fix_first_errors: "Two different errors fixed: a SyntaxError (nothing ran) and a ReferenceError (it stopped at the line). You read both like a detective.",
+  fix_total_length: "Found it: the loop started at position 1 and skipped the first song. Off-by-one bugs are everywhere, and now you can catch one.",
+  fix_can_add: "Fixed: at the limit there is no room left. Boundaries (> or >=) are where bugs love to hide; printing the values made it visible.",
   greet: "Your first function: it takes a name and gives back new text. A template literal (`Hello, ${name}!`) built it.",
   total_minutes: "Arithmetic in a function: hours * 60 + minutes. JavaScript does * before +, just like school maths.",
   percent: "A guarded division: you checked for 0 first, then rounded to one decimal. That guard prevents a classic Infinity bug.",
@@ -46,6 +50,13 @@ const PASS = {
 };
 const pass = (task) => report(task, true, PASS[task] ?? "ok");
 const fail = (task, msg, expected, actual) => report(task, false, "Not yet: " + msg, expected, actual);
+
+/** Runs `node <file>` in a chapter folder: { out, err, code }. */
+function runNode(dir, file) {
+  const r = require("node:child_process").spawnSync(process.execPath, [file], { cwd: path.join(W, dir), encoding: "utf8", timeout: 15000 });
+  return { out: r.stdout ?? "", err: r.stderr ?? "", code: r.status };
+}
+const firstError = (err) => (err.split("\n").find((l) => /^[A-Za-z]*Error\b/.test(l)) ?? err.trim().split("\n")[0] ?? "").trim();
 
 function load(file) {
   const full = path.join(W, file);
@@ -77,29 +88,54 @@ function cases(task, mod, fn, list, advice = () => "") {
 }
 
 const CHAPTERS = {
-  "01-first-program": ["hello/hello.js", (m) => {
+  "hello-js": [null, () => {
+    if (!fs.existsSync(path.join(W, "01-hello-js", "mixtape.js"))) fail("hello_mixtape", "01-hello-js/mixtape.js is missing from your workspace.");
+    else {
+      const r = runNode("01-hello-js", "mixtape.js");
+      const want = "Hello! I am Mixtape.\nI will play your songs.\n";
+      if (r.code !== 0) fail("hello_mixtape", `node mixtape.js stopped with ${firstError(r.err)}. Run it in the terminal to see the line.`);
+      else if (r.out === want) pass("hello_mixtape");
+      else if (r.out.trim() === "") fail("hello_mixtape", "node mixtape.js printed nothing yet. Add two console.log lines.");
+      else fail("hello_mixtape", `node mixtape.js printed ${show(r.out.trimEnd())}, but it should print the two lines exactly, capitals and full stops included.`, show(want.trimEnd()), show(r.out.trimEnd()));
+    }
+    if (!fs.existsSync(path.join(W, "01-hello-js", "fixme.js"))) fail("fix_first_errors", "01-hello-js/fixme.js is missing from your workspace.");
+    else {
+      const r = runNode("01-hello-js", "fixme.js");
+      const want = "Mixtape is starting...\nReady to play your songs.\nSongs in the playlist: 12\n";
+      if (r.code !== 0) fail("fix_first_errors", `node fixme.js still stops with ${firstError(r.err)}. Fix one mistake, run it again, and read the next message.`);
+      else if (r.out === want) pass("fix_first_errors");
+      else fail("fix_first_errors", `fixme.js runs now, but prints ${show(r.out.trimEnd())}. Only fix the mistakes: keep the three messages as they were.`, show(want.trimEnd()), show(r.out.trimEnd()));
+    }
+  }],
+  "01-first-program": ["02-functions/hello.js", (m) => {
     if (cases("greet", m, "greet", [[["Asha"], "Hello, Asha!"], [["Kabir"], "Hello, Kabir!"]], (a, got) =>
       got === undefined ? "The function has no return: add return before the text." : "Mind the comma, the space and the !")) pass("greet");
     if (cases("total_minutes", m, "totalMinutes", [[[2, 15], 135], [[0, 45], 45], [[1, 0], 60]], (a, got) =>
       typeof got === "string" ? "That is text: + joined the values. Make sure both are numbers." : "")) pass("total_minutes");
   }],
-  "02-values-and-types": ["types/numbers.js", (m) => {
+  "02-values-and-types": ["03-values-and-types/numbers.js", (m) => {
     if (cases("percent", m, "percent", [[[45, 50], 90], [[1, 3], 33.3], [[2, 3], 66.7], [[7, 0], 0]], (a, got) =>
       a[1] === 0 ? "Check for a total of 0 before dividing." : "Round to one decimal: Math.round(x * 10) / 10.")) pass("percent");
     if (cases("format_rupees", m, "formatRupees", [[[1250], "₹12.50"], [[5], "₹0.05"], [[0], "₹0.00"], [[120000], "₹1200.00"]], () =>
       "Divide by 100 for rupees, then toFixed(2) for exactly two decimals.")) pass("format_rupees");
   }],
-  "03-decisions": ["decisions/decisions.js", (m) => {
+  "03-decisions": ["04-decisions/decisions.js", (m) => {
     if (cases("grade", m, "grade", [[[80], "A"], [[79], "B"], [[60], "B"], [[40], "C"], [[39], "F"], [[0], "F"], [[100], "A"], [[101], "Invalid"], [[-1], "Invalid"]], (a) =>
       a[0] > 100 || a[0] < 0 ? "Check for impossible marks first." : "Look at the boundary: 80, 60 and 40 themselves count (>=).")) pass("grade");
     if (cases("leap_year", m, "isLeapYear", [[[2024], true], [[2023], false], [[1900], false], [[2000], true], [[2100], false]], (a) =>
       a[0] % 100 === 0 ? "Years divisible by 100 are not leap years, unless divisible by 400." : "")) pass("leap_year");
   }],
-  "04-loops": ["loops/loops.js", (m) => {
+  "04-loops": ["05-loops/loops.js", (m) => {
     if (cases("sum_to", m, "sumTo", [[[5], 15], [[1], 1], [[0], 0], [[100], 5050]], (a, got) =>
       got === 10 && a[0] === 5 ? "The loop stops one too early: let it run while i <= n." : "")) pass("sum_to");
     if (cases("count_vowels", m, "countVowels", [[["Hello World"], 3], [["AEIOU"], 5], [["rhythm"], 0], [[""], 0]], (a) =>
       a[0] === "AEIOU" ? "Capital vowels count too: lower-case the text first." : "")) pass("count_vowels");
+  }],
+  "finding-bugs": ["06-finding-bugs/playlist.js", (m) => {
+    if (cases("fix_total_length", m, "totalLength", [[[[200, 180, 240]], 620], [[[200]], 200], [[[]], 0], [[[30, 40]], 70]], (a, got) =>
+      a[0].length && got === a[0].slice(1).reduce((x, y) => x + y, 0) ? "The first song is missing from the total. Where does the loop start?" : "")) pass("fix_total_length");
+    if (cases("fix_can_add", m, "canAdd", [[[9, 10], true], [[10, 10], false], [[0, 0], false], [[0, 5], true], [[12, 10], false]], (a) =>
+      a[0] === a[1] ? "At the limit there is no room left. Compare the symbols > and >= on the last line." : "")) pass("fix_can_add");
   }],
   "05-strings": ["words/words.js", (m) => {
     if (cases("count_words", m, "countWords", [[["JavaScript is fun"], 3], [["  lots   of   spaces  "], 3], [[""], 0], [["   "], 0]], (a, got) =>
@@ -244,6 +280,7 @@ const CHAPTERS = {
 };
 
 const TASKS = {
+  "hello-js": ["hello_mixtape", "fix_first_errors"], "finding-bugs": ["fix_total_length", "fix_can_add"],
   "01-first-program": ["greet", "total_minutes"], "02-values-and-types": ["percent", "format_rupees"],
   "03-decisions": ["grade", "leap_year"], "04-loops": ["sum_to", "count_vowels"], "05-strings": ["count_words", "clean_name"],
   "06-arrays": ["top_n", "unique"], "07-objects": ["cart_total", "with_discount"], "08-objects-and-sets": ["word_counts", "common_items"],
@@ -257,7 +294,7 @@ const TASKS = {
     if (only && only !== chapter) continue;
     let mod;
     try {
-      mod = load(file);
+      if (file) mod = load(file);
     } catch (e) {
       const why = e.code === "MODULE_NOT_FOUND" ? `${file} is missing from your workspace.` : `${file} could not be loaded: ${e.name}: ${e.message.split("\n")[0]}. Run node ${file} in the terminal to see the line.`;
       for (const t of TASKS[chapter]) report(t, false, "Not yet: " + why);

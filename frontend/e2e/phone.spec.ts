@@ -21,7 +21,7 @@ test("phones get a reading mode that fits and starts no machine", async ({ page,
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   // The chapter picker and theme still work; a try step offers no Run button (there is no terminal).
   await page.getByLabel("Chapter", { exact: true }).selectOption("04-loops");
-  await page.getByRole("button", { name: /^Step 6:/ }).click();
+  await page.getByRole("button", { name: /^Step 2:/ }).click();
   await expect(page.locator(".step-kind")).toHaveText("Try it");
   await expect(page.locator(".code-btn", { hasText: /Run/ })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);

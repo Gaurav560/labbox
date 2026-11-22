@@ -1,7 +1,7 @@
 id: javascript-basics
 version: 2
 title: JavaScript from zero
-subtitle: From your first function to objects, classes, promises and a real report.
+subtitle: From your very first line of JavaScript to objects, classes, promises and real programs, one curious step at a time.
 description: 'Learn JavaScript from the very first line: values and types, decisions, loops, strings, arrays,
   objects, sets, array methods, errors, classes, async and await, and reading files. Plain explanations,
   everyday examples and real tests.'
@@ -9,7 +9,7 @@ language: javascript
 track: languages
 tags: [javascript, beginner]
 level: beginner
-estimated_minutes: 220
+estimated_minutes: 406
 cover: cover.svg
 cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
 image: labbox/javascript-basics:v1
@@ -26,13 +26,41 @@ check:
   timeout_seconds: 30
   network: none
 chapters:
+- id: hello-js
+  title: Your first JavaScript program
+  file: chapters/01-hello-js.md
+  minutes: 45
+  folder: 01-hello-js
+  part: Starting out
+  tasks:
+  - id: hello_mixtape
+    title: 'mixtape.js: Mixtape says hello'
+    hints:
+    - Look at first.js. Each console.log prints one line.
+    - Text goes inside quotes, and each line ends with a semicolon.
+    - Two lines, two console.log calls, the words exactly as shown, capitals and full stops included.
+    examples:
+    - call: node mixtape.js
+      gives: 'Hello! I am Mixtape. / I will play your songs.'
+      note: two lines
+  - id: fix_first_errors
+    title: 'fixme.js: fix it until it runs'
+    hints:
+    - Run node fixme.js and read the first error. Which line, and what is missing?
+    - Every ( needs a matching ).
+    - After that fix, run it again. A ReferenceError means a name is spelled wrong.
+    examples:
+    - call: node fixme.js
+      gives: 'Mixtape is starting... / Ready to play your songs. / Songs in the playlist: 12'
+      note: three lines
 - id: 01-first-program
-  title: Your first functions
-  file: chapters/01-first-program.md
-  minutes: 15
+  title: Functions
+  file: chapters/02-functions.md
+  minutes: 40
+  folder: 02-functions
   tasks:
   - id: greet
-    title: 'hello/hello.js: greet(name)'
+    title: 'hello.js: greet(name)'
     hints:
     - Right now greet returns an empty string. What should it give back instead?
     - A template literal uses backticks and puts a value inside with ${...}.
@@ -43,7 +71,7 @@ chapters:
     - call: greet("Kabir")
       gives: '"Hello, Kabir!"'
   - id: total_minutes
-    title: 'hello/hello.js: totalMinutes(hours, minutes)'
+    title: 'hello.js: totalMinutes(hours, minutes)'
     hints:
     - How many minutes are in one hour?
     - Turn the hours into minutes first, then add the extra minutes.
@@ -55,11 +83,12 @@ chapters:
       gives: '45'
 - id: 02-values-and-types
   title: Values and types
-  file: chapters/02-values-and-types.md
-  minutes: 18
+  file: chapters/03-values-and-types.md
+  minutes: 40
+  folder: 03-values-and-types
   tasks:
   - id: percent
-    title: 'types/numbers.js: percent(scored, total)'
+    title: 'numbers.js: percent(scored, total)'
     hints:
     - What should happen when total is 0? Answer that before you divide.
     - scored / total gives a fraction; times 100 gives a percentage.
@@ -73,7 +102,7 @@ chapters:
     - call: percent(7, 0)
       gives: '0'
   - id: format_rupees
-    title: 'types/numbers.js: formatRupees(paise)'
+    title: 'numbers.js: formatRupees(paise)'
     hints:
     - There are 100 paise in a rupee.
     - toFixed(2) turns a number into text with exactly two decimals.
@@ -85,11 +114,12 @@ chapters:
       gives: '"₹0.05"'
 - id: 03-decisions
   title: Making decisions
-  file: chapters/03-decisions.md
-  minutes: 16
+  file: chapters/04-decisions.md
+  minutes: 40
+  folder: 04-decisions
   tasks:
   - id: grade
-    title: 'decisions/decisions.js: grade(marks)'
+    title: 'decisions.js: grade(marks)'
     hints:
     - Answer the impossible marks (below 0, above 100) before anything else.
     - Then check from the top down, 80 first, so each mark meets exactly one rule.
@@ -102,7 +132,7 @@ chapters:
     - call: grade(101)
       gives: '"Invalid"'
   - id: leap_year
-    title: 'decisions/decisions.js: isLeapYear(year)'
+    title: 'decisions.js: isLeapYear(year)'
     hints:
     - year % 4 === 0 is true when the year divides by 4 exactly.
     - Years divisible by 100 are the exception, unless they divide by 400.
@@ -116,11 +146,12 @@ chapters:
       gives: 'true'
 - id: 04-loops
   title: Loops
-  file: chapters/04-loops.md
-  minutes: 15
+  file: chapters/05-loops.md
+  minutes: 40
+  folder: 05-loops
   tasks:
   - id: sum_to
-    title: 'loops/loops.js: sumTo(n)'
+    title: 'loops.js: sumTo(n)'
     hints:
     - Start a total at 0 before the loop.
     - Count i from 1 up to n, including n itself.
@@ -132,7 +163,7 @@ chapters:
     - call: sumTo(100)
       gives: '5050'
   - id: count_vowels
-    title: 'loops/loops.js: countVowels(text)'
+    title: 'loops.js: countVowels(text)'
     hints:
     - A for...of loop visits each character of a string.
     - Lower-case the text first, so "A" and "a" are the same.
@@ -142,10 +173,40 @@ chapters:
       gives: '3'
     - call: countVowels("rhythm")
       gives: '0'
+- id: finding-bugs
+  title: Finding bugs
+  file: chapters/06-finding-bugs.md
+  minutes: 45
+  folder: 06-finding-bugs
+  tasks:
+  - id: fix_total_length
+    title: 'playlist.js: the total that forgets a song'
+    hints:
+    - 620 should come out, 420 does. 620 - 420 = 200. Which song is missing?
+    - Add console.log("i =", i) inside the loop and run node playlist.js. Which positions does the loop visit?
+    - Positions in an array start at 0. Look at where the loop variable starts.
+    examples:
+    - call: totalLength([200, 180, 240])
+      gives: '620'
+    - call: totalLength([])
+      gives: '0'
+  - id: fix_can_add
+    title: 'playlist.js: at the limit means no more songs'
+    hints:
+    - Try canAdd(10, 10) in the REPL. A playlist with 10 songs and a limit of 10 has no room left.
+    - Print room before the return. What is room exactly at the limit?
+    - Adding needs some room left, more than none. Compare the symbols > and >= on the last line.
+    examples:
+    - call: canAdd(9, 10)
+      gives: 'true'
+    - call: canAdd(10, 10)
+      gives: 'false'
+      note: at the limit
 - id: 05-strings
   title: Strings
   file: chapters/05-strings.md
   minutes: 16
+  part: Working with data
   tasks:
   - id: count_words
     title: 'words/words.js: warm-up, countWords(text)'
