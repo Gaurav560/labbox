@@ -1707,3 +1707,66 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .profile-exit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; border-radius: 9px; cursor: pointer;
   border: 1px solid var(--border); background: transparent; color: var(--text); font: 600 14px var(--font-text); }
 .profile-exit:hover { border-color: var(--danger); color: var(--danger); background: color-mix(in srgb, var(--danger) 8%, transparent); }
+
+/* The retro computer: the dashboard's Continue picture for labs where you write code (RetroComputer.tsx). */
+.retro { width: 100%; container-type: inline-size; }
+.retro-stage { position: relative; height: 318px; margin: 14px -22px 0 -30px; overflow: hidden; }
+.retro-pix { position: absolute; width: 52px; height: 52px; }
+.retro-c { background: var(--deck); }
+.retro-g1 { background: #26272a; } .retro-g2 { background: #333438; } .retro-g3 { background: #404145; }
+.retro-float { position: absolute; left: 50%; top: 12px; width: 280px; height: 272px; margin-left: -140px; perspective: 900px;
+  animation: retro-float 5s ease-in-out infinite; }
+.retro-pc { position: relative; width: 100%; height: 100%; transform: rotateY(-16deg) rotateX(6deg) rotateZ(-4deg); transform-style: preserve-3d; }
+.retro-side { position: absolute; top: 10px; right: -26px; width: 34px; height: 252px; border-radius: 0 22px 22px 0; transform: skewY(-6deg);
+  background: linear-gradient(180deg, var(--deck-hi), var(--deck) 40%, var(--deck-lo)); box-shadow: 8px 18px 30px rgba(0, 0, 0, .5); }
+.retro-body { position: absolute; inset: 0; border-radius: 26px; background: linear-gradient(160deg, #f4f5f6 0%, #c9ccd0 45%, #a6aab0 100%);
+  box-shadow: inset 0 3px 0 #fff, inset 0 -6px 10px rgba(0, 0, 0, .25), 0 20px 34px rgba(0, 0, 0, .55); }
+.retro-bezel { position: absolute; left: 18px; right: 18px; top: 18px; height: 168px; border-radius: 18px; padding: 10px; display: block;
+  background: var(--deck); box-shadow: inset 0 2px 6px rgba(0, 0, 0, .45); text-decoration: none; }
+.retro-bezel:hover { text-decoration: none; filter: brightness(1.05); }
+.retro-bezel:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.retro-crt { position: relative; height: 100%; border-radius: 14px; overflow: hidden; padding: 12px 13px; text-align: left;
+  background: radial-gradient(ellipse at 50% 40%, #232427 0%, #141517 70%, #0c0c0d 100%);
+  font: 600 9px/1.45 "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; color: #e8e2d8; }
+.retro-crt::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 22px rgba(0, 0, 0, .8);
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .035) 0 1px, transparent 1px 3px); }
+.retro-top { display: flex; justify-content: space-between; gap: 8px; color: #8a8f96; font-weight: 500; font-size: 8.5px; letter-spacing: .06em; }
+.retro-top span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.retro-head { color: var(--deck); font-weight: 800; font-size: 10.5px; letter-spacing: .05em; margin: 5px 0 4px; text-transform: uppercase;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--deck) 60%, transparent);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.retro-code { margin: 0; font: inherit; color: #e8e2d8; white-space: pre; overflow: hidden; text-overflow: ellipsis; max-height: 66px; }
+.retro-prompt { color: var(--deck); margin-top: 4px; }
+.retro-cursor { display: inline-block; width: 6px; height: 10px; margin-left: 2px; background: var(--deck); vertical-align: -1px; animation: retro-blink 1s steps(1) infinite; }
+.retro-bar { position: absolute; left: 13px; right: 13px; bottom: 9px; height: 2px; background: #2b2c30; }
+.retro-bar i, .retro-meter i { display: block; height: 100%; background: var(--deck); }
+.retro-slot { position: absolute; left: 34px; top: 206px; width: 150px; height: 30px; border-radius: 6px;
+  background: linear-gradient(180deg, #b9bdc2, #e6e8ea); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35); }
+.retro-slot::after { content: ""; position: absolute; left: 12px; right: 12px; top: 12px; height: 7px; border-radius: 2px; background: #1d1e20; }
+.retro-slot::before { content: ""; position: absolute; left: 14px; top: 12px; width: 46px; height: 7px; border-radius: 2px; background: var(--deck); z-index: 1; }
+.retro-power { position: absolute; right: 34px; top: 208px; width: 26px; height: 26px; border-radius: 6px; background: var(--deck);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .3), 0 2px 3px rgba(0, 0, 0, .3); }
+.retro-power::after { content: ""; position: absolute; left: 10px; top: 10px; width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: .85; }
+.retro-power:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.retro-controls { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+.retro-play { flex: none; width: 56px; height: 56px; border-radius: 50%; background: #fff; display: grid; place-items: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .35); transition: transform .15s ease; }
+.retro-play:hover { transform: scale(1.06); }
+.retro-play:focus-visible { outline: 2px solid var(--deck); outline-offset: 3px; }
+.retro-play svg { width: 22px; height: 22px; margin-left: 4px; fill: #1b1c1e; }
+.retro-track { flex: 1; min-width: 0; }
+.retro-meter { height: 8px; border-radius: 99px; background: #fff; overflow: hidden; }
+.retro-meter i { border-radius: 99px; }
+.retro-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 11px; color: #a8adb4; letter-spacing: .06em; text-transform: uppercase; }
+@keyframes retro-blink { 50% { opacity: 0; } }
+@keyframes retro-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+/* The dashboard side column is narrow: the computer shrinks to fit. */
+@container (max-width: 380px) {
+  .retro-stage { height: 262px; }
+  .retro-float { top: 6px; scale: .8; transform-origin: 50% 0; }
+}
+@container (max-width: 300px) {
+  .retro-stage { height: 230px; }
+  .retro-float { scale: .7; }
+}
+@media (prefers-reduced-motion: reduce) { .retro-float, .retro-cursor { animation: none; } }

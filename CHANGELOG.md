@@ -1,5 +1,19 @@
 # Changelog
 
+## 22 November: the dashboard's Continue card shows a retro computer for coding labs
+
+- The owner chose a split: labs where you write code (tracks `languages`, `frameworks` and the future `ai`) show a
+  retro computer in the lab's colour; the rest (databases, DevOps, system design) keep the cassette. The rule is
+  `labDeck(track)` in `brand.ts`, so new labs follow it by their track.
+- The computer (`RetroComputer.tsx`, drawn in CSS, no image files) shows on its screen the lab and chapter, a
+  chapter:step clock, the step's title, the first lines of its code (or the chapter as a comment) and a blinking
+  `> continue`. The round play key and the screen are Continue, the power button opens the course page, and the
+  bar is the place in the chapter. It scales to the dashboard's narrow column and stops moving for people who turn
+  animations off.
+- `/api/me/next` also returns the lab's `track`, the step's `step_title` and up to 5 lines of `code` (additive).
+- Tests: a backend test for the new fields; the course browser test checks the computer for Go and the cassette
+  for SQL; the next-step test clicks the new Continue key.
+
 ## 22 November: Java from zero rewrite, Part 4 "Capstone" (chapter 18); the course is complete
 
 - 18. **Capstone**: Shelf's previous developer left a `Book` whose `equals` has no matching `hashCode` (a HashSet

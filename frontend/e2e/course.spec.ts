@@ -14,6 +14,10 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   const deck = page.getByRole("region", { name: "Continue where you left off" });
   await expect(deck).toContainText("Go from zero", { timeout: 30_000 }); // slow under a full parallel run
   await expect(deck.locator(".deck-initial")).toHaveCSS("color", "rgb(0, 173, 216)"); // Go's cyan, not the default red
+  // A lab where you write code gets the retro computer, its screen showing the step; the others keep the cassette.
+  await expect(deck.locator(".retro-crt")).toBeVisible();
+  await expect(deck.locator(".cassette")).toHaveCount(0);
+  await expect(deck.getByRole("link", { name: "Continue", exact: true })).toHaveAttribute("href", "/labs/go-basics?chapter=02-numbers-and-text");
 
   await page.locator(".labs-tiles .h-lab", { hasText: "Go from zero" }).click();
   await expect(page).toHaveURL(/\/courses\/go-basics$/);
@@ -25,6 +29,12 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await page.getByRole("link", { name: "Continue: Chapter 2 →" }).click();
   await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=02-numbers-and-text$/);
   await expect(page.locator(".step-count")).toHaveText(/^Step 4 of/);
+
+  await request.put("/api/labs/sql-from-zero/chapters/01-select-and-where/progress", { headers, data: { current_step: 1 } });
+  await page.goto("/labs");
+  await expect(deck).toContainText("SQL", { timeout: 30_000 });
+  await expect(deck.locator(".cassette")).toBeVisible();
+  await expect(deck.locator(".retro")).toHaveCount(0);
 
   await page.goto("/courses/go-basics");
   await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();

@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
-import { inkOn, labTone, mix } from "../brand";
+import { inkOn, labDeck, labTone, mix } from "../brand";
+import RetroComputer from "../components/RetroComputer";
 import { chapterNumber } from "../components/StatusBar";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
@@ -102,6 +103,8 @@ export default function LabsPage() {
  * red-and-silver cassette design): a dark dotted panel, a bold title with a red initial, and a silver deck playing a
  * red cassette whose tape winds from the left reel to the right one as the chapter goes on. The keys work:
  * previous chapter, the lab's course page (with its skill map), Continue (the red play key) and next chapter.
+ * Labs where you write code (languages, frameworks, AI) show a retro computer instead, its screen showing the step
+ * the learner stopped at (owner, 22 November; RetroComputer.tsx, labDeck in brand.ts).
  */
 function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const cont = next.kind === "continue";
@@ -124,6 +127,22 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
         </div>
         {!cont && next.reason && <p className="next-reason">{next.reason}</p>}
       </div>
+      {labDeck(next.track) === "computer" ? (
+        <RetroComputer
+          screen={{
+            path: `${(lab?.language ?? "code").toUpperCase()} / CHAPTER ${String(next.chapter_number).padStart(2, "0")}`,
+            clock: `${String(next.chapter_number).padStart(2, "0")}:${String(next.step).padStart(2, "0")}`,
+            title: next.step_title || next.chapter_title,
+            code: next.code?.length ? next.code : [`// ${next.chapter_title}`],
+          }}
+          progress={pct / 100}
+          playTo={chapterUrl(next.chapter_id)}
+          playLabel={cont ? "Continue" : "Start the first chapter"}
+          courseTo={`/courses/${next.lab_id}`}
+          stepText={`Step ${next.step} / ${next.steps}`}
+          chapterText={`Chapter ${String(next.chapter_number).padStart(2, "0")} / ${String(next.chapters).padStart(2, "0")}`}
+        />
+      ) : (
       <div className="deck">
         <div className="deck-keys">
           {prev ? <Link className="deck-key" to={chapterUrl(prev.id)} aria-label={`Previous chapter: ${prev.title}`} title={prev.title}>◀◀</Link>
@@ -146,6 +165,7 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 }

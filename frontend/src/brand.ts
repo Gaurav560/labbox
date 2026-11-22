@@ -37,6 +37,12 @@ export const LAB_TONES: Record<string, string> = {
   "sql-from-zero": "#6366f1",
 };
 
+/** The dashboard's Continue picture (owner, 22 November): a retro computer for labs where you write code
+ *  (languages, frameworks, AI), the cassette for the rest (databases, DevOps, system design). */
+export function labDeck(track: string | undefined): "computer" | "cassette" {
+  return track === "languages" || track === "frameworks" || track === "ai" ? "computer" : "cassette";
+}
+
 /** A lab's colour: its own tone, else its cover's brand colour, else the LabBox red. */
 export function labTone(labId: string, coverCredit?: { by?: string } | null): string {
   return LAB_TONES[labId] ?? labBrand(coverCredit)?.color ?? "#e50914";

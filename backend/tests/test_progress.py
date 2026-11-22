@@ -140,3 +140,19 @@ def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
     fresh = client.get("/api/me/next?lab=go-basics", headers=h).json()
     assert (fresh["kind"], fresh["chapter_id"], fresh["step"]) == ("start", "01-first-program", 1)
     assert client.get("/api/me/next?lab=nope", headers=h).status_code == 404
+
+
+def test_next_feeds_the_dashboard_screen(client: TestClient):
+    """The retro computer on the dashboard shows the step's title and the first lines of its code."""
+    h = auth(client)
+    first = client.get("/api/me/next?lab=java-basics", headers=h).json()
+    assert first["track"] == "languages"
+    assert first["step_title"]  # step 1 of chapter 1
+    steps = labs.get_lab("java-basics").chapter_steps("01-methods")
+    i = next(n for n, s in enumerate(steps) if "```java" in s.markdown)
+    client.put("/api/labs/java-basics/chapters/01-methods/progress", json={"current_step": i}, headers=h)
+    nxt = client.get("/api/me/next?lab=java-basics", headers=h).json()
+    assert nxt["step_title"] == steps[i].title
+    assert 1 <= len(nxt["code"]) <= 5 and nxt["code"][0].strip() in steps[i].markdown
+    assert all(len(line) <= 80 for line in nxt["code"])
+    assert client.get("/api/me/next?lab=sql-from-zero", headers=h).json()["track"] == "databases"

@@ -36,7 +36,8 @@ every session.
    DONE: 18 chapters, 36 tasks, about 13.5 hours. **Next: Spring Boot** gets handwritten notes on all 31 recaps and a
    few genuine photos (owner chose Java first), then the JavaScript and Go from zero rewrites. Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
 4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
-   17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick.
+   17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick; the dashboard's Continue card is a retro computer for
+   coding labs and the cassette for the rest (`labDeck` in `brand.ts`).
 
 ## 22 November: UI session with the owner (commits `29b27e6` to `b2ad178`)
 

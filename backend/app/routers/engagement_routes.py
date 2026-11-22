@@ -1,4 +1,5 @@
 """XP and streak stats, profile, daily drill, skill maps and onboarding."""
+import re
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -36,6 +37,32 @@ class NextOut(BaseModel):
     step: int  # 1-based, the step the learner will land on
     steps: int
     reason: str | None = None  # why this lab, for a new learner
+    # For the dashboard's retro computer (coding labs): the lab's track, the step's title and its first code lines.
+    track: str = ""
+    step_title: str | None = None
+    code: list[str] = []
+
+
+_FENCE = re.compile(r"^```([^\n`]*)\n(.*?)^```", re.M | re.S)
+_NOT_CODE = {"text", "console", "output", ""}
+
+
+def _screen(course, chapter_id: str, step_index: int) -> dict:
+    """What the dashboard's screen shows for a step: its title and up to 5 lines of its first code block
+    (a shell command gets a "$ " in front; output blocks are skipped)."""
+    steps = course.chapter_steps(chapter_id)
+    if not steps:
+        return {"track": course.track or ""}
+    st = steps[max(0, min(step_index, len(steps) - 1))]
+    lines: list[str] = []
+    for info, body in _FENCE.findall(st.markdown):
+        lang = info.strip().split(" ")[0].lower()
+        if lang in _NOT_CODE:
+            continue
+        shell = lang in {"bash", "sh", "shell"}
+        lines = [("$ " + ln if shell else ln).rstrip()[:80] for ln in body.splitlines() if ln.strip()][:5]
+        break
+    return {"track": course.track or "", "step_title": st.title, "code": lines}
 
 
 def _id_number(chapter_id: str, fallback: int) -> int:
@@ -69,14 +96,14 @@ def my_next(lab: str | None = None, user: User = Depends(get_current_user), sess
         return NextOut(kind="continue", lab_id=course.id, lab_title=course.title, chapter_id=ch.id, chapter_title=ch.title,
                        chapter_number=_id_number(ch.id, i) if zero else i + 1,
                        chapters=_id_number(ids[-1], len(ids) - 1) if zero else len(ids),
-                       step=min(step, total - 1) + 1, steps=total)
+                       step=min(step, total - 1) + 1, steps=total, **_screen(course, ch.id, step))
     if lab is not None:
         first = labs[lab]
         ch = first.chapters[0]
         return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
                        chapter_number=0 if ch.id.startswith("00-") else 1,
                        chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
-                       step=1, steps=len(first.chapter_steps(ch.id)))
+                       step=1, steps=len(first.chapter_steps(ch.id)), **_screen(first, ch.id, 0))
     # A new learner: the first lab of the goal they picked in onboarding, else the coding basics.
     goal_id = engagement.get_profile(session, _uid(user)).goal
     try:
@@ -89,7 +116,7 @@ def my_next(lab: str | None = None, user: User = Depends(get_current_user), sess
     return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
                    chapter_number=0 if ch.id.startswith("00-") else 1,
                    chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
-                   step=1, steps=len(first.chapter_steps(ch.id)),
+                   step=1, steps=len(first.chapter_steps(ch.id)), **_screen(first, ch.id, 0),
                    reason=f"Picked for your goal: {goal.title}" if goal else "The best first lab: it builds the coding basics every track uses")
 
 

@@ -35,7 +35,7 @@ test("a confident start: start here, continue where you left off, coming-up task
     await page.goto("/labs");
     const cont = page.getByRole("region", { name: "Continue where you left off" });
     await expect(cont).toContainText("Chapter 4 of 13: Loops");
-    await cont.getByRole("link", { name: "Continue →" }).click();
+    await cont.getByRole("link", { name: "Continue", exact: true }).click();
     await expect(page).toHaveURL(/\/labs\/javascript-basics\?chapter=04-loops$/);
     await expect(page.locator(".step-count")).toHaveText("Step 6 of 13");
   } finally {

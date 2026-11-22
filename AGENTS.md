@@ -66,8 +66,8 @@ said about 15 is enough for now, so the platform phases come next.
 ## Where we are (keep this current)
 
 - Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); Go and JavaScript from zero are 13-chapter courses waiting for the same rewrite; Spring Boot is a 31-chapter course, 0 to 30), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
-- App shape (owner, 22 November): `/labs` is the dashboard (a Continue tape deck in the colour of the lab last
-  opened, the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
+- App shape (owner, 22 November): `/labs` is the dashboard (a Continue card in the colour of the lab last opened: a retro
+  computer showing the step for coding labs, a tape deck for the rest; the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
   lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,
   editor, terminal). Level, streak and XP sit in the profile panel (top right) with Exit. The separate Skill maps
   section is gone (`/skills...` and `/tracks/...` redirect). Lab colours: `frontend/src/brand.ts` (`LAB_TONES`).
