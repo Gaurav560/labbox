@@ -1760,13 +1760,22 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .retro-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 11px; color: #a8adb4; letter-spacing: .06em; text-transform: uppercase; }
 @keyframes retro-blink { 50% { opacity: 0; } }
 @keyframes retro-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-/* The dashboard side column is narrow: the computer shrinks to fit. */
-@container (max-width: 380px) {
-  .retro-stage { height: 262px; }
-  .retro-float { top: 6px; scale: .8; transform-origin: 50% 0; }
-}
-@container (max-width: 300px) {
-  .retro-stage { height: 230px; }
-  .retro-float { scale: .7; }
+/* The dashboard's side column is narrow (about 250px): a compact computer drawn at its true size (never scaled,
+   so the screen text stays sharp), with a gentler tilt. */
+@container (max-width: 340px) {
+  .retro-stage { height: 280px; margin-top: 10px; }
+  .retro-float { top: 14px; width: 236px; height: 232px; margin-left: -124px; }
+  .retro-pc { transform: rotateY(-12deg) rotateX(4deg) rotateZ(-3deg); }
+  .retro-side { top: 10px; right: -20px; width: 26px; height: 214px; }
+  .retro-body { border-radius: 22px; }
+  .retro-bezel { left: 13px; right: 13px; top: 13px; height: 150px; padding: 8px; border-radius: 15px; }
+  .retro-crt { padding: 10px 11px; border-radius: 11px; font-size: 9px; }
+  .retro-head { font-size: 10px; margin: 4px 0 3px; }
+  .retro-code { max-height: 54px; }
+  .retro-bar { left: 11px; right: 11px; bottom: 8px; }
+  .retro-slot { left: 26px; top: 178px; width: 122px; height: 26px; }
+  .retro-slot::after, .retro-slot::before { top: 10px; }
+  .retro-power { right: 26px; top: 179px; width: 24px; height: 24px; }
+  .retro-power::after { left: 9px; top: 9px; }
 }
 @media (prefers-reduced-motion: reduce) { .retro-float, .retro-cursor { animation: none; } }

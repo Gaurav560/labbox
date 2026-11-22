@@ -20,6 +20,9 @@
   `> continue`. The round play key and the screen are Continue, the power button opens the course page, and the
   bar is the place in the chapter. It scales to the dashboard's narrow column and stops moving for people who turn
   animations off.
+- Owner, same day: the first version shrank the computer to 80% in the dashboard's narrow column (about 250px), which
+  blurred the tilted screen text. Now a compact computer is drawn at its true size there (container query, gentler
+  tilt, 9px screen text), never scaled, so it is as sharp as the sample.
 - `/api/me/next` also returns the lab's `track`, the step's `step_title` and up to 5 lines of `code` (additive).
 - Tests: a backend test for the new fields; the course browser test checks the computer for Go and the cassette
   for SQL; the next-step test clicks the new Continue key.
