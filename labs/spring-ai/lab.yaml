@@ -1,0 +1,162 @@
+id: spring-ai
+version: 2
+title: "Spring AI"
+subtitle: Build Atlas, a museum guide powered by a language model, with Spring Boot 4 and Spring AI 2.
+description: "Learn to build AI features in Java: what language models are and what they cost, prompts and system
+  prompts, options and tokens, streaming, structured output, memory, tools, embeddings, vector stores, retrieval
+  (RAG), testing, guardrails, cost control and observability, by building Atlas, the visitor guide of a science
+  museum in Pune, with Spring Boot 4 and Spring AI 2.0."
+language: java
+track: ai
+tags: [java, spring-boot, ai]
+level: intermediate
+estimated_minutes: 240
+cover_scene: "A friendly museum guide robot made of light standing in a science museum hall, with a planetarium dome and a swinging pendulum behind it."
+cover: cover.svg
+cover_credit: { by: "Logos: spring", source: "devicon (MIT)" }
+image: labbox/spring-ai:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+preview:
+  - { name: "Atlas", port: 8080, path: "/ask?q=Hello" }
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: why-ai
+  title: Why AI in your app, and your first call
+  file: chapters/01-why-ai.md
+  minutes: 50
+  folder: 01-why-ai
+  part: First steps
+  tasks:
+  - id: first_call
+    title: connect /ask to the model
+    xp: 20
+    hints:
+    - 'The ChatClient is already built in the constructor: start a request with chat.prompt().'
+    - 'The visitor''s question is the user message: .user(q). Then send it and wait with .call().'
+    - End the chain with content(), which gives the answer's text, and return that.
+    examples:
+    - call: curl -s localhost:8080/ask?q=Hello
+      gives: the model's answer
+  - id: model_alias
+    title: use the course's model
+    xp: 10
+    hints:
+    - 'The app''s log shows the gateway''s answer: it lists the model names labs may use.'
+    - The chat model is set by spring.ai.openai.chat.options.model in application.properties.
+    - Set it to the alias for chat models in this course, then restart the app.
+    examples:
+    - call: grep model application.properties
+      gives: the chat model is ai-chat
+- id: prompts
+  title: Prompts that behave
+  file: chapters/02-prompts.md
+  minutes: 50
+  folder: 02-prompts
+  tasks:
+  - id: system_prompt
+    title: Atlas's system prompt
+    xp: 20
+    hints:
+    - Rules for every conversation belong in a system message, set once on the ChatClient builder.
+    - builder.defaultSystem("...") before .build(). A Java text block (three double quotes) keeps it readable.
+    - Say who the model is (Atlas), where (the Deccan Science Museum), what is allowed, and what to do otherwise.
+    examples:
+    - call: /ask?q=Hello, who are you?
+      gives: Hello! I am Atlas, ...
+  - id: prompt_template
+    title: explain any exhibit, for any age
+    xp: 20
+    hints:
+    - A template has placeholders in braces, like {exhibit} and {age}.
+    - In .user(u -> ...), u.text(template) sets the words and u.param(name, value) fills one placeholder.
+    - Two params, exhibit and age; then call it and take its content, as in /ask.
+    examples:
+    - call: /explain?exhibit=Foucault pendulum&age=7
+      gives: a short explanation for a child
+- id: options
+  title: Options, tokens and cost
+  file: chapters/03-options.md
+  minutes: 45
+  folder: 03-options
+  tasks:
+  - id: chat_options
+    title: steady and short answers
+    xp: 20
+    hints:
+    - Options travel with the prompt, before .call().
+    - OpenAiChatOptions.builder() has temperature(...) and maxTokens(...); pass the builder to .options(...).
+    - 'Temperature 0.2 and at most 300 tokens. No .build() at the end: Spring AI 2.0 takes the builder.'
+    examples:
+    - call: 3 x /ask?q=fun fact about Saturn
+      gives: nearly the same answer
+  - id: token_usage
+    title: what an answer cost
+    xp: 20
+    hints:
+    - chatResponse() at the end of the chain, instead of content(), gives you the whole response.
+    - The text is response.getResult().getOutput().getText(); the counts are in response.getMetadata().getUsage().
+    - 'Usage has getPromptTokens(), getCompletionTokens() and getTotalTokens(): put them in a CostedAnswer.'
+    examples:
+    - call: /ask/costed?q=What is a black hole?
+      gives: answer, 96, 53, 149
+- id: streaming
+  title: Streaming answers
+  file: chapters/04-streaming.md
+  minutes: 45
+  folder: 04-streaming
+  tasks:
+  - id: stream_answer
+    title: stream the answer
+    xp: 20
+    hints:
+    - 'Replace .call() with .stream(): the answer then arrives as a Flux, piece by piece.'
+    - 'After stream(), content() gives a Flux<String>. Return it: Spring sends each piece as an event.'
+    - The method already produces text/event-stream; just return the Flux from the chat chain.
+    examples:
+    - call: curl -sN /stream?q=Why is the sky blue?
+      gives: 'data:The ... data: sky ...'
+  - id: stream_events
+    title: token events, then done
+    xp: 20
+    hints:
+    - Start from the same Flux<String> of pieces.
+    - .map(piece -> ServerSentEvent.builder(piece).event("token").build()) names each piece.
+    - concatWith(Flux.just(...)) adds one last event, built with .event("done").
+    examples:
+    - call: curl -sN /stream/events?q=...
+      gives: event:token ... event:done
+- id: structured
+  title: Structured output into Java
+  file: chapters/05-structured.md
+  minutes: 50
+  folder: 05-structured
+  tasks:
+  - id: tour_plan
+    title: a tour plan as a record
+    xp: 20
+    hints:
+    - entity(SomeRecord.class) at the end of the chain, instead of content(), returns a record.
+    - Use a template for the minutes, then .call().entity(TourPlan.class).
+    - Spring AI adds TourPlan's JSON schema to the prompt for you, and reads the JSON answer into the record.
+    examples:
+    - call: /tour?minutes=60
+      gives: '{title, stops: [...]}'
+  - id: exhibit_list
+    title: three suggestions as a list
+    xp: 20
+    hints:
+    - 'Models answer more reliably with an object than with a bare list: Suggestions wraps the list.'
+    - Ask for three exhibits for the interest, and read the answer into the Suggestions record with entity(...).
+    - 'Then return its list: the record''s accessor is exhibits().'
+    examples:
+    - call: /suggest?interest=dinosaurs
+      gives: '[three names]'

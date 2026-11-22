@@ -33,6 +33,7 @@ export const LAB_TONES: Record<string, string> = {
   "python-collections": "#4b8bbe",
   "rate-limiter": "#00b347",
   "redis-in-practice": "#DC382D",
+  "spring-ai": "#10a37f",
   "spring-boot-first-api": "#6DB33F",
   "sql-from-zero": "#6366f1",
 };

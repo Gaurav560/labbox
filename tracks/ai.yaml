@@ -1,0 +1,12 @@
+# Skill map for the AI track. A node lights up when all its chapters are complete.
+# Nodes without chapters are shown as "coming soon".
+track: ai
+title: AI engineering
+nodes:
+  - id: ai-first-steps
+    title: Calling a model from Spring
+    chapters: [spring-ai/why-ai, spring-ai/prompts, spring-ai/options]
+  - id: ai-answers
+    title: Streaming and structured answers
+    requires: [ai-first-steps]
+    chapters: [spring-ai/streaming, spring-ai/structured]

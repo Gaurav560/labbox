@@ -280,7 +280,7 @@ def test_onboarding(client: TestClient):
     r = client.post("/api/onboarding", json={"goal": "devops", "answers": [0, 0, 0]}, headers=h).json()
     assert r["level"] == "beginner" and r["start"]["lab_id"] == "linux-on-call" and r["note"] is None  # DevOps now has its own first lab
     r = client.post("/api/onboarding", json={"goal": "ai", "answers": [0, 0, 0]}, headers=h).json()
-    assert r["start"]["lab_id"] == "python-basics" and "on the way" in r["note"]  # a track with no labs yet
+    assert r["start"]["lab_id"] == "python-basics" and r["note"] is None  # the AI track has its first lab (Spring AI) since 23 November
     assert client.post("/api/onboarding", json={"goal": "devops", "answers": [0]}, headers=h).status_code == 422
     assert client.post("/api/onboarding", json={"goal": "nope", "answers": [0, 0, 0]}, headers=h).status_code == 422
 

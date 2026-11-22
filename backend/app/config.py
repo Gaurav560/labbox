@@ -60,9 +60,11 @@ class Settings(BaseSettings):
     LLM_GATEWAY_ENABLED: bool = True
     LLM_GATEWAY_HOST: str = ""  # empty: the Docker bridge address, so lab relays can reach it
     LLM_GATEWAY_PORT: int = 9000
+    # ai-chat and ai-embed are the Spring AI course's models: OpenAI, approved by the owner for that course only
+    # (23 November); every call still goes through the gateway's budget and log.
     LLM_MODELS: str = (
         "lab-chat=ollama/qwen2.5:0.5b,lab-chat-smart=ollama/qwen2.5:1.5b,lab-embed=ollama/nomic-embed-text,"
-        "lab-code=ollama/qwen2.5-coder:1.5b"
+        "lab-code=ollama/qwen2.5-coder:1.5b,ai-chat=openai/gpt-4o-mini,ai-embed=openai/text-embedding-3-small"
     )
     OLLAMA_URL: str = "http://127.0.0.1:11434"
     LLM_DAILY_TOKENS: int = 50_000  # per user, per UTC day, all labs and the tutor together

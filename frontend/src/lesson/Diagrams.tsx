@@ -1589,7 +1589,94 @@ function LinuxCron() {
   );
 }
 
+function AiRequestFlow() {
+  return (
+    <SketchSteps
+      title="one question's journey"
+      intro="Press Play to follow a visitor's question to the model and back."
+      label="the visitor asks atlas; the controller builds a prompt with chat client; spring ai sends it as json; the labbox gateway checks the budget and forwards it with the real key; the model writes an answer; it comes back the same way as text"
+      steps={[
+        { label: "1. GET /ask?q=...", says: "A visitor's browser calls Atlas." },
+        { label: "2. ChatClient builds a prompt", says: "chat.prompt().user(q): the question becomes a user message." },
+        { label: "3. Spring AI sends JSON", says: "A chat completions request, naming the model ai-chat." },
+        { label: "4. The LabBox gateway", says: "Checks your budget, logs the call, adds the real key, forwards it." },
+        { label: "5. The model answers", says: "Token by token, then the whole answer comes back as JSON." },
+        { label: "6. .content()", says: "Spring AI hands your controller the text, and Atlas returns it." },
+      ]}
+    />
+  );
+}
+
+function AiRoles() {
+  return (
+    <SketchSteps
+      title="system, user, assistant"
+      intro="Press Play to see who writes each message."
+      label="the developer writes the system message with the rules; the visitor writes the user message; the model writes the assistant message, following both"
+      steps={[
+        { label: "1. system", says: "You, the developer: who Atlas is and its rules. Sent with every request." },
+        { label: "2. user", says: "The visitor: Name one planet with rings." },
+        { label: "3. assistant", says: "The model: Saturn is a planet with rings." },
+        { label: "4. Next time", says: "The rules come first again: the model has no memory of its own." },
+      ]}
+    />
+  );
+}
+
+function AiTemperature() {
+  return (
+    <SketchSteps
+      title="picking the next word"
+      intro="Press Play to see temperature at work."
+      label="after the sky is, the candidates are blue with a high probability and clear and full with lower ones; at a low temperature the model almost always picks blue; at a high temperature it often picks a less likely word"
+      steps={[
+        { label: "1. The sky is ...", says: "Candidates: blue 70%, clear 10%, full 5%, and many more." },
+        { label: "2. Temperature 0", says: "Almost always the top choice: blue, blue, blue." },
+        { label: "3. Temperature 0.2", says: "Mostly the top choice, now and then another." },
+        { label: "4. Temperature 1.5", says: "Less likely words often win: surprising, sometimes odd." },
+      ]}
+    />
+  );
+}
+
+function AiStreaming() {
+  return (
+    <SketchSteps
+      title="call versus stream"
+      intro="Press Play to compare what the visitor sees."
+      label="the model writes tokens one after another; with call the server waits for the last token and sends everything at once; with stream the server sends each token as soon as it exists"
+      steps={[
+        { label: "1. The model writes", says: "One token after another, for about two seconds." },
+        { label: "2. With call()", says: "The screen stays empty until the last token, then everything appears." },
+        { label: "3. With stream()", says: "The first words appear after about half a second." },
+        { label: "4. Same total", says: "Same tokens, same price; only the empty wait is shorter." },
+      ]}
+    />
+  );
+}
+
+function AiStructured() {
+  return (
+    <SketchSteps
+      title="text in, a record out"
+      intro="Press Play to follow entity(TourPlan.class)."
+      label="spring ai writes the json schema of the record into the prompt; the model answers with json in that shape; jackson reads the json into a tourplan record; the controller returns it"
+      steps={[
+        { label: "1. entity(TourPlan.class)", says: "Spring AI looks at the record's fields." },
+        { label: "2. The schema goes in the prompt", says: "title is a string; stops is a list of gallery and minutes." },
+        { label: "3. The model answers in JSON", says: "Following the shape, with no explanations around it." },
+        { label: "4. Jackson reads it", says: "The JSON becomes a TourPlan, ready for your Java code." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "ai-request-flow": AiRequestFlow,
+  "ai-roles": AiRoles,
+  "ai-temperature": AiTemperature,
+  "ai-streaming": AiStreaming,
+  "ai-structured": AiStructured,
   "linux-tree": LinuxTree,
   "linux-glob": LinuxGlob,
   "linux-streams": LinuxStreams,

@@ -41,7 +41,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   that drive the classic editor set `localStorage["labbox.editor"] = "classic"` first.
 - AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
   gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
-  Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval.
+  Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval. Approved once: `ai-chat`
+  (openai/gpt-4o-mini) and `ai-embed` (openai/text-embedding-3-small), for the Spring AI course only (23 November).
 - Tests: **full runs use Postgres and Redis, as in production** (owner, 22 November): `cd backend &&
   LABBOX_TEST_DATABASE_URL=... LABBOX_TEST_REDIS_URL=... .venv/bin/pytest` (see README; about 275 tests,
   Docker ones included, about 11 minutes). Plain `.venv/bin/pytest` runs on SQLite and in-memory locks (the
@@ -65,7 +66,7 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); JavaScript from zero was rewritten the same way (22 November: 18 chapters, Mixtape the playlist app, node:test for testing); Go from zero was rewritten the same way (22 November: 18 chapters, Parcel the parcel tracker, go test for testing); Spring Boot is a 31-chapter course, 0 to 30; Redis, SQL from zero and Git without fear were rebuilt to the full standard the same night; Linux on call followed on 23 November, 15 chapters about Tara, a radio telescope observatory), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); JavaScript from zero was rewritten the same way (22 November: 18 chapters, Mixtape the playlist app, node:test for testing); Go from zero was rewritten the same way (22 November: 18 chapters, Parcel the parcel tracker, go test for testing); Spring Boot is a 31-chapter course, 0 to 30; Redis, SQL from zero and Git without fear were rebuilt to the full standard the same night; Linux on call followed on 23 November, 15 chapters about Tara, a radio telescope observatory; then a new Spring AI course, Atlas the museum guide, in progress), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - App shape (owner, 22 November): `/labs` is the dashboard (a Continue card in the colour of the lab last opened: a retro
   computer showing the step for coding labs, a tape deck for the rest; the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
   lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,

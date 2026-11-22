@@ -1,5 +1,20 @@
 # Changelog
 
+## 23 November: Spring AI, Part 1 (a new course: Atlas, the museum guide)
+
+- Owner, going to sleep after Linux: "once done, move to Spring AI". OpenAI is the course's model, only through the
+  LLM gateway: two new aliases, `ai-chat` (gpt-4o-mini) and `ai-embed` (text-embedding-3-small), added to the default
+  `LLM_MODELS`; the tutor and other labs stay on Ollama. The key stays in `backend/.env`; budgets and logs apply.
+- New lab `spring-ai` (track `ai`): Java 21, **Spring Boot 4.0.10 and Spring AI 2.0.3** (the current major line; 2.1.0
+  was four days old), every library in an offline Maven repository in the image. The running project is **Atlas**,
+  the visitor guide of a fictional science museum in Pune. One Maven project per chapter, like the Spring Boot course.
+- Part 1, First steps (5 chapters, 10 tasks): why AI in your app (LLMs, tokens, ELIZA to ChatGPT to Spring AI, what
+  answers cost), prompts (system prompts and templates, with the real failures of a first-draft prompt), options and
+  token usage, streaming with server-sent events, structured output into records (including the real "bare list"
+  failure and its fix). Every model answer quoted in the lessons came from the real model through the gateway.
+- Checks never call a model: hidden JUnit checks start a fake OpenAI-compatible server, point the learner's app at it,
+  and grade the requests the app sends (system prompt, options, schema, streaming) and how it handles the replies.
+
 ## 23 November: Linux on call rewritten to the full standard (15 chapters, Tara)
 
 - Owner's order after Git: Linux, then a new Spring AI course. The old course was 2 chapters and 5 tasks about a lunchbox
