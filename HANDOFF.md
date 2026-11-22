@@ -54,7 +54,7 @@ every session.
      `fix_shuffle` red to green, and `test_duration` where the learner's tests must catch planted bugs).
    - Part 4 "Capstone": 18 the monthly report (`13-capstone`, tasks kept).
    Photos to look for: Brendan Eich, the Netscape Navigator box or screen, Ryan Dahl. Notes on every recap.
-   Part 1 (chapters 1 to 6) DONE. Ryan Dahl's photo (cropped, no cup) waits in the scratchpad for chapter 16 (Node).
+   Part 1 (chapters 1 to 6) and Part 2 (7 to 12) DONE. Ryan Dahl's photo (cropped, no cup) waits in the scratchpad for chapter 16 (Node).
 4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
    17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick; the dashboard's Continue card is a retro computer for
    coding labs and the cassette for the rest (`labDeck` in `brand.ts`).

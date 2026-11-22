@@ -34,7 +34,7 @@ test("a confident start: start here, continue where you left off, coming-up task
     await request.put("/api/labs/javascript-basics/chapters/04-loops/progress", { headers, data: { current_step: 5 } });
     await page.goto("/labs");
     const cont = page.getByRole("region", { name: "Continue where you left off" });
-    await expect(cont).toContainText("Chapter 5 of 15: Loops");
+    await expect(cont).toContainText(/Chapter 5 of \d+: Loops/); // the course grows: count-free
     await cont.getByRole("link", { name: "Continue", exact: true }).click();
     await expect(page).toHaveURL(/\/labs\/javascript-basics\?chapter=04-loops$/);
     await expect(page.locator(".step-count")).toHaveText("Step 6 of 14");

@@ -17,6 +17,8 @@ function report(task, passed, message, expected, actual) {
 
 // What each task teaches when it passes (Content standard: passes teach too).
 const PASS = {
+  save_playlist: "A playlist turned into JSON text with JSON.stringify: now it can go into a file, a database or across the internet.",
+  load_playlist: "JSON.parse brought the text back to life, and ?? [] handled a playlist with no songs. That pair is how every web app talks.",
   hello_mixtape: "Mixtape said its first words: two console.log lines, run from top to bottom. Every program starts like this.",
   fix_first_errors: "Two different errors fixed: a SyntaxError (nothing ran) and a ReferenceError (it stopped at the line). You read both like a detective.",
   fix_total_length: "Found it: the loop started at position 1 and skipped the first song. Off-by-one bugs are everywhere, and now you can catch one.",
@@ -137,13 +139,13 @@ const CHAPTERS = {
     if (cases("fix_can_add", m, "canAdd", [[[9, 10], true], [[10, 10], false], [[0, 0], false], [[0, 5], true], [[12, 10], false]], (a) =>
       a[0] === a[1] ? "At the limit there is no room left. Compare the symbols > and >= on the last line." : "")) pass("fix_can_add");
   }],
-  "05-strings": ["words/words.js", (m) => {
+  "05-strings": ["07-strings/words.js", (m) => {
     if (cases("count_words", m, "countWords", [[["JavaScript is fun"], 3], [["  lots   of   spaces  "], 3], [[""], 0], [["   "], 0]], (a, got) =>
       a[0].trim() === "" ? "Empty text has no words: trim first, and check for nothing left." : "Split on runs of spaces: split(/\\s+/) after trim().")) pass("count_words");
     if (cases("clean_name", m, "cleanName", [[["  riya   SHARMA "], "Riya Sharma"], [["ARJUN"], "Arjun"], [["   "], ""]], () =>
       "Split into words, make the first letter upper case and the rest lower case, then join with one space.")) pass("clean_name");
   }],
-  "06-arrays": ["arrays/arrays.js", (m) => {
+  "06-arrays": ["08-arrays/arrays.js", (m) => {
     const nums = [72, 45, 90, 66];
     let ok = cases("top_n", m, "topN", [[[[72, 45, 90, 66], 2], [90, 72]], [[[5, 1], 5], [5, 1]], [[[3, 1, 2], 0], []], [[[10, 9, 100], 2], [100, 10]]], (a, got) =>
       "Biggest first needs a compare function, (a, b) => b - a: sort() on its own compares numbers as text, so 100 comes before 9.");
@@ -154,7 +156,7 @@ const CHAPTERS = {
     if (ok) pass("top_n");
     if (cases("unique", m, "unique", [[[["juice", "coffee", "juice", "milk"]], ["juice", "coffee", "milk"]], [[[3, 1, 3, 2, 1]], [3, 1, 2]], [[[]], []]])) pass("unique");
   }],
-  "07-objects": ["objects/cart.js", (m) => {
+  "07-objects": ["09-objects/cart.js", (m) => {
     const cart = [{ name: "juice", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }];
     if (cases("cart_total", m, "cartTotal", [[[cart], 55], [[[]], 0], [[[{ name: "pen", price: 12.5, qty: 4 }]], 50]], (a, got) =>
       got === 35 ? "Multiply each price by its qty before adding." : "")) pass("cart_total");
@@ -167,13 +169,13 @@ const CHAPTERS = {
     }
     if (ok) pass("with_discount");
   }],
-  "08-objects-and-sets": ["counting/counting.js", (m) => {
+  "08-objects-and-sets": ["10-counting/counting.js", (m) => {
     if (cases("word_counts", m, "wordCounts", [[[["juice", "Coffee", "JUICE", "juice"]], { juice: 3, coffee: 1 }], [[[]], {}]], (a, got) =>
       got && got.JUICE ? "Lower-case each word before counting." : "")) pass("word_counts");
     if (cases("common_items", m, "commonItems", [[[["toast", "coffee", "milk"], ["milk", "toast", "juice"]], ["milk", "toast"]], [[["b", "a", "b"], ["b", "b", "a"]], ["a", "b"]], [[[], ["juice"]], []]], (a, got) =>
       Array.isArray(got) && new Set(got).size !== got.length ? "Each item once: a Set removes the repeats." : "Sort the result so the order is always the same.")) pass("common_items");
   }],
-  "09-array-methods": ["arraymethods/marks.js", (m) => {
+  "09-array-methods": ["11-array-methods/marks.js", (m) => {
     if (cases("passing", m, "passing", [[[[72, 30, 90, 40, 39]], [72, 90, 40]], [[[]], []]], (a, got) =>
       Array.isArray(got) && !got.includes(40) ? "40 itself passes: use >= 40." : "")) pass("passing");
     const words = ["banana", "fig", "apple", "kiwi", "date"];
@@ -185,6 +187,23 @@ const CHAPTERS = {
       if (!same(w, words)) { fail("sort_by_length", "sortByLength changed the array it was given. sort works in place, so sort a copy: [...words].", show(words), show(w)); ok = false; }
     }
     if (ok) pass("sort_by_length");
+  }],
+  "modules-and-json": ["12-modules-and-json/playlist.js", (m) => {
+    const songs = [{ title: "Monsoon Drive", seconds: 245 }, { title: "Neon Lanes", seconds: 198 }];
+    if (typeof m.savePlaylist !== "function") fail("save_playlist", "savePlaylist is not exported. Keep it in module.exports at the bottom of the file.");
+    else {
+      const got = m.savePlaylist("Rainy day", structuredClone(songs));
+      let parsed;
+      try { parsed = typeof got === "string" ? JSON.parse(got) : undefined; } catch { parsed = undefined; }
+      if (typeof got !== "string") fail("save_playlist", `savePlaylist gave back ${typeof got === "object" ? "an object" : show(got)}, but it should give back text: JSON.stringify turns an object into JSON text.`);
+      else if (parsed === undefined) fail("save_playlist", `savePlaylist gave back ${show(got)}, which is not JSON. Build an object, then JSON.stringify it.`);
+      else if (parsed.name !== "Rainy day" || parsed.count !== 2 || !same(parsed.songs, songs)) fail("save_playlist", `the JSON holds ${show(parsed)}, but it should hold name "Rainy day", count 2 and the two songs.`, show({ name: "Rainy day", count: 2, songs }), show(parsed));
+      else if (JSON.parse(m.savePlaylist("Empty", [])).count !== 0) fail("save_playlist", "a playlist with no songs should have count 0.");
+      else pass("save_playlist");
+    }
+    const two = JSON.stringify({ name: "Rainy day", count: 2, songs });
+    if (cases("load_playlist", m, "loadPlaylist", [[[two], ["Monsoon Drive", "Neon Lanes"]], [['{"name":"Quiet","songs":[]}'], []], [['{"name":"Old"}'], []]], (a, got) =>
+      a[0] === '{"name":"Old"}' ? "This JSON has no songs at all: playlist.songs is undefined. Use ?? [] before map." : typeof got === "string" ? "Parse the text first: JSON.parse(text)." : "")) pass("load_playlist");
   }],
   "10-errors": ["errors/ages.js", (m) => {
     let ok = cases("parse_age", m, "parseAge", [[["17"], 17], [[" 42 "], 42], [["0"], 0], [["150"], 150]]);
@@ -280,7 +299,7 @@ const CHAPTERS = {
 };
 
 const TASKS = {
-  "hello-js": ["hello_mixtape", "fix_first_errors"], "finding-bugs": ["fix_total_length", "fix_can_add"],
+  "hello-js": ["hello_mixtape", "fix_first_errors"], "finding-bugs": ["fix_total_length", "fix_can_add"], "modules-and-json": ["save_playlist", "load_playlist"],
   "01-first-program": ["greet", "total_minutes"], "02-values-and-types": ["percent", "format_rupees"],
   "03-decisions": ["grade", "leap_year"], "04-loops": ["sum_to", "count_vowels"], "05-strings": ["count_words", "clean_name"],
   "06-arrays": ["top_n", "unique"], "07-objects": ["cart_total", "with_discount"], "08-objects-and-sets": ["word_counts", "common_items"],

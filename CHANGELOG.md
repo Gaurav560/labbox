@@ -1,5 +1,17 @@
 # Changelog
 
+## 22 November: JavaScript from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
+
+- Chapters 7 to 11 moved into numbered folders and rewritten curiosity-first around Mixtape, each opening with a
+  real puzzle run in the lab image: why one emoji has length 2 (strings), why `[10, 9, 1].sort()` gives
+  `[1, 10, 9]` (arrays), how a `const` object can change (objects), why `1` and `"1"` are the same object key and
+  what Map and Set do (counting), and the famous `["10", "10", "10"].map(parseInt)` giving `[10, NaN, 2]` (array
+  methods). Chapter and task ids kept.
+- 12. **Modules and JSON** (new): `module.exports` and `require` (what is not exported stays private), CommonJS
+  versus ES modules, `JSON.stringify` and `JSON.parse`, JSON's strict rules and a real parse error. Tasks
+  `save_playlist` and `load_playlist`.
+- Six handwritten notes pages, every one checked letter by letter.
+
 ## 22 November: JavaScript from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
 
 - Same treatment as Python and Java (owner: "the same tone and style"): curiosity-first openings, a running project

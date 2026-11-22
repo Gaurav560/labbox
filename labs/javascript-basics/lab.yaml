@@ -9,7 +9,7 @@ language: javascript
 track: languages
 tags: [javascript, beginner]
 level: beginner
-estimated_minutes: 406
+estimated_minutes: 576
 cover: cover.svg
 cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
 image: labbox/javascript-basics:v1
@@ -204,12 +204,13 @@ chapters:
       note: at the limit
 - id: 05-strings
   title: Strings
-  file: chapters/05-strings.md
-  minutes: 16
+  file: chapters/07-strings.md
+  minutes: 40
+  folder: 07-strings
   part: Working with data
   tasks:
   - id: count_words
-    title: 'words/words.js: warm-up, countWords(text)'
+    title: 'words.js: countWords(text)'
     hints:
     - Several spaces in a row should still count as one gap.
     - trim() removes the spaces at the ends; split(/\s+/) splits on runs of spaces.
@@ -220,7 +221,7 @@ chapters:
     - call: countWords("  lots   of   spaces  ")
       gives: '3'
   - id: clean_name
-    title: 'words/words.js: cleanName(raw)'
+    title: 'words.js: cleanName(raw)'
     hints:
     - Split the name into words first, ignoring extra spaces.
     - For each word, the first letter goes upper case and the rest lower case.
@@ -232,11 +233,12 @@ chapters:
       gives: '"Arjun"'
 - id: 06-arrays
   title: Arrays
-  file: chapters/06-arrays.md
-  minutes: 16
+  file: chapters/08-arrays.md
+  minutes: 40
+  folder: 08-arrays
   tasks:
   - id: top_n
-    title: 'arrays/arrays.js: topN(numbers, n)'
+    title: 'arrays.js: topN(numbers, n)'
     hints:
     - sort changes the array it is called on. Whose array is that?
     - Make a copy with the spread syntax first, then sort the copy, biggest first.
@@ -248,7 +250,7 @@ chapters:
     - call: topN([5, 1], 5)
       gives: '[5, 1]'
   - id: unique
-    title: 'arrays/arrays.js: unique(items)'
+    title: 'arrays.js: unique(items)'
     hints:
     - Build a new array and add each item only the first time you meet it.
     - includes tells you whether an array already holds a value.
@@ -260,11 +262,12 @@ chapters:
       gives: '[]'
 - id: 07-objects
   title: Objects
-  file: chapters/07-objects.md
-  minutes: 16
+  file: chapters/09-objects.md
+  minutes: 40
+  folder: 09-objects
   tasks:
   - id: cart_total
-    title: 'objects/cart.js: cartTotal(cart)'
+    title: 'cart.js: cartTotal(cart)'
     hints:
     - Each line of the cart is an object with a price and a qty.
     - Keep a running total, and add each line's price times its qty.
@@ -275,7 +278,7 @@ chapters:
     - call: cartTotal([])
       gives: '0'
   - id: with_discount
-    title: 'objects/cart.js: withDiscount(item, percent)'
+    title: 'cart.js: withDiscount(item, percent)'
     hints:
     - The item you were given belongs to the caller. Should it change?
     - '{ ...item } copies every field into a new object.'
@@ -285,12 +288,13 @@ chapters:
       gives: '{ name: "juice", price: 18 }'
       note: the item passed in stays as it was
 - id: 08-objects-and-sets
-  title: Counting with objects, and sets
-  file: chapters/08-objects-and-sets.md
-  minutes: 16
+  title: Counting with objects, sets and maps
+  file: chapters/10-counting.md
+  minutes: 40
+  folder: 10-counting
   tasks:
   - id: word_counts
-    title: 'counting/counting.js: wordCounts(words)'
+    title: 'counting.js: wordCounts(words)'
     hints:
     - Start with an empty object, and lower-case each word before you use it as a key.
     - counts[key] is undefined the first time; ?? 0 turns that into 0.
@@ -301,7 +305,7 @@ chapters:
     - call: wordCounts([])
       gives: '{}'
   - id: common_items
-    title: 'counting/counting.js: commonItems(a, b)'
+    title: 'counting.js: commonItems(a, b)'
     hints:
     - A Set answers "is this in there?" with has, and keeps each value once.
     - Make a Set from b, then keep the items of a that it has.
@@ -311,11 +315,12 @@ chapters:
       gives: '["milk", "toast"]'
 - id: 09-array-methods
   title: Array methods and arrow functions
-  file: chapters/09-array-methods.md
-  minutes: 16
+  file: chapters/11-array-methods.md
+  minutes: 45
+  folder: 11-array-methods
   tasks:
   - id: passing
-    title: 'arraymethods/marks.js: passing(marks)'
+    title: 'marks.js: passing(marks)'
     hints:
     - filter keeps the items for which your function answers true.
     - An arrow function looks like m => (a test on m).
@@ -324,7 +329,7 @@ chapters:
     - call: passing([72, 30, 90, 40, 39])
       gives: '[72, 90, 40]'
   - id: sort_by_length
-    title: 'arraymethods/marks.js: sortByLength(words)'
+    title: 'marks.js: sortByLength(words)'
     hints:
     - sort changes the array it is called on, so sort a copy.
     - A compare function returns a negative number when a should come first.
@@ -333,9 +338,36 @@ chapters:
     - call: sortByLength(["banana", "fig", "apple", "kiwi", "date"])
       gives: '["fig", "date", "kiwi", "apple", "banana"]'
       note: ties alphabetical
+- id: modules-and-json
+  title: Modules and JSON
+  file: chapters/12-modules-and-json.md
+  minutes: 45
+  folder: 12-modules-and-json
+  tasks:
+  - id: save_playlist
+    title: 'playlist.js: savePlaylist(name, songs)'
+    hints:
+    - First build a plain object with three properties, then turn it into text.
+    - count is how many songs there are, and an array knows its own length.
+    - JSON.stringify turns any plain object into JSON text. Give back that text.
+    examples:
+    - call: 'savePlaylist("Rainy day", [{ title: "Monsoon Drive", seconds: 245 }])'
+      gives: '{"name":"Rainy day","count":1,"songs":[...]}'
+  - id: load_playlist
+    title: 'playlist.js: loadPlaylist(text)'
+    hints:
+    - The text has to become an object again before you can read its songs.
+    - An old file may have no songs at all. ?? gives a fallback for undefined.
+    - Turn each song into its title with map.
+    examples:
+    - call: 'loadPlaylist(''{"name":"Quiet","songs":[]}'')'
+      gives: '[]'
+    - call: 'loadPlaylist(''{"name":"Old"}'')'
+      gives: '[]'
+      note: no songs at all
 - id: 10-errors
   title: Errors
-  file: chapters/10-errors.md
+  file: chapters/13-errors.md
   minutes: 16
   tasks:
   - id: parse_age
@@ -363,7 +395,7 @@ chapters:
       gives: '{ total: 0, bad: [] }'
 - id: 11-classes
   title: Classes
-  file: chapters/11-classes.md
+  file: chapters/14-classes.md
   minutes: 18
   tasks:
   - id: bank_account
@@ -391,7 +423,7 @@ chapters:
       gives: '0'
 - id: 12-async
   title: Promises and async/await
-  file: chapters/12-async.md
+  file: chapters/15-async.md
   minutes: 20
   tasks:
   - id: fetch_all
@@ -421,7 +453,7 @@ chapters:
       gives: throws the last error
 - id: 13-capstone
   title: 'Capstone: a monthly report'
-  file: chapters/13-capstone.md
+  file: chapters/18-capstone.md
   minutes: 22
   tasks:
   - id: read_totals
