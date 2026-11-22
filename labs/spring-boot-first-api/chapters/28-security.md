@@ -281,5 +281,9 @@ You can now secure an API:
 - **CSRF** protects cookie-based browser logins; header-authenticated APIs **disable** it.
 - Users in memory for learning; hashed passwords (**BCrypt**) and tokens (**JWT**) in real systems.
 
+:::photo{src="/lesson-images/spring/spring-28-notes.webp" alt="Handwritten notes about Security: 401 = who are you?, 403 = not allowed, SecurityFilterChain: first match wins, HTTP Basic only over HTTPS, BCrypt for passwords" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 29: the Shop API is not alone. Calling other services, and surviving when they are slow.
 :::

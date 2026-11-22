@@ -239,6 +239,10 @@ Your multi-step changes are now safe:
 - **Checked exceptions commit** by default: add `rollbackFor = SomeException.class`.
 - It works through a **proxy**: public methods, called from **another bean**; calls on `this` skip it.
 
+:::photo{src="/lesson-images/spring/spring-23-notes.webp" alt="Handwritten notes about Transactions: all or nothing (ACID), @Transactional, exception: roll back, checked exceptions commit!, calls on this skip the proxy" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 24: so far Hibernate creates the tables on start-up. In real life the database outlives every
 version of your app. Migrations with Flyway.
 :::

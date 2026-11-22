@@ -270,5 +270,9 @@ You can now test the web layer the way professional teams do:
 - **`MockMvc`**: `perform(get(...))`, `andExpect(status()...)`, `andExpect(jsonPath("$.field").value(...))`.
 - Read a failure: test name, line, expected and actual.
 
+:::photo{src="/lesson-images/spring/spring-25-notes.webp" alt="Handwritten notes about Testing controllers: @WebMvcTest: only the web layer, @MockitoBean fakes the service, MockMvc: perform, andExpect, jsonPath checks the JSON, a good test fails on wrong code" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 26: testing what a mock cannot, the database queries themselves.
 :::

@@ -4,6 +4,10 @@ a machine you may never log into, maybe ten copies of it behind a load balancer,
 customer says "my order failed", you have two ways to find out what happened: the app's **logs**, and its
 **health**.
 
+:::photo{src="/lesson-images/spring/cern-server-room.webp" alt="A large server room at CERN: long rows of metal racks under bright ceiling lights, with no person in sight" credit="Florian Hirzinger" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:CERN_Server_03.jpg"}
+A server room at CERN. Rows of machines, and nobody watching a terminal: logs and health checks are how you see inside.
+:::
+
 Spring Boot has both built in. Logging, through **SLF4J** and **Logback**, writes structured, filterable log lines.
 **Actuator**, which you added in chapter 2, exposes operational endpoints like `/actuator/health`. This chapter
 teaches you to use both the way production teams do.
@@ -257,6 +261,10 @@ You can now see what a running app is doing:
 - **Actuator**: `/actuator/health` (UP 200 / DOWN 503, for load balancers), `/actuator/info` (facts you choose),
   `/actuator/metrics`. Expose them on purpose with `management.endpoints.web.exposure.include`.
 - `management.info.env.enabled=true` + `info.*` properties fill the info endpoint.
+
+:::photo{src="/lesson-images/spring/spring-27-notes.webp" alt="Handwritten notes about Logging and health: Logger, never System.out, TRACE DEBUG INFO WARN ERROR, curly-brace placeholders, /actuator/health: UP or DOWN, /actuator/info" ai="true"}
+One page of notes for this chapter.
+:::
 
 Next, chapter 28: right now anyone can call any endpoint. Security.
 :::

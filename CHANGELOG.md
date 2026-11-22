@@ -1,5 +1,15 @@
 # Changelog
 
+## 22 November: Spring Boot gets handwritten notes on every recap and two real photos
+
+- 31 handwritten notes pages (`frontend/public/lesson-images/spring/spring-00-notes.webp` to `spring-30-notes.webp`),
+  one on each chapter's recap, made with the approved OpenAI key and checked letter by letter (chapter 25's page
+  regenerated once: it showed code in curly quotes).
+- Real photos (Wikimedia, credited): the NeXT computer at CERN that ran the first web server, with its "DO NOT POWER
+  IT DOWN" label (chapter 1, Coolcaesar, CC BY-SA 3.0), and a CERN server room for "seeing a server you cannot see"
+  (chapter 27, Florian Hirzinger, CC BY-SA 3.0).
+- Photo alt texts must not contain curly braces: the block's attribute list ends at the first one.
+
 ## 22 November: the dashboard's Continue card shows a retro computer for coding labs
 
 - The owner chose a split: labs where you write code (tracks `languages`, `frameworks` and the future `ai`) show a

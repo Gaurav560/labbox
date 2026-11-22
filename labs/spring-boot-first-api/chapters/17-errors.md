@@ -273,5 +273,9 @@ Your API now fails clearly and consistently:
   400 problem with it.
 - Unexpected errors: log the details on the server, give the client a short, generic 500.
 
+:::photo{src="/lesson-images/spring/spring-17-notes.webp" alt="Handwritten notes about Errors: unhandled exception = 500, @RestControllerAdvice, @ExceptionHandler(X.class), ProblemDetail: title, status, detail, log details, show a short 500" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 18: code that runs around every request, with filters and interceptors.
 :::

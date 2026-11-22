@@ -293,6 +293,10 @@ You wrote your first two endpoints. You now know:
 - After changing code: stop, build and run again.
 - You can test with curl, and see GET responses in the **Preview** tab.
 
+:::photo{src="/lesson-images/spring/spring-03-notes.webp" alt="Handwritten notes about First endpoints: @RestController, @GetMapping('/hello'), return value = response body, records become JSON, change code: rebuild, rerun" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 4 slows down and follows exactly what happens when the app starts: how Spring found your
 controller in the first place.
 :::

@@ -336,5 +336,9 @@ The Shop API now stores its products in a real database:
   `DataIntegrityViolationException`.
 - **`--spring.jpa.show-sql=true`** shows every query Hibernate runs. Read it.
 
+:::photo{src="/lesson-images/spring/spring-19-notes.webp" alt="Handwritten notes about Databases and JPA: rows, columns, primary key, JPA + Hibernate = ORM, @Entity, @Id, @GeneratedValue, JpaRepository writes itself, HikariCP pools connections" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 20: asking the database real questions, with queries Spring Data writes from method names.
 :::

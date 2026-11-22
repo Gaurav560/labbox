@@ -283,5 +283,9 @@ You can now call other services safely:
 - **Always set timeouts**; one slow dependency can otherwise use up every thread.
 - A failing dependency becomes a fast **503** from your API.
 
+:::photo{src="/lesson-images/spring/spring-29-notes.webp" alt="Handwritten notes about Calling other services: RestClient from the Builder, base URL is a setting, 4xx and 5xx become exceptions, ALWAYS set timeouts, slow dependency? fast 503" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 30, the capstone: a complete checkout, built by you, using everything from this course.
 :::

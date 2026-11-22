@@ -303,6 +303,10 @@ You can now configure a Spring Boot app the way real teams do:
   `--spring.profiles.active=prod` (or `SPRING_PROFILES_ACTIVE=prod`); the log shows the active profile.
 - Secrets never go into files committed with the code.
 
+:::photo{src="/lesson-images/spring/spring-07-notes.webp" alt="Handwritten notes about Configuration and profiles: settings live outside the code, @ConfigurationProperties, file < profile < env < command line, application-prod.yml, no secrets in git!" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 8 answers a question you have had since chapter 0: how does Spring Boot decide what to
 configure for you? You will build a small auto-configuration yourself.
 :::

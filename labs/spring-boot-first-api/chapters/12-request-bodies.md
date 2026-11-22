@@ -255,5 +255,9 @@ You can now accept data safely and control exactly what you send:
   what a client may see (no leaks); the internal model holds everything.
 - Money in paise, formatted with `String.format("Rs %d.%02d", paise / 100, paise % 100)`.
 
+:::photo{src="/lesson-images/spring/spring-12-notes.webp" alt="Handwritten notes about Request bodies: @RequestBody: JSON to object, no Content-Type: 415, broken JSON: 400, input DTO: only what clients may set, money in paise" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 13: answering with the right status code, every time, with `ResponseEntity`.
 :::

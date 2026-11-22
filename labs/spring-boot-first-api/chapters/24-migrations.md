@@ -228,6 +228,10 @@ You can now change a database that holds real data, safely:
 - **`ddl-auto=validate`**: Hibernate only checks that tables match entities; Flyway owns the schema.
 - New required columns need a **default** for existing rows; **data** changes are migrations too.
 
+:::photo{src="/lesson-images/spring/spring-24-notes.webp" alt="Handwritten notes about Migrations: Flyway runs numbered SQL scripts, V2__add_stock.sql (two _), each runs once, in order, never edit an applied one, ddl-auto=validate" ai="true"}
+One page of notes for this chapter.
+:::
+
 That completes Part 3: the Shop API has a real, evolving database. Part 4 makes it production-ready, starting
 with chapter 25: writing your own tests.
 :::

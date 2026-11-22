@@ -284,5 +284,9 @@ The start-up second is no longer a black box. You know:
   silently ignored, so its endpoints answer 404.
 - `@Value("${name:default}")` reads a setting into a field; without a default, a missing setting stops the app.
 
+:::photo{src="/lesson-images/spring/spring-04-notes.webp" alt="Handwritten notes about How the app starts: SpringApplication.run, scan, auto-configure, create beans, @SpringBootApplication = 3 in 1, only scans its own package and below, @Value reads a setting" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 5: what exactly are those "objects Spring creates and connects"? Beans, and the application context.
 :::

@@ -210,5 +210,9 @@ Your API can now serve big catalogues:
 - **`@Query`** with **JPQL** writes your own queries about entities and fields, with **named parameters**
   (`:name` + `@Param`), checked at start-up, safe from SQL injection.
 
+:::photo{src="/lesson-images/spring/spring-22-notes.webp" alt="Handwritten notes about Paging: the database pages: limit, offset, Pageable from ?page=&size=&sort=, page numbers start at 0, @Query with JPQL, named parameters: :name" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 23: when one action changes several rows, they must all succeed or all fail. Transactions.
 :::

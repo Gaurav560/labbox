@@ -325,6 +325,10 @@ Auto-configuration is no longer magic. You know:
 - **`ObjectProvider<T>`** injects a bean that may not exist.
 - `--debug` prints the **conditions evaluation report**: every decision, with its reason.
 
+:::photo{src="/lesson-images/spring/spring-08-notes.webp" alt="Handwritten notes about Auto-configuration: @Bean in a @Configuration class, yours first, auto-config after, @ConditionalOnMissingBean, ObjectProvider: maybe a bean, --debug shows every decision" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 9 follows a bean through its whole life: when it is created, how it can prepare itself, how
 many copies exist, and what happens when the app shuts down.
 :::

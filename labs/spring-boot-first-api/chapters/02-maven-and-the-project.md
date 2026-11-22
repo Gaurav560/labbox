@@ -300,5 +300,9 @@ You can now read and change the heart of any Spring Boot project:
   runs with `java -jar`.
 - You added the Actuator, and a health endpoint appeared without any Java code.
 
+:::photo{src="/lesson-images/spring/spring-02-notes.webp" alt="Handwritten notes about Maven and the project: pom.xml = what the project needs, a starter = a bundle of libraries, src/main/java, src/test/java, mvn package makes a jar, target/ can be deleted" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 3: your first endpoints. You will write the Java side of the HTTP conversations from chapter 1.
 :::

@@ -295,6 +295,10 @@ You can now handle the most common dependency injection situations:
 - **`List<Type>`** in a constructor gets **all** the beans of that type; add a class, and it joins the list.
 - `.map(...)` in a stream turns each item into something else.
 
+:::photo{src="/lesson-images/spring/spring-06-notes.webp" alt="Handwritten notes about Dependency injection: depend on an interface, Spring injects by type, @Primary = the default, @Qualifier picks one, List<Type> gets them all" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 7 is about configuration: settings files, YAML, typed settings classes, and different
 settings for development and production with profiles.
 :::

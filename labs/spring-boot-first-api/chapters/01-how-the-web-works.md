@@ -28,6 +28,13 @@ answer any request.)
 
 Both the request and the response are just **text**, in a fixed format. That is the nice thing about
 HTTP: you can read it with your own eyes. Let's look at one.
+
+It all began on one machine. In 1990 at CERN, Tim Berners-Lee wrote the first web server and the first browser on
+this NeXT computer. The label on it says it all: "This machine is a server. DO NOT POWER IT DOWN!!"
+
+:::photo{src="/lesson-images/spring/first-web-server.webp" alt="The NeXT computer at CERN that ran the first web server, with a handwritten label on the case saying This machine is a server, DO NOT POWER IT DOWN, next to its keyboard and Tim Berners-Lee's proposal" credit="Coolcaesar at English Wikipedia" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:First_Web_Server.jpg"}
+The first web server, at CERN. Every Spring Boot app you build is its great-grandchild.
+:::
 :::
 
 :::step{type=concept title="What a request looks like"}
@@ -382,6 +389,10 @@ You can now read any HTTP conversation:
 - **JSON**: objects, arrays, strings in double quotes, numbers, booleans and null.
 - With **curl** you can play the client: `-i` to see headers, `-X` for the method, `-H` for a header,
   `-d` for a body.
+
+:::photo{src="/lesson-images/spring/spring-01-notes.webp" alt="Handwritten notes about How the web works: request: method, path, headers, body, 2xx ok, 4xx client, 5xx server, GET reads, POST creates, PUT replaces, PATCH changes, curl -i shows the headers" ai="true"}
+One page of notes for this chapter.
+:::
 
 Everything from here on is about writing the server side of these conversations in Spring. First, chapter
 2 looks at the project itself: Maven and the pom.xml.

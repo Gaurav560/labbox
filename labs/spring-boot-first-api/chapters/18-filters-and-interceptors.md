@@ -247,6 +247,10 @@ You can now run code around every request:
 - A **request id** (`X-Request-Id`, a UUID, or the caller's own) lets you follow one request through
   every log and service.
 
+:::photo{src="/lesson-images/spring/spring-18-notes.webp" alt="Handwritten notes about Filters and interceptors: filter: every request, before Spring, interceptor: around the controller, register in WebMvcConfigurer, X-Request-Id follows one request, pick the right hook" ai="true"}
+One page of notes for this chapter.
+:::
+
 That completes Part 2: you can build a complete, well-behaved REST API. Part 3 gives it a real database,
 starting with chapter 19.
 :::

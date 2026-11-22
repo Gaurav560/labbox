@@ -236,5 +236,9 @@ Your endpoints now tell the truth:
 - **Delete**: `204`, or `404` when there was nothing; the status can be chosen at run time.
 - An empty list is `200 []`, not 404.
 
+:::photo{src="/lesson-images/spring/spring-13-notes.webp" alt="Handwritten notes about Status codes: ResponseEntity = status + headers + body, create: 201 + Location, delete: 204 or 404, empty list is 200 [], .build() or .body(x)" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 14: the controller is getting busy. Time to split the work into layers.
 :::

@@ -213,5 +213,9 @@ You can now test queries properly:
 - **AssertJ**: `assertThat(list).containsExactly(...)` checks elements *and* order; `contains` and `hasSize` do not.
 - A test's value is the bug it can catch. Ask "if someone breaks this, will my test notice?"
 
+:::photo{src="/lesson-images/spring/spring-26-notes.webp" alt="Handwritten notes about Testing data: @DataJpaTest + embedded database, each test rolls back, rows that should NOT be found too, containsExactly checks order, would it catch the bug?" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 27: when the app is running on a server, how do you know what it is doing? Logs and health checks.
 :::

@@ -388,6 +388,10 @@ Look at what you have learned in this chapter:
 - You know there is **one shared object per bean**, and why `new` can quietly break that.
 - And when you see "required a bean of type ... that could not be found", you know exactly what to fix.
 
+:::photo{src="/lesson-images/spring/spring-05-notes.webp" alt="Handwritten notes about Beans: bean = object Spring looks after, @Component, @Service, ask with a constructor parameter, one shared object per bean, never new a bean yourself" ai="true"}
+One page of notes for this chapter.
+:::
+
 Every Spring app you will ever read is built from these few ideas. Next, chapter 6 goes further with
 dependency injection: what happens when there is more than one bean that fits, and how to choose.
 :::

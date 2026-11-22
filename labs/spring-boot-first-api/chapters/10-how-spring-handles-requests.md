@@ -279,5 +279,9 @@ You can now follow any request through Spring:
 - The same path can have different Java methods for different HTTP methods.
 - One controller object serves every request at once: no per-customer data in fields.
 
+:::photo{src="/lesson-images/spring/spring-10-notes.webp" alt="Handwritten notes about How a request is handled: Tomcat gives it a thread, DispatcherServlet finds the method, 404 no path, 405 wrong method, @RequestMapping('/api/v1') on the class, one controller serves all requests" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 11: reading everything a request carries, from path variables to query parameters and headers.
 :::

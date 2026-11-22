@@ -33,8 +33,27 @@ every session.
    projects checked by `SelfCheckMaven` (offline `mvn package`, then `java -jar`) and `SelfCheckTesting` (the
    learner's FinesTest must pass on the real lateFee and fail on three planted bugs in `tests/pkg/testing/fines/`,
    run with JUnit's console launcher). Self checks get 170 s, the lab's check 200 s. Part 4 (18 capstone: the Long Room photo, hashCode as "which bay")
-   DONE: 18 chapters, 36 tasks, about 13.5 hours. **Next: Spring Boot** gets handwritten notes on all 31 recaps and a
-   few genuine photos (owner chose Java first), then the JavaScript and Go from zero rewrites. Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
+   DONE: 18 chapters, 36 tasks, about 13.5 hours. Spring Boot then got handwritten notes on all 31 recaps and two real photos
+   (first web server, CERN server room): DONE. **Next: the JavaScript from zero rewrite, then Go from zero** (syllabus
+   written here first, then built without asking, per the owner's nap order). Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
+   **JavaScript from zero syllabus** (written 22 November; build without asking). Running project **Mixtape**, a small
+   playlist app (songs, durations, shuffles). Node 22 in `labbox/javascript-basics:v1`, a folder per chapter, a
+   `main`-style demo in every file run with `node file.js`, every chapter and task id kept (progress hangs on them).
+   History: Brendan Eich wrote JavaScript in 10 days at Netscape in 1995; Node.js (Ryan Dahl, 2009).
+   - Part 1 "Starting out": 1 Your first JavaScript program (new `hello-js`: console.log, `node file.js`, a
+     SyntaxError vs a TypeError, the browser console; tasks `hello_mixtape`, `fix_first_errors`), 2 Functions
+     (`01-first-program`), 3 Values and types (`02-values-and-types`: 0.1 + 0.2, typeof null, == vs ===), 4 Decisions,
+     5 Loops, 6 Finding bugs (new `finding-bugs`: stack traces, labelled console.log, the debugger statement; tasks
+     `fix_total_length`, `fix_can_add` as planted bugs).
+   - Part 2 "Working with data": 7 Strings, 8 Arrays, 9 Objects, 10 Counting with objects, sets and maps, 11 Array
+     methods and arrow functions, 12 Modules and JSON (new `modules-and-json`: import/export, require, JSON.stringify
+     and parse; tasks `save_playlist`, `load_playlist`).
+   - Part 3 "Real programs": 13 Errors, 14 Classes, 15 Promises, async/await and the event loop (`12-async`),
+     16 Files and a command-line program (new `files-and-cli`: node:fs, process.argv, stderr, exit codes; tasks
+     `read_playlist`, `playlist_cli`), 17 Testing with node:test (new `testing`: built into Node, no downloads; task
+     `fix_shuffle` red to green, and `test_duration` where the learner's tests must catch planted bugs).
+   - Part 4 "Capstone": 18 the monthly report (`13-capstone`, tasks kept).
+   Photos to look for: Brendan Eich, the Netscape Navigator box or screen, Ryan Dahl. Notes on every recap.
 4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
    17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick; the dashboard's Continue card is a retro computer for
    coding labs and the cassette for the rest (`labDeck` in `brand.ts`).

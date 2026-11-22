@@ -244,5 +244,9 @@ You can now organise a Spring app the way professional teams do:
 - Services return plain data, never `ResponseEntity`.
 - `mapToInt(...).sum()` adds up values from a stream.
 
+:::photo{src="/lesson-images/spring/spring-14-notes.webp" alt="Handwritten notes about Layers: controller speaks HTTP, service holds the rules, repository stores data, each calls only the one below, one rule, one place" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 15: changing existing products properly, with PUT and PATCH.
 :::

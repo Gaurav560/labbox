@@ -274,5 +274,9 @@ You can now map and load related data, efficiently:
 - Fix it with **`@Query("select distinct o from Order o join fetch o.items")`** (JPQL talks about entities and fields).
 - Return **DTOs**, not entities with relationships.
 
+:::photo{src="/lesson-images/spring/spring-21-notes.webp" alt="Handwritten notes about Relationships: @ManyToOne + @JoinColumn, @OneToMany(mappedBy = ...), lazy: loaded when touched, N+1: one query per row!, fix with join fetch" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 22: when there are thousands of products, nobody wants them all at once. Paging, sorting and your own queries.
 :::

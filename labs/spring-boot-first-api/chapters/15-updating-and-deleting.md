@@ -279,5 +279,9 @@ Products in the Shop API now have the full set of operations:
 - `condition ? a : b` picks a value; `ResponseEntity.of(optional)` answers 200 or 404 from an Optional.
 - **DELETE** answers 204, is idempotent, and real systems often soft-delete instead.
 
+:::photo{src="/lesson-images/spring/spring-15-notes.webp" alt="Handwritten notes about Updating and deleting: PUT replaces the whole thing, PATCH changes only what is sent, Integer, not int: null = not sent, DELETE: 204, idempotent, soft delete in real systems" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 16: never trust a request body. Validation, done properly.
 :::

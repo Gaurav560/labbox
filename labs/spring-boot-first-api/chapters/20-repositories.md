@@ -236,6 +236,10 @@ You can now ask the database real questions, without writing SQL:
 - Let the **database** filter and sort (`where`, `order by`), not Java after `findAll()`.
 - Check with `existsBy...` and answer **409 Conflict** for duplicates; keep the unique constraint as the net.
 
+:::photo{src="/lesson-images/spring/spring-20-notes.webp" alt="Handwritten notes about Repositories: findByNameContaining(...), the method name IS the query, names checked at start-up, let the database filter and sort, duplicate? 409 Conflict" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 21: products are not alone. Orders contain items, items point to products: relationships, and the
 most famous performance trap in JPA.
 :::

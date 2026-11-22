@@ -243,5 +243,9 @@ You can now keep bad data out of your API:
   the server log.
 - `[0-9]{10}`: exactly ten digits.
 
+:::photo{src="/lesson-images/spring/spring-16-notes.webp" alt="Handwritten notes about Validation: @NotBlank @Size @Min @Email, @Valid switches checking on, fails: 400 with every field, most rules allow null, a pattern for exactly ten digits" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 17: turning that exception, and every other error, into clear and consistent JSON answers.
 :::

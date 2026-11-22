@@ -296,5 +296,9 @@ You can now read everything a request carries outside its body:
   `sorted`.
 - A fixed route (`/products/search`) beats a placeholder route (`/products/{id}`).
 
+:::photo{src="/lesson-images/spring/spring-11-notes.webp" alt="Handwritten notes about Reading the request: @PathVariable reads the id from the path, @RequestParam: ?q=pen, bad text gives 400 by itself, not found? throw, never return null, a fixed route beats a placeholder" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 12: the fourth place, the request body, where clients send whole JSON objects.
 :::

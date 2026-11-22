@@ -272,6 +272,10 @@ You now know a bean's whole life:
 - A prototype injected through a singleton's constructor is created **once**; ask each time with
   `ObjectProvider`, or use plain objects for per-request data.
 
+:::photo{src="/lesson-images/spring/spring-09-notes.webp" alt="Handwritten notes about Bean lifecycle: created once at start-up, @PostConstruct: get ready, @PreDestroy: clean up, singleton is shared by everyone, no per-request data in fields" ai="true"}
+One page of notes for this chapter.
+:::
+
 That completes Part 1, the foundations. You now understand what Spring is doing under every API you will
 write. Part 2 begins with chapter 10: exactly what happens to one HTTP request inside Spring, from the
 moment it arrives to the moment the JSON goes back.

@@ -233,6 +233,10 @@ Look back at what you have learned, from "what is a framework" to a working chec
 - **Production basics**: tests for controllers and queries, logs and health checks, security, calling other services
   with timeouts.
 
+:::photo{src="/lesson-images/spring/spring-30-notes.webp" alt="Handwritten notes about Capstone: foundations: HTTP, Maven, beans, REST: requests, DTOs, status codes, data: JPA, paging, transactions, production: tests, logs, security, Spring Boot: done!" ai="true"}
+One page of notes for this chapter.
+:::
+
 These are the building blocks of nearly every Spring Boot service running in production today. You do not just know
 the annotations: you know what Spring is doing underneath each one, how to read its logs and errors, and how to check
 your own work. Well done.

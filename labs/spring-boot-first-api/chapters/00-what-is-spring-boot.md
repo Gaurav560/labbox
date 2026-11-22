@@ -399,5 +399,9 @@ You have covered a lot of ground without writing much code. You now know:
   `application.properties` (its settings).
 - You built and ran a real server, and named it.
 
+:::photo{src="/lesson-images/spring/spring-00-notes.webp" alt="Handwritten notes about What is Spring Boot?: backend: request in, JSON out, framework calls YOUR code, Spring = a container of objects, Boot = sensible defaults, Spring 1.0 in 2004, Boot in 2014" ai="true"}
+One page of notes for this chapter.
+:::
+
 Next, chapter 1 takes a proper look at HTTP and JSON: the language your server will speak.
 :::
