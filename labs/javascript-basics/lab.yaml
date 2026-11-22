@@ -9,7 +9,7 @@ language: javascript
 track: languages
 tags: [javascript, beginner]
 level: beginner
-estimated_minutes: 576
+estimated_minutes: 795
 cover: cover.svg
 cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
 image: labbox/javascript-basics:v1
@@ -368,10 +368,12 @@ chapters:
 - id: 10-errors
   title: Errors
   file: chapters/13-errors.md
-  minutes: 16
+  minutes: 45
+  folder: 13-errors
+  part: Real programs
   tasks:
   - id: parse_age
-    title: 'errors/ages.js: parseAge(text)'
+    title: 'ages.js: parseAge(text)'
     hints:
     - Trim the text first, then decide whether it is only digits.
     - A regular expression like /^\d+$/ matches text made of digits only.
@@ -383,7 +385,7 @@ chapters:
       gives: TypeError
       note: 'message: not a whole number: "abc"'
   - id: safe_sum
-    title: 'errors/ages.js: safeSum(values)'
+    title: 'ages.js: safeSum(values)'
     hints:
     - Number("x") gives NaN, and Number.isNaN tells you when that happened.
     - Number("") gives 0, so an empty value needs its own check.
@@ -396,10 +398,11 @@ chapters:
 - id: 11-classes
   title: Classes
   file: chapters/14-classes.md
-  minutes: 18
+  minutes: 45
+  folder: 14-classes
   tasks:
   - id: bank_account
-    title: 'classes/bank.js: deposit and withdraw'
+    title: 'bank.js: deposit and withdraw'
     hints:
     - Check the amount first, and throw before changing anything.
     - '"Positive" means more than 0; withdraw also needs enough money in the account.'
@@ -411,7 +414,7 @@ chapters:
       gives: RangeError
       note: balance unchanged
   - id: total_area
-    title: 'classes/bank.js: Circle area() and totalArea(shapes)'
+    title: 'bank.js: Circle area() and totalArea(shapes)'
     hints:
     - Circle needs a method with the same name as Rect's.
     - Math.PI times the radius squared; ** 2 squares a number.
@@ -424,10 +427,11 @@ chapters:
 - id: 12-async
   title: Promises and async/await
   file: chapters/15-async.md
-  minutes: 20
+  minutes: 45
+  folder: 15-async
   tasks:
   - id: fetch_all
-    title: 'async/prices.js: fetchAll(items, fetchPrice)'
+    title: 'prices.js: fetchAll(items, fetchPrice)'
     hints:
     - Awaiting inside the loop waits for each price before asking for the next one.
     - Call fetchPrice for every item first, without await, to get an array of promises.
@@ -440,7 +444,7 @@ chapters:
       gives: about 100 ms in all
       note: all at once
   - id: retry
-    title: 'async/prices.js: retry(task, times)'
+    title: 'prices.js: retry(task, times)'
     hints:
     - Loop up to times times, and await the task inside try.
     - When it works, return its result straight away.
@@ -451,13 +455,72 @@ chapters:
       note: on the third try
     - call: retry(alwaysFails, 2)
       gives: throws the last error
+- id: files-and-cli
+  title: Files and a command-line program
+  file: chapters/16-files-and-cli.md
+  minutes: 50
+  folder: 16-files-and-cli
+  tasks:
+  - id: read_playlist
+    title: 'library.js: readPlaylist(path)'
+    hints:
+    - Read the whole file as text, then cut it into lines. The first line is the header, not a song.
+    - Destructure each row into title and seconds. A blank line or a row with no title has an empty title.
+    - Keep a row only when seconds is digits and nothing else, and store seconds as a number.
+    examples:
+    - call: readPlaylist("playlist.csv")[0]
+      gives: '{ title: "Monsoon Drive", seconds: 245 }'
+    - call: readPlaylist("missing.csv")
+      gives: throws (ENOENT)
+  - id: playlist_cli
+    title: 'cli.js: the playlist tool'
+    hints:
+    - The file name the user typed is process.argv[2]. When it is missing, print a usage line with console.error.
+    - Wrap readPlaylist in try and catch. A missing file throws an error whose code is ENOENT.
+    - process.exit(1) for a missing file and process.exit(2) for no file name. Minutes and seconds come from the total with Math.floor and the remainder.
+    examples:
+    - call: node cli.js playlist.csv
+      gives: '4 songs, 17:36 in all / Longest: Slow Sunday'
+    - call: node cli.js missing.csv
+      gives: 'File not found: missing.csv'
+      note: stderr, exit code 1
+- id: testing
+  title: Testing with node:test
+  file: chapters/17-testing.md
+  minutes: 50
+  folder: 17-testing
+  tasks:
+  - id: fix_skip
+    title: 'skip.js: make the red test green'
+    hints:
+    - node --test shows which test failed, its message, and what it got.
+    - With 3 songs the positions are 0, 1 and 2. After 2, Skip must give 0.
+    - The remainder operator % wraps a number around. What is 3 % 3?
+    examples:
+    - call: nextIndex(0, 3)
+      gives: '1'
+    - call: nextIndex(2, 3)
+      gives: '0'
+      note: wraps around
+  - id: test_duration
+    title: 'duration.test.js: tests that catch a broken duration'
+    hints:
+    - 'Read the rules in duration.js: two-digit seconds, hours from one hour up, negative numbers refused.'
+    - Test the edges, where bugs live. A song under ten seconds past the minute, exactly one hour, and just under an hour.
+    - A negative number must throw. assert.throws checks that.
+    examples:
+    - call: node --test
+      gives: your tests pass on the real formatDuration
+      note: and fail on three broken copies of it
 - id: 13-capstone
   title: 'Capstone: a monthly report'
   file: chapters/18-capstone.md
-  minutes: 22
+  minutes: 60
+  folder: 18-capstone
+  part: Capstone
   tasks:
   - id: read_totals
-    title: 'capstone/report.js: warm-up, readTotals(path)'
+    title: 'report.js: readTotals(path)'
     hints:
     - fs.readFileSync(path, "utf8") gives the whole file as text; split it into lines.
     - Skip line 0 (the header) and blank lines, then split each line on commas.
@@ -468,7 +531,7 @@ chapters:
     - call: readTotals("expenses.csv").shopping
       gives: '4095'
   - id: monthly_report
-    title: 'capstone/report.js: monthlyReport(path)'
+    title: 'report.js: monthlyReport(path)'
     hints:
     - Read the rows once, keeping each row's line number (its index plus 1).
     - Sort them into good rows and bad rows; blank lines are neither.

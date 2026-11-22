@@ -1,5 +1,20 @@
 # Changelog
 
+## 22 November: JavaScript from zero rewrite, Parts 3 and 4 (chapters 13 to 18); the course is complete
+
+- Part 3 "Real programs": 13 **Errors** (one broken saved playlist does not stop the others, the quiet failures
+  `NaN` and `undefined`, `?.`, `finally` running before the error leaves); 14 **Classes** (a private `#plays`, the
+  lost-`this` surprise run for real, `extends` and `super`); 15 **Promises and async** ("which line prints first?"
+  answered 1, 4, 3, 2 with a new playing diagram `js-event-loop`, a forgotten `await`, all at once with
+  `Promise.all`); 16 **Files and a command-line program** (new, Ryan Dahl and Node.js, David Calhoun, CC BY 2.0,
+  cropped; tasks `read_playlist` and `playlist_cli` with usage line, `File not found` and exit codes); 17 **Testing
+  with node:test** (new: `fix_skip` red to green, and `test_duration`, where the learner's own tests must catch three
+  planted bugs in `tests/testing/`, run with `node --test`).
+- Part 4 "Capstone": 18 the monthly report (`18-capstone/`): size up the file with `wc` and `uniq -c`, a plan in
+  words, line numbers kept through blank lines, the real output.
+- JavaScript from zero: 18 chapters, 36 tasks, about 13 hours, in four parts, with three real photos, 18 handwritten
+  notes pages and four playing diagrams. Chapter and task ids kept.
+
 ## 22 November: JavaScript from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
 
 - Chapters 7 to 11 moved into numbered folders and rewritten curiosity-first around Mixtape, each opening with a

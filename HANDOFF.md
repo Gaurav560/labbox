@@ -54,7 +54,26 @@ every session.
      `fix_shuffle` red to green, and `test_duration` where the learner's tests must catch planted bugs).
    - Part 4 "Capstone": 18 the monthly report (`13-capstone`, tasks kept).
    Photos to look for: Brendan Eich, the Netscape Navigator box or screen, Ryan Dahl. Notes on every recap.
-   Part 1 (chapters 1 to 6) and Part 2 (7 to 12) DONE. Ryan Dahl's photo (cropped, no cup) waits in the scratchpad for chapter 16 (Node).
+   COMPLETE (22 November): 18 chapters, 36 tasks. Chapter 16 opens with Ryan Dahl; chapter 17's planted bugs live in
+   `tests/testing/`. **Next: Go from zero** (write its syllabus here first, then build without asking).
+   **Go from zero syllabus** (written 22 November; build without asking). Running project **Parcel**, a small parcel
+   tracker (parcels, weights, depots, delivery times): Go's home ground is servers and many things at once. Go
+   1.27 in `labbox/go-basics:v1`, a folder per chapter (each its own package, as now), every chapter and task id
+   kept. History: Robert Griesemer, Rob Pike and Ken Thompson designed Go at Google in 2007 (released 2009), while
+   waiting for a huge C++ build; the Gopher by Renee French.
+   - Part 1 "Starting out": 1 Your first Go program (new `hello-go`: `go run`, package main, Go refusing an unused
+     variable or import; tasks `hello_parcel`, `fix_first_errors`), 2 Functions (`01-first-program`), 3 Numbers and
+     text (`02-numbers-and-text`: integer division, typed constants), 4 Decisions, 5 Loops (Go has only `for`),
+     6 Finding bugs (new `finding-bugs`: a panic and its goroutine trace, `fmt.Printf("%+v")`; planted bugs
+     `fix_total_weight`, `fix_can_load`).
+   - Part 2 "Working with data": 7 Slices and errors (`01-slices-and-errors`, the root `till.go` moves to its own
+     folder), 8 Strings (bytes versus runes: `len("é")` is 2), 9 More slices (the shared backing array surprise),
+     10 Maps and structs (`02-maps-and-structs`), 11 Pointers, 12 Methods and interfaces.
+   - Part 3 "Real programs": 13 Errors in depth, 14 Packages, modules and JSON (new: `go.mod`, imports, struct
+     tags; tasks `save_manifest`, `load_manifest`), 15 Files and a command-line program, 16 Goroutines and channels,
+     17 Testing with `go test` (new: table-driven tests; a red test to fix, and tests that must catch planted bugs).
+   - Part 4 "Capstone": 18 a depot report from a messy manifest file (new).
+   Photos to look for: the Go Gopher (CC BY), Rob Pike or Ken Thompson. Notes on every recap.
 4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
    17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick; the dashboard's Continue card is a retro computer for
    coding labs and the cassette for the rest (`labDeck` in `brand.ts`).

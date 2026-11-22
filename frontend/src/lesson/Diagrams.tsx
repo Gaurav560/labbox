@@ -975,7 +975,27 @@ function JsStackTrace() {
   );
 }
 
+/** JavaScript from zero, chapter 15: the event loop, played step by step on the four-line puzzle. */
+function JsEventLoop() {
+  return (
+    <SketchSteps
+      title="1. start, 2. timer, 3. promise, 4. end"
+      intro="Press Play to follow JavaScript's one worker through the four lines."
+      label="The call stack runs line 1 and prints start; setTimeout hands its job to the timer queue; then the promise hands its job to the promise queue; line 4 prints end and the call stack is empty; now every promise job runs, printing promise; only then does the next timer job run, printing timer; and the loop waits for more work"
+      steps={[
+        { label: "1. run line 1", says: "One worker, the call stack, runs your code from the top: it prints 1. start." },
+        { label: "2. setTimeout: to the timer queue", says: "The timer's job is not run now. It waits in the timer queue, even with 0 ms." },
+        { label: "3. then: to the promise queue", says: "The promise's job waits too, in a separate, faster queue: the promise queue." },
+        { label: "4. run line 4", says: "The worker carries on with your code and prints 4. end. Now your code is finished." },
+        { label: "5. empty stack: promise jobs first", says: "With nothing else to do, the event loop runs every waiting promise job: 3. promise." },
+        { label: "6. then one timer job", says: "Only then does it take the next timer job: 2. timer, after 0 ms. And it goes round again, waiting for more work." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "js-event-loop": JsEventLoop,
   "js-stack-trace": JsStackTrace,
   "node-runs-a-file": NodeRunsAFile,
   "java-try-catch": JavaTryCatch,

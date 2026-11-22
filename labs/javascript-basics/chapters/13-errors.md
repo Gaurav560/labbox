@@ -1,22 +1,27 @@
-:::step{type=story title="Why errors"}
-Real input is never perfect: someone types "abc" as their age, a file has a broken line, a value is
-out of range. A good program does not fall over on the first surprise. It says clearly what went
-wrong, or skips the bad value and carries on.
+:::step{type=story title="What happens when a saved playlist is broken?"}
+Mixtape saves playlists as JSON (chapter 12). One day, one of the files gets damaged: half a line missing. Mixtape
+calls `JSON.parse` on it, the program stops, and every other playlist, all perfectly fine, never loads.
+
+One broken file should not take everything down with it. A good program notices the problem, says what went wrong,
+puts the bad one aside and carries on. That is what **errors** and `try`/`catch` are for.
+
+And JavaScript adds a twist: many of its problems never throw at all. They just quietly hand you `NaN` or
+`undefined` and keep going. Today you learn to handle both: the loud failures and the quiet ones.
 
 :::mission
-In `errors/ages.js`, read an age with clear errors for bad input, and add up a list of values while
-collecting the ones that are not numbers.
+Make `parseAge` refuse bad input with the right kind of error, and make `safeSum` add up the good values while
+collecting the bad ones.
 :::
 :::
 
 :::step{type=concept title="An error is an alarm"}
-Picture a fire alarm in a building. When something goes wrong in one room, the alarm rings and normal
-work stops, until someone whose job it is deals with it.
+Picture a fire alarm in a building. When something goes wrong in one room, the alarm rings and normal work stops,
+until someone whose job it is deals with it.
 
-When JavaScript cannot carry on, it **throws** an error: the current function stops, and JavaScript
-looks for code that will **catch** it. If nobody does, the program ends with a message.
+When JavaScript cannot carry on, it **throws** an error: the current function stops, and JavaScript looks for code
+that will **catch** it. If nobody does, the program ends with a stack trace (chapter 6).
 
-```javascript
+```js
 null.length           // TypeError: Cannot read properties of null
 JSON.parse("{oops")   // SyntaxError
 ```
@@ -26,22 +31,44 @@ An error stops the work until something handles it.
 :::
 :::
 
+:::step{type=try title="One broken playlist, and the rest carry on" file="13-errors/catch.js" line="2-12"}
+Open `catch.js`:
+
+```js
+for (const text of saved) {
+  try {
+    const playlist = JSON.parse(text);
+    console.log("loaded", playlist.name);
+  } catch (error) {
+    console.log("skipped:", error.name, "-", error.message);
+  }
+}
+console.log("all done");
+```
+
+```bash run
+cd /workspace/13-errors && node catch.js
+```
+
+```text
+loaded Rainy day
+skipped: SyntaxError - Expected property name or '}' in JSON at position 1 (line 1 column 2)
+loaded Road trip
+all done
+```
+
+The broken one was skipped; the other two loaded, and `all done` still printed.
+:::
+
 :::step{type=concept title="try and catch"}
 Code that might throw goes in `try`. If it throws, JavaScript jumps to `catch`:
 
-```javascript
-try {
-  const data = JSON.parse(text);
-  console.log("read", data);
-} catch (e) {
-  console.log("that was not valid JSON:", e.message);
-}
-console.log("carrying on");
-```
-
 - If nothing throws, the `catch` block is skipped.
-- If something throws, the rest of `try` is skipped and `catch` runs with the error as `e`.
+- If something throws, the **rest of `try` is skipped** and `catch` runs, with the error object as `error`.
 - Either way, the program **carries on** afterwards.
+
+An error is a real object: `error.name` is its kind (`SyntaxError`, `TypeError`, `RangeError`...) and
+`error.message` says what happened.
 
 :::picture{name="safety-net" concept="try and catch"}
 A thrown error drops out of the risky work and into its handler.
@@ -49,12 +76,12 @@ A thrown error drops out of the risky work and into its handler.
 :::
 
 :::step{type=example title="Worked example: a safe quantity"}
-Your own functions can throw, with a message in your own words:
+Your own functions can throw, with a message in your own words, and the **right kind** of error:
 
-```javascript
+```js
 function parseQuantity(text) {
-  const q = Number(text);
-  if (!Number.isInteger(q)) {
+  const q = Number(text.trim());
+  if (!Number.isInteger(q) || text.trim() === "") {
     throw new TypeError(`not a whole number: "${text}"`);
   }
   if (q < 1) {
@@ -64,121 +91,180 @@ function parseQuantity(text) {
 }
 ```
 
-1. Text that is not a whole number gets a `TypeError` (the wrong **kind** of value).
-2. A number that makes no sense gets a `RangeError` (the right kind, out of range).
-3. Each message names the bad value, so the person can fix it.
-
-:::trace{title="parseQuantity with three inputs"}
-| text | Number(text) | whole? | q < 1? | result |
-|---|---|---|---|---|
-| "3" | 3 | yes | no | returns 3 |
-| "2.5" | 2.5 | no |  | TypeError: not a whole number: "2.5" |
-| "0" | 0 | yes | yes | RangeError: quantity must be at least 1: 0 |
-:::
+1. `TypeError` for "this is not even the right kind of value"; `RangeError` for "a number, but out of bounds".
+2. The message names the bad value, so whoever reads it knows exactly which input was wrong.
+3. `Number.isInteger` refuses `NaN`, decimals and Infinity in one test. And watch out: `Number("")` is `0`, so empty
+   text needs its own check.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
 What does this print?
 
-```javascript
+```js
 try {
-  throw new Error("boom");
-  console.log("A");
-} catch (e) {
-  console.log("B");
+  const data = JSON.parse("{bad}");
+  console.log("parsed");
+} catch (error) {
+  console.log("caught");
 }
-console.log("C");
+console.log("done");
 ```
 :::
-- [ ] `A`, `B`, `C`
-- [x] `B`, `C`
-- [ ] `A`, `C`
-- [ ] Only `B`
+- [ ] `parsed` then `done`
+- [x] `caught` then `done`
+- [ ] Only `caught`
 :::explain
-`throw` stops the `try` block at once, so `A` never prints. `catch` prints `B`, and then the program
-carries on with `C`.
+`JSON.parse` throws, so the rest of `try` is skipped, `catch` runs, and the program carries on with `done`.
 :::
 :::
 
-:::step{type=try title="Catch one, carry on"}
+:::step{type=task task=parse_age title="Your turn: read an age, or refuse it"}
+Open `ages.js` and finish `parseAge(text)`:
+
+- spaces around the number are fine: `parseAge(" 42 ")` gives `42`;
+- text that is not a whole number (`"abc"`, `"12.5"`, `""`, `"-1"`) throws a **TypeError**;
+- a number above 150 throws a **RangeError**;
+- both messages name the bad value.
+
 ```bash run
-node -e 'for (const t of ["42", "abc", "7"]) { try { const n = Number(t); if (Number.isNaN(n)) throw new TypeError("not a number: " + t); console.log(t, "->", n); } catch (e) { console.log(t, "-> problem:", e.message); } }'
+cd /workspace/13-errors && node ages.js
 ```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=parse_age title="Warm-up: read an age"}
-Make `parseAge(text)` return a whole number from 0 to 150, ignoring spaces at the ends:
+:::step{type=try title="The quiet failures" file="13-errors/quiet.js" line="2-6"}
+Now the twist. Open `quiet.js`: four lines that look like bugs, and not one of them throws:
 
-- `parseAge("17")` returns `17`, and `parseAge(" 42 ")` returns `42`
-- text that is not a whole number (`"abc"`, `"12.5"`, `""`, `"-1"`) throws a `TypeError`
-- `parseAge("151")` throws a `RangeError`
-- every message names the bad value
+```bash run
+cd /workspace/13-errors && node quiet.js
+```
+
+```text
+NaN
+NaN
+undefined
+undefined
+```
+
+A missing property times 2 is `NaN`. Text that is not a number becomes `NaN`. A slot past the end of an array is
+`undefined`. And `song.artist?.name` uses **optional chaining**: `?.` means "if this is null or undefined, stop and give
+`undefined`", which is how you read deep into data that may be missing without a crash.
 :::
 
 :::step{type=concept title="NaN: the quiet failure"}
-Not every problem throws. `Number("x")` does not crash; it gives `NaN`, "not a number", which then
-quietly spoils every sum it touches. And `Number("")` gives `0`, not `NaN`, which is even sneakier.
+`NaN` is the sneakiest of them all. It never throws; it just spreads:
 
-```javascript
-Number("12.5")          // 12.5
-Number("x")             // NaN
+```js
+Number("12.5")              // 12.5
+Number("x")                 // NaN
+NaN + 5                     // NaN: one NaN spoils the whole total
 Number.isNaN(Number("x"))   // true: the safe test
-Number("")              // 0, careful!
+Number("")                  // 0, careful!
 ```
 
-So when you read values, test them yourself: skip or report the bad ones.
+So when you read values from outside (a file, a form, a person), test them yourself: skip or report the bad ones,
+before they reach a total.
 
 :::picture{name="spoiled-total" code='NaN' concept="NaN: the quiet failure"}
 A failed conversion can carry a bad value into the next sum without ringing an alarm.
 :::
 :::
 
-:::step{type=task task=safe_sum title="Add the good, report the bad"}
-Make `safeSum(values)` add up the values that are numbers and collect the others, returning both:
+:::step{type=task task=safe_sum title="Your turn: add the good, report the bad"}
+In `ages.js`, make `safeSum(values)` add up every value that is a number (decimals too) and collect the ones that are
+not, giving back `{ total, bad }`.
 
-- `safeSum(["10", "x", "2.5", ""])` returns `{ total: 12.5, bad: ["x", ""] }`
-- `safeSum([])` returns `{ total: 0, bad: [] }`
+`safeSum(["10", "x", "2.5", ""])` gives `{ total: 12.5, bad: ["x", ""] }`: the empty text is bad too, even though
+`Number("")` is 0. An empty list gives `{ total: 0, bad: [] }`.
+
+```bash run
+cd /workspace/13-errors && node ages.js
+```
+
+Then press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=concept title="finally: the clean-up that always runs" file="13-errors/finally.js" line="2-19"}
+Sometimes code must run whatever happens: turn the speaker off, close a file. That is `finally`. Open `finally.js`
+and run it:
+
+```bash run
+cd /workspace/13-errors && node finally.js
+```
+
+```text
+speaker on for Neon Lanes
+playing Neon Lanes
+speaker off
+speaker on for 
+speaker off
+refused: no title to play
+```
+
+Look at the order for the empty title: `speaker off` comes **before** `refused`. The error was on its way out of
+`play`, and JavaScript stopped to run `finally` first. Success or failure, the speaker was turned off.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-When does a `finally` block run?
+Which kind of error fits "age 200 is too big"?
 :::
-- [ ] Only when an error happened
-- [ ] Only when no error happened
-- [x] Always, error or not
-- [ ] Never, unless you call it
+- [ ] `TypeError`
+- [x] `RangeError`
+- [ ] `SyntaxError`
 :::explain
-`finally` always runs after `try` and `catch`, which makes it the place for clean-up.
+It is a number (the right type), just outside the allowed range.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What is `Number("12a")`?
+What is `undefined?.name`?
 :::
-- [ ] `12`
-- [x] `NaN`
-- [ ] An error is thrown
-- [ ] `"12a"`
+- [ ] A TypeError
+- [x] `undefined`
+- [ ] `""`
 :::explain
-`Number` does not throw: anything it cannot read becomes `NaN`. Test with `Number.isNaN`.
+Optional chaining stops at `undefined` and gives `undefined` instead of throwing.
 :::
 :::
 
-:::step{type=deep-dive title="Error types, and catching too much"}
-JavaScript's built-in errors include `TypeError`, `RangeError`, `SyntaxError` and `ReferenceError`
-(using a name that does not exist). You can create your own with `class AgeError extends Error {}`.
-
-Catch only what you expect and can handle. An empty `catch (e) {}` swallows every problem, including
-real bugs, and makes failures silent: one of the most common causes of "it just stopped working" in
-production systems.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+`try` throws and nothing catches the error in this function. Does `finally` still run?
+:::
+- [x] Yes, before the error leaves the function
+- [ ] No
+:::explain
+`finally` always runs, whether `try` finished, returned or threw.
+:::
 :::
 
-:::step{type=recap title="Chapter done"}
-- An error is an alarm: work stops until a `catch` handles it.
-- `try { } catch (e) { }` handles what you expect; then the program carries on.
-- `throw new TypeError(...)` or `RangeError(...)` with a message that names the value.
-- `Number` gives `NaN` (and `0` for `""`) instead of throwing: test values yourself.
+:::step{type=deep-dive title="Go deeper: error.cause, your own error classes, and catching too much"}
+**error.cause.** When you catch one error and throw a clearer one, keep the original:
+`throw new Error("could not load the playlist", { cause: error })`. Node then prints both, the cause under
+`[cause]:`, so nothing is lost.
+
+**Your own error classes.** `class PlaylistError extends Error {}` (classes are next chapter) lets callers catch
+exactly your errors: `if (error instanceof PlaylistError)`.
+
+**Do not catch everything.** An empty `catch (error) {}` swallows every problem, including real bugs, silently. Catch
+what you expect, do something useful, and let the rest go.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Catch errors with `try` and `catch`, read `error.name` and `error.message`, and carry on.
+- Throw the right kind of error (`TypeError`, `RangeError`) with a message that names the bad value.
+- Spot the quiet failures (`NaN`, `undefined`), test with `Number.isNaN`, and read safely with `?.`.
+- Use `finally` for clean-up that must always run.
+
+:::photo{src="/lesson-images/javascript/js-13-notes.webp" alt="Handwritten notes about JavaScript errors: try and catch then carry on, throw new TypeError or RangeError, name the bad value, NaN spreads quietly, Number of empty text is 0, optional chaining, finally always runs" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 14: classes, so Mixtape can make many songs from one blueprint.
 :::

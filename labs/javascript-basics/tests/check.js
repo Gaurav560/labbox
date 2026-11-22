@@ -17,6 +17,10 @@ function report(task, passed, message, expected, actual) {
 
 // What each task teaches when it passes (Content standard: passes teach too).
 const PASS = {
+  read_playlist: "You read a real, messy file and kept only the good rows, with seconds as numbers. A missing file still throws, as it should.",
+  playlist_cli: "A real command-line tool: a clean summary, a usage line, a friendly message for a missing file and the right exit codes.",
+  fix_skip: "Red to green: the test told you exactly what was wrong, and % wraps the playlist around. Now that test guards the rule for good.",
+  test_duration: "Your tests pass on the real formatDuration and caught all three planted bugs. That is what good tests do.",
   save_playlist: "A playlist turned into JSON text with JSON.stringify: now it can go into a file, a database or across the internet.",
   load_playlist: "JSON.parse brought the text back to life, and ?? [] handled a playlist with no songs. That pair is how every web app talks.",
   hello_mixtape: "Mixtape said its first words: two console.log lines, run from top to bottom. Every program starts like this.",
@@ -205,7 +209,7 @@ const CHAPTERS = {
     if (cases("load_playlist", m, "loadPlaylist", [[[two], ["Monsoon Drive", "Neon Lanes"]], [['{"name":"Quiet","songs":[]}'], []], [['{"name":"Old"}'], []]], (a, got) =>
       a[0] === '{"name":"Old"}' ? "This JSON has no songs at all: playlist.songs is undefined. Use ?? [] before map." : typeof got === "string" ? "Parse the text first: JSON.parse(text)." : "")) pass("load_playlist");
   }],
-  "10-errors": ["errors/ages.js", (m) => {
+  "10-errors": ["13-errors/ages.js", (m) => {
     let ok = cases("parse_age", m, "parseAge", [[["17"], 17], [[" 42 "], 42], [["0"], 0], [["150"], 150]]);
     for (const [bad, kind] of ok ? [["abc", TypeError], ["12.5", TypeError], ["", TypeError], ["-1", TypeError], ["151", RangeError]] : []) {
       try {
@@ -220,7 +224,7 @@ const CHAPTERS = {
     if (cases("safe_sum", m, "safeSum", [[[["10", "x", "2.5", ""]], { total: 12.5, bad: ["x", ""] }], [[["1", "2"]], { total: 3, bad: [] }], [[[]], { total: 0, bad: [] }]], (a, got) =>
       got && got.total === 12.5 && got.bad && got.bad.length === 1 ? "An empty string is not a number either, even though Number(\"\") gives 0." : "")) pass("safe_sum");
   }],
-  "11-classes": ["classes/bank.js", (m) => {
+  "11-classes": ["14-classes/bank.js", (m) => {
     try {
       const a = new m.BankAccount("Riya");
       a.deposit(500);
@@ -247,7 +251,7 @@ const CHAPTERS = {
       fail("total_area", e.message + ".");
     }
   }],
-  "12-async": ["async/prices.js", async (m) => {
+  "12-async": ["15-async/prices.js", async (m) => {
     try {
       let running = 0, most = 0;
       const fetchPrice = (item) => {
@@ -277,7 +281,61 @@ const CHAPTERS = {
       fail("retry", e.message + ".");
     }
   }],
-  "13-capstone": ["capstone/report.js", (m) => {
+  "files-and-cli": ["16-files-and-cli/library.js", (m) => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "labbox-cli-"));
+    const csv = path.join(tmp, "mix.csv");
+    fs.writeFileSync(csv, "title,seconds\nAlpha,100\n\nBeta,abc\n,90\nGamma,215\nDelta,-5\n");
+    if (cases("read_playlist", m, "readPlaylist", [[[csv], [{ title: "Alpha", seconds: 100 }, { title: "Gamma", seconds: 215 }]]], (a, got) =>
+      Array.isArray(got) && got.some((x) => typeof x.seconds === "string") ? "seconds should be a number: Number(seconds)." :
+      Array.isArray(got) && got.some((x) => !x.title) ? "A row with no title is not a song: skip it." :
+      Array.isArray(got) && got.length > 2 ? "Skip the header, blank lines, and seconds that are not a whole number (abc, -5)." : "")) {
+      let threw = false;
+      try { m.readPlaylist(path.join(tmp, "missing.csv")); } catch { threw = true; }
+      if (threw) pass("read_playlist");
+      else fail("read_playlist", "a missing file should throw. readFileSync does that for you: do not catch it inside readPlaylist.");
+    }
+    const run = (...args) => {
+      const r = require("node:child_process").spawnSync(process.execPath, ["cli.js", ...args], { cwd: path.join(W, "16-files-and-cli"), encoding: "utf8", timeout: 15000 });
+      return { out: r.stdout ?? "", err: r.stderr ?? "", code: r.status };
+    };
+    if (!fs.existsSync(path.join(W, "16-files-and-cli", "cli.js"))) { fail("playlist_cli", "16-files-and-cli/cli.js is missing from your workspace."); return; }
+    const ok = run(csv);
+    const want = "2 songs, 5:15 in all\nLongest: Gamma\n";
+    const missing = path.join(tmp, "nope.csv");
+    if (ok.code !== 0) fail("playlist_cli", `node cli.js mix.csv stopped with exit code ${ok.code}: ${firstError(ok.err) || "see Output"}.`);
+    else if (ok.out !== want) fail("playlist_cli", `for a playlist of Alpha (100 s) and Gamma (215 s), node cli.js printed ${show(ok.out.trimEnd())}, but it should print two lines: "2 songs, 5:15 in all" and "Longest: Gamma".`, show(want.trimEnd()), show(ok.out.trimEnd()));
+    else {
+      const gone = run(missing);
+      const none = run();
+      if (gone.code !== 1 || !gone.err.includes(`File not found: ${missing}`)) fail("playlist_cli", `for a missing file, console.error should say "File not found: <path>" and the exit code be 1; got exit code ${gone.code} and ${show(gone.err.trim().split("\n")[0] ?? "")}.`);
+      else if (/\n\s+at /.test(gone.err)) fail("playlist_cli", "for a missing file, show only the friendly message, not a stack trace: catch the ENOENT error.");
+      else if (none.code !== 2 || none.err.trim() === "") fail("playlist_cli", `with no file name, print a usage line with console.error and exit with code 2; got exit code ${none.code}.`);
+      else pass("playlist_cli");
+    }
+  }],
+  "testing": ["17-testing/skip.js", (m) => {
+    if (cases("fix_skip", m, "nextIndex", [[[0, 3], 1], [[1, 3], 2], [[2, 3], 0], [[4, 5], 0], [[0, 1], 0]], (a) =>
+      a[0] === a[1] - 1 ? "After the last song, Skip goes back to position 0. The remainder operator % wraps around." : "")) pass("fix_skip");
+    const test = path.join(W, "17-testing", "duration.test.js");
+    if (!fs.existsSync(test)) { fail("test_duration", "17-testing/duration.test.js is missing. Your tests for formatDuration go there."); return; }
+    const runWith = (variant) => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), `labbox-test-${variant}-`));
+      fs.copyFileSync(path.join("/check/tests/testing", variant, "duration.js"), path.join(dir, "duration.js"));
+      fs.copyFileSync(test, path.join(dir, "duration.test.js"));
+      const r = require("node:child_process").spawnSync(process.execPath, ["--test", "--test-reporter=spec", "duration.test.js"], { cwd: dir, encoding: "utf8", timeout: 30000 });
+      return { code: r.status, out: (r.stdout ?? "") + (r.stderr ?? "") };
+    };
+    const good = runWith("good");
+    if (good.code !== 0) {
+      const line = good.out.split("\n").map((l) => l.trim()).find((l) => l.startsWith("✖") || l.includes("Error")) ?? "see Output";
+      console.log(good.out);
+      fail("test_duration", `your tests fail on the correct formatDuration, so one of them expects the wrong answer (${line}). Work it out from the rules again.`);
+    } else if (runWith("nopad").code === 0) fail("test_duration", "your tests all pass even when formatDuration forgets the leading zero (245 seconds shown as 4:5). Test a song whose seconds are below ten.");
+    else if (runWith("nohours").code === 0) fail("test_duration", "your tests all pass even when hours only start at two hours (3600 seconds shown as 60:00). Test exactly one hour.");
+    else if (runWith("negative").code === 0) fail("test_duration", "your tests all pass even when formatDuration quietly gives 0:00 for -1 instead of refusing it. Test that a negative number throws, with assert.throws.");
+    else pass("test_duration");
+  }],
+  "13-capstone": ["18-capstone/report.js", (m) => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lb-"));
     process.chdir(dir); // the files below are named as a learner would name them
     const csv = "march.csv";
@@ -304,7 +362,7 @@ const TASKS = {
   "03-decisions": ["grade", "leap_year"], "04-loops": ["sum_to", "count_vowels"], "05-strings": ["count_words", "clean_name"],
   "06-arrays": ["top_n", "unique"], "07-objects": ["cart_total", "with_discount"], "08-objects-and-sets": ["word_counts", "common_items"],
   "09-array-methods": ["passing", "sort_by_length"], "10-errors": ["parse_age", "safe_sum"], "11-classes": ["bank_account", "total_area"],
-  "12-async": ["fetch_all", "retry"], "13-capstone": ["read_totals", "monthly_report"],
+  "12-async": ["fetch_all", "retry"], "files-and-cli": ["read_playlist", "playlist_cli"], "testing": ["fix_skip", "test_duration"], "13-capstone": ["read_totals", "monthly_report"],
 };
 
 (async () => {
