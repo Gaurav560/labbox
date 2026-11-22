@@ -25,7 +25,7 @@ generics-records-enums|12-generics-records-enums|modern|CheckModern|loan_record 
 12-files-and-cli|15-files-and-cli|files|CheckFiles|read_totals summary_cli
 packages-and-maven|16-packages-and-maven|maven|SelfCheckMaven|package_catalog runnable_jar
 testing|17-testing|testing|SelfCheckTesting|test_late_fee fix_renewal
-13-capstone|capstone|capstone|CheckCapstone|fix_book monthly_report
+13-capstone|18-capstone|capstone|CheckCapstone|fix_book monthly_report
 "
 
 fail_all() { # tasks message

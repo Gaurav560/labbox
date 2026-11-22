@@ -11,7 +11,7 @@ tags:
 - java
 - beginner
 level: beginner
-estimated_minutes: 595
+estimated_minutes: 815
 cover_scene: A calm desk with a laptop showing a few lines of Java and a coffee cup, soft morning light.
 cover: cover.svg
 cover_credit:
@@ -526,10 +526,12 @@ chapters:
 - id: 13-capstone
   title: 'Capstone: a monthly report'
   file: chapters/18-capstone.md
-  minutes: 25
+  minutes: 60
+  folder: 18-capstone
+  part: Capstone
   tasks:
   - id: fix_book
-    title: 'capstone/Book.java: warm-up, fix the inherited class'
+    title: 'Book.java: fix the inherited class'
     hints:
     - 'Put two equal books in a HashSet: how many does it hold?'
     - A HashSet asks hashCode first; equal objects must have equal hash codes.
@@ -541,7 +543,7 @@ chapters:
     - call: "map.get(sameIsbnCopy)"
       gives: "the value stored for book"
   - id: monthly_report
-    title: 'capstone/Report.java: monthly(path)'
+    title: 'Report.java: monthly(path)'
     hints:
     - 'Read the lines and keep their numbers: the header is line 1.'
     - A row is bad when its category is empty or its amount is not a number; blank lines are skipped,

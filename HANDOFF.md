@@ -17,7 +17,7 @@ every session.
    notes (31 recaps and a few genuine photos), then the JavaScript from zero and Go from zero rewrites (same
    treatment as Python; write each syllabus here first, then build without asking). OpenAI key approved for notes.
    Notes doodles are never a cup or a drink; no chai or tea anywhere.
-   **Now: Java from zero rewrite** (owner approved the syllabus on 22 November, 10:30: "start building the Java
+   **Java from zero rewrite: COMPLETE (22 November)** (owner approved the syllabus on 22 November, 10:30: "start building the Java
    one"; OpenAI key OK for Java's handwritten notes). 18 chapters, running project **Shelf** (a small library app),
    same treatment as Python (curiosity-first, folder per chapter, photos, notes, playing diagrams). Design: each
    chapter folder holds default-package classes (no `package` line until chapter 16 teaches packages), each with
@@ -32,10 +32,11 @@ every session.
    keep its versions in step with the chapter poms: JUnit 5.11.4, jar plugin 3.4.2); chapters 16 and 17 are Maven
    projects checked by `SelfCheckMaven` (offline `mvn package`, then `java -jar`) and `SelfCheckTesting` (the
    learner's FinesTest must pass on the real lateFee and fail on three planted bugs in `tests/pkg/testing/fines/`,
-   run with JUnit's console launcher). Self checks get 170 s, the lab's check 200 s. Next: Part 4 (18 capstone). After Java: Spring Boot gets photos and handwritten notes (owner chose
-   Java first). Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
-4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,
-   25 browser tests, 17 labs valid, `scripts/labbox admin list` empty.
+   run with JUnit's console launcher). Self checks get 170 s, the lab's check 200 s. Part 4 (18 capstone: the Long Room photo, hashCode as "which bay")
+   DONE: 18 chapters, 36 tasks, about 13.5 hours. **Next: Spring Boot** gets handwritten notes on all 31 recaps and a
+   few genuine photos (owner chose Java first), then the JavaScript and Go from zero rewrites. Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
+4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
+   17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick.
 
 ## 22 November: UI session with the owner (commits `29b27e6` to `b2ad178`)
 

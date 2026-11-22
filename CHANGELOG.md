@@ -1,5 +1,15 @@
 # Changelog
 
+## 22 November: Java from zero rewrite, Part 4 "Capstone" (chapter 18); the course is complete
+
+- 18. **Capstone**: Shelf's previous developer left a `Book` whose `equals` has no matching `hashCode` (a HashSet
+  keeps two equal books) and a half-finished monthly report. Rewritten curiosity-first: a real run that shows the
+  bug, the Long Room of Trinity College Dublin (Diliff, CC BY-SA 4.0) whose lettered bays explain "hashCode picks
+  the bay, equals picks the book", a plan in words, the line-number trace, `wc` and `uniq -c` on the real file, and
+  the real report output. Files moved to `18-capstone/` (with `expenses.csv`), packages dropped, mains added.
+- Java from zero now has 18 chapters, 36 tasks and about 13.5 hours, in four parts (Starting out, Working with data,
+  Real programs, Capstone), with 4 real photos plus reused ones, 18 handwritten notes pages and 5 playing diagrams.
+
 ## 22 November: finished chapters show a green tick; test data removed from the owner's account
 
 - On a course page's skill map, a finished stop (every task of the chapter passed Check) is now filled green (the

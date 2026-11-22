@@ -48,8 +48,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   quick-start mode); run it only when a change touches the database, migrations or the no-Redis fallbacks;
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (25 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (22 November, course pages and profile panel) (274 backend tests on Postgres and Redis,
-  270 on SQLite, 25 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (22 November, Java from zero rewrite) (276 backend tests on Postgres and Redis,
+  25 browser tests on 4 workers, 17 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
@@ -65,7 +65,7 @@ said about 15 is enough for now, so the platform phases come next.
 
 ## Where we are (keep this current)
 
-- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Go, Java and JavaScript from zero are 13-chapter courses waiting for the same rewrite; Spring Boot is a 31-chapter course, 0 to 30), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
+- Done: phases A to E and G, 17 labs (Redis is a 13-chapter course; Python from zero is a 19-chapter course rewritten curiosity-first with photos and handwritten notes (22 November); Java from zero is an 18-chapter course rewritten the same way (22 November: Shelf the library app, Maven and JUnit offline in the image); Go and JavaScript from zero are 13-chapter courses waiting for the same rewrite; Spring Boot is a 31-chapter course, 0 to 30), real VS Code in labs (IDE | Lite, no marketplace), GitHub-grey theme, AI-first home page.
 - App shape (owner, 22 November): `/labs` is the dashboard (a Continue tape deck in the colour of the lab last
   opened, the chapter rail, the daily drill, lab cards); a lab card opens `/courses/<lab>` (cover, Continue, the
   lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,
