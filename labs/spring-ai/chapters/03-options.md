@@ -74,7 +74,7 @@ chat.prompt()
     .content();
 ```
 
-(Note: you pass the **builder**, without `.build()`: Spring AI 2.0 merges it with the defaults for you.) Options can also
+(Note: you pass the **builder**, without `.build()`: Spring AI 2 merges it with the defaults for you.) Options can also
 be set for the whole app in `application.properties`, such as `spring.ai.openai.chat.options.temperature=0.2`; options on a
 prompt override those for that one request.
 :::

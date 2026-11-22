@@ -10,10 +10,10 @@ language: java
 track: ai
 tags: [java, spring-boot, ai]
 level: intermediate
-estimated_minutes: 240
+estimated_minutes: 695
 cover_scene: "A friendly museum guide robot made of light standing in a science museum hall, with a planetarium dome and a swinging pendulum behind it."
 cover: cover.svg
-cover_credit: { by: "Logos: spring", source: "devicon (MIT)" }
+cover_credit: { by: "Logos: spring-ai", source: "Spring AI reference documentation" }
 image: labbox/spring-ai:v1
 resources: m
 workspace:
@@ -160,3 +160,242 @@ chapters:
     examples:
     - call: /suggest?interest=dinosaurs
       gives: '[three names]'
+- id: memory
+  title: Conversations that remember
+  file: chapters/06-memory.md
+  minutes: 50
+  folder: 06-memory
+  part: Conversations and tools
+  tasks:
+  - id: session_memory
+    title: one session per visitor
+    xp: 20
+    hints:
+    - Memory is an advisor on the ChatClient, built on the session service the constructor receives.
+    - defaultAdvisors(SessionAdvisors.builder(sessions).build()) in the builder; then every call needs a session id.
+    - In chat(), name the session for this call with SessionAdvisors.session(...), passing the visitor id, before call().
+    examples:
+    - call: /chat?visitor=ria ... then What is my name?
+      gives: Your name is Ria!
+  - id: memory_window
+    title: compact long sessions
+    xp: 20
+    hints:
+    - Compaction needs a trigger (when) and a strategy (what to keep), set together on the SessionAdvisors builder.
+    - new TurnCountTrigger(8) fires when the view holds more than 8 turns.
+    - WindowCompactionStrategy.builder().lastTurns(4).build() keeps the last 4 turns; pass both to compaction(...).
+    examples:
+    - call: 10 questions in one session
+      gives: the 10th carries only the last 4 turns
+- id: tools
+  title: 'Tools: let the model call Java'
+  file: chapters/07-tools.md
+  minutes: 55
+  folder: 07-tools
+  tasks:
+  - id: opening_hours_tool
+    title: the opening hours
+    xp: 20
+    hints:
+    - A tool is a method with @Tool(description = ...); its parameters can have @ToolParam(description = ...).
+    - LocalDate.parse(date) reads the date; compare getDayOfWeek() with DayOfWeek.MONDAY.
+    - 'Then offer the tools to the model in AskController: the prompt chain has a tools(...) method; give it the MuseumTools
+      field.'
+    examples:
+    - call: /ask?q=Is the museum open next Monday?
+      gives: closed on Mondays
+  - id: show_times_tool
+    title: planetarium shows
+    xp: 20
+    hints:
+    - A second @Tool method in MuseumTools, with a date parameter like openingHours.
+    - 'The ShowSchedule service already knows the shows: its showsOn(...) takes a LocalDate.'
+    - 'Return the List<Show>: Spring AI sends it to the model as JSON.'
+    examples:
+    - call: /ask?q=Free seats this Saturday?
+      gives: the 14:00 show is fully booked
+- id: tool-safety
+  title: Tools you can trust
+  file: chapters/08-tool-safety.md
+  minutes: 50
+  folder: 08-tool-safety
+  tasks:
+  - id: confirm_booking
+    title: no booking without a yes
+    xp: 20
+    hints:
+    - Spring AI 2.1 can pause before a tool runs, until a person decides.
+    - 'The @Tool annotation has an attribute for that: requiresConfirmation.'
+    - Set it to true on bookSeats; the controller already handles the pause and the decision.
+    examples:
+    - call: /book?... then /book/ID/confirm?yes=true
+      gives: booked only after the yes
+  - id: tool_context
+    title: the right visitor
+    xp: 20
+    hints:
+    - The controller already passes the visitor in the tool context, under the key visitor.
+    - A tool method can take a ToolContext parameter; the model never sees it.
+    - Replace the visitorName parameter with ToolContext context, and read context.getContext().get("visitor").
+    examples:
+    - call: model asks to book for Sam
+      gives: the booking is Ria's
+- id: advisors
+  title: Writing your own advisor
+  file: chapters/09-advisors.md
+  minutes: 50
+  folder: 09-advisors
+  tasks:
+  - id: usage_advisor
+    title: a token meter
+    xp: 20
+    hints:
+    - Everything before chain.nextCall(request) happens on the way in; everything after, on the way back.
+    - 'Keep what chain.nextCall(request) returns: its chatResponse().getMetadata().getUsage() has the tokens.'
+    - Increment calls, add getTotalTokens() to tokens, and return the response.
+    examples:
+    - call: /ask twice, then /meter
+      gives: calls 2, tokens ...
+  - id: language_advisor
+    title: answer in the visitor's language
+    xp: 20
+    hints:
+    - request.context().get(LANGUAGE) is the language the controller passed, or null.
+    - 'Requests are immutable: request.mutate().prompt(...).build() makes a changed copy.'
+    - prompt.augmentSystemMessage(system -> system.mutate().text(...).build()) adds your line to the end of the system text.
+    examples:
+    - call: /ask?q=...&lang=Marathi
+      gives: an answer in Marathi
+- id: mcp
+  title: The Model Context Protocol
+  file: chapters/10-mcp.md
+  minutes: 50
+  folder: 10-mcp
+  tasks:
+  - id: mcp_server
+    title: switch on the MCP server
+    xp: 20
+    hints:
+    - The starter is already in the pom; the server is switched on with properties.
+    - 'spring.ai.mcp.server.protocol chooses the transport: STREAMABLE serves MCP over HTTP at /mcp.'
+    - Also set spring.ai.mcp.server.name to atlas-museum (and a version and instructions if you like).
+    examples:
+    - call: curl -X POST localhost:8080/mcp (initialize)
+      gives: 'serverInfo: atlas-museum'
+  - id: mcp_tools
+    title: offer the museum's tools
+    xp: 20
+    hints:
+    - The MCP server offers every ToolCallbackProvider bean to clients.
+    - MethodToolCallbackProvider.builder().toolObjects(...) turns the @Tool methods of an object into one.
+    - A @Bean method in McpConfig that takes MuseumTools and returns that provider.
+    examples:
+    - call: tools/list
+      gives: today, nextDay, openingHours, planetariumShows
+- id: embeddings
+  title: Embeddings and similarity
+  file: chapters/11-embeddings.md
+  minutes: 50
+  folder: 11-embeddings
+  part: Knowledge
+  tasks:
+  - id: cosine_similarity
+    title: cosine similarity in Java
+    xp: 20
+    hints:
+    - 'One loop over both arrays adds up three sums: a[i] * b[i], a[i] * a[i] and b[i] * b[i].'
+    - The first sum is the dot product; the square roots of the other two are the lengths.
+    - Return the dot product divided by the product of the two lengths.
+    examples:
+    - call: cosine([1, 2], [2, 4])
+      gives: '1.0'
+    - call: cosine([1, 0], [0, 1])
+      gives: '0.0'
+  - id: nearest_exhibit
+    title: the nearest exhibit
+    xp: 20
+    hints:
+    - Embed the question with embeddings.embed(q), and all the exhibits in one request with embed(list).
+    - 'Give each exhibit''s name and description together, like name + ": " + description.'
+    - Keep the name whose vector has the highest Similarity.cosine with the question's vector.
+    examples:
+    - call: /nearest?q=Which exhibit shows that the Earth spins?
+      gives: Foucault pendulum
+- id: vector-store
+  title: Vector stores
+  file: chapters/12-vector-store.md
+  minutes: 45
+  folder: 12-vector-store
+  tasks:
+  - id: add_documents
+    title: load the cards
+    xp: 10
+    hints:
+    - The documents are ready in the list; the vector store is the field store.
+    - VectorStore has an add(...) method that embeds each document as it stores it.
+    - Pass the whole list to the store's add method at the end of run(...).
+    examples:
+    - call: start-up log
+      gives: Loaded 12 exhibit cards into the vector store.
+  - id: search_cards
+    title: search by meaning
+    xp: 20
+    hints:
+    - store.similaritySearch(...) takes a SearchRequest, built with SearchRequest.builder().
+    - The builder has query(...), topK(...) and similarityThreshold(...).
+    - Use q, k and 0.5, then build(); the code below already turns the documents into hits.
+    examples:
+    - call: /search?q=Where is the pendulum?
+      gives: foucault-pendulum.md, 0.64
+- id: etl
+  title: Loading documents
+  file: chapters/13-etl.md
+  minutes: 50
+  folder: 13-etl
+  tasks:
+  - id: read_cards
+    title: read the cards
+    xp: 20
+    hints:
+    - A MarkdownDocumentReader reads one resource; its get() returns the documents.
+    - MarkdownDocumentReaderConfig.builder().withAdditionalMetadata("file", ...) adds the file name to each document.
+    - Loop over the cards, read each one with its own config, and collect all the documents in one list.
+    examples:
+    - call: read(cards)
+      gives: 14 documents from 12 cards
+  - id: split_and_load
+    title: split and load
+    xp: 20
+    hints:
+    - TokenTextSplitter.builder() with withChunkSize(100), then build().
+    - A splitter's apply(documents) returns the chunks; they keep each document's metadata.
+    - Add the chunks to the store, and return them so the report can count them.
+    examples:
+    - call: /etl
+      gives: '{files: 12, documents: 14, chunks: 23}'
+- id: rag
+  title: Retrieval-augmented generation
+  file: chapters/14-rag.md
+  minutes: 55
+  folder: 14-rag
+  tasks:
+  - id: rag_answer
+    title: answer from the cards
+    xp: 20
+    hints:
+    - 'RAG in Spring AI is an advisor: QuestionAnswerAdvisor, built on the vector store.'
+    - QuestionAnswerAdvisor.builder(store) has searchRequest(...); give it topK 3 and similarityThreshold 0.35.
+    - Add it with defaultAdvisors(...) on the ChatClient builder, before build().
+    examples:
+    - call: /ask?q=How much is a ticket for a child?
+      gives: 60 rupees
+  - id: cite_sources
+    title: answers with sources
+    xp: 20
+    hints:
+    - chatClientResponse() at the end of the chain returns the response and the advisor context.
+    - The context key QuestionAnswerAdvisor.RETRIEVED_DOCUMENTS holds the documents that were retrieved.
+    - Map each document to its file metadata, keep each file once, and return them with the answer text.
+    examples:
+    - call: /ask/sourced?q=What did India find on the Moon?
+      gives: chandrayaan-3.md

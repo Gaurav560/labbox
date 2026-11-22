@@ -79,6 +79,8 @@ class Settings(BaseSettings):
     AI_COMPLETION: bool = True  # ghost-text code completion in the editor (alias lab-code)
     LLM_COMPLETION_RPM: int = 30  # editor completions have their own limits
     LLM_COMPLETION_DAILY_TOKENS: int = 200_000
+    LLM_EMBED_RPM: int = 300  # embeddings have their own limits: a vector store embeds one document per request
+    LLM_EMBED_DAILY_TOKENS: int = 500_000  # about 1 US cent of text-embedding-3-small
 
     @field_validator("JWT_SECRET")
     @classmethod

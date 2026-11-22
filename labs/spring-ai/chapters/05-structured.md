@@ -255,17 +255,25 @@ No setting gives a model knowledge it does not have. Shape comes from the schema
 :::
 
 :::step{type=deep-dive title="Go deeper: native JSON mode, validation and retries"}
-**Native structured output.** OpenAI and several other providers can enforce a JSON schema on their side, so the answer
-is guaranteed to match it. Spring AI 2.0 can use that instead of prompt instructions; with OpenAI it is an option
-(`responseFormat` with a JSON schema) or the advisor parameter for native structured output. It is stricter and the
-prompt is shorter; prompt-based output works with every model.
+**Provider-native structured output.** OpenAI, Anthropic, Google and Mistral can enforce a JSON schema on their own
+side, so an answer that breaks the shape cannot even be produced. In Spring AI 2.1 it is one switch:
+
+```java
+.entity(TourPlan.class, spec -> spec.useProviderStructuredOutput())
+```
+
+The schema then travels as an API field instead of prompt text: stricter, and fewer tokens. It is off by default,
+because older models reject it; when a model does not support it, Spring AI quietly falls back to prompt instructions.
+
+**Self-correction.** `spec -> spec.validateSchema()` checks every answer against the schema and, when it does not match,
+asks again with the exact error added ("missing required field title"), up to three attempts. Both switches combine:
+`spec.useProviderStructuredOutput().validateSchema()`. Retries cost tokens, and the response reports the usage of all
+attempts together.
 
 **Validate anyway.** A valid shape can still hold nonsense: a tour of 60 minutes whose stops add up to 90, or a gallery
 that does not exist. Check the values in Java (Bean Validation annotations on the record, or plain `if`s) before
 showing them.
 
-**Retry once.** If reading fails, a second request often succeeds. Spring AI has retry support for network errors; for
-format errors, catching the exception and asking again (perhaps including the error) is a common pattern.
 
 **Enums and nested records** work too: `enum Level { EASY, MEDIUM, HARD }` in a record gives the model a fixed list of
 allowed values in the schema.

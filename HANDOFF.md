@@ -39,12 +39,14 @@ standard next, without waiting; write its syllabus here first.
 repository per chapter built by its setup with fixed authors and dates.
 **Linux on call: COMPLETE (23 November)**: 15 chapters, 31 tasks, Tara (a radio telescope observatory near Pune;
 owner: never Dabba Express, nothing resembling Chai aur Code). Live checks; setups build each chapter folder.
-**Spring AI (new lab `spring-ai`), in progress**: the owner said "once done, move to Spring AI" (23 November night), so the
-syllabus was chosen without asking. Atlas, the visitor guide of a fictional science museum in Pune; Spring Boot 4.0.10,
-Spring AI 2.0.3; models `ai-chat` and `ai-embed` (OpenAI through the gateway). Checks use a fake OpenAI server
-(`tests/common/FakeOpenAi.java`). Chapters (ids): Part 1 why-ai, prompts, options, streaming, structured (DONE);
-Part 2 memory, tools; Part 3 embeddings, vector-store, rag; Part 4 testing, guardrails, cost-speed, observability,
-capstone. Generator scripts live in the session scratchpad (`springai/gen.py`, `build_yaml.py`).
+**Spring AI (new lab `spring-ai`), in progress**: the owner said "once done, move to Spring AI" (23 November night), and
+then "please finish complete spring ai" (the syllabus follows docs.spring.io/spring-ai/reference 2.1.0). Atlas, the
+visitor guide of a fictional science museum in Pune; Spring Boot 4.2.0, Spring AI 2.1.0; models `ai-chat` and
+`ai-embed` (OpenAI through the gateway). Checks use a fake OpenAI server (`tests/common/FakeOpenAi.java`).
+Chapters (ids): Part 1 why-ai, prompts, options, streaming, structured; Part 2 memory, tools, tool-safety, advisors,
+mcp; Part 3 embeddings, vector-store, etl, rag (DONE, 14 chapters, 28 tasks); Part 4 vision, evaluation, guardrails,
+production, agents, live (in progress). Generator scripts live in the session scratchpad (`springai/gen.py` with
+`chapters_part*.py`, `build_yaml.py`, `add_diag.py`).
 **SQL from zero: COMPLETE (22 November evening)**, as below (14 chapters, 28 tasks, Safar). Next: ask the owner which
 lab comes next (the other ten labs are still 1 or 2 chapters). **SQL from zero syllabus** (22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
 coffee stall: a full rewrite with a new running project, **Safar**, a bus ticket booking app (cities, routes,
@@ -64,7 +66,7 @@ buses, trips, seats, passengers, bookings, payments), on Postgres 16. Keep the i
    sign-up allowance so browser tests do not hit the 60-per-hour limit:
    `cd backend && SIGNUPS_PER_IP_HOUR=1000 .venv/bin/uvicorn app.main:app --port 8000 --workers 4`.
    Frontend: `cd frontend && npm run dev`. Database and Redis: `scripts/devdb.sh`.
-2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (17 labs valid).
+2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (18 labs valid).
 3. **Owner's standing order (22 November, about 11:45, going to nap): "finish springboot, rest of current Java,
    and other programming languages".** Order: finish Java (Parts 2 to 4), then Spring Boot photos and handwritten
    notes (31 recaps and a few genuine photos), then the JavaScript from zero and Go from zero rewrites (same

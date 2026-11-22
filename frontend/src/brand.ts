@@ -2,7 +2,7 @@
 // (the same colours as tools/logo_cover.py). Used for the faint logo behind the lesson.
 const COLORS: Record<string, string> = {
   python: "#3776AB", java: "#f89820", "duke-waving": "#f89820", "duke-thumbsup": "#f89820",
-  fastapi: "#009688", spring: "#6DB33F", postgresql: "#336791", sql: "#6366f1", go: "#00ADD8",
+  fastapi: "#009688", spring: "#6DB33F", "spring-ai": "#7eb050", postgresql: "#336791", sql: "#6366f1", go: "#00ADD8",
   javascript: "#F7DF1E", express: "#8a8a8a", redis: "#DC382D", nodejs: "#5FA04E",
   typescript: "#3178C6", linux: "#FCC624", git: "#F05033", docker: "#2496ED", kubernetes: "#326CE5",
   nginx: "#009639", mysql: "#00758F", mongodb: "#47A248",
@@ -33,7 +33,7 @@ export const LAB_TONES: Record<string, string> = {
   "python-collections": "#4b8bbe",
   "rate-limiter": "#00b347",
   "redis-in-practice": "#DC382D",
-  "spring-ai": "#10a37f",
+  "spring-ai": "#7eb050",
   "spring-boot-first-api": "#6DB33F",
   "sql-from-zero": "#6366f1",
 };

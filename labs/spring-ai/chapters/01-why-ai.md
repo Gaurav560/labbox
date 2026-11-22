@@ -98,7 +98,7 @@ models and more, so your code does not depend on one company.
 - **2022** ChatGPT opens to the public on 30 November.
 - **2023** Spring AI begins, as an experiment in the Spring team.
 - **2025** Spring AI 1.0, the first stable release, in May.
-- **2026** Spring AI 2.0, on Spring Boot 4: the version this course uses.
+- **2026** Spring AI 2.0 on Spring Boot 4; in November, Spring AI 2.1, the version this course uses.
 :::
 
 :::usedby{title="Used for"}
@@ -319,7 +319,7 @@ this (OpenAI's "chat completions" format, which most providers and gateways now 
 ```
 
 and the answer comes back as JSON with the text in `choices[0].message.content`, plus a `usage` block counting the
-tokens. Spring AI 2.0 uses OpenAI's own Java library underneath to send it.
+tokens. Spring AI 2 uses OpenAI's own Java library underneath to send it.
 
 **Why a framework at all?** You could send that JSON yourself with `RestClient`. Spring AI earns its place when you
 need more than one call: switching providers, conversation memory, tools, retrieval, structured output, retries,

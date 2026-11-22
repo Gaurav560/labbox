@@ -14,6 +14,15 @@ prompts|02-prompts|system_prompt prompt_template
 options|03-options|chat_options token_usage
 streaming|04-streaming|stream_answer stream_events
 structured|05-structured|tour_plan exhibit_list
+memory|06-memory|session_memory memory_window
+tools|07-tools|opening_hours_tool show_times_tool
+tool-safety|08-tool-safety|confirm_booking tool_context
+advisors|09-advisors|usage_advisor language_advisor
+mcp|10-mcp|mcp_server mcp_tools
+embeddings|11-embeddings|cosine_similarity nearest_exhibit
+vector-store|12-vector-store|add_documents search_cards
+etl|13-etl|read_cards split_and_load
+rag|14-rag|rag_answer cite_sources
 "
 
 fail_all() { # tasks message

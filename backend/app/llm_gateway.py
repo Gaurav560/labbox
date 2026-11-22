@@ -101,28 +101,33 @@ def require_identity(request: Request) -> Identity:
 # ---------- budgets ----------
 
 COMPLETION = "completion"  # editor completions have their own bucket, so typing never eats the tutor's budget
+EMBEDDINGS = "embeddings"  # so do embeddings: a vector store embeds every document, and embeddings cost a fraction of chat
 
 
 def tokens_used_today(user_id: int, bucket: str = "") -> int:
-    """Tokens used since midnight UTC: editor completions (bucket "completion") or everything else."""
+    """Tokens used since midnight UTC: editor completions (bucket "completion"), embeddings (bucket "embeddings"),
+    or everything else."""
     start = utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    is_completion = LlmRequest.endpoint == COMPLETION
+    in_bucket = LlmRequest.endpoint == bucket if bucket else col(LlmRequest.endpoint).not_in([COMPLETION, EMBEDDINGS])
     with Session(engine) as s:
         q = select(func.coalesce(func.sum(LlmRequest.prompt_tokens + LlmRequest.completion_tokens), 0)).where(
-            LlmRequest.user_id == user_id, col(LlmRequest.created_at) >= start, is_completion if bucket == COMPLETION else ~is_completion
+            LlmRequest.user_id == user_id, col(LlmRequest.created_at) >= start, in_bucket
         )
         return int(s.exec(q).one())
 
 
 def check_budget(user_id: int, bucket: str = "") -> None:
     settings = get_settings()
-    rpm, daily = (settings.LLM_COMPLETION_RPM, settings.LLM_COMPLETION_DAILY_TOKENS) if bucket == COMPLETION else (settings.LLM_RPM, settings.LLM_DAILY_TOKENS)
+    rpm, daily = {
+        COMPLETION: (settings.LLM_COMPLETION_RPM, settings.LLM_COMPLETION_DAILY_TOKENS),
+        EMBEDDINGS: (settings.LLM_EMBED_RPM, settings.LLM_EMBED_DAILY_TOKENS),
+    }.get(bucket, (settings.LLM_RPM, settings.LLM_DAILY_TOKENS))
     key = f"ai:{user_id}:{bucket or 'chat'}"  # requests in the last minute, counted across every worker
     if shared.recent(key) >= rpm:
         raise GatewayError(429, f"Too many requests: the limit is {rpm} a minute. Wait a few seconds and try again.", "rate_limited", "rate_limit_error")
     used = tokens_used_today(user_id, bucket)
     if used >= daily:
-        what = "code completion" if bucket == COMPLETION else "AI budget"
+        what = {COMPLETION: "code completion", EMBEDDINGS: "embedding"}.get(bucket, "AI budget")
         raise GatewayError(
             429,
             f"Your {what} for today is used up ({used:,} of {daily:,} tokens). It resets at midnight UTC.",
@@ -339,7 +344,7 @@ async def completions(ident: Identity, body: dict[str, Any], endpoint: str = "co
 async def embeddings(ident: Identity, body: dict[str, Any]) -> dict[str, Any]:
     alias = body.get("model")
     target = resolve(alias)
-    check_budget(ident.user_id)
+    check_budget(ident.user_id, EMBEDDINGS)
     started = time.monotonic()
     try:
         out = await upstream_post(*target, "/embeddings", body)

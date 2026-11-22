@@ -1,5 +1,26 @@
 # Changelog
 
+## 23 November: Spring AI, Parts 2 and 3 (memory, tools, MCP, embeddings, vector stores, ETL, RAG)
+
+- Owner, going to sleep: "please finish complete spring ai. and fyi, spring ai has different logo". The syllabus
+  follows the official reference (docs.spring.io/spring-ai/reference, 2.1.0), so the course moved to **Spring Boot
+  4.2.0 and Spring AI 2.1.0** (Part 1's text and projects updated: the timeline, the structured output deep dive).
+- Part 2, Conversations and tools (5 chapters, 10 tasks): session memory with the new Session API (per visitor, a
+  turn-count compaction window), tools (`@Tool`, with the real date mistake the model made and the `nextDay` tool that
+  fixed it), tools you can trust (tool call confirmation, a deny message the model cannot embellish, identity in the
+  `ToolContext`), advisors (a usage counter and a language advisor, with real Marathi and Hindi answers), and MCP
+  (Atlas's tools served over Streamable HTTP, called by a real MCP client in the check).
+- Part 3, Knowledge (4 chapters, 8 tasks): embeddings and cosine similarity (by hand, then in Java), a vector store with
+  real similarity scores and an honest miss, the ETL pipeline (Markdown reader, token splitter: the miss fixed by giving
+  the visitor card headings), and RAG with sources. Every threshold was set from real measured scores.
+- The museum's 12 exhibit cards are real science (Foucault's pendulum, Mangalyaan, Chandrayaan-3, Rajasaurus...).
+- LLM gateway: embeddings have their own limits (`LLM_EMBED_RPM` 300, `LLM_EMBED_DAILY_TOKENS` 500,000), because
+  `SimpleVectorStore` embeds one document per request and hit the 20-a-minute chat limit at start-up.
+- The Spring AI logo (a leaf in a brain) replaces the Spring leaf on the cover; brand colour `#7eb050`.
+- Photos (Samuel Parris's 1817 journal, a reading room desk, a cheque signed by Dickens, the Fort Augustus locks,
+  USB-C, Mercator's 1569 map, the Graz subject catalogue, the Plantin-Moretus presses, an open book), handwritten notes
+  on all 14 recaps, 10 more playing diagrams; the ai track has six Spring AI nodes.
+
 ## 23 November: Spring AI, Part 1 (a new course: Atlas, the museum guide)
 
 - Owner, going to sleep after Linux: "once done, move to Spring AI". OpenAI is the course's model, only through the

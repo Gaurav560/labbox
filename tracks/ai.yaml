@@ -10,3 +10,19 @@ nodes:
     title: Streaming and structured answers
     requires: [ai-first-steps]
     chapters: [spring-ai/streaming, spring-ai/structured]
+  - id: ai-conversations
+    title: Memory and tools
+    requires: [ai-answers]
+    chapters: [spring-ai/memory, spring-ai/tools, spring-ai/tool-safety]
+  - id: ai-extending
+    title: Advisors and MCP
+    requires: [ai-conversations]
+    chapters: [spring-ai/advisors, spring-ai/mcp]
+  - id: ai-retrieval
+    title: Embeddings and vector stores
+    requires: [ai-extending]
+    chapters: [spring-ai/embeddings, spring-ai/vector-store]
+  - id: ai-rag
+    title: Documents and RAG
+    requires: [ai-retrieval]
+    chapters: [spring-ai/etl, spring-ai/rag]

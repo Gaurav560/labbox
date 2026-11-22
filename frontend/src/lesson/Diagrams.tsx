@@ -1671,7 +1671,186 @@ function AiStructured() {
   );
 }
 
+function AiMemory() {
+  return (
+    <SketchSteps
+      title="a session, turn by turn"
+      intro="Press Play to follow Ria's conversation."
+      label="ria asks a first question; the session advisor stores it and the answer; her second question arrives; the advisor loads her session and sends the earlier turn with the new question; after many turns the session is compacted to its last turns"
+      steps={[
+        { label: "1. First question", says: "My name is Ria and I am 9. It goes to the model with the system prompt." },
+        { label: "2. Stored", says: "The session keeps the question and the answer, under Ria's id." },
+        { label: "3. Second question", says: "The advisor loads Ria's session and sends it before the new question." },
+        { label: "4. Sam asks", says: "Sam's session is empty: nothing of Ria's travels with his question." },
+        { label: "5. Compaction", says: "After more than 8 turns, only the last 4 stay in the view the model sees." },
+      ]}
+    />
+  );
+}
+
+function AiToolCalling() {
+  return (
+    <SketchSteps
+      title="a tool call"
+      intro="Press Play to follow one question that needs a tool."
+      label="the app sends the question and the tool descriptions; the model replies with a tool call instead of an answer; spring ai runs the java method; the result goes back to the model; the model answers with the real fact"
+      steps={[
+        { label: "1. Question and tools", says: "Is it open next Monday? plus the descriptions of today, nextDay, openingHours ..." },
+        { label: "2. The model asks", says: "Not an answer: please run nextDay(MONDAY)." },
+        { label: "3. Spring AI runs your method", says: "nextDay returns 2026-11-23 (MONDAY)." },
+        { label: "4. Another round", says: "The model asks for openingHours(2026-11-23); it returns Closed." },
+        { label: "5. The answer", says: "The museum is closed next Monday. Real facts, from your code." },
+      ]}
+    />
+  );
+}
+
+function AiToolConfirmation() {
+  return (
+    <SketchSteps
+      title="propose, then decide"
+      intro="Press Play to follow a booking that waits for a yes."
+      label="the model proposes a booking; the loop pauses before anything runs; the app shows the call to the visitor; the visitor says yes or no; a yes runs the tool, a no answers the model with a message; the model writes the final answer"
+      steps={[
+        { label: "1. The model proposes", says: "bookSeats(2026-11-28, 16:00, 2 seats)." },
+        { label: "2. The loop pauses", says: "requiresConfirmation: nothing runs; the reply returns to the app." },
+        { label: "3. The visitor decides", says: "The app shows the call: book 2 seats at 16:00?" },
+        { label: "4a. Yes", says: "The tool runs: 2 seats booked. The result goes back to the model." },
+        { label: "4b. No", says: "The tool does not run; the model gets the deny message instead." },
+        { label: "5. The answer", says: "The model tells the visitor what really happened." },
+      ]}
+    />
+  );
+}
+
+function AiToolContext() {
+  return (
+    <SketchSteps
+      title="arguments and context"
+      intro="Press Play to see what the model can and cannot set."
+      label="the model fills the tool's arguments such as the date and seats; the app puts the visitor in the tool context; spring ai hands both to the tool; the model never sees the context and cannot change it"
+      steps={[
+        { label: "1. The model fills arguments", says: "date 2026-11-28, time 16:00, seats 2." },
+        { label: "2. The app sets the context", says: "visitor = ria, from the login or the screen." },
+        { label: "3. The tool gets both", says: "bookSeats(date, time, seats, context)." },
+        { label: "4. Out of reach", says: "The model never sees the context: whatever it says, the booking is Ria's." },
+      ]}
+    />
+  );
+}
+
+function AiAdvisorChain() {
+  return (
+    <SketchSteps
+      title="the advisor chain"
+      intro="Press Play to follow a call through two advisors."
+      label="the request passes the usage advisor, then the language advisor, then reaches the model; the response comes back through the language advisor, then the usage advisor, which counts its tokens"
+      steps={[
+        { label: "1. call()", says: "The request enters the chain." },
+        { label: "2. Usage advisor, on the way in", says: "Notes the time; passes the request on." },
+        { label: "3. Language advisor", says: "Adds Answer in Marathi. to the system message." },
+        { label: "4. The model", says: "Answers in Marathi." },
+        { label: "5. On the way back", says: "The usage advisor counts the call and its tokens, then returns the answer." },
+      ]}
+    />
+  );
+}
+
+function AiMcp() {
+  return (
+    <SketchSteps
+      title="MCP in four messages"
+      intro="Press Play to follow a client using Atlas's tools."
+      label="the client sends initialize and learns the server's name; it sends tools list and learns four tools; its model decides to use planetarium shows; the client sends tools call and gets the result back"
+      steps={[
+        { label: "1. initialize", says: "Hello, I am a client. The server: I am atlas-museum, with tools." },
+        { label: "2. tools/list", says: "today, nextDay, openingHours, planetariumShows, with descriptions." },
+        { label: "3. The client's model decides", says: "This question needs planetariumShows for 2026-11-28." },
+        { label: "4. tools/call", says: "Atlas runs its Java method and returns the shows as text." },
+      ]}
+    />
+  );
+}
+
+function AiEmbeddings() {
+  return (
+    <SketchSteps
+      title="texts become points"
+      intro="Press Play to see meaning turn into numbers."
+      label="each exhibit description goes into the embedding model and comes out as a list of 1536 numbers; similar descriptions land close together; a question is embedded the same way; the nearest point is the answer"
+      steps={[
+        { label: "1. A description goes in", says: "The Foucault pendulum: as the Earth rotates, its swing turns." },
+        { label: "2. Numbers come out", says: "1,536 numbers: 0.003, 0.060, 0.051, ..." },
+        { label: "3. Every exhibit gets a point", says: "Pendulum, prism, bicycle, Rajasaurus ... each at its own place." },
+        { label: "4. The question too", says: "Which exhibit shows that the Earth spins? becomes a point." },
+        { label: "5. The nearest wins", says: "Cosine similarity is highest for the pendulum: Foucault pendulum." },
+      ]}
+    />
+  );
+}
+
+function AiVectorStore() {
+  return (
+    <SketchSteps
+      title="embed once, search many times"
+      intro="Press Play to follow the cards into the store."
+      label="at start-up each card is embedded once and stored with its text and metadata; later a search embeds only the question; the store compares it with every stored vector and returns the closest above the threshold"
+      steps={[
+        { label: "1. Start-up", says: "CardLoader reads 12 cards into Documents, each with its file." },
+        { label: "2. store.add", says: "Each card is embedded once; text, vector and file are kept together." },
+        { label: "3. A search", says: "Where is the pendulum? Only the question is embedded." },
+        { label: "4. Compare", says: "The store ranks every card by similarity to the question." },
+        { label: "5. Filter", says: "topK 3, threshold 0.5: foucault-pendulum.md, 0.64. Nothing weaker." },
+      ]}
+    />
+  );
+}
+
+function AiEtl() {
+  return (
+    <SketchSteps
+      title="extract, transform, load"
+      intro="Press Play to follow a card through the pipeline."
+      label="the markdown reader turns each card into documents, one per heading, with the file in metadata; the token text splitter cuts them into chunks of about 100 tokens that keep the metadata; the chunks are added to the vector store"
+      steps={[
+        { label: "1. Extract", says: "MarkdownDocumentReader: visitor-information.md becomes 3 documents, one per heading." },
+        { label: "2. Label", says: "Every document gets file = visitor-information.md." },
+        { label: "3. Transform", says: "TokenTextSplitter cuts long documents into chunks of about 100 tokens." },
+        { label: "4. Metadata follows", says: "Each chunk still knows its file." },
+        { label: "5. Load", says: "vectorStore.add(chunks): 12 cards, 14 documents, 23 chunks." },
+      ]}
+    />
+  );
+}
+
+function AiRag() {
+  return (
+    <SketchSteps
+      title="retrieve, augment, generate"
+      intro="Press Play to follow one question through RAG."
+      label="the question is embedded and searched in the vector store; the three closest chunks above the threshold come back; the advisor adds them to the user message with instructions; the model answers from them; the app returns the answer with the files of the chunks"
+      steps={[
+        { label: "1. The question", says: "How much is a ticket for a child?" },
+        { label: "2. Retrieve", says: "QuestionAnswerAdvisor searches the store: the ticket chunk, 0.40." },
+        { label: "3. Augment", says: "The chunk is added to the user message, with: answer from the context." },
+        { label: "4. Generate", says: "The model answers: 60 rupees for children aged 5 to 15." },
+        { label: "5. Sources", says: "The retrieved chunks name their file: visitor-information.md." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "ai-embeddings": AiEmbeddings,
+  "ai-vector-store": AiVectorStore,
+  "ai-etl": AiEtl,
+  "ai-rag": AiRag,
+  "ai-memory": AiMemory,
+  "ai-tool-calling": AiToolCalling,
+  "ai-tool-confirmation": AiToolConfirmation,
+  "ai-tool-context": AiToolContext,
+  "ai-advisor-chain": AiAdvisorChain,
+  "ai-mcp": AiMcp,
   "ai-request-flow": AiRequestFlow,
   "ai-roles": AiRoles,
   "ai-temperature": AiTemperature,

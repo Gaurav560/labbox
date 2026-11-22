@@ -89,11 +89,21 @@ def test_requests_per_minute(gw: TestClient, user: User, monkeypatch):
 
 
 def test_embeddings(gw: TestClient, user: User):
-    r = gw.post("/llm/v1/embeddings", headers=auth(user), json={"model": "lab-embed", "input": ["filter coffee", "cold coffee"]})
+    r = gw.post("/llm/v1/embeddings", headers=auth(user), json={"model": "lab-embed", "input": ["a comet", "a meteor"]})
     assert r.status_code == 200
     data = r.json()["data"]
     assert len(data) == 2 and len(data[0]["embedding"]) == 16 and data[0]["embedding"] != data[1]["embedding"]
     assert rows(user)[0].endpoint == "embeddings"
+
+
+def test_embeddings_have_their_own_limits(gw: TestClient, user: User, monkeypatch):
+    # A vector store embeds one document per request: those must not use up the chat limits, nor the other way round.
+    monkeypatch.setattr(get_settings(), "LLM_RPM", 1)
+    monkeypatch.setattr(get_settings(), "LLM_EMBED_RPM", 5)
+    embed = {"model": "lab-embed", "input": "a comet"}
+    assert [gw.post("/llm/v1/embeddings", headers=auth(user), json=embed).status_code for _ in range(3)] == [200, 200, 200]
+    chat = {"model": "lab-chat", "messages": [{"role": "user", "content": "hi"}]}
+    assert [gw.post("/llm/v1/chat/completions", headers=auth(user), json=chat).status_code for _ in range(2)] == [200, 429]
 
 
 def test_streaming_relays_chunks_and_logs_usage(gw: TestClient, user: User):

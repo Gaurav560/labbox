@@ -26,6 +26,7 @@ BRANDS: dict[str, tuple[str, str, str]] = {
     "duke-thumbsup": ("#1b4f80", "#08172b", "#f89820"),
     "fastapi": ("#009688", "#003f3a", "#ffffff"),
     "spring": ("#6DB33F", "#24501a", "#ffffff"),
+    "spring-ai": ("#2d5a1b", "#0f2408", "#7eb050"),  # the Spring AI brain-and-leaf mark, on a deep green
     "postgresql": ("#336791", "#14304a", "#ffffff"),
     "sql": ("#4338ca", "#1e1b4b", "#f59e0b"),  # our own generic SQL mark, amber on indigo
     "go": ("#00ADD8", "#00506a", "#ffffff"),
