@@ -53,7 +53,7 @@ func TestLabboxCheckTopN(t *testing.T) {
 func TestLabboxCheckUnique(t *testing.T) {
 	defer guard("unique")
 	cases := []struct{ in, want []string }{
-		{[]string{"tea", "coffee", "tea", "milk", "coffee"}, []string{"tea", "coffee", "milk"}},
+		{[]string{"juice", "coffee", "juice", "milk", "coffee"}, []string{"juice", "coffee", "milk"}},
 		{[]string{"a", "a", "a"}, []string{"a"}},
 		{[]string{"b", "a"}, []string{"b", "a"}},
 	}

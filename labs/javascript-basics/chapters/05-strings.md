@@ -12,11 +12,11 @@ In `words/words.js`, count the words in a sentence, then tidy a name typed in a 
 Each character in a string has a numbered position, starting at **0**:
 
 ```javascript
-const word = "tea cup";
+const word = "red cup";
 word.length     // 7: the space counts too
-word[0]         // "t"
+word[0]         // "r"
 word[4]         // "c"
-word.slice(0, 3)  // "tea": from 0 up to (not including) 3
+word.slice(0, 3)  // "red": from 0 up to (not including) 3
 ```
 
 Strings never change in place. Methods like `toUpperCase()` give back a **new** string and leave the
@@ -127,12 +127,12 @@ Make `cleanName(raw)` turn a name typed in a hurry into a tidy one:
 
 :::step{type=predict title="Quick check (1 of 2)"}
 :::question
-What is `"masala".slice(0, 3)`?
+What is `"samosa".slice(0, 3)`?
 :::
-- [x] `"mas"`
-- [ ] `"masa"`
-- [ ] `"ala"`
-- [ ] `"m"`
+- [x] `"sam"`
+- [ ] `"samo"`
+- [ ] `"osa"`
+- [ ] `"s"`
 :::explain
 `slice(0, 3)` takes positions 0, 1 and 2: it stops **before** 3.
 :::
@@ -140,10 +140,10 @@ What is `"masala".slice(0, 3)`?
 
 :::step{type=predict title="Quick check (2 of 2)"}
 :::question
-After `let s = "tea"; s.toUpperCase();` what is `s`?
+After `let s = "pen"; s.toUpperCase();` what is `s`?
 :::
-- [x] `"tea"`
-- [ ] `"TEA"`
+- [x] `"pen"`
+- [ ] `"PEN"`
 - [ ] `undefined`
 - [ ] An error
 :::explain

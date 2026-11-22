@@ -160,13 +160,13 @@ function Goroutines() {
 /** Java strings: == compares addresses, equals compares the letters. */
 function StringEquals() {
   return (
-    <Svg viewBox="0 0 440 200" label="a and b point to two different String objects that both hold tea; a == b is false, a.equals(b) is true">
+    <Svg viewBox="0 0 440 200" label="a and b point to two different String objects that both hold riya; a == b is false, a.equals(b) is true">
       <Box x={10} y={30} w={60} h={34} label="a" tone="accent" code />
       <Box x={10} y={110} w={60} h={34} label="b" tone="accent" code />
       <Arrow x1={72} y1={47} x2={196} y2={47} />
       <Arrow x1={72} y1={127} x2={196} y2={127} />
-      <Box x={200} y={28} w={110} h={38} label='"tea"' code />
-      <Box x={200} y={108} w={110} h={38} label='"tea"' code />
+      <Box x={200} y={28} w={110} h={38} label='"riya"' code />
+      <Box x={200} y={108} w={110} h={38} label='"riya"' code />
       <text className="dg-note" x={320} y={52}>object 1</text>
       <text className="dg-note" x={320} y={132}>object 2</text>
       <text className="dg-note" x={10} y={180}><tspan className="dg-code">a == b</tspan> is false (two objects)</text>

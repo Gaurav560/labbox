@@ -17,10 +17,10 @@ interface P { code?: string }
 /** A function or method is a recipe card: a name, what it needs, the steps, and what it gives back. */
 function RecipeCard() {
   const rows: [number, string, string][] = [
-    [36, "Masala chai", "name"],
-    [68, "needs: milk, tea", "inputs"],
+    [36, "Lemon rice", "name"],
+    [68, "needs: rice, lemon", "inputs"],
     [96, "1. boil 2. add 3. pour", "body"],
-    [124, "gives: one cup of chai", "return"],
+    [124, "gives: a plate of lemon rice", "return"],
   ];
   return (
     <Svg label="A recipe card mapped to the parts of a function: name, inputs, body and return value">
@@ -92,9 +92,9 @@ function RunningTrack() {
 
 /** A string is beads on a thread: every character has a numbered position, starting at 0. */
 function BeadsOnString() {
-  const letters = ["t", "e", "a", " ", "c", "u", "p"];
+  const letters = ["r", "e", "d", " ", "c", "u", "p"];
   return (
-    <Svg label="The text tea cup as beads on a thread, positions 0 to 6; the space is a bead too">
+    <Svg label="The text red cup as beads on a thread, positions 0 to 6; the space is a bead too">
       <Ink d="M8 70 L312 70" plain />
       {letters.map((ch, i) => (
         <g key={i}>
@@ -474,9 +474,9 @@ function Postman() {
 /** An object is a filled-in form: each field has a label and a value. */
 function FormCard() {
   return (
-    <Svg label="An object drawn as a form card with three labelled fields: name tea, price 20, qty 2">
+    <Svg label="An object drawn as a form card with three labelled fields: name juice, price 20, qty 2">
       <Card x={30} y={14} w={200} h={122} />
-      {[["name", "masala tea"], ["price", "20"], ["qty", "2"]].map(([k, v], i) => (
+      {[["name", "juice"], ["price", "20"], ["qty", "2"]].map(([k, v], i) => (
         <g key={k}>
           <Hand x={44} y={46 + i * 34} kind="label">{`${k}:`}</Hand>
           <rect className="pc-cell" x={110} y={30 + i * 34} width={108} height={24} rx={4} />

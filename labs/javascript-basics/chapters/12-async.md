@@ -15,7 +15,7 @@ When you order at a busy food counter, you get a **receipt** straight away, and 
 **promise** is that receipt: an object that stands for a value that is not ready yet.
 
 ```javascript
-const p = fetchPrice("tea");   // a promise, at once
+const p = fetchPrice("juice");   // a promise, at once
 p.then((price) => console.log(price));   // runs later, when ready
 ```
 
@@ -32,9 +32,9 @@ The receipt is available immediately. Its final outcome arrives later.
 
 ```javascript
 async function priceOfTwo() {
-  const tea = await fetchPrice("tea");      // wait here
+  const juice = await fetchPrice("juice");      // wait here
   const bun = await fetchPrice("bun");      // then wait here
-  return tea + bun;
+  return juice + bun;
 }
 ```
 
@@ -48,14 +48,14 @@ One suspended function can wait while other work keeps moving.
 :::
 
 :::step{type=example title="Worked example: two at once"}
-The code above waits for tea, **then** asks for the bun. Both can be asked at the same time:
+The code above waits for the juice, **then** asks for the bun. Both can be asked at the same time:
 
 ```javascript
 async function priceOfTwo() {
-  const teaP = fetchPrice("tea");     // 1. ask for both
+  const juiceP = fetchPrice("juice");     // 1. ask for both
   const bunP = fetchPrice("bun");
-  const [tea, bun] = await Promise.all([teaP, bunP]);  // 2. wait once
-  return tea + bun;
+  const [juice, bun] = await Promise.all([juiceP, bunP]);  // 2. wait once
+  return juice + bun;
 }
 ```
 

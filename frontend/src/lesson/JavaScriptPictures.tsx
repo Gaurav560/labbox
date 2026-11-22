@@ -98,10 +98,10 @@ export function CaseLenses() {
 export function TrimEdges() {
   return (
     <Board
-      label="Dots mark spaces around and inside the words red and tea. Only the outer dots disappear."
+      label="Dots mark spaces around and inside the words red and cup. Only the outer dots disappear."
       rows={[
-        { left: "typed", right: ["··", "red", "··", "tea", "··"] },
-        { left: "trimmed", right: ["red", "··", "tea"], marked: [1] },
+        { left: "typed", right: ["··", "red", "··", "cup", "··"] },
+        { left: "trimmed", right: ["red", "··", "cup"], marked: [1] },
       ]}
     />
   );
@@ -133,10 +133,10 @@ export function SearchSigns() {
 export function CartShelves() {
   return (
     <Board
-      label="Cart slot zero holds tea, 20 and two. Slot one holds bun, 15 and one."
+      label="Cart slot zero holds juice, 20 and two. Slot one holds bun, 15 and one."
       rows={[
         { left: "fields", right: ["name", "price", "qty"] },
-        { left: "slot 0", right: ["tea", "20", "2"] },
+        { left: "slot 0", right: ["juice", "20", "2"] },
         { left: "slot 1", right: ["bun", "15", "1"] },
       ]}
     />

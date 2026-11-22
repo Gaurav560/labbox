@@ -69,8 +69,8 @@ changes, you would have to find and fix every copy.
 A **method** solves this. You write the steps **once**, give them a name, and then use that name
 whenever you need them. Change the method, and every place that uses it changes too.
 
-Think of a method like a **recipe card**: it has a name ("Masala chai"), a list of things it needs
-(milk, tea leaves), and a result (a cup of chai). You do not rewrite the recipe each morning; you
+Think of a method like a **recipe card**: it has a name ("Lemon rice"), a list of things it needs
+(rice, lemon), and a result (a plate of lemon rice). You do not rewrite the recipe each morning; you
 follow the card.
 
 :::picture{name="recipe-card"}

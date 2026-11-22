@@ -106,8 +106,8 @@ changing the array it was given:
 Two questions you will ask arrays all the time:
 
 ```javascript
-const items = ["tea", "coffee"];
-items.includes("tea")      // true: is it in there?
+const items = ["juice", "coffee"];
+items.includes("juice")    // true: is it in there?
 items.indexOf("coffee")    // 1: where is it? (-1 when missing)
 ```
 
@@ -121,7 +121,7 @@ A membership question gives yes or no. A position question gives a slot number.
 :::step{type=task task=unique title="Each item once"}
 Make `unique(items)` return the items with repeats removed, in the order they first appear:
 
-- `unique(["tea", "coffee", "tea", "milk"])` returns `["tea", "coffee", "milk"]`
+- `unique(["juice", "coffee", "juice", "milk"])` returns `["juice", "coffee", "milk"]`
 - `unique([3, 1, 3, 2, 1])` returns `[3, 1, 2]`
 :::
 

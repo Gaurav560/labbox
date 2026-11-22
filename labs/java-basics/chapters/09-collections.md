@@ -66,13 +66,13 @@ public static Map<String, Integer> totals(List<String> items, List<Integer> qty)
 `out.getOrDefault(item, 0)` is the total so far (0 the first time). Add the new amount and store it
 back. Counting words is the same, adding 1 each time.
 
-:::trace{title="totals([tea, milk, tea], [2, 1, 3])"}
+:::trace{title="totals([juice, milk, juice], [2, 1, 3])"}
 | i | item | qty | out | note |
 |---|---|---|---|---|
 |  |  |  | {} | The map starts empty. |
-| 0 | tea | 2 | {tea=2} | tea is not in the map yet: 0 + 2 = 2. |
-| 1 | milk | 1 | {tea=2, milk=1} | milk is new too: 0 + 1 = 1. |
-| 2 | tea | 3 | {tea=5, milk=1} | tea is already 2: 2 + 3 = 5, stored back under the same key. |
+| 0 | juice | 2 | {juice=2} | juice is not in the map yet: 0 + 2 = 2. |
+| 1 | milk | 1 | {milk=1, juice=2} | milk is new too: 0 + 1 = 1. |
+| 2 | juice | 3 | {milk=1, juice=5} | juice is already 2: 2 + 3 = 5, stored back under the same key. |
 :::
 :::
 
@@ -128,9 +128,9 @@ without changing the list it was given.
 
 :::step{type=task task=word_counts title="Count each word"}
 In `collections/WordCounter.java`, make `count(words)` return how many times each word appears, with
-words lower-cased so `Tea` and `tea` count together.
+words lower-cased so `Juice` and `juice` count together.
 
-- `count([tea, Coffee, TEA, tea])` returns `{tea=3, coffee=1}`
+- `count([juice, Coffee, JUICE, juice])` returns `{coffee=1, juice=3}`
 - `count([])` returns an empty map
 :::
 

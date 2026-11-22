@@ -50,7 +50,7 @@ func TestLabboxCheckReadTotals(t *testing.T) {
 	}{
 		{sample, map[string]float64{"food": 200, "travel": 40.5}},
 		{"date,category,amount\n", map[string]float64{}},
-		{"date,category,amount\n2026-03-05,\"snacks, tea\",30\n2026-03-06,\"snacks, tea\",12.25\n", map[string]float64{"snacks, tea": 42.25}},
+		{"date,category,amount\n2026-03-05,\"snacks, juice\",30\n2026-03-06,\"snacks, juice\",12.25\n", map[string]float64{"snacks, juice": 42.25}},
 	}
 	for _, c := range cases {
 		got, err := ReadTotals(writeTemp(t, "e.csv", c.text))

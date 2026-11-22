@@ -54,9 +54,9 @@ func TestLabboxCheckWordCounts(t *testing.T) {
 	defer guard("word_counts")
 	texts := make([]string, 200)
 	for i := range texts {
-		texts[i] = "Go go GOPHER tea"
+		texts[i] = "Go go GOPHER juice"
 	}
-	want := map[string]int{"go": 400, "gopher": 200, "tea": 200}
+	want := map[string]int{"go": 400, "gopher": 200, "juice": 200}
 	for round := 0; round < 5; round++ {
 		if got := CountWords(texts); !reflect.DeepEqual(got, want) {
 			report("word_counts", false, fmt.Sprintf("CountWords over 200 texts returned %v: with many goroutines, protect the map with a sync.Mutex", got), want, got)

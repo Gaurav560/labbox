@@ -280,10 +280,10 @@ chapters:
     hints:
     - A HashMap<String, Integer> holds one count per word.
     - getOrDefault(word, 0) gives the count so far, or 0 the first time.
-    - Lower-case each word before counting, so Tea and tea count together.
+    - Lower-case each word before counting, so Juice and juice count together.
     examples:
-    - call: count([tea, Coffee, TEA, tea])
-      gives: '{tea=3, coffee=1}'
+    - call: count([juice, Coffee, JUICE, juice])
+      gives: '{coffee=1, juice=3}'
     - call: count([])
       gives: '{}'
 - id: 10-exceptions

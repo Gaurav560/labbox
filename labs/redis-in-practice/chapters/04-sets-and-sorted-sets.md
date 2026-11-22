@@ -49,13 +49,13 @@ A tasting event: count each person once, however many cups they try.
 
 :::step{type=predict title="Guess first"}
 :::question
-`SADD tags coffee tea coffee coffee` on an empty key. What does `SCARD tags` return?
+`SADD tags coffee juice coffee coffee` on an empty key. What does `SCARD tags` return?
 :::
 - [ ] 4
 - [x] 2
 - [ ] 1
 :::explain
-A set keeps each member once, so the three `coffee` become one: `coffee` and `tea`, 2 members.
+A set keeps each member once, so the three `coffee` become one: `coffee` and `juice`, 2 members.
 `SADD` itself returns how many members were new, which is also 2.
 :::
 :::

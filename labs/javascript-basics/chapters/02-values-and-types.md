@@ -13,7 +13,7 @@ A **variable** is a name for a value, so you can use it later:
 
 ```javascript
 const price = 120;        // a number
-const item = "masala tea"; // text, called a string
+const item = "veg sandwich"; // text, called a string
 let inStock = true;        // a boolean: true or false
 inStock = false;           // let can change later
 ```

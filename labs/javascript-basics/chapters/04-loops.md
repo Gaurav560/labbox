@@ -34,8 +34,8 @@ for (const mark of [45, 20, 90]) {
   console.log(mark);
 }
 
-for (const ch of "tea") {
-  console.log(ch);   // "t", "e", "a"
+for (const ch of "pen") {
+  console.log(ch);   // "p", "e", "n"
 }
 ```
 

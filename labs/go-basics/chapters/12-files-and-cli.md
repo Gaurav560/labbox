@@ -19,7 +19,7 @@ defer f.Close()           // runs when the function returns, however it returns
 ```
 
 `defer` is Go's way to make sure clean-up happens. For CSV, the `encoding/csv` package handles quoting
-(`"snacks, tea"`) correctly:
+(`"snacks, juice"`) correctly:
 
 ```go
 r := csv.NewReader(f)

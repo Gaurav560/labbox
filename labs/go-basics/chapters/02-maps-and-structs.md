@@ -37,8 +37,8 @@ func CountWords(words []string) map[string]int {
 	return counts
 }
 
-// CountWords([]string{"tea", "coffee", "tea"})
-// map[coffee:1 tea:2]
+// CountWords([]string{"juice", "coffee", "juice"})
+// map[coffee:1 juice:2]
 ```
 
 1. `make(map[string]int)` creates an empty, ready-to-use map.
@@ -46,13 +46,13 @@ func CountWords(words []string) map[string]int {
 
 `CountByItem` adds a struct's `Qty` instead of `1`.
 
-:::trace{title='CountWords([]string{"tea", "coffee", "tea"})'}
+:::trace{title='CountWords([]string{"juice", "coffee", "juice"})'}
 | w | counts[w] before | counts | note |
 |---|---|---|---|
 |  |  | map[] | make gives an empty map, ready to use. |
-| tea | 0 | map[tea:1] | A missing key reads as 0, so counts[w]++ makes it 1. |
-| coffee | 0 | map[coffee:1 tea:1] | coffee is new too. |
-| tea | 1 | map[coffee:1 tea:2] | tea was 1: now 2. |
+| juice | 0 | map[juice:1] | A missing key reads as 0, so counts[w]++ makes it 1. |
+| coffee | 0 | map[coffee:1 juice:1] | coffee is new too. |
+| juice | 1 | map[coffee:1 juice:2] | juice was 1: now 2. |
 :::
 :::
 

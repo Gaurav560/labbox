@@ -40,16 +40,16 @@ function countItems(items) {
   return counts;
 }
 
-countItems(["tea", "coffee", "tea"])   // { tea: 2, coffee: 1 }
+countItems(["juice", "coffee", "juice"])   // { juice: 2, coffee: 1 }
 ```
 
-:::trace{title='countItems(["tea", "coffee", "tea"])'}
+:::trace{title='countItems(["juice", "coffee", "juice"])'}
 | item | counts[item] ?? 0 | counts | note |
 |---|---|---|---|
 |  |  | {} | Start with an empty object. |
-| tea | 0 | { tea: 1 } | tea is new: undefined ?? 0 is 0, plus 1. |
-| coffee | 0 | { tea: 1, coffee: 1 } | coffee is new too. |
-| tea | 1 | { tea: 2, coffee: 1 } | tea is already 1: 1 + 1 = 2, stored back under tea. |
+| juice | 0 | { juice: 1 } | juice is new: undefined ?? 0 is 0, plus 1. |
+| coffee | 0 | { juice: 1, coffee: 1 } | coffee is new too. |
+| juice | 1 | { juice: 2, coffee: 1 } | juice is already 1: 1 + 1 = 2, stored back under juice. |
 :::
 :::
 
@@ -69,15 +69,15 @@ a key without `?? 0`, and every count after it stays `NaN`.
 
 :::step{type=try title="Count with and without ??"}
 ```bash run
-node -e 'const c = {}; c.tea = c.tea + 1; const d = {}; d.tea = (d.tea ?? 0) + 1; console.log(c, d)'
+node -e 'const c = {}; c.juice = c.juice + 1; const d = {}; d.juice = (d.juice ?? 0) + 1; console.log(c, d)'
 ```
 :::
 
 :::step{type=task task=word_counts title="Warm-up: count each word"}
-Make `wordCounts(words)` return how many times each word appears, with words lower-cased so `Tea` and
-`tea` count together:
+Make `wordCounts(words)` return how many times each word appears, with words lower-cased so `Juice` and
+`juice` count together:
 
-- `wordCounts(["tea", "Coffee", "TEA", "tea"])` returns `{ tea: 3, coffee: 1 }`
+- `wordCounts(["juice", "Coffee", "JUICE", "juice"])` returns `{ juice: 3, coffee: 1 }`
 - `wordCounts([])` returns `{}`
 :::
 
@@ -102,7 +102,7 @@ A set keeps each item once, like a guest list.
 :::step{type=task task=common_items title="The items two lists share"}
 Make `commonItems(a, b)` return the items that are in **both** arrays, each once, **sorted**:
 
-- `commonItems(["tea", "coffee", "milk"], ["milk", "tea", "juice"])` returns `["milk", "tea"]`
+- `commonItems(["toast", "coffee", "milk"], ["milk", "toast", "juice"])` returns `["milk", "toast"]`
 - `commonItems(["b", "a", "b"], ["b", "b", "a"])` returns `["a", "b"]`
 :::
 

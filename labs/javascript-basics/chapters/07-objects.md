@@ -13,8 +13,8 @@ the original.
 An object is written with curly braces: **keys** (labels) and their **values**:
 
 ```javascript
-const item = { name: "masala tea", price: 20, qty: 2 };
-item.name          // "masala tea"
+const item = { name: "veg sandwich", price: 20, qty: 2 };
+item.name          // "veg sandwich"
 item.price * item.qty   // 40
 item.qty = 3;      // change a value
 item.inStock = true;    // add a new key
@@ -33,14 +33,14 @@ Real data is usually a **list of records**: an array where each item is an objec
 
 ```javascript
 const cart = [
-  { name: "tea", price: 20, qty: 2 },
+  { name: "juice", price: 20, qty: 2 },
   { name: "bun", price: 15, qty: 1 },
 ];
 
 for (const line of cart) {
   console.log(line.name, line.price * line.qty);
 }
-// tea 40
+// juice 40
 // bun 15
 ```
 
@@ -72,14 +72,14 @@ itemCount(cart)   // 3
 | line | line.qty | count | note |
 |---|---|---|---|
 |  |  | 0 | Before the loop: count starts at zero. |
-| tea | 2 | 2 | The first line is an object; line.qty reads its quantity. |
+| juice | 2 | 2 | The first line is an object; line.qty reads its quantity. |
 | bun | 1 | 3 | 2 + 1 = 3. No lines left: the answer is 3. |
 :::
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-What is `item.colour` for `const item = { name: "tea", price: 20 }`?
+What is `item.colour` for `const item = { name: "juice", price: 20 }`?
 :::
 - [ ] An error
 - [x] `undefined`
@@ -93,14 +93,14 @@ a key name (`item.prcie`) quietly gives `undefined` too.
 
 :::step{type=try title="Explore an object"}
 ```bash run
-node -e 'const item = { name: "tea", price: 20 }; console.log(item.name, item.colour, Object.keys(item), { ...item, price: 18 }, item)'
+node -e 'const item = { name: "juice", price: 20 }; console.log(item.name, item.colour, Object.keys(item), { ...item, price: 18 }, item)'
 ```
 :::
 
 :::step{type=task task=cart_total title="Warm-up: the cart total"}
 In `objects/cart.js`, make `cartTotal(cart)` add up `price * qty` for every line:
 
-- `cartTotal([{ name: "tea", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }])` returns `55`
+- `cartTotal([{ name: "juice", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }])` returns `55`
 - `cartTotal([])` returns `0`
 :::
 
@@ -111,7 +111,7 @@ object, and changing `b` changes `a` too.
 To change a value **without** touching the original, copy first with the spread syntax:
 
 ```javascript
-const item = { name: "tea", price: 20 };
+const item = { name: "juice", price: 20 };
 const cheaper = { ...item, price: 18 };   // copy every key, then set price
 item.price      // 20: the original is untouched
 cheaper.price   // 18
@@ -128,7 +128,7 @@ Changing the price on a photocopy leaves the original tag at 20.
 Make `withDiscount(item, percent)` return a **new** item with the price lowered by `percent`, rounded
 to two decimals, keeping every other field, and leaving `item` exactly as it was:
 
-- `withDiscount({ name: "tea", price: 20 }, 10)` returns `{ name: "tea", price: 18 }`
+- `withDiscount({ name: "juice", price: 20 }, 10)` returns `{ name: "juice", price: 18 }`
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -166,7 +166,7 @@ It came from JavaScript's object syntax, with stricter rules: keys in double quo
 :::
 
 :::step{type=recap title="Chapter done"}
-- An object groups labelled values: `{ name: "tea", price: 20 }`, read with a dot.
+- An object groups labelled values: `{ name: "juice", price: 20 }`, read with a dot.
 - Real data is often an array of objects; loop over it with `for...of`.
 - `b = a` shares an object; `{ ...a, key: value }` makes a changed copy.
 - A missing key gives `undefined`, not an error.

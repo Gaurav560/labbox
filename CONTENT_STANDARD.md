@@ -129,7 +129,7 @@ animated, cool images, tasks and much more." On top of everything above:
   (how Python runs a file, one function call, reading a traceback), and a trace with Play for every loop.
 - **One small running project, with a name** (Python from zero: **Pocket**, a money tracker): tasks feel like
   giving it new powers, not exercises.
-- **Invite play.** "Now change `chai = 15.5` to `20` and run it again." The learner changes code and sees
+- **Invite play.** "Now change `juice = 15.5` to `20` and run it again." The learner changes code and sees
   what happens long before the task.
 - Still precise: curiosity lives in the questions and reveals, not in piling up analogies. Every output is
   still captured from the real lab image.

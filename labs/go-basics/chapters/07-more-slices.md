@@ -111,7 +111,7 @@ Go has no set type; a `map[string]bool` does the job:
 
 ```go
 seen := map[string]bool{}
-seen["tea"] = true
+seen["juice"] = true
 if seen["coffee"] {        // a missing key reads as false
 	fmt.Println("had coffee")
 }
@@ -129,7 +129,7 @@ A set keeps each item once, like a guest list.
 In `slicetools/slicetools.go`, make `Unique(items []string) []string` return each item once, in the
 order it **first** appeared, and an empty (not nil) slice for no items.
 
-- `Unique([]string{"tea", "coffee", "tea", "milk"})` returns `[tea coffee milk]`
+- `Unique([]string{"juice", "coffee", "juice", "milk"})` returns `[juice coffee milk]`
 - `Unique(nil)` returns `[]`
 :::
 
