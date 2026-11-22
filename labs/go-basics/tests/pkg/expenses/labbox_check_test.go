@@ -72,10 +72,9 @@ const big = "date,category,amount\n2026-03-01,rent,18000\n2026-03-02,food,120\n2
 func TestLabboxCheckSummaryCli(t *testing.T) {
 	defer guard("summary_cli")
 	bin := filepath.Join(t.TempDir(), "summary")
-	build := exec.Command("go", "build", "-o", bin, "./cmd/summary")
-	build.Dir = ".."
+	build := exec.Command("go", "build", "-o", bin, "./summary")
 	if out, err := build.CombinedOutput(); err != nil {
-		report("summary_cli", false, "cmd/summary does not build:\n"+string(out), nil, nil)
+		report("summary_cli", false, "summary does not build:\n"+string(out), nil, nil)
 		return
 	}
 	data := writeTemp(t, "big.csv", big)

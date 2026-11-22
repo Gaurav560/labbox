@@ -1,5 +1,32 @@
 # Changelog
 
+## 22 November: Go from zero rewrite, Part 4 "Capstone" (chapter 18); the course is complete
+
+- 18. **Capstone: a depot report** (new, ids `capstone`, `depot_report`, `busiest_depot`): size up `deliveries.csv`
+  with `wc` and `uniq -c`, a `Report` struct already designed, a plan in words, line numbers counted through blank
+  lines, empty (not nil) results, and a fair tie rule over a randomly ordered map. Checked by `tests/pkg/report`.
+- Go from zero: 18 chapters, 36 tasks, about 13.5 hours, in four parts, with three real photos (Ken Thompson and Dennis
+  Ritchie, the Gopher, Rob Pike), 18 handwritten notes pages and four playing diagrams. All four language courses
+  (Python, Java, JavaScript, Go) are now rewritten in the same curiosity-first style.
+
+## 22 November: Go from zero rewrite, Part 3 "Real programs" (chapters 13 to 17)
+
+- 13. **Errors in depth**: an error wrapped twice and still found by `errors.Is` (`%w` versus `%v`), sentinel errors,
+  `defer` running last in, first out.
+- 14. **Packages, modules and JSON** (new): `go.mod` and import paths, `json.Marshal` and `json.Unmarshal`, struct tags
+  and `omitempty`, a lower-case field JSON cannot see, a wrong-shape JSON error. Tasks `save_manifest` and
+  `load_manifest`, checked by `tests/pkg/manifest`.
+- 15. **Files and a command-line program**: `bufio.Scanner`, flags must come before file names (run for real), errors
+  to `os.Stderr`, and `go run` turning exit code 2 into 1. The summary tool moves from `cmd/summary` to
+  `15-files-and-cli/summary` and imports its package by path.
+- 16. **Goroutines and channels**: goroutines that vanish when `main` returns, a WaitGroup (900 ms becomes 300 ms),
+  channels (new playing diagram `go-channels`), and a real "fatal error: concurrent map writes". Rob Pike's photo
+  (Chlor, CC BY-SA 3.0).
+- 17. **Testing with go test** (new): `fix_next_stop` red to green, and `test_eta`, a table-driven test that must
+  catch three planted bugs (`tests/gotest/`, run with `go test` in a scratch module).
+- Five notes pages (chapter 14's regenerated twice: the image model kept writing "Umarshal", so that line is now in
+  words). Chapter and task ids kept; the old `cmd` folder is gone.
+
 ## 22 November: Go from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
 
 - The shared root package `till.go` is split in two: `07-slices-and-errors/till.go` (package `till`: `Total`,

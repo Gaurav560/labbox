@@ -19,9 +19,12 @@ finding-bugs|06-finding-bugs|pkg/van|fix_total_weight fix_can_load
 02-maps-and-structs|10-maps-and-structs|pkg/orders|count_by_item busiest
 11-pointers|11-pointers|pkg/wallet|deposit swap
 09-methods-and-interfaces|12-methods-and-interfaces|pkg/shapes|areas total_area
-10-errors-in-depth|bank|pkg/bank|withdraw parse_age
-12-files-and-cli|expenses|pkg/expenses|read_totals summary_cli
-13-goroutines|concurrent|pkg/concurrent|fetch_all word_counts
+10-errors-in-depth|13-errors-in-depth|pkg/bank|withdraw parse_age
+packages-and-json|14-packages-and-json|pkg/manifest|save_manifest load_manifest
+12-files-and-cli|15-files-and-cli|pkg/expenses|read_totals summary_cli
+13-goroutines|16-goroutines|pkg/concurrent|fetch_all word_counts
+testing|17-testing|gotest|fix_next_stop test_eta
+capstone|18-capstone|pkg/report|depot_report busiest_depot
 "
 
 fail_all() { # tasks message

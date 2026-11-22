@@ -67,5 +67,5 @@ func TestLabboxCheckWordCounts(t *testing.T) {
 		report("word_counts", false, "CountWords(nil) should return an empty map, not nil", "map[]", got)
 		return
 	}
-	report("word_counts", true, "Exactly right under 200 goroutines: the mutex kept the map safe. You have finished Go from zero: well done.", nil, nil)
+	report("word_counts", true, "Exactly right under 200 goroutines: the mutex kept the map safe. That is how Go servers share data between requests.", nil, nil)
 }

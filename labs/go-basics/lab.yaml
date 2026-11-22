@@ -12,7 +12,7 @@ tags:
 - go
 - beginner
 level: beginner
-estimated_minutes: 565
+estimated_minutes: 805
 cover: cover.svg
 cover_credit:
   by: 'Logos: go'
@@ -390,10 +390,12 @@ chapters:
 - id: 10-errors-in-depth
   title: Errors in depth
   file: chapters/13-errors-in-depth.md
-  minutes: 20
+  minutes: 45
+  folder: 13-errors-in-depth
+  part: Real programs
   tasks:
   - id: withdraw
-    title: 'bank/bank.go: Withdraw(balance, amount)'
+    title: 'bank.go: Withdraw(balance, amount)'
     hints:
     - 'Check the amount first: zero or negative is an error of its own.'
     - For too little money, wrap the sentinel error with fmt.Errorf and the %w verb, so callers can use errors.Is.
@@ -405,7 +407,7 @@ chapters:
       gives: "100, ErrInsufficientFunds"
       note: "balance unchanged"
   - id: parse_age
-    title: 'bank/bank.go: ParseAge(text)'
+    title: 'bank.go: ParseAge(text)'
     hints:
     - strconv.Atoi turns text into an int, or returns an error you can wrap.
     - Wrap that error with %w so errors.Is(err, strconv.ErrSyntax) still works for the caller.
@@ -416,13 +418,40 @@ chapters:
     - call: "ParseAge(\"abc\")"
       gives: "0, an error"
       note: "wraps strconv.ErrSyntax"
+- id: packages-and-json
+  title: Packages, modules and JSON
+  file: chapters/14-packages-and-json.md
+  minutes: 45
+  folder: 14-packages-and-json
+  tasks:
+  - id: save_manifest
+    title: 'manifest.go: SaveManifest(van, parcels)'
+    hints:
+    - A struct tag goes after a field's type, between backticks, and names its JSON key.
+    - Count is how many parcels there are, and a slice knows its own length.
+    - Build a Manifest value and give it to json.Marshal, which already returns bytes and an error.
+    examples:
+    - call: SaveManifest("Van 7", parcels)
+      gives: '{"van":"Van 7","count":1,"parcels":[...]}'
+  - id: load_manifest
+    title: 'manifest.go: LoadManifest(data)'
+    hints:
+    - json.Unmarshal fills in a variable, so it needs that variable's address.
+    - Broken JSON makes Unmarshal return an error. Pass it on.
+    - A missing parcels key leaves the slice nil. Return an empty slice instead.
+    examples:
+    - call: LoadManifest of two parcels
+      gives: the two parcels, nil
+    - call: 'LoadManifest of {"van":"Van 1"}'
+      gives: '[]Parcel{}, nil'
 - id: 12-files-and-cli
   title: Files and a command-line program
   file: chapters/15-files-and-cli.md
-  minutes: 20
+  minutes: 50
+  folder: 15-files-and-cli
   tasks:
   - id: read_totals
-    title: 'expenses/expenses.go: ReadTotals(path)'
+    title: 'expenses.go: ReadTotals(path)'
     hints:
     - os.Open gives a file and an error; return the error (wrapped) when the file is missing.
     - csv.NewReader reads rows; set FieldsPerRecord to -1 so short rows do not stop the reading.
@@ -433,7 +462,7 @@ chapters:
     - call: "ReadTotals(\"missing.csv\")"
       gives: "nil, fs.ErrNotExist"
   - id: summary_cli
-    title: 'cmd/summary/main.go: the top categories'
+    title: 'summary/main.go: the top categories'
     hints:
     - flag.Int defines -top; flag.Parse, then flag.Arg(0) is the file path.
     - For a missing file, print the message to os.Stderr, then end the program with exit code 1 (the os package has a function for it).
@@ -448,10 +477,11 @@ chapters:
 - id: 13-goroutines
   title: Goroutines and channels
   file: chapters/16-goroutines.md
-  minutes: 20
+  minutes: 50
+  folder: 16-goroutines
   tasks:
   - id: fetch_all
-    title: 'concurrent/concurrent.go: FetchAll(items, fetch)'
+    title: 'concurrent.go: FetchAll(items, fetch)'
     hints:
     - go f() runs f at the same time as the rest of the program.
     - 'Make the result slice first, and let each goroutine write only its own index: the order stays right.'
@@ -464,7 +494,7 @@ chapters:
       gives: "well under 1 s"
       note: "all at once"
   - id: word_counts
-    title: 'concurrent/concurrent.go: CountWords(texts)'
+    title: 'concurrent.go: CountWords(texts)'
     hints:
     - Several goroutines writing to one map at once crash the program.
     - Protect the map with a sync.Mutex (Lock before writing, Unlock after), or send counts over a channel.
@@ -474,5 +504,64 @@ chapters:
       gives: "map[fun:1 go:3 is:1]"
     - call: "CountWords(nil)"
       gives: "map[]"
+- id: testing
+  title: Testing with go test
+  file: chapters/17-testing.md
+  minutes: 50
+  folder: 17-testing
+  tasks:
+  - id: fix_next_stop
+    title: 'stops.go: make the red test green'
+    hints:
+    - go test shows which test failed, its file and line, and what it got.
+    - With 3 stops the positions are 0, 1 and 2. After 2, the van goes back to 0.
+    - The remainder operator % wraps a number around. What is 3 % 3?
+    examples:
+    - call: NextStop(0, 3)
+      gives: '1'
+    - call: NextStop(2, 3)
+      gives: '0'
+      note: back to the depot
+  - id: test_eta
+    title: 'eta_test.go: a table that catches a broken ETA'
+    hints:
+    - 'Read the rules in eta.go: minutes under an hour, hours with two-digit minutes from 60 up, negative is an error.'
+    - Test the edges, where bugs live. Just under an hour, exactly one hour, and a few minutes past it.
+    - A negative number must return an error. Write a small test that checks err is not nil.
+    examples:
+    - call: go test
+      gives: your tests pass on the real FormatETA
+      note: and fail on three broken copies of it
+- id: capstone
+  title: 'Capstone: a depot report'
+  file: chapters/18-capstone.md
+  minutes: 60
+  folder: 18-capstone
+  part: Capstone
+  tasks:
+  - id: depot_report
+    title: 'report.go: DepotReport(path)'
+    hints:
+    - Count every line as you read it, blank ones too, and skip the header and blank lines.
+    - A row is bad when it has no depot, or when strconv.Atoi refuses its weight or its minutes.
+    - Start the map and the slice empty, not nil, and guard the average when nothing was delivered.
+    examples:
+    - call: DepotReport of the five lines in Guess first
+      gives: 2 delivered, 10 kg, 40.0 min
+      note: bad lines [3 4]
+    - call: DepotReport("deliveries.csv").Delivered
+      gives: '7'
+  - id: busiest_depot
+    title: 'report.go: BusiestDepot(r)'
+    hints:
+    - Walk the PerDepot map, keeping the best depot so far.
+    - Map order is random, so a tie needs a rule of its own.
+    - On equal kilograms, keep the name that sorts first, with depot < best.
+    examples:
+    - call: BusiestDepot with Pune 26, Mumbai 13
+      gives: '"Pune"'
+    - call: BusiestDepot with Pune 7, Goa 7
+      gives: '"Goa"'
+      note: a tie
 cover_scene: A calm desk with a laptop showing a few lines of Go and a small gopher figure beside it, soft morning
   light.

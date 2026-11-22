@@ -1,201 +1,259 @@
-:::step{type=story title="Why goroutines"}
-Go's most famous feature is how easily it does many things at once: fetch ten web pages at the same
-time, handle thousands of connections, process files in parallel. A **goroutine** is a function
-running alongside the rest of the program, and it costs almost nothing to start.
+:::step{type=story title="Can one program do three things at once?"}
+Parcel has three vans out, each taking 300 milliseconds to deliver. Do them one after another, and it takes 900. Do
+them at the same time, and it takes 300.
+
+Doing many things at once is the reason Go exists. Its designers worked on Google's servers, where every program
+handles thousands of requests at the same moment, and the languages they had made that painful. So they built it into
+Go itself, with one tiny keyword: `go`. Put it in front of a function call, and the call runs **alongside** everything
+else, in a **goroutine**.
+
+:::photo{src="/lesson-images/go/rob-pike.webp" alt="Rob Pike, one of the designers of Go: a man with short dark hair and rimless glasses, in a dark shirt" credit="Chlor at English Wikipedia" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:Rob-pike_(cropped).jpg"}
+Rob Pike, one of Go's three designers, who has spent decades on languages for doing many things at once.
+:::
+
+It sounds too easy, and it is: your first goroutines will vanish without a trace. Today you find out why, and learn
+the two tools that make them reliable: **WaitGroups** and **channels**.
 
 :::mission
-In `concurrent/concurrent.go`, run slow fetches at the same time while keeping the results in order,
-and count words from many goroutines without corrupting the counts.
+Make `FetchAll` call every fetch at the same time while keeping the results in order, and make `CountWords` count
+words with one goroutine per text, without crashing.
 :::
 :::
 
-:::step{type=concept title="go and WaitGroup"}
-Put `go` in front of a function call and it runs concurrently:
+:::step{type=try title="Three deliveries that vanish" file="16-goroutines/forgot.go" line="16-21"}
+Open `forgot.go`:
+
+```go
+for _, stop := range []string{"MG Road", "FC Road", "JM Road"} {
+	go deliver(stop)
+}
+fmt.Println("all sent!")
+```
+
+```bash run
+cd /workspace/16-goroutines && go run forgot.go
+```
+
+```text
+all sent!
+```
+
+Not a single delivery printed. `go deliver(stop)` started three goroutines and **did not wait** for them. `main` went
+straight on, printed `all sent!` and returned, and when `main` returns, the whole program ends, goroutines and all.
+They were still sleeping on their way to MG Road.
+:::
+
+:::step{type=try title="Wait for them, and time it" file="16-goroutines/waitgroup.go" line="16-36"}
+Open `waitgroup.go`:
 
 ```go
 var wg sync.WaitGroup
-for i := range 3 {
+for _, stop := range stops {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		fmt.Println("worker", i)
+		deliver(stop)
 	}()
 }
-wg.Wait()    // wait until all three called Done
+wg.Wait()
 ```
 
-`main` does not wait for goroutines by itself: without `wg.Wait()` the program could end before they
-run.
+```bash run
+cd /workspace/16-goroutines && go run waitgroup.go
+```
 
-:::picture{name="two-cooks"}
-More cooks, all at once: dinner is ready sooner.
-:::
+```text
+one by one: 900ms
+all at once: 300ms
+```
+
+A `sync.WaitGroup` is a counter: `Add(1)` before starting each goroutine, `Done()` (deferred, chapter 13) when it
+finishes, and `Wait()` blocks until the counter is back to zero. Three deliveries in the time of one.
+
+`go func() { ... }()` starts an unnamed function as a goroutine, right there. Since Go 1.22, each lap of the loop gets
+its own `stop`, so every goroutine delivers to the right address.
 :::
 
-:::step{type=example title="Worked example: square numbers in parallel, in order"}
-Each goroutine writes only its own slot, so the order is kept:
+:::step{type=concept title="Channels: goroutines talk"}
+A **channel** is a pipe between goroutines. One sends, another receives:
 
 ```go
-func Squares(nums []int) []int {
-	out := make([]int, len(nums))
+results := make(chan string)
+go func() { results <- "P-1 weighs 4 kg" }()   // send
+msg := <-results                                // receive: waits until something arrives
+```
+
+Receiving **waits**, which is how goroutines hand work back without any shared variables. Go's motto, from Rob Pike:
+"Do not communicate by sharing memory; instead, share memory by communicating."
+
+:::diagram{name="go-channels"}
+Three goroutines send into one channel, and main receives the results in the order they finish.
+:::
+:::
+
+:::step{type=try title="Results come back in any order" file="16-goroutines/channel.go" line="12-20"}
+Open `channel.go`: three goroutines each send one result.
+
+```bash run
+cd /workspace/16-goroutines && go run channel.go
+```
+
+```text
+P-3 weighs 7 kg
+P-1 weighs 4 kg
+P-2 weighs 12 kg
+```
+
+Your order may differ: results arrive in the order the goroutines **finish**, not the order they started. When the
+order matters, as in your next task, each goroutine must write to its **own** place: for example, `results[i]` of a
+slice, where `i` is its position.
+:::
+
+:::step{type=example title="Worked example: weigh every parcel at once"}
+```go
+func WeighAll(parcels []string, weigh func(string) int) []int {
+	weights := make([]int, len(parcels))
 	var wg sync.WaitGroup
-	for i, n := range nums {
+	for i, p := range parcels {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			out[i] = n * n
+			weights[i] = weigh(p)
 		}()
 	}
 	wg.Wait()
-	return out
+	return weights
 }
 ```
 
-1. Make the result slice first, one slot per input.
-2. Start one goroutine per item; each writes `out[i]`, its own slot.
-3. `wg.Wait()` waits for all of them before returning.
-
-`FetchAll` is this with `fetch(item)` in place of `n * n`.
-
-:::trace{title="Squares([]int{2, 3, 4})"}
-| moment | out | note |
-|---|---|---|
-| make([]int, 3) | [0 0 0] | One slot per number, made before any goroutine starts. |
-| three goroutines start | [0 0 0] | Each one knows its own i and n. They run at the same time. |
-| the goroutine for 4 finishes first | [0 0 16] | Order of finishing does not matter: it writes only to slot 2. |
-| the others finish | [4 9 16] | Each wrote its own slot, so nothing clashes. |
-| wg.Wait() returns | [4 9 16] | Only now is it safe to return: every goroutine called Done. |
+1. Make the result slice first, the right length.
+2. Each goroutine writes only to **its own slot**, `weights[i]`, so the order is kept and no two goroutines touch the
+   same place.
+3. `wg.Wait()` before returning, or you would return half-empty results.
 :::
+
+:::step{type=task task=fetch_all title="Your turn: fetch everything at once"}
+Open `concurrent.go`. `FetchAll(items, fetch)` works, but calls `fetch` for one item after another. Make it call every
+fetch **at the same time**, and still return the results in the items' order.
+
+```bash run
+cd /workspace/16-goroutines && go run run.go
+```
+
+Then press **Check**: it measures whether the fetches really overlap.
+:::
+
+:::step{type=try title="Many goroutines, one map" file="16-goroutines/race.go" line="11-25"}
+Now the danger. Open `race.go`: 50 goroutines each add 1000 to the same map entry.
+
+```bash run
+cd /workspace/16-goroutines && go run race.go
+```
+
+```text
+fatal error: concurrent map writes
+
+goroutine 28 [running]:
+internal/runtime/maps.fatal({0x49dfd4?, 0x553238?})
+	/opt/go/src/runtime/panic.go:1197 +0x18
+main.main.func1()
+	/workspace/16-goroutines/race.go:19 +0x6c
+created by main.main in goroutine 1
+```
+
+Go caught two goroutines writing the map at the same instant and stopped the program, on purpose, rather than let it
+quietly corrupt your data. (On a lucky run it may survive and print a wrong total.) Shared data needs a guard: a
+`sync.Mutex`, which only one goroutine can hold at a time.
+
+```go
+var mu sync.Mutex
+mu.Lock()
+counts["parcels"]++
+mu.Unlock()
+```
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-Five calls each take 200 ms. Run one after another they take 1 second. Started as five goroutines and
-then waited for, about how long do they take?
+`main` starts five goroutines with `go work()` and returns at once. How many finish their work?
 :::
-- [ ] 1 second
-- [x] About 200 ms
-- [ ] About 40 ms
-- [ ] It depends on the number of CPUs, at least 1 second
+- [ ] All five
+- [x] Probably none: the program ends when `main` returns
 :::explain
-Goroutines **wait** at the same time, so five 200 ms waits overlap into roughly 200 ms in total. This
-is why Go is so good at network work, which is mostly waiting.
+Nothing waits for them. Use a `sync.WaitGroup` and call `Wait()` before `main` ends.
 :::
 :::
 
-:::step{type=try title="Sequential versus concurrent"}
-:::diagram{name="goroutines"}
-One after another, five waits add up; as goroutines, they overlap.
-:::
+:::step{type=task task=word_counts title="Your turn: count words in parallel"}
+In `concurrent.go`, make `CountWords(texts)` count every word, in lower case, across all the texts, with **one
+goroutine per text**. All of them add to one shared map, so protect it with a `sync.Mutex`.
 
 ```bash run
-cat > /tmp/conc.go <<'GO'
-package main
-
-import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-func slow(i int) { time.Sleep(200 * time.Millisecond) }
-
-func main() {
-	start := time.Now()
-	for i := range 5 {
-		slow(i)
-	}
-	fmt.Println("one by one:", time.Since(start).Round(time.Millisecond))
-
-	start = time.Now()
-	var wg sync.WaitGroup
-	for i := range 5 {
-		wg.Add(1)
-		go func() { defer wg.Done(); slow(i) }()
-	}
-	wg.Wait()
-	fmt.Println("together:  ", time.Since(start).Round(time.Millisecond))
-}
-GO
-go run /tmp/conc.go
-```
-:::
-
-:::step{type=task task=fetch_all title="Fetch everything at once"}
-`FetchAll` in `concurrent/concurrent.go` works, but calls `fetch` one item after another. Make it
-call `fetch` for every item **at the same time**, and still return the results in the items' order.
-
-With five fetches of 200 ms each, it must finish in well under a second, and
-`FetchAll([]string{"a", "b"}, strings.ToUpper)` must still return `[A B]`.
-:::
-
-:::step{type=concept title="Sharing data safely"}
-Two goroutines writing the same map at the same moment is a **data race**: Go may crash with
-`concurrent map writes`, or counts can silently come out wrong. Two ways to stay safe:
-
-```go
-var mu sync.Mutex
-mu.Lock()            // only one goroutine at a time past this line
-counts[word]++
-mu.Unlock()
+cd /workspace/16-goroutines && go run run.go
 ```
 
-or send results over a **channel** to one goroutine that owns the map:
-
-```go
-ch := make(chan string)
-go func() { ch <- "hello" }()
-word := <-ch         // receives "hello"
-```
+Then press **Check**.
 :::
 
-:::step{type=task task=word_counts title="Count words from many goroutines"}
-In `concurrent/concurrent.go`, make `CountWords(texts []string) map[string]int` count every word (in
-lower case) across all the texts, using one goroutine per text, and return an empty map for no texts.
-With 200 texts at once the counts must be exactly right, every time.
-:::
-
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-What happens if `main` returns while goroutines are still running?
+What does `wg.Wait()` do?
 :::
-- [ ] It waits for them
-- [x] They are stopped with the program
-- [ ] They keep running
-- [ ] It panics
+- [x] Blocks until every `Done` has balanced every `Add`
+- [ ] Waits one second
+- [ ] Starts the goroutines
 :::explain
-When `main` returns the whole program ends, goroutines included. That is why `wg.Wait()` matters.
+A WaitGroup is a counter; `Wait` blocks until it is back to zero.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-Several goroutines add to one map. What keeps it safe?
+What does `msg := <-results` do when nothing has been sent yet?
 :::
-- [ ] Nothing is needed
-- [x] A `sync.Mutex` around each write
-- [ ] Making the map bigger
-- [ ] `defer`
+- [ ] Gives an empty string
+- [x] Waits until a value arrives
 :::explain
-Lock a mutex around each write (or send values over a channel to one owner). Unprotected map writes crash the program.
+Receiving from a channel blocks until another goroutine sends.
 :::
 :::
 
-:::step{type=deep-dive title="Do not communicate by sharing memory"}
-Go's motto is "do not communicate by sharing memory; share memory by communicating": instead of many
-goroutines locking one map, pass values over channels to a goroutine that owns the data. Both styles
-are fine; mutexes are simpler for a counter, channels for pipelines of work.
-
-`go test -race` (and `go run -race`) finds data races while your code runs; it needs a C compiler,
-which this lab machine leaves out to stay small. `context.Context` lets you cancel a whole group of
-goroutines, for example when a web request is abandoned, and `errgroup` collects the first error from
-a group. Goroutines start with a few kilobytes of stack, so a server running a hundred thousand of them
-is normal.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+How do you keep results in order when many goroutines finish in any order?
+:::
+- [x] Each goroutine writes to its own slot, like `results[i]`
+- [ ] Sort them afterwards
+- [ ] Goroutines always finish in order
+:::explain
+Writing to its own index keeps the order and means no two goroutines share a slot.
+:::
 :::
 
-:::step{type=recap title="Course complete"}
-- `go f()` runs `f` concurrently; a `sync.WaitGroup` waits for a group.
-- Write each result to its own slot (or index) to keep the order.
-- Protect shared maps with a `sync.Mutex`, or send values over channels.
-- You have learned Go from the first line to goroutines: well done.
+:::step{type=deep-dive title="Go deeper: buffered channels, select and the race detector"}
+**Buffered channels.** `make(chan string, 10)` can hold 10 values before a sender has to wait.
+
+**select.** `select { case r := <-results: ...; case <-time.After(time.Second): ... }` waits for whichever comes
+first: the classic way to give up after a timeout.
+
+**The race detector.** `go run -race` watches every memory access and reports two goroutines touching the same data
+without a guard, even when the program happens to survive.
+
+**Why so cheap.** A goroutine starts with a few kilobytes of memory, so one program can run hundreds of thousands of
+them. Go's scheduler spreads them across your computer's cores.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Start goroutines with `go`, and explain why they vanish when `main` returns.
+- Wait for them with a `sync.WaitGroup`: `Add`, `defer Done`, `Wait`.
+- Send and receive through channels, knowing results arrive in the order goroutines finish.
+- Keep results in order with one slot per goroutine, and guard shared maps with a `sync.Mutex`.
+
+:::photo{src="/lesson-images/go/go-16-notes.webp" alt="Handwritten notes about goroutines: go starts a goroutine, main returning ends everything, WaitGroup Add Done Wait, channels send and receive, results arrive in finish order, one slot each keeps order, Mutex guards a shared map" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 17: tests with `go test`, the testing tool built into Go itself.
 :::

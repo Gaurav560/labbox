@@ -1,177 +1,212 @@
-:::step{type=story title="Why errors in depth"}
-"insufficient funds" alone does not say which account or how much. Real Go code adds context to an
-error as it travels up, while keeping the original inside so callers can still recognise it. Go 1.13
-added exactly the tools for that.
+:::step{type=story title="How can an error remember where it came from?"}
+A van cannot be dispatched. The error message says so. But **why**? Because loading failed. And why did loading fail?
+Because the van was full.
+
+In chapter 7 an error was one plain sentence. Real programs go deeper: one function calls another, which calls
+another, and an error from the bottom has to travel up to the top without losing its story, and while staying
+recognisable, so the code at the top can still ask "was this the van-is-full problem?". Go solves it with one small
+verb, `%w`, and one function, `errors.Is`. You will also meet `defer`, Go's way to clean up on the way out.
 
 :::mission
-In `bank/bank.go`, write `Withdraw`, which wraps a known error with context, and `ParseAge`, which
-wraps `strconv`'s error so callers can still inspect it.
+Write `Withdraw`, which refuses bad amounts and wraps a known error, and `ParseAge`, which wraps the error it got from
+`strconv`.
 :::
 :::
 
-:::step{type=concept title="Sentinel errors and wrapping"}
-A **sentinel** error is a named value callers can compare against:
+:::step{type=try title="An error wrapped twice" file="13-errors-in-depth/wrap.go" line="11-32"}
+Open `wrap.go`:
 
 ```go
-var ErrNotFound = errors.New("not found")
-```
+var ErrNoRoom = errors.New("van is full")
 
-`fmt.Errorf` with the `%w` verb adds context **and** keeps the original error inside:
-
-```go
-return fmt.Errorf("load user %d: %w", id, ErrNotFound)
-// "load user 7: not found"
-```
-
-`errors.Is(err, ErrNotFound)` looks through every layer of wrapping and says whether it is in there.
-:::
-
-:::step{type=example title="Worked example: wrap a sentinel with context"}
-A function that adds context and keeps the original error recognisable:
-
-```go
-var ErrNotFound = errors.New("not found")
-
-func FindUser(id int) (string, error) {
-	if id != 7 {
-		return "", fmt.Errorf("find user %d: %w", id, ErrNotFound)
+func load(van string, count int) error {
+	if count >= 10 {
+		return fmt.Errorf("load parcel onto %s: %w", van, ErrNoRoom)
 	}
-	return "Riya", nil
+	return nil
 }
 
-_, err := FindUser(3)
-// err: "find user 3: not found"
-// errors.Is(err, ErrNotFound) is true
+func dispatch(van string, count int) error {
+	if err := load(van, count); err != nil {
+		return fmt.Errorf("dispatch failed: %w", err)
+	}
+	return nil
+}
 ```
 
-`%w` is the one detail that matters: it wraps, so callers can still recognise `ErrNotFound`. `Withdraw`
-does the same with `ErrInsufficientFunds`.
+```bash run
+cd /workspace/13-errors-in-depth && go run wrap.go
+```
 
-:::trace{title="FindUser(3), then FindUser(7)"}
-| call | id != 7? | returns | note |
-|---|---|---|---|
-| FindUser(3) | true | "", find user 3: not found | %w wraps ErrNotFound inside a message with the id. |
-| errors.Is(err, ErrNotFound) | | true | The original error is still inside, so callers can test for it. |
-| FindUser(7) | false | "Riya", nil | Found: no error. |
+```text
+dispatch failed: load parcel onto Van 7: van is full
+true false
+true
+```
+
+The message tells the whole story, outside in. And look at line two: `errors.Is(err, ErrNoRoom)` is `true`, even though
+`err == ErrNoRoom` is `false`. The error at the top is not `ErrNoRoom` itself; it **wraps** it, two layers deep.
 :::
+
+:::step{type=concept title="%w wraps, errors.Is looks inside"}
+`fmt.Errorf` builds an error from a format, like `Sprintf`. With the special verb `%w` (for "wrap"), the new error
+also **keeps** the old one inside it, like a letter in an envelope in another envelope.
+
+- `errors.Is(err, ErrNoRoom)` opens every envelope, looking for `ErrNoRoom`. That is how the top of a program asks
+  "is this the van-is-full problem?" without caring how many layers there are.
+- `errors.Unwrap(err)` opens one envelope, which is why the third line, unwrapping twice, found `ErrNoRoom`.
+- `%v` instead of `%w` would copy the **text** only: the message would look the same, but `errors.Is` would say
+  `false`.
+
+A known error stored in a variable, like `ErrNoRoom`, is called a **sentinel error**. By convention its name starts with
+`Err`. The `os` package has `os.ErrNotExist`, which chapter 15 uses.
+:::
+
+:::step{type=example title="Worked example: a load that refuses"}
+```go
+var ErrTooHeavy = errors.New("too heavy")
+
+func Load(capacity, kg int) (int, error) {
+	if kg <= 0 {
+		return capacity, fmt.Errorf("invalid weight %d", kg)
+	}
+	if kg > capacity {
+		return capacity, fmt.Errorf("load %d kg into %d kg of room: %w", kg, capacity, ErrTooHeavy)
+	}
+	return capacity - kg, nil
+}
+```
+
+1. A nonsense value gets its own error, made with `fmt.Errorf` so the message names the bad value.
+2. The known problem wraps the sentinel with `%w`, so callers can check `errors.Is(err, ErrTooHeavy)`.
+3. On every error, the room is returned **unchanged**: a refused load must never half-happen.
+
+Your `Withdraw` has exactly this shape.
+:::
+
+:::step{type=task task=withdraw title="Your turn: a withdrawal that refuses"}
+Open `bank.go` (the depot's petty cash) and finish `Withdraw(balance, amount)`:
+
+- give back the new balance;
+- an amount of 0 or less returns an error;
+- an amount bigger than the balance returns an error that **wraps** `ErrInsufficientFunds`, so `errors.Is` finds it;
+- on any error, return the balance unchanged.
+
+```bash run
+cd /workspace/13-errors-in-depth && go run run.go
+```
+
+Then press **Check**.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-`err := fmt.Errorf("withdraw: %v", ErrInsufficientFunds)`. What is
-`errors.Is(err, ErrInsufficientFunds)`?
+`err := fmt.Errorf("oops: %v", ErrNoRoom)`. What is `errors.Is(err, ErrNoRoom)`?
 :::
-- [ ] `true`: the message contains it
-- [x] `false`: `%v` only copies the text
-- [ ] It does not compile
-- [ ] It panics
+- [ ] `true`
+- [x] `false`
 :::explain
-`%v` turns the error into text and the original is gone; `errors.Is` compares errors, not messages, so
-it returns `false`. Only `%w` **wraps**: then `errors.Is` finds `ErrInsufficientFunds` inside. One
-letter decides whether callers can react to the error.
+`%v` only copies the text. Only `%w` keeps the original error inside, where `errors.Is` can find it.
 :::
 :::
 
-:::step{type=try title="Wrap and unwrap"}
+:::step{type=task task=parse_age title="Your turn: wrap what strconv tells you"}
+In `bank.go`, make `ParseAge(text)` read a whole number from 0 to 150:
+
+- text that is not a number returns an error that **wraps** `strconv`'s error with `%w`, so the caller can still find
+  `strconv.ErrSyntax` inside;
+- a number outside 0 to 150 returns an error.
+
 ```bash run
-cat > /tmp/wrap.go <<'GO'
-package main
-
-import (
-	"errors"
-	"fmt"
-)
-
-var ErrLow = errors.New("too low")
-
-func main() {
-	a := fmt.Errorf("step 1: %v", ErrLow)
-	b := fmt.Errorf("step 1: %w", ErrLow)
-	fmt.Println(a, errors.Is(a, ErrLow))
-	fmt.Println(b, errors.Is(b, ErrLow))
-}
-GO
-go run /tmp/wrap.go
+cd /workspace/13-errors-in-depth && go run run.go
 ```
+
+Then press **Check**.
 :::
 
-:::step{type=task task=withdraw title="Withdraw money"}
-In `bank/bank.go`, make `Withdraw(balance, amount int) (int, error)` return the new balance, or an
-error with the **balance unchanged**:
-
-- `Withdraw(500, 200)` returns `300, nil`, and `Withdraw(500, 500)` returns `0, nil`
-- an amount of `0` or less is an error of its own (not insufficient funds)
-- `Withdraw(100, 250)` returns `100` and an error for which `errors.Is(err, ErrInsufficientFunds)` is
-  `true`, with a message that says how much and from what, like
-  `withdraw 250 from 100: insufficient funds`
-:::
-
-:::step{type=concept title="Errors with details: errors.As"}
-:::diagram{name="error-chain"}
-Each `%w` adds a layer of context around the error inside; `errors.Is` and `errors.As` look through every layer.
-:::
-
-Some errors are types with fields. `strconv.Atoi` returns a `*strconv.NumError` that holds the text it
-could not read. `errors.As` finds such an error inside the wrapping and gives you its fields:
+:::step{type=try title="defer: clean up on the way out" file="13-errors-in-depth/defer.go" line="8-17"}
+Open `defer.go`:
 
 ```go
-var numErr *strconv.NumError
-if errors.As(err, &numErr) {
-	fmt.Println("could not read", numErr.Num)
+func deliver(stop string) {
+	fmt.Println("open the van doors")
+	defer fmt.Println("close the van doors")
+	defer fmt.Println("lock the van")
+	fmt.Println("hand over the parcel at", stop)
 }
 ```
 
-Wrap with `%w` and both `errors.Is` and `errors.As` keep working for your callers.
+```bash run
+cd /workspace/13-errors-in-depth && go run defer.go
+```
+
+```text
+open the van doors
+hand over the parcel at MG Road
+lock the van
+close the van doors
+```
+
+`defer` postpones a call until the function **returns**, however it returns: normally, through an early `return`, or
+in a panic. And several defers run **last in, first out**, like a stack of plates. Go programs write
+`defer f.Close()` right after opening a file, so it can never be forgotten (chapter 15).
 :::
 
-:::step{type=task task=parse_age title="Read an age"}
-In `bank/bank.go`, make `ParseAge(text string) (int, error)` return a whole number from 0 to 150:
-
-- `ParseAge("17")` returns `17, nil`
-- `ParseAge("abc")` returns an error that **wraps** strconv's error, so
-  `errors.Is(err, strconv.ErrSyntax)` is `true`
-- `ParseAge("-1")`, `ParseAge("151")`, `ParseAge("")` and `ParseAge("12.5")` return errors
-:::
-
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Which verb wraps an error so `errors.Is` can find it?
+Which verb in `fmt.Errorf` keeps the original error inside the new one?
 :::
 - [ ] `%v`
 - [ ] `%s`
 - [x] `%w`
-- [ ] `%e`
 :::explain
-Only `%w` wraps; `%v` and `%s` just copy the text.
+`%w` wraps. `%v` and `%s` copy the text only.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What is the best way to check for a specific error?
+A function has `defer fmt.Println("A")` then `defer fmt.Println("B")`. What prints when it returns?
 :::
-- [ ] `err.Error() == "not found"`
-- [x] `errors.Is(err, ErrNotFound)`
-- [ ] `strings.Contains(err.Error(), "not")`
-- [ ] `err != nil`
+- [ ] A then B
+- [x] B then A
 :::explain
-Compare errors, not their text: messages can change, sentinels do not.
+Deferred calls run last in, first out.
 :::
 :::
 
-:::step{type=deep-dive title="Handle each error once"}
-A common mistake is to log an error **and** return it: then every layer logs it again and one failure
-fills the log ten times. Handle each error once: either deal with it (retry, use a default, log and
-stop), or add context with `%w` and return it.
-
-Messages read best as a chain of lower-case phrases, no full stops: `load config: open settings.json:
-no such file or directory`. Each layer adds only what it knows. And never compare error **text**
-(`err.Error() == "..."`): use `errors.Is` and `errors.As`, so a reworded message breaks nothing.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+Why compare with `errors.Is(err, ErrNoRoom)` instead of `err == ErrNoRoom`?
+:::
+- [x] Because the error may be wrapped in other errors
+- [ ] Because `==` does not work on errors
+:::explain
+`==` only matches the exact same error. `errors.Is` looks through every layer of wrapping.
+:::
 :::
 
-:::step{type=recap}
-- A sentinel error (`var ErrX = errors.New(...)`) is a value callers can check.
-- `fmt.Errorf("context: %w", err)` adds context and keeps the original; `%v` does not.
-- `errors.Is` finds a sentinel inside the wrapping; `errors.As` finds an error type.
-- Handle each error once; add context as it travels up.
+:::step{type=deep-dive title="Go deeper: errors.As, custom error types and errors.Join"}
+**Custom error types.** Any type with an `Error() string` method is an error (chapter 12's interfaces again):
+`type LoadError struct { Van string; Kg int }` can carry details, not just a sentence.
+
+**errors.As.** `var le *LoadError; if errors.As(err, &le) { fmt.Println(le.Van) }` finds an error of a **type** inside
+the wrapping, and hands it to you.
+
+**errors.Join.** `errors.Join(err1, err2)` combines several errors into one, for "three of the ten parcels failed".
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Wrap an error with `fmt.Errorf("...: %w", err)`, keeping its story and its identity.
+- Check for a known error anywhere inside with `errors.Is`, and define sentinel errors named `Err...`.
+- Return the value unchanged on every error, so a refused operation never half-happens.
+- Use `defer` for clean-up that always runs, last in, first out.
+
+:::photo{src="/lesson-images/go/go-13-notes.webp" alt="Handwritten notes about Go errors in depth: wrap with percent w, errors.Is looks inside every layer, percent v only copies text, sentinel errors start with Err, defer runs on the way out, last in first out" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 14: packages, modules and JSON, so Parcel can save a van's manifest and send it anywhere.
 :::

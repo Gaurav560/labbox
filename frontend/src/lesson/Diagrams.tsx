@@ -1031,7 +1031,27 @@ function GoPanicTrace() {
   );
 }
 
+/** Go from zero, chapter 16: three goroutines report back through one channel, played step by step. */
+function GoChannels() {
+  return (
+    <SketchSteps
+      title="results := make(chan string)"
+      intro="Press Play to watch goroutines hand their results back through a channel."
+      label="main makes a channel; it starts three goroutines with go, which run alongside main; main reaches a receive and waits; the goroutine that finishes first sends its result into the channel and main receives it; the other two follow in the order they finish; after three receives, main carries on"
+      steps={[
+        { label: "1. make the channel", says: "main makes a channel of strings: a pipe that goroutines can send into." },
+        { label: "2. go, go, go", says: "Three goroutines start, each weighing one parcel. They run alongside main, not one after another." },
+        { label: "3. main waits at <-results", says: "Receiving blocks: main waits until something is sent. No busy checking, no shared variables." },
+        { label: "4. the first to finish sends", says: "Whichever goroutine finishes first sends its result, and main receives it at once. Here that is P-3." },
+        { label: "5. the others follow", says: "The next two results arrive in the order their goroutines finish, not the order they started." },
+        { label: "6. three received: carry on", says: "After three receives, main has every result and carries on." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "go-channels": GoChannels,
   "go-panic-trace": GoPanicTrace,
   "go-runs-a-file": GoRunsAFile,
   "js-event-loop": JsEventLoop,

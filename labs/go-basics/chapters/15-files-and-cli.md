@@ -1,169 +1,222 @@
-:::step{type=story title="Why files and command-line programs"}
-Go is a favourite for command-line tools: one fast binary, nothing else to install. Most such tools
-read a file, work out something, and print it, and they fail with one clear sentence when the input is
-wrong.
+:::step{type=story title="What makes a program a real tool?"}
+`git`, `docker`, `go` itself: the tools developers use every day are command-line programs. You type a name, some
+options and a file, and they do one job well, with clear messages when something is wrong. A huge number of them are
+written in Go, because Go builds a single file that runs anywhere, with nothing else to install.
+
+Today Parcel's depot gets its first real tool: it reads a month of the depot's spending from a CSV file and prints the
+biggest categories. Along the way you will discover why `-top 2` must come **before** the file name, and why
+`go run` tells you one exit code while the terminal says another.
 
 :::mission
-In `expenses/expenses.go`, read `expenses.csv` (a real, messy file in your workspace) into totals per
-category, then finish `cmd/summary`, a program that prints the biggest categories.
+Write `ReadTotals`, which adds up a messy CSV per category, and the `summary` tool, which prints the top categories with
+a `-top` flag and a friendly message for a missing file.
 :::
 :::
 
-:::step{type=concept title="Opening and reading files"}
+:::step{type=try title="Read a file, line by line" file="15-files-and-cli/readfile.go" line="12-31"}
+Open `readfile.go`:
+
 ```go
 f, err := os.Open("expenses.csv")
 if err != nil {
-	return nil, err
+	fmt.Println("could not open:", err)
+	return
 }
-defer f.Close()           // runs when the function returns, however it returns
+defer f.Close()
+
+scanner := bufio.NewScanner(f)
+for scanner.Scan() {
+	n++
+	...
+}
 ```
 
-`defer` is Go's way to make sure clean-up happens. For CSV, the `encoding/csv` package handles quoting
-(`"snacks, juice"`) correctly:
-
-```go
-r := csv.NewReader(f)
-row, err := r.Read()      // []string{"2026-03-02", "food", "120"}, or io.EOF at the end
+```bash run
+cd /workspace/15-files-and-cli && go run readfile.go
 ```
+
+```text
+1 date,category,amount
+2 2026-03-01,rent,18000
+3 2026-03-01,fun,600
+46 lines
+open nope.csv: no such file or directory
+```
+
+- `os.Open` opens a file and, Go style, gives back the file **and** an error (chapter 7).
+- `defer f.Close()` (chapter 13) closes it whatever happens, written right where it was opened.
+- `bufio.Scanner` reads one line at a time, so even a huge file never has to fit in memory. `scanner.Text()` is the
+  line, without its new-line character.
+- A missing file is an ordinary error, whose message names the file.
+:::
+
+:::step{type=concept title="CSV: one record per line"}
+`expenses.csv` has a header, then one purchase per line: date, category, amount. It is real, which means it is messy:
+a blank line, an amount that says `abc`, a row with no category.
+
+```text
+date,category,amount
+2026-03-01,rent,18000
+2026-03-07,food,
+```
+
+`strings.Split(line, ",")` cuts a row into its pieces (keep only rows with exactly 3), and
+`strconv.ParseFloat(amount, 64)` reads `210.5` or refuses `abc` with an error. Go also has a full CSV reader,
+`encoding/csv`, which understands quoted commas too.
+
+To tell "missing file" from other problems, check the error: `errors.Is(err, fs.ErrNotExist)` (chapter 13's
+`errors.Is`, and the `io/fs` package).
 
 :::picture{name="file-lines"}
-Each line of a CSV file is one row, cut at the commas.
+A file is a ribbon of lines: the header first, then one record on each line.
 :::
 :::
 
-:::step{type=example title="Worked example: read a file line by line"}
-Open, defer the close, and read:
+:::step{type=task task=read_totals title="Your turn: totals from a messy CSV"}
+Open `expenses.go` and make `ReadTotals(path)` give back a map of each category to its total. Skip the header, blank
+lines, rows without three pieces or with no category, and amounts that are not numbers. A missing file returns the
+error from opening it.
 
-```go
-func CountLines(path string) (int, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return 0, err
-	}
-	defer f.Close()
-	n := 0
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		n++
-	}
-	return n, sc.Err()
-}
+On `expenses.csv`, `rent` is `18000`.
+
+```bash run
+cd /workspace/15-files-and-cli && go run run.go
 ```
 
-1. `os.Open` returns the file or an error; return the error for a missing file.
-2. `defer f.Close()` runs when the function returns, however it returns.
-3. Read in a loop until the reader says it is done.
-
-`ReadTotals` is this shape with `csv.NewReader` in place of the scanner.
-
-:::trace{title='CountLines("notes.txt") for a file with 3 lines'}
-| step | n | note |
-|---|---|---|
-| os.Open | 0 | The file opened, so err is nil and we go on. defer schedules Close for later. |
-| sc.Scan() reads line 1 | 1 | Scan returns true while there is a line to read. |
-| sc.Scan() reads line 2 | 2 |  |
-| sc.Scan() reads line 3 | 3 |  |
-| sc.Scan() returns false | 3 | No more lines: the loop ends, Close runs, and the function returns 3, nil. |
+Then press **Check**.
 :::
+
+:::step{type=try title="Arguments and flags" file="15-files-and-cli/args.go" line="12-21"}
+Open `args.go`. It prints what the program was given:
+
+```bash run
+cd /workspace/15-files-and-cli && go run args.go -top 2 expenses.csv
+```
+
+```text
+4 [-top 2 expenses.csv]
+top: 2 files: [expenses.csv]
+```
+
+`os.Args` holds every word, and `os.Args[0]` is the program itself. The `flag` package reads options for you:
+`flag.Int("top", 3, "...")` declares `-top` with a default of 3, `flag.Parse()` reads them, and `flag.Args()` is what
+is left over: the file names. Now put the file **first**:
+
+```bash run
+cd /workspace/15-files-and-cli && go run args.go expenses.csv -top 2
+```
+
+```text
+4 [expenses.csv -top 2]
+top: 3 files: [expenses.csv -top 2]
+```
+
+`flag` stops at the first word that is not a flag, so `-top 2` became two more file names and `top` stayed 3.
+Options before arguments, always.
+:::
+
+:::step{type=concept title="Errors to stderr, and exit codes"}
+Run it with no file, and ask the terminal how it ended:
+
+```bash run
+cd /workspace/15-files-and-cli && go run args.go; echo "exit $?"
+```
+
+```text
+1 []
+top: 3 files: []
+usage: go run args.go [-top N] <file.csv>
+exit status 2
+exit 1
+```
+
+- `fmt.Fprintln(os.Stderr, ...)` writes to **standard error**: problems go there, so they stay on screen even when
+  the normal output is saved to a file.
+- `os.Exit(2)` ends the program with **exit code** 2. Scripts read it: 0 means success, anything else failure.
+- And the curious last two lines: `go run` noticed your program's exit code 2 (`exit status 2`), then itself exited
+  with 1. A program built with `go build` would give exactly 2.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-`expenses.csv` has a row `2026-03-07,food,` (no amount). What does `strconv.ParseFloat("", 64)` return?
+`go run tool.go data.csv -verbose`. Does `flag` see `-verbose`?
 :::
-- [ ] `0, nil`
-- [x] `0` and an error
-- [ ] It panics
-- [ ] `NaN, nil`
+- [ ] Yes
+- [x] No: it stops at `data.csv`, the first word that is not a flag
 :::explain
-An empty string is not a number, so `ParseFloat` returns an error, and you skip that row. Go never
-guesses: bad input always comes back as an error you decide what to do with.
+Put flags before the file names: `go run tool.go -verbose data.csv`.
 :::
 :::
 
-:::step{type=try title="Look at the real file"}
+:::step{type=task task=summary_cli title="Your turn: the summary tool"}
+Open `summary/main.go`, a program of its own in a sub-folder, and make it a real tool:
+
+- `-top N` chooses how many categories to print (default 3), and the CSV file comes after it;
+- print the categories with the biggest totals first, one per line, as `category: amount` with two decimals;
+- for a missing file, print `File not found: <the path>` to standard error (no panic, no stack trace) and exit with
+  code 1.
+
 ```bash run
-head -5 expenses.csv; echo ...; grep -n -v -E '^[0-9-]+,[a-z]+,[0-9.]+$' expenses.csv
+cd /workspace/15-files-and-cli && go run ./summary -top 2 expenses.csv
 ```
 
-The second command lists the lines that do not look like `date,category,amount`. Your code must
-survive all of them.
+Then try `go run ./summary nope.csv`, and press **Check**.
 :::
 
-:::step{type=task task=read_totals title="Totals from a CSV file"}
-In `expenses/expenses.go`, make `ReadTotals(path string) (map[string]float64, error)` return the total
-per category, rounded to 2 decimals. Skip the header, blank lines, and rows with a missing or
-non-numeric amount. For a missing file, return an error for which `errors.Is(err, fs.ErrNotExist)` is
-true (returning or wrapping `os.Open`'s error does that).
-
-Set `r.FieldsPerRecord = -1` so a short row does not stop the reading.
-:::
-
-:::step{type=concept title="A command-line program"}
-`cmd/summary/main.go` is package `main`. The `flag` package reads options:
-
-```go
-top := flag.Int("top", 3, "how many categories to show")
-flag.Parse()
-path := flag.Arg(0)          // the first argument that is not a flag
-```
-
-Errors for people go to `os.Stderr`, and `os.Exit(1)` tells the shell the program failed.
-:::
-
-:::step{type=task task=summary_cli title="The summary program"}
-Finish `cmd/summary/main.go` so that
-
-```text
-$ go run ./cmd/summary -top 2 expenses.csv
-rent: 18000.00
-shopping: 4095.00
-```
-
-prints the biggest categories, biggest first, as `category: amount` with two decimals (3 when `-top`
-is left out), and `go run ./cmd/summary missing.csv` prints `File not found: missing.csv` to stderr and
-exits with code `1`, without a panic.
-:::
-
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-When does a deferred call run?
+Why write `defer f.Close()` right after opening a file?
 :::
-- [ ] Immediately
-- [x] When the function returns
-- [ ] When the program ends
-- [ ] Never, unless there is an error
+- [x] So it is closed however the function ends, and never forgotten
+- [ ] Because Go requires it
 :::explain
-`defer` schedules the call for when the surrounding function returns, which makes clean-up impossible to forget.
+`defer` runs on every way out: normal returns, early returns and panics.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=predict title="Quick check (2 of 3)"}
 :::question
-Where should a command-line tool print an error for a person?
+What is `os.Args[0]`?
 :::
-- [ ] `os.Stdout`
-- [x] `os.Stderr`
-- [ ] A log file only
-- [ ] Nowhere: just exit
+- [ ] The first word the user typed
+- [x] The program itself
 :::explain
-Errors go to stderr, so they still show when the normal output is sent to a file or another program.
+The user's words start at `os.Args[1]`. With flags, use `flag.Args()`.
 :::
 :::
 
-:::step{type=deep-dive title="Single binaries and cross-compiling"}
-`go build ./cmd/summary` produces one file with everything inside, the Go runtime included. Copy it to
-a server and run it; nothing else is needed. Set two variables and Go builds for another system:
-`GOOS=windows GOARCH=amd64 go build ./cmd/summary` makes a Windows `.exe` from Linux.
-
-For big files, read line by line (`bufio.Scanner`, or `csv.Reader` in a loop as here) instead of
-`os.ReadFile`, which loads everything into memory. Tools with many sub-commands (`git commit`,
-`docker run`) are usually built with a library such as `cobra` on top of the same ideas.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+How do you check that an error means "the file does not exist"?
+:::
+- [ ] `err == "no such file"`
+- [x] `errors.Is(err, fs.ErrNotExist)`
+:::explain
+The error from `os.Open` wraps `fs.ErrNotExist`, and `errors.Is` finds it (chapter 13).
+:::
 :::
 
-:::step{type=recap}
-- `os.Open` plus `defer f.Close()`; `encoding/csv` handles quoted commas.
-- Skip what you cannot read; return real errors (like a missing file) to the caller.
-- `flag` reads options; `flag.Arg(0)` is the first plain argument.
-- Errors for people go to `os.Stderr`; `os.Exit(1)` signals failure.
+:::step{type=deep-dive title="Go deeper: go build, cross-compiling and os.ReadFile"}
+**go build.** `go build -o summary ./summary` leaves a single program file you can copy to any Linux machine and run,
+with nothing else installed.
+
+**Cross-compiling.** `GOOS=windows GOARCH=amd64 go build ./summary` builds a Windows `.exe` from Linux, in seconds.
+This is a big reason so many tools are written in Go.
+
+**os.ReadFile.** For small files, `data, err := os.ReadFile(path)` reads everything at once.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Open and read a file line by line with `os.Open`, `bufio.Scanner` and `defer f.Close()`.
+- Parse messy CSV rows and tell a missing file apart with `errors.Is(err, fs.ErrNotExist)`.
+- Read arguments and flags with `os.Args` and the `flag` package, flags first.
+- Write a real tool: problems to `os.Stderr`, and a meaningful exit code with `os.Exit`.
+
+:::photo{src="/lesson-images/go/go-15-notes.webp" alt="Handwritten notes about files and command-line tools in Go: os.Open then defer Close, bufio.Scanner reads line by line, errors.Is with fs.ErrNotExist, flag.Int for options, flags before file names, errors to os.Stderr, os.Exit with a code" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 16: goroutines and channels, the reason Go was created.
 :::

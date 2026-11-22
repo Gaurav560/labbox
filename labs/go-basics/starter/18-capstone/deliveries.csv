@@ -1,0 +1,12 @@
+id,depot,weight_kg,minutes
+P-101,Pune,4,35
+P-102,Pune,12,50
+P-103,Mumbai,7,40
+
+P-104,Mumbai,abc,25
+P-105,,3,30
+P-106,Delhi,9,60
+P-107,Pune,2,15
+P-108,Delhi,15,
+P-109,Mumbai,6,45
+P-110,Pune,8,40
