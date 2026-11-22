@@ -7,6 +7,47 @@ every session.
 
 ## Resume here
 
+**Redis in practice: full revamp (owner, 22 November evening, going out): "revamp redis to the full standard ...
+why redis came, what was the problem, how much money it can actually save in a high performance application,
+performance impact ... real images, handwritten images, animations, tables, and much more." Build without asking.**
+Syllabus (every old chapter id and task id kept; new ones marked new; numbering is by position, 1 to 17):
+running project **Basket**, a 10-minute grocery delivery app in Pune with two dark stores (Kothrud and Baner) and
+a slow catalogue service (1.5 s a call, counted in `catalogue:calls`). No coffee shop any more (no drinks).
+- Part 1 "Starting out": 1 Why Redis exists (new `why-redis`: the latency ladder, memcached and the world before,
+  antirez and LLOOGG, measure it yourself with `redis-cli --latency` and `redis-benchmark`, what a millisecond and
+  a hit rate are worth in money, task `measure_redis`), 2 Your first keys (`01-what-redis-is`), 3 Keys that
+  expire, 4 Hashes and lists, 5 Sets and sorted sets.
+- Part 2 "Redis in an app": 6 Redis from Python (round trips and pipelines, measured), 7 Caching (cache-aside,
+  1.5 s to 1 ms, measured), 8 What the cache saves (new `cache-savings`: hit and miss counters, INFO stats, a
+  `/savings` report in seconds and rupees; tasks `hit_counter`, `savings_report`), 9 The stampede (new
+  `stampede`: `stampede_lock` moved here, new `jitter_ttl`), 10 Atomic operations, 11 Locks, 12 Streams.
+- Part 3 "Redis in production": 13 Measuring Redis (new `performance`: benchmark, pipelining, latency, Big O, the
+  slow log; tasks `slow_key_found`, `slowlog_config`), 14 Memory and eviction, 15 Persistence, 16 Replication and
+  clusters, 17 Capstone.
+- App chapters each get a folder (`06-redis-from-python/` ... `17-capstone/`) with `app.py` and `catalogue.py`;
+  the check runs only `LABBOX_TASKS`; `solution/apply.sh` serves every chapter's solution from one combined app.
+- 12 to 15 real photos, a handwritten notes page on every recap, playing diagrams (cache-aside, latency ladder,
+  one thread, stampede, lock, consumer group, eviction, AOF, replication).
+**Status (22 November evening):** all 17 chapters written (every output captured in the lab image), lab.yaml,
+starter and solution folders, setups, checks and tests done; validate and test-lab pass; every starter app fails
+its own checks for the right reason. Photos (15, Wikimedia, `frontend/public/lesson-images/redis/`) and notes
+(17 recaps) were the last step; see the commit for what landed.
+**Then SQL (owner, same evening): "once redis is finished, start with SQL".** Revamp `sql-from-zero` to the full
+standard next, without waiting; write its syllabus here first.
+**SQL from zero syllabus** (draft, 22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
+coffee stall: a full rewrite with a new running project, **Safar**, a bus ticket booking app (cities, routes,
+buses, trips, seats, passengers, bookings, payments), on Postgres 16. Keep the ids `01-select-and-where`,
+`02-group-by` and the tasks `q_paid_coffee`, `q_count_refunds`, `q_revenue_by_outlet`, `q_top_item` (retitled).
+- Part 1 "Starting out": 1 Why databases exist (new: files and spreadsheets before, Codd 1970, SEQUEL at IBM 1974,
+  Oracle 1979, Stonebraker's Postgres 1986, a first psql session), 2 Asking for rows (SELECT, WHERE), 3 Sorting and
+  shaping (ORDER BY, LIMIT, DISTINCT, AS, CASE), 4 Text, numbers, dates and NULL.
+- Part 2 "Many tables": 5 Totals (COUNT, SUM, AVG, GROUP BY, HAVING), 6 Joins (INNER, LEFT, the NULLs a LEFT JOIN
+  makes), 7 Subqueries and CTEs, 8 Window functions (rank, running totals, LAG).
+- Part 3 "Changing data": 9 Tables and constraints, 10 INSERT, UPDATE, DELETE safely (RETURNING, the missing WHERE),
+  11 Transactions (book a seat all or nothing).
+- Part 4 "Fast and safe": 12 Indexes and EXPLAIN ANALYZE (measured: a seq scan against an index scan, and what it
+  saves), 13 Designing tables (one fact in one place), 14 Capstone: the monthly report.
+
 1. Start the stack (see AGENTS.md). For the **local dev server only**, start the backend with a bigger
    sign-up allowance so browser tests do not hit the 60-per-hour limit:
    `cd backend && SIGNUPS_PER_IP_HOUR=1000 .venv/bin/uvicorn app.main:app --port 8000 --workers 4`.

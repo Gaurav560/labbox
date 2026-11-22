@@ -11,8 +11,8 @@ nodes:
     requires: [sql-select]
     chapters: [sql-from-zero/02-group-by]
   - id: redis-basics
-    title: Redis keys and expiry
-    chapters: [redis-in-practice/01-what-redis-is, redis-in-practice/02-expiring-keys]
+    title: Why Redis, keys and expiry
+    chapters: [redis-in-practice/why-redis, redis-in-practice/01-what-redis-is, redis-in-practice/02-expiring-keys]
   - id: redis-types
     title: Redis data types
     requires: [redis-basics]
@@ -26,9 +26,9 @@ nodes:
     requires: [redis-types]
     chapters: [redis-in-practice/05-redis-from-python]
   - id: redis-cache
-    title: Caching for real
+    title: Caching, savings and stampedes
     requires: [redis-python]
-    chapters: [redis-in-practice/06-caching-for-real]
+    chapters: [redis-in-practice/06-caching-for-real, redis-in-practice/cache-savings, redis-in-practice/stampede]
   - id: redis-atomic
     title: Atomic operations and locks
     requires: [redis-cache]
@@ -40,7 +40,7 @@ nodes:
   - id: redis-operations
     title: Running Redis in production
     requires: [redis-streams]
-    chapters: [redis-in-practice/10-memory-and-eviction, redis-in-practice/11-persistence]
+    chapters: [redis-in-practice/performance, redis-in-practice/10-memory-and-eviction, redis-in-practice/11-persistence]
   - id: redis-scale
     title: Scaling Redis
     requires: [redis-operations]

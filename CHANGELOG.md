@@ -1,5 +1,41 @@
 # Changelog
 
+## 22 November: Redis in practice revamped to the full standard (17 chapters, Basket)
+
+- Owner, going out: "revamp redis to the full standard ... why redis came, what was the problem, how much money it
+  can actually save in a high performance application, performance impact ... real images, handwritten images,
+  animations, tables, and much more", and "remember this for every lab". Built without stopping, as asked.
+- A new running project, **Basket**, a 10-minute grocery delivery app in Pune (two dark stores, a slow catalogue
+  service at 1.5 s and Rs 0.10 a call), replaces the Brew Point coffee shop: no drinks anywhere.
+- 17 chapters in three parts (Starting out, Redis in an app, Redis in production), 39 tasks, about 13 hours. Every
+  old chapter id and task id is kept; numbering is by position. Four new chapters: 1 Why Redis exists (the latency
+  ladder, memcached and LLOOGG, Google's half second, Stack Overflow's 5.8 billion Redis hits in 2.8 hours against
+  505 million SQL queries in 168 hours, what a hit rate is worth in money, `redis-cli --latency` and
+  `redis-benchmark`; tasks `measure_latency`, `measure_redis`), 8 What the cache saves (hit and miss counters and a
+  `/savings` report in seconds and rupees, about 124 bytes per cached price measured; tasks `hit_counter`,
+  `savings_report`), 9 The stampede (`stampede_lock` moved here, new `jitter_ttl`), 13 Measuring Redis (throughput
+  four ways, Big O, `INFO commandstats`, the slow log read correctly; tasks `slow_key_found`, `slowlog_config`).
+- Every other chapter rewritten in the curiosity-first teacher's voice, every quoted output captured from the lab
+  image (1.5 s to under 1 ms on the learner's own app, a coin race at minus 1,500, 30 catalogue calls to 1).
+- App chapters each have a folder (`06-redis-from-python/` to `11-locks/`, `17-capstone/`) with their own app,
+  plus small scripts to see each bug (`compare.py`, `stampede.py`, `race.py`, `book_race.py`). The check runs only
+  the chapter's tasks (`LABBOX_TASKS`) and names the folder to start; a 404 from another chapter's app says so.
+  `solution/apply.sh` serves every chapter's solution from one combined app.
+- Fixes found on the way: the coin race now fails the starter every time (a 100 ms payments check), the slow log
+  holds three entries with the slowest one oldest, chapter 14 seeds its own carts for the "deleted too much" check.
+- 15 real photos, each on the step that teaches its idea: Salvatore Sanfilippo and Brad Fitzpatrick (history),
+  Grace Hopper's nanosecond wires (the latency ladder), an open hard disk, an hourglass (expiry), the Augusta
+  leaderboard (sorted sets), a log cache in Alaska (where the word cache comes from), wildebeest crossing the Mara
+  (the stampede), a Stockholm turnstile (rate limits), a Tyer's tablet instrument (one token, one train: locks),
+  Edison's stock ticker (streams), a memory module, a flight data recorder (the append-only file), Wikimedia's
+  servers (replication) and Apollo 9 Mission Control (the capstone). Wikimedia rate-limited two originals; real
+  thumbnails (and, for Hopper, the Navy's own photo of the wires) were used instead. A handwritten notes page on
+  all 17 recaps, every line checked.
+- Eight new playing diagrams (latency ladder, hit rate savings, one command at a time, cache-aside, stampede, lock,
+  slow command, eviction); the old Redis diagrams relabelled for Basket. Tests moved to the new layout
+  (`test_focus.py`, `test_tutor.py`, `chapter-focus.spec.ts`, `editor.spec.ts`); the databases track lists the new
+  chapters.
+
 ## 22 November: real photos spread through every course (10 to 15 each), starting with Spring Boot
 
 - Owner: photos sat at the start of each lab and almost vanished in the middle and the end. New rule: 10 to 15 real,

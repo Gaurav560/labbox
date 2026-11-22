@@ -1,18 +1,17 @@
 id: redis-in-practice
 version: 2
 title: Redis in practice
-subtitle: From your first SET to streams, replication and production incidents, on a real Redis.
-description: From your first SET to streams, replication and production incidents, on a real Redis.
+subtitle: Why Redis exists, what it saves, and how to run it, from your first SET to production incidents, on a real Redis.
+description: "Learn Redis from the beginning: why it was built and what a millisecond is worth, keys, expiry, hashes,
+  lists, sets and sorted sets, Redis from Python, caching and what it saves in seconds and rupees, stampedes,
+  atomic operations, locks, streams, measuring performance, memory, persistence, replication and clusters, by
+  building Basket, a 10-minute grocery delivery app, on a real Redis server."
 language: python
 track: databases
-tags: [redis, python, caching]
+tags: [redis, python, caching, performance]
 level: beginner
-estimated_minutes: 290
-story:
-  company: Brew Point
-  character: { name: Kabir, role: "Backend lead, Brew Point" }
-  pitch: "Brew Point's menu API takes 1.5 seconds a call, and someone is spamming the OTP button. Redis can fix both."
-cover_scene: "Brew Point's back office: a glowing red Redis cube on a counter, coffee cups flying past it on a conveyor."
+estimated_minutes: 770
+cover_scene: "A grocery delivery app's backend: a glowing red Redis cube beside a server, a stopwatch showing under one millisecond, delivery bags on a shelf."
 cover: cover.svg
 cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
 image: labbox/redis-in-practice:v1
@@ -22,6 +21,8 @@ workspace:
   shell: /bin/bash
   network: lab
   env: { REDIS_HOST: redis }
+preview:
+  - { name: "Basket API", port: 8000, path: "/docs" }
 services:
   - name: redis
     image: redis:7.4
@@ -30,7 +31,7 @@ services:
     command: [redis-server, --appendonly, "yes", --maxmemory, 64mb, --repl-diskless-sync-delay, "0"]
     data: /data
     ready: [redis-cli, ping]
-  # Chapter 12: a second server, which the learner turns into a replica.
+  # Chapter 16: a second server, which the learner turns into a replica.
   - name: replica
     image: redis:7.4
     resources: { cpus: 0.5, memory: 256m, pids_limit: 64 }
@@ -39,452 +40,594 @@ services:
 check:
   mode: live
   command: ["bash", "/check/tests/run_checks.sh"]
-  timeout_seconds: 60
+  timeout_seconds: 90
   network: none
 chapters:
-  - id: 01-what-redis-is
-    title: What Redis is
-    file: chapters/01-what-redis-is.md
-    minutes: 20
-    setup: ["bash", "/lab/setup/01.sh"]
-    tasks:
-      - id: first_keys
-        title: "Store the shop's name and city"
-        xp: 10
-        hints:
-          - "Each fact is one key with a plain text value. SET stores a value under a key."
-          - "Two SET commands, one for shop:name and one for shop:city. A value with a space needs quotes."
-          - "Check with GET shop:name and GET shop:city: they should read Brew Point and Pune."
-        examples:
-          - call: "GET shop:name"
-            gives: "\"Brew Point\""
-          - call: "GET shop:city"
-            gives: "\"Pune\""
-      - id: cups_counter
-        title: "Count cups, take beans off the stock"
-        xp: 20
-        hints:
-          - "A counter that starts from nothing needs no SET: the first INCR creates it."
-          - "INCR adds one. Its cousins INCRBY and DECRBY add or subtract any whole number."
-          - "Three INCR on cups:sold, then subtract 250 from beans:grams with the command that decrements by an amount."
-        examples:
-          - call: "GET cups:sold"
-            gives: "\"3\""
-          - call: "GET beans:grams"
-            gives: "250 less than before"
-      - id: clean_up
-        title: "Delete the leftover tmp:import keys"
-        xp: 20
-        hints:
-          - "First list them: the scan option of redis-cli shown in the step walks the keys matching a pattern."
-          - "DEL accepts several key names at once and tells you how many it removed."
-          - "Delete all five tmp:import keys, then scan again: nothing should be left, and beans:grams still there."
-        examples:
-          - call: "redis-cli --scan --pattern 'tmp:import:*'"
-            gives: "(nothing)"
-          - call: "the other keys"
-            gives: "still there"
-  - id: 02-expiring-keys
-    title: Keys that expire
-    file: chapters/02-expiring-keys.md
-    minutes: 15
-    setup: ["bash", "/lab/setup/02.sh"]
-    tasks:
-      - id: otp_expiry
-        title: "A login code that expires in 5 minutes"
-        xp: 20
-        hints:
-          - "SET can give a key a timer in the same command, so it disappears on its own."
-          - "The EX option takes seconds: 5 minutes is 300."
-          - "TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone."
-        examples:
-          - call: "GET otp:9876543210"
-            gives: "\"4821\""
-          - call: "TTL otp:9876543210"
-            gives: "300 or a little less"
-            note: "counting down"
-      - id: session_ttl
-        title: "Give the session a 30 minute lifetime"
-        xp: 20
-        hints:
-          - "The session already exists, and its value must not change. Which command adds a timer to an existing key?"
-          - "EXPIRE takes a key and a number of seconds. 30 minutes is 1800 seconds."
-          - "Do not SET the session again: that would replace its value. Check the result with TTL."
-        examples:
-          - call: "TTL session:7f3a"
-            gives: "1800 or a little less"
-          - call: "GET session:7f3a"
-            gives: "the same value as before"
-      - id: keep_forever
-        title: "Make the promo permanent"
-        xp: 20
-        hints:
-          - "TTL promo:diwali shows its timer is counting down. You want the opposite of EXPIRE."
-          - "One command removes a key's timer and keeps its value."
-          - "After it, TTL promo:diwali should answer -1, and GET still shows the offer."
-        examples:
-          - call: "TTL promo:diwali"
-            gives: "-1"
-            note: "no timer: it stays"
-          - call: "GET promo:diwali"
-            gives: "the same value as before"
-  - id: 03-hashes-and-lists
-    title: Hashes and lists
-    file: chapters/03-hashes-and-lists.md
-    minutes: 20
-    tasks:
-      - id: menu_hash
-        title: "A hash for the menu"
-        xp: 20
-        hints:
-          - "A hash is one key that holds many field and value pairs. The key is menu, the fields are the item names."
-          - "HSET takes the key, then field value, field value, ... in one command. Names with a space need quotes."
-          - "Check your work with HGETALL menu: three fields, prices 30, 40 and 25."
-        examples:
-          - call: "HGET menu \"vada pav\""
-            gives: "\"25\""
-          - call: "HLEN menu"
-            gives: "3"
-      - id: customer_profile
-        title: "Asha's profile, one more visit, a gold tier"
-        xp: 20
-        hints:
-          - "Start with HSET customer:42 and two field and value pairs: name and visits."
-          - "Adding to one numeric field in one step is the hash version of INCRBY."
-          - "HINCRBY the visits field by 1, then HSET one more field, tier, to gold. HGETALL shows all three."
-        examples:
-          - call: "HGET customer:42 visits"
-            gives: "\"8\""
-          - call: "HGET customer:42 tier"
-            gives: "\"gold\""
-      - id: order_queue
-        title: "Run the order queue"
-        xp: 20
-        hints:
-          - "Orders go in on the left with LPUSH, one at a time or all at once in arrival order."
-          - "The oldest order is the one furthest from where you push, so it comes off the right."
-          - "LPUSH o1, o2 and o3, then RPOP once. LRANGE orders:pending 0 -1 should show o3 then o2."
-        examples:
-          - call: "LRANGE orders:pending 0 -1"
-            gives: "1) \"o3\"  2) \"o2\""
-            note: "o1 was made first"
-  - id: 04-sets-and-sorted-sets
-    title: Sets and sorted sets
-    file: chapters/04-sets-and-sorted-sets.md
-    minutes: 20
-    setup: ["bash", "/lab/setup/04.sh"]
-    tasks:
-      - id: unique_visitors
-        title: "Count each visitor once"
-        xp: 20
-        hints:
-          - "A set never holds the same member twice, so you can add every visit as it happened."
-          - "SADD takes the key and any number of members. Duplicates are simply ignored."
-          - "Add all five visits to visitors:today; SCARD should then answer 3."
-        examples:
-          - call: "SCARD visitors:today"
-            gives: "3"
-          - call: "SISMEMBER visitors:today meera"
-            gives: "1"
-      - id: common_customers
-        title: "Customers of both outlets, in customers:both"
-        xp: 20
-        hints:
-          - "You want the people who are in the first set and also in the second: an intersection."
-          - "SINTER shows the intersection; its STORE version saves it under a new key."
-          - "The destination key comes first, then the two outlet sets. SMEMBERS customers:both shows the result."
-        examples:
-          - call: "SMEMBERS customers:both"
-            gives: "only people in both outlets' sets"
-      - id: top_sellers
-        title: "A sorted set of today's sales"
-        xp: 20
-        hints:
-          - "A sorted set keeps members ordered by a number called the score. ZADD adds members with their scores."
-          - "ZADD takes the key, then score member, score member. ZINCRBY adds to one member's score."
-          - "ZRANGE sales:today 0 -1 REV WITHSCORES lists them, best seller first: 120, 80, then 50."
-        examples:
-          - call: "ZSCORE sales:today \"cold coffee\""
-            gives: "\"50\""
-          - call: "ZREVRANGE sales:today 0 0"
-            gives: "\"filter coffee\""
-  - id: 05-redis-from-python
-    title: Redis from Python
-    file: chapters/05-redis-from-python.md
-    minutes: 20
-    tasks:
-      - id: profile_api
-        title: "GET /customers/{cid}: a profile from a hash"
-        xp: 30
-        hints:
-          - "One command reads every field of a hash. In Python it returns a dict."
-          - "A missing hash comes back as an empty dict: answer 404 when there is nothing."
-          - "Build the answer from the dict, and turn the visits field into an int before returning it."
-        examples:
-          - call: "curl -s localhost:8000/customers/42"
-            gives: "{\"id\": 42, \"name\": \"Asha\", \"visits\": 8, \"tier\": \"gold\"}"
-          - call: "curl -s -o /dev/null -w '%{http_code}' localhost:8000/customers/7"
-            gives: "404"
-      - id: bulk_import
-        title: "POST /import: 2000 rows in a handful of round trips"
-        xp: 40
-        hints:
-          - "The loop sends one command per row and waits for each answer. That waiting is the cost."
-          - "A pipeline queues commands on the client and sends them together. r.pipeline gives you one."
-          - "Queue every HSET on the pipeline inside the loop, then run them all with one call after the loop."
-        examples:
-          - call: "curl -s -X POST localhost:8000/import"
-            gives: "the same 2000 rows"
-            note: "in a few round trips"
-  - id: 06-caching-for-real
-    title: Caching for real
-    file: chapters/06-caching-for-real.md
-    minutes: 25
-    tasks:
-      - id: price_cache
-        title: "GET /price/{item}: cache-aside for 60 seconds"
-        xp: 40
-        hints:
-          - "Cache-aside: look in Redis first, and only on a miss call the slow lookup and keep the answer."
-          - "r.get returns None on a miss. r.set takes an ex= argument: the number of seconds to keep the value."
-          - "Use one key per item, like price:samosa. Redis gives strings back, so turn the price into an int."
-        examples:
-          - call: "curl -s localhost:8000/price/samosa"
-            gives: "{\"item\": \"samosa\", \"price\": 20}"
-            note: "slow once, then instant"
-          - call: "GET billing:calls"
-            gives: "one more per minute at most"
-      - id: price_invalidate
-        title: "PUT /price/{item}: the next read sees the new price"
-        xp: 30
-        hints:
-          - "After the price changes, the cached copy is wrong. What should happen to it?"
-          - "Removing the cached value is enough: the next read misses and asks billing again."
-          - "Delete the price key for that item right after updating PRICES."
-        examples:
-          - call: "PUT price 22, then GET /price/samosa"
-            gives: "{\"item\": \"samosa\", \"price\": 22}"
-      - id: stampede_lock
-        title: "30 requests on an empty cache, one call to billing"
-        xp: 50
-        hints:
-          - "Only one request may call billing. The others must notice someone is already on it."
-          - "SET with nx=True succeeds for exactly one caller. Give that key a short expiry so a crash cannot block everyone."
-          - "The winner fills the cache and deletes its lock; the others sleep 50 ms at a time and read the cache again."
-        examples:
-          - call: "30 requests for an empty cache at once"
-            gives: "1 call to billing"
-            note: "all 30 get the price"
-  - id: 07-atomic-operations
-    title: Atomic operations
-    file: chapters/07-atomic-operations.md
-    minutes: 20
-    tasks:
-      - id: otp_limit
-        title: "POST /otp/{phone}: at most 3 OTPs a minute"
-        xp: 40
-        hints:
-          - "Count requests per phone number in Redis, and let the count disappear after a minute."
-          - "r.incr(key) adds one and returns the new count, even for a key that does not exist yet."
-          - "Give the key a 60 second expiry when the count is 1, and raise HTTPException with status 429 above 3."
-        examples:
-          - call: "4 x POST /otp/9876543210 within a minute"
-            gives: "200, 200, 200, 429"
-          - call: "the 5th call a minute later"
-            gives: "200"
-            note: "the count reset"
-      - id: redeem_points
-        title: "POST /redeem/{cid}: never double-spend"
-        xp: 50
-        hints:
-          - "The read, the check and the write must happen as one step, with nothing in between."
-          - "A Lua script runs atomically inside Redis. register_script turns its source into a function you can call."
-          - "In the script: read the balance, return -1 when it is too low, otherwise DECRBY and return the result. Answer 409 on -1."
-        examples:
-          - call: "20 x POST /redeem/77?points=100 at once, 500 points"
-            gives: "5 x 200, 15 x 409"
-          - call: "GET loyalty:77"
-            gives: "\"0\""
-            note: "never below zero"
-  - id: 08-distributed-locks
-    title: Distributed locks
-    file: chapters/08-distributed-locks.md
-    minutes: 25
-    tasks:
-      - id: book_once
-        title: "POST /book/{table}: exactly one winner"
-        xp: 50
-        hints:
-          - "Take a lock for the table before checking whether it is free, and give up (409) if you cannot get it."
-          - "SET with nx=True and px= takes the lock; its value should be a random token, for example from uuid4."
-          - "Hold the lock around the check and the booking, and release it in a finally block, even when you answer 409."
-        examples:
-          - call: "30 x POST /book/5 at the same moment"
-            gives: "1 x 200, 29 x 409"
-      - id: safe_unlock
-        title: "Release a lock only if it is yours"
-        xp: 40
-        hints:
-          - "Before deleting, the value must be compared with the token. Doing that in two commands is a race."
-          - "A short Lua script can GET the key and DEL it only when the value equals the token, in one step."
-          - "Pass the lock key in KEYS and the token in ARGV, and return whether something was deleted."
-        examples:
-          - call: "release lock:x with the wrong token"
-            gives: "the lock stays"
-          - call: "release lock:x with its own token"
-            gives: "the lock is gone"
-  - id: 09-streams
-    title: Streams and consumer groups
-    file: chapters/09-streams.md
-    minutes: 25
-    setup: ["bash", "/lab/setup/09.sh"]
-    tasks:
-      - id: orders_stream
-        title: "Three orders on orders:stream"
-        xp: 20
-        hints:
-          - "XADD appends one entry to a stream. Let Redis pick the ID with *."
-          - "After the ID come field value pairs: the order field and the item field. Quote item names with a space."
-          - "Three XADD commands in order o1, o2, o3; XRANGE orders:stream - + shows them oldest first."
-        examples:
-          - call: "XLEN orders:stream"
-            gives: "3"
-          - call: "XRANGE orders:stream - +"
-            gives: "o1, o2, o3, in order"
-      - id: kitchen_group
-        title: "A kitchen group: read three, acknowledge one"
-        xp: 40
-        hints:
-          - "XGROUP CREATE makes a group on a stream. Starting at 0 means from the oldest entry."
-          - "XREADGROUP with GROUP kitchen barista1 and the special ID > hands out entries nobody has received yet."
-          - "Acknowledge only o1's ID with XACK. XPENDING orders:stream kitchen should then show 2."
-        examples:
-          - call: "XPENDING orders:stream kitchen"
-            gives: "2 pending, for barista1"
-            note: "o2 and o3"
-      - id: reclaim_stuck
-        title: "worker-2 takes over the stuck payments"
-        xp: 40
-        hints:
-          - "XPENDING shows who holds each payment and for how long. Someone alive must take them over."
-          - "XAUTOCLAIM with a minimum idle time in milliseconds moves old pending entries to a new consumer."
-          - "Claim as worker-2 with 60000 and start ID 0, then XACK both returned IDs in the billing group."
-        examples:
-          - call: "XPENDING payments:stream billing"
-            gives: "0 pending"
-            note: "worker-2 claimed and acknowledged them"
-  - id: 10-memory-and-eviction
-    title: Memory and eviction
-    file: chapters/10-memory-and-eviction.md
-    minutes: 20
-    setup: ["bash", "/lab/setup/10.sh"]
-    tasks:
-      - id: find_big_key
-        title: "Find and remove what filled Redis"
-        xp: 60
-        hints:
-          - "One key is much bigger than everything else. The bigkeys option of redis-cli finds the biggest of each type."
-          - "MEMORY USAGE on a key shows its real size. Look for a key that should never have grown."
-          - "Remove only that one key (UNLINK frees a big key without blocking). The cache entries must stay."
-        examples:
-          - call: "redis-cli --bigkeys"
-            gives: "no runaway key left"
-          - call: "the cache, carts and sessions"
-            gives: "all still there"
-      - id: eviction_policy
-        title: "Evict cache entries, never real data"
-        xp: 40
-        hints:
-          - "The policy decides what Redis may throw away when it is full. Real data here has no TTL."
-          - "Policies starting with allkeys may evict anything; the ones starting with volatile only touch keys with a TTL."
-          - "CONFIG SET maxmemory-policy to the volatile version of least recently used."
-        examples:
-          - call: "CONFIG GET maxmemory-policy"
-            gives: "a volatile-* policy"
-            note: "only keys with a TTL can go"
-  - id: 11-persistence
-    title: Persistence
-    file: chapters/11-persistence.md
-    minutes: 15
-    setup: ["bash", "/lab/setup/11.sh"]
-    tasks:
-      - id: aof_on
-        title: "Turn on the append-only file, flushed every second"
-        xp: 30
-        hints:
-          - "Two settings: one turns the log on, the other says how often it is flushed to disk."
-          - "CONFIG SET appendonly takes yes or no; appendfsync takes always, everysec or no."
-          - "Set appendonly to yes and appendfsync to everysec, then check with CONFIG GET append*."
-        examples:
-          - call: "CONFIG GET appendonly"
-            gives: "\"yes\""
-          - call: "CONFIG GET appendfsync"
-            gives: "\"everysec\""
-      - id: fresh_snapshot
-        title: "Take a snapshot now"
-        xp: 30
-        hints:
-          - "A snapshot can be taken in the background while Redis keeps serving."
-          - "BGSAVE starts one. If the append-only file is still being rewritten, BGSAVE SCHEDULE waits for it."
-          - "Check INFO persistence: rdb_last_bgsave_status should be ok and the last save time recent."
-        examples:
-          - call: "INFO persistence"
-            gives: "rdb_last_bgsave_status:ok"
-            note: "and a recent rdb_last_save_time"
-  - id: 12-scaling
-    title: Replication and clusters
-    file: chapters/12-scaling.md
-    minutes: 20
-    setup: ["bash", "/lab/setup/12.sh"]
-    tasks:
-      - id: replica_sync
-        title: "Make the second server a live replica"
-        xp: 40
-        hints:
-          - "The command runs on the server that should become the replica, so talk to it with -h replica."
-          - "REPLICAOF takes the primary's host and port: here redis and 6379."
-          - "INFO replication on the replica should show role slave and master_link_status up."
-        examples:
-          - call: "redis-cli -h replica INFO replication"
-            gives: "master_link_status:up"
-          - call: "SET on redis, GET on replica"
-            gives: "the same value"
-      - id: hash_tags
-        title: "Customer 42's cart and wishlist in one cluster slot"
-        xp: 40
-        hints:
-          - "In a cluster, a key's slot comes from a hash of its name. Different names usually mean different slots."
-          - "Only the part between curly braces is hashed, when the key name has one."
-          - "Put the same part in braces in both names, for example a braced customer 42 followed by :cart and :wishlist."
-        examples:
-          - call: "the slots of customer 42's cart and wishlist keys"
-            gives: "the same slot"
-  - id: 13-production-capstone
-    title: "Capstone: production is slow"
-    file: chapters/13-production-capstone.md
-    minutes: 25
-    setup: ["bash", "/lab/setup/13.sh"]
-    tasks:
-      - id: scan_not_keys
-        title: "GET /sessions/active with SCAN, not KEYS"
-        xp: 50
-        hints:
-          - "KEYS returns everything in one blocking call. SCAN returns a little at a time with a cursor."
-          - "The Python client has scan_iter, which runs the SCAN cursor loop for you; match and count are arguments."
-          - "Count what scan_iter yields for the session pattern, with a count of about 1000 per step."
-        examples:
-          - call: "curl -s localhost:8000/sessions/active"
-            gives: "the exact count"
-            note: "counted with SCAN"
-      - id: unlink_culprit
-        title: "Remove the slow key without blocking"
-        xp: 50
-        hints:
-          - "SLOWLOG GET shows the slow commands and the key they touched."
-          - "DEL frees memory on the main thread while everyone waits. There is a command that frees it in the background."
-          - "Use UNLINK on that one key, and leave the sessions alone."
-        examples:
-          - call: "the huge key from the slow log"
-            gives: "gone, freed in the background"
-          - call: "the sessions"
-            gives: "all still there"
+- id: why-redis
+  title: Why Redis exists
+  file: chapters/01-why-redis.md
+  minutes: 45
+  folder: 01-why-redis
+  part: Starting out
+  tasks:
+  - id: measure_latency
+    title: measure one round trip to Redis
+    xp: 10
+    hints:
+    - redis-cli has a mode that pings Redis over and over and prints min, max and avg in milliseconds.
+    - Run redis-cli --latency, let it count for a few seconds, then stop it with Ctrl+C. Read the avg.
+    - 'Store only the number: SET bench:latency_ms followed by the avg it printed (a decimal like 0.21 is fine).'
+    examples:
+    - call: GET bench:latency_ms
+      gives: '"0.08"'
+      note: your own number
+  - id: measure_redis
+    title: measure how many GETs and SETs a second Redis serves
+    xp: 20
+    hints:
+    - redis-benchmark sends a flood of commands from 50 clients at once and prints requests per second.
+    - Run the redis-benchmark command from the lesson, with -t get,set, -n 100000 and -q for one line each.
+    - 'Store the two whole numbers it printed: bench:get_per_sec and bench:set_per_sec (no commas, no decimals needed).'
+    examples:
+    - call: GET bench:get_per_sec
+      gives: '"203665"'
+      note: your own number
+    - call: GET bench:set_per_sec
+      gives: '"195312"'
+      note: your own number
+- id: 01-what-redis-is
+  title: Your first keys
+  file: chapters/02-first-keys.md
+  minutes: 40
+  setup:
+  - bash
+  - /lab/setup/02.sh
+  tasks:
+  - id: first_keys
+    title: store Basket's name and city
+    xp: 10
+    hints:
+    - Each fact is one key with a plain text value. SET stores a value under a key.
+    - Two SET commands, one for shop:name and one for shop:city. Capital letters count.
+    - 'Check with GET shop:name and GET shop:city: they should read Basket and Pune.'
+    examples:
+    - call: GET shop:name
+      gives: '"Basket"'
+    - call: GET shop:city
+      gives: '"Pune"'
+  - id: cups_counter
+    title: count today's orders and take a dozen eggs off the stock
+    xp: 20
+    hints:
+    - 'A counter that starts from nothing needs no SET: the first INCR creates it.'
+    - INCR adds one. Its cousins INCRBY and DECRBY add or take away any whole number.
+    - Three INCR on orders:today, then take 12 off stock:eggs with the command that decrements by an amount.
+    examples:
+    - call: GET orders:today
+      gives: '"3"'
+    - call: GET stock:eggs
+      gives: '"108"'
+      note: 12 less than 120
+  - id: clean_up
+    title: delete the leftover tmp:import keys
+    xp: 20
+    hints:
+    - 'First list them: the scan option of redis-cli shown in the step walks the keys matching a pattern.'
+    - DEL accepts several key names at once and tells you how many it removed.
+    - 'Delete all five tmp:import keys, then scan again: nothing should be left, and stock:eggs still there.'
+    examples:
+    - call: redis-cli --scan --pattern 'tmp:import:*'
+      gives: (nothing)
+    - call: the other keys
+      gives: still there
+- id: 02-expiring-keys
+  title: Keys that expire
+  file: chapters/03-expiring-keys.md
+  minutes: 40
+  setup:
+  - bash
+  - /lab/setup/03.sh
+  tasks:
+  - id: otp_expiry
+    title: a login code that expires in 5 minutes
+    xp: 20
+    hints:
+    - SET can give a key a timer in the same command, so it disappears on its own.
+    - 'The EX option takes seconds: 5 minutes is 300.'
+    - TTL otp:9876543210 shows the seconds left. -1 means it never expires, -2 means it is gone.
+    examples:
+    - call: GET otp:9876543210
+      gives: '"4821"'
+    - call: TTL otp:9876543210
+      gives: 300 or a little less
+      note: counting down
+  - id: session_ttl
+    title: give the endless session a 30 minute lifetime
+    xp: 20
+    hints:
+    - The session already exists, and its value must not change. Which command adds a timer to an existing key?
+    - EXPIRE takes a key and a number of seconds. 30 minutes is 1800 seconds.
+    - 'Do not SET the session again: that would replace its value. Check the result with TTL.'
+    examples:
+    - call: TTL session:7f3a
+      gives: 1800 or a little less
+    - call: GET session:7f3a
+      gives: the same value as before
+  - id: keep_forever
+    title: make the Diwali promo permanent
+    xp: 20
+    hints:
+    - TTL promo:diwali shows its timer is counting down. You want the opposite of EXPIRE.
+    - One command removes a key's timer and keeps its value.
+    - After it, TTL promo:diwali should answer -1, and GET still shows the offer.
+    examples:
+    - call: TTL promo:diwali
+      gives: '-1'
+      note: 'no timer: it stays'
+    - call: GET promo:diwali
+      gives: the same value as before
+- id: 03-hashes-and-lists
+  title: Hashes and lists
+  file: chapters/04-hashes-and-lists.md
+  minutes: 45
+  tasks:
+  - id: menu_hash
+    title: the catalogue as one hash
+    xp: 20
+    hints:
+    - A hash is one key that holds many field and value pairs. The key is catalogue, the fields are the item names.
+    - HSET takes the key, then field value, field value, and so on, all in one command.
+    - 'Check your work with HGETALL catalogue: three fields, prices 60, 120 and 300.'
+    examples:
+    - call: HGET catalogue mangoes
+      gives: '"300"'
+    - call: HLEN catalogue
+      gives: '3'
+  - id: customer_profile
+    title: Asha's profile, one more order, a gold tier
+    xp: 20
+    hints:
+    - One hash, customer:42, with the fields name and orders to start with.
+    - HINCRBY adds to a number stored in one field, in one step, without reading it first.
+    - Create it with orders 7, add 1 with HINCRBY, then set the tier field to gold.
+    examples:
+    - call: HGET customer:42 orders
+      gives: '"8"'
+    - call: HGET customer:42 tier
+      gives: '"gold"'
+  - id: order_queue
+    title: run the order queue
+    xp: 20
+    hints:
+    - New orders go in at one end of a list; the packing team takes the oldest from the other end.
+    - LPUSH adds on the left. RPOP takes from the right, so the oldest order comes out first.
+    - LPUSH orders:pending o1 o2 o3, then one RPOP. LRANGE orders:pending 0 -1 should show o3, o2.
+    examples:
+    - call: RPOP orders:pending
+      gives: '"o1"'
+      note: the oldest first
+    - call: LRANGE orders:pending 0 -1
+      gives: o3, o2
+- id: 04-sets-and-sorted-sets
+  title: Sets and sorted sets
+  file: chapters/05-sets-and-sorted-sets.md
+  minutes: 45
+  setup:
+  - bash
+  - /lab/setup/05.sh
+  tasks:
+  - id: unique_visitors
+    title: count each visitor once
+    xp: 20
+    hints:
+    - A set keeps each member once, however many times you add it.
+    - SADD takes the key and any number of members, and ignores the ones already there.
+    - Add this morning's five visits to visitors:today in one SADD. SCARD should say 3.
+    examples:
+    - call: SCARD visitors:today
+      gives: '3'
+      note: five visits, three people
+  - id: common_customers
+    title: customers of both stores, in customers:both
+    xp: 20
+    hints:
+    - customers:kothrud and customers:baner already exist. You want the people in both.
+    - SINTER shows the members two sets share. Its cousin with STORE writes them into a new key.
+    - SINTERSTORE takes the destination key first, then the two store sets.
+    examples:
+    - call: SMEMBERS customers:both
+      gives: dev, priya, ravi
+      note: in any order
+  - id: top_sellers
+    title: a sorted set of today's sales
+    xp: 20
+    hints:
+    - A sorted set keeps every member with a score, always in order.
+    - ZADD takes score member pairs. ZINCRBY adds to one member's score.
+    - ZADD sales:today 120 mangoes 80 rice 45 dal, then give dal 5 more with ZINCRBY.
+    examples:
+    - call: ZREVRANGE sales:today 0 -1 WITHSCORES
+      gives: mangoes 120, rice 80, dal 50
+- id: 05-redis-from-python
+  title: Redis from Python
+  file: chapters/06-redis-from-python.md
+  minutes: 50
+  folder: 06-redis-from-python
+  part: Redis in an app
+  tasks:
+  - id: profile_api
+    title: 'GET /customers/{cid}: a profile from a hash'
+    xp: 20
+    hints:
+    - The endpoint answers 501 now. Read the whole hash customer:<cid> with one command.
+    - 'hgetall gives an empty dict when the key does not exist: that is your 404.'
+    - Everything comes back as text. Turn orders into an int before you return it.
+    examples:
+    - call: GET /customers/42
+      gives: '{"id": 42, "name": "Asha", "orders": 8, "tier": "gold"}'
+    - call: GET /customers/7
+      gives: '404'
+      note: no such customer
+  - id: bulk_import
+    title: 'POST /import: 2000 rows in a handful of round trips'
+    xp: 20
+    hints:
+    - The loop sends 2000 separate commands, and waits for every answer before sending the next.
+    - A pipeline collects commands, then sends them all at once and reads all the answers together.
+    - Make a pipeline from r, call hset on it inside the loop, and execute it once after the loop.
+    examples:
+    - call: POST /import
+      gives: '{"imported": 2000}'
+    - call: round trips to Redis
+      gives: a handful
+      note: not 2000
+- id: 06-caching-for-real
+  title: Caching
+  file: chapters/07-caching.md
+  minutes: 50
+  folder: 07-caching
+  tasks:
+  - id: price_cache
+    title: 'GET /price/{item}: cache-aside for 60 seconds'
+    xp: 20
+    hints:
+    - Every call asks the slow catalogue now. Look in Redis first, under price:<item>.
+    - 'A hit: return the cached price (as an int). A miss: ask the catalogue, then keep the answer in Redis.'
+    - 'Store it with an expiry of 60 seconds: r.set takes an ex argument in seconds.'
+    examples:
+    - call: GET /price/rice
+      gives: about 1.5 s
+      note: 'the first time: a miss'
+    - call: GET /price/rice
+      gives: a few ms
+      note: 'the second time: a hit'
+  - id: price_invalidate
+    title: 'PUT /price/{item}: the next read sees the new price'
+    xp: 20
+    hints:
+    - After a price change, Redis still holds the old price for up to a minute.
+    - The catalogue is the source of truth. The cached copy just has to go.
+    - 'Removing the cached value is enough: the next read misses and asks the catalogue again.'
+    examples:
+    - call: PUT /price/bread 50, then GET /price/bread
+      gives: '{"item": "bread", "price": 50}'
+- id: cache-savings
+  title: What the cache saves
+  file: chapters/08-cache-savings.md
+  minutes: 50
+  folder: 08-cache-savings
+  tasks:
+  - id: hit_counter
+    title: count hits and misses in Redis
+    xp: 20
+    hints:
+    - /price works, but nobody knows how often the cache helps. Count it.
+    - 'INCR makes and adds to a counter in one step: one key for hits, one for misses.'
+    - On a hit, INCR stats:price:hits before returning; on a miss, INCR stats:price:misses after storing.
+    examples:
+    - call: 10 reads of /price/onions
+      gives: 9 hits, 1 miss
+    - call: GET stats:price:hits
+      gives: '"9"'
+  - id: savings_report
+    title: 'GET /savings: what the cache saved, in seconds and rupees'
+    xp: 20
+    hints:
+    - /savings answers 501. It needs the two counters, and the two prices of a catalogue call from catalogue.py.
+    - Read both counters (a missing one counts as 0). The hit rate is hits divided by all reads.
+    - 'Every hit is a catalogue call that did not happen: multiply hits by SECONDS_PER_CALL and RUPEES_PER_CALL.'
+    examples:
+    - call: GET /savings
+      gives: '{"hits": 9, "misses": 1, "hit_rate": 0.9, ...}'
+    - call: seconds_saved, rupees_saved
+      gives: 13.5 and 0.9
+      note: after 9 hits
+- id: stampede
+  title: The stampede
+  file: chapters/09-stampede.md
+  minutes: 45
+  folder: 09-stampede
+  tasks:
+  - id: stampede_lock
+    title: 30 requests on an empty cache, one call to the catalogue
+    xp: 20
+    hints:
+    - 'Run python3 stampede.py paneer: all 30 requests miss at the same moment, and every one asks the catalogue.'
+    - Only the request that wins a short-lived lock key may ask; SET with nx=True wins for exactly one caller.
+    - The others sleep a little and read price:<item> again, until the winner has stored it.
+    examples:
+    - call: 30 requests at once
+      gives: 1 catalogue call
+    - call: every request
+      gives: the right price
+      note: '200'
+  - id: jitter_ttl
+    title: prices cached together expire at different moments
+    xp: 20
+    hints:
+    - Every price lives exactly 60 seconds, so a burst of prices also expires in a burst.
+    - Pick each lifetime at random when you store it. Python's random module has randint.
+    - Use a random number of seconds between 45 and 60 for ex, instead of the fixed 60.
+    examples:
+    - call: TTL of six prices cached together
+      gives: different numbers, 45 to 60
+- id: 07-atomic-operations
+  title: Atomic operations
+  file: chapters/10-atomic-operations.md
+  minutes: 45
+  folder: 10-atomic-operations
+  tasks:
+  - id: otp_limit
+    title: 'POST /otp/{phone}: at most 3 login codes a minute'
+    xp: 20
+    hints:
+    - Count the codes per phone in Redis, under otp:count:<phone>.
+    - INCR counts and tells you the new number in one step. The first code of the minute starts a 60 s timer.
+    - When INCR returns more than 3, answer 429 instead of sending.
+    examples:
+    - call: 4 calls in a row
+      gives: 200, 200, 200, 429
+    - call: a minute later
+      gives: 200 again
+  - id: redeem_points
+    title: 'POST /redeem/{cid}: never double-spend coins'
+    xp: 20
+    hints:
+    - 'Fire 20 redemptions at once: they all read the same balance before any of them spends.'
+    - The check and the spend must be one single step inside Redis. A Lua script runs start to finish alone.
+    - register_script a script that reads the balance, returns -1 when it is too low, and otherwise DECRBYs.
+    examples:
+    - call: 500 coins, 20 x 100 at once
+      gives: 5 succeed, 15 get 409
+    - call: GET coins:<cid>
+      gives: '"0"'
+      note: never below zero
+- id: 08-distributed-locks
+  title: Locks
+  file: chapters/11-locks.md
+  minutes: 45
+  folder: 11-locks
+  tasks:
+  - id: book_once
+    title: 'POST /book/{slot}: exactly one winner'
+    xp: 20
+    hints:
+    - 30 customers book the same slot at once, and several are told they won.
+    - 'SET with nx=True only writes when the key is missing: exactly one caller gets True. Give it an expiry too.'
+    - Take lock:<booking key> first; whoever does not get it answers 409. Release it in a finally block.
+    examples:
+    - call: 30 bookings at once
+      gives: one 200, twenty-nine 409
+  - id: safe_unlock
+    title: release a lock only if it is yours
+    xp: 20
+    hints:
+    - Deleting the lock blindly can remove a lock that someone else holds now.
+    - The lock's value is its owner's token. Compare it before deleting, and do both in one step.
+    - 'A small Lua script: if GET equals the token, DEL, otherwise return 0.'
+    examples:
+    - call: release with someone else's token
+      gives: the lock stays
+    - call: release with your own token
+      gives: the lock is gone
+- id: 09-streams
+  title: Streams and consumer groups
+  file: chapters/12-streams.md
+  minutes: 45
+  setup:
+  - bash
+  - /lab/setup/12.sh
+  tasks:
+  - id: orders_stream
+    title: three orders on orders:stream
+    xp: 20
+    hints:
+    - 'A stream is a log: XADD appends an entry with field value pairs and an id Redis gives it.'
+    - Use * as the id, so Redis picks one. Each entry has an order field and an item field.
+    - 'Three XADD commands, in order: o1 rice, o2 dal, o3 mangoes. XRANGE orders:stream - + shows them.'
+    examples:
+    - call: XLEN orders:stream
+      gives: '3'
+    - call: XRANGE orders:stream - + COUNT 1
+      gives: order o1, item rice
+  - id: kitchen_group
+    title: 'a packing group: read three, acknowledge one'
+    xp: 20
+    hints:
+    - A consumer group remembers what each worker has read and not yet finished.
+    - XGROUP CREATE orders:stream packing 0 starts it from the beginning. XREADGROUP reads as one consumer.
+    - Read all three as packer1 with the id >, then XACK only the first entry's id.
+    examples:
+    - call: XPENDING orders:stream packing
+      gives: 2 pending for packer1
+  - id: reclaim_stuck
+    title: worker-2 takes over the stuck payments
+    xp: 20
+    hints:
+    - XPENDING payments:stream billing shows two payments a crashed worker never finished.
+    - XAUTOCLAIM hands pending entries that have been idle long enough to another consumer.
+    - Claim them for worker-2 (idle for at least 60000 ms), then XACK both ids.
+    examples:
+    - call: XPENDING payments:stream billing
+      gives: 0 pending
+    - call: who finished them
+      gives: worker-2
+- id: performance
+  title: Measuring Redis
+  file: chapters/13-measuring-redis.md
+  minutes: 45
+  part: Redis in production
+  setup:
+  - bash
+  - /lab/setup/13.sh
+  tasks:
+  - id: slow_key_found
+    title: find the slowest command in the slow log
+    xp: 20
+    hints:
+    - SLOWLOG GET shows the slowest commands Redis caught, newest first.
+    - Each entry shows an id, a time, the duration in microseconds, and the command with its arguments.
+    - Find the entry with the biggest duration. Store its key in answer:slow_key and its command in answer:slow_command.
+    examples:
+    - call: GET answer:slow_key
+      gives: the key in the slowest entry
+    - call: GET answer:slow_command
+      gives: its command name
+  - id: slowlog_config
+    title: switch the slow log back on, at 10 ms
+    xp: 20
+    hints:
+    - CONFIG GET slowlog* shows two settings. A negative threshold means nothing is logged.
+    - 'slowlog-log-slower-than is in microseconds: 10 ms is 10000. slowlog-max-len is how many entries it keeps.'
+    - CONFIG SET slowlog-log-slower-than 10000, and CONFIG SET slowlog-max-len 1000.
+    examples:
+    - call: CONFIG GET slowlog-log-slower-than
+      gives: '10000'
+    - call: CONFIG GET slowlog-max-len
+      gives: '1000'
+- id: 10-memory-and-eviction
+  title: Memory and eviction
+  file: chapters/14-memory-and-eviction.md
+  minutes: 45
+  setup:
+  - bash
+  - /lab/setup/14.sh
+  tasks:
+  - id: find_big_key
+    title: find and remove what filled Redis
+    xp: 20
+    hints:
+    - INFO memory shows how much memory is used. redis-cli --bigkeys finds the biggest key of each type.
+    - MEMORY USAGE tells you how many bytes one key takes.
+    - 'One key is far bigger than the rest. Remove it without blocking Redis: UNLINK.'
+    examples:
+    - call: SET lab:test ok
+      gives: OK
+      note: writes work again
+    - call: the debug log
+      gives: gone
+  - id: eviction_policy
+    title: evict cache entries, never real data
+    xp: 20
+    hints:
+    - 'CONFIG GET maxmemory-policy says noeviction: when Redis is full, it refuses writes.'
+    - Cache entries have a TTL; carts, sessions and counters do not. Some policies only evict keys with a TTL.
+    - 'CONFIG SET maxmemory-policy volatile-lru: evict the least recently used key that has an expiry.'
+    examples:
+    - call: CONFIG GET maxmemory-policy
+      gives: volatile-lru
+      note: or another volatile- policy
+- id: 11-persistence
+  title: Persistence
+  file: chapters/15-persistence.md
+  minutes: 40
+  setup:
+  - bash
+  - /lab/setup/15.sh
+  tasks:
+  - id: aof_on
+    title: turn on the append-only file, flushed every second
+    xp: 20
+    hints:
+    - 'CONFIG GET appendonly says no: only snapshots (if any) protect the data.'
+    - The append-only file logs every write. appendfsync decides how often it is flushed to disk.
+    - CONFIG SET appendonly yes, and CONFIG SET appendfsync everysec.
+    examples:
+    - call: CONFIG GET appendonly
+      gives: 'yes'
+    - call: CONFIG GET appendfsync
+      gives: everysec
+  - id: fresh_snapshot
+    title: take a snapshot now
+    xp: 20
+    hints:
+    - Persistence was off, so the last snapshot on disk is old.
+    - BGSAVE writes a snapshot in the background, while Redis keeps serving.
+    - Run BGSAVE, then LASTSAVE shows when the newest snapshot finished.
+    examples:
+    - call: INFO persistence
+      gives: rdb_last_bgsave_status:ok
+    - call: LASTSAVE
+      gives: a moment ago
+- id: 12-scaling
+  title: Replication and clusters
+  file: chapters/16-replication-and-clusters.md
+  minutes: 45
+  setup:
+  - bash
+  - /lab/setup/16.sh
+  tasks:
+  - id: replica_sync
+    title: make the second server a live replica
+    xp: 20
+    hints:
+    - redis-cli -h replica talks to the second server. INFO replication shows its role.
+    - REPLICAOF host port turns a server into a copy of another one.
+    - 'On the replica: REPLICAOF redis 6379. Then write a key on redis and read it on the replica.'
+    examples:
+    - call: redis-cli -h replica INFO replication
+      gives: role:slave, master_link_status:up
+  - id: hash_tags
+    title: customer 42's cart and wishlist in one cluster slot
+    xp: 20
+    hints:
+    - In a cluster, each key goes to one of 16384 slots by its name, so related keys can land far apart.
+    - Only the part of a key name inside { } is used to pick the slot.
+    - 'Name both keys with the same tag: a cart hash with rice 2, a wishlist set with mangoes.'
+    examples:
+    - call: key_slot() of both key names
+      gives: the same number
+      note: 4672 for {customer:42}
+- id: 13-production-capstone
+  title: 'Capstone: production is slow'
+  file: chapters/17-capstone.md
+  minutes: 50
+  folder: 17-capstone
+  setup:
+  - bash
+  - /lab/setup/17.sh
+  tasks:
+  - id: scan_not_keys
+    title: GET /sessions/active with SCAN, not KEYS
+    xp: 20
+    hints:
+    - KEYS session:* walks all keys at once, and Redis serves nobody else until it is done.
+    - SCAN walks the keys in small pieces. redis-py's scan_iter hides the cursor for you.
+    - Count what scan_iter(match="session:*", count=1000) gives, instead of len(r.keys(...)).
+    examples:
+    - call: GET /sessions/active
+      gives: '{"active": 30000}'
+    - call: KEYS used
+      gives: never
+  - id: unlink_culprit
+    title: remove the slow key without blocking
+    xp: 20
+    hints:
+    - SLOWLOG GET names the command and the key that kept freezing Redis.
+    - DEL frees a big key on the spot, and Redis waits for it. UNLINK frees it in the background.
+    - UNLINK the key the slow log names. Leave the sessions alone.
+    examples:
+    - call: the slow key
+      gives: gone
+    - call: the slow log
+      gives: no DEL of it

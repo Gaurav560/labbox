@@ -93,15 +93,15 @@ def test_tutor_reply_with_whitespace_changes_still_blocked(client: TestClient, m
 def test_commands_from_apply_sh_are_caught_without_quotes(client: TestClient, monkeypatch):
     """A real reply from a small model: the redis-cli command that solves the task, unquoted."""
     h, _ = login(client)
-    reply = "Try running:\n```bash\nredis-cli HSET menu filter coffee 30 cold coffee 40 vada pav 25\n```"
+    reply = "Try running:\n```bash\nredis-cli HSET catalogue rice 60 dal 120 mangoes 300\n```"
     monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: reply)
     r = client.post(url("redis-in-practice", "03-hashes-and-lists", "menu_hash"), headers=h, json={})
-    assert r.json()["blocked"] is True and "HSET menu" not in r.json()["reply"]
+    assert r.json()["blocked"] is True and "HSET catalogue" not in r.json()["reply"]
 
 
 def test_tutor_replies_never_carry_code_blocks(client: TestClient, monkeypatch):
     h, _ = login(client)
-    monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: "Think about hashes: one key, many fields.\n```python\nr.hset('menu', mapping=PRICES)\n```\nWhich command writes several fields at once?")
+    monkeypatch.setattr(llm_gateway, "fake_chat_reply", lambda m: "Think about hashes: one key, many fields.\n```python\nr.hset('catalogue', mapping=PRICES)\n```\nWhich command writes several fields at once?")
     reply = client.post(url("redis-in-practice", "03-hashes-and-lists", "menu_hash"), headers=h, json={}).json()["reply"]
     assert "```" not in reply and "hset(" not in reply and "Which command writes several fields" in reply
 

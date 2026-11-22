@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Chapter 2 setup: a login session that never expires (a bug), and a promo that is about to.
+# Chapter 2 setup: the egg stock, and leftovers from an old import script to clean up.
 set -euo pipefail
 R=(redis-cli)
-"${R[@]}" SET session:7f3a '{"customer": 42, "outlet": "andheri"}' > /dev/null
-"${R[@]}" SET promo:diwali "20% off filter coffee" EX 3600 > /dev/null
+"${R[@]}" SET stock:eggs 120 > /dev/null
+for i in 1 2 3 4 5; do "${R[@]}" SET "tmp:import:$i" "row $i" > /dev/null; done

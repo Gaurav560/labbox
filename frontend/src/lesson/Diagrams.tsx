@@ -192,12 +192,12 @@ function ObjectReference() {
   );
 }
 
-/** Redis: one shared dictionary in memory, used by every outlet and worker; the database stays on disk. */
+/** Redis: one shared dictionary in memory, used by every store app and worker; the database stays on disk. */
 function RedisShared() {
   return (
-    <Svg viewBox="0 0 440 200" label="Three apps, two outlets and a worker, all talk to one Redis server that keeps data in memory; Postgres keeps the full records on disk">
-      <Box x={10} y={14} w={118} h={34} label="outlet app" />
-      <Box x={10} y={82} w={118} h={34} label="outlet app" />
+    <Svg viewBox="0 0 440 200" label="Three programs, the two store apps and a worker, all talk to one Redis server that keeps data in memory; Postgres keeps the full records on disk">
+      <Box x={10} y={14} w={118} h={34} label="Kothrud app" />
+      <Box x={10} y={82} w={118} h={34} label="Baner app" />
       <Box x={10} y={150} w={118} h={34} label="worker" />
       <Arrow x1={130} y1={31} x2={232} y2={86} />
       <Arrow x1={130} y1={99} x2={232} y2={99} />
@@ -237,14 +237,14 @@ function RoundTrips() {
 /** Cache-aside: ask Redis first; on a miss, ask the slow system and keep the answer with a TTL. */
 function CacheAside() {
   return (
-    <Svg viewBox="0 0 440 210" label="The app asks Redis first. On a hit it answers at once. On a miss it asks the slow billing system, stores the answer in Redis with a TTL, then answers">
+    <Svg viewBox="0 0 440 210" label="The app asks Redis first. On a hit it answers at once. On a miss it asks the slow catalogue, stores the answer in Redis with a TTL, then answers">
       <Box x={10} y={84} w={84} h={40} label="app" />
       <Arrow x1={96} y1={96} x2={196} y2={44} />
       <Box x={200} y={22} w={110} h={40} label="Redis" tone="accent" />
       <text className="dg-note" x={318} y={36}>1. hit?</text>
       <text className="dg-note" x={318} y={52}>answer at once</text>
       <Arrow x1={96} y1={112} x2={196} y2={166} />
-      <Box x={200} y={148} w={110} h={40} label="billing" />
+      <Box x={200} y={148} w={110} h={40} label="catalogue" />
       <text className="dg-note" x={318} y={162}>2. miss: slow,</text>
       <text className="dg-note" x={318} y={178}>1.5 s</text>
       <Arrow x1={255} y1={146} x2={255} y2={66} />
@@ -260,11 +260,11 @@ function ConsumerGroup() {
       <text className="dg-note" x={10} y={18}>stream: an append-only log</text>
       <Cells x={10} y={26} values={["1-0", "2-0", "3-0", "4-0"]} />
       <Arrow x1={110} y1={70} x2={150} y2={96} />
-      <Box x={120} y={98} w={140} h={34} label="group: kitchen" tone="accent" />
+      <Box x={120} y={98} w={140} h={34} label="group: packing" tone="accent" />
       <Arrow x1={160} y1={134} x2={80} y2={164} />
       <Arrow x1={220} y1={134} x2={300} y2={164} />
-      <Box x={10} y={166} w={120} h={34} label="barista1" />
-      <Box x={250} y={166} w={120} h={34} label="barista2" />
+      <Box x={10} y={166} w={120} h={34} label="packer1" />
+      <Box x={250} y={166} w={120} h={34} label="packer2" />
       <text className="dg-note" x={276} y={110}>pending until XACK:</text>
       <text className="dg-note" x={276} y={126}>a crash loses nothing</text>
     </Svg>
@@ -1050,7 +1050,160 @@ function GoChannels() {
   );
 }
 
+/* ---------- Redis in practice: playing timelines ---------- */
+
+function LatencyLadder() {
+  return (
+    <SketchSteps
+      title="where the time goes"
+      intro="Press Play to climb down the ladder. Each rung is a place data can live, and each is far slower than the one above."
+      label="the CPU cache answers in half a nanosecond; main memory in about 100 nanoseconds; an SSD read in about 150 microseconds; a round trip inside a data centre in about half a millisecond; a hard disk seek in about 10 milliseconds; a packet across the world in about 150 milliseconds"
+      steps={[
+        { label: "CPU cache: 0.5 ns", says: "Data the processor just used. If memory took one second, this would take a blink." },
+        { label: "RAM: 100 ns", says: "Main memory, where Redis keeps everything. Our one-second yardstick." },
+        { label: "SSD read: 150 µs", says: "About 1,500 times slower than RAM. On our scale: 25 minutes." },
+        { label: "Data centre round trip: 0.5 ms", says: "Asking another server in the same building. On our scale: 1 hour 23 minutes." },
+        { label: "Hard disk seek: 10 ms", says: "A spinning disk moving its head to the right place. On our scale: more than a day." },
+        { label: "Across the world: 150 ms", says: "California to the Netherlands and back. On our scale: 17 days." },
+      ]}
+    />
+  );
+}
+
+function HitRateSavings() {
+  return (
+    <SketchSteps
+      title="100 price reads, a 90% hit rate"
+      intro="Press Play to follow 100 reads of prices through the cache."
+      label="100 reads arrive; Redis answers 90 of them from memory in under a millisecond each; only 10 misses go to the slow catalogue; each miss costs 1.5 seconds and 10 paise; the answer is stored, so the next read is a hit; total: 10 calls instead of 100"
+      steps={[
+        { label: "1. 100 reads arrive", says: "Customers open product pages. Every page needs a price." },
+        { label: "2. 90 hits: Redis answers", says: "The price is already in Redis. Each answer takes a fraction of a millisecond and costs nothing extra." },
+        { label: "3. 10 misses: ask the catalogue", says: "These prices were not cached yet, or had expired. Each one waits 1.5 seconds and costs Rs 0.10." },
+        { label: "4. Store each answer", says: "The app keeps every catalogue answer in Redis, so the next read of that price is a hit." },
+        { label: "5. 10 calls, not 100", says: "The catalogue did a tenth of the work. Raise the hit rate to 99% and it does a hundredth." },
+      ]}
+    />
+  );
+}
+
+function OneAtATime() {
+  return (
+    <SketchSteps
+      title="three clients, one Redis"
+      intro="Press Play to watch Redis serve three clients that send commands at the same moment."
+      label="the Kothrud app, the Baner app and a worker each send a command at once; Redis puts them in a line; it runs the first command from start to finish; then the second; then the third; no command ever runs in the middle of another"
+      steps={[
+        { label: "1. Three commands arrive at once", says: "The Kothrud app sends INCR orders:today, the Baner app sends INCR orders:today, a worker sends GET stock:eggs." },
+        { label: "2. They wait in line", says: "Redis has one main thread. It takes commands one at a time, in the order they arrived." },
+        { label: "3. INCR from Kothrud: 1", says: "Read, add one, write: all inside one command. Nothing else runs meanwhile." },
+        { label: "4. INCR from Baner: 2", says: "This one sees the 1 that Kothrud just wrote, so no count is lost." },
+        { label: "5. GET from the worker", says: "It reads the stock. Each command took microseconds, so nobody waited long." },
+        { label: "6. The catch", says: "If one command took a whole second, the other two would wait a whole second. Chapter 17 is about that." },
+      ]}
+    />
+  );
+}
+
+function CacheAsideFlow() {
+  return (
+    <SketchSteps
+      title="GET /price/rice, cache-aside"
+      intro="Press Play to follow two requests for the same price: the first misses, the second hits."
+      label="a request asks for the price of rice; the app asks Redis for price:rice; it is missing; the app asks the catalogue and waits 1.5 seconds; it stores the answer in Redis for 60 seconds; it answers; a second request asks Redis and finds it; it answers in about a millisecond"
+      steps={[
+        { label: "1. GET /price/rice arrives", says: "A customer opens the rice page. The app needs the price." },
+        { label: "2. Ask Redis: GET price:rice", says: "Always look in the cache first. It answers (nil): a miss." },
+        { label: "3. Miss: ask the catalogue", says: "The slow, paid call: 1.5 seconds and Rs 0.10. It answers 60." },
+        { label: "4. Keep it: SET price:rice 60 EX 60", says: "Store the answer with a lifetime, so a price change shows up within a minute at most." },
+        { label: "5. Answer the customer", says: "This first customer waited 1.5 seconds." },
+        { label: "6. Next request: a hit", says: "GET price:rice finds 60 at once. This customer waits about a millisecond, and the catalogue is not asked." },
+      ]}
+    />
+  );
+}
+
+function Stampede() {
+  return (
+    <SketchSteps
+      title="a sale starts: 30 requests, one empty cache"
+      intro="Press Play to see a stampede, then the lock that stops it."
+      label="the cached price of paneer expires; 30 requests arrive in the same instant; without a lock all 30 miss and all 30 ask the catalogue; with a lock one request wins it and asks; the other 29 wait briefly and read the answer from Redis; one catalogue call instead of 30"
+      steps={[
+        { label: "1. price:paneer expires", says: "Its 60 seconds are up, just as a sale on paneer starts." },
+        { label: "2. 30 requests, same instant", says: "Every one of them asks Redis, and every one gets a miss." },
+        { label: "3. No lock: 30 catalogue calls", says: "All 30 ask the slow catalogue at once: 30 times the cost, and it may fall over." },
+        { label: "4. With a lock: one winner", says: "SET lock:price:paneer 1 NX EX 5 succeeds for exactly one request. Only it asks the catalogue." },
+        { label: "5. The other 29 wait a moment", says: "They sleep 100 ms and look in Redis again, until the winner has stored the price." },
+        { label: "6. One call, 30 answers", says: "The catalogue answered once. Everyone got the price about 1.5 seconds after asking." },
+      ]}
+    />
+  );
+}
+
+function LockFlow() {
+  return (
+    <SketchSteps
+      title="two customers, one delivery slot"
+      intro="Press Play to watch a Redis lock decide who books the slot."
+      label="Asha and Ravi book the 6 pm slot at the same moment; both try SET lock NX with a token and an expiry; Asha's succeeds and Ravi's returns nil; Ravi gets a 409; Asha checks the slot is free, books it, and releases the lock only if it still holds her token"
+      steps={[
+        { label: "1. Two bookings, same instant", says: "Asha and Ravi both tap the 6 pm delivery slot." },
+        { label: "2. Both: SET lock NX PX 2000", says: "Each request tries to create the lock key with its own random token and a 2 second expiry." },
+        { label: "3. Asha wins: OK", says: "NX writes only when the key is missing, so exactly one SET succeeds." },
+        { label: "4. Ravi loses: (nil), 409", says: "His SET found the key there. He is told politely that someone is booking." },
+        { label: "5. Asha books the slot", says: "Only the lock holder checks and writes booking:slot:1800. No race is possible." },
+        { label: "6. Release, if still hers", says: "A small script deletes the lock only if it still holds Asha's token, never someone else's." },
+      ]}
+    />
+  );
+}
+
+function SlowCommand() {
+  return (
+    <SketchSteps
+      title="one slow command, everyone waits"
+      intro="Press Play to see why one big command hurts every other client."
+      label="a report sends ZRANGE over 100,000 members; Redis starts it on its one thread; meanwhile thousands of quick GETs from the apps arrive and wait in line; the ZRANGE finishes after many milliseconds; only then are the waiting GETs served; the slow log records the ZRANGE"
+      steps={[
+        { label: "1. A report sends one big ZRANGE", says: "It asks for all 100,000 members of report:2025 at once." },
+        { label: "2. Redis starts it", says: "One thread, one command at a time: this command now has Redis to itself." },
+        { label: "3. Quick GETs pile up", says: "The store apps keep asking for prices and sessions. Each would take microseconds, but they must wait." },
+        { label: "4. The ZRANGE finishes", says: "Many milliseconds later it sends its huge answer. Every waiting client was slow for that long." },
+        { label: "5. The queue drains", says: "The waiting GETs are served, a little late each. Customers saw a slow app." },
+        { label: "6. The slow log remembers", says: "Redis noted the command, its key and its duration, so you can find it later with SLOWLOG GET." },
+      ]}
+    />
+  );
+}
+
+function EvictionLru() {
+  return (
+    <SketchSteps
+      title="Redis is full: volatile-lru"
+      intro="Press Play to see what Redis does when a write arrives and memory is full."
+      label="memory reaches maxmemory; a new write arrives; with noeviction Redis refuses it with an OOM error; with volatile-lru Redis looks only at keys that have a TTL; it removes the one used least recently; carts and sessions without a TTL are never touched; the write succeeds"
+      steps={[
+        { label: "1. Memory reaches maxmemory", says: "Redis has used its whole budget: 64 MB in this lab." },
+        { label: "2. A new write arrives", says: "A customer adds rice to their cart." },
+        { label: "3. noeviction: refuse it", says: "The write fails with OOM. Carts, logins and counters stop working." },
+        { label: "4. volatile-lru: pick a victim", says: "Redis looks only at keys with a TTL (cache entries) and picks one not used for the longest time." },
+        { label: "5. Evict it", says: "That old cached page is removed. It can be fetched again later; nothing real is lost." },
+        { label: "6. The write succeeds", says: "The cart is saved. Keys without a TTL were never candidates." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "latency-ladder": LatencyLadder,
+  "hit-rate-savings": HitRateSavings,
+  "one-at-a-time": OneAtATime,
+  "cache-aside-flow": CacheAsideFlow,
+  stampede: Stampede,
+  "lock-flow": LockFlow,
+  "slow-command": SlowCommand,
+  "eviction-lru": EvictionLru,
   "go-channels": GoChannels,
   "go-panic-trace": GoPanicTrace,
   "go-runs-a-file": GoRunsAFile,

@@ -56,7 +56,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 |---|---|
 | Languages | python-basics (**Python from zero**, complete: 13 chapters, 27 tasks), python-collections, java-basics (**Java from zero**, rewritten: 18 chapters, 36 tasks), java-collections, javascript-basics (**JavaScript from zero**, complete: 13 chapters, 26 tasks), javascript-inside-out, go-basics (**Go from zero**, complete: 13 chapters, 26 tasks) |
 | Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
-| Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice** (a full course: 13 chapters, 32 tasks, zero to production), **postgres-transactions-and-locks** |
+| Databases | sql-from-zero, postgres-indexing-incident, **redis-in-practice** (full revamp, 22 November: 17 chapters, 39 tasks, about 13 hours; why Redis exists, what a cache saves in time and money, measuring performance, zero to production; Basket as the running project), **postgres-transactions-and-locks** |
 | DevOps | **linux-on-call**, **git-without-fear** |
 | System design | **rate-limiter** (not on the home grid, which keeps its 15 cards) |
 
@@ -219,8 +219,8 @@ Done: kinder checks (coming-up tasks are not failures), "start here / continue" 
 learners land on it. Done (22 November): Continue follows the last chapter opened and wears that lab's colour; a lab card opens
 the lab's own course page (`/courses/<lab>`) first, then the lab. Level, streak and stars moved into a profile panel with an Exit button. The skill map is on each course page; the separate Skill maps section (lab and track maps) was removed. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
 button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
-courses (49). Redis in practice is fully up to the standard (history, 6 diagrams, worked examples,
-12 traces, quick checks, 32 task cards). Traces have a Play button.
+courses (49). Redis in practice was revamped to the full standard (22 November, owner: "remember this for every lab"): 17 chapters
+in three parts, real measured numbers, 15 real photos, notes on every recap, 8 playing diagrams. **Next: SQL from zero, the same way.** Traces have a Play button.
 **Spring Boot (21 November, rewrite complete):** at the owner's request, a self-sufficient course in a teacher's
 voice: 31 chapters (0 to 30) in four parts (foundations, REST APIs, data, production basics), 61 tasks, every step
 about code opening its own file. Next: Python in practice (story), and later a "Spring Boot in production" course

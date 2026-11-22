@@ -8,8 +8,7 @@ test("the editor suggests Python names and snippets", async ({ page }) => {
   await page.goto("/");
   await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
   await page.goto("/labs/redis-in-practice");
-  await page.locator(".tree-row", { hasText: "app.py" }).click({ timeout: 60_000 });
-  await expect(page.locator(".tab.active")).toContainText("app.py");
+  await expect(page.locator(".tab.active")).toContainText("compare.py", { timeout: 60_000 }); // chapter 1 opens its script
   const editor = page.locator(".monaco-editor").first();
   await expect(editor).toBeVisible();
 
