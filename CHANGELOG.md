@@ -1,5 +1,31 @@
 # Changelog
 
+## 22 November: Java from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
+
+- The owner approved the Java syllabus (18 chapters, running project **Shelf**, a small library app) and the
+  OpenAI key for Java's handwritten notes. Same treatment as Python: curiosity-first voice, a folder per chapter,
+  every output captured in `labbox/java-basics:v1`, photos, notes and playing diagrams.
+- Design: no `package` lines until the packages chapter; every chapter file has a small `main`, run with
+  `java File.java`; `run_checks.sh` maps chapter, folder, check folder, check class and tasks; a check named
+  `Self...` compiles the learner's files itself (chapter 1 checks Hello.java and the broken FixMe.java apart).
+  1. **Your first Java program** (new): the terminal, a class and main, why Java needs `;`, compile errors (Java
+     shows the first one, then the next) versus exceptions, `javac` and the class file's real `ca fe ba be`
+     bytes. Photos: Duke (BSD), James Gosling (Peter Campbell, CC BY-SA 4.0), a California oak for Java's first
+     name (Daniel Lu, CC BY-SA 4.0), the VT100. Tasks `hello_shelf`, `fix_first_errors`.
+  2. **Methods** (`01-methods`): typed methods, a playing call (`java-method-call`), Java's compile-time type
+     errors (real messages), void vs return, the shortest-word trace.
+  3. **Variables and types** (`02-variables-and-types`): types table, integer division and casts, int overflow
+     (2147483647 + 1 = -2147483648), money in paise, `"5" + 5 + 5` vs `5 + 5 + "5"`, String.format.
+  4. **Making decisions** (`03-decisions`): booleans, if / else if, `=` in a condition does not compile, switch
+     expressions, the ternary; Pope Gregory XIII.
+  5. **Loops** (`04-loops`): for-each, the counting for, a running total trace, a real
+     ArrayIndexOutOfBoundsException, characters of a string.
+  6. **Finding bugs** (new): a Java stack trace read from the top (`java-stack-trace` diagram; Python reads its
+     traceback the other way), println with labels, a real jshell session. Tasks `fix_total_fines`,
+     `fix_can_borrow`. The 1947 moth.
+- New playing diagrams `java-runs-a-file`, `java-method-call`, `java-stack-trace`; six handwritten notes pages
+  (the doodle is never a cup or a drink, so nothing looks like chai). Tests follow the new chapter 1.
+
 ## 22 November: no chai or tea examples anywhere
 
 - The owner: "dont use masala chai and chai related stuff as an example. in any of the lesson, task, lab or

@@ -162,7 +162,7 @@ def test_check_timeout_cleans_up(client: TestClient, user, monkeypatch):
 def test_java_check(client: TestClient, user):
     h, _ = user
     assert check(client, h, "java-basics", "01-methods")["passed_count"] == 0
-    write(client, h, "java-basics", "Greeter.java", JAVA_SOLVED)
+    write(client, h, "java-basics", "02-methods/Greeter.java", JAVA_SOLVED)
     res = check(client, h, "java-basics", "01-methods")
     assert (res["passed_count"], res["total_count"]) == (2, 2), res
 
@@ -236,7 +236,7 @@ def test_check_v2_fields_and_task_progress(client: TestClient):
     assert greet["passed"] is False
     assert (greet["expected"], greet["actual"]) == ('"Hello, Asha!"', "null")
 
-    write(client, h, "java-basics", "Greeter.java", JAVA_SOLVED)
+    write(client, h, "java-basics", "02-methods/Greeter.java", JAVA_SOLVED)
     assert check(client, h, "java-basics", "01-methods")["passed_count"] == 2
     with Session(engine) as s:
         row = s.get(TaskProgress, {"user_id": uid, "lab_id": "java-basics", "task_id": "greet"})

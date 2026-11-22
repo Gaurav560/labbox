@@ -48,9 +48,9 @@ def test_too_few_hints(labs_dir: Path):
 
 
 def test_em_dash(labs_dir: Path):
-    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    ch = labs_dir / "java-basics" / "chapters" / "02-methods.md"
     ch.write_text(ch.read_text() + "\nOne more thing \u2014 really.\n")
-    assert any("01-methods.md:" in e and "em dash" in e for e in errors(labs_dir / "java-basics"))
+    assert any("02-methods.md:" in e and "em dash" in e for e in errors(labs_dir / "java-basics"))
 
 
 def test_task_without_step(labs_dir: Path):
@@ -308,7 +308,7 @@ def test_real_labs_pass_the_strict_gate():
 
 
 def test_pictures_and_traces_are_checked(labs_dir: Path):
-    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    ch = labs_dir / "java-basics" / "chapters" / "02-methods.md"
     good = ch.read_text()
     assert ':::picture{name="recipe-card"}' in good and ":::trace{" in good
     ch.write_text(good.replace('picture{name="recipe-card"}', 'picture{name="no-such-picture"}'))
@@ -331,11 +331,11 @@ def test_code_in_a_picture_must_be_in_a_code_block(labs_dir: Path):
 
 
 def test_pictures_only_where_ideas_are_taught(labs_dir: Path):
-    ch = labs_dir / "java-basics" / "chapters" / "01-methods.md"
+    ch = labs_dir / "java-basics" / "chapters" / "02-methods.md"
     good = ch.read_text()
     # A picture on a task step pushes the task down: refused.
-    ch.write_text(good.replace(':::step{type=task task=greet title="Warm-up: greet someone"}',
-                               ':::step{type=task task=greet title="Warm-up: greet someone"}\n:::picture{name="fork-in-road"}\nx\n:::'))
+    ch.write_text(good.replace(':::step{type=task task=greet title="Your turn: greet someone"}',
+                               ':::step{type=task task=greet title="Your turn: greet someone"}\n:::picture{name="fork-in-road"}\nx\n:::'))
     assert any("(task) has a picture" in e for e in errors(labs_dir / "java-basics"))
     # Two figures on one step: refused.
     ch.write_text(good.replace(':::picture{name="recipe-card"}', ':::picture{name="egg-box"}\nx\n:::\n\n:::picture{name="recipe-card"}'))

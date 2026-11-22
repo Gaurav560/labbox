@@ -102,7 +102,7 @@ def test_hint_for_task_of_other_chapter_or_lab(client: TestClient):
 
 def test_task_card_examples_are_served(client: TestClient):
     h = auth(client)
-    tasks = client.get("/api/labs/java-basics", headers=h).json()["chapters"][0]["tasks"]
+    tasks = next(c for c in client.get("/api/labs/java-basics", headers=h).json()["chapters"] if c["id"] == "01-methods")["tasks"]
     assert tasks[0]["examples"][0] == {"call": 'greet("Asha")', "gives": '"Hello, Asha!"', "note": None}
     py = next(c for c in client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"] if c["id"] == CH)["tasks"][0]
     assert py["examples"][0]["call"] == 'greet("Asha")'
@@ -121,8 +121,8 @@ def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
     url = "/api/labs/java-basics/chapters/03-decisions/progress"
     assert client.put(url, json={"current_step": 4}, headers=h).status_code == 200
     nxt = client.get("/api/me/next", headers=h).json()
-    assert (nxt["kind"], nxt["lab_id"], nxt["chapter_id"], nxt["chapter_number"], nxt["step"]) == ("continue", "java-basics", "03-decisions", 3, 5)
-    assert nxt["steps"] > 5 and nxt["chapters"] == 13
+    assert (nxt["kind"], nxt["lab_id"], nxt["chapter_id"], nxt["chapter_number"], nxt["step"]) == ("continue", "java-basics", "03-decisions", 4, 5)
+    assert nxt["steps"] > 5 and nxt["chapters"] == len(labs.get_lab("java-basics").chapters)  # the course grows
 
     # The most recently touched chapter wins.
     client.put(f"/api/labs/{LAB}/chapters/{CH}/progress", json={"current_step": 2}, headers=h)

@@ -12,13 +12,23 @@ every session.
    `cd backend && SIGNUPS_PER_IP_HOUR=1000 .venv/bin/uvicorn app.main:app --port 8000 --workers 4`.
    Frontend: `cd frontend && npm run dev`. Database and Redis: `scripts/devdb.sh`.
 2. Check the state: `git log --oneline -12`, `scripts/labbox validate --strict` (17 labs valid).
-3. **Python from zero is COMPLETE** (rewritten overnight 22 November at the owner's request, commits
-   `a731a19` Part 1, `f02beee` photos and notes, `1369412` Part 2, `56d1ebb` Part 3, then Part 4): 19 chapters,
-   39 tasks, one folder per chapter, Pocket as the running project, curiosity-first voice (CONTENT_STANDARD
-   "Curiosity first"), 7 playing diagrams, Wikimedia photos with credits and AI handwritten notes on every recap
-   (OpenAI key approved by the owner for Python lesson notes only). **Next:** the owner reviews Python; then the
-   Java, JavaScript and Go rewrites, each starting with a syllabus for the owner's OK (the overnight "do not ask"
-   was for Python only). Python in practice still waits for its syllabus and name answers.
+3. **Owner's standing order (22 November, about 11:45, going to nap): "finish springboot, rest of current Java,
+   and other programming languages".** Order: finish Java (Parts 2 to 4), then Spring Boot photos and handwritten
+   notes (31 recaps and a few genuine photos), then the JavaScript from zero and Go from zero rewrites (same
+   treatment as Python; write each syllabus here first, then build without asking). OpenAI key approved for notes.
+   Notes doodles are never a cup or a drink; no chai or tea anywhere.
+   **Now: Java from zero rewrite** (owner approved the syllabus on 22 November, 10:30: "start building the Java
+   one"; OpenAI key OK for Java's handwritten notes). 18 chapters, running project **Shelf** (a small library app),
+   same treatment as Python (curiosity-first, folder per chapter, photos, notes, playing diagrams). Design: each
+   chapter folder holds default-package classes (no `package` line until chapter 16 teaches packages), each with
+   a small `main`, run with `java File.java`; `tests/run_checks.sh` maps chapter | folder | check folder | check
+   class | tasks; a check class named `Self...` compiles the learner's files itself (chapter 1 checks Hello.java
+   and the deliberately broken FixMe.java separately). Java photos are in `frontend/public/lesson-images/java/`
+   (Duke, James Gosling, a California oak for the "Oak" name). Part 1 (chapters 1 to 6) DONE. Next: Part 2
+   (7 strings, 8 arrays, 9 classes and objects, 10 interfaces, 11 ArrayList and HashMap, 12 generics, records and
+   enums new), Part 3 (13 exceptions, 14 lambdas and streams, 15 files and a CLI, 16 packages, jars and Maven new,
+   17 testing with JUnit new: JUnit must be added to the Java image), Part 4 (18 capstone). After Java: Spring Boot gets photos and handwritten notes (owner chose
+   Java first). Python from zero is complete (19 chapters); its review reminder fires at 18:07 today.
 4. The working tree was clean at handoff. Last run: 274 backend tests on Postgres and Redis, 270 on SQLite,
    25 browser tests, 17 labs valid, `scripts/labbox admin list` empty.
 

@@ -191,10 +191,10 @@ test("java lab renders its v2 steps", async ({ page }) => {
   await page.getByLabel("Password").fill("secret123");
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
-  await page.goto("/labs/java-basics");
-  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
-  await expect(page.getByText("Welcome to Java")).toBeVisible();
-  await page.locator(".dot").nth(6).click(); // dots jump straight to a step
+  await page.goto("/labs/java-basics?chapter=01-methods"); // chapter 2 since the 22 November rewrite
+  await expect(stepCount(page)).toHaveText("Step 1 of 15", { timeout: 60_000 });
+  await expect(page.getByText("Why does every big program start small?")).toBeVisible();
+  await page.locator(".dot").nth(3).click(); // dots jump straight to a step
   await expect(page.locator(".step-kind")).toHaveText("Predict");
   await page.locator(".predict-option", { hasText: "null" }).click();
   await expect(page.getByText("Right first time!")).toBeVisible();
@@ -207,11 +207,11 @@ test("lessons show pictures, a step-through trace and task cards", async ({ page
   await page.getByLabel("Password").fill("secret123");
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
-  await page.goto("/labs/java-basics");
-  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
-  await page.locator(".dot").nth(2).click(); // Why methods exist: the recipe card
+  await page.goto("/labs/java-basics?chapter=01-methods");
+  await expect(stepCount(page)).toHaveText("Step 1 of 15", { timeout: 60_000 });
+  await page.locator(".dot").nth(1).click(); // A method, part by part: the recipe card
   await expect(page.locator(".picture svg")).toBeVisible();
-  await page.locator(".dot").nth(10).click(); // Worked example: the shortest word
+  await page.locator(".dot").nth(8).click(); // Worked example: the shortest word
   const trace = page.locator(".trace");
   await expect(trace).toContainText("step 1 of 5");
   await trace.getByRole("button", { name: "Next ▶" }).click();
@@ -225,7 +225,7 @@ test("lessons show pictures, a step-through trace and task cards", async ({ page
   await trace.getByRole("button", { name: "↻ Watch again" }).click();
   await expect(trace).toContainText("step 1 of 5");
   await expect(trace.getByRole("button", { name: "⏸ Pause" })).toBeVisible();
-  await page.locator(".dot").nth(8).click(); // the greet task
+  await page.locator(".dot").nth(5).click(); // the greet task
   await expect(page.locator(".task-card")).toContainText('greet("Asha")');
   await expect(page.locator(".task-card")).toContainText('"Hello, Asha!"');
 });

@@ -18,7 +18,8 @@ def test_real_labs_load():
     assert [t.id for t in py.chapter("01-functions").tasks] == ["greet", "add", "is_even"]  # ids kept when chapters moved
     assert py.check.network == "none"
     assert "def double(x):" in py.chapter_markdown("01-functions")
-    assert [t.id for t in labs["java-basics"].chapters[0].tasks] == ["greet", "longest_word"]
+    assert [t.id for t in labs["java-basics"].chapters[0].tasks] == ["hello_shelf", "fix_first_errors"]
+    assert [t.id for t in labs["java-basics"].chapter("01-methods").tasks] == ["greet", "longest_word"]  # ids kept
 
 
 @pytest.fixture

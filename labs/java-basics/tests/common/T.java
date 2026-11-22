@@ -4,6 +4,10 @@ import java.util.Objects;
 /** Shared by every chapter's check: one @@RESULT line per task, in the LabBox voice (Content standard). */
 public class T {
     static final Map<String, String> PASS = Map.ofEntries(
+        Map.entry("hello_shelf", "Shelf said its first words: a class, a main method and two println lines. Every Java program starts like this."),
+        Map.entry("fix_first_errors", "Two compile errors read and fixed. Java checks the whole file before it runs a single line, and its messages point at the exact spot."),
+        Map.entry("fix_total_fines", "Found it: the loop started at position 1 and skipped the first fine. Off-by-one bugs are everywhere, and now you can catch one."),
+        Map.entry("fix_can_borrow", "Fixed: at the limit there is no room left. Boundaries (> or >=) are where bugs love to hide; printing the values made it visible."),
         Map.entry("percent", "Right, including 0 out of 0. Casting to double before dividing avoids Java's integer division trap."),
         Map.entry("format_rupees", "Spot on: %02d keeps the paise at two digits, so 5 paise shows as 0.05."),
         Map.entry("grade", "All the edges are right: 80, 79, 40, 39 and the invalid marks."),

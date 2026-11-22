@@ -1,4 +1,3 @@
-import loops.Loops;
 
 public class CheckLoops {
     public static void main(String[] a) {

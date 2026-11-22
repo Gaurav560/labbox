@@ -1,4 +1,3 @@
-import types.Numbers;
 
 public class CheckTypes {
     public static void main(String[] a) {

@@ -845,7 +845,66 @@ function ImportSearch() {
   );
 }
 
+/** Java from zero, chapter 1: what happens after "java First.java", played step by step. */
+function JavaRunsAFile() {
+  return (
+    <SketchSteps
+      title="java First.java"
+      intro="Press Play to watch Java turn your file into a running program."
+      label="You type java First.java; Java reads the whole file and checks its grammar and types; it compiles the class to bytecode; the Java Virtual Machine loads the class, finds main and runs its lines one at a time; println sends text to the terminal; when main ends, the program ends"
+      steps={[
+        { label: "1. you press Enter", says: "The terminal starts java and hands it your file, First.java." },
+        { label: "2. check the whole file", says: "Java reads every line first: grammar, names and types. One missing ; or a misspelled name and nothing runs: you get a compile error." },
+        { label: "3. compile to bytecode", says: "Your class becomes bytecode: simple instructions that are the same on every computer. (javac First.java writes them to First.class.)" },
+        { label: "4. the JVM loads the class", says: "The Java Virtual Machine, a program made for this exact computer, loads the bytecode. This is the trick behind \"write once, run anywhere\"." },
+        { label: "5. find main, run it line by line", says: "The JVM looks for public static void main and runs its lines from the top, one at a time." },
+        { label: "6. main ends: the program ends", says: "Each println sends a line to the terminal. When main reaches its closing brace, the program is over." },
+      ]}
+    />
+  );
+}
+
+/** Java from zero, chapter 2: one method call, from the call to the value coming back. */
+function JavaMethodCall() {
+  return (
+    <SketchSteps
+      title='String message = welcome("Pune");'
+      intro="Press Play to follow one method call, from the call to the answer."
+      label="main calls welcome with the argument Pune; Java jumps into the method; the parameter city holds Pune; the body joins the strings; return carries Welcome to Pune! back; main stores it in message, a String variable"
+      steps={[
+        { label: '1. the call: welcome("Pune")', says: "main reaches the right side of = and sees a method name with brackets: call it." },
+        { label: "2. jump into the method", says: "Java remembers where it was in main, then jumps to static String welcome(String city)." },
+        { label: '3. city = "Pune"', says: "The parameter city holds the argument for this call. Java already checked at compile time that \"Pune\" is a String." },
+        { label: "4. the body runs", says: 'The body joins "Welcome to ", city and "!" into one String: "Welcome to Pune!".' },
+        { label: "5. return hands it back", says: "return ends the method and carries the String back to main. The method's own city variable is gone." },
+        { label: "6. message holds the answer", says: "Back in main, the String is stored in message, and the next line prints it." },
+      ]}
+    />
+  );
+}
+
+/** Java from zero, chapter 6: reading a Java stack trace, which lists the newest call first. */
+function JavaStackTrace() {
+  return (
+    <SketchSteps
+      title="reading a Java stack trace"
+      intro="Press Play to read a real stack trace the way Java developers do: from the top."
+      label="Read the first line: the exception and its message. Then the first at line: the method, file and line where it happened. Then the lines below: the methods that called it, oldest at the bottom, ending in main"
+      steps={[
+        { label: "1. the first line: what went wrong", says: "Exception in thread \"main\" java.lang.ArithmeticException: / by zero. The kind of exception, then its message." },
+        { label: "2. the first at line: where", says: "at Report.average(Report.java:8): the method, the file and the line number. This is where the exception was thrown." },
+        { label: "3. the next line: who called it", says: "at Report.summary(Report.java:12): summary called average. Java lists the calls newest first, the opposite of Python." },
+        { label: "4. the last line: the start", says: "at Report.main(Report.java:17): main called summary with an empty array of fines. There is the real cause." },
+        { label: "5. fix the cause", says: "The crash is in average, but the question is what the average of no fines should be. Decide that, and the error is gone for good." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "java-stack-trace": JavaStackTrace,
+  "java-method-call": JavaMethodCall,
+  "java-runs-a-file": JavaRunsAFile,
   "import-search": ImportSearch,
   "object-creation": ObjectCreation,
   "try-except-flow": TryExceptFlow,

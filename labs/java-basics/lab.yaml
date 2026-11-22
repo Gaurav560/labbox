@@ -1,7 +1,7 @@
 id: java-basics
 version: 2
 title: Java from zero
-subtitle: From your first method to classes, collections, streams, exceptions and a real program.
+subtitle: From your very first line of Java to classes, collections, streams and real programs, one curious step at a time.
 description: 'Learn Java from the very first line: types, decisions, loops, strings, arrays, classes and
   records, interfaces, collections, exceptions, lambdas and streams, files and a command-line program.
   Plain explanations, everyday examples and real tests.'
@@ -33,10 +33,41 @@ check:
   timeout_seconds: 60
   network: none
 chapters:
+- id: first-program
+  title: Your first Java program
+  file: chapters/01-first-program.md
+  minutes: 45
+  folder: 01-first-program
+  part: Starting out
+  tasks:
+  - id: hello_shelf
+    title: 'Hello.java: Shelf says hello'
+    hints:
+    - Lines that start with // are notes for people. Java skips them, so right now main does nothing.
+    - System.out.println(...) shows what is between the brackets, then starts a new line. Each one goes inside main, and ends with a semicolon.
+    - Write two println lines inside main, each sentence in double quotes, copied exactly from the TODO, full stops included.
+    examples:
+    - call: java Hello.java
+      gives: Hello! I am Shelf.
+      note: first line
+    - call: java Hello.java
+      gives: I will look after your books.
+      note: second line
+  - id: fix_first_errors
+    title: 'FixMe.java: fix two small mistakes'
+    hints:
+    - Run java FixMe.java and read the first line of what Java says. The ^ under the code points at the spot.
+    - Every statement in Java ends with a semicolon. One line is missing its semicolon.
+    - After that fix, Java stops at a name it does not know. Java is case-sensitive; compare it with the line above.
+    examples:
+    - call: java FixMe.java
+      gives: Shelf is starting...
+      note: then two more lines
 - id: 01-methods
   title: Your first methods
-  file: chapters/01-methods.md
-  minutes: 15
+  file: chapters/02-methods.md
+  minutes: 40
+  folder: 02-methods
   tasks:
   - id: greet
     title: 'Greeter.greet: return a greeting'
@@ -62,8 +93,9 @@ chapters:
       gives: '2'
 - id: 02-variables-and-types
   title: Variables and types
-  file: chapters/02-variables-and-types.md
-  minutes: 15
+  file: chapters/03-variables-and-types.md
+  minutes: 45
+  folder: 03-variables-and-types
   tasks:
   - id: percent
     title: 'types/Numbers.java: percent(scored, total)'
@@ -92,8 +124,9 @@ chapters:
       gives: "\"₹0.05\""
 - id: 03-decisions
   title: Making decisions
-  file: chapters/03-decisions.md
-  minutes: 15
+  file: chapters/04-decisions.md
+  minutes: 40
+  folder: 04-decisions
   tasks:
   - id: grade
     title: 'decisions/Decisions.java: grade(marks)'
@@ -123,8 +156,9 @@ chapters:
       gives: "true"
 - id: 04-loops
   title: Loops
-  file: chapters/04-loops.md
-  minutes: 15
+  file: chapters/05-loops.md
+  minutes: 45
+  folder: 05-loops
   tasks:
   - id: sum_to
     title: 'loops/Loops.java: sumTo(n)'
@@ -149,10 +183,40 @@ chapters:
       gives: "3"
     - call: "countVowels(\"rhythm\")"
       gives: "0"
+- id: finding-bugs
+  title: Finding bugs
+  file: chapters/06-finding-bugs.md
+  minutes: 45
+  folder: 06-finding-bugs
+  tasks:
+  - id: fix_total_fines
+    title: 'Fines.java: the total that forgets a fine'
+    hints:
+    - 60 should come out, 50 does. 60 - 50 = 10. Which fine is missing?
+    - Add System.out.println(i + " " + fines[i]); inside the loop and run java Fines.java. Which positions does the loop visit?
+    - Positions in an array start at 0. Look at where the loop variable starts.
+    examples:
+    - call: totalFines(new int[] {10, 20, 30})
+      gives: '60'
+    - call: totalFines(new int[] {})
+      gives: '0'
+  - id: fix_can_borrow
+    title: 'Fines.java: at the limit means no more books'
+    hints:
+    - Try canBorrow(5, 5). A member with 5 books and a limit of 5 has no room left.
+    - Print room before the return. What is room exactly at the limit?
+    - Borrowing needs some room left, more than none. Compare the symbols > and >= on the last line.
+    examples:
+    - call: canBorrow(4, 5)
+      gives: 'true'
+    - call: canBorrow(5, 5)
+      gives: 'false'
+      note: at the limit
 - id: 05-strings
   title: Strings
   file: chapters/05-strings.md
   minutes: 15
+  part: Working with data
   tasks:
   - id: count_words
     title: 'words/Words.java: warm-up, countWords(text)'

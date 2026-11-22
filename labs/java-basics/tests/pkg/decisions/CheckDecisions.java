@@ -1,4 +1,3 @@
-import decisions.Decisions;
 
 public class CheckDecisions {
     public static void main(String[] a) {
