@@ -27,7 +27,7 @@ def test_terminal_only_chapters_open_the_readme():
 def test_other_comment_styles():
     go = LABS["go-basics"]
     slices_ch = next(i for i, c in enumerate(go.chapters) if c.id == "01-slices-and-errors")
-    assert focus("go-basics", slices_ch)[0] == "till.go"  # // TODO (task total)
+    assert focus("go-basics", slices_ch)[0] == "07-slices-and-errors/till.go"  # // TODO (task total)
     assert focus("go-basics", 1)[0] == "02-functions/hello.go"  # a chapter in its own package folder
     assert focus("sql-from-zero", 0) == ("q1.sql", 1)  # -- q1 (task q_paid_coffee)
     assert focus("python-basics", 0)[0] == "01-first-program/hello.py"  # the first task's TODO, not fix_me.py (sorts first)

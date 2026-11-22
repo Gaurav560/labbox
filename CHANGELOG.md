@@ -1,5 +1,18 @@
 # Changelog
 
+## 22 November: Go from zero rewrite, Part 2 "Working with data" (chapters 7 to 12)
+
+- The shared root package `till.go` is split in two: `07-slices-and-errors/till.go` (package `till`: `Total`,
+  `ParseAmount`) and `10-maps-and-structs/orders.go` (package `orders`: `CountByItem`, `Busiest`), each with its own
+  check (`tests/pkg/till`, `tests/pkg/orders`); `cmd/main.go` is gone. Words, slice tools, wallet and shapes move to
+  numbered folders, and pointers now come before methods and interfaces. Chapter and task ids kept.
+- Each chapter opens with a real puzzle run in the lab image: where Go's exceptions are (errors are values), why
+  `len("café")` is 5 (bytes and runes, UTF-8 drawn on a diner placemat), how changing one slice changes another (a
+  shared array and `append`), why map order changes every run (random on purpose, so tie rules matter), why a function
+  cannot make a parcel heavier (copies and pointers, a nil pointer panic), and how a bike and a van share one loop
+  (implicit interfaces, `fmt.Stringer`).
+- Six handwritten notes pages, checked letter by letter.
+
 ## 22 November: Go from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
 
 - Same treatment as Python, Java and JavaScript: curiosity-first openings, a running project (**Parcel**, a small

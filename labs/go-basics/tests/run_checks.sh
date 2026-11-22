@@ -13,13 +13,13 @@ hello-go|01-hello-go|gorun|hello_parcel fix_first_errors
 03-decisions|04-decisions|pkg/decisions|grade leap_year
 04-loops|05-loops|pkg/loops|sum_to count_vowels
 finding-bugs|06-finding-bugs|pkg/van|fix_total_weight fix_can_load
-01-slices-and-errors|.|.|total parse_amount count_by_item busiest
-06-strings|words|pkg/words|clean_name count_words
-07-more-slices|slicetools|pkg/slicetools|top_n unique
-02-maps-and-structs|.|.|total parse_amount count_by_item busiest
-09-methods-and-interfaces|shapes|pkg/shapes|areas total_area
+01-slices-and-errors|07-slices-and-errors|pkg/till|total parse_amount
+06-strings|08-strings|pkg/words|clean_name count_words
+07-more-slices|09-more-slices|pkg/slicetools|top_n unique
+02-maps-and-structs|10-maps-and-structs|pkg/orders|count_by_item busiest
+11-pointers|11-pointers|pkg/wallet|deposit swap
+09-methods-and-interfaces|12-methods-and-interfaces|pkg/shapes|areas total_area
 10-errors-in-depth|bank|pkg/bank|withdraw parse_age
-11-pointers|wallet|pkg/wallet|deposit swap
 12-files-and-cli|expenses|pkg/expenses|read_totals summary_cli
 13-goroutines|concurrent|pkg/concurrent|fetch_all word_counts
 "
@@ -32,6 +32,10 @@ echo "$CHAPTERS" | while IFS='|' read -r chapter dir tests tasks; do
   [ -z "$chapter" ] && continue
   if [ -n "${LABBOX_CHAPTER:-}" ] && [ "$chapter" != "$LABBOX_CHAPTER" ]; then continue; fi
   if [ ! -d "$dir" ]; then fail_all "$tasks" "Could not find the folder $dir/ in your workspace."; continue; fi
+  if [ "$tests" = "gotest" ]; then  # the learner's own tests: go test on copies in a scratch module
+    (cd /tmp && go build -o /tmp/gotest-check /check/tests/gotest/check.go) && /tmp/gotest-check "/check/workspace/$dir"
+    continue
+  fi
   if [ "$tests" = "gorun" ]; then  # small programs: run them with go run and compare their output
     (cd /tmp && go build -o /tmp/gorun-check /check/tests/gorun/check.go) && /tmp/gorun-check "/check/workspace/$dir"
     continue

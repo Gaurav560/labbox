@@ -1,122 +1,78 @@
-:::step{type=story title="Why pointers"}
-When you pass a value to a Go function, the function gets a **copy**. That keeps code safe and simple,
-until you actually want the function to change the caller's value. Pointers are how you say "work on
-the original".
+:::step{type=story title="Why can a function not make your parcel heavier?"}
+Parcel has a function that adds a 2 kg box to a parcel. Inside the function, the weight goes from 4 to 6. Back outside,
+the parcel still weighs 4. The function did its job, printed proof of it, and the parcel never changed.
+
+Where did the 2 kg go? The answer is the single most important idea about data in Go: when you pass a value to a
+function, Go hands over a **copy**. To change the original, you need its **address**: a **pointer**. Pointers sound
+scary; by the end of this chapter they will be one small `&` and one small `*`.
 
 :::mission
-In `wallet/wallet.go`, fix a `Deposit` method that never changes the balance, and write `Swap`, which
-exchanges two variables through pointers.
+Fix a wallet whose `Deposit` never changes the balance, then write `Swap`, which exchanges two values through their
+addresses.
 :::
 :::
 
-:::step{type=concept title="Values and pointers"}
-`&x` is the **address** of `x`; a variable holding an address is a pointer, and `*p` reads or writes
-the value it points to:
+:::step{type=try title="The box that vanished" file="11-pointers/copy.go" line="10-29"}
+Open `copy.go`:
 
 ```go
-n := 10
-p := &n       // p is a *int pointing at n
-*p = 20       // changes n
-fmt.Println(n) // 20
-```
-
-A function that takes a pointer can change the caller's variable:
-
-```go
-func reset(x *int) { *x = 0 }
-reset(&n)     // n is now 0
-```
-
-:::picture{name="envelope-address"}
-A pointer is an address: two envelopes, one house.
-:::
-:::
-
-:::step{type=example title="Worked example: a counter that really counts"}
-A method that changes its struct needs a pointer receiver:
-
-```go
-type Counter struct{ N int }
-
-func (c *Counter) Inc() {
-	c.N++
+func addBox(p Parcel) {
+	p.Weight += 2
+	fmt.Println("inside addBox:", p.Weight)
 }
 
-var c Counter
-c.Inc()
-c.Inc()
-// c.N is 2
-```
-
-1. `(c *Counter)` receives a pointer, so `c.N++` changes the caller's counter.
-2. Go takes the address for you: `c.Inc()` works on a plain variable.
-
-`Deposit` needs exactly this change.
-
-:::trace{title="two calls to c.Inc()"}
-| line | c.N | note |
-|---|---|---|
-| var c Counter | 0 | A new Counter starts with N at 0. |
-| c.Inc() | 1 | Inc gets a pointer to c, so c.N++ changes the real counter. |
-| c.Inc() | 2 | The same counter again: now 2. A value receiver would have left it at 0. |
-:::
-:::
-
-:::step{type=predict title="Guess first"}
-:::question
-`wallet.go` starts with this method. What does the last line print?
-
-```go
-func (w Wallet) Deposit(amount int) {
-	w.Balance += amount
+func addBoxReally(p *Parcel) {
+	p.Weight += 2
 }
-
-w := Wallet{Balance: 100}
-w.Deposit(50)
-fmt.Println(w.Balance)
 ```
-:::
-- [ ] `150`
-- [x] `100`
-- [ ] `50`
-- [ ] It does not compile
-:::explain
-`(w Wallet)` is a **value receiver**: the method gets a copy of the wallet, adds 50 to the copy, and
-the copy is thrown away when it returns. The caller's wallet still holds 100. A pointer receiver,
-`(w *Wallet)`, works on the original.
-:::
-:::
-
-:::step{type=try title="Watch the copy"}
-:::diagram{name="value-vs-pointer"}
-A value receiver changes a copy that is thrown away; a pointer receiver changes the caller's wallet.
-:::
 
 ```bash run
-cat > /tmp/wallet.go <<'GO'
-package main
-
-import "fmt"
-
-type Wallet struct{ Balance int }
-
-func (w Wallet) ByValue(n int)    { w.Balance += n }
-func (w *Wallet) ByPointer(n int) { w.Balance += n }
-
-func main() {
-	w := Wallet{Balance: 100}
-	w.ByValue(50)
-	fmt.Println("after ByValue:", w.Balance)
-	w.ByPointer(50)
-	fmt.Println("after ByPointer:", w.Balance)
-}
-GO
-go run /tmp/wallet.go
+cd /workspace/11-pointers && go run copy.go
 ```
+
+```text
+inside addBox: 6
+after addBox: 4
+after addBoxReally: 6
+6 {6} true
+```
+
+`addBox` received a **copy** of the parcel and made the copy heavier, which was thrown away when the function ended.
+`addBoxReally` received the parcel's **address**, `&parcel`, and changed the real one.
 :::
 
-:::step{type=task task=deposit title="Fix Deposit"}
-In `wallet/wallet.go`, fix `Deposit` so that
+:::step{type=concept title="& and *"}
+Two small symbols are all there is:
+
+- `&parcel` means "the address of parcel": a **pointer**, of type `*Parcel`.
+- `*ptr` means "the value at that address". For structs, Go lets you skip it: `ptr.Weight` is short for
+  `(*ptr).Weight`.
+
+The last line of the output shows all three: `ptr.Weight` is 6, `*ptr` is the whole parcel `{6}`, and `ptr == &parcel`
+is `true`, because it points at the very same parcel.
+
+Copies are the safe default: a function cannot change your data behind your back. Pointers are how you say "yes, you
+may change this one".
+
+:::picture{name="envelope-address"}
+A pointer is an address: whoever has it can find the real house.
+:::
+:::
+
+:::step{type=concept title="Methods with a pointer receiver"}
+A method can be attached to a type (chapter 12 does a lot more of this). Its **receiver** is the value it works on:
+
+```go
+func (w Wallet) Show() int     { return w.Balance }   // a copy: fine for reading
+func (w *Wallet) Add(n int)    { w.Balance += n }     // a pointer: needed to change it
+```
+
+Use a pointer receiver when a method **changes** the value. Go calls pointer methods on ordinary variables for you:
+`w.Add(50)` becomes `(&w).Add(50)` automatically.
+:::
+
+:::step{type=task task=deposit title="Your turn: fix Deposit"}
+Open `wallet.go`. `Deposit` does not work: the balance never changes. Fix it, so that
 
 ```go
 w := Wallet{Balance: 100}
@@ -124,68 +80,128 @@ w.Deposit(50)
 w.Deposit(25)
 ```
 
-leaves `w.Balance` at `175`. Change as little as possible.
-:::
+leaves `w.Balance` at `175`. Change as little as possible: one character is enough.
 
-:::step{type=concept title="When to use a pointer receiver"}
-Use a pointer receiver when a method **changes** the value, or when the struct is large and copying it
-would be wasteful. Go calls pointer methods on ordinary variables for you: `w.Deposit(50)` becomes
-`(&w).Deposit(50)` automatically.
-
-Keep it consistent: if one method of a type needs a pointer receiver, give them all one.
-:::
-
-:::step{type=task task=swap title="Swap two values"}
-In `wallet/wallet.go`, make `Swap(a, b *int)` exchange the two values:
-
-```go
-x, y := 1, 2
-Swap(&x, &y)
-// now x is 2 and y is 1
+```bash run
+cd /workspace/11-pointers && go run run.go
 ```
 
-`Swap(&x, &x)` must leave `x` unchanged.
+Then press **Check**.
 :::
 
-:::step{type=predict title="Quick check (1 of 2)"}
+:::step{type=example title="Worked example: double a number in place"}
+```go
+func Double(n *int) {
+	*n = *n * 2
+}
+
+x := 21
+Double(&x)
+// x is now 42
+```
+
+1. The parameter is `*int`: the address of an int.
+2. `*n` reads the value at that address, and `*n = ...` writes back to it.
+3. The caller passes `&x`. Inside `Double`, `n` is a copy of the **address**, but it points at the real `x`.
+:::
+
+:::step{type=predict title="Guess first"}
 :::question
-What does `&x` give?
+`func reset(n int) { n = 0 }`, then `x := 5; reset(x)`. What is `x`?
 :::
-- [ ] A copy of x
-- [x] The address of x
-- [ ] x's type
-- [ ] x multiplied
+- [x] `5`
+- [ ] `0`
 :::explain
-`&x` is the address of `x`, a pointer; `*p` reads or writes what a pointer points to.
+`reset` got a copy of 5 and zeroed the copy. To change `x`, take `n *int` and pass `&x`.
 :::
 :::
 
-:::step{type=predict title="Quick check (2 of 2)"}
+:::step{type=task task=swap title="Your turn: swap two values"}
+In `wallet.go`, make `Swap(a, b *int)` exchange the two values: after `Swap(&x, &y)` with `x, y := 1, 2`, `x` is 2 and `y`
+is 1. `Swap(&x, &x)` must leave `x` unchanged.
+
+```bash run
+cd /workspace/11-pointers && go run run.go
+```
+
+Then press **Check**.
+:::
+
+:::step{type=try title="A pointer to nothing" file="11-pointers/nilptr.go" line="12-16"}
+A pointer that points at nothing is `nil`. Open `nilptr.go`:
+
+```bash run
+cd /workspace/11-pointers && go run nilptr.go
+```
+
+```text
+true
+panic: runtime error: invalid memory address or nil pointer dereference
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x499e91]
+```
+
+Asking a `nil` pointer for a field panics. It is Go's most common panic, and the fix is always the same idea: check
+`if p == nil` before using a pointer you were handed, or make sure it never is nil.
+:::
+
+:::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Why is returning `&Wallet{}` from a function safe in Go?
+What is the type of `&parcel`, when `parcel` is a `Parcel`?
 :::
-- [ ] It is not safe
-- [x] Escape analysis keeps it alive on the heap
-- [ ] Go copies it
-- [ ] Only in tests
+- [ ] `Parcel`
+- [x] `*Parcel`
+- [ ] `&Parcel`
 :::explain
-The compiler sees the value outlives the function and keeps it on the heap; the garbage collector frees it later.
+`&` takes an address; the type of an address of a `Parcel` is written `*Parcel`.
 :::
 :::
 
-:::step{type=deep-dive title="Escape analysis and nil"}
-In Go you can safely return a pointer to a local variable: `return &Wallet{}`. The compiler's **escape
-analysis** sees that the value outlives the function and puts it on the heap, where the garbage
-collector will free it later. There is no pointer arithmetic, so pointers cannot wander into random
-memory.
-
-The zero value of a pointer is `nil`, and reading through a nil pointer panics. Slices, maps and
-channels are already small references, so you rarely need a pointer to them; pass them as they are.
+:::step{type=predict title="Quick check (2 of 3)"}
+:::question
+When should a method have a pointer receiver?
+:::
+- [x] When it changes the value it is called on
+- [ ] Always
+- [ ] Never
+:::explain
+A value receiver works on a copy; changes would be lost. Reading-only methods are fine with either.
+:::
 :::
 
-:::step{type=recap}
-- Go passes copies: a function changing a parameter changes its copy.
-- `&x` takes an address; `*p` reads or writes through a pointer.
-- Methods that change their struct need a pointer receiver `(w *Wallet)`.
-- Returning `&T{}` is safe; reading through a `nil` pointer panics.
+:::step{type=predict title="Quick check (3 of 3)"}
+:::question
+What does `p.Weight` do when `p` is a nil `*Parcel`?
+:::
+- [ ] Gives 0
+- [x] Panics: nil pointer dereference
+:::explain
+There is no parcel at a nil address. Check `p == nil` first.
+:::
+:::
+
+:::step{type=deep-dive title="Go deeper: new, escape analysis and when not to use pointers"}
+**new.** `p := new(Parcel)` makes a zero `Parcel` and gives its address, the same as `&Parcel{}`.
+
+**No pointer arithmetic.** Unlike C, Go will not let you add to an address and wander through memory. Pointers in Go
+are safe: they point at a real value or at nil.
+
+**Escape analysis.** Returning `&localVariable` is fine in Go: the compiler notices and keeps the value alive. In C, it
+would be a classic bug.
+
+**When not to.** Slices and maps already share their data (chapters 9 and 10), so you rarely need a pointer to them.
+:::
+
+:::step{type=recap title="What you can do now"}
+You can now:
+
+- Explain that Go passes copies, so a function cannot change your value without its address.
+- Use `&` to take an address and `*` to read or write through it.
+- Choose a pointer receiver for methods that change their value.
+- Recognise a nil pointer panic, and guard against it.
+
+:::photo{src="/lesson-images/go/go-11-notes.webp" alt="Handwritten notes about Go pointers: functions get a copy, ampersand takes the address, star reads or writes through it, pointer receiver to change, a nil pointer panics, check p equals nil" ai="true"}
+One page of notes for this chapter.
+:::
+
+Next, chapter 12: methods and interfaces, and how a bike and a van can both deliver.
 :::

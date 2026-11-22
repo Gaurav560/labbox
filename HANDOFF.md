@@ -75,6 +75,7 @@ every session.
    - Part 4 "Capstone": 18 a depot report from a messy manifest file (new).
    Photos to look for: the Go Gopher (CC BY), Rob Pike or Ken Thompson. Notes on every recap.
    Part 1 (chapters 1 to 6) DONE: demos use `//go:build ignore`; chapter 1 is checked by `tests/gorun/check.go`.
+   Part 2 (chapters 7 to 12) DONE: the root `till.go` became `07-slices-and-errors/till.go` and `10-maps-and-structs/orders.go`.
    Rob Pike's photo is in `lesson-images/go/` for chapter 16 (goroutines).
 4. The working tree was clean at handoff. Last run: 276 backend tests on Postgres and Redis, 25 browser tests,
    17 labs valid, `scripts/labbox admin list` empty. Finished chapters on the skill map now show a green tick; the dashboard's Continue card is a retro computer for

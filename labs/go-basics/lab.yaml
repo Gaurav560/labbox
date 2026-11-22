@@ -12,7 +12,7 @@ tags:
 - go
 - beginner
 level: beginner
-estimated_minutes: 400
+estimated_minutes: 565
 cover: cover.svg
 cover_credit:
   by: 'Logos: go'
@@ -209,8 +209,9 @@ chapters:
       note: at the limit
 - id: 01-slices-and-errors
   title: Slices and errors
-  file: chapters/01-slices-and-errors.md
-  minutes: 15
+  file: chapters/07-slices-and-errors.md
+  minutes: 45
+  folder: 07-slices-and-errors
   part: Working with data
   tasks:
   - id: total
@@ -242,11 +243,12 @@ chapters:
       gives: "0, an error"
 - id: 06-strings
   title: Strings
-  file: chapters/06-strings.md
-  minutes: 15
+  file: chapters/08-strings.md
+  minutes: 40
+  folder: 08-strings
   tasks:
   - id: count_words
-    title: 'words/words.go: warm-up, CountWords(text)'
+    title: 'words.go: CountWords(text)'
     hints:
     - Words are separated by one or more spaces, tabs or new lines.
     - strings.Fields already ignores extra spaces at the ends and in between.
@@ -257,7 +259,7 @@ chapters:
     - call: "CountWords(\"  lots   of   spaces  \")"
       gives: "3"
   - id: clean_name
-    title: 'words/words.go: CleanName(raw)'
+    title: 'words.go: CleanName(raw)'
     hints:
     - strings.Fields splits on any run of spaces and drops the empty pieces.
     - 'For each word: the first letter upper case, the rest lower case (strings.ToUpper and strings.ToLower on slices
@@ -270,11 +272,12 @@ chapters:
       gives: "\"Arjun\""
 - id: 07-more-slices
   title: More slices
-  file: chapters/07-more-slices.md
-  minutes: 15
+  file: chapters/09-more-slices.md
+  minutes: 40
+  folder: 09-more-slices
   tasks:
   - id: top_n
-    title: 'slicetools/slicetools.go: TopN(numbers, n)'
+    title: 'slicetools.go: TopN(numbers, n)'
     hints:
     - 'Sorting the slice you were given changes the caller''s slice too: they share the same array.'
     - slices.Clone makes a separate copy you can sort safely.
@@ -286,7 +289,7 @@ chapters:
     - call: "TopN([]int{5, 1}, 5)"
       gives: "[5 1]"
   - id: unique
-    title: 'slicetools/slicetools.go: Unique(items)'
+    title: 'slicetools.go: Unique(items)'
     hints:
     - Keep a map of the items you have already seen.
     - Loop in the original order and append an item only the first time you see it.
@@ -298,11 +301,12 @@ chapters:
       gives: "[]"
 - id: 02-maps-and-structs
   title: Maps and structs
-  file: chapters/02-maps-and-structs.md
-  minutes: 15
+  file: chapters/10-maps-and-structs.md
+  minutes: 45
+  folder: 10-maps-and-structs
   tasks:
   - id: count_by_item
-    title: 'till.go: CountByItem(orders)'
+    title: 'orders.go: CountByItem(orders)'
     xp: 20
     hints:
     - Each Order has an Item and a Qty. Add up Qty per Item.
@@ -315,7 +319,7 @@ chapters:
       gives: "map[]"
       note: "empty, not nil"
   - id: busiest
-    title: 'till.go: Busiest(orders)'
+    title: 'orders.go: Busiest(orders)'
     xp: 20
     hints:
     - 'Start from CountByItem: the best seller is the item with the biggest count.'
@@ -327,13 +331,40 @@ chapters:
       gives: "\"juice\""
     - call: "Busiest(nil)"
       gives: "\"\""
+- id: 11-pointers
+  title: Pointers
+  file: chapters/11-pointers.md
+  minutes: 40
+  folder: 11-pointers
+  tasks:
+  - id: deposit
+    title: 'wallet.go: fix Deposit'
+    hints:
+    - 'With a value receiver, the method gets a copy of the wallet: the change is lost when it returns.'
+    - A pointer receiver (w *Wallet) lets the method change the caller's wallet.
+    - Change only the receiver; Go calls pointer methods on addressable values for you.
+    examples:
+    - call: "w := Wallet{Balance: 100}; w.Deposit(50); w.Deposit(25)"
+      gives: "w.Balance is 175"
+  - id: swap
+    title: 'wallet.go: Swap(a, b)'
+    hints:
+    - 'a and b are pointers: *a reads or writes the int they point to.'
+    - 'Go can swap two values in one line: x, y = y, x.'
+    - Swap the values the pointers point to, not the pointers themselves.
+    examples:
+    - call: "x, y := 1, 2; Swap(&x, &y)"
+      gives: "x is 2, y is 1"
+    - call: "Swap(&x, &x)"
+      gives: "x unchanged"
 - id: 09-methods-and-interfaces
   title: Methods and interfaces
-  file: chapters/09-methods-and-interfaces.md
-  minutes: 15
+  file: chapters/12-methods-and-interfaces.md
+  minutes: 45
+  folder: 12-methods-and-interfaces
   tasks:
   - id: areas
-    title: 'shapes/shapes.go: Area() for Rect and Circle'
+    title: 'shapes.go: Area() for Rect and Circle'
     hints:
     - 'A method is a function with a receiver: func (r Rect) Area() float64.'
     - A rectangle's area is width times height.
@@ -345,7 +376,7 @@ chapters:
       gives: "12.566..."
       note: "π times 2 squared"
   - id: total_area
-    title: 'shapes/shapes.go: TotalArea(shapes)'
+    title: 'shapes.go: TotalArea(shapes)'
     hints:
     - Any type with an Area() float64 method is a Shape, so the slice can mix rectangles and circles.
     - Loop over the shapes and add up s.Area().
@@ -358,7 +389,7 @@ chapters:
       gives: "0"
 - id: 10-errors-in-depth
   title: Errors in depth
-  file: chapters/10-errors-in-depth.md
+  file: chapters/13-errors-in-depth.md
   minutes: 20
   tasks:
   - id: withdraw
@@ -385,34 +416,9 @@ chapters:
     - call: "ParseAge(\"abc\")"
       gives: "0, an error"
       note: "wraps strconv.ErrSyntax"
-- id: 11-pointers
-  title: Pointers
-  file: chapters/11-pointers.md
-  minutes: 15
-  tasks:
-  - id: deposit
-    title: 'wallet/wallet.go: fix Deposit'
-    hints:
-    - 'With a value receiver, the method gets a copy of the wallet: the change is lost when it returns.'
-    - A pointer receiver (w *Wallet) lets the method change the caller's wallet.
-    - Change only the receiver; Go calls pointer methods on addressable values for you.
-    examples:
-    - call: "w := Wallet{Balance: 100}; w.Deposit(50); w.Deposit(25)"
-      gives: "w.Balance is 175"
-  - id: swap
-    title: 'wallet/wallet.go: Swap(a, b)'
-    hints:
-    - 'a and b are pointers: *a reads or writes the int they point to.'
-    - 'Go can swap two values in one line: x, y = y, x.'
-    - Swap the values the pointers point to, not the pointers themselves.
-    examples:
-    - call: "x, y := 1, 2; Swap(&x, &y)"
-      gives: "x is 2, y is 1"
-    - call: "Swap(&x, &x)"
-      gives: "x unchanged"
 - id: 12-files-and-cli
   title: Files and a command-line program
-  file: chapters/12-files-and-cli.md
+  file: chapters/15-files-and-cli.md
   minutes: 20
   tasks:
   - id: read_totals
@@ -441,7 +447,7 @@ chapters:
       note: "stderr, exit 1"
 - id: 13-goroutines
   title: Goroutines and channels
-  file: chapters/13-goroutines.md
+  file: chapters/16-goroutines.md
   minutes: 20
   tasks:
   - id: fetch_all
