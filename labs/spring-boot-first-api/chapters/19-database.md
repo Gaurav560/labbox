@@ -8,6 +8,14 @@ between many app instances, survive restarts and crashes, and find things fast. 
 connect the Shop API to one, and learn the tools Spring gives you for it: **JPA**, **Hibernate** and
 **Spring Data**.
 
+A database survives a restart because it keeps its rows on **disk**. The very first hard disk, IBM's 350 RAMAC of
+1956, was as big as two refrigerators: fifty spinning platters holding about 5 million characters. A laptop's drive
+today holds around a hundred thousand times more.
+
+:::photo{src="/lesson-images/spring/ramac.webp" alt="The IBM 350 RAMAC disk unit being restored: a tall stack of large metal platters behind a curved cover" credit="vnunet.com" license="CC BY-SA 2.5" source="https://commons.wikimedia.org/wiki/File:IBM_350_RAMAC.jpg"}
+The IBM 350 RAMAC, 1956: the first hard disk, about 5 million characters.
+:::
+
 This first chapter goes slowly, because there are several new ideas at once. By the end, products will be
 rows in a real database table, created from your Java class.
 
@@ -20,20 +28,12 @@ Turn `Product` into a JPA entity stored in a database table, and let the databas
 The databases most backends use are **relational databases**: PostgreSQL, MySQL, Oracle, SQL Server, and the
 small one we use in this lab, **H2**. They all store data the same way: in **tables**.
 
-Databases store their rows on disk. The very first hard disk, IBM's 350 RAMAC of 1956, was as big as two
-refrigerators: fifty spinning platters holding about 5 million characters. A laptop's drive today holds around a
-hundred thousand times more.
-
-:::photo{src="/lesson-images/spring/ramac.webp" alt="The IBM 350 RAMAC disk unit being restored: a tall stack of large metal platters behind a curved cover" credit="vnunet.com" license="CC BY-SA 2.5" source="https://commons.wikimedia.org/wiki/File:IBM_350_RAMAC.jpg"}
-The IBM 350 RAMAC, 1956: the first hard disk, about 5 million characters.
-:::
-
 ```text
 table: product
 +----+---------------+-------------+-------+
 | id | name          | price_paise | sku   |
 +----+---------------+-------------+-------+
-|  1 | Mango lassi    |        2000 | LAS-1 |
+|  1 | Mango lassi   |        2000 | LAS-1 |
 |  2 | Filter coffee |        3000 | COF-1 |
 |  3 | Samosa        |        1800 | SAM-1 |
 +----+---------------+-------------+-------+

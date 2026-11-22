@@ -68,13 +68,6 @@ The same sum, two answers. Here is why.
 constant maths **exactly**, with as many digits as it needs, at compile time. Exactly 0.3 is then stored, and 0.3 is
 printed.
 
-Wrapping around is not only a computer thing. A car's odometer has six digits, so after 99,999.9 miles it rolls
-back to all zeros, exactly like an `int8` going from 127 to -128: the counter simply has no room for more.
-
-:::photo{src="/lesson-images/go/odometer.webp" alt="Three close-ups of a car odometer: reading 99999.9, rolling over, then showing all zeros" credit="Hellbus" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Odometer_rollover.jpg"}
-An odometer rolling over from 99999.9 to zero.
-:::
-
 **Line 2 uses variables.** `a` and `b` are `float64` variables: real binary decimals, with the same tiny leftover as
 every other language. The surprise is not that Go gets it wrong; it is that constants get it **right**.
 
@@ -83,6 +76,13 @@ with `float64(7)`, and you get `3.5`. Go never converts for you.
 
 **Line 4:** an `int8` holds -128 to 127. Add 1 to 127 and it **wraps around** to -128, silently. Go's normal `int` is
 huge (up to about 9 quintillion), so this rarely bites, but now you know.
+
+Wrapping around is not only a computer thing. A car's odometer has six digits, so after 99,999.9 miles it rolls
+back to all zeros, exactly like an `int8` going from 127 to -128: the counter simply has no room for more.
+
+:::photo{src="/lesson-images/go/odometer.webp" alt="Three close-ups of a car odometer: reading 99999.9, rolling over, then showing all zeros" credit="Hellbus" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Odometer_rollover.jpg"}
+An odometer rolling over from 99999.9 to zero.
+:::
 
 **Line 5:** `fmt.Printf` formats: `%.2f` two decimals, `%5d` a number padded to 5 wide, `%q` a quoted string, `%T`
 the type of a value.

@@ -3,8 +3,8 @@ Count how many times a shop's billing app says "Hello, ..." to a customer, or wo
 times a day. Do you think someone wrote those instructions out thousands of times?
 
 The idea is older than electric computers. In 1843 **Ada Lovelace** wrote out, step by step, how Charles Babbage's
-Analytical Engine could calculate a series of numbers called Bernoulli numbers: a recipe a machine could follow,
-now called the first published computer program.
+Analytical Engine could calculate a series of numbers called Bernoulli numbers: a recipe written down once, which the
+machine could follow again for every number in the series. It is now called the first published computer program.
 
 :::photo{src="/lesson-images/python/ada-lovelace.webp" alt="A watercolour portrait of Ada Lovelace in a purple and white dress with a dark lace shawl, holding a fan" credit="Alfred Edward Chalon" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg"}
 Ada Lovelace, around 1840.

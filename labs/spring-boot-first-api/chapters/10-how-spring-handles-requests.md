@@ -29,8 +29,9 @@ The part of Spring that handles web requests is called **Spring MVC** (MVC stand
 Controller, an old name from the days of server-rendered web pages; for REST APIs, think "Spring's web
 layer"). The web starter set it all up for you in chapter 3.
 
-The DispatcherServlet does what this telephone operator did, all day long: every call arrives at one board, and
-the operator plugs it through to the right line. One front door, and a table of where everything goes.
+Every request enters Spring through one front door, the **DispatcherServlet**, and it works like this telephone
+operator: every call arrives at one board, and the operator plugs it through to the right line. One front door, and
+a table of where everything goes.
 
 :::photo{src="/lesson-images/spring/switchboard.webp" alt="A telephone operator at a manual switchboard in 1975, plugging cords into a panel of sockets" credit="Joseph A. Carr" license="Attribution" source="https://commons.wikimedia.org/wiki/File:Jersey_Telecom_switchboard_and_operator.jpg"}
 A switchboard in 1975: one operator routes every call, like the DispatcherServlet routes every request.

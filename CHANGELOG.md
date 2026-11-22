@@ -20,6 +20,20 @@
 - Owner, same evening: photos at the bottom of a long step were easy to miss (the Rosetta Stone). Each of the 33 new
   photos now sits near the top of its step (median line 8, at most 14), with its lead sentence: after the step's
   first paragraph, or at the very top when that paragraph introduces code, so no example is split from its output.
+- Owner asked for an in-depth check: is each photo there because it belongs, or forced to the top? Every real photo
+  in the five courses was read with the paragraph before and after it. Seven were moved to sit right after the text
+  that sets up their idea: the odometer (Go 3, after the int8 wrap), Hubble (Java 17, after "a test that checks
+  lateFee(0)"), the crash test dummy (Spring 25, after "a test that passes no matter what"), Ford's assembly line
+  (JavaScript 11, after the walkthrough, no longer between code and its explanation), the lottery machine (Go 10, after
+  "made it random on purpose"), the first web server (Spring 1, before "Let's look at one", which now leads into the
+  request). The switchboard lead (Spring 10) now introduces the DispatcherServlet itself, and Go 13 uses one picture,
+  the dolls, instead of envelopes and dolls.
+- Second pass, same question per photo: does its step teach the photo's idea, or was a sentence written to tie it
+  on? Two were tied on and moved to the step that teaches them: the Rosetta Stone (Python 7) from the indexing step
+  to the top of "Go deeper: characters from every language" (Unicode), and the RAMAC disk (Spring 19) from the
+  tables step to the Part 3 opener, "data that survives", after "survive restarts". Ada Lovelace's lead (Python 2)
+  now says her program was written once and followed again for every number, which is what the step is about.
+- The Mango lassi row in the product tables of Spring 19 and 21 was one space wider than its column; aligned.
 - Every photo checked by eye before use (two were dropped: a "pigeonhole" that was a dessert in a teacup, and beanbags
   that did not explain the event loop). Downloads are paced to stay within Wikimedia's rate limits.
 

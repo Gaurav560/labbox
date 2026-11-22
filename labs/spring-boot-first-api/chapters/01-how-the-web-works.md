@@ -26,15 +26,16 @@ conversation: the server does not automatically remember the previous one. (This
 **stateless**, and it is a big reason the web scales so well: any of a hundred identical servers can
 answer any request.)
 
-Both the request and the response are just **text**, in a fixed format. That is the nice thing about
-HTTP: you can read it with your own eyes. Let's look at one.
-
 It all began on one machine. In 1990 at CERN, Tim Berners-Lee wrote the first web server and the first browser on
 this NeXT computer. The label on it says it all: "This machine is a server. DO NOT POWER IT DOWN!!"
 
 :::photo{src="/lesson-images/spring/first-web-server.webp" alt="The NeXT computer at CERN that ran the first web server, with a handwritten label on the case saying This machine is a server, DO NOT POWER IT DOWN, next to its keyboard and Tim Berners-Lee's proposal" credit="Coolcaesar at English Wikipedia" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:First_Web_Server.jpg"}
 The first web server, at CERN. Every Spring Boot app you build is its great-grandchild.
 :::
+
+Both the request and the response are just **text**, in a fixed format. That is the nice thing about
+HTTP: you can read it with your own eyes. Let's look at one.
+
 :::
 
 :::step{type=concept title="What a request looks like"}

@@ -16,14 +16,6 @@ into a tidy one.
 :::
 
 :::step{type=concept title="A string is a row of characters"}
-A Python string can hold the characters of any script in the world. The **Rosetta Stone** carries one decree in
-three scripts (Egyptian hieroglyphs, Demotic and Greek), and that is how hieroglyphs were finally read. A single
-Python string could hold all three.
-
-:::photo{src="/lesson-images/python/rosetta-stone.webp" alt="The Rosetta Stone, a dark grey stone slab covered in three bands of carved writing, in the British Museum" credit="Hans Hillewaert" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Rosetta_Stone.JPG"}
-The Rosetta Stone, British Museum: one text, three scripts.
-:::
-
 You have used strings since chapter 1. Now look inside one. A string is a **sequence**: characters in a fixed
 order, each with a position number, its **index**. As with lists in chapter 5, positions start at **0**. And
 Python lets you count from the end too, with negative numbers:
@@ -238,7 +230,14 @@ What does `"-".join(["a", "b", "c"])` give?
 
 :::step{type=deep-dive title="Go deeper: characters from every language"}
 Python strings are **Unicode**: they hold characters from every writing system in the world, not just English
-letters. Try it:
+letters. The **Rosetta Stone** carries one decree in three scripts (Egyptian hieroglyphs, Demotic and Greek), and
+that is how hieroglyphs were finally read. A single Python string could hold all three.
+
+:::photo{src="/lesson-images/python/rosetta-stone.webp" alt="The Rosetta Stone, a dark grey stone slab covered in three bands of carved writing, in the British Museum" credit="Hans Hillewaert" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Rosetta_Stone.JPG"}
+The Rosetta Stone, British Museum: one text, three scripts.
+:::
+
+Try it with a Hindi word:
 
 ```bash run
 python3 -c "print(len('दाल'), 'दाल'[0])"
