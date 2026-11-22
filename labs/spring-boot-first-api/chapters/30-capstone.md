@@ -23,7 +23,7 @@ Before any code, the contract. This is how teams start: agree on the requests an
 
 ```json
 POST /checkout
-{"customerEmail": "asha@shop.in", "items": [{"sku": "TEA-1", "quantity": 2}, {"sku": "COF-1", "quantity": 1}]}
+{"customerEmail": "asha@shop.in", "items": [{"sku": "LAS-1", "quantity": 2}, {"sku": "COF-1", "quantity": 1}]}
 ```
 
 **The answers:**
@@ -41,7 +41,7 @@ POST /checkout
 - Stock goes down by the quantities bought.
 - **All or nothing**: if any item fails, no stock changes and no order is saved.
 
-The stock starts at: Masala tea (TEA-1) 10 at Rs 20, Samosa (SAM-1) **1** at Rs 18, Filter coffee (COF-1) 5 at Rs 30.
+The stock starts at: Mango lassi (LAS-1) 10 at Rs 20, Samosa (SAM-1) **1** at Rs 18, Filter coffee (COF-1) 5 at Rs 30.
 :::
 
 :::step{type=concept title="What is already built, and what you build"}
@@ -94,11 +94,11 @@ Notice `show.reserve(...)` is never followed by `save(show)`. Inside a transacti
 and writes their changes at commit (chapter 23). And if `reserve` throws on the second show, the first show's seats
 are released too: that is the transaction rolling back.
 
-:::trace{title="checkout: TEA-1 x1, then SAM-1 x5 (only 1 left)"}
-| step | TEA-1 stock | SAM-1 stock | total |
+:::trace{title="checkout: LAS-1 x1, then SAM-1 x5 (only 1 left)"}
+| step | LAS-1 stock | SAM-1 stock | total |
 |---|---|---|---|
 | transaction starts | 10 | 1 | 0 |
-| take 1 TEA-1 | 9 | 1 | 2000 |
+| take 1 LAS-1 | 9 | 1 | 2000 |
 | take 5 SAM-1 | 9 | 1 | OutOfStockException |
 | rollback | 10 | 1 | the error handler answers 409 |
 :::
@@ -141,7 +141,7 @@ cd 30-capstone && mvn -q -o package -DskipTests && java -jar target/capstone.jar
 ```
 
 ```bash run
-curl -i -X POST localhost:8080/checkout -H "Content-Type: application/json" -d '{"customerEmail": "asha@shop.in", "items": [{"sku": "TEA-1", "quantity": 2}, {"sku": "COF-1", "quantity": 1}]}'
+curl -i -X POST localhost:8080/checkout -H "Content-Type: application/json" -d '{"customerEmail": "asha@shop.in", "items": [{"sku": "LAS-1", "quantity": 2}, {"sku": "COF-1", "quantity": 1}]}'
 ```
 
 ```text
@@ -151,7 +151,7 @@ Location: /orders/1
 {"id":1,"customerEmail":"asha@shop.in","totalPaise":7000}
 ```
 
-2 teas (Rs 40) + 1 coffee (Rs 30) = Rs 70. Then `curl localhost:8080/orders/1` returns the saved order. The check also
+2 lassis (Rs 40) + 1 coffee (Rs 30) = Rs 70. Then `curl localhost:8080/orders/1` returns the saved order. The check also
 confirms the stock went down. Press **Check**.
 :::
 
@@ -159,7 +159,7 @@ confirms the stock went down. Press **Check**.
 Add the two handlers to **`ApiErrors`**. Then try both failures:
 
 ```bash run
-curl -i -X POST localhost:8080/checkout -H "Content-Type: application/json" -d '{"customerEmail": "ravi@shop.in", "items": [{"sku": "TEA-1", "quantity": 1}, {"sku": "SAM-1", "quantity": 5}]}'
+curl -i -X POST localhost:8080/checkout -H "Content-Type: application/json" -d '{"customerEmail": "ravi@shop.in", "items": [{"sku": "LAS-1", "quantity": 1}, {"sku": "SAM-1", "quantity": 5}]}'
 ```
 
 ```text
@@ -176,7 +176,7 @@ HTTP/1.1 400
 {"type":"about:blank","title":"Invalid request","status":400,"instance":"/checkout","errors":{"items":"must not be empty","customerEmail":"must be a well-formed email address"}}
 ```
 
-The check also makes sure the tea taken before the samosas ran out was **put back**. Press **Check**.
+The check also makes sure the lassi taken before the samosas ran out was **put back**. Press **Check**.
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class ProductRepository {
 
     private final List<Product> products = new ArrayList<>(List.of(
-            new Product(1, "Masala tea", 2000, 900),
+            new Product(1, "Mango lassi", 2000, 900),
             new Product(2, "Filter coffee", 3000, 1400),
             new Product(3, "Samosa", 1800, 700)));
     private final AtomicLong nextId = new AtomicLong(4);

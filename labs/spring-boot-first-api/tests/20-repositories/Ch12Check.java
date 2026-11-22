@@ -49,9 +49,9 @@ class Ch12Check {
     void skuConflict() {
         R.task("sku_conflict", () -> {
             int dup = mvc.perform(post("/products").contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\": \"Tea again\", \"pricePaise\": 900, \"category\": \"drinks\", \"sku\": \"TEA-1\"}")).andReturn().getResponse().getStatus();
+                    .content("{\"name\": \"Lassi again\", \"pricePaise\": 900, \"category\": \"drinks\", \"sku\": \"LAS-1\"}")).andReturn().getResponse().getStatus();
             int fresh = mvc.perform(post("/products").contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\": \"Lassi\", \"pricePaise\": 3500, \"category\": \"drinks\", \"sku\": \"LAS-1\"}")).andReturn().getResponse().getStatus();
+                    .content("{\"name\": \"Rose milk\", \"pricePaise\": 3500, \"category\": \"drinks\", \"sku\": \"ROS-1\"}")).andReturn().getResponse().getStatus();
             if (!declares("existsBySku")) {
                 R.fail("sku_conflict", "ProductRepository has no existsBySku yet.");
             } else if (dup != 409) {

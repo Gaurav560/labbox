@@ -83,11 +83,11 @@ curl "localhost:8080/products?page=1&size=2&sort=name"
 ```
 
 ```text
-{"content":[{"id":4,"name":"Kachori",...},{"id":1,"name":"Masala tea",...}],
+{"content":[{"id":4,"name":"Kachori",...},{"id":1,"name":"Mango lassi",...}],
  "page":{"size":2,"number":1,"totalElements":6,"totalPages":3}}
 ```
 
-Read the answer: `content` is the page (Kachori and Masala tea: positions 3 and 4 by name, because page 0 held
+Read the answer: `content` is the page (Kachori and Mango lassi: positions 3 and 4 by name, because page 0 held
 Bhel puri and Filter coffee), and `page` tells the client everything it needs for a pager: 6 products, 3 pages,
 this is number 1. And in the log, the two queries from the first step:
 
@@ -139,7 +139,7 @@ Rebuild, run, and try:
 curl "localhost:8080/products/price-range?min=2000&max=3000"
 ```
 
-You should get Masala tea (2000), Kachori (2200), Vada pav (2500) and Filter coffee (3000), in that order. The log
+You should get Mango lassi (2000), Kachori (2200), Vada pav (2500) and Filter coffee (3000), in that order. The log
 shows your JPQL, translated:
 
 ```text

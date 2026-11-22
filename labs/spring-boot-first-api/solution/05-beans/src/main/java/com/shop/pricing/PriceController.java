@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PriceController {
 
-    static final int TEA_PAISE = 2000;
+    static final int LASSI_PAISE = 2000;
 
     private final PriceCalculator calculator;
 
@@ -14,8 +14,8 @@ public class PriceController {
         this.calculator = calculator;
     }
 
-    @GetMapping("/tea/price")
-    public int teaPrice() {
-        return calculator.withGst(TEA_PAISE);
+    @GetMapping("/lassi/price")
+    public int lassiPrice() {
+        return calculator.withGst(LASSI_PAISE);
     }
 }

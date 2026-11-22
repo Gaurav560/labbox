@@ -90,12 +90,12 @@ public class ProductController {
 
     @GetMapping("/products/featured")
     public Product featured() {
-        return new Product(1, "Masala tea", 2000);
+        return new Product(1, "Mango lassi", 2000);
     }
 
     @GetMapping("/products/names")
     public List<String> names() {
-        return List.of("Masala tea", "Samosa");
+        return List.of("Mango lassi", "Samosa");
     }
 }
 ```
@@ -106,8 +106,8 @@ and Java writes the constructor and the getters for you. You will use them a lot
 The responses:
 
 ```text
-GET /products/featured  ->  {"id":1,"name":"Masala tea","pricePaise":2000}
-GET /products/names     ->  ["Masala tea","Samosa"]
+GET /products/featured  ->  {"id":1,"name":"Mango lassi","pricePaise":2000}
+GET /products/names     ->  ["Mango lassi","Samosa"]
 ```
 
 Each field of the record became a `"name": value` pair of a JSON **object**. The `List` became a JSON

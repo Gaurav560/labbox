@@ -1,5 +1,5 @@
 :::step{type=story title="Things that belong together"}
-An order is not just a row on its own. Asha's order contains two lines: two masala teas and three samosas.
+An order is not just a row on its own. Asha's order contains two lines: two mango lassis and three samosas.
 In the database, those lines live in their own table, `order_item`, and each one points back to its order. In
 Java, you would like to write `order.getItems()` and get the list. Making those two worlds meet is what JPA
 **relationships** are for.
@@ -27,7 +27,7 @@ orders                         order_item
 +----+----------+              +----+---------------+----------+-------------+----------+
 | id | customer |              | id | product       | quantity | price_paise | order_id |
 +----+----------+              +----+---------------+----------+-------------+----------+
-|  1 | Asha     |  <---------  |  1 | Masala tea    |        2 |        2000 |        1 |
+|  1 | Asha     |  <---------  |  1 | Mango lassi    |        2 |        2000 |        1 |
 |  2 | Ravi     |  <----+----  |  2 | Samosa        |        3 |        1800 |        1 |
 +----+----------+       +----  |  3 | Filter coffee |        1 |        3000 |        2 |
                                +----+---------------+----------+-------------+----------+

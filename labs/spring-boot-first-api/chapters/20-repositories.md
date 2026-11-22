@@ -113,7 +113,7 @@ Chapter 19 made `sku` unique in the database. Now see what happens when a client
 that is already taken:
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Tea again", "pricePaise": 1000, "category": "drinks", "sku": "TEA-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi again", "pricePaise": 1000, "category": "drinks", "sku": "LAS-1"}'
 ```
 
 ```text
@@ -124,7 +124,7 @@ HTTP/1.1 500
 And in the server log, deep in the stack trace:
 
 ```text
-Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'TEA-1' )"
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'LAS-1' )"
 ```
 
 The good news: the database protected the data, as designed. Nothing was saved. The bad news: the **client**
@@ -170,11 +170,11 @@ rare case into a 409 as well is what an exception handler from chapter 17 is for
 Rebuild, run, and try the duplicate again, then a new SKU:
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Tea again", "pricePaise": 1000, "category": "drinks", "sku": "TEA-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi again", "pricePaise": 1000, "category": "drinks", "sku": "LAS-1"}'
 ```
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi", "pricePaise": 4500, "category": "drinks", "sku": "LAS-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Rose milk", "pricePaise": 4500, "category": "drinks", "sku": "ROS-1"}'
 ```
 
 `409`, then `201`. Press **Check**.

@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 class Ch21Check {
-    /** A fake supplier: TEA-1 has 120, MISSING is not stocked (404), SLOW answers after 3 seconds. */
+    /** A fake supplier: LAS-1 has 120, MISSING is not stocked (404), SLOW answers after 3 seconds. */
     static final HttpServer SUPPLIER;
 
     static {
@@ -69,12 +69,12 @@ class Ch21Check {
     @Test
     void fetchStock() {
         R.task("fetch_stock", () -> {
-            MvcResult r = mvc.perform(get("/supplier-stock/TEA-1")).andReturn();
+            MvcResult r = mvc.perform(get("/supplier-stock/LAS-1")).andReturn();
             String body = r.getResponse().getContentAsString().replace(" ", "");
             if (r.getResponse().getStatus() == 200 && body.contains("\"available\":120")) {
                 R.pass("fetch_stock", "RestClient called the supplier, and Jackson read its JSON into a SupplierStock record.");
             } else {
-                R.fail("fetch_stock", "GET /supplier-stock/TEA-1 should show the 120 the supplier reports.", "{\"available\":120,...}", r.getResponse().getStatus() + " " + body);
+                R.fail("fetch_stock", "GET /supplier-stock/LAS-1 should show the 120 the supplier reports.", "{\"available\":120,...}", r.getResponse().getStatus() + " " + body);
             }
         });
     }

@@ -66,8 +66,8 @@ class Ch15Check {
             Map<?, ?> p = product(1);
             if (code != 200 || !Integer.valueOf(2200).equals(p.get("pricePaise"))) {
                 R.fail("patch_price", "PATCH /products/1 with only a price should change the price.", "pricePaise 2200", code + ", " + p);
-            } else if (!"Masala tea".equals(p.get("name")) || !Integer.valueOf(40).equals(p.get("stock"))) {
-                R.fail("patch_price", "The fields that were not sent must keep their old values: a null in the ProductPatch means keep it.", "{name: Masala tea, pricePaise: 2200, stock: 40}", String.valueOf(p));
+            } else if (!"Mango lassi".equals(p.get("name")) || !Integer.valueOf(40).equals(p.get("stock"))) {
+                R.fail("patch_price", "The fields that were not sent must keep their old values: a null in the ProductPatch means keep it.", "{name: Mango lassi, pricePaise: 2200, stock: 40}", String.valueOf(p));
             } else if (missing != 404) {
                 R.fail("patch_price", "PATCH on a product that does not exist should answer 404.", "404", String.valueOf(missing));
             } else {

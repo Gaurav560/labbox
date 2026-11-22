@@ -181,14 +181,14 @@ At the second TODO, add **`PATCH /products/{id}`** with a `ProductPatch` body: e
 `null` replaces the old value, each `null` keeps it. Answer `200` with the updated product, or `404` if
 there is no such product.
 
-Rebuild, run, and change just the price of the masala tea:
+Rebuild, run, and change just the price of the mango lassi:
 
 ```bash run
 curl -X PATCH localhost:8080/products/1 -H "Content-Type: application/json" -d '{"pricePaise": 2200}'
 ```
 
 ```text
-{"id":1,"name":"Masala tea","pricePaise":2200,"stock":40}
+{"id":1,"name":"Mango lassi","pricePaise":2200,"stock":40}
 ```
 
 The price changed; the name and the stock (40) did not. Press **Check**.

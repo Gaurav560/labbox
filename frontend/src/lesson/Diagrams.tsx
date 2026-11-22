@@ -574,7 +574,7 @@ function OneToMany() {
       <text className="dg-note" x={10} y={18}>orders</text>
       <Box x={10} y={26} w={150} h={30} label="id 1 | Asha" tone="accent" code />
       <text className="dg-note" x={210} y={18}>order_item</text>
-      <Box x={210} y={26} w={220} h={30} label="tea x2 | order_id 1" code />
+      <Box x={210} y={26} w={220} h={30} label="lassi x2 | order_id 1" code />
       <Box x={210} y={62} w={220} h={30} label="samosa x3 | order_id 1" code />
       <Arrow x1={208} y1={41} x2={162} y2={41} />
       <Arrow x1={208} y1={77} x2={162} y2={48} />
@@ -588,15 +588,15 @@ function OneToMany() {
 /** A transaction: every change commits together, or none does. */
 function TransactionFlow() {
   return (
-    <Svg viewBox="0 0 440 200" label="Inside one transaction, the tea stock goes from 10 to 8, then the samosa check fails; the transaction rolls back and the tea stock is 10 again">
-      <Box x={10} y={10} w={420} h={30} label="@Transactional placeOrder(tea x2, samosa x5)" tone="accent" code />
-      <Box x={30} y={50} w={180} h={30} label="tea: 10 -> 8" />
+    <Svg viewBox="0 0 440 200" label="Inside one transaction, the lassi stock goes from 10 to 8, then the samosa check fails; the transaction rolls back and the lassi stock is 10 again">
+      <Box x={10} y={10} w={420} h={30} label="@Transactional placeOrder(lassi x2, samosa x5)" tone="accent" code />
+      <Box x={30} y={50} w={180} h={30} label="lassi: 10 -> 8" />
       <Arrow x1={212} y1={65} x2={240} y2={65} />
       <Box x={244} y={50} w={186} h={30} label="samosa: only 1 left!" tone="highlight" />
       <Arrow x1={337} y1={82} x2={337} y2={110} />
       <Box x={244} y={114} w={186} h={30} label="exception: roll back" tone="highlight" />
       <Arrow x1={242} y1={129} x2={212} y2={129} />
-      <Box x={30} y={114} w={180} h={30} label="tea: back to 10" tone="accent" />
+      <Box x={30} y={114} w={180} h={30} label="lassi: back to 10" tone="accent" />
       <text className="dg-note" x={10} y={180}>all the changes commit together, or none of them do</text>
     </Svg>
   );

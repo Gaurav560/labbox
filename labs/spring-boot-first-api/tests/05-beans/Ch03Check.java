@@ -30,13 +30,13 @@ class Ch03Check {
             }
             boolean injected = Arrays.stream(ctx.getBean("priceController").getClass().getConstructors())
                     .map(Constructor::getParameterTypes).anyMatch(ps -> Arrays.asList(ps).contains(calc));
-            String got = mvc.perform(get("/tea/price")).andReturn().getResponse().getContentAsString();
+            String got = mvc.perform(get("/lassi/price")).andReturn().getResponse().getContentAsString();
             if (!injected) {
                 R.fail("price_service", "PriceController does not ask for a PriceCalculator in its constructor yet.", "2360", got);
             } else if (got.equals("2360")) {
                 R.pass("price_service", "Spring created one PriceCalculator and passed it to PriceController's constructor: dependency injection, with no new in sight.");
             } else {
-                R.fail("price_service", "GET /tea/price should be 2000 paise plus 18% GST.", "2360", got);
+                R.fail("price_service", "GET /lassi/price should be 2000 paise plus 18% GST.", "2360", got);
             }
         });
     }

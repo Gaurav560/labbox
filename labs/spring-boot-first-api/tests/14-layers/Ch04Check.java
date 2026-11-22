@@ -50,9 +50,9 @@ class Ch04Check {
             String got = mvc.perform(get("/products/budget")).andReturn().getResponse().getContentAsString();
             boolean viaRepo = Mockito.mockingDetails(repository).getInvocations().stream()
                     .anyMatch(i -> i.getMethod().getName().equals("findCheaperThan"));
-            boolean right = got.contains("Masala tea") && got.contains("Filter coffee") && got.contains("Samosa") && !got.contains("Paneer roll");
+            boolean right = got.contains("Mango lassi") && got.contains("Filter coffee") && got.contains("Samosa") && !got.contains("Paneer roll");
             if (!right) {
-                R.fail("budget_products", "GET /products/budget should list the three products under Rs 50 (5000 paise).", "Masala tea, Filter coffee, Samosa", got);
+                R.fail("budget_products", "GET /products/budget should list the three products under Rs 50 (5000 paise).", "Mango lassi, Filter coffee, Samosa", got);
             } else if (!viaRepo) {
                 R.fail("budget_products", "The list is right, but the service does not ask the repository's findCheaperThan for it.");
             } else {

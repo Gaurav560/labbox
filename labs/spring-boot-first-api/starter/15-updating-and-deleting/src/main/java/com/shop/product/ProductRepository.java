@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class ProductRepository {
 
     private final Map<Long, Product> products = new ConcurrentHashMap<>(Map.of(
-            1L, new Product(1, "Masala tea", 2000, 40),
+            1L, new Product(1, "Mango lassi", 2000, 40),
             2L, new Product(2, "Filter coffee", 3000, 25),
             3L, new Product(3, "Samosa", 1800, 60)));
 

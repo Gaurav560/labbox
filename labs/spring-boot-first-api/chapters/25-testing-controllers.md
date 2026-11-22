@@ -180,7 +180,7 @@ and nothing else; a failing run prints which test failed, and why.
 In `ProductControllerTest.java`, write at least **two** tests:
 
 1. `GET /products/1` answers **200** with the product's **name**, when the service finds it. (Arrange with
-   `when(service.find(1)).thenReturn(Optional.of(new Product(1, "Masala tea", 2000)))`.)
+   `when(service.find(1)).thenReturn(Optional.of(new Product(1, "Mango lassi", 2000)))`.)
 2. `GET /products/99` answers **404**, when the service finds nothing (`Optional.empty()`).
 
 You need the `MockMvc` field, the `@MockitoBean ProductService` field, and the imports (`Test` from
@@ -188,11 +188,11 @@ You need the `MockMvc` field, the `@MockitoBean ProductService` field, and the i
 `org.mockito.Mockito`, and the MockMvc statics).
 
 Run `mvn -q -o test` until it passes. Then try breaking one on purpose: expect `"Samosa"` instead of
-`"Masala tea"`, and run again:
+`"Mango lassi"`, and run again:
 
 ```text
 [ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0 <<< FAILURE! -- in com.shop.product.ProductControllerTest
-[ERROR]   ProductControllerTest.returnsTheProduct:30 JSON path "$.name" expected:<Samosa> but was:<Masala tea>
+[ERROR]   ProductControllerTest.returnsTheProduct:30 JSON path "$.name" expected:<Samosa> but was:<Mango lassi>
 ```
 
 The test's name, the line, what was expected and what came back. Put it back, and press **Check**.

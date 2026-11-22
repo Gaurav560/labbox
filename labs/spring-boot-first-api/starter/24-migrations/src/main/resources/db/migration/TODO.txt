@@ -1,5 +1,5 @@
 # TODO (task add_category_column): the Product entity has a category column that the database does not
 # have yet, so the app will not start. Add a migration next to V1: V2__add_category.sql, which adds the
 # column category (VARCHAR(40), NOT NULL, DEFAULT 'other').
-# TODO (task set_categories): then add V3__set_categories.sql: the two drinks (TEA-1, COF-1) get the
+# TODO (task set_categories): then add V3__set_categories.sql: the two drinks (LAS-1, COF-1) get the
 # category drinks, and the samosa (SAM-1) snacks.

@@ -24,7 +24,7 @@ public class MenuController {
     }
 
     private final List<MenuItem> menu = new ArrayList<>(List.of(
-            new MenuItem(1, "Masala tea", 2000),
+            new MenuItem(1, "Mango lassi", 2000),
             new MenuItem(2, "Samosa", 1800),
             new MenuItem(3, "Filter coffee", 3000)));
 

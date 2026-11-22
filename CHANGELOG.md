@@ -1,5 +1,19 @@
 # Changelog
 
+## 22 November: no chai or tea examples anywhere
+
+- The owner: "dont use masala chai and chai related stuff as an example. in any of the lesson, task, lab or
+  anywhere." Saved as a standing rule. Chai means tea, so tea went too.
+- **Spring Boot:** the Shop API's "Masala tea" (SKU TEA-1) is now "Mango lassi" (SKU LAS-1) in data, starters,
+  solutions, checks, lessons and diagrams; same price and the same alphabetical place, so every quoted output and
+  sort order holds. Chapter 20's brand-new product, which already used LAS-1, became "Rose milk" (ROS-1).
+- **Java, JavaScript, Go, Redis:** juice, toast, pen, red cup, a veg sandwich and lemon rice instead; map print
+  orders taken from real Java (HashMap) and Go runs. Shared pictures redrawn: the recipe card says "Lemon rice",
+  the beads spell "red cup", the form card and cart say juice, and the string-equals diagram shows "riya" like
+  its chapter.
+- CONTENT_STANDARD and the v2 spec's example world updated. Every changed lab passes validate --strict and
+  test-lab (starter fails every task, solution passes every task).
+
 ## 22 November: four more real photos in Python from zero; the snake opens chapter 1
 
 - Also: no chai examples anywhere (owner: "dont use masala chai and chai related stuff as an example ... anywhere").

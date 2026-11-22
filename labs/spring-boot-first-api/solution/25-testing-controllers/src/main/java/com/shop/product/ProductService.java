@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final Map<Long, Product> products = Map.of(
-            1L, new Product(1, "Masala tea", 2000),
+            1L, new Product(1, "Mango lassi", 2000),
             2L, new Product(2, "Samosa", 1800));
 
     public Optional<Product> find(long id) {

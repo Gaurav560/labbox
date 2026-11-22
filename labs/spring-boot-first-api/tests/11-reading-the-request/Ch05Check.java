@@ -57,13 +57,13 @@ class Ch05Check {
             }
             List<String> cheap = names("/products/search?maxPrice=2000");
             List<String> byPrice = names("/products/search?sort=price");
-            List<String> wantAll = List.of("Filter coffee", "Masala tea", "Paneer roll", "Samosa");
+            List<String> wantAll = List.of("Filter coffee", "Mango lassi", "Paneer roll", "Samosa");
             if (!all.equals(wantAll)) {
                 R.fail("search_products", "Without parameters, the search should return every product sorted by name.", wantAll.toString(), all.toString());
-            } else if (!List.of("Masala tea", "Samosa").equals(cheap)) {
-                R.fail("search_products", "maxPrice=2000 should keep only products costing 2000 paise or less, sorted by name.", "[Masala tea, Samosa]", String.valueOf(cheap));
-            } else if (!List.of("Samosa", "Masala tea", "Filter coffee", "Paneer roll").equals(byPrice)) {
-                R.fail("search_products", "sort=price should list the cheapest first.", "[Samosa, Masala tea, Filter coffee, Paneer roll]", String.valueOf(byPrice));
+            } else if (!List.of("Mango lassi", "Samosa").equals(cheap)) {
+                R.fail("search_products", "maxPrice=2000 should keep only products costing 2000 paise or less, sorted by name.", "[Mango lassi, Samosa]", String.valueOf(cheap));
+            } else if (!List.of("Samosa", "Mango lassi", "Filter coffee", "Paneer roll").equals(byPrice)) {
+                R.fail("search_products", "sort=price should list the cheapest first.", "[Samosa, Mango lassi, Filter coffee, Paneer roll]", String.valueOf(byPrice));
             } else {
                 R.pass("search_products", "Optional query parameters with sensible defaults: one endpoint answers many questions.");
             }

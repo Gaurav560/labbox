@@ -32,7 +32,7 @@ What makes it the template, as a checklist for every new course:
 6. **Everything quoted is real.** Every log line, curl answer, error message, stack trace line and SQL statement
    in a lesson was captured by running the chapter's actual project in the lab image. Never invent output.
 7. **See it, break it, fix it.** Each chapter makes the learner *see* the problem first (a `try` step with the
-   real wrong output: a 404, a 500, six SQL queries, a receipt with someone else's tea), then fix it in a task,
+   real wrong output: a 404, a 500, six SQL queries, a receipt with someone else's lassi), then fix it in a task,
    then see the right output. If the project has no way to see the problem, add one (a small endpoint, a fake
    service the learner runs in a second terminal).
 8. **Watch it run.** Processes (start-up, a request's journey, a bean's life, a transaction) get a calm playing
@@ -112,7 +112,7 @@ three options, and a one- or two-sentence explanation of why.
 **The recap starts "You can now ..."**, lists skills (not topics) in bullets, and ends with the next chapter:
 "Next, chapter 15: changing existing products properly, with PUT and PATCH."
 
-**Everyday, consistent world.** Prices in Rs and paise, masala tea, samosa, GST, a nightly report: familiar,
+**Everyday, consistent world.** Prices in Rs and paise, mango lassi, samosa, GST, a nightly report: familiar,
 never jargon, the same Shop API throughout. No hype words, almost never an exclamation mark (one in 31 chapters);
 calm confidence.
 

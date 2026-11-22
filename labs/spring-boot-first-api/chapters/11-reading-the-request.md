@@ -17,7 +17,7 @@ Add `GET /products/{id}` (with a proper 404) and `GET /products/search` with opt
 `ProductController` is on the right, with a `ProductRepository` that holds four products:
 
 ```text
-1 Masala tea      2000 paise
+1 Mango lassi      2000 paise
 2 Filter coffee   3000
 3 Samosa          1800
 4 Paneer roll     9000
@@ -194,7 +194,7 @@ curl "localhost:8080/products/search?maxPrice=2500"; echo; curl "localhost:8080/
 
 (The quotes around the URL matter: without them, your shell would treat `&` as a command of its own.)
 
-You should get the masala tea and the samosa (sorted by name), then all four from cheapest to dearest,
+You should get the mango lassi and the samosa (sorted by name), then all four from cheapest to dearest,
 then a `400`, because `cheap` is not a number. Press **Check**.
 :::
 

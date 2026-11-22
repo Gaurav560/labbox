@@ -28,7 +28,7 @@ moment it runs. So if a method runs three updates and the third fails, the first
 
 :::step{type=try title="See the half-done order" file="23-transactions/src/main/java/com/shop/stock/OrderService.java" line="17-25"}
 `OrderService.placeOrder`, on the right, loops over the ordered items. For each one it loads the stock, takes
-the quantity (which throws `OutOfStockException` if there is not enough), and saves. The stock starts at: tea
+the quantity (which throws `OutOfStockException` if there is not enough), and saves. The stock starts at: lassi
 10, samosa **1**, coffee 5.
 
 Start the app:
@@ -37,28 +37,28 @@ Start the app:
 cd 23-transactions && mvn -q -o package -DskipTests && java -jar target/transactions.jar
 ```
 
-Now order 2 teas and 5 samosas, then look at the tea:
+Now order 2 lassis and 5 samosas, then look at the lassi:
 
 ```bash run
-curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"TEA-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/TEA-1
+curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"LAS-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/LAS-1
 ```
 
 ```text
 HTTP/1.1 409
 Not enough stock for SAM-1
-{"quantity":8,"sku":"TEA-1"}
+{"quantity":8,"sku":"LAS-1"}
 ```
 
-The order failed with 409, correctly. But the tea stock is **8**. Two teas left the shelf for an order that
+The order failed with 409, correctly. But the lassi stock is **8**. Two lassis left the shelf for an order that
 never happened. Follow it step by step:
 
-:::trace{title="placeOrder(tea x2, samosa x5) without a transaction"}
-| step | tea in the database | samosa in the database | note |
+:::trace{title="placeOrder(lassi x2, samosa x5) without a transaction"}
+| step | lassi in the database | samosa in the database | note |
 |---|---|---|---|
 | start | 10 | 1 | |
-| take 2 tea, save | 8 | 1 | saved immediately: a statement on its own is committed at once |
+| take 2 lassi, save | 8 | 1 | saved immediately: a statement on its own is committed at once |
 | take 5 samosa | 8 | 1 | only 1 left: OutOfStockException |
-| the request fails | 8 | 1 | the tea change is already permanent |
+| the request fails | 8 | 1 | the lassi change is already permanent |
 :::
 :::
 
@@ -99,10 +99,10 @@ In `OrderService`, make `placeOrder` run in **one transaction**. (`org.springfra
 Rebuild, run (the stock resets at every start), and repeat the order:
 
 ```bash run
-curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"TEA-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/TEA-1
+curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"LAS-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/LAS-1
 ```
 
-Still `409`, and now the tea stays at **10**. The tea change was made, inside the transaction, then undone when
+Still `409`, and now the lassi stays at **10**. The lassi change was made, inside the transaction, then undone when
 the samosas ran out. Press **Check**.
 :::
 

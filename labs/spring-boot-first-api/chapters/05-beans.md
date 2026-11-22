@@ -37,8 +37,8 @@ public class PriceController {
 
     private final PriceCalculator calculator = new PriceCalculator();
 
-    @GetMapping("/tea/price")
-    public int teaPrice() {
+    @GetMapping("/lassi/price")
+    public int lassiPrice() {
         return calculator.withGst(2000);
     }
 }
@@ -248,10 +248,10 @@ Run the app as it is, and see:
 cd 05-beans && mvn -q -o package -DskipTests && java -jar target/beans.jar
 ```
 
-In a second tab, ask for the price of a tea:
+In a second tab, ask for the price of a lassi:
 
 ```bash run
-curl -s localhost:8080/tea/price; echo
+curl -s localhost:8080/lassi/price; echo
 ```
 
 You get `0`. The controller is waiting for someone to give it a calculator. That someone is going to be

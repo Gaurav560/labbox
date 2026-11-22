@@ -6,7 +6,7 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * A pretend supplier for chapter 29, on port 9099. Run it in its own terminal with:  java FakeSupplier.java
- *   GET /stock/TEA-1    -> 200 {"sku": "TEA-1", "available": 120}   (any sku works the same)
+ *   GET /stock/LAS-1    -> 200 {"sku": "LAS-1", "available": 120}   (any sku works the same)
  *   GET /stock/MISSING  -> 404: the supplier does not stock it
  *   GET /stock/SLOW     -> answers after 3 seconds: a supplier having a bad day
  */

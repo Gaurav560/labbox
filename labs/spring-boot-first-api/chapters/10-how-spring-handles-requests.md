@@ -160,10 +160,10 @@ Give `CartController` the prefix `/api/v1`, once, on the class, so its endpoints
 The import is `org.springframework.web.bind.annotation.RequestMapping`. Rebuild and run, then:
 
 ```bash run
-curl -X POST localhost:8080/api/v1/cart/items/tea; echo; curl -i localhost:8080/cart
+curl -X POST localhost:8080/api/v1/cart/items/lassi; echo; curl -i localhost:8080/cart
 ```
 
-The first adds tea and shows `["tea"]`. The second, the old path, is now 404. Press **Check**.
+The first adds lassi and shows `["lassi"]`. The second, the old path, is now 404. Press **Check**.
 :::
 
 :::step{type=concept title="Same path, different methods" file="10-how-spring-handles-requests/src/main/java/com/shop/cart/CartController.java"}

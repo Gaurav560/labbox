@@ -22,10 +22,10 @@ class Ch10Check {
     void classPrefix() {
         R.task("class_prefix", () -> {
             int versioned = mvc.perform(get("/api/v1/cart")).andReturn().getResponse().getStatus();
-            int added = mvc.perform(post("/api/v1/cart/items/tea")).andReturn().getResponse().getStatus();
+            int added = mvc.perform(post("/api/v1/cart/items/lassi")).andReturn().getResponse().getStatus();
             int old = mvc.perform(get("/cart")).andReturn().getResponse().getStatus();
             if (versioned != 200 || added != 200) {
-                R.fail("class_prefix", "GET /api/v1/cart and POST /api/v1/cart/items/tea should both work: put the /api/v1 prefix on the class.", "200 and 200", versioned + " and " + added);
+                R.fail("class_prefix", "GET /api/v1/cart and POST /api/v1/cart/items/lassi should both work: put the /api/v1 prefix on the class.", "200 and 200", versioned + " and " + added);
             } else if (old != 404) {
                 R.fail("class_prefix", "GET /cart still answers: the old path should be gone once the prefix is on the class.", "404", String.valueOf(old));
             } else {

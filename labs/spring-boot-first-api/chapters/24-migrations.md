@@ -140,7 +140,7 @@ and the app starts. `curl localhost:8080/products` shows every product with `"ca
 
 :::step{type=concept title="Data migrations"}
 A migration does not have to change the structure. It can change **data** too. Now that every product has
-the category `other`, someone has to sort them: the teas and coffees are drinks, the samosa is a snack.
+the category `other`, someone has to sort them: the lassis and coffees are drinks, the samosa is a snack.
 
 That is also a migration, with the next version number, so it runs exactly once on every database, after the
 column exists:
@@ -155,7 +155,7 @@ next new environment would *not* have it. Anything the database needs, it gets t
 :::
 
 :::step{type=task task=set_categories title="Your turn: V3 sets the categories"}
-Create **`V3__set_categories.sql`**: the two drinks, **TEA-1** and **COF-1**, get the category **`drinks`**,
+Create **`V3__set_categories.sql`**: the two drinks, **LAS-1** and **COF-1**, get the category **`drinks`**,
 and **SAM-1** gets **`snacks`**. (Use `UPDATE ... SET ... WHERE sku ...`; `WHERE sku IN ('A', 'B')` matches
 several values.)
 

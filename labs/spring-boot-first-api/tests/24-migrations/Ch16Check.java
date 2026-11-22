@@ -50,11 +50,11 @@ class Ch16Check {
             List<String> v = versions();
             Map<String, Object> cats = new java.util.HashMap<>();
             jdbc.queryForList("SELECT sku, category FROM product").forEach(r -> cats.put(String.valueOf(r.get("SKU")), r.get("CATEGORY")));
-            boolean right = "drinks".equals(cats.get("TEA-1")) && "drinks".equals(cats.get("COF-1")) && "snacks".equals(cats.get("SAM-1"));
+            boolean right = "drinks".equals(cats.get("LAS-1")) && "drinks".equals(cats.get("COF-1")) && "snacks".equals(cats.get("SAM-1"));
             if (!v.equals(List.of("1", "2", "3"))) {
                 R.fail("set_categories", "Flyway should have applied versions 1, 2 and 3, in order.", "[1, 2, 3]", v.toString());
             } else if (!right) {
-                R.fail("set_categories", "After V3, TEA-1 and COF-1 should be drinks and SAM-1 snacks.", "{TEA-1=drinks, COF-1=drinks, SAM-1=snacks}", cats.toString());
+                R.fail("set_categories", "After V3, LAS-1 and COF-1 should be drinks and SAM-1 snacks.", "{LAS-1=drinks, COF-1=drinks, SAM-1=snacks}", cats.toString());
             } else {
                 R.pass("set_categories", "Three versioned migrations, applied in order on every new database: the schema has a history, like your code.");
             }

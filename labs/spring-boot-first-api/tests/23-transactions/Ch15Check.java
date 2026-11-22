@@ -35,20 +35,20 @@ class Ch15Check {
     @Test
     void placeOrderAtomic() {
         R.task("place_order_atomic", () -> {
-            int teaBefore = qty("TEA-1");
+            int lassiBefore = qty("LAS-1");
             Map<String, Integer> items = new LinkedHashMap<>();
-            items.put("TEA-1", 2);   // in stock
-            items.put("SAM-1", 5);   // only 1 left: fails after the tea was taken
+            items.put("LAS-1", 2);   // in stock
+            items.put("SAM-1", 5);   // only 1 left: fails after the lassi was taken
             try {
                 orders.placeOrder(items);
             } catch (RuntimeException expected) {
                 // OutOfStockException
             }
-            int teaAfter = qty("TEA-1");
-            if (teaAfter != teaBefore) {
-                R.fail("place_order_atomic", "The samosas ran out, yet 2 teas were still taken off the stock: each save committed on its own. Run placeOrder in one transaction.", "TEA-1: " + teaBefore, "TEA-1: " + teaAfter);
+            int lassiAfter = qty("LAS-1");
+            if (lassiAfter != lassiBefore) {
+                R.fail("place_order_atomic", "The samosas ran out, yet 2 lassis were still taken off the stock: each save committed on its own. Run placeOrder in one transaction.", "LAS-1: " + lassiBefore, "LAS-1: " + lassiAfter);
             } else {
-                R.pass("place_order_atomic", "@Transactional: when the samosas ran out, the tea that had already been taken went back too. All or nothing.");
+                R.pass("place_order_atomic", "@Transactional: when the samosas ran out, the lassi that had already been taken went back too. All or nothing.");
             }
         });
     }

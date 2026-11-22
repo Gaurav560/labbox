@@ -17,7 +17,7 @@ class ProductRepositoryTest {
     @Test
     void findsOneCategorySortedByName() {
         repository.save(new Product("Samosa", "snacks"));
-        repository.save(new Product("Masala tea", "drinks"));
+        repository.save(new Product("Mango lassi", "drinks"));
         repository.save(new Product("Bhel puri", "snacks"));
         repository.save(new Product("Kachori", "snacks"));
 

@@ -10,7 +10,7 @@ public class ProductController {
 
     @GetMapping("/api/products")
     public List<String> all() {
-        return List.of("Masala tea", "Samosa", "Filter coffee");
+        return List.of("Mango lassi", "Samosa", "Filter coffee");
     }
 
     /** Not part of the API: a simple "are you alive?" page for the load balancer. */

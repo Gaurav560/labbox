@@ -612,7 +612,7 @@ Each flagship: 8 to 12 chapters, fully tested with `labbox test-lab`.
 - **Every task has 3 hints** and a check message that explains what is wrong without giving the answer, with `expected` and `actual` whenever possible.
 - **One "aha" per chapter:** a moment where something surprising happens (a race condition appears, a query gets 1000x faster, an injected prompt leaks data).
 - **Real tools only:** real Postgres, real Kubernetes, real models. No fake simulations when a real thing can run.
-- **Voice:** friendly, direct, no fluff, no em dashes, Indian-English friendly examples (UPI, dabbas, chai shops, cricket scores are welcome).
+- **Voice:** friendly, direct, no fluff, no em dashes, Indian-English friendly examples (UPI, dabbas, corner shops (never chai: owner, 22 November), cricket scores are welcome).
 - **Difficulty curve:** first 2 chapters (free) must give an early win within 3 minutes and a real "I built that" moment by the end of chapter 2.
 
 ---
