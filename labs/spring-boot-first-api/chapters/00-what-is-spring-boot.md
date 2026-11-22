@@ -75,6 +75,13 @@ and the data, usually written as **JSON**:
 
 Chapter 1 goes through HTTP and JSON properly, with a real server you can poke at. For now, keep just
 this picture in your head: **a backend is a program that waits for requests and sends back responses.**
+
+The very first web server was written in 1990 at CERN by this man, **Tim Berners-Lee**, who also invented the web
+itself: URLs, HTTP and HTML. Chapter 1 shows you the machine it ran on.
+
+:::photo{src="/lesson-images/spring/berners-lee.webp" alt="Sir Tim Berners-Lee, inventor of the World Wide Web, in a dark suit and blue tie" credit="Paul Clarke" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Sir_Tim_Berners-Lee_(cropped).jpg"}
+Tim Berners-Lee, who wrote the first web server and the first browser.
+:::
 :::
 
 :::step{type=concept title="What a backend has to do before your code even runs"}

@@ -6,6 +6,13 @@ So you make your own type. In Java that is a **class**, and you have been writin
 using its real power: until now, every class was just a box for static methods. Today you create **objects**:
 real books, each with its own data, that protect themselves from bad changes.
 
+
+Architects solved this problem long before programmers: draw the plan **once**, and build as many houses from it
+as you like. A class is that plan; every `new` builds one more house.
+
+:::photo{src="/lesson-images/java/blueprint.webp" alt="A blue architectural blueprint drawing of a tall building, with white lines and a title block in the corner" credit="Warner, Burns, Toan and Lunde" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Original_Blueprint_of_United_States_National_Agricultural_Library.jpg"}
+A blueprint of the US National Agricultural Library: one plan, one building.
+:::
 :::mission
 Finish `Point`, a record that knows the distance to another point, and `BankAccount`, an object that refuses
 bad deposits and withdrawals.

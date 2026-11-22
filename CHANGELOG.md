@@ -1,5 +1,25 @@
 # Changelog
 
+## 22 November: real photos spread through every course (10 to 15 each), starting with Spring Boot
+
+- Owner: photos sat at the start of each lab and almost vanished in the middle and the end. New rule: 10 to 15 real,
+  credited photos per lab, spread through the whole course, each on the step where its idea is taught, never filler.
+- Spring Boot: 2 photos became 12. Tim Berners-Lee (chapter 0), Douglas Crockford for JSON (3), Roy Fielding for REST
+  and a 1975 telephone switchboard for the DispatcherServlet (10), the IBM 350 RAMAC disk (19), a library card
+  catalogue for paging (22), the Enfield bank of the first cash machine for transactions (23), a crash test dummy
+  for tests (25), the Belgica's ship's log for logging (27), an Enigma machine for security (28). No freely licensed
+  photo of Rod Johnson exists, so his story stays in the text.
+- Python from zero, 7 to 14: Ada Lovelace (functions), a Jacquard loom (loops), the Rosetta Stone (strings), a jukebox
+  (lists), an IBM card sorter (sorting by key), the Mars Climate Orbiter (raise), Margaret Hamilton (testing).
+- Java from zero, 7 to 12: a blueprint (classes), Ariane 5 (an unhandled exception), punched-card storage (files), a
+  container ship (packages and jars), Hubble's mirror (who tests the tests).
+- JavaScript from zero, 5 to 10: the Patriot clock drift (0.1 in binary), upper and lower type cases (toUpperCase),
+  Hollerith's tabulating machine (counting), Ford's assembly line (chaining methods), a NASA wind tunnel (testing).
+- Go from zero, 5 to 11: an odometer rolling over (int8), a lottery machine (random map order), a signpost (pointers),
+  travel adapters (interfaces), matryoshka dolls (wrapped errors), the Tacoma Narrows Bridge (testing).
+- Every photo checked by eye before use (two were dropped: a "pigeonhole" that was a dessert in a teacup, and beanbags
+  that did not explain the event loop). Downloads are paced to stay within Wikimedia's rate limits.
+
 ## 22 November: Go from zero rewrite, Part 4 "Capstone" (chapter 18); the course is complete
 
 - 18. **Capstone: a depot report** (new, ids `capstone`, `depot_report`, `busiest_depot`): size up `deliveries.csv`

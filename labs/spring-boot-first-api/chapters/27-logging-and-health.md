@@ -36,6 +36,14 @@ Every part of it is useful:
 And because every line has a level, you can **choose** what to keep: everything on your laptop, only warnings and
 errors in production, and an alert to your phone for every `ERROR`. `println` has none of that: no level, no time,
 no class, and no way to switch it off.
+
+The word **log** comes from the sea. Sailors measured a ship's speed by throwing a wooden log overboard on a knotted
+rope, and wrote the result, with the time, in the ship's **log book**. Every app's log is that book: what happened,
+and when.
+
+:::photo{src="/lesson-images/spring/ships-log.webp" alt="The cloth-bound log book of the ship Belgica from the Belgian Antarctic Expedition of 1897, with a label on the cover" credit="Till.niermann" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File:Belgica_Ship%27s_log.jpg"}
+The log book of the Belgica, Antarctic expedition, 1897.
+:::
 :::
 
 :::step{type=concept title="Log levels"}

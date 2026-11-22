@@ -6,6 +6,13 @@ In Python that idea is a **list**, and you have already met small ones: `[120, 8
 lists really behave: how to add and remove things, how to sort them, and one famous surprise that catches
 almost every beginner (and plenty of professionals).
 
+
+Before music apps, there was the **jukebox**: a cabinet of records kept in order, waiting in a queue for the next
+coin. The queue of songs you chose was a list.
+
+:::photo{src="/lesson-images/python/jukebox.webp" alt="An old wooden jukebox cabinet with a glass window and chrome bars, standing in a wood-panelled room" credit="Ɱ" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Wurlitzer_jukebox.jpg"}
+A Wurlitzer jukebox: a list of songs, played in order.
+:::
 :::mission
 Write `remove_duplicates`, which keeps each item once, and `top_n`, which finds the biggest amounts without
 spoiling the original list.

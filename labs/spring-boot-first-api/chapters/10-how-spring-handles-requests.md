@@ -13,6 +13,14 @@ log describe each step as it happens.
 Follow a request through Spring MVC, move the cart API under `/api/v1`, and handle a second method on the
 same path.
 :::
+
+The word **REST** comes from this man's PhD thesis. In 2000, **Roy Fielding**, one of the authors of the HTTP
+standard itself, described the style the web works best in: resources with addresses, a few standard methods, and
+status codes that mean the same thing everywhere. Part 2 is that style, in Spring.
+
+:::photo{src="/lesson-images/spring/fielding.webp" alt="Roy Fielding, a man with curly brown hair in a light shirt, speaking at a lectern on a dark stage" credit="Phil Whitehouse" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Roy_Fielding_(cropped).jpg"}
+Roy Fielding, who named and described REST in 2000.
+:::
 :::
 
 :::step{type=concept title="One request's journey"}
@@ -35,6 +43,13 @@ messages:
 - **Handler mapping**: the table from (method, path) to your Java method, built at start-up.
 - **Message converter**: the piece that turns the request body into Java objects and your return value
   into JSON, using Jackson.
+
+The DispatcherServlet does what this telephone operator did, all day long: every call arrives at one board, and
+the operator plugs it through to the right line. One front door, and a table of where everything goes.
+
+:::photo{src="/lesson-images/spring/switchboard.webp" alt="A telephone operator at a manual switchboard in 1975, plugging cords into a panel of sockets" credit="Joseph A. Carr" license="Attribution" source="https://commons.wikimedia.org/wiki/File:Jersey_Telecom_switchboard_and_operator.jpg"}
+A switchboard in 1975: one operator routes every call, like the DispatcherServlet routes every request.
+:::
 :::
 
 :::step{type=example title="Spring's log, telling you the journey"}

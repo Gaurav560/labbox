@@ -7,6 +7,13 @@ Java would need `class Van implements Deliverer`, written into the van itself. G
 smarter: if a type **has the right methods**, it **is** a deliverer. No announcement needed. Today you meet methods,
 and Go's interfaces, the idea the whole standard library is built on.
 
+
+Travellers meet the same problem at every border: different plugs everywhere. An adapter fits the wall socket on one
+side and the device on the other, and neither needs to know about the other. Go interfaces work the same way.
+
+:::photo{src="/lesson-images/go/travel-adapters.webp" alt="Travel plug adapters plugged into a power strip on a stone counter, charging cables leading away" credit="Grandmaster Huon" license="CC0" source="https://commons.wikimedia.org/wiki/File:Travel_adapters_in_action.jpeg"}
+Travel adapters at work: anything with the right plug fits.
+:::
 :::mission
 Give rectangles and circles an `Area()` method, then add up the area of any mix of shapes.
 :::

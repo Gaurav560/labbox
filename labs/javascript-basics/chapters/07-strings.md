@@ -159,6 +159,14 @@ The first letter, made a capital, joined to the rest, made small.
 :::picture{name="initial-and-tail" concept="Capital first, the rest small"}
 The first letter becomes a capital; the tail becomes small letters.
 :::
+
+Why are capitals called **upper case**? Printers once built every page from metal letters kept in two wooden cases:
+the capitals in the case above, the small letters in the case below. `toUpperCase()` is named after a piece of
+furniture.
+
+:::photo{src="/lesson-images/javascript/type-case.webp" alt="Two wooden printer's type cases with many small compartments full of metal letters, one above the other" credit="Maggie McCain" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Upper_case_and_lower_case_types.jpg"}
+Upper case and lower case: a printer's two type cases.
+:::
 :::
 
 :::step{type=task task=clean_name title="Your turn: a tidy name"}

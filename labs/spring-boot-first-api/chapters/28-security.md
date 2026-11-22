@@ -77,6 +77,14 @@ send credentials over plain HTTP outside your own machine.
 Basic is fine for internal tools and for learning. Public APIs usually use **tokens** (OAuth2, JWT): the user logs in
 once with an identity provider and the client sends a short-lived token instead of a password. They plug into the
 same filter chain you are about to configure.
+
+Base64 is an encoding, not a secret. Real secrets need real encryption, and the race to break it changed history:
+this Enigma machine encrypted German messages in the Second World War, until Alan Turing and the code breakers at
+Bletchley Park learned to read them. HTTPS is the modern, unbroken version of what Enigma tried to be.
+
+:::photo{src="/lesson-images/spring/enigma.webp" alt="An Enigma cipher machine in its open wooden case, with a keyboard, lamp board and rotors" credit="National Security Agency" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Enigma_Machine_at_NSA.jpg"}
+An Enigma machine, at the US National Security Agency's museum.
+:::
 :::
 
 :::step{type=concept title="The security filter chain"}

@@ -93,6 +93,13 @@ const titles = songs
 1. `filter` keeps the songs under 240 seconds: only Neon Lanes.
 2. `map` turns each kept song into its title in capitals.
 3. Chaining reads top to bottom like a sentence: take the songs, keep the short ones, turn each into a loud title.
+
+Chaining methods works like Henry Ford's **assembly line** of 1913: each station does one small job and passes the
+work on, and the finished result comes out at the end. Nobody at a station needs to know the whole car.
+
+:::photo{src="/lesson-images/javascript/assembly-line.webp" alt="A black and white photo of workers standing along a moving assembly line at the Ford factory in 1913" credit="Ford Motor Company" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Ford_assembly_line_-_1913.jpg"}
+Ford's assembly line, 1913: one small job per station.
+:::
 :::
 
 :::step{type=task task=passing title="Your turn: the passing marks"}

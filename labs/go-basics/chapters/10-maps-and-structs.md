@@ -15,6 +15,13 @@ seller fairly, every single time.
 Maps come with their partner: the **struct**, Go's way of bundling the fields of one thing, like a parcel's ID, weight
 and city.
 
+
+Some machines are built to be unpredictable on purpose. A lottery machine mixes the balls so nobody can guess the
+order they come out. Go's maps do the same with their keys, for a very practical reason you will meet below.
+
+:::photo{src="/lesson-images/go/lottery.webp" alt="A lottery ball machine: a clear drum with a mixing paddle, below a rack of coloured numbered balls" credit="Graphoscanada" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:TheBiLLeLottoBallMachine2012.jpg"}
+A lottery ball machine: the order is random by design.
+:::
 :::mission
 Write `CountByItem`, which adds up the quantity of each item sold, and `Busiest`, which finds the best seller with a
 fair tie rule.

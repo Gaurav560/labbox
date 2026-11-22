@@ -8,6 +8,14 @@ long book is made of sentences.
 
 Today Pocket gets its first three functions: one to greet you, and two little helpers for its sums.
 
+
+The idea is older than electric computers. In 1843 **Ada Lovelace** wrote out, step by step, how Charles Babbage's
+Analytical Engine could calculate a series of numbers called Bernoulli numbers: a recipe a machine could follow,
+now called the first published computer program.
+
+:::photo{src="/lesson-images/python/ada-lovelace.webp" alt="A watercolour portrait of Ada Lovelace in a purple and white dress with a dark lace shawl, holding a fan" credit="Alfred Edward Chalon" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg"}
+Ada Lovelace, around 1840.
+:::
 :::mission
 Write `greet`, which builds a greeting for any name, then `add` and `is_even`, two helpers Pocket will need.
 :::

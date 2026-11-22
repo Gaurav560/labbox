@@ -117,6 +117,13 @@ reading.
 Who did the conversion? **Jackson**, the JSON library the web starter brought in (you saw it in the
 dependency tree in chapter 2). Spring hands your return value to Jackson, and Jackson writes the JSON.
 You will customise this later; for now, enjoy that it just works.
+
+The format itself was named and written down in the early 2000s by **Douglas Crockford**, who noticed that
+JavaScript's way of writing objects made a perfect way to send data between any two programs.
+
+:::photo{src="/lesson-images/spring/crockford.webp" alt="Douglas Crockford, a smiling man with grey hair, a beard and glasses, in a dark jacket" credit="Robert Claypool" license="CC0" source="https://commons.wikimedia.org/wiki/File:Douglas_Crockford,_February_2013.jpg"}
+Douglas Crockford, who specified JSON.
+:::
 :::
 
 :::step{type=predict title="Guess first"}

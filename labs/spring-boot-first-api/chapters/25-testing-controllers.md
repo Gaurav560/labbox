@@ -37,6 +37,13 @@ Every test has the same three parts, often written as comments:
 // act:     do the thing being tested
 // assert:  check the result
 ```
+
+Car makers have the same idea, built in metal: a crash test dummy is crashed on purpose, again and again, so the
+failure shows up in the lab and never on the road. A good test does that for your code.
+
+:::photo{src="/lesson-images/spring/crash-dummy.webp" alt="A THOR crash test dummy with a tan body and visible joints and cables, sitting in a test laboratory" credit="Lin Pan" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:Female_Crash_Test_Dummy_-_THOR_5th.jpg"}
+A crash test dummy: break it in the lab, so nothing breaks on the road.
+:::
 :::
 
 :::step{type=concept title="Test slices: start only what you need"}

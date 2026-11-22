@@ -51,6 +51,14 @@ these four lines is enough.)
 **H2** is a database written in Java that can run *inside* your app, in memory. It is perfect for learning
 and for tests: nothing to install. In production you would point the same code at PostgreSQL or MySQL by
 changing a setting.
+
+Databases store their rows on disk. The very first hard disk, IBM's 350 RAMAC of 1956, was as big as two
+refrigerators: fifty spinning platters holding about 5 million characters. A laptop's drive today holds around a
+hundred thousand times more.
+
+:::photo{src="/lesson-images/spring/ramac.webp" alt="The IBM 350 RAMAC disk unit being restored: a tall stack of large metal platters behind a curved cover" credit="vnunet.com" license="CC BY-SA 2.5" source="https://commons.wikimedia.org/wiki/File:IBM_350_RAMAC.jpg"}
+The IBM 350 RAMAC, 1956: the first hard disk, about 5 million characters.
+:::
 :::
 
 :::step{type=concept title="From objects to rows: ORM, JPA and Hibernate"}
