@@ -22,9 +22,6 @@ things, usually remembered as **ACID**:
 - **Isolated**: other requests do not see your half-finished changes while the transaction runs.
 - **Durable**: once committed, the changes survive even a crash a second later.
 
-Atomic is the one this chapter is about. Without a transaction, **each statement is saved on its own**, the
-moment it runs. So if a method runs three updates and the third fails, the first two are already permanent.
-
 Banks needed all-or-nothing before anyone else. On 27 June 1967, the world's first cash machine was switched on at
 this branch in Enfield, London. Taking money out is two changes, the cash and the balance, and they must happen
 together or not at all.
@@ -32,6 +29,10 @@ together or not at all.
 :::photo{src="/lesson-images/spring/first-cash-machine-bank.webp" alt="The front of Barclays Bank in Enfield Town, London, where the world's first cash machine was installed in 1967" credit="Christine Matthews" license="CC BY-SA 2.0" source="https://commons.wikimedia.org/wiki/File:Barclays_Bank,_Enfield_Town_-_geograph.org.uk_-_271511.jpg"}
 Barclays, Enfield Town: home of the first cash machine, 1967.
 :::
+
+Atomic is the one this chapter is about. Without a transaction, **each statement is saved on its own**, the
+moment it runs. So if a method runs three updates and the third fails, the first two are already permanent.
+
 :::
 
 :::step{type=try title="See the half-done order" file="23-transactions/src/main/java/com/shop/stock/OrderService.java" line="17-25"}

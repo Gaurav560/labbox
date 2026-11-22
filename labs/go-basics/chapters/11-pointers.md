@@ -42,6 +42,13 @@ after addBoxReally: 6
 :::
 
 :::step{type=concept title="& and *"}
+A pointer is like this signpost: it is not the town, it tells you where the town is. Follow it, and you reach the
+real place, so whatever you change there, everyone else who follows the sign will see.
+
+:::photo{src="/lesson-images/go/signpost.webp" alt="A green finger signpost on a grass verge, with arms pointing to Shipton-on-Cherwell, Tackley, Oxford and the town centre" credit="Jaggery" license="CC BY-SA 2.0" source="https://commons.wikimedia.org/wiki/File:Directions_and_distances_signpost,_Woodstock_-_geograph.org.uk_-_4533617.jpg"}
+A signpost in Woodstock: it points at places, it is not the places.
+:::
+
 Two small symbols are all there is:
 
 - `&parcel` means "the address of parcel": a **pointer**, of type `*Parcel`.
@@ -58,12 +65,6 @@ may change this one".
 A pointer is an address: whoever has it can find the real house.
 :::
 
-A pointer is like this signpost: it is not the town, it tells you where the town is. Follow it, and you reach the
-real place, so whatever you change there, everyone else who follows the sign will see.
-
-:::photo{src="/lesson-images/go/signpost.webp" alt="A green finger signpost on a grass verge, with arms pointing to Shipton-on-Cherwell, Tackley, Oxford and the town centre" credit="Jaggery" license="CC BY-SA 2.0" source="https://commons.wikimedia.org/wiki/File:Directions_and_distances_signpost,_Woodstock_-_geograph.org.uk_-_4533617.jpg"}
-A signpost in Woodstock: it points at places, it is not the places.
-:::
 :::
 
 :::step{type=concept title="Methods with a pointer receiver"}

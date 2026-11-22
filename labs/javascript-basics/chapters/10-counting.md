@@ -2,11 +2,6 @@
 Mixtape wants to know which song was played most. That means counting: one tally per song title. JavaScript objects
 make a fine tally sheet, with the title as the label and the count as the value.
 
-But objects have a secret. Store something under the number `1`, then store something else under the text `"1"`,
-and ask how many entries there are. Two, surely: a number is not text. JavaScript says one. Today you find out why,
-and meet the two tools JavaScript added for exactly these jobs: **Set** and **Map**.
-
-
 Counting things is one of the oldest jobs computers were built for. For the 1890 US census, Herman Hollerith's
 **tabulating machine** counted 62 million people from punched cards, with a dial for each category: a tally, one per
 key. His company later became part of IBM.
@@ -14,6 +9,11 @@ key. His company later became part of IBM.
 :::photo{src="/lesson-images/javascript/hollerith.webp" alt="A black and white photo of a man seated at a Hollerith tabulating machine, a desk with a wall of round counting dials" credit="U.S. Census Bureau" license="Public domain" source="https://commons.wikimedia.org/wiki/File:1902_Hollerith_electric_tabulating_machine.jpg"}
 A Hollerith tabulating machine, 1902: a dial per category, counting.
 :::
+
+But objects have a secret. Store something under the number `1`, then store something else under the text `"1"`,
+and ask how many entries there are. Two, surely: a number is not text. JavaScript says one. Today you find out why,
+and meet the two tools JavaScript added for exactly these jobs: **Set** and **Map**.
+
 :::mission
 Write `wordCounts`, which counts how often each word appears, and `commonItems`, which finds what two lists share.
 :::

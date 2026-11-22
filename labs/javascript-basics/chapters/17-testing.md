@@ -2,14 +2,6 @@
 Every chapter so far, you pressed **Check** and LabBox told you whether your code worked. Someone wrote those checks.
 Real programs have no Check button: somebody has to write it.
 
-And it matters more than you might think. Change one line of Mixtape next month, a small tidy-up, and something three
-files away may quietly break: a song length shown as `4:5` instead of `4:05`, and nobody notices until the reviews
-come in. Unless there is a **test**: a small program that calls your code with known inputs and shouts the moment an
-answer changes.
-
-Node has a test runner **built in**: `node:test`. No downloads, no setup. Today you write the tests yourself.
-
-
 Engineers test before anyone flies. NASA put this model of the Space Shuttle in a wind tunnel long before a real one
 left the ground: a safe copy, a controlled test, and an answer while mistakes are still cheap. A test file is your
 wind tunnel.
@@ -17,6 +9,14 @@ wind tunnel.
 :::photo{src="/lesson-images/javascript/wind-tunnel.webp" alt="A pale yellow model of the Space Shuttle mounted on poles inside the enormous test section of a NASA wind tunnel" credit="NASA Ames Research Center" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Space_Shuttle_Orbitor_Model_(A-100)_testing_in_the_NASA_Ames_Research_Center_40x80ft_Subsonic_Wind_Tunnel_(ARC-1975-AC75-1161-4).jpg"}
 A Space Shuttle model in NASA's 40 by 80 foot wind tunnel, 1975.
 :::
+
+And it matters more than you might think. Change one line of Mixtape next month, a small tidy-up, and something three
+files away may quietly break: a song length shown as `4:5` instead of `4:05`, and nobody notices until the reviews
+come in. Unless there is a **test**: a small program that calls your code with known inputs and shouts the moment an
+answer changes.
+
+Node has a test runner **built in**: `node:test`. No downloads, no setup. Today you write the tests yourself.
+
 :::mission
 Make a failing test pass by fixing the Skip button, then write tests for `formatDuration` that are good enough to catch
 three bugs you cannot see.

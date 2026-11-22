@@ -56,6 +56,14 @@ to make yours just as helpful.
 :::
 
 :::step{type=concept title="raise: say exactly what is wrong"}
+Not refusing bad input can cost a spaceship. In 1999 NASA's **Mars Climate Orbiter** was lost because one program
+sent its numbers in pound-force seconds while another read them as newton seconds. No code checked, nothing
+raised an error, and the craft flew too close to Mars.
+
+:::photo{src="/lesson-images/python/mars-climate-orbiter.webp" alt="An artist's drawing of the Mars Climate Orbiter spacecraft, with a gold body, a long solar panel and a dish antenna, above Mars" credit="NASA/JPL/Corby Waste" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Mars_Climate_Orbiter_2.jpg"}
+The Mars Climate Orbiter, lost in 1999 to an unchecked unit mix-up.
+:::
+
 Your functions can raise exceptions too, with `raise`, the kind of exception, and a message:
 
 ```python
@@ -77,13 +85,6 @@ far through a program before anyone notices (a quiet bug, chapter 6). An excepti
 a message that names the bad value. A good error message answers three questions: **what** was wrong, **which**
 value, and ideally **what to do**.
 
-Not refusing bad input can cost a spaceship. In 1999 NASA's **Mars Climate Orbiter** was lost because one program
-sent its numbers in pound-force seconds while another read them as newton seconds. No code checked, nothing
-raised an error, and the craft flew too close to Mars.
-
-:::photo{src="/lesson-images/python/mars-climate-orbiter.webp" alt="An artist's drawing of the Mars Climate Orbiter spacecraft, with a gold body, a long solar panel and a dish antenna, above Mars" credit="NASA/JPL/Corby Waste" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Mars_Climate_Orbiter_2.jpg"}
-The Mars Climate Orbiter, lost in 1999 to an unchecked unit mix-up.
-:::
 :::
 
 :::step{type=example title="Worked example: catch one error, raise a better one"}

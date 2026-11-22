@@ -17,6 +17,9 @@
   Hollerith's tabulating machine (counting), Ford's assembly line (chaining methods), a NASA wind tunnel (testing).
 - Go from zero, 5 to 11: an odometer rolling over (int8), a lottery machine (random map order), a signpost (pointers),
   travel adapters (interfaces), matryoshka dolls (wrapped errors), the Tacoma Narrows Bridge (testing).
+- Owner, same evening: photos at the bottom of a long step were easy to miss (the Rosetta Stone). Each of the 33 new
+  photos now sits near the top of its step (median line 8, at most 14), with its lead sentence: after the step's
+  first paragraph, or at the very top when that paragraph introduces code, so no example is split from its output.
 - Every photo checked by eye before use (two were dropped: a "pigeonhole" that was a dessert in a teacup, and beanbags
   that did not explain the event loop). Downloads are paced to stay within Wikimedia's rate limits.
 

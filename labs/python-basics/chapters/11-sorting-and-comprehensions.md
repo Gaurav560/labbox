@@ -16,6 +16,14 @@ biggest first.
 You know `sorted(amounts)` and `reverse=True` from chapter 8. Python sorts numbers by size and strings
 alphabetically. But what if you want words by their **length**?
 
+Sorting by one chosen value is older than Python. This **IBM card sorter** dropped each punched card into one of
+thirteen pockets according to a single column, hundreds of cards a minute. To sort by a different thing, you chose
+a different column: exactly what `key` does.
+
+:::photo{src="/lesson-images/python/card-sorter.webp" alt="An IBM 82 punched card sorter: a long grey machine with a row of open pockets for sorted cards" credit="leighklotz" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:IBM_82_Card_Sorter.jpg"}
+An IBM 82 card sorter, Computer History Museum.
+:::
+
 ```python
 words = ["samosa", "pav", "biryani"]
 sorted(words, key=len)      # ['pav', 'samosa', 'biryani']
@@ -42,13 +50,6 @@ cd /workspace/11-sorting-and-comprehensions && python3 spends.py
 
 Line three proves `sorted` left the original list alone. Lines four and five are comprehensions, coming next.
 
-Sorting by one chosen value is older than Python. This **IBM card sorter** dropped each punched card into one of
-thirteen pockets according to a single column, hundreds of cards a minute. To sort by a different thing, you chose
-a different column: exactly what `key` does.
-
-:::photo{src="/lesson-images/python/card-sorter.webp" alt="An IBM 82 punched card sorter: a long grey machine with a row of open pockets for sorted cards" credit="leighklotz" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:IBM_82_Card_Sorter.jpg"}
-An IBM 82 card sorter, Computer History Museum.
-:::
 :::
 
 :::step{type=concept title="lambda: a tiny function, right where you need it"}

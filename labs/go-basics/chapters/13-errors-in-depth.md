@@ -52,6 +52,13 @@ The message tells the whole story, outside in. And look at line two: `errors.Is(
 `fmt.Errorf` builds an error from a format, like `Sprintf`. With the special verb `%w` (for "wrap"), the new error
 also **keeps** the old one inside it, like a letter in an envelope in another envelope.
 
+Think of Russian **matryoshka** dolls: each one opens to reveal a smaller one inside, all the way down to the
+smallest. `%w` puts an error inside a new one; `errors.Is` opens every doll until it finds the one it is looking for.
+
+:::photo{src="/lesson-images/go/matryoshka.webp" alt="Shelves in a glass cabinet filled with many brightly painted matryoshka nesting dolls of different sizes" credit="LR0725" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Many_matryoshka_dolls.jpg"}
+Matryoshka dolls: each one holds a smaller one inside.
+:::
+
 - `errors.Is(err, ErrNoRoom)` opens every envelope, looking for `ErrNoRoom`. That is how the top of a program asks
   "is this the van-is-full problem?" without caring how many layers there are.
 - `errors.Unwrap(err)` opens one envelope, which is why the third line, unwrapping twice, found `ErrNoRoom`.
@@ -61,12 +68,6 @@ also **keeps** the old one inside it, like a letter in an envelope in another en
 A known error stored in a variable, like `ErrNoRoom`, is called a **sentinel error**. By convention its name starts with
 `Err`. The `os` package has `os.ErrNotExist`, which chapter 15 uses.
 
-Think of Russian **matryoshka** dolls: each one opens to reveal a smaller one inside, all the way down to the
-smallest. `%w` puts an error inside a new one; `errors.Is` opens every doll until it finds the one it is looking for.
-
-:::photo{src="/lesson-images/go/matryoshka.webp" alt="Shelves in a glass cabinet filled with many brightly painted matryoshka nesting dolls of different sizes" credit="LR0725" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Many_matryoshka_dolls.jpg"}
-Matryoshka dolls: each one holds a smaller one inside.
-:::
 :::
 
 :::step{type=example title="Worked example: a load that refuses"}

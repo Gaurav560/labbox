@@ -5,10 +5,6 @@ their own code, every day, for one reason: code changes. Someone fixes a bug in 
 another. Clicking through everything by hand after each change is slow, boring and easy to get wrong. Tests run in
 a second, every time.
 
-Today you switch sides. You write the tests, and LabBox checks whether **your** tests are good enough to catch real
-bugs.
-
-
 **Margaret Hamilton** led the MIT team that wrote the software flying the Apollo missions. Testing and error checking
 were central to her team's work, and during the Apollo 11 landing in 1969, that software handled a flood of alarms
 without falling over. Next to her: the program, printed out.
@@ -16,6 +12,10 @@ without falling over. Next to her: the program, printed out.
 :::photo{src="/lesson-images/python/margaret-hamilton.webp" alt="Margaret Hamilton in 1969, smiling and standing next to a stack of printed program listings as tall as she is" credit="Adam Cuerden (restoration)" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg"}
 Margaret Hamilton with the Apollo guidance software, 1969.
 :::
+
+Today you switch sides. You write the tests, and LabBox checks whether **your** tests are good enough to catch real
+bugs.
+
 :::mission
 Write tests for Pocket's `format_price` and `over_budget`, good enough to catch the bugs LabBox plants in them.
 :::

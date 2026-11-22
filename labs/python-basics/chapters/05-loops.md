@@ -1,18 +1,18 @@
 :::step{type=story title="How would you add up a thousand amounts?"}
 Pocket has a month of your spending: maybe 90 amounts. Next year, a thousand. How would you add them up?
 
-You could write `total = a1 + a2 + a3 + ...` with a thousand names. Nobody does that, because nobody needs to.
-You write the instruction **once**, and tell Python: "do this for every amount in the list". That is a
-**loop**, and it is the reason computers are so good at boring, repetitive work. They never get tired, and they
-never skip a line.
-
-
 Machines have repeated instructions for over two hundred years. A **Jacquard loom** (1804) reads a chain of punched
 cards, one card per row of cloth, and weaves the same pattern again and again: a loop, made of wood and string.
 
 :::photo{src="/lesson-images/python/jacquard-loom.webp" alt="A Jacquard loom in a museum, with a long chain of punched cards hanging beside the threads" credit="Stephencdickson" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:A_Jacquard_loom_showing_information_punchcards,_National_Museum_of_Scotland.jpg"}
 A Jacquard loom and its punched cards, National Museum of Scotland.
 :::
+
+You could write `total = a1 + a2 + a3 + ...` with a thousand names. Nobody does that, because nobody needs to.
+You write the instruction **once**, and tell Python: "do this for every amount in the list". That is a
+**loop**, and it is the reason computers are so good at boring, repetitive work. They never get tired, and they
+never skip a line.
+
 :::mission
 Write `count_above`, which counts the big expenses in a list, and `first_negative`, which finds the first
 refund.

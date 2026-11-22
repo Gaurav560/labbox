@@ -46,6 +46,14 @@ to the `catch` block that matches, runs it, and carries on. `7` was still read, 
 :::
 
 :::step{type=concept title="Where does the exception go?"}
+What happens when an exception goes all the way up with nobody to catch it? In 1996 the first **Ariane 5** rocket
+found out. A number too big for its slot raised an exception in the guidance software, nothing handled it, the
+guidance system shut down, and 37 seconds after launch the rocket broke apart.
+
+:::photo{src="/lesson-images/java/ariane-5.webp" alt="The white nose of an Ariane 5 rocket with its two side boosters, against a deep blue sky" credit="DiscoA340" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Ariane_5_on_Display_at_Le_Bourget.jpg"}
+An Ariane 5 at the Paris Air and Space Museum.
+:::
+
 Press Play and follow the exception:
 
 :::diagram{name="java-try-catch"}
@@ -63,13 +71,6 @@ An exception is a real **object**, made with `new` like any other, and `e` is th
 | `ArithmeticException` | dividing an `int` by zero (chapter 6) |
 | `IllegalArgumentException` | a method refused its input (chapters 8 to 12) |
 
-What happens when an exception goes all the way up with nobody to catch it? In 1996 the first **Ariane 5** rocket
-found out. A number too big for its slot raised an exception in the guidance software, nothing handled it, the
-guidance system shut down, and 37 seconds after launch the rocket broke apart.
-
-:::photo{src="/lesson-images/java/ariane-5.webp" alt="The white nose of an Ariane 5 rocket with its two side boosters, against a deep blue sky" credit="DiscoA340" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Ariane_5_on_Display_at_Le_Bourget.jpg"}
-An Ariane 5 at the Paris Air and Space Museum.
-:::
 :::
 
 :::step{type=example title="Worked example: an error in your own words, with its cause"}

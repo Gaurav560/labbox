@@ -70,6 +70,14 @@ Authorization: Basic c3RhZmY6c3RhZmYxMjM=
 That strange text is just `staff:staff123` (username, colon, password) written in **Base64**, an encoding that
 turns any bytes into plain letters. curl builds it for you with `-u staff:staff123`.
 
+Base64 is an encoding, not a secret. Real secrets need real encryption, and the race to break it changed history:
+this Enigma machine encrypted German messages in the Second World War, until Alan Turing and the code breakers at
+Bletchley Park learned to read them. HTTPS is the modern, unbroken version of what Enigma tried to be.
+
+:::photo{src="/lesson-images/spring/enigma.webp" alt="An Enigma cipher machine in its open wooden case, with a keyboard, lamp board and rotors" credit="National Security Agency" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Enigma_Machine_at_NSA.jpg"}
+An Enigma machine, at the US National Security Agency's museum.
+:::
+
 Base64 is **not encryption**: anyone can turn it back into `staff:staff123` in a second. So Basic is only safe
 over **HTTPS**, where the whole request is encrypted on the wire. That holds for every login method, really: never
 send credentials over plain HTTP outside your own machine.
@@ -78,13 +86,6 @@ Basic is fine for internal tools and for learning. Public APIs usually use **tok
 once with an identity provider and the client sends a short-lived token instead of a password. They plug into the
 same filter chain you are about to configure.
 
-Base64 is an encoding, not a secret. Real secrets need real encryption, and the race to break it changed history:
-this Enigma machine encrypted German messages in the Second World War, until Alan Turing and the code breakers at
-Bletchley Park learned to read them. HTTPS is the modern, unbroken version of what Enigma tried to be.
-
-:::photo{src="/lesson-images/spring/enigma.webp" alt="An Enigma cipher machine in its open wooden case, with a keyboard, lamp board and rotors" credit="National Security Agency" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Enigma_Machine_at_NSA.jpg"}
-An Enigma machine, at the US National Security Agency's museum.
-:::
 :::
 
 :::step{type=concept title="The security filter chain"}

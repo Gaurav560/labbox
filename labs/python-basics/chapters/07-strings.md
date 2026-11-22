@@ -16,6 +16,14 @@ into a tidy one.
 :::
 
 :::step{type=concept title="A string is a row of characters"}
+A Python string can hold the characters of any script in the world. The **Rosetta Stone** carries one decree in
+three scripts (Egyptian hieroglyphs, Demotic and Greek), and that is how hieroglyphs were finally read. A single
+Python string could hold all three.
+
+:::photo{src="/lesson-images/python/rosetta-stone.webp" alt="The Rosetta Stone, a dark grey stone slab covered in three bands of carved writing, in the British Museum" credit="Hans Hillewaert" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Rosetta_Stone.JPG"}
+The Rosetta Stone, British Museum: one text, three scripts.
+:::
+
 You have used strings since chapter 1. Now look inside one. A string is a **sequence**: characters in a fixed
 order, each with a position number, its **index**. As with lists in chapter 5, positions start at **0**. And
 Python lets you count from the end too, with negative numbers:
@@ -42,13 +50,6 @@ A **slice** `[start:stop]` gives a new string from `start` up to, but not includ
 A string is beads on a thread: each bead a character, each with its place in the row.
 :::
 
-A Python string can hold the characters of any script in the world. The **Rosetta Stone** carries one decree in
-three scripts (Egyptian hieroglyphs, Demotic and Greek), and that is how hieroglyphs were finally read. A single
-Python string could hold all three.
-
-:::photo{src="/lesson-images/python/rosetta-stone.webp" alt="The Rosetta Stone, a dark grey stone slab covered in three bands of carved writing, in the British Museum" credit="Hans Hillewaert" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Rosetta_Stone.JPG"}
-The Rosetta Stone, British Museum: one text, three scripts.
-:::
 :::
 
 :::step{type=predict title="Guess first"}

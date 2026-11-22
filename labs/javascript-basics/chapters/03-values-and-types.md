@@ -5,11 +5,6 @@ Ask any person, and they say yes. Ask JavaScript:
 0.30000000000000004
 ```
 
-That is not a bug in JavaScript. Your laptop's chip does it in Python and Java too. But JavaScript has a few more
-surprises of its own, and they all come from one question: what **type** of value is this? A number? Text? Nothing at
-all? By the end of this chapter, five of the strangest lines in programming will make complete sense.
-
-
 Does a tiny leftover like that ever matter? In 1991 a **Patriot** air-defence system counted time in tenths of a
 second, and a tenth cannot be stored exactly in binary. After 100 hours switched on, its clock had drifted by a
 third of a second, enough to miss an incoming missile. Small errors add up.
@@ -17,6 +12,11 @@ third of a second, enough to miss an incoming missile. Small errors add up.
 :::photo{src="/lesson-images/javascript/patriot.webp" alt="A Patriot missile launcher, a large angled box of missile tubes on a vehicle, in the desert during the Gulf War" credit="U.S. Army" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Patriot_missile_launcher_during_the_Gulf_War.jpg"}
 A Patriot launcher, 1991: a decimal rounding error, after 100 hours, became a third of a second.
 :::
+
+That is not a bug in JavaScript. Your laptop's chip does it in Python and Java too. But JavaScript has a few more
+surprises of its own, and they all come from one question: what **type** of value is this? A number? Text? Nothing at
+all? By the end of this chapter, five of the strangest lines in programming will make complete sense.
+
 :::mission
 Write `percent`, a safe percentage that never divides by zero, and `formatRupees`, which shows an amount of money
 exactly right.

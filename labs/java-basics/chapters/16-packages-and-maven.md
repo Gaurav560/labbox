@@ -3,6 +3,14 @@ Shelf has grown chapter by chapter, but each folder is still a little pile of fi
 neighbourhoods. Real Java programs are huge: a bank's code can have ten thousand classes, and some of them are
 bound to be called `Account` or `Report`. How does Java know which `Report` you mean?
 
+Shipping had the same problem, and solved it with one idea: the **standard container**. Every box is the same shape,
+labelled with where it goes, so any crane and any ship can handle any cargo. Packages give classes an address; a jar
+is the box they travel in.
+
+:::photo{src="/lesson-images/java/container-ship.webp" alt="A large blue container ship loaded with stacked shipping containers, beside cranes at a port" credit="Petar Milošević" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:MAERSK_HANOI_Container_Ship_(Port_Koper_SIKOP,_2023).jpg"}
+A container ship at the port of Koper: standard boxes, labelled, ready for any crane.
+:::
+
 The answer has three parts, and every professional Java project uses all three:
 
 - **packages** give every class a full name, like a postal address;
@@ -12,14 +20,6 @@ The answer has three parts, and every professional Java project uses all three:
 Today Shelf becomes a real project, with the exact folder layout used by Spring Boot and nearly every Java
 codebase in the world.
 
-
-Shipping had the same problem, and solved it with one idea: the **standard container**. Every box is the same shape,
-labelled with where it goes, so any crane and any ship can handle any cargo. Packages give classes an address; a jar
-is the box they travel in.
-
-:::photo{src="/lesson-images/java/container-ship.webp" alt="A large blue container ship loaded with stacked shipping containers, beside cranes at a port" credit="Petar Milošević" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:MAERSK_HANOI_Container_Ship_(Port_Koper_SIKOP,_2023).jpg"}
-A container ship at the port of Koper: standard boxes, labelled, ready for any crane.
-:::
 :::mission
 Move `Catalog` into its own package so the project builds, then make the jar start with a plain `java -jar`.
 :::

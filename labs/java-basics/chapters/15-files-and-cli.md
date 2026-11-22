@@ -2,14 +2,6 @@
 Everything Shelf has learned so far vanishes the moment the program ends. Every list, every map, every `Book`
 object lives in memory, and memory is wiped when `main` returns. Run it again, and Shelf remembers nothing.
 
-Real programs keep their data in **files**, and the most popular kind of data file in the world is the humble
-CSV: plain text, one record per line, values separated by commas. Every bank, spreadsheet and shop till can export
-one.
-
-Today Shelf reads a real CSV, a month of the library's spending, and becomes a **command-line program**: a tool
-people run from the terminal with their own file and options, like `javac` and `git`.
-
-
 Before disks were cheap, data lived on punched cards, one record per card. This is how the US government kept its
 records in 1959: a warehouse of boxes, a few hundred thousand cards per aisle. A CSV file is the same idea, one
 record per line, on a disk the size of a fingernail.
@@ -17,6 +9,14 @@ record per line, on a disk the size of a fingernail.
 :::photo{src="/lesson-images/java/punched-cards.webp" alt="A black and white photo of a huge warehouse filled with rows of stacked boxes of IBM punched cards" credit="U.S. National Archives and Records Administration" license="Public domain" source="https://commons.wikimedia.org/wiki/File:IBM_card_storage.NARA.jpg"}
 IBM punched cards in storage at a US federal records centre, 1959.
 :::
+
+Real programs keep their data in **files**, and the most popular kind of data file in the world is the humble
+CSV: plain text, one record per line, values separated by commas. Every bank, spreadsheet and shop till can export
+one.
+
+Today Shelf reads a real CSV, a month of the library's spending, and becomes a **command-line program**: a tool
+people run from the terminal with their own file and options, like `javac` and `git`.
+
 :::mission
 Write `readTotals`, which adds up a messy CSV per category, and the `Summary` program, which prints the top
 categories, with a friendly message when the file is missing.

@@ -3,11 +3,6 @@ Every chapter so far, you pressed **Check** and LabBox told you whether your cod
 in Go, with a tool every Go programmer has: `go test`. It is not a library you download. It ships with Go itself, and
 every Go project in the world, including Go's own compiler, is tested with it.
 
-Tests matter more than you might think. Change one line of Parcel next month, and a delivery time could quietly show
-`1 h 5 min` instead of `1 h 05 min`. Nobody notices, until a test notices for you, the moment you run it. Today you
-write the tests yourself.
-
-
 In 1940 the **Tacoma Narrows Bridge** in the United States opened in July and fell into the river in November,
 twisted apart by a moderate wind. Its design had never been tested against that kind of wind. Today every big
 bridge design is tested in a wind tunnel first: engineering learned the value of tests the hard way.
@@ -15,6 +10,11 @@ bridge design is tested in a wind tunnel first: engineering learned the value of
 :::photo{src="/lesson-images/go/tacoma-narrows.webp" alt="A black and white photo of the Tacoma Narrows suspension bridge breaking apart, its deck collapsing into the water" credit="Unknown photographer" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Tacoma-narrows-bridge-collapse.jpg"}
 The Tacoma Narrows Bridge collapsing, 7 November 1940.
 :::
+
+Tests matter more than you might think. Change one line of Parcel next month, and a delivery time could quietly show
+`1 h 5 min` instead of `1 h 05 min`. Nobody notices, until a test notices for you, the moment you run it. Today you
+write the tests yourself.
+
 :::mission
 Make a failing test pass by fixing `NextStop`, then write a table of tests for `FormatETA` that is good enough to catch
 three bugs you cannot see.

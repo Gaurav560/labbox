@@ -3,6 +3,14 @@ Welcome to Part 2. In Part 1 you learned what Spring is doing underneath everyth
 configuration, auto-configuration. From now on, we build the Shop API's real REST endpoints: reading
 requests, accepting JSON, answering with the right status codes, validating input and handling errors.
 
+The word **REST** comes from this man's PhD thesis. In 2000, **Roy Fielding**, one of the authors of the HTTP
+standard itself, described the style the web works best in: resources with addresses, a few standard methods, and
+status codes that mean the same thing everywhere. Part 2 is that style, in Spring.
+
+:::photo{src="/lesson-images/spring/fielding.webp" alt="Roy Fielding, a man with curly brown hair in a light shirt, speaking at a lectern on a dark stage" credit="Phil Whitehouse" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Roy_Fielding_(cropped).jpg"}
+Roy Fielding, who named and described REST in 2000.
+:::
+
 Before writing more endpoints, it pays to know precisely what happens to **one request** inside Spring.
 You have written `@GetMapping` methods since chapter 3, and they just worked. But who decided that your
 method should run? How did a `List` become JSON? Why do you sometimes get 404, sometimes 405, sometimes
@@ -14,19 +22,19 @@ Follow a request through Spring MVC, move the cart API under `/api/v1`, and hand
 same path.
 :::
 
-The word **REST** comes from this man's PhD thesis. In 2000, **Roy Fielding**, one of the authors of the HTTP
-standard itself, described the style the web works best in: resources with addresses, a few standard methods, and
-status codes that mean the same thing everywhere. Part 2 is that style, in Spring.
-
-:::photo{src="/lesson-images/spring/fielding.webp" alt="Roy Fielding, a man with curly brown hair in a light shirt, speaking at a lectern on a dark stage" credit="Phil Whitehouse" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Roy_Fielding_(cropped).jpg"}
-Roy Fielding, who named and described REST in 2000.
-:::
 :::
 
 :::step{type=concept title="One request's journey"}
 The part of Spring that handles web requests is called **Spring MVC** (MVC stands for Model, View,
 Controller, an old name from the days of server-rendered web pages; for REST APIs, think "Spring's web
 layer"). The web starter set it all up for you in chapter 3.
+
+The DispatcherServlet does what this telephone operator did, all day long: every call arrives at one board, and
+the operator plugs it through to the right line. One front door, and a table of where everything goes.
+
+:::photo{src="/lesson-images/spring/switchboard.webp" alt="A telephone operator at a manual switchboard in 1975, plugging cords into a panel of sockets" credit="Joseph A. Carr" license="Attribution" source="https://commons.wikimedia.org/wiki/File:Jersey_Telecom_switchboard_and_operator.jpg"}
+A switchboard in 1975: one operator routes every call, like the DispatcherServlet routes every request.
+:::
 
 Press **▶ Play** and read each step:
 
@@ -44,12 +52,6 @@ messages:
 - **Message converter**: the piece that turns the request body into Java objects and your return value
   into JSON, using Jackson.
 
-The DispatcherServlet does what this telephone operator did, all day long: every call arrives at one board, and
-the operator plugs it through to the right line. One front door, and a table of where everything goes.
-
-:::photo{src="/lesson-images/spring/switchboard.webp" alt="A telephone operator at a manual switchboard in 1975, plugging cords into a panel of sockets" credit="Joseph A. Carr" license="Attribution" source="https://commons.wikimedia.org/wiki/File:Jersey_Telecom_switchboard_and_operator.jpg"}
-A switchboard in 1975: one operator routes every call, like the DispatcherServlet routes every request.
-:::
 :::
 
 :::step{type=example title="Spring's log, telling you the journey"}

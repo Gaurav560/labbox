@@ -110,6 +110,14 @@ class LimitsTest {
 :::step{type=concept title="Who tests the tests?"}
 Here is a curious question. Your tests pass. Does that prove anything?
 
+This happened to a telescope. The **Hubble Space Telescope**'s main mirror was polished to the wrong shape, by about
+one fiftieth of a hair's width, because the instrument used to test it had one lens 1.3 mm out of place. The test
+said "perfect", and Hubble's first pictures came back blurred. Astronauts had to fit corrective optics in 1993.
+
+:::photo{src="/lesson-images/java/hubble.webp" alt="The Hubble Space Telescope, wrapped in shiny silver foil, raised above the Space Shuttle with the Earth below" credit="NASA" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Hubble_Space_Telescope_(HST)_above_OV-103%27s_PLB_during_STS-31_deployment.jpg"}
+Hubble being released from the Space Shuttle Discovery, 1990.
+:::
+
 Not by itself. A test that checks `lateFee(0)` and nothing else passes on the correct code, and **also** passes on
 a hundred broken versions of it. So professionals test their tests: they break the code on purpose, one small
 change at a time, and check that some test goes red. This is called **mutation testing**.
@@ -122,13 +130,6 @@ someone who might write them.
 Try it yourself in one second: change `assertEquals(0, ...)` to `assertEquals(1, ...)`, run `mvn -o -q test`, watch
 it go red, and change it back.
 
-This happened to a telescope. The **Hubble Space Telescope**'s main mirror was polished to the wrong shape, by about
-one fiftieth of a hair's width, because the instrument used to test it had one lens 1.3 mm out of place. The test
-said "perfect", and Hubble's first pictures came back blurred. Astronauts had to fit corrective optics in 1993.
-
-:::photo{src="/lesson-images/java/hubble.webp" alt="The Hubble Space Telescope, wrapped in shiny silver foil, raised above the Space Shuttle with the Earth below" credit="NASA" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Hubble_Space_Telescope_(HST)_above_OV-103%27s_PLB_during_STS-31_deployment.jpg"}
-Hubble being released from the Space Shuttle Discovery, 1990.
-:::
 :::
 
 :::step{type=predict title="Guess first"}

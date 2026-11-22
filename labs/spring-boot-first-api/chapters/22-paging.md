@@ -14,6 +14,13 @@ Serve products a page at a time with sorting, and write a price-range query in J
 :::
 
 :::step{type=concept title="Paging in the database: offset and limit"}
+Libraries solved this problem long before databases: a card catalogue is the whole collection, but you only ever
+pull out **one drawer at a time**. A page is a drawer.
+
+:::photo{src="/lesson-images/spring/card-catalog.webp" alt="Rows of small wooden drawers with brass label holders in a library card catalogue, with a pull-out shelf" credit="TBurmeister (WMF)" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Card_catalog_at_the_Indiana_State_Library_-_cabinet_exterior.jpg"}
+A library card catalogue: everything is there, one drawer at a time.
+:::
+
 To return page 2 of a list sorted by name, with 20 items per page, the database needs three instructions:
 **sort** by name, **skip** the first 20 rows (page 1), and **return** the next 20. In SQL:
 
@@ -30,12 +37,6 @@ That needs a second, cheap query: `select count(...) from product`.
 Pages are numbered **from 0** in Spring Data: `page=0` is the first page. Keep that in mind; it surprises
 everyone once.
 
-Libraries solved this problem long before databases: a card catalogue is the whole collection, but you only ever
-pull out **one drawer at a time**. A page is a drawer.
-
-:::photo{src="/lesson-images/spring/card-catalog.webp" alt="Rows of small wooden drawers with brass label holders in a library card catalogue, with a pull-out shelf" credit="TBurmeister (WMF)" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Card_catalog_at_the_Indiana_State_Library_-_cabinet_exterior.jpg"}
-A library card catalogue: everything is there, one drawer at a time.
-:::
 :::
 
 :::step{type=concept title="Pageable and Page"}

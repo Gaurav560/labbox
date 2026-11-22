@@ -82,6 +82,13 @@ GET /status            ->  Spring finds status()  ->  it returns "ok"  ->  HTTP/
 Returning text is nice, but APIs mostly return **data**. Here is the part that feels like magic the first
 time: if your method returns a Java object or a list, **Spring turns it into JSON for you**.
 
+The format itself was named and written down in the early 2000s by **Douglas Crockford**, who noticed that
+JavaScript's way of writing objects made a perfect way to send data between any two programs.
+
+:::photo{src="/lesson-images/spring/crockford.webp" alt="Douglas Crockford, a smiling man with grey hair, a beard and glasses, in a dark jacket" credit="Robert Claypool" license="CC0" source="https://commons.wikimedia.org/wiki/File:Douglas_Crockford,_February_2013.jpg"}
+Douglas Crockford, who specified JSON.
+:::
+
 ```java
 public record Product(long id, String name, int pricePaise) { }
 
@@ -118,12 +125,6 @@ Who did the conversion? **Jackson**, the JSON library the web starter brought in
 dependency tree in chapter 2). Spring hands your return value to Jackson, and Jackson writes the JSON.
 You will customise this later; for now, enjoy that it just works.
 
-The format itself was named and written down in the early 2000s by **Douglas Crockford**, who noticed that
-JavaScript's way of writing objects made a perfect way to send data between any two programs.
-
-:::photo{src="/lesson-images/spring/crockford.webp" alt="Douglas Crockford, a smiling man with grey hair, a beard and glasses, in a dark jacket" credit="Robert Claypool" license="CC0" source="https://commons.wikimedia.org/wiki/File:Douglas_Crockford,_February_2013.jpg"}
-Douglas Crockford, who specified JSON.
-:::
 :::
 
 :::step{type=predict title="Guess first"}
