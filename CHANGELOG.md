@@ -1,5 +1,28 @@
 # Changelog
 
+## 22 November: Git without fear rewritten to the full standard (14 chapters, Trails)
+
+- Owner's order: Git, then Linux, then a new Spring AI course (OpenAI as its model). For Git: "you decide best. It
+  should be world class at the same time easy to understand". The old course was 2 chapters and 5 tasks about a
+  coffee shop; it is now 14 chapters, 28 tasks, about 10 hours, around **Trails**, a small website about treks in
+  the Sahyadri hills, written by Asha, Ravi and Meera. The old ids (`01-commit-branch-merge`, `02-undo-without-fear`
+  and their five tasks) are kept, retitled.
+- Part 1 Starting out: why version control exists (BitKeeper, Linus Torvalds in April 2005, Junio Hamano, every copy
+  a full copy), commits and the staging area, reading history (log, show, blame, log -S), branches and merging,
+  merge conflicts. Part 2 Undo without fear: undoing local work (restore, amend, reset), undoing shared history
+  (revert, the reflog), stash and clean. Part 3 Working with others: remotes (a rejected push, handled), a pull
+  request end to end, rebase and squash, what is inside .git (blobs, trees, commits, a hash computed with sha1sum).
+  Part 4: good habits (.gitignore, annotated tags) and a capstone (clean a leaked file from unpushed history, then
+  merge, tag and push a release).
+- Every chapter has its own practice repository, built by its setup with fixed authors and dates, so every learner
+  gets the same hashes; chapters 7, 9, 10 and 14 add a bare "server" repository. The check reads the repositories with
+  read-only git commands; typical mistakes (deleting a secret in a new commit, markers left in, a lightweight release
+  tag, `git clean -fd` taking a keeper, an unpushed revert) get their own messages. Every output quoted in the
+  lessons was captured from the lab image (git 2.43).
+- 10 real photos (Rajmachi fort, Linus Torvalds, a Domesday Book page, Darwin's 1837 tree sketch, a merge sign, the
+  Svalbard seed vault, Proust's corrected proofs, a fingerprint card, Nagpur's Zero Mile Stone, a mountain rescue
+  team), handwritten notes on all 14 recaps, 11 playing diagrams; the devops track lists the new chapters.
+
 ## 22 November: SQL from zero rewritten to the full standard (14 chapters, Safar)
 
 - Owner: "once redis is finished, start with SQL". The old course was 2 chapters and 4 tasks about a tea and coffee

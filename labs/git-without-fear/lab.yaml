@@ -1,18 +1,16 @@
 id: git-without-fear
 version: 2
 title: Git without fear
-subtitle: Commit, branch and merge, then undo a leaked secret and a pushed mistake the safe way.
-description: Commit, branch and merge, then undo a leaked secret and a pushed mistake the safe way.
+subtitle: From your first commit to conflicts, undoing anything, pull requests and releases, on real repositories.
+description: "Learn Git from the beginning: why version control exists, commits, history, branches, merge conflicts,
+  undoing local and shared mistakes, stash, remotes, pull requests, rebase, what is inside .git, good habits and
+  releases, by looking after Trails, a small website about treks in the Sahyadri hills."
 language: bash
 track: devops
 tags: [git]
 level: beginner
-estimated_minutes: 35
-story:
-  company: Brew Point
-  character: { name: Kabir, role: "Backend lead, Brew Point" }
-  pitch: "Brew Point's menu lives in git now, and Kabir wants you fearless with it by Friday."
-cover_scene: "A glowing branching tree of commits over a small coffee counter."
+estimated_minutes: 610
+cover_scene: "A trekking trail map in the Sahyadri hills drawn as a branching tree of commits, with small flags at each merge."
 cover: cover.svg
 cover_credit: { by: "Logos: git", source: "devicon (MIT)" }
 image: labbox/git-without-fear:v1
@@ -24,56 +22,444 @@ workspace:
 check:
   mode: live
   command: ["bash", "/check/tests/run_checks.sh"]
-  timeout_seconds: 30
+  timeout_seconds: 60
   network: none
   mount_workspace: ro
 chapters:
-  - id: 01-commit-branch-merge
-    title: Commit, branch, merge
-    file: chapters/01-commit-branch-merge.md
-    minutes: 15
-    setup: ["bash", "/lab/setup/01.sh"]
-    setup_user: learner
-    tasks:
-      - id: commit_hours
-        title: "Commit hours.txt"
-        xp: 20
-        hints:
-          - "git status shows hours.txt as untracked: git does not know about it yet."
-          - "Two steps: git add puts the file in the staging area, git commit records what is staged."
-          - "Give the commit a message with -m that mentions the opening hours."
-      - id: combo_branch
-        title: "A branch for the breakfast combo"
-        xp: 20
-        hints:
-          - "A branch is a separate line of work. git switch -c makes a new one and moves you onto it."
-          - "On the new branch, create combo.txt with the combo line, then add and commit it there."
-          - "git log --oneline --all --graph shows both branches; main should not have combo.txt yet."
-      - id: merge_combo
-        title: "Merge the combo into main"
-        xp: 20
-        hints:
-          - "You merge INTO the branch you are on. So first go back to main."
-          - "git switch main, then git merge with the name of the branch that has the work."
-          - "After the merge, ls on main shows combo.txt, and git log shows the combo commit."
-  - id: 02-undo-without-fear
-    title: Undo without fear
-    file: chapters/02-undo-without-fear.md
-    minutes: 20
-    setup: ["bash", "/lab/setup/02.sh"]
-    setup_user: learner
-    tasks:
-      - id: undo_secret
-        title: "Take the secret out of the last commit"
-        xp: 40
-        hints:
-          - "The last commit is not pushed yet, so you may change it. git status and git log origin/main..main show what is only local."
-          - "git rm --cached removes a file from git but keeps it on disk. A .gitignore line stops it coming back."
-          - "Stage the removal and the .gitignore, then git commit --amend to replace the last commit instead of adding a new one."
-      - id: revert_bad
-        title: "Undo the pushed price typo"
-        xp: 40
-        hints:
-          - "The 300 commit is already on origin, so other people have it. Do not rewrite it; add a commit that undoes it."
-          - "git log --oneline finds the commit's short hash. git revert makes a new commit with the opposite change."
-          - "git revert with the hash of the Raise filter coffee commit, keep the default message, then check menu.txt."
+- id: why-version-control
+  title: Why version control exists
+  file: chapters/01-why-version-control.md
+  minutes: 40
+  folder: 01-why-version-control
+  part: Starting out
+  setup:
+  - bash
+  - /lab/setup/01.sh
+  setup_user: learner
+  tasks:
+  - id: first_repo
+    title: make the trails folder a repository
+    xp: 10
+    hints:
+    - The folder has files, but git does not know about it yet.
+    - One command, run inside the folder, creates the hidden .git folder.
+    - cd into 01-why-version-control/trails and run git init.
+    examples:
+    - call: ls -a
+      gives: .git is there
+  - id: first_commit
+    title: your first commit
+    xp: 20
+    hints:
+    - A commit saves what is staged. Nothing is staged yet.
+    - git add puts files in the staging area; git commit records them with a message.
+    - Add README.md and trails.md, then commit with -m and a message that says what they are.
+    examples:
+    - call: git log --oneline
+      gives: one commit
+- id: 01-commit-branch-merge
+  title: Commits
+  file: chapters/02-commits.md
+  minutes: 40
+  folder: 02-commits
+  setup:
+  - bash
+  - /lab/setup/02.sh
+  setup_user: learner
+  tasks:
+  - id: commit_hours
+    title: commit the safety rules
+    xp: 20
+    hints:
+    - 'git status shows rules.md as untracked: git does not know about it yet.'
+    - Stage only that file, then commit what is staged.
+    - Add rules.md by name, and give the commit a message that mentions the safety rules.
+    examples:
+    - call: git log --oneline -1
+      gives: your commit about the rules
+  - id: stage_part
+    title: commit one file, not the other
+    xp: 20
+    hints:
+    - Two files are changed, but only trails.md belongs in the next commit.
+    - 'git add takes file names: stage only the one you mean.'
+    - Stage trails.md alone, commit it, and leave notes.txt changed but not staged.
+    examples:
+    - call: git status
+      gives: notes.txt still modified
+    - call: git show --stat
+      gives: only trails.md
+- id: history
+  title: Reading history
+  file: chapters/03-history.md
+  minutes: 45
+  folder: 03-history
+  setup:
+  - bash
+  - /lab/setup/03.sh
+  setup_user: learner
+  tasks:
+  - id: find_author
+    title: who changed Rajmachi's distance?
+    xp: 20
+    hints:
+    - The distance line says 51 km. Somebody changed it last.
+    - git blame shows, for every line of a file, the commit and the person who changed it last.
+    - Run git blame on trails.md, find the Rajmachi distance line, and write that name in answer-author.txt.
+    examples:
+    - call: cat answer-author.txt
+      gives: a first name
+  - id: find_commit
+    title: which commit removed the water point?
+    xp: 20
+    hints:
+    - A line about Udhewadi village was there once and is gone now.
+    - git log -S finds the commits where a piece of text appeared or disappeared, newest first.
+    - Search for Udhewadi; of the two commits, the newer one removed it. Write its short hash in answer-commit.txt.
+    examples:
+    - call: cat answer-commit.txt
+      gives: a 7 character hash
+- id: branches
+  title: Branches and merging
+  file: chapters/04-branches.md
+  minutes: 45
+  folder: 04-branches
+  setup:
+  - bash
+  - /lab/setup/04.sh
+  setup_user: learner
+  tasks:
+  - id: combo_branch
+    title: a branch for the monsoon page
+    xp: 20
+    hints:
+    - A branch is a separate line of work. One command makes it and moves you onto it.
+    - git switch -c makes a new branch. On it, create monsoon.md, then add and commit.
+    - Name the branch feature/monsoon, and put the line from the task in monsoon.md.
+    examples:
+    - call: git log --oneline --all --graph
+      gives: two lines of work
+    - call: ls on main
+      gives: no monsoon.md yet
+  - id: merge_combo
+    title: merge the monsoon page into main
+    xp: 20
+    hints:
+    - You merge INTO the branch you are on, so go back to main first.
+    - git switch main, then git merge with the name of the branch that has the work.
+    - After the merge, ls on main shows monsoon.md, and git log shows the monsoon commit.
+    examples:
+    - call: ls
+      gives: monsoon.md on main
+- id: merge-conflicts
+  title: Merge conflicts
+  file: chapters/05-merge-conflicts.md
+  minutes: 45
+  folder: 05-merge-conflicts
+  setup:
+  - bash
+  - /lab/setup/05.sh
+  setup_user: learner
+  tasks:
+  - id: resolve_conflict
+    title: Ravi's GPS against Asha's map
+    xp: 20
+    hints:
+    - 'Merging ravi/rajmachi stops with a conflict: both sides changed the distance line.'
+    - 'Open trails.md: between the markers are both versions. Keep the right line, delete the markers.'
+    - Keep Ravi's 16 km line, remove all three marker lines, then git add trails.md and git commit.
+    examples:
+    - call: grep Distance trails.md
+      gives: 16 km for Rajmachi
+    - call: grep '<<<' trails.md
+      gives: nothing
+  - id: combine_both
+    title: two credits, both right
+    xp: 20
+    hints:
+    - 'Merging meera/readme conflicts in README.md: both sides added a line at the same place.'
+    - 'Neither side is wrong this time: the resolution keeps both lines.'
+    - Delete only the three marker lines so both credits stay, then add and commit.
+    examples:
+    - call: tail -4 README.md
+      gives: both credits
+- id: 02-undo-without-fear
+  title: Undoing local work
+  file: chapters/06-undo-local.md
+  minutes: 45
+  folder: 06-undo-local
+  part: Undo without fear
+  setup:
+  - bash
+  - /lab/setup/06.sh
+  setup_user: learner
+  tasks:
+  - id: undo_secret
+    title: take the secret out of the last commit
+    xp: 20
+    hints:
+    - The last commit is only on your machine, so you may change it. git show --stat shows what is in it.
+    - git rm --cached removes a file from git but keeps it on disk. A .gitignore line stops it coming back.
+    - Stage the removal and the .gitignore, then git commit --amend to replace the last commit instead of adding one.
+    examples:
+    - call: git log --stat -1
+      gives: no secrets.env
+    - call: ls secrets.env
+      gives: still on disk
+  - id: discard_changes
+    title: throw away an accident, keep the good edit
+    xp: 20
+    hints:
+    - trails.md was half deleted by accident; notes.md has an edit worth keeping. git diff shows both.
+    - git restore puts a file back as it was in the last commit. It takes file names.
+    - Restore trails.md only, and check with git status that notes.md is still modified.
+    examples:
+    - call: git status
+      gives: only notes.md modified
+- id: undo-shared
+  title: Undoing shared history
+  file: chapters/07-undo-shared.md
+  minutes: 45
+  folder: 07-undo-shared
+  setup:
+  - bash
+  - /lab/setup/07.sh
+  setup_user: learner
+  tasks:
+  - id: revert_bad
+    title: undo the pushed Kalsubai mistake
+    xp: 20
+    hints:
+    - The bad commit is already on the server, so others may have it. Do not rewrite it; add a commit that undoes it.
+    - git log --oneline finds the commit's short hash. git revert makes a new commit with the opposite change.
+    - Revert the "Make Kalsubai easy" commit, keep the default message, check trails.md, then push.
+    examples:
+    - call: grep -A2 Kalsubai trails.md
+      gives: 'Difficulty: hard'
+    - call: git log --oneline -1
+      gives: Revert ...
+  - id: rescue_commit
+    title: rescue the commit a reset threw away
+    xp: 20
+    hints:
+    - A commit called Add Visapur was made and then removed with a hard reset. It is not on any branch.
+    - git reflog lists every place HEAD has been, including commits no branch points at any more.
+    - Find Add Visapur in the reflog and make a branch called rescued that points at it.
+    examples:
+    - call: git log --oneline rescued -1
+      gives: Add Visapur
+- id: stash-and-clean
+  title: Stash and clean
+  file: chapters/08-stash.md
+  minutes: 40
+  folder: 08-stash
+  setup:
+  - bash
+  - /lab/setup/08.sh
+  setup_user: learner
+  tasks:
+  - id: stash_work
+    title: an urgent fix in the middle of your work
+    xp: 20
+    hints:
+    - You have half-written work on feature/lohagad. The fix is needed on main, now.
+    - git stash puts your uncommitted changes aside; git stash pop brings them back.
+    - Stash, switch to main, fix Sahyadry and commit, switch back to feature/lohagad, and pop.
+    examples:
+    - call: git log --oneline main -1
+      gives: the spelling fix
+    - call: git diff
+      gives: your Lohagad lines, back
+  - id: clean_untracked
+    title: remove the junk, keep the idea
+    xp: 20
+    hints:
+    - 'Three untracked things: preview/, draft.tmp and ideas.md. Only the first two are junk.'
+    - git clean deletes untracked files; -n shows what it would delete without deleting.
+    - Preview with -n, then clean only preview and draft.tmp (name them, and -d for the folder).
+    examples:
+    - call: ls
+      gives: ideas.md is still there
+- id: remotes
+  title: 'Remotes: push and pull'
+  file: chapters/09-remotes.md
+  minutes: 45
+  folder: 09-remotes
+  part: Working with others
+  setup:
+  - bash
+  - /lab/setup/09.sh
+  setup_user: learner
+  tasks:
+  - id: pull_changes
+    title: bring in Ravi's commit
+    xp: 20
+    hints:
+    - Ravi pushed a commit to the server after you cloned. Your copy does not know yet.
+    - git fetch downloads it; git pull downloads it and merges it into your branch.
+    - Run git pull on main, then git log --oneline to see Ravi's Harishchandragad commit.
+    examples:
+    - call: git log --oneline -1
+      gives: Add Harishchandragad
+  - id: push_work
+    title: push your own trail
+    xp: 20
+    hints:
+    - Add the Visapur section to trails.md and commit it on main.
+    - git push sends your new commits to the server's main.
+    - Commit, then push. git status should say your branch is up to date with origin/main.
+    examples:
+    - call: git status -sb
+      gives: '## main...origin/main'
+- id: pull-request
+  title: A pull request, end to end
+  file: chapters/10-pull-request.md
+  minutes: 45
+  folder: 10-pull-request
+  setup:
+  - bash
+  - /lab/setup/10.sh
+  setup_user: learner
+  tasks:
+  - id: push_branch
+    title: push a branch for review
+    xp: 20
+    hints:
+    - Reviewed work lives on its own branch, pushed to the server.
+    - Make feature/torna, commit the Torna section, then push the branch with -u.
+    - git push -u origin feature/torna creates the branch on the server and links your copy to it.
+    examples:
+    - call: git branch -r
+      gives: origin/feature/torna
+  - id: merge_reviewed
+    title: fix what the review asked, then merge
+    xp: 20
+    hints:
+    - The reviewer asked for Torna's best season. Changes from a review go on the same branch.
+    - Commit the fix on feature/torna and push. Then merge the branch into main.
+    - 'On main: git merge feature/torna, then git push, so the server''s main has the reviewed work.'
+    examples:
+    - call: git log --oneline --graph -4
+      gives: the merge on main
+- id: rebase
+  title: Rebase or merge?
+  file: chapters/11-rebase.md
+  minutes: 45
+  folder: 11-rebase
+  setup:
+  - bash
+  - /lab/setup/11.sh
+  setup_user: learner
+  tasks:
+  - id: rebase_branch
+    title: put your branch on top of the latest main
+    xp: 20
+    hints:
+    - main moved on after feature/sinhagad started. Rebase replays your commits on top of the new main.
+    - 'On feature/sinhagad: git rebase main.'
+    - Afterwards git log --oneline --graph --all shows one straight line.
+    examples:
+    - call: git log --oneline --graph --all
+      gives: a straight line
+  - id: squash_commits
+    title: three wip commits become one
+    xp: 20
+    hints:
+    - '"wip", "wip again" and "done Sinhagad" say nothing to a reader. Make them one commit.'
+    - git rebase -i main lets you squash commits; git reset --soft main then one commit also works.
+    - Whichever way, end with one commit ahead of main, with a clear message like "Add Sinhagad".
+    examples:
+    - call: git log --oneline main..feature/sinhagad
+      gives: one commit
+- id: inside-git
+  title: What is inside .git
+  file: chapters/12-inside-git.md
+  minutes: 40
+  folder: 12-inside-git
+  setup:
+  - bash
+  - /lab/setup/12.sh
+  setup_user: learner
+  tasks:
+  - id: tree_hash
+    title: find the tree of the last commit
+    xp: 20
+    hints:
+    - 'A commit points at a tree: a snapshot of the folder.'
+    - git cat-file -p HEAD prints the commit itself, and its first line names its tree.
+    - Copy the tree's hash (at least 7 characters) into answer-tree.txt, next to the trails folder.
+    examples:
+    - call: cat answer-tree.txt
+      gives: a hash
+      note: not the commit's
+  - id: blob_hash
+    title: find the blob of trails.md
+    xp: 20
+    hints:
+    - A tree lists its files, each with a blob hash.
+    - git cat-file -p on the tree's hash lists its entries.
+    - Copy the hash on the trails.md line into answer-blob.txt.
+    examples:
+    - call: cat answer-blob.txt
+      gives: a hash
+- id: good-habits
+  title: 'Good habits: ignore, tag, release'
+  file: chapters/13-good-habits.md
+  minutes: 40
+  folder: 13-good-habits
+  part: Habits and capstone
+  setup:
+  - bash
+  - /lab/setup/13.sh
+  setup_user: learner
+  tasks:
+  - id: gitignore_files
+    title: ignore what must never be committed
+    xp: 20
+    hints:
+    - node_modules/, build.log and .env must never be committed. git status lists them as untracked.
+    - A .gitignore file lists patterns, one per line; a folder ends with a slash.
+    - Write the three patterns (a folder, all .log files, .env), then commit the .gitignore.
+    examples:
+    - call: git status
+      gives: only .gitignore to commit
+  - id: tag_release
+    title: tag the first release
+    xp: 20
+    hints:
+    - The commit "Ready for the first release" is version 1.0.
+    - 'An annotated tag has a message and an author: git tag -a with -m.'
+    - Tag that commit, by its hash, as v1.0. git show v1.0 shows the tag and its commit.
+    examples:
+    - call: git show v1.0
+      gives: tag v1.0 and the release commit
+- id: capstone
+  title: 'Capstone: rescue a messy repository'
+  file: chapters/14-capstone.md
+  minutes: 50
+  folder: 14-capstone
+  setup:
+  - bash
+  - /lab/setup/14.sh
+  setup_user: learner
+  tasks:
+  - id: capstone_clean
+    title: remove the leaked credentials from history
+    xp: 20
+    hints:
+    - Two commits are not pushed yet; the first added credentials.json, the second only removed it again.
+    - Rewriting unpushed commits is fine. git log origin/main..main shows which ones those are.
+    - Squash the two local commits into one that never had the file, for example with git reset --soft origin/main.
+    examples:
+    - call: git log main -- credentials.json
+      gives: nothing
+  - id: capstone_release
+    title: merge the maps feature and release v2.0
+    xp: 20
+    hints:
+    - Merge feature/maps into the cleaned main.
+    - Tag the result as v2.0, annotated, then push main and the tag.
+    - 'git push origin main, then git push origin v2.0: tags are not pushed by default.'
+    examples:
+    - call: git ls-remote --tags origin
+      gives: v2.0

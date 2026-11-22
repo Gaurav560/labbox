@@ -1,8 +1,9 @@
-# Brew Point: git
+# Trails: Git without fear
 
-Each chapter sets up a real repository here:
+Trails is a small website about treks in the Sahyadri hills, written by three friends. Every chapter has its own
+folder with its own practice repository, made fresh when you open the chapter:
 
-- `shop/`: chapter 1. Commit, branch and merge.
-- `kitchen/`: chapter 2. Undo mistakes. `kitchen-origin.git` plays the shared server (GitHub).
+    cd /workspace/02-commits/trails && git status
 
-`cd shop` (or `cd kitchen`), then `git status` and `git log --oneline` tell you where you are.
+Some chapters also have a `server/` folder: a repository standing in for GitHub. If a practice repository gets into a
+state you do not want, press Reset lab to start the chapter's repositories again.

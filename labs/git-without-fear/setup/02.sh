@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
-# Chapter 2 setup: the kitchen repo. A typo commit that is already pushed, then an unpushed commit
-# that adds a secrets file by mistake.
+# Chapter 2 setup: a repository with two commits, a new file to commit, and two changed files of which only one
+# belongs in the next commit.
 set -euo pipefail
 source /lab/setup/common.sh
-cd /workspace
-rm -rf kitchen kitchen-origin.git
-git init -q --bare kitchen-origin.git
-git init -q kitchen
-cd kitchen
-printf 'filter coffee 30\ncold coffee 40\n' > menu.txt
-git add menu.txt && commit "2026-11-03T09:00:00+05:30" "Add the kitchen menu"
-sed -i 's/^filter coffee 30$/filter coffee 300/' menu.txt
-git add menu.txt && commit "2026-11-04T09:00:00+05:30" "Raise filter coffee to 300"
-printf 'Grind the beans at 6:30\nBoil milk at 6:45\n' > prep.txt
-git add prep.txt && commit "2026-11-05T09:00:00+05:30" "Add the prep list"
-git remote add origin ../kitchen-origin.git
-git push -q -u origin main
-printf '# Kitchen\n\nOpens at 7. Ask Kabir for the SMS settings.\n' > README.md
-printf 'SMS_API_KEY=not-a-real-key\n' > secrets.env
-git add README.md secrets.env && commit "2026-11-06T09:00:00+05:30" "Add a README and the SMS settings"
+fresh 02-commits
+git init -q trails && cd trails && trails_v1
+printf 'Ideas for later:\n- a map page\n' > notes.txt
+git add README.md notes.txt && commit "2026-11-02T09:00:00+05:30" "Add the README and a notes file"
+git add trails.md && commit "2026-11-02T09:30:00+05:30" "Add Rajmachi and Kalsubai"
+cat > rules.md <<'MD'
+# Safety rules
+
+1. Tell someone where you are going.
+2. Carry two litres of water.
+3. Start back before 3 pm.
+MD
+cat >> trails.md <<'MD'
+
+## Harishchandragad
+- Distance: 14 km
+- Difficulty: hard
+- Best season: September to February
+MD
+printf -- '- ask Ravi about the night trek\n' >> notes.txt

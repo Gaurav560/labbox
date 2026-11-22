@@ -34,6 +34,9 @@ its own checks for the right reason. Photos (15, Wikimedia, `frontend/public/les
 (17 recaps) were the last step; see the commit for what landed.
 **Then SQL (owner, same evening): "once redis is finished, start with SQL".** Revamp `sql-from-zero` to the full
 standard next, without waiting; write its syllabus here first.
+**Owner's order after SQL: Git, then Linux, then a new Spring AI course (OpenAI as its model, through the gateway).**
+**Git without fear: COMPLETE (22 November night)**: 14 chapters, 28 tasks, Trails (a trekking website), a practice
+repository per chapter built by its setup with fixed authors and dates. **Next: Linux on call** (syllabus first, here).
 **SQL from zero: COMPLETE (22 November evening)**, as below (14 chapters, 28 tasks, Safar). Next: ask the owner which
 lab comes next (the other ten labs are still 1 or 2 chapters). **SQL from zero syllabus** (22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
 coffee stall: a full rewrite with a new running project, **Safar**, a bus ticket booking app (cities, routes,

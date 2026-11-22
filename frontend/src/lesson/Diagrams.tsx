@@ -1215,7 +1215,209 @@ function LeftJoin() {
   );
 }
 
+/* ---------- Git without fear ---------- */
+
+function GitThreeAreas() {
+  return (
+    <SketchSteps
+      title="working folder, staging area, history"
+      intro="Press Play to follow one change from your editor into history."
+      label="you edit trails.md in the working folder; git status shows it modified; git add copies it into the staging area; git status shows it staged; git commit saves everything staged as a new commit in history; the staging area now matches the commit"
+      steps={[
+        { label: "1. Edit a file", says: "You change trails.md. The change exists only in your working folder." },
+        { label: "2. git status: modified", says: "Git notices the file differs from the last commit, but nothing is staged yet." },
+        { label: "3. git add trails.md", says: "The change is copied into the staging area: it will be in the next commit." },
+        { label: "4. git status: staged", says: "Changes to be committed: trails.md. Other edits can stay unstaged." },
+        { label: "5. git commit -m ...", says: "Everything staged becomes one new commit in history, with your message." },
+        { label: "6. Clean again", says: "Working folder, staging area and the last commit all match. git status: nothing to commit." },
+      ]}
+    />
+  );
+}
+
+function GitBranchPointer() {
+  return (
+    <SketchSteps
+      title="a branch is a label on a commit"
+      intro="Press Play to watch branch labels move as you commit."
+      label="main points at commit B; git switch -c feature makes a second label on B and HEAD follows it; a commit C on feature moves only the feature label; main still points at B; git switch main moves HEAD back to main"
+      steps={[
+        { label: "1. main points at B", says: "A branch is just a label holding one commit's hash. HEAD says you are on main." },
+        { label: "2. git switch -c feature", says: "A new label, feature, on the same commit B. No files are copied. HEAD now follows feature." },
+        { label: "3. Commit C on feature", says: "The new commit's parent is B. The label you are on, feature, moves to C." },
+        { label: "4. main has not moved", says: "main still points at B. Nobody on main sees C yet." },
+        { label: "5. git switch main", says: "HEAD moves back to main, and your files become B's files again." },
+      ]}
+    />
+  );
+}
+
+function GitMerge() {
+  return (
+    <SketchSteps
+      title="fast-forward or merge commit"
+      intro="Press Play to see the two kinds of merge."
+      label="if main has not moved since the branch started, git merge just slides the main label forward, a fast-forward; if both main and the branch have new commits, git merge makes a merge commit with two parents that joins both lines"
+      steps={[
+        { label: "1. Branch ahead, main still", says: "feature has new commits; main has not moved since the branch began." },
+        { label: "2. Fast-forward", says: "git merge feature slides the main label forward. No new commit is needed." },
+        { label: "3. Both sides moved", says: "Now main and the branch each have commits the other lacks: history has forked." },
+        { label: "4. Merge commit", says: "git merge makes a commit with two parents, joining both lines." },
+        { label: "5. Delete the branch label", says: "git branch -d removes the label; its commits stay in history." },
+      ]}
+    />
+  );
+}
+
+function GitConflict() {
+  return (
+    <SketchSteps
+      title="a merge conflict, start to finish"
+      intro="Press Play to walk through a conflict calmly."
+      label="both branches changed the same line; git merge stops and writes both versions between markers; you edit the file to say what is true and delete the markers; git add marks it resolved; git commit finishes the merge"
+      steps={[
+        { label: "1. Same line, two changes", says: "main says 15.5 km; ravi/rajmachi says 16 km. Git cannot choose." },
+        { label: "2. Merge pauses", says: "CONFLICT in trails.md. Everything else is merged; this file waits for you." },
+        { label: "3. Read the markers", says: "Your side between <<<<<<< and =======, theirs between ======= and >>>>>>>." },
+        { label: "4. Edit to the truth", says: "Keep one side, both, or write something new. Delete the three marker lines." },
+        { label: "5. git add trails.md", says: "Staging the file tells Git it is resolved." },
+        { label: "6. git commit", says: "The merge commit is made. Or, at any point before: git merge --abort." },
+      ]}
+    />
+  );
+}
+
+function GitUndoMap() {
+  return (
+    <SketchSteps
+      title="which undo for which place"
+      intro="Press Play to match each mistake with its undo."
+      label="an edit only in the working folder is thrown away with git restore; a staged change is unstaged with git restore --staged; the last unpushed commit is replaced with git commit --amend; recent unpushed commits are undone with git reset --soft; pushed commits are undone with git revert"
+      steps={[
+        { label: "Edit not staged", says: "git restore file: back to the last commit. The edit is gone for good." },
+        { label: "Staged by mistake", says: "git restore --staged file: unstaged, and the edit stays in the file." },
+        { label: "Last commit, not pushed", says: "git commit --amend: a new commit replaces it." },
+        { label: "Recent commits, not pushed", says: "git reset --soft HEAD~1: the branch steps back, the changes stay staged." },
+        { label: "Already pushed", says: "git revert: a new commit that undoes it, safe for everyone (chapter 7)." },
+      ]}
+    />
+  );
+}
+
+function GitReflog() {
+  return (
+    <SketchSteps
+      title="the reflog after a hard reset"
+      intro="Press Play to recover a commit that seemed lost."
+      label="a commit D is made; git reset --hard HEAD~1 moves main back to C; git log no longer shows D; git reflog lists where HEAD has been, including D; git branch rescued D gives the commit a label again"
+      steps={[
+        { label: "1. Commit D", says: "Asha commits Add Visapur on top of C." },
+        { label: "2. git reset --hard HEAD~1", says: "main moves back to C. D is no longer on any branch." },
+        { label: "3. git log: D is gone", says: "History starts at C. It looks deleted, but the commit still exists." },
+        { label: "4. git reflog", says: "Every move of HEAD is listed: HEAD@{1} is D, just before the reset." },
+        { label: "5. git branch rescued HEAD@{1}", says: "A label on D again. The commit is safe." },
+      ]}
+    />
+  );
+}
+
+function GitStash() {
+  return (
+    <SketchSteps
+      title="stash, switch, fix, pop"
+      intro="Press Play to follow an urgent fix in the middle of your work."
+      label="you have unfinished changes on feature; git stash puts them in the stash and cleans the folder; you switch to main and commit the fix; you switch back to feature; git stash pop brings the changes back"
+      steps={[
+        { label: "1. Unfinished work", says: "Half-written Lohagad lines on feature/lohagad, not committed." },
+        { label: "2. git stash", says: "The changes go into the stash; the folder matches the last commit again." },
+        { label: "3. Switch to main, fix, commit", says: "The spelling fix goes into main, alone." },
+        { label: "4. Back to the branch", says: "git switch feature/lohagad." },
+        { label: "5. git stash pop", says: "Your unfinished lines are back, and the stash is empty again." },
+      ]}
+    />
+  );
+}
+
+function GitPushPull() {
+  return (
+    <SketchSteps
+      title="fetch, pull and push"
+      intro="Press Play to see commits move between your copy and the server."
+      label="Ravi pushes a commit to the server; git fetch downloads it and moves origin/main, while your main stays; git pull also merges it into main; you commit; git push uploads your commit and moves the server's main"
+      steps={[
+        { label: "1. Ravi pushes", says: "The server's main gains a commit you do not have." },
+        { label: "2. git fetch", says: "Your copy downloads it. origin/main moves; your main does not." },
+        { label: "3. git pull", says: "Fetch plus merge: your main now has Ravi's commit too." },
+        { label: "4. You commit", says: "Your main is one commit ahead of origin/main." },
+        { label: "5. git push", says: "Your commit goes up, and the server's main moves to it." },
+      ]}
+    />
+  );
+}
+
+function GitPullRequest() {
+  return (
+    <SketchSteps
+      title="a pull request"
+      intro="Press Play to follow one change through review."
+      label="make a branch and commit; push the branch to the server; a teammate reviews the diff since main; you commit the requested fix on the same branch and push; the branch is merged into main and pushed"
+      steps={[
+        { label: "1. Branch and commit", says: "feature/torna, from an up-to-date main." },
+        { label: "2. git push -u origin feature/torna", says: "The branch is on the server; the pull request shows its diff." },
+        { label: "3. Review", says: "A teammate reads git diff main...feature/torna and asks for a change." },
+        { label: "4. Fix and push again", says: "A new commit on the same branch; the pull request updates itself." },
+        { label: "5. Merge into main", says: "The approved branch is merged and main is pushed. The branch can be deleted." },
+      ]}
+    />
+  );
+}
+
+function GitRebase() {
+  return (
+    <SketchSteps
+      title="rebase onto main"
+      intro="Press Play to watch commits being replayed."
+      label="the branch started from an old commit; main moved on; git rebase main sets the branch's commits aside, moves the branch to the tip of main, and replays each commit as a new commit; history becomes one straight line"
+      steps={[
+        { label: "1. History has forked", says: "Your three commits started from A; main has two newer commits." },
+        { label: "2. Set your commits aside", says: "Rebase remembers the changes your commits made." },
+        { label: "3. Move to main's tip", says: "The branch now starts from the latest main." },
+        { label: "4. Replay, one by one", says: "Each change is applied again as a new commit, with a new hash." },
+        { label: "5. One straight line", says: "Merged into main now, it is a fast-forward. Never rebase commits others have." },
+      ]}
+    />
+  );
+}
+
+function GitObjects() {
+  return (
+    <SketchSteps
+      title="commit, tree, blob"
+      intro="Press Play to walk from a commit down to a file's content."
+      label="a commit names a tree and its parent; the tree lists names, each pointing at a blob or another tree; a blob holds a file's content; every object's name is the hash of its content, so a change anywhere changes the hashes above it"
+      steps={[
+        { label: "1. The commit", says: "git cat-file -p HEAD: a tree hash, the parent, author, date and message." },
+        { label: "2. The tree", says: "A list of names: tips.md is a blob, maps is another tree." },
+        { label: "3. The blob", says: "Just the content of tips.md. Its name is the hash of that content." },
+        { label: "4. Same content, same blob", says: "An unchanged file in the next commit reuses its blob: no copy." },
+        { label: "5. A chain of hashes", says: "Each commit holds its parent's hash, so changing the past changes every hash after it." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "git-three-areas": GitThreeAreas,
+  "git-branch-pointer": GitBranchPointer,
+  "git-merge": GitMerge,
+  "git-conflict": GitConflict,
+  "git-undo-map": GitUndoMap,
+  "git-reflog": GitReflog,
+  "git-stash": GitStash,
+  "git-push-pull": GitPushPull,
+  "git-pull-request": GitPullRequest,
+  "git-rebase": GitRebase,
+  "git-objects": GitObjects,
   "left-join": LeftJoin,
   "latency-ladder": LatencyLadder,
   "hit-rate-savings": HitRateSavings,

@@ -12,11 +12,15 @@ nodes:
     chapters: [linux-on-call/02-disk-and-permissions]
   - id: git-basics
     title: Commit, branch, merge
-    chapters: [git-without-fear/01-commit-branch-merge]
+    chapters: [git-without-fear/why-version-control, git-without-fear/01-commit-branch-merge, git-without-fear/history, git-without-fear/branches, git-without-fear/merge-conflicts]
   - id: git-undo
     title: Undo without fear
     requires: [git-basics]
-    chapters: [git-without-fear/02-undo-without-fear]
+    chapters: [git-without-fear/02-undo-without-fear, git-without-fear/undo-shared, git-without-fear/stash-and-clean]
+  - id: git-team
+    title: Working with others
+    requires: [git-undo]
+    chapters: [git-without-fear/remotes, git-without-fear/pull-request, git-without-fear/rebase, git-without-fear/inside-git, git-without-fear/good-habits, git-without-fear/capstone]
   - id: docker
     title: Docker
     requires: [linux-disk, git-basics]
