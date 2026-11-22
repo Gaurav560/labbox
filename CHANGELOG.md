@@ -1,5 +1,29 @@
 # Changelog
 
+## 22 November: SQL from zero rewritten to the full standard (14 chapters, Safar)
+
+- Owner: "once redis is finished, start with SQL". The old course was 2 chapters and 4 tasks about a tea and coffee
+  stall ("Tapri Counter", database `tapri`). It is now a full course on a new running project, **Safar**, a bus
+  ticket booking app (8 cities, 16 routes, 16 buses, 480 trips, 2,000 passengers, 12,005 bookings in November
+  2026), in a database called `safar` (the setup creates it on machines that only have the old one).
+- 14 chapters in four parts, 28 tasks, about 10.5 hours; the old ids (`01-select-and-where`, `02-group-by`) and
+  tasks (`q_paid_coffee`, `q_count_refunds`, `q_revenue_by_outlet`, `q_top_item`) are kept, retitled.
+  Part 1 Starting out: why databases exist (Codd, SEQUEL, Oracle, Stonebraker's Postgres), asking for rows,
+  sorting and shaping, text, dates and NULL. Part 2 Many tables: joins, totals, subqueries and CTEs, window
+  functions. Part 3 Changing data: tables and constraints, changing data safely (the missing WHERE, inside a
+  transaction), transactions (two sessions, all or nothing). Part 4 Fast and safe: indexes measured with EXPLAIN
+  ANALYZE (two million searches: 84 ms to 0.7 ms, and what that is worth in CPU), designing tables
+  (normalising operators), and a capstone report.
+- Every output quoted in the lessons was captured from the lab's Postgres 16. Each chapter has its own folder;
+  query tasks are checked against a reference query (order-sensitive when the task asks for an order); tasks that
+  change data are checked from the database's state, with rule tests run inside a transaction that is rolled
+  back. Typical mistakes get their own messages (wrong order, unnamed column, one index per column, deleted
+  instead of cancelled).
+- 9 real photos (an MSRTC Shivneri coach, Don Chamberlin, Michael Stonebraker, an Indian Railways reservation chart
+  board, an 1870 railway map of India, an IBM 407, Luca Pacioli, the index of a 1655 atlas, Bradshaw's 1840 railway
+  guide), handwritten notes on all 14 recaps, a playing left-join diagram, traces for GROUP BY and running totals.
+  `test_focus.py` follows the new layout; `test_progress.py` finds a task without a card in any lab.
+
 ## 22 November: Redis in practice revamped to the full standard (17 chapters, Basket)
 
 - Owner, going out: "revamp redis to the full standard ... why redis came, what was the problem, how much money it

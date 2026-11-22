@@ -34,7 +34,8 @@ its own checks for the right reason. Photos (15, Wikimedia, `frontend/public/les
 (17 recaps) were the last step; see the commit for what landed.
 **Then SQL (owner, same evening): "once redis is finished, start with SQL".** Revamp `sql-from-zero` to the full
 standard next, without waiting; write its syllabus here first.
-**SQL from zero syllabus** (draft, 22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
+**SQL from zero: COMPLETE (22 November evening)**, as below (14 chapters, 28 tasks, Safar). Next: ask the owner which
+lab comes next (the other ten labs are still 1 or 2 chapters). **SQL from zero syllabus** (22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
 coffee stall: a full rewrite with a new running project, **Safar**, a bus ticket booking app (cities, routes,
 buses, trips, seats, passengers, bookings, payments), on Postgres 16. Keep the ids `01-select-and-where`,
 `02-group-by` and the tasks `q_paid_coffee`, `q_count_refunds`, `q_revenue_by_outlet`, `q_top_item` (retitled).

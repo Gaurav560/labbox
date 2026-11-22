@@ -1,24 +1,17 @@
-# Generated from sql-from-zero.yaml. Edit freely; the spec is only the starting point.
 id: sql-from-zero
 version: 2
 title: SQL from zero
-subtitle: Ask a real Postgres questions about a coffee chain's orders, one query at a time.
-description: Ask a real Postgres questions about a coffee chain's orders, one query at a time.
+subtitle: Ask a real Postgres anything, change it safely, design it well and make it fast, in 14 chapters.
+description: "Learn SQL from the beginning on a real PostgreSQL database: why databases exist, SELECT and WHERE,
+  sorting, text, dates and NULL, joins, totals, subqueries and CTEs, window functions, tables and constraints,
+  changing data safely, transactions, indexes measured with EXPLAIN ANALYZE, and good table design, by looking after
+  the data of Safar, a bus ticket booking app."
 language: sql
 track: databases
-tags:
-- sql
-- postgres
+tags: [sql, postgres]
 level: beginner
-estimated_minutes: 30
-story:
-  company: Tapri Counter
-  character:
-    name: Meera
-    role: CTO, Tapri Counter
-  pitch: Meera wants answers from the order database, and the analyst just quit.
-cover_scene: 'Tapri Counter''s data room: a tiny library where glowing filing drawers of coffee orders slide open,
-  little lantern-lit tables of rows and columns floating above a reading desk.'
+estimated_minutes: 625
+cover_scene: "A bus booking app's data room: rows of seats on a bus seat map turning into rows of a table, a route map of Indian cities, a glowing database cylinder."
 cover: cover.svg
 cover_credit: { by: "Logos: sql", source: "LabBox" }
 image: labbox/sql-from-zero:v1
@@ -31,86 +24,425 @@ workspace:
     PGHOST: db
     PGUSER: postgres
     PGPASSWORD: labpass
-    PGDATABASE: tapri
+    PGDATABASE: safar
 services:
 - name: db
   image: postgres:16
   env:
     POSTGRES_PASSWORD: labpass
-    POSTGRES_DB: tapri
+    POSTGRES_DB: safar
   resources:
     cpus: 1
     memory: 768m
     pids_limit: 256
-  command:
-  - postgres
-  - -c
-  - shared_buffers=64MB
-  - -c
-  - maintenance_work_mem=64MB
-  - -c
-  - work_mem=8MB
-  - -c
-  - max_parallel_maintenance_workers=0
-  - -c
-  - max_parallel_workers_per_gather=1
+  command: [postgres, -c, shared_buffers=64MB, -c, maintenance_work_mem=64MB, -c, work_mem=8MB, -c,
+            max_parallel_maintenance_workers=0, -c, max_parallel_workers_per_gather=1]
   data: /var/lib/postgresql/data
-  ready:
-  - pg_isready
-  - -h
-  - 127.0.0.1
-  - -U
-  - postgres
+  ready: [pg_isready, -h, 127.0.0.1, -U, postgres]
 check:
   mode: live
-  command:
-  - bash
-  - /check/tests/run_checks.sh
-  timeout_seconds: 60
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 90
   network: none
   mount_workspace: ro
 chapters:
+- id: why-databases
+  title: Why databases exist
+  file: chapters/01-why-databases.md
+  minutes: 40
+  folder: 01-why-databases
+  part: Starting out
+  setup:
+  - bash
+  - /lab/setup/data.sh
+  tasks:
+  - id: count_cities
+    title: count the cities Safar serves
+    xp: 10
+    hints:
+    - 'The answer is one number: how many rows the cities table has.'
+    - COUNT(*) counts rows instead of listing them.
+    - Count the rows of cities; the query has just two parts, what to select and from where.
+    examples:
+    - call: psql -f q1.sql
+      gives: one row, one number
+  - id: first_trips
+    title: the first five trips by id
+    xp: 20
+    hints:
+    - Two columns from trips, in id order, and only five rows.
+    - Sorting by the id column puts them in order; LIMIT keeps only the first rows.
+    - Two named columns instead of *, sorted by id, and a limit of five.
+    examples:
+    - call: psql -f q2.sql
+      gives: trips 1 to 5
+      note: id and departs_at
 - id: 01-select-and-where
   title: Asking for rows
-  file: chapters/01-select-and-where.md
-  minutes: 15
+  file: chapters/02-asking-for-rows.md
+  minutes: 40
+  folder: 02-asking-for-rows
+  setup:
+  - bash
+  - /lab/setup/data.sh
   tasks:
   - id: q_paid_coffee
-    title: 'q1.sql: paid filter coffee orders at outlet 3'
+    title: the taken seats on trip 42
     xp: 20
     hints:
-    - You need two columns, id and qty, from the orders table.
-    - 'WHERE can combine conditions with AND: the item, the status and the outlet_id.'
-    - Filter item = 'filter coffee' AND status = 'paid' AND outlet_id = 3, and sort by id.
+    - Two columns from bookings, only the rows of one trip with one status, in seat order.
+    - WHERE combines conditions with AND. Text values go in single quotes.
+    - 'Two conditions joined with AND: the trip is 42, and the status is the word confirmed in quotes. Sort by seat_no.'
+    examples:
+    - call: psql -f q1.sql
+      gives: seat_no, passenger_id
+      note: seat 1 first
   - id: q_count_refunds
-    title: 'q2.sql: how many orders were refunded'
+    title: how many bookings were cancelled
     xp: 20
     hints:
-    - The answer is one number, not a list of rows.
-    - COUNT(*) counts the rows that are left after WHERE.
-    - Count the rows whose status is 'refunded', and name the column refunds with AS.
-  setup:
-  - bash
-  - /lab/setup/data.sh
+    - The answer is one number, in a column with a name you choose.
+    - COUNT(*) counts the rows left after WHERE; AS names the column.
+    - Count the bookings whose status is 'cancelled', AS cancelled.
+    examples:
+    - call: psql -f q2.sql
+      gives: 'one column: cancelled'
+- id: order-and-limit
+  title: Sorting and shaping
+  file: chapters/03-sorting-and-shaping.md
+  minutes: 40
+  folder: 03-sorting-and-shaping
+  tasks:
+  - id: longest_routes
+    title: the three longest routes
+    xp: 20
+    hints:
+    - Sort routes by distance, longest first, and keep three.
+    - DESC sorts from largest. A second ORDER BY column breaks ties.
+    - Sort by distance from largest, then by id for equal distances, and limit to three.
+    examples:
+    - call: psql -f q1.sql
+      gives: three rows, 840 km first
+  - id: distinct_operators
+    title: every operator, once
+    xp: 20
+    hints:
+    - Several buses share an operator. You want each name once.
+    - DISTINCT removes repeated rows from the result.
+    - Put DISTINCT right after SELECT, and sort by the operator column.
+    examples:
+    - call: psql -f q2.sql
+      gives: five names, A to Z
+- id: types-and-null
+  title: Text, dates and NULL
+  file: chapters/04-text-dates-null.md
+  minutes: 45
+  folder: 04-text-dates-null
+  tasks:
+  - id: night_trips
+    title: the night buses of 15 November
+    xp: 20
+    hints:
+    - Trips leaving from 21:00 on 15 November until the end of that day.
+    - 'Compare departs_at with timestamps written as text: ''2026-11-15 21:00''.'
+    - departs_at >= '2026-11-15 21:00' AND departs_at < '2026-11-16', sorted by departs_at.
+    examples:
+    - call: psql -f q1.sql
+      gives: id, departs_at
+      note: earliest first
+  - id: missing_emails
+    title: passengers without an email
+    xp: 20
+    hints:
+    - A missing email is NULL. Count the passengers where it is missing.
+    - = NULL is never true. NULL has its own test.
+    - WHERE email IS NULL, and COUNT(*).
+    examples:
+    - call: psql -f q2.sql
+      gives: one number, not 0
+- id: joins
+  title: Joins
+  file: chapters/05-joins.md
+  minutes: 45
+  folder: 05-joins
+  part: Many tables
+  tasks:
+  - id: route_names
+    title: routes with their city names
+    xp: 20
+    hints:
+    - A route has two city ids. Each name lives in cities.
+    - Join cities twice, under two different aliases, one per end of the route.
+    - One alias for the start city matched on from_city_id, another for the end city matched on to_city_id; name the two name
+      columns with AS.
+    examples:
+    - call: psql -f q1.sql
+      gives: 16 rows
+      note: 1 Pune Mumbai first
+  - id: never_booked
+    title: passengers who never booked
+    xp: 20
+    hints:
+    - An inner join drops passengers with no bookings. You want exactly those.
+    - A LEFT JOIN keeps every passenger, with NULLs where no booking matches.
+    - Start from passengers, LEFT JOIN bookings on the passenger id, and keep the rows where the booking id is NULL.
+    examples:
+    - call: psql -f q2.sql
+      gives: id, name
+      note: a very short list
 - id: 02-group-by
-  title: Totals per outlet
-  file: chapters/02-group-by.md
-  minutes: 15
+  title: Totals
+  file: chapters/06-totals.md
+  minutes: 45
+  folder: 06-totals
   tasks:
   - id: q_revenue_by_outlet
-    title: 'q3.sql: paid revenue per outlet'
+    title: revenue per operator
     xp: 20
     hints:
-    - Outlet names live in the outlets table; amounts live in orders. Connect them with outlet_id.
-    - JOIN the tables, keep only paid orders, then GROUP BY the outlet name.
-    - SELECT the name and SUM(amount_paise) AS revenue_paise, grouped by name, biggest first.
+    - The operator is on the bus, the money is on the booking, and the trip connects them.
+    - Join bookings to trips to buses, keep confirmed bookings, then GROUP BY the operator.
+    - Group by the operator column, sum the amounts, name the sum revenue_paise, and sort by it from largest.
+    examples:
+    - call: psql -f q1.sql
+      gives: five operators
+      note: biggest first
   - id: q_top_item
-    title: 'q4.sql: the best-selling item'
+    title: the busiest route
     xp: 20
     hints:
-    - Best-selling means the most cups or plates, so add up qty, not the number of rows.
-    - Group the rows by item, add up qty per group, and sort by that total from high to low.
-    - Keep paid orders only, and use LIMIT 1 to return just the top row (item and qty).
+    - Count confirmed bookings per route; a booking reaches its route through its trip.
+    - GROUP BY the trip's route_id, COUNT(*), sort by that count.
+    - ORDER BY the count DESC, then LIMIT 1.
+    examples:
+    - call: psql -f q2.sql
+      gives: route_id and a count
+      note: one row
+- id: subqueries-and-ctes
+  title: Subqueries and CTEs
+  file: chapters/07-subqueries-and-ctes.md
+  minutes: 45
+  folder: 07-subqueries-and-ctes
+  tasks:
+  - id: above_average
+    title: routes longer than average
+    xp: 20
+    hints:
+    - 'Two steps: the average distance, then the routes above it.'
+    - A query in brackets can stand where one value is needed.
+    - Compare distance_km with a subquery in brackets that averages distance_km over routes.
+    examples:
+    - call: psql -f q1.sql
+      gives: id, distance_km
+      note: eight routes
+  - id: almost_full
+    title: how many trips were at least 90% full
+    xp: 20
+    hints:
+    - 'First, for every trip: its bus''s seats and its confirmed bookings. Then count the full ones.'
+    - WITH names the first step. A LEFT JOIN keeps empty trips; the status condition goes in its ON.
+    - Count the rows of that step WHERE confirmed >= 0.9 * seats.
+    examples:
+    - call: psql -f q2.sql
+      gives: one number
+- id: window-functions
+  title: Window functions
+  file: chapters/08-window-functions.md
+  minutes: 45
+  folder: 08-window-functions
+  tasks:
+  - id: rank_operators
+    title: the operators' league table
+    xp: 20
+    hints:
+    - Revenue per operator as in chapter 6, plus a rank beside each row.
+    - RANK() OVER (ORDER BY ...) can rank by an aggregate in a GROUP BY query.
+    - Inside the OVER, order by the summed amount from largest; name the column rank and sort the result by it.
+    examples:
+    - call: psql -f q1.sql
+      gives: operator, revenue_paise, rank
+      note: 1 to 5
+  - id: running_total
+    title: November, day by day, with a running total
+    xp: 20
+    hints:
+    - Group confirmed revenue by the trip's day, then add a running sum of those daily totals.
+    - 'A window over an aggregate: SUM(SUM(...)) OVER (ORDER BY day).'
+    - GROUP BY departs_at::date, and SUM(SUM(b.amount_paise)) OVER (ORDER BY departs_at::date).
+    examples:
+    - call: psql -f q2.sql
+      gives: 30 rows
+      note: the last running total is the month
+- id: tables-and-constraints
+  title: Tables and constraints
+  file: chapters/09-tables-and-constraints.md
+  minutes: 45
+  folder: 09-tables-and-constraints
+  part: Changing data
+  tasks:
+  - id: reviews_table
+    title: the reviews table
+    xp: 20
+    hints:
+    - Five columns, and each rule from the task's table becomes a constraint.
+    - IDENTITY PRIMARY KEY, NOT NULL, REFERENCES bookings(id), CHECK, DEFAULT now().
+    - stars needs NOT NULL and a CHECK with BETWEEN 1 AND 5; created_at needs NOT NULL and a DEFAULT of the current time.
+    examples:
+    - call: a review with 6 stars
+      gives: refused
+    - call: a review of booking 1, 4 stars
+      gives: accepted
+  - id: one_seat_one_booking
+    title: one seat, one booking
+    xp: 20
+    hints:
+    - The same trip and seat must never appear twice in bookings.
+    - ALTER TABLE adds a rule to an existing table. UNIQUE can cover two columns together.
+    - ADD CONSTRAINT with a name you choose, then UNIQUE with both column names in brackets.
+    examples:
+    - call: a second booking of trip 42, seat 1
+      gives: refused
+- id: changing-data
+  title: Changing data safely
+  file: chapters/10-changing-data.md
+  minutes: 45
+  folder: 10-changing-data
+  tasks:
+  - id: add_trip
+    title: trip 481 on sale
+    xp: 20
+    hints:
+    - One new row in trips, with the five values from the task.
+    - INSERT INTO trips (columns) VALUES (values). Timestamps are written as text.
+    - List the five columns, then the five values in the same order; the time goes in single quotes.
+    examples:
+    - call: SELECT * FROM trips WHERE id = 481
+      gives: route 1, bus 1, 1 December 09:00
+  - id: raise_fares
+    title: Konkan Lines raises its fares
+    xp: 20
+    hints:
+    - 'Count the trips first: route 7, leaving on or after 20 November.'
+    - 'UPDATE ... SET fare_paise = ... WHERE: the same WHERE as your count.'
+    - The new fare is the old fare times 110, divided by 100; the WHERE has a route condition and a date condition.
+    examples:
+    - call: UPDATE ...
+      gives: UPDATE 11
+    - call: route 7 before the 20th
+      gives: unchanged
+- id: transactions
+  title: Transactions
+  file: chapters/11-transactions.md
+  minutes: 45
+  folder: 11-transactions
+  tasks:
+  - id: move_booking
+    title: move a booking, all or nothing
+    xp: 20
+    hints:
+    - 'Two changes that must happen together: cancel 936, insert the new booking.'
+    - BEGIN; the two statements; COMMIT; An INSERT can take values from a SELECT.
+    - First the UPDATE of booking 936's status, then an INSERT whose values come from a SELECT on trip 74, so the fare is
+      copied exactly.
+    examples:
+    - call: booking 936
+      gives: cancelled
+    - call: trip 74
+      gives: one confirmed booking, seat 1
+  - id: refund_trip
+    title: the trip that was called off
+    xp: 20
+    hints:
+    - Every confirmed booking on trip 100 becomes cancelled; nothing is deleted.
+    - One UPDATE in a transaction; count the rows before you commit.
+    - One UPDATE of status, limited to trip 100 and to bookings that are confirmed now.
+    examples:
+    - call: confirmed bookings on trip 100
+      gives: '0'
+- id: indexes
+  title: Indexes and EXPLAIN
+  file: chapters/12-indexes.md
+  minutes: 50
+  folder: 12-indexes
+  part: Fast and safe
   setup:
   - bash
-  - /lab/setup/data.sh
+  - /lab/setup/12.sh
+  tasks:
+  - id: index_passenger
+    title: fast recent searches
+    xp: 20
+    hints:
+    - The query filters searches by passenger_id. Give that column an index.
+    - CREATE INDEX name ON table (column).
+    - Name the index after the table and column, and put passenger_id in the brackets.
+    examples:
+    - call: EXPLAIN ANALYZE ... passenger_id = 42
+      gives: Index Scan, under a millisecond
+  - id: index_trip_search
+    title: fast trip search
+    xp: 20
+    hints:
+    - The badge filters on three columns at once. One index can hold all three.
+    - 'A multi-column index: CREATE INDEX name ON searches (a, b, c).'
+    - 'Put the three filtered columns in the brackets, in the order the search narrows down: from, to, date.'
+    examples:
+    - call: EXPLAIN ANALYZE ... the trip search
+      gives: your index in the plan
+- id: designing-tables
+  title: Designing tables
+  file: chapters/13-designing-tables.md
+  minutes: 45
+  folder: 13-designing-tables
+  tasks:
+  - id: operators_table
+    title: an operators table
+    xp: 20
+    hints:
+    - Each operator name, stored once, in its own table.
+    - CREATE TABLE with an identity id and a unique name; fill it with INSERT ... SELECT DISTINCT.
+    - After CREATE TABLE, an INSERT whose rows come from a SELECT of the distinct operator names.
+    examples:
+    - call: SELECT name FROM operators
+      gives: five names
+  - id: buses_operator_id
+    title: buses point at their operator
+    xp: 20
+    hints:
+    - Add the column, fill it by matching names, then make it required.
+    - ALTER TABLE ... ADD COLUMN ... REFERENCES; UPDATE ... FROM operators o WHERE ...
+    - The UPDATE reads from operators and matches each bus by name; then ALTER the column to be NOT NULL.
+    examples:
+    - call: SELECT COUNT(*) FROM buses WHERE operator_id IS NULL
+      gives: '0'
+- id: capstone
+  title: 'Capstone: the November report'
+  file: chapters/14-capstone.md
+  minutes: 50
+  folder: 14-capstone
+  part: Capstone
+  tasks:
+  - id: monthly_report
+    title: the route report
+    xp: 20
+    hints:
+    - One row per route. Count trips and total bookings in separate steps, so nothing multiplies.
+    - Two named steps in one WITH, one counting trips per route and one totalling sales per route, then join both to routes
+      and cities.
+    - Join routes to its two cities and the trips step, LEFT JOIN the sales step, use COALESCE for the zeros, and sort by
+      revenue then id.
+    examples:
+    - call: psql -f q1.sql
+      gives: 16 rows
+      note: best revenue first
+  - id: top_passengers
+    title: the five best customers
+    xp: 20
+    hints:
+    - Confirmed spend per passenger, with a rank beside it, and only five rows.
+    - GROUP BY the passenger; RANK() OVER (ORDER BY SUM(amount_paise) DESC).
+    - Sort by the spend from largest, then by the passenger's id, and keep five rows.
+    examples:
+    - call: psql -f q2.sql
+      gives: five rows
+      note: a tie shares rank 4

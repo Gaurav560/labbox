@@ -5,11 +5,19 @@ title: Databases
 nodes:
   - id: sql-select
     title: SELECT and WHERE
-    chapters: [sql-from-zero/01-select-and-where]
+    chapters: [sql-from-zero/why-databases, sql-from-zero/01-select-and-where, sql-from-zero/order-and-limit, sql-from-zero/types-and-null]
   - id: sql-group
     title: JOIN and GROUP BY
     requires: [sql-select]
-    chapters: [sql-from-zero/02-group-by]
+    chapters: [sql-from-zero/joins, sql-from-zero/02-group-by, sql-from-zero/subqueries-and-ctes, sql-from-zero/window-functions]
+  - id: sql-change
+    title: Changing data safely
+    requires: [sql-group]
+    chapters: [sql-from-zero/tables-and-constraints, sql-from-zero/changing-data, sql-from-zero/transactions]
+  - id: sql-design
+    title: Indexes and design
+    requires: [sql-change]
+    chapters: [sql-from-zero/indexes, sql-from-zero/designing-tables, sql-from-zero/capstone]
   - id: redis-basics
     title: Why Redis, keys and expiry
     chapters: [redis-in-practice/why-redis, redis-in-practice/01-what-redis-is, redis-in-practice/02-expiring-keys]

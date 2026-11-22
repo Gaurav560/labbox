@@ -106,8 +106,12 @@ def test_task_card_examples_are_served(client: TestClient):
     assert tasks[0]["examples"][0] == {"call": 'greet("Asha")', "gives": '"Hello, Asha!"', "note": None}
     py = next(c for c in client.get(f"/api/labs/{LAB}", headers=h).json()["chapters"] if c["id"] == CH)["tasks"][0]
     assert py["examples"][0]["call"] == 'greet("Asha")'
-    other = client.get("/api/labs/sql-from-zero", headers=h).json()["chapters"][0]["tasks"][0]
-    assert other["examples"] == []  # optional: tasks without a card still work
+    # Cards are optional: a task without one is served with an empty list. Find such a task in any lab (labs gain
+    # cards as they are rewritten, so the test does not name one).
+    from app.labs import all_labs
+    lab, chapter = next((l, c) for l in all_labs() for c in l.chapters if not c.tasks[0].examples)
+    other = next(c for c in client.get(f"/api/labs/{lab.id}", headers=h).json()["chapters"] if c["id"] == chapter.id)["tasks"][0]
+    assert other["examples"] == []
 
 
 def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):

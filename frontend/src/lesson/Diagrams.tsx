@@ -1195,7 +1195,28 @@ function EvictionLru() {
   );
 }
 
+/* ---------- SQL from zero ---------- */
+
+function LeftJoin() {
+  return (
+    <SketchSteps
+      title="passengers LEFT JOIN bookings"
+      intro="Press Play to watch a join pair rows, and see what a LEFT JOIN keeps that an inner join drops."
+      label="Asha has two bookings, Ravi has none, Meera has one; the join pairs each passenger with every matching booking; Asha appears twice and Meera once; an inner join drops Ravi; a left join keeps Ravi once with NULL in the booking columns; WHERE booking id IS NULL then keeps only Ravi"
+      steps={[
+        { label: "1. Take each passenger", says: "Asha, Ravi and Meera, from the table before JOIN (the left table)." },
+        { label: "2. Find matching bookings", says: "ON b.passenger_id = p.id: Asha matches two bookings, Meera one, Ravi none." },
+        { label: "3. One row per pair", says: "Asha appears twice, once with each booking. Joins multiply rows." },
+        { label: "4. Inner JOIN: Ravi is gone", says: "A passenger with no match makes no pair, so an inner join drops him." },
+        { label: "5. LEFT JOIN: Ravi stays", says: "Every left row stays at least once. Ravi's booking columns are NULL." },
+        { label: "6. WHERE b.id IS NULL", says: "Keeps only the rows with no match: the passengers who never booked." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "left-join": LeftJoin,
   "latency-ladder": LatencyLadder,
   "hit-rate-savings": HitRateSavings,
   "one-at-a-time": OneAtATime,
