@@ -138,7 +138,7 @@ def test_next_starts_new_learners_and_continues_the_rest(client: TestClient):
     assert client.get("/api/me/next?lab=java-basics", headers=h).json()["chapter_id"] == "03-decisions"
     assert client.get(f"/api/me/next?lab={LAB}", headers=h).json()["chapter_id"] == CH
     fresh = client.get("/api/me/next?lab=go-basics", headers=h).json()
-    assert (fresh["kind"], fresh["chapter_id"], fresh["step"]) == ("start", "01-first-program", 1)
+    assert (fresh["kind"], fresh["chapter_id"], fresh["step"]) == ("start", labs.get_lab("go-basics").chapters[0].id, 1)
     assert client.get("/api/me/next?lab=nope", headers=h).status_code == 404
 
 

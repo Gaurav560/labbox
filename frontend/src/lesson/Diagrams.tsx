@@ -994,7 +994,46 @@ function JsEventLoop() {
   );
 }
 
+/** Go from zero, chapter 1: what happens after "go run first.go", played step by step. */
+function GoRunsAFile() {
+  return (
+    <SketchSteps
+      title="go run first.go"
+      intro="Press Play to watch Go turn your file into a running program."
+      label="You type go run first.go; Go reads the whole file and checks grammar, names, types and unused variables or imports; any problem is a compile error and nothing runs; then it compiles the file to machine code; the program starts at func main and runs line by line; a panic stops it at that line; when main returns, the program ends"
+      steps={[
+        { label: "1. you press Enter", says: "The terminal starts go and hands it your file, first.go." },
+        { label: "2. check everything", says: "Grammar, names and types, and anything declared but never used. One problem is a compile error, and nothing runs." },
+        { label: "3. compile to machine code", says: "Go turns the file into a real program for this computer, in about a second." },
+        { label: "4. start at func main", says: "The program runs the lines of main from the top, one at a time." },
+        { label: "5. a panic?", says: "Something impossible while running, like parcel number 5 of 2, panics: the program stops at that line." },
+        { label: "6. main returns: the end", says: "When main reaches its closing brace, the program is over." },
+      ]}
+    />
+  );
+}
+
+/** Go from zero, chapter 6: reading a Go panic, played step by step. */
+function GoPanicTrace() {
+  return (
+    <SketchSteps
+      title="panic: index out of range [0] with length 0"
+      intro="Press Play to read a Go panic the way Go developers do."
+      label="The first line says what went wrong; goroutine 1 running means the main goroutine; the first function listed is where it happened, with the file and line on the next line; each function below called the one above it; main.main is where the program started"
+      steps={[
+        { label: "1. panic: ...", says: "What went wrong: asked for item 0 of a list with 0 items." },
+        { label: "2. goroutine 1 [running]", says: "Which goroutine crashed. Number 1 is the main one (chapter 16 makes more)." },
+        { label: "3. main.heaviest ... report.go:9", says: "The newest call comes first: it failed in heaviest, at line 9." },
+        { label: "4. main.summary ... report.go:19", says: "Who called heaviest: summary, at line 19. The strange hex numbers are the arguments' raw memory: skip them." },
+        { label: "5. main.main ... report.go:24", says: "Where it all began: main, line 24. Read upward to follow the story forward." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "go-panic-trace": GoPanicTrace,
+  "go-runs-a-file": GoRunsAFile,
   "js-event-loop": JsEventLoop,
   "js-stack-trace": JsStackTrace,
   "node-runs-a-file": NodeRunsAFile,

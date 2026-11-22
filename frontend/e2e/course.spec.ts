@@ -26,7 +26,7 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await expect(page.locator(".metro-now")).toContainText("You are here");
   await expect(page.locator(".course-where")).toContainText("step 4 of");
 
-  await page.getByRole("link", { name: "Continue: Chapter 2 →" }).click();
+  await page.getByRole("link", { name: /^Continue: Chapter \d+ →$/ }).click(); // count-free: courses grow
   await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=02-numbers-and-text$/);
   await expect(page.locator(".step-count")).toHaveText(/^Step 4 of/);
 
@@ -39,7 +39,7 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await page.goto("/courses/go-basics");
   await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();
   await page.getByRole("link", { name: "01 Your first Go program" }).click();
-  await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=01-first-program$/);
+  await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=hello-go$/);
 
   // Every subtopic opens its own lesson step; course parts are the map's lines.
   await page.goto("/courses/spring-boot-first-api");

@@ -3,7 +3,7 @@
 id: go-basics
 version: 2
 title: Go from zero
-subtitle: From your first Go program to interfaces, errors, files and goroutines, one small step at a time.
+subtitle: From your very first line of Go to interfaces, files, goroutines and tests, one curious step at a time.
 description: 'Learn Go from the very first line: types, loops, slices, maps, structs, methods and interfaces, real
   error handling, a command-line program and goroutines. Plain explanations, everyday examples and real tests.'
 language: go
@@ -12,7 +12,7 @@ tags:
 - go
 - beginner
 level: beginner
-estimated_minutes: 210
+estimated_minutes: 400
 cover: cover.svg
 cover_credit:
   by: 'Logos: go'
@@ -33,13 +33,41 @@ check:
   timeout_seconds: 30
   network: none
 chapters:
-- id: 01-first-program
+- id: hello-go
   title: Your first Go program
-  file: chapters/01-first-program.md
-  minutes: 15
+  file: chapters/01-hello-go.md
+  minutes: 45
+  folder: 01-hello-go
+  part: Starting out
+  tasks:
+  - id: hello_parcel
+    title: 'parcel.go: Parcel says hello'
+    hints:
+    - Look at first.go. It imports fmt, and each fmt.Println prints one line.
+    - Text goes inside double quotes.
+    - Two lines, two fmt.Println calls, the words exactly as shown, capitals and full stops included.
+    examples:
+    - call: go run parcel.go
+      gives: 'Hello! I am Parcel. / I will track your deliveries.'
+      note: two lines
+  - id: fix_first_errors
+    title: 'fixme.go: make Go happy'
+    hints:
+    - Run go run fixme.go and read both errors. Each names a line and a column.
+    - Go refuses an import that nothing uses. Which package is never used?
+    - Go also refuses a variable that nothing uses. Use count on the last line instead of the number.
+    examples:
+    - call: go run fixme.go
+      gives: 'Parcel is starting... / Ready to track your deliveries. / Parcels on the van: 12'
+      note: three lines
+- id: 01-first-program
+  title: Functions
+  file: chapters/02-functions.md
+  minutes: 40
+  folder: 02-functions
   tasks:
   - id: greeting
-    title: 'hello/hello.go: Greeting(name)'
+    title: 'hello.go: Greeting(name)'
     hints:
     - Go joins strings with +, just like numbers are added.
     - The result must be exactly Hello, then a comma and a space, then the name, then an exclamation mark.
@@ -50,7 +78,7 @@ chapters:
     - call: "Greeting(\"Kabir\")"
       gives: "\"Hello, Kabir!\""
   - id: total_minutes
-    title: 'hello/hello.go: TotalMinutes(hours, minutes)'
+    title: 'hello.go: TotalMinutes(hours, minutes)'
     hints:
     - An hour has 60 minutes.
     - Multiply the hours by 60 first, then add the minutes.
@@ -62,11 +90,12 @@ chapters:
       gives: "45"
 - id: 02-numbers-and-text
   title: Numbers and text
-  file: chapters/02-numbers-and-text.md
-  minutes: 15
+  file: chapters/03-numbers-and-text.md
+  minutes: 40
+  folder: 03-numbers-and-text
   tasks:
   - id: percent
-    title: 'numbers/numbers.go: Percent(scored, total)'
+    title: 'numbers.go: Percent(scored, total)'
     hints:
     - '45 / 50 is 0 in Go: dividing two ints throws the fraction away.'
     - 'Convert both to float64 before dividing: float64(scored).'
@@ -78,7 +107,7 @@ chapters:
       gives: "33.3"
       note: "one decimal"
   - id: format_rupees
-    title: 'numbers/numbers.go: FormatRupees(paise)'
+    title: 'numbers.go: FormatRupees(paise)'
     hints:
     - '1250 paise is 12 rupees and 50 paise: use / and % with 100.'
     - fmt.Sprintf builds a string; the verb %02d pads a number to two digits with a zero.
@@ -90,11 +119,12 @@ chapters:
       gives: "\"₹0.05\""
 - id: 03-decisions
   title: Making decisions
-  file: chapters/03-decisions.md
-  minutes: 15
+  file: chapters/04-decisions.md
+  minutes: 40
+  folder: 04-decisions
   tasks:
   - id: grade
-    title: 'decisions/decisions.go: Grade(marks)'
+    title: 'decisions.go: Grade(marks)'
     hints:
     - 'Check the invalid marks first: below 0 or above 100.'
     - 'Then test from the highest grade down: 80, then 60, then 40.'
@@ -107,7 +137,7 @@ chapters:
     - call: "Grade(101)"
       gives: "\"Invalid\""
   - id: leap_year
-    title: 'decisions/decisions.go: IsLeapYear(year)'
+    title: 'decisions.go: IsLeapYear(year)'
     hints:
     - Divisible by 4 is usually a leap year, with two exceptions.
     - Divisible by 100 is not, unless it is also divisible by 400.
@@ -121,11 +151,12 @@ chapters:
       gives: "true"
 - id: 04-loops
   title: Loops
-  file: chapters/04-loops.md
-  minutes: 15
+  file: chapters/05-loops.md
+  minutes: 40
+  folder: 05-loops
   tasks:
   - id: sum_to
-    title: 'loops/loops.go: SumTo(n)'
+    title: 'loops.go: SumTo(n)'
     hints:
     - "A classic for loop has three parts: start i at 1, keep going while i is at most n, add one each round."
     - Add each i to a running total that starts at 0.
@@ -137,7 +168,7 @@ chapters:
     - call: "SumTo(100)"
       gives: "5050"
   - id: count_vowels
-    title: 'loops/loops.go: CountVowels(text)'
+    title: 'loops.go: CountVowels(text)'
     hints:
     - for _, r := range text gives you each character (a rune) in turn.
     - unicode.ToLower(r) lets you treat A and a the same.
@@ -147,10 +178,40 @@ chapters:
       gives: "3"
     - call: "CountVowels(\"rhythm\")"
       gives: "0"
+- id: finding-bugs
+  title: Finding bugs
+  file: chapters/06-finding-bugs.md
+  minutes: 45
+  folder: 06-finding-bugs
+  tasks:
+  - id: fix_total_weight
+    title: 'van.go: the total that forgets a parcel'
+    hints:
+    - 23 should come out, 19 does. 23 - 19 = 4. Which parcel is missing?
+    - Print i and weights[i] inside the loop and run go run ask.go. Which positions does the loop visit?
+    - Positions in a slice start at 0. Look at where the loop variable starts.
+    examples:
+    - call: TotalWeight([]int{4, 12, 7})
+      gives: '23'
+    - call: TotalWeight([]int{})
+      gives: '0'
+  - id: fix_can_load
+    title: 'van.go: a full van takes no more'
+    hints:
+    - Try CanLoad(10, 10) in ask.go. A van with 10 parcels and room for 10 is full.
+    - Print room before the return. What is room exactly at the limit?
+    - Loading needs some room left, more than none. Compare the symbols > and >= on the last line.
+    examples:
+    - call: CanLoad(9, 10)
+      gives: 'true'
+    - call: CanLoad(10, 10)
+      gives: 'false'
+      note: at the limit
 - id: 01-slices-and-errors
   title: Slices and errors
   file: chapters/01-slices-and-errors.md
   minutes: 15
+  part: Working with data
   tasks:
   - id: total
     title: 'till.go: Total(prices)'

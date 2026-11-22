@@ -7,10 +7,12 @@ cd /check/workspace
 
 # chapter id | package folder | test file | tasks
 CHAPTERS="
-01-first-program|hello|pkg/hello|greeting total_minutes
-02-numbers-and-text|numbers|pkg/numbers|percent format_rupees
-03-decisions|decisions|pkg/decisions|grade leap_year
-04-loops|loops|pkg/loops|sum_to count_vowels
+hello-go|01-hello-go|gorun|hello_parcel fix_first_errors
+01-first-program|02-functions|pkg/hello|greeting total_minutes
+02-numbers-and-text|03-numbers-and-text|pkg/numbers|percent format_rupees
+03-decisions|04-decisions|pkg/decisions|grade leap_year
+04-loops|05-loops|pkg/loops|sum_to count_vowels
+finding-bugs|06-finding-bugs|pkg/van|fix_total_weight fix_can_load
 01-slices-and-errors|.|.|total parse_amount count_by_item busiest
 06-strings|words|pkg/words|clean_name count_words
 07-more-slices|slicetools|pkg/slicetools|top_n unique
@@ -30,6 +32,10 @@ echo "$CHAPTERS" | while IFS='|' read -r chapter dir tests tasks; do
   [ -z "$chapter" ] && continue
   if [ -n "${LABBOX_CHAPTER:-}" ] && [ "$chapter" != "$LABBOX_CHAPTER" ]; then continue; fi
   if [ ! -d "$dir" ]; then fail_all "$tasks" "Could not find the folder $dir/ in your workspace."; continue; fi
+  if [ "$tests" = "gorun" ]; then  # small programs: run them with go run and compare their output
+    (cd /tmp && go build -o /tmp/gorun-check /check/tests/gorun/check.go) && /tmp/gorun-check "/check/workspace/$dir"
+    continue
+  fi
   if [ "$tests" = "." ]; then src=/check/tests/labbox_check_test.go; else src=/check/tests/$tests/labbox_check_test.go; fi
   cp "$src" "$dir/labbox_check_test.go"
   if ! go vet "./$dir" > /tmp/vet.log 2>&1; then

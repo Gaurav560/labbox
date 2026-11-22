@@ -1,5 +1,25 @@
 # Changelog
 
+## 22 November: Go from zero rewrite, Part 1 "Starting out" (chapters 1 to 6)
+
+- Same treatment as Python, Java and JavaScript: curiosity-first openings, a running project (**Parcel**, a small
+  parcel tracker), a folder per chapter, every output captured in `labbox/go-basics:v1`, credited photos, a notes page
+  on every recap, playing diagrams. Chapter and task ids kept.
+- Demo programs sit beside each chapter's package with `//go:build ignore`, so `go run demo.go` runs them while the
+  package, `go vet` and the checks never see them; each task package has a `run.go` that calls it.
+  1. **Your first Go program** (new `hello-go`): why Go exists (a 45-minute C++ build), Ken Thompson and Dennis
+     Ritchie (public domain), the Go Gopher (Renee French, CC BY 3.0), `go run`, a panic, and Go refusing an unused
+     import and an unused variable (new playing diagram `go-runs-a-file`). Tasks `hello_parcel` and
+     `fix_first_errors`, checked by `tests/gorun/check.go`, which runs the learner's programs.
+  2. **Functions**: two results at once, the blank `_`, a missing argument caught before running, capital means
+     public.
+  3. **Numbers and text**: `0.1 + 0.2` is exactly 0.3 as a constant and not as variables, `7/2` is 3, an `int8`
+     wrapping to -128, `int + string` refused.
+  4. **Decisions**: a shipping price from the top down, `switch` that never falls through, `if 0` refused.
+  5. **Loops**: one loop, `for`, in three shapes, and a trace.
+  6. **Finding bugs** (new): a real Go panic read from the top (new diagram `go-panic-trace`), labelled prints, a
+     tiny `ask.go` instead of a REPL. Tasks `fix_total_weight` and `fix_can_load` (planted bugs).
+
 ## 22 November: JavaScript from zero rewrite, Parts 3 and 4 (chapters 13 to 18); the course is complete
 
 - Part 3 "Real programs": 13 **Errors** (one broken saved playlist does not stop the others, the quiet failures
