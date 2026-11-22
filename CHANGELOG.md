@@ -1,5 +1,15 @@
 # Changelog
 
+## 22 November: finished chapters show a green tick; test data removed from the owner's account
+
+- On a course page's skill map, a finished stop (every task of the chapter passed Check) is now filled green (the
+  app's success colour) instead of the lab's own colour, so "done" reads the same on every lab. Visiting a chapter
+  or answering its quizzes never ticks it; the current chapter keeps its pulsing "You are here" dot.
+- The owner saw Java "methods" ticked without doing it: on 17 November a test run (before the 20 November fix that
+  gave test accounts 8-digit ids and their own database) had checked as asha (id 1). With the owner's OK, its 13
+  check runs (10 Python, 3 Java) and a solved `Greeter.java` it wrote into asha's Java workspace were deleted.
+  asha's own Python runs are kept.
+
 ## 22 November: Java from zero rewrite, Part 3 "Real programs" (chapters 13 to 17)
 
 - Exceptions, lambdas and streams, files and the command line moved into `13-exceptions` to `15-files-and-cli`

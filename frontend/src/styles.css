@@ -1569,7 +1569,7 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
   box-shadow: 0 7px 12px rgba(0, 0, 0, .5), 0 2px 0 color-mix(in srgb, var(--c) 55%, #000), inset 0 -3px 4px rgba(0, 0, 0, .28);
   transition: transform .15s ease; }
 .metro-done .metro-dot { border: none; text-shadow: 0 1px 1px rgba(0, 0, 0, .4);
-  background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--c) 35%, #fff) 0 14%, var(--c) 55%, color-mix(in srgb, var(--c) 55%, #000) 100%); }
+  background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--success) 35%, #fff) 0 14%, var(--success) 55%, color-mix(in srgb, var(--success) 55%, #000) 100%); }
 .metro-now .metro-dot { width: 40px; height: 40px; border-width: 9px; animation: metro-pulse 2s ease-out infinite; }
 .metro-locked .metro-dot, .metro-soon .metro-dot { border-color: color-mix(in srgb, var(--c) 40%, var(--border)); }
 .metro-hit:hover .metro-dot { transform: translateY(-2px) scale(1.12); }
