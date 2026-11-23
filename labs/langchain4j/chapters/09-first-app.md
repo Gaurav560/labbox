@@ -48,6 +48,12 @@ and a builder, plus ready-made pieces for memory, tools, retrieval, guardrails a
 - Data extraction from emails and forms
 - Agents that call existing Java services
 :::
+
+Java itself was created at Sun Microsystems by **James Gosling** and released in **1995**. Three decades later it runs much of the world's business software, which is why an AI library designed for Java mattered.
+
+:::photo{src="/lesson-images/langchain4j/james-gosling.webp" alt="James Gosling, grey-bearded, in glasses and a black T-shirt, speaking at a seminar" credit="Peter Campbell" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3AJames_Gosling_2008.jpg"}
+James Gosling, the creator of Java, in 2008.
+:::
 :::
 
 :::step{type=concept title="Two levels: ChatModel and AI Services"}

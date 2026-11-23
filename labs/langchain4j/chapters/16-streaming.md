@@ -7,6 +7,12 @@ ChatGPT never feels like that, because its answers appear word by word while the
 explained why that is possible: a model produces one token at a time. **Streaming** sends each piece to you as soon as
 it exists, so the first words appear in under a second, and the passenger reads while the rest arrives.
 
+
+Text that arrives a piece at a time is older than chat. Teleprinters such as the **Teletype Model 33** (1963) printed each character the moment it came down the line, about ten a second, and early computer users read every answer that way.
+
+:::photo{src="/lesson-images/langchain4j/teletype-model-33.webp" alt="A 1975 Altair 8800 computer with a row of switches and lights, next to a beige Teletype Model 33 with a keyboard and a roll of paper" credit="Tim Colegrove" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3AAltair_8800_and_Model_33_ASR_Teletype.jpg"}
+An Altair 8800 and a Teletype Model 33, which printed output one character at a time.
+:::
 :::mission
 Stream an answer piece by piece with a `StreamingChatModel`, then make a streaming AI Service that returns a
 `TokenStream`.

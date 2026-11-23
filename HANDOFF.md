@@ -18,8 +18,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## LangChain4j (new lab `langchain4j`, owner 23 November): complete, 30 chapters, 60 tasks
 
-All five parts are built, checked (`test-lab`: starter fails all 60 tasks, solution passes all) and committed.
-Left: more real photos (5 now; the full standard wants 10 or more).
+All five parts are built, checked (`test-lab`: starter fails all 60 tasks, solution passes all) and committed,
+with 12 real photos: at the full standard.
 
 Owner: "start with new ai lab: LangChain4j ... fetch everything from the url (docs.langchain4j.dev) ... create a world
 class lab, go on". Syllabus = the Telusko LangChain4j video's chapter list + the official tutorials, at the current

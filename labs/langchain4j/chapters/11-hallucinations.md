@@ -7,6 +7,12 @@ model does (chapter 3).
 This is called a **hallucination**, and it is the single most important thing to design around in any AI
 application. A help desk that sends passengers to the platform at the wrong time is worse than no help desk.
 
+
+The real Lonavla station, on the line from Pune up through the Western Ghats (the railway spells it Lonavla). Setu's fictional Ghat Express stops here at 08:40; a model that has never seen Sahyadri Rail's timetable can only guess a time like that.
+
+:::photo{src="/lesson-images/langchain4j/lonavla-station.webp" alt="The entrance of Lonavla railway station: a curved concrete arch with the station name in Marathi, Hindi and English, an auto-rickshaw in front" credit="Superfast1111" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File%3ALonavla_railway_station_-_Entrance.jpg"}
+Lonavla station, on the ghat line from Pune.
+:::
 :::mission
 See Setu hallucinate with the real model, then fix it the two cheapest ways: permission to say "I don't know", and the
 real facts in the prompt.

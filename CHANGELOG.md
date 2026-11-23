@@ -17,6 +17,8 @@
     `userMessageTemplate()`.
 - Two more playing diagrams (a sequence, a routed review), six notes pages, two AI-track nodes.
 - LangChain4j now has 30 chapters, 60 tasks, about 22 hours.
+- Seven more real photos (Weizenbaum, Gosling, Lonavla station, a Teletype Model 33, Kalman, an IBM flowchart
+  template, the Konkan Railway): 12 in all, so the course is at the full standard.
 
 ## 23 November: LangChain4j, Part 4 (tools, MCP and knowledge)
 

@@ -42,6 +42,12 @@ they turn "I think it is fine" into "94% of the golden set, $0.45 a day".
 - **2023** OpenAI Evals; evals become a practice.
 - **2024** OpenTelemetry conventions for generative AI.
 :::
+
+**Rudolf Kálmán**, who defined observability for control systems in 1960, photographed in 2008 when he received the Charles Stark Draper Prize for his work.
+
+:::photo{src="/lesson-images/langchain4j/rudolf-kalman.webp" alt="Rudolf Kalman in 2008, white-haired, in a dark suit and patterned tie, in front of a blue wall" credit="ETH-Bibliothek Zurich, Image Archive" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3AETH-BIB-Kalman%2C_Rudolf_E._%281930-2016%29-HK_04-01925.jpg"}
+Rudolf Kálmán in 2008.
+:::
 :::
 
 :::step{type=concept title="A listener sees every call" file="26-observability/src/main/java/com/setu/Models.java" line="15-22"}

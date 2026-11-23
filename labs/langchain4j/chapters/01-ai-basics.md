@@ -100,6 +100,12 @@ to questions nobody wrote a rule, or an example, for.
 Samuel's draughts program, written on an IBM 701, beat a strong human player in 1962. IBM's shares reportedly rose
 the morning after Samuel first demonstrated it on television in 1956.
 :::
+
+In **1966** Joseph Weizenbaum at MIT wrote **ELIZA**, a program that played a therapist by turning a person's sentences back into questions with a few hand-written rules. People confided in it anyway, which troubled him for the rest of his life.
+
+:::photo{src="/lesson-images/langchain4j/joseph-weizenbaum.webp" alt="A black and white photo of Joseph Weizenbaum in 1982, seated, in glasses and a dark jacket, with his hands together" credit="Rochester Institute of Technology" license="Public domain" source="https://commons.wikimedia.org/wiki/File%3AWeizenbaum_1982.jpg"}
+Joseph Weizenbaum in 1982, author of ELIZA, one of the first chatbots.
+:::
 :::
 
 :::step{type=example title="Worked example: a rule-based help desk" file="01-ai-basics/src/main/java/com/setu/Rules.java" line="8-11"}

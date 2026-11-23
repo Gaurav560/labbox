@@ -7,6 +7,12 @@ every token.
 Now they become one application. The railway's website will call one endpoint, `POST /chat`, and every answer will
 say which rule-book files it came from, so the staff can check it. This is the app the operations team will run.
 
+
+A real train on the Konkan Railway, the coastal line that reaches Ratnagiri, where Setu's fictional Sahyadri Rail ends.
+
+:::photo{src="/lesson-images/langchain4j/konkan-railway.webp" alt="The blue coaches of the Matsyagandha Express at a small station on the Konkan Railway, passengers on the platform under a cloudy sky" credit="Saurabh Shetty" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File%3AView_of_a_Train_%22_Matsyagandha_Express%22_on_Konkan_Railway_-_panoramio.jpg"}
+The Matsyagandha Express on the Konkan Railway.
+:::
 :::mission
 Index the rule book when the app starts, and return every answer with its sources, in a Spring Boot app that wires
 everything else by itself.

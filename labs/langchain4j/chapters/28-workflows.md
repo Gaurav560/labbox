@@ -39,6 +39,12 @@ calls keeps an AI application predictable: you know which steps can run, how oft
 - **2023** Self-Refine: generate, critique, refine.
 - **2025** Agentic workflows in LangChain4j.
 :::
+
+Before workflow software, programmers drew flowcharts by hand with plastic templates like this IBM one: a diamond for a decision, a rectangle for a step, arrows for the order. The conditions and loops in this chapter are the same shapes, with agents in the boxes.
+
+:::photo{src="/lesson-images/langchain4j/ibm-flowchart-template.webp" alt="An IBM flowcharting template, a green plastic stencil with cut-out shapes such as diamonds and rectangles, next to its paper holder listing the symbols" credit="Bubba73 (Jud McCranie)" license="Public domain" source="https://commons.wikimedia.org/wiki/File%3AIBM_flowchart_template.jpg"}
+An IBM flowcharting template and its holder.
+:::
 :::
 
 :::step{type=concept title="Four workflow shapes"}
