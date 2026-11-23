@@ -15,7 +15,7 @@ level: intermediate
 estimated_minutes: 530
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
-cover_credit: { by: "Logos: java", source: "devicon (MIT)" }
+cover_credit: { by: "Logo: LangChain4j", source: "LangChain4j project (Apache 2.0)" }
 image: labbox/langchain4j:v1
 resources: m
 workspace:

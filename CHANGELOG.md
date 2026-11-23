@@ -1,5 +1,11 @@
 # Changelog
 
+## 23 November: LangChain4j's cover uses its real logo
+
+- Owner: "use LangChain4j's real logo". The cover now shows LangChain4j's own parrot logo (from the project's Apache 2.0
+  repository, `tools/logos/langchain4j.svg`) on a deep green, credited to the LangChain4j project; the lab's accent
+  colour follows the logo's orange.
+
 ## 23 November: LangChain4j, Part 2 (calling a model from Java)
 
 - Part 2, "Calling a model from Java" (6 chapters, 12 tasks), every model output captured from gpt-4o-mini through the
