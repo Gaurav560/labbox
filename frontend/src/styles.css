@@ -1079,6 +1079,22 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .h-lab.is-done .h-lab-progress span { color: var(--success); font-weight: 600; }
 .labs-main > h2 { margin-top: var(--space-6); }
 
+/* Labs by category (owner, 23 November): jump chips, then one titled grid per category. */
+.lab-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 var(--space-4); }
+.lab-chips a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: background var(--t-fast); }
+.lab-chips a:hover { background: var(--hover); }
+.lab-chips a span { font-size: 12px; font-weight: 500; color: var(--muted); }
+.lab-chips a.is-soon { color: var(--muted); border-style: dashed; }
+.lab-group { scroll-margin-top: 72px; }
+.lab-group + .lab-group { margin-top: var(--space-8, 40px); }
+.lab-group-title { display: flex; align-items: baseline; gap: 10px; margin: 0 0 var(--space-3); padding-bottom: 8px;
+  border-bottom: 1px solid var(--border); font-size: 18px; }
+.lab-group-title span { font-size: 13px; font-weight: 500; color: var(--muted); }
+.lab-group-soon { margin: 0; padding: 18px 16px; border: 1px dashed var(--border); border-radius: var(--radius);
+  color: var(--muted); font-size: 14px; }
+
 /* ---------- home: inside a lab ---------- */
 .h-inside { display: flex; flex-direction: column; gap: var(--space-12, 64px); }
 /* --shot-tone: the lab's own colour (HomeSections TONES), red when unknown. */
@@ -1779,3 +1795,4 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
   .retro-power::after { left: 9px; top: 9px; }
 }
 @media (prefers-reduced-motion: reduce) { .retro-float, .retro-cursor { animation: none; } }
+

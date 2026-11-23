@@ -132,6 +132,9 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   - The Java labs show Duke, the Java mascot.
   - Cover addresses carry a version, so a new cover always shows up.
 
+- **Dashboard by category** (23 November): `/labs` groups labs as AI, Languages, Frameworks, System design,
+  Databases, DevOps, then Cloud and AWS (coming soon), with jump chips; full courses first in each.
+
 ### Repository
 
 - Code is on GitHub at https://github.com/Gaurav560/labbox (branch `master`).

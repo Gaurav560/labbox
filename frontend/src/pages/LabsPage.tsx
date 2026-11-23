@@ -20,8 +20,30 @@ export const TRACK_LABEL: Record<string, string> = {
   devops: "DevOps",
   "system-design": "System design",
   ai: "AI",
+  cloud: "Cloud",
+  aws: "AWS",
   interview: "Interview",
 };
+
+// The dashboard shows labs by category, in this order (owner, 23 November). Categories without labs yet
+// show a quiet "coming soon" line; a track missing here still shows, after these.
+export const CATEGORY_ORDER = ["ai", "languages", "frameworks", "system-design", "databases", "devops", "cloud", "aws", "interview"];
+const UPCOMING = new Set(["cloud", "aws"]);
+const LEVEL_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 };
+
+function byCategory(labs: LabSummary[]): { id: string; labs: LabSummary[] }[] {
+  const ids = [...CATEGORY_ORDER, ...labs.map((l) => l.track).filter((t) => !CATEGORY_ORDER.includes(t))];
+  return [...new Set(ids)]
+    .map((id) => ({
+      id,
+      labs: labs
+        .filter((l) => l.track === id)
+        // Full courses first, then the short labs; beginners before advanced; then A to Z.
+        .sort((a, b) => b.chapter_count - a.chapter_count
+          || (LEVEL_ORDER[a.level ?? ""] ?? 9) - (LEVEL_ORDER[b.level ?? ""] ?? 9) || a.title.localeCompare(b.title)),
+    }))
+    .filter((g) => g.labs.length > 0 || UPCOMING.has(g.id));
+}
 
 export default function LabsPage() {
   const { user } = useAuth();
@@ -68,30 +90,22 @@ export default function LabsPage() {
         <DrillCard />
         <h2>Your labs</h2>
         {!labs && <p className="muted">Loading...</p>}
-        {/* The same tile as the home page's lab grid, plus a quiet progress line. */}
-        <div className="h-labs labs-tiles">
-          {labs?.map((lab) => {
-            const { passed_tasks: done, total_tasks: total } = lab.progress;
-            const pct = total ? (100 * done) / total : 0;
-            return (
-              <Link key={lab.id} to={`/courses/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
-                <div className="h-lab-img">
-                  {lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : (
-                    <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
-                  )}
-                </div>
-                <div className="h-lab-text">
-                  <strong>{lab.title}</strong>
-                  <span>{TRACK_LABEL[lab.track] ?? lab.track}{lab.level ? ` · ${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : ""}</span>
-                  <div className="h-lab-progress" title={`${done} of ${total} tasks`}>
-                    <div className="h-lab-track"><div style={{ width: `${pct}%` }} /></div>
-                    <span>{total && done === total ? "✓ Done" : done ? `${done} / ${total} tasks` : `${total} task${total === 1 ? "" : "s"} · ${lab.chapter_count} chapter${lab.chapter_count === 1 ? "" : "s"}`}</span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        {labs && <CategoryChips groups={byCategory(labs)} />}
+        {labs && byCategory(labs).map((g) => (
+          <section key={g.id} id={`category-${g.id}`} className="lab-group" aria-label={TRACK_LABEL[g.id] ?? g.id}>
+            <h3 className="lab-group-title">
+              {TRACK_LABEL[g.id] ?? g.id}
+              <span>{g.labs.length ? `${g.labs.length} lab${g.labs.length === 1 ? "" : "s"}` : "coming soon"}</span>
+            </h3>
+            {g.labs.length ? (
+              <div className="h-labs labs-tiles">
+                {g.labs.map((lab) => <LabTile key={lab.id} lab={lab} />)}
+              </div>
+            ) : (
+              <p className="lab-group-soon">{TRACK_LABEL[g.id] ?? g.id} labs are being written. They will appear here.</p>
+            )}
+          </section>
+        ))}
       </main>
       </div>
     </div>
@@ -106,6 +120,43 @@ export default function LabsPage() {
  * Labs where you write code (languages, frameworks, AI) show a retro computer instead, its screen showing the step
  * the learner stopped at (owner, 22 November; RetroComputer.tsx, labDeck in brand.ts).
  */
+/** Jump links to each category, with how many labs it has. */
+function CategoryChips({ groups }: { groups: { id: string; labs: LabSummary[] }[] }) {
+  return (
+    <nav className="lab-chips" aria-label="Categories">
+      {groups.map((g) => (
+        <a key={g.id} href={`#category-${g.id}`} className={g.labs.length ? "" : "is-soon"}>
+          {TRACK_LABEL[g.id] ?? g.id}
+          <span>{g.labs.length || "soon"}</span>
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+/** The same tile as the home page's lab grid, plus a quiet progress line. */
+function LabTile({ lab }: { lab: LabSummary }) {
+  const { passed_tasks: done, total_tasks: total } = lab.progress;
+  const pct = total ? (100 * done) / total : 0;
+  return (
+    <Link to={`/courses/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
+      <div className="h-lab-img">
+        {lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : (
+          <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
+        )}
+      </div>
+      <div className="h-lab-text">
+        <strong>{lab.title}</strong>
+        <span>{TRACK_LABEL[lab.track] ?? lab.track}{lab.level ? ` · ${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : ""}</span>
+        <div className="h-lab-progress" title={`${done} of ${total} tasks`}>
+          <div className="h-lab-track"><div style={{ width: `${pct}%` }} /></div>
+          <span>{total && done === total ? "✓ Done" : done ? `${done} / ${total} tasks` : `${total} task${total === 1 ? "" : "s"} · ${lab.chapter_count} chapter${lab.chapter_count === 1 ? "" : "s"}`}</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const cont = next.kind === "continue";
   const pct = cont ? Math.round((100 * (next.step - 1)) / Math.max(1, next.steps)) : 0;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 23 November: the dashboard shows labs by category
+
+- `/labs` groups the lab cards by category, in the owner's order: AI, Languages, Frameworks, System design,
+  Databases, DevOps, then Cloud and AWS (shown as "coming soon" until they have labs). Chips at the top jump to
+  a category and show how many labs it has; inside a category, full courses come first. Browser test:
+  `e2e/categories.spec.ts`. A trial "paper notes" look was built, shown and removed at the owner's request.
+- The drink rewrite also renamed Dabba Express (Express and Python collections) to Thali House, a cloud kitchen,
+  and fixed a Spring Boot check that compared merchant names without spaces.
+
 ## 23 November: no drinks anywhere (owner: "yes rewrite the drink examples")
 
 - Every drink example is rewritten, in all 13 labs that had one, the app, the drills, the lab templates and the specs.
