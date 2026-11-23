@@ -235,7 +235,7 @@ cd backend
 | `MAX_FILE_BYTES` | Max file size for the editor API. |
 | `CORS_ORIGINS` | Comma-separated origins. |
 | `ALLOW_SIGNUP` | `true` or `false`. |
-| `LLM_MODELS` | Model aliases for the LLM gateway: `alias=provider/model,...` (default: local Ollama). |
+| `LLM_MODELS` | Model aliases for the LLM gateway: `alias=provider/model,...` (default: OpenAI gpt-4o-mini and text-embedding-3-small, `OPENAI_API_KEY` from `.env`). |
 | `OLLAMA_URL` | Where Ollama answers (default `http://127.0.0.1:11434`, started by `scripts/ollama.sh`). |
 | `LLM_DAILY_TOKENS` / `LLM_RPM` / `LLM_MAX_TOKENS` | Per-user AI budget: tokens a day, requests a minute, reply cap. |
 | `LLM_GATEWAY_PORT` / `LLM_GATEWAY_HOST` | Gateway port (9000); host defaults to the Docker bridge address. |
@@ -509,10 +509,10 @@ chapters:
 ### AI labs and the LLM gateway (Phase E)
 
 The backend also serves the LLM gateway on port 9000, bound to the Docker bridge address.
-Run `scripts/ollama.sh` once: it starts Ollama in Docker (localhost only) and pulls the free models
-behind the default aliases (`lab-chat` = qwen2.5:0.5b, `lab-chat-smart` = qwen2.5:1.5b,
-`lab-embed` = nomic-embed-text). To use a paid provider instead, map an alias in `LLM_MODELS`, for
-example `lab-chat=openai/gpt-4o-mini` (uses `OPENAI_API_KEY` from `.env`; ask the owner first).
+By default every alias goes to OpenAI (`lab-chat`, `lab-chat-smart` and `ai-chat` = gpt-4o-mini, `lab-embed`
+and `ai-embed` = text-embedding-3-small, using `OPENAI_API_KEY` from `.env`), within the daily budgets. For free
+local models instead, run `scripts/ollama.sh` (Ollama in Docker, localhost only) and map the aliases to
+`ollama/...` in `LLM_MODELS`, for example `lab-chat=ollama/qwen2.5:0.5b,lab-code=ollama/qwen2.5-coder:1.5b`.
 
 A lab with `llm: {enabled: true}` (template `ai`, image `labbox/ai-python`) gets `OPENAI_BASE_URL`,
 `OPENAI_API_KEY` and the `ANTHROPIC_` pair, so the official SDKs work unchanged. The key is a lab

@@ -152,9 +152,9 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - **Editor:** real VS Code (not a lookalike) as the default, Lite as the fallback. "VS Code" is not
   used as a label (Microsoft trademark): the switch says "IDE | Lite".
 - **App colours:** GitHub greys everywhere, not the old blue `#7c9cff`.
-- **AI provider:** Ollama (free, local) by default. The OpenAI key is approved for cover art and the handwritten
-  notes (medium quality), and for the Spring AI course through the gateway only (`ai-chat` = openai/gpt-4o-mini,
-  `ai-embed` = openai/text-embedding-3-small, daily budget on). Anything else needs your approval.
+- **AI provider:** OpenAI for everything (23 November: "use open ai"; Ollama stopped to save memory): the tutor,
+  design grading, AI labs and Spring AI use gpt-4o-mini and text-embedding-3-small through the gateway, with the
+  daily budgets on. Editor ghost-text completion is off until you pick a fill-in-the-middle model.
 - **Capacity target:** at most about 100 learners at once. Plan about 1 GB of RAM per running machine
   with the IDE (about 1.5 GB for Java and Spring labs): one 128 GB server or two 64 GB servers.
 - **Phase F (Docker and Kubernetes in labs) is skipped on this laptop** (its kernel 7.0 is newer than

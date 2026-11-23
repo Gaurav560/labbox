@@ -40,10 +40,12 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 - Images: `scripts/build_lab_images.sh` (bases first, then every lab).
 - VS Code in labs: `scripts/openvscode.sh` once (downloads to /srv/labbox/openvscode). Browser tests
   that drive the classic editor set `localStorage["labbox.editor"] = "classic"` first.
-- AI: `scripts/ollama.sh` once (Ollama in Docker, free local models). The backend serves the LLM
-  gateway on 9000 at the Docker bridge address. Tests use the `fake` provider (set in conftest).
-  Mapping an alias to a paid provider (`LLM_MODELS`) needs the owner's approval. Approved once: `ai-chat`
-  (openai/gpt-4o-mini) and `ai-embed` (openai/text-embedding-3-small), for the Spring AI course only (23 November).
+- AI: every alias maps to OpenAI (owner, 23 November: "use open ai" for the tutor; Ollama is stopped to save
+  memory). `lab-chat`, `lab-chat-smart` (tutor, design grader) and `ai-chat` are openai/gpt-4o-mini; `lab-embed`
+  and `ai-embed` are openai/text-embedding-3-small. Editor ghost-text completion (`lab-code`) is off until the
+  owner picks a fill-in-the-middle model. The backend serves the LLM gateway on 9000 at the Docker bridge
+  address; the daily budgets stay on. Tests use the `fake` provider (set in conftest). Any other paid model
+  needs the owner's approval. `scripts/ollama.sh` still works if local models are wanted again.
 - Tests: **full runs use Postgres and Redis, as in production** (owner, 22 November): `cd backend &&
   LABBOX_TEST_DATABASE_URL=... LABBOX_TEST_REDIS_URL=... .venv/bin/pytest` (see README; about 275 tests,
   Docker ones included, about 11 minutes). Plain `.venv/bin/pytest` runs on SQLite and in-memory locks (the

@@ -1,5 +1,18 @@
 # Changelog
 
+## 23 November: the AI tutor uses OpenAI; Ollama stopped to free memory
+
+- Owner: "I am not using Ollama in the AI tutor, use OpenAI", and "do all the required to free up memory".
+- `LLM_MODELS` now maps every alias to OpenAI: `lab-chat`, `lab-chat-smart` (the tutor and the design-review
+  grader) and `ai-chat` to gpt-4o-mini; `lab-embed` and `ai-embed` to text-embedding-3-small. Budgets and the
+  request log are unchanged. Checked: a real tutor answer came back from gpt-4o-mini through the gateway.
+- Editor ghost-text completion (`lab-code`) is off: it needs a fill-in-the-middle model, which gpt-4o-mini is not.
+- The Ollama container is stopped and no longer starts at boot (`scripts/ollama.sh` brings it back).
+- The privacy policy now says that the tutor, design reviews and AI labs send the question and code to OpenAI
+  through our gateway, with no name or email.
+- Memory on the laptop: 30 lab machines left by browser tests stopped, Ollama stopped, old temp files removed
+  (`/tmp` lives in RAM here). Available memory went from 2.6 GB to 6 GB.
+
 ## 23 November: the dashboard shows labs by category
 
 - `/labs` groups the lab cards by category, in the owner's order: AI, Languages, Frameworks, System design,

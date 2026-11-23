@@ -121,6 +121,7 @@ export function PrivacyPage() {
       <h2>What we do not do</h2>
       <ul>
         <li>We do not sell your data or share it for advertising.</li>
+        <li>The AI tutor, design reviews and the AI labs send your question and the code they need to OpenAI, through our own gateway, to get an answer. OpenAI receives no name or email address with it.</li>
         <li>We do not use third party analytics or tracking scripts. Fonts and images are served from our own servers.</li>
       </ul>
 
