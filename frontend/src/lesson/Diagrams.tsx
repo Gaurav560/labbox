@@ -2749,7 +2749,101 @@ function LgFunctional() {
   );
 }
 
+function LgMutation() {
+  return (
+    <SketchSteps
+      title="How the checks judge your tests"
+      intro="Press Play to follow one test through the check."
+      label="Planted bugs"
+      steps={[
+        { label: "Correct desk", says: "Your test runs against the reference desk.py. It must pass." },
+        { label: "Plant a bug", says: "The check changes one line: TEAMS forgets dirty water." },
+        { label: "Run again", says: "Your test runs against the broken desk." },
+        { label: "Fails?", says: "A good test fails here: it noticed the bug. The task passes." },
+        { label: "Passes?", says: "A test that still passes would not notice this mistake: the check says it is too weak." },
+      ]}
+    />
+  );
+}
+
+function LgServer() {
+  return (
+    <SketchSteps
+      title="One message through the server"
+      intro="Press Play to follow 'Any update?' from client.py."
+      label="Server"
+      steps={[
+        { label: "threads.create", says: "The client asks for a thread; the server returns its id." },
+        { label: "runs.wait", says: "The client sends the message as JSON on that thread, for the graph named harsh." },
+        { label: "load", says: "The server loads the thread's saved state: empty the first time." },
+        { label: "run", says: "It runs harsh/graph.py's graph: agent, tools, agent." },
+        { label: "save", says: "It saves the thread itself; the graph has no checkpointer of its own." },
+        { label: "answer", says: "runs.wait returns the final state; the client prints the last message." },
+      ]}
+    />
+  );
+}
+
+function LgDeepAgent() {
+  return (
+    <SketchSteps
+      title="The planner, its files and its helper"
+      intro="Press Play to follow the monsoon plan."
+      label="Deep agent"
+      steps={[
+        { label: "read_file", says: "The planner reads /pipes.csv and /crews.md: small files, real data/ on disk." },
+        { label: "permission", says: "It may not read /complaints_2025.csv: 149 rows stay out of its context." },
+        { label: "task", says: "It hands the counting to the data-analyst, with a description of what it needs." },
+        { label: "count_complaints", says: "The analyst counts with Python, in its own fresh context, and returns one answer." },
+        { label: "write_file", says: "The planner writes /plan.md, which is data/plan.md on disk." },
+        { label: "check", says: "Counts from Python are exact; the ages and crew days it worked out itself are not." },
+      ]}
+    />
+  );
+}
+
+function LgResearch() {
+  return (
+    <SketchSteps
+      title="A research team"
+      intro="Press Play to follow the Station Road study."
+      label="Research"
+      steps={[
+        { label: "plan", says: "The planner sees the seven records and writes seven questions." },
+        { label: "Send", says: "Seven researchers start at once, each with one question." },
+        { label: "research", says: "Each reads the sources it needs and returns a Finding with its sources." },
+        { label: "reducer", says: "operator.add collects the seven findings into one list." },
+        { label: "write", says: "The writer turns the findings into paragraphs, each ending with its sources." },
+        { label: "review", says: "Python checks every paragraph's citations; problems go back to the writer once." },
+      ]}
+    />
+  );
+}
+
+function LgCapstone() {
+  return (
+    <SketchSteps
+      title="Harsh, complete"
+      intro="Press Play to follow a burst main."
+      label="Capstone"
+      steps={[
+        { label: "intake", says: "The model reads the message: kind repair, problem main_burst, street Station Road." },
+        { label: "route_intent", says: "kind repair: go to the repair node." },
+        { label: "repair", says: "REPAIR_COST says Rs 65,000: over 50,000, so interrupt and wait." },
+        { label: "server", says: "The run is saved; the client shows that the engineer is being asked." },
+        { label: "engineer", says: "Her app sends command={'resume': {'approve': True}} on the same thread." },
+        { label: "booked", says: "repair runs again, gets the approval, and books a crew. For Thursday: the urgency was never checked." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lg-mutation": LgMutation,
+  "lg-server": LgServer,
+  "lg-deep-agent": LgDeepAgent,
+  "lg-research": LgResearch,
+  "lg-capstone": LgCapstone,
   "lg-agent-loop": LgAgentLoop,
   "lg-reflection": LgReflection,
   "lg-agentic-rag": LgAgenticRag,

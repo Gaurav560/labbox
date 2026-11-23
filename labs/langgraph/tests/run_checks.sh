@@ -27,6 +27,11 @@ subgraphs|16-subgraphs|add_subgraph map_state
 multi-agent|17-multi-agent|supervisor_route specialist_report
 streaming|18-streaming|progress_events stream_tokens
 functional-api|19-functional-api|task_steps approval_in_flow
+testing|20-testing|test_routes test_interrupts
+server|21-server|server_graph sdk_client
+deep-agents|22-deep-agents|deep_agent analyst_subagent
+research-team|23-research-team|fan_out_questions check_citations
+capstone|24-capstone|route_intent approve_over_api
 "
 
 fail_all() { # tasks message

@@ -11,7 +11,7 @@ language: python
 track: ai
 tags: [python, ai, langgraph]
 level: intermediate
-estimated_minutes: 815
+estimated_minutes: 1035
 cover_scene: "A calm control room of a small city water board at night, a map of pipes and a repair van outside."
 cover: cover.svg
 cover_credit: { by: "Logo: LangGraph", source: "Simple Icons (CC0)" }
@@ -527,3 +527,134 @@ chapters:
     examples:
     - call: start J-302 65000
       gives: __interrupt__ with the estimate
+- id: testing
+  title: Testing graphs
+  file: chapters/20-testing.md
+  minutes: 40
+  folder: 20-testing
+  part: Production
+  tasks:
+  - id: test_routes
+    title: a test for routing
+    xp: 20
+    hints:
+    - The test is empty, so it passes even when dirty water goes to the wrong team.
+    - build_graph takes a fake chat model, and invoke returns the final state.
+    - Invoke on a brown-water complaint and assert both the kind and the team.
+    examples:
+    - call: python -m pytest -v
+      gives: test_dirty_water_goes_to_health PASSED
+  - id: test_interrupts
+    title: a test for the pause
+    xp: 25
+    hints:
+    - The test is empty, so a repair that skips the engineer would still pass.
+    - An interrupt needs a checkpointer and a thread id; get_state shows where the run is waiting.
+    - Assert the pause and the waiting node, resume with a refusal, and assert the status and that no reply exists.
+    examples:
+    - call: python -m pytest -v
+      gives: test_big_repair_waits_for_engineer PASSED
+- id: server
+  title: A local server
+  file: chapters/21-server.md
+  minutes: 40
+  folder: 21-server
+  tasks:
+  - id: server_graph
+    title: a graph the server accepts
+    xp: 15
+    hints:
+    - langgraph dev refuses to load the graph, and its log says why.
+    - The server saves every thread itself; a graph must not bring its own checkpointer.
+    - Compile without a checkpointer, and remove the import you no longer need.
+    examples:
+    - call: langgraph dev --no-browser --port 2024
+      gives: '{"ok":true}'
+  - id: sdk_client
+    title: talk to the server
+    xp: 20
+    hints:
+    - ask returns an empty string, so nothing is sent.
+    - runs.wait runs the graph on a thread and returns its final state as a dict.
+    - Send the text as a user message with runs.wait and return the content of the last message.
+    examples:
+    - call: python client.py "Any update on my complaints?" "98220"
+      gives: two answers, 9 messages saved by the server
+- id: deep-agents
+  title: Deep Agents
+  file: chapters/22-deep-agents.md
+  minutes: 45
+  folder: 22-deep-agents
+  tasks:
+  - id: deep_agent
+    title: a planner with files and a helper
+    xp: 20
+    hints:
+    - The planner has no data-analyst, and its files live only in memory.
+    - create_deep_agent takes subagents, and a backend decides where its files are.
+    - Pass the analyst as a subagent and a FilesystemBackend rooted at the data folder in virtual mode.
+    examples:
+    - call: python main.py
+      gives: data/plan.md written
+  - id: analyst_subagent
+    title: the analyst's tool
+    xp: 15
+    hints:
+    - The analyst is asked for numbers but has no way to count.
+    - A subagent is a dict; its tools key lists what it may call.
+    - Give the analyst the count_complaints tool.
+    examples:
+    - call: count Station Road leaks
+      gives: '41'
+- id: research-team
+  title: A research team
+  file: chapters/23-research-team.md
+  minutes: 45
+  folder: 23-research-team
+  tasks:
+  - id: fan_out_questions
+    title: one researcher per question
+    xp: 15
+    hints:
+    - fan_out sends no work, so nothing is researched.
+    - A Send names a node and that run's own input.
+    - Return a Send to research for each question, with the question in its input.
+    examples:
+    - call: three questions
+      gives: three Sends to research
+  - id: check_citations
+    title: check every paragraph
+    xp: 25
+    hints:
+    - check_citations finds no problems, even in a paragraph with no source.
+    - cited holds the source names found in the paragraph; known holds the real ones.
+    - Add a problem when cited is empty, and one for each cited name that is not known.
+    examples:
+    - call: a paragraph citing [council-notes]
+      gives: unknown source [council-notes]
+- id: capstone
+  title: Capstone
+  file: chapters/24-capstone.md
+  minutes: 50
+  folder: 24-capstone
+  tasks:
+  - id: route_intent
+    title: every message to its place
+    xp: 20
+    hints:
+    - Every message goes to other, so nothing is answered.
+    - The intake writes intent with a kind; three kinds have nodes of the same name.
+    - Return the node named after the kind for status, rules and repair, and other for anything else.
+    examples:
+    - call: '{"intent": {"kind": "rules"}}'
+      gives: rules
+  - id: approve_over_api
+    title: the engineer's answer over HTTP
+    xp: 25
+    hints:
+    - decide returns an empty dict and the repair stays paused.
+    - runs.wait accepts a command instead of an input; a resume command answers a paused run.
+    - Call runs.wait on the thread with a resume command holding approve and note.
+    examples:
+    - call: decide(client, thread, True, "before the evening rush")
+      gives: A crew is booked for the main burst at Station Road

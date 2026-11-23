@@ -113,3 +113,6 @@ nodes:
   - id: lg-agents
     title: Agents in graphs (LangGraph, Part 3)
     chapters: [langgraph/agent-graph, langgraph/reflection, langgraph/agentic-rag, langgraph/subgraphs, langgraph/multi-agent, langgraph/streaming, langgraph/functional-api]
+  - id: lg-production
+    title: Production (LangGraph, Part 4)
+    chapters: [langgraph/testing, langgraph/server, langgraph/deep-agents, langgraph/research-team, langgraph/capstone]

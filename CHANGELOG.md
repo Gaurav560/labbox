@@ -1,5 +1,26 @@
 # Changelog
 
+## 24 November: LangGraph, Part 4 (production): the course is complete
+
+- Five chapters, ten tasks, every output captured through the gateway: testing graphs (learners write pytest tests;
+  the checks run them on the correct desk and with a planted bug, mutation-testing style), a local server
+  (`langgraph.json`, `langgraph dev`, the SDK; the server's real refusal of a graph with its own checkpointer is the
+  first task), Deep Agents (a monsoon planner with a FilesystemBackend, a data-analyst subagent and a read permission;
+  every count from Python was exact and every number the planner worked out itself was wrong, as the lesson shows), a
+  research team (Send fan-out, structured findings, citations checked in Python; the first run's parser rejected the
+  writer's `[a, b]` lists and the planner missed the pressure log, both shown and fixed; the report still never links
+  the 2.5 bar design pressure to the 3.0 bar raise), and the capstone (intake, two `create_agent` agents as nodes, an
+  approval resumed over HTTP; a flooding main still waits for approval and is booked for Thursday, the lesson of
+  chapter 6 again).
+- The image adds `langgraph-cli[inmem]` (pinned, 29 packages) so labs can run `langgraph dev`. Chapters 22 to 24 share
+  an `InMemoryRateLimiter` (0.3 calls a second) to stay under the gateway's 20 calls a minute.
+- The author account's daily budget ran out mid-part; the owner approved raising it for this session (backend started
+  with LLM_DAILY_TOKENS=400000 and LLM_RPM=60 in its environment only, restored afterwards; backend/.env untouched).
+- Five playing diagrams, five notes pages, three photos (the 1947 moth log page, EDSAC, Marvin Minsky; also placed in
+  chapters 16 and 17), one AI-track node. LangGraph: 24 chapters, 48 tasks, about 17 hours, 18 real photos.
+- Open product question: a learner's daily budget is 50,000 tokens across all labs; a deep agent or research run can
+  use a large part of it.
+
 ## 23 November: LangGraph, Part 3 (agents in graphs)
 
 - Seven chapters, fourteen tasks, every output captured through the gateway: an agent loop by hand (`bind_tools`,

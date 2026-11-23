@@ -37,6 +37,12 @@ the blackboard, and `Command` is how one agent hands over to the next.
 - **1986** "The Society of Mind".
 - **2023** Multi-agent frameworks for language models.
 :::
+
+Marvin Minsky, who argued in 1986 that a mind is a society of many simple agents, each doing one small job.
+
+:::photo{src="/lesson-images/langgraph/minsky.webp" alt="Marvin Minsky, an older man with glasses, seen in profile, looking down" credit="Joi Ito" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Marvin_Minsky_(1).jpg"}
+Marvin Minsky.
+:::
 :::
 
 :::step{type=concept title="The supervisor routes with Command" file="17-multi-agent/team.py" line="37-42"}

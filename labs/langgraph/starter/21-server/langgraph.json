@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "harsh": "./harsh/graph.py:graph"
+  },
+  "env": {"LANGSMITH_TRACING": "false"}
+}

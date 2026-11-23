@@ -36,6 +36,12 @@ inside it.
 - **1972** Parnas: modules that hide their decisions.
 - **2024** LangGraph subgraphs.
 :::
+
+EDSAC at the University of Cambridge, where the first library of subroutines was written: racks of valves, and programs that could call each other's parts.
+
+:::photo{src="/lesson-images/langgraph/edsac.webp" alt="Two men standing among tall racks of vacuum tubes and wiring in a plain room, a black and white photo" credit="Computer Laboratory, University of Cambridge" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:EDSAC_(12).jpg"}
+EDSAC, Cambridge, around 1949.
+:::
 :::
 
 :::step{type=concept title="Shared keys: the graph is the node" file="16-subgraphs/desk.py" line="36-47"}
