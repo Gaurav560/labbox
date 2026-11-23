@@ -53,3 +53,11 @@ nodes:
     title: Parameters, hallucinations and cost
     requires: [l4j-calling]
     chapters: [langchain4j/parameters, langchain4j/hallucinations, langchain4j/usage]
+  - id: l4j-ai-services
+    title: AI Services, templates and structured output
+    requires: [l4j-controlling]
+    chapters: [langchain4j/ai-services, langchain4j/templates, langchain4j/structured]
+  - id: l4j-apps
+    title: Streaming, memory and a Spring Boot API
+    requires: [l4j-ai-services]
+    chapters: [langchain4j/streaming, langchain4j/memory, langchain4j/rest-api]

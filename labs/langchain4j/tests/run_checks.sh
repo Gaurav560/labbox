@@ -21,6 +21,12 @@ first-app|09-first-app|chat_model system_message
 parameters|10-parameters|steady_model short_answer
 hallucinations|11-hallucinations|honest_prompt grounded_answer
 usage|12-usage|token_usage answer_cost
+ai-services|13-ai-services|ai_service system_annotation
+templates|14-templates|prompt_template template_service
+structured|15-structured|extract_trip classify_topic
+streaming|16-streaming|stream_tokens token_stream
+memory|17-memory|window_memory memory_per_passenger
+rest-api|18-rest-api|ai_service_bean chat_endpoint
 "
 
 fail_all() { # tasks message
@@ -51,6 +57,8 @@ echo "$CHAPTERS" | while IFS='|' read -r chapter dir tasks; do
     if grep -q "COMPILATION ERROR" "$log"; then
       why=$(grep -m1 -E "\[ERROR\] .*\.java:\[[0-9]+" "$log" | sed -E 's/.*\/src\/(main|test)\/java\///; s/^\[ERROR\] //')
       fail_all "$missing" "the project does not compile: ${why:-see Output}."
+    elif grep -q "No qualifying bean of type 'com.setu.SetuAssistant'" "$log"; then
+      fail_all "$missing" "the app did not start: Spring found no SetuAssistant bean to give SetuController. Annotate the SetuAssistant interface with @AiService."
     else
       why=$(grep -E "^Caused by: " "$log" | tail -1 | sed -E 's/^Caused by: [A-Za-z0-9_.$]+: //' | cut -c1-220)
       fail_all "$missing" "the check could not run: ${why:-see Output}."

@@ -12,7 +12,7 @@ language: java
 track: ai
 tags: [java, ai, langchain4j]
 level: intermediate
-estimated_minutes: 530
+estimated_minutes: 790
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain4j", source: "LangChain4j project (Apache 2.0)" }
@@ -365,3 +365,162 @@ chapters:
     examples:
     - call: dollars(new Usage(180, 60))
       gives: '0.000063'
+- id: ai-services
+  title: AI Services
+  file: chapters/13-ai-services.md
+  minutes: 40
+  folder: 13-ai-services
+  part: AI Services
+  tasks:
+  - id: ai_service
+    title: let LangChain4j implement Setu
+    xp: 20
+    hints:
+    - assistant returns null. LangChain4j can implement the Assistant interface for you.
+    - The AiServices class has a static method that takes an interface and a ChatModel.
+    - Pass Assistant.class and the model to that method and return what it creates.
+    examples:
+    - call: assistant(model).chat("Hello!")
+      gives: Hello! I'm Setu, ...
+  - id: system_annotation
+    title: attach the instructions with an annotation
+    xp: 20
+    hints:
+    - The model gets no system message, so it answers as a generic assistant.
+    - An annotation on the chat method can load the system message from a file on the classpath.
+    - Use the SystemMessage annotation from dev.langchain4j.service, with fromResource set to the file's name.
+    examples:
+    - call: the request for chat("Hello")
+      gives: a system message with the text of setu-system.txt
+- id: templates
+  title: Prompt templates
+  file: chapters/14-templates.md
+  minutes: 40
+  folder: 14-templates
+  tasks:
+  - id: prompt_template
+    title: fill a prompt template
+    xp: 20
+    hints:
+    - delayPrompt returns an empty string. DELAY already holds the template.
+    - A PromptTemplate's apply method takes a map from each blank's name to its value.
+    - The keys are train, destination and minutes; the result is a Prompt, whose text() is the string.
+    examples:
+    - call: delayPrompt("Konkan Breeze", "Ratnagiri", 25)
+      gives: '... the Konkan Breeze to Ratnagiri is running 25 minutes late ...'
+  - id: template_service
+    title: a template on an AI Service method
+    xp: 20
+    hints:
+    - LangChain4j refuses ask(...) because it does not know where station and question go.
+    - The UserMessage annotation holds the template; the V annotation names the blank a parameter fills.
+    - Put the template from the TODO on the method, and V("station"), V("question") (with @) on the two parameters.
+    examples:
+    - call: ask("Lonavala", "Where is the cloakroom?")
+      gives: 'user message: A passenger at Lonavala station asks: Where is the cloakroom?'
+- id: structured
+  title: Structured output
+  file: chapters/15-structured.md
+  minutes: 45
+  folder: 15-structured
+  tasks:
+  - id: extract_trip
+    title: return a TripRequest record
+    xp: 20
+    hints:
+    - trip still returns a String, so the booking system would have to parse text.
+    - When an AI Service method returns a record, LangChain4j sends its JSON schema and parses the answer.
+    - Change only the return type of trip, from String to TripRequest; keep the annotation.
+    examples:
+    - call: trip("3 tickets from Pune to Karjat this Saturday")
+      gives: TripRequest[from=Pune, to=Karjat, date=..., passengers=3]
+  - id: classify_topic
+    title: classify with an enum
+    xp: 20
+    hints:
+    - Reader has no method for topics yet.
+    - A method returning the Topic enum makes the model choose one of its six values.
+    - Add a method named topic taking the message as a String, with the UserMessage text from the TODO.
+    examples:
+    - call: topic("I cancelled yesterday, where is my money?")
+      gives: REFUND
+- id: streaming
+  title: Streaming answers
+  file: chapters/16-streaming.md
+  minutes: 45
+  folder: 16-streaming
+  tasks:
+  - id: stream_tokens
+    title: stream with a handler
+    xp: 20
+    hints:
+    - stream returns a future nobody ever completes, and never calls the model.
+    - model.chat(question, handler) takes a StreamingChatResponseHandler with three callbacks.
+    - Pass each partial response to onToken, complete the future in onCompleteResponse, and completeExceptionally in onError.
+    examples:
+    - call: stream(model, "Why do trains slow down on a ghat?", print)
+      gives: 56 pieces, the first after about a second
+  - id: token_stream
+    title: a streaming AI Service
+    xp: 20
+    hints:
+    - ask returns a future nobody completes.
+    - setu.chat(question) returns a TokenStream; attach callbacks to it in a chain.
+    - Use onPartialResponse, onCompleteResponse (with the answer's text) and onError, then call start().
+    examples:
+    - call: ask(setu, "Hello! Which trains do you run?", print)
+      gives: the answer, word by word, then its full text
+- id: memory
+  title: Chat memory
+  file: chapters/17-memory.md
+  minutes: 45
+  folder: 17-memory
+  tasks:
+  - id: window_memory
+    title: give Setu a memory
+    xp: 20
+    hints:
+    - assistant uses AiServices.create, which has no memory, so every question starts from nothing.
+    - AiServices.builder(Assistant.class) takes the model and a chatMemory.
+    - Give it a MessageWindowChatMemory that keeps the last 10 messages, then build().
+    examples:
+    - call: chat("My name is Meera."), then chat("What is my name?")
+      gives: Your name is Meera.
+  - id: memory_per_passenger
+    title: one memory per passenger
+    xp: 20
+    hints:
+    - A method with @MemoryId needs memories chosen by id, so the desk cannot answer yet.
+    - The builder's chatMemoryProvider takes a function from a memory id to a ChatMemory.
+    - For each id, build a MessageWindowChatMemory with that id and 10 messages.
+    examples:
+    - call: chat("ravi", "What did I lose?") after Ravi lost an umbrella
+      gives: your umbrella
+    - call: chat("asha", "What did I lose?")
+      gives: a question back, not Ravi's umbrella
+- id: rest-api
+  title: An AI REST API with Spring Boot
+  file: chapters/18-rest-api.md
+  minutes: 45
+  folder: 18-rest-api
+  tasks:
+  - id: ai_service_bean
+    title: make Setu a Spring bean
+    xp: 20
+    hints:
+    - The app does not start, because nothing implements SetuAssistant for the controller.
+    - The LangChain4j Spring Boot starter implements interfaces that carry one annotation.
+    - Put the AiService annotation from dev.langchain4j.service.spring on the SetuAssistant interface.
+    examples:
+    - call: the app starting
+      gives: a SetuAssistant bean, wired with the model and the memory provider
+  - id: chat_endpoint
+    title: expose POST /chat
+    xp: 20
+    hints:
+    - POST /chat answers 404, because no method handles it.
+    - A method with PostMapping("/chat") and a RequestBody ChatRequest parameter receives the JSON.
+    - Ask setu.chat with the request's passenger and message, and return a ChatReply with the passenger and the answer.
+    examples:
+    - call: 'POST /chat {"passenger": "meera", "message": "What did I just ask you about?"}'
+      gives: '{"passenger": "meera", "answer": "You asked if the Konkan Breeze ..."}'

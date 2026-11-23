@@ -1,5 +1,17 @@
 # Changelog
 
+## 23 November: LangChain4j, Part 3 (AI Services)
+
+- Part 3, "AI Services" (6 chapters, 12 tasks), every model output captured from gpt-4o-mini through the gateway: an
+  AI Service as an interface implemented by a proxy (`jdk.proxy3.$Proxy28`), instructions from a resource file with
+  `@SystemMessage(fromResource = ...)`; prompt templates with `PromptTemplate.apply` and `@UserMessage`/`@V`; structured
+  output into a record and an enum with strict JSON schemas (the real schema is quoted, and the model's real wrong date,
+  a Thursday for "this coming Saturday", leads to tools); streaming with a handler and a `TokenStream` (first piece
+  after 905 ms, all after 2103 ms); chat memory, shared and per passenger with `@MemoryId`; and Setu as a Spring Boot 4
+  web API with `@AiService` and `POST /chat`.
+- The check runner names the cause when the Spring app cannot start for lack of an `@AiService` bean.
+- One more playing diagram (inside an AI Service), six notes pages, two AI-track nodes.
+
 ## 23 November: LangChain4j's cover uses its real logo
 
 - Owner: "use LangChain4j's real logo". The cover now shows LangChain4j's own parrot logo (from the project's Apache 2.0

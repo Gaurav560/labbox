@@ -2061,7 +2061,26 @@ function L4jHttpCall() {
   );
 }
 
+function L4jAiService() {
+  return (
+    <SketchSteps
+      title="inside an AI Service"
+      intro="Press Play to follow one call to setu.chat."
+      label="the call goes to a proxy; the proxy reads the annotations, builds the system and user messages, calls the ChatModel, and converts the answer to the method's return type"
+      steps={[
+        { label: "1. Your code", says: 'setu.chat("Hello!") on the Assistant interface.' },
+        { label: "2. The proxy", says: "A class the JDK generated at run time receives the call." },
+        { label: "3. Annotations", says: '@SystemMessage(fromResource = "setu-system.txt") becomes the system message.' },
+        { label: "4. Messages", says: "The argument becomes the user message; memory adds the history." },
+        { label: "5. The model", says: "ChatModel.chat(...) sends the request through the gateway." },
+        { label: "6. Return type", says: "String here; a record, an enum or a TokenStream in later chapters." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-ai-service": L4jAiService,
   "l4j-http-call": L4jHttpCall,
   "l4j-ai-circles": L4jAiCircles,
   "l4j-neuron": L4jNeuron,
