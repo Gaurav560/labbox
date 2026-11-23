@@ -12,7 +12,7 @@ tags:
 - rust
 - beginner
 level: beginner
-estimated_minutes: 375
+estimated_minutes: 565
 cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
@@ -237,3 +237,108 @@ chapters:
     examples:
     - call: last_hour of ten readings
       gives: the last six
+- id: structs
+  title: Structs and methods
+  file: chapters/09-structs.md
+  minutes: 50
+  folder: 09-structs
+  part: Shaping data
+  tasks:
+  - id: from_line
+    title: a Reading from a log line
+    xp: 15
+    hints:
+    - from_line still says todo!().
+    - A struct value names every field; text from the line must become an owned String to live in the struct.
+    - Build a Reading with the four parts, turning the two texts into Strings and parsing the two numbers.
+    examples:
+    - call: Reading::from_line("T07,2026-11-24 10:10,12.4,2100")
+      gives: a Reading for T07 at 12.4 m/s and 2100 kW
+  - id: underperforming
+    title: is this turbine underperforming?
+    xp: 20
+    hints:
+    - underperforming still says todo!().
+    - A method reads its own fields through self and can call its other methods.
+    - Compare the power with eighty percent of the expected power, and only when something is expected at all.
+    examples:
+    - call: a reading of 140 kW at 7.5 m/s
+      gives: 'true'
+- id: enums
+  title: Enums and Option
+  file: chapters/10-enums.md
+  minutes: 50
+  folder: 10-enums
+  tasks:
+  - id: classify
+    title: classify a turbine
+    xp: 20
+    hints:
+    - classify still says todo!().
+    - match on the fault Option; each variant of Status is built with its own data.
+    - A fault code wins; otherwise the wind decides between calm, generating with its power, and a storm stop.
+    examples:
+    - call: classify(14.0, 0.0, Some(512))
+      gives: Fault(512)
+  - id: peak_power
+    title: the peak, if there is one
+    xp: 15
+    hints:
+    - peak_power still says todo!().
+    - 'Option says "maybe nothing": None for an empty log, Some for a real peak.'
+    - Return None when the log is empty; otherwise keep the largest reading in a loop and wrap it in Some.
+    examples:
+    - call: peak_power(&[])
+      gives: None
+- id: match
+  title: Pattern matching
+  file: chapters/11-match.md
+  minutes: 50
+  folder: 11-match
+  tasks:
+  - id: describe_status
+    title: a status in words
+    xp: 20
+    hints:
+    - Generating and fault statuses still reach the todo!() arm.
+    - Arms are tried in order; a guard adds a condition, and a range with @ names the matched code.
+    - Add the full-power arm with its guard first, then generating, then the urgent fault range, then any other fault.
+    examples:
+    - call: describe(&Status::Fault(512))
+      gives: 'fault 512: send the crew now'
+  - id: parse_line
+    title: broken lines become None
+    xp: 20
+    hints:
+    - parse_line still says todo!() once the line has four fields.
+    - let else binds the value when the pattern fits, and must leave when it does not.
+    - Parse wind and power with let else returning None on failure, then return Some of a new Reading.
+    examples:
+    - call: parse_line("T07,2026-11-24 10:50,13.4,22O0")
+      gives: None
+- id: modules
+  title: Modules and crates
+  file: chapters/12-modules.md
+  minutes: 40
+  folder: 12-modules
+  tasks:
+  - id: make_public
+    title: open the summary
+    xp: 15
+    hints:
+    - The crate does not compile; the compiler says a function is private.
+    - Everything in a module is private unless marked pub.
+    - Mark farm_summary in report.rs as pub.
+    examples:
+    - call: cargo run
+      gives: 3 turbines, 4 readings (1 skipped), 0.72 MWh
+  - id: re_export
+    title: a short path
+    xp: 15
+    hints:
+    - farm_summary is only reachable through the report module's path.
+    - pub use makes another public path to a name.
+    - Re-export farm_summary from the report module in lib.rs.
+    examples:
+    - call: ch12_modules::farm_summary(...)
+      gives: the same summary

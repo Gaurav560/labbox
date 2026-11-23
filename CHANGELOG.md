@@ -1,5 +1,20 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 3 (shaping data)
+
+- Four chapters, eight tasks, every output and compiler message captured from real runs: structs and methods (a
+  Reading from a log line; the power curve flags T12 making 140 kW where 312 are expected), enums and Option (four
+  statuses carrying their data; an empty day's peak is None, not a made-up zero), pattern matching (a guard, a range
+  of urgent fault codes, E0004 for a forgotten case, the unreachable-arm warning checked for real; `let else` skips
+  three broken lines out of six, including `22O0` with a letter O), and modules (E0603 for a private function, `pub
+  use` for a short path).
+- The check runner can build one hidden test per task (`check_<task>.rs`), so a missing `pub use` does not hide the
+  other task's result, and it now says "your code compiles, but the check cannot use it" when only the check's import
+  fails.
+- Three playing diagrams, four notes pages (page 11 redrawn: the first said `500...=599`), two photos (Grace Hopper,
+  Tony Hoare; a Niklaus Wirth photo was left out because it shows a drinks bottle), one track node. Chapter 11's task
+  id is `describe_status` (task ids are unique across the lab; chapter 3 has `describe`).
+
 ## 24 November: Rust from zero, Part 2 (ownership)
 
 - Three chapters, six tasks, every output and compiler message captured from real runs: ownership and moves (E0382

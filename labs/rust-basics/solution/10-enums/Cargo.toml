@@ -1,0 +1,6 @@
+[package]
+name = "ch10-enums"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

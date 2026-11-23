@@ -135,3 +135,7 @@ nodes:
     title: Rust ownership
     requires: [rust-first-steps]
     chapters: [rust-basics/ownership, rust-basics/borrowing, rust-basics/slices-and-strings]
+  - id: rust-shaping-data
+    title: Rust structs, enums and modules
+    requires: [rust-ownership]
+    chapters: [rust-basics/structs, rust-basics/enums, rust-basics/match, rust-basics/modules]

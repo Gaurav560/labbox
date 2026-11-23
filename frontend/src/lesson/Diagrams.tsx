@@ -2975,7 +2975,61 @@ function RsSlice() {
   );
 }
 
+function RsOption() {
+  return (
+    <SketchSteps
+      title="A peak that may not exist"
+      intro="Press Play to follow two logs into peak_power."
+      label="Option"
+      steps={[
+        { label: "Monday", says: "Three readings: peak_power returns Some(2400.0), the number wrapped in Some." },
+        { label: "Tuesday", says: "No readings: there is no peak, so peak_power returns None. No made-up zero, no null." },
+        { label: "the caller", says: "An Option<f64> is not an f64: adding 100 to it does not compile." },
+        { label: "deciding", says: "The caller opens it: match, if let, or unwrap_or(0.0), where everyone can see the choice." },
+        { label: "printed", says: "Monday shows 2400, Tuesday shows 0, because the caller chose 0 for None." },
+      ]}
+    />
+  );
+}
+
+function RsLetElse() {
+  return (
+    <SketchSteps
+      title="Three gates for a log line"
+      intro="Press Play to send three lines through parse_line."
+      label="let else"
+      steps={[
+        { label: "gate 1: four fields", says: "let [turbine, time, wind, power] = parts[..] else { return None };" },
+        { label: "12.9 with three fields", says: '"T07,...,12.9" has three parts: it does not fit, so None.' },
+        { label: "gate 2: wind is a number", says: '"windy" cannot be parsed into an f64: None.' },
+        { label: "gate 3: power is a number", says: '"22O0" has a letter O: None.' },
+        { label: "through", says: '"T07,...,12.4,2100" passes all three gates and becomes Some(Reading { ... }).' },
+      ]}
+    />
+  );
+}
+
+function RsModules() {
+  return (
+    <SketchSteps
+      title="Borders inside a crate"
+      intro="Press Play to follow a call from main.rs to reading.rs."
+      label="Modules"
+      steps={[
+        { label: "lib.rs", says: "The crate root says pub mod reading; pub mod report;, so the two files are part of the crate." },
+        { label: "main.rs", says: "Outside the library: it may only use pub items, by paths starting with ch12_modules." },
+        { label: "summary_text", says: "lib.rs calls report::farm_summary: it must be pub, even for the parent module." },
+        { label: "farm_summary", says: "report.rs uses crate::reading::parse_line, a pub function in a sibling module." },
+        { label: "pub use", says: "lib.rs re-exports farm_summary, so outsiders can write ch12_modules::farm_summary." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-option": RsOption,
+  "rs-let-else": RsLetElse,
+  "rs-modules": RsModules,
   "rs-move": RsMove,
   "rs-borrow": RsBorrow,
   "rs-slice": RsSlice,

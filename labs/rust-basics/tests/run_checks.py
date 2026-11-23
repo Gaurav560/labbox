@@ -21,6 +21,10 @@ CHAPTERS = [
     ("ownership", "06-ownership", "test", ["fix_moved_value", "add_reading"]),
     ("borrowing", "07-borrowing", "test", ["average_power", "cap_readings"]),
     ("slices-and-strings", "08-slices-and-strings", "test", ["turbine_id", "last_hour"]),
+    ("structs", "09-structs", "test", ["from_line", "underperforming"]),
+    ("enums", "10-enums", "test", ["classify", "peak_power"]),
+    ("match", "11-match", "test", ["describe_status", "parse_line"]),
+    ("modules", "12-modules", "test", ["make_public", "re_export"]),
 ]
 
 
@@ -77,11 +81,27 @@ def run_mode(cid, folder, tasks, work, pkg):
 
 
 def test_mode(cid, folder, tasks, work, pkg):
+    """One hidden test for the chapter (check.rs), or one per task (check_<task>.rs) when a task's test would not
+    even compile until that task is done (like a missing `pub use`): then each task is built on its own."""
+    if os.path.exists(f"{T}/{cid}/check.rs"):
+        run_tests(folder, tasks, work, pkg, {"labbox_check": f"{T}/{cid}/check.rs"})
+    else:
+        for t in tasks:
+            run_tests(folder, [t], work, pkg, {f"labbox_{t}": f"{T}/{cid}/check_{t}.rs"})
+
+
+def run_tests(folder, tasks, work, pkg, targets):
     os.makedirs(f"{work}/{folder}/tests", exist_ok=True)
-    with open(f"{work}/{folder}/tests/labbox_check.rs", "w") as f:
-        f.write(open(f"{T}/common/check.rs").read() + "\n" + open(f"{T}/{cid}/check.rs").read())
-    p = subprocess.run(["cargo", "test", "-q", "-p", pkg, "--test", "labbox_check", "--", "--nocapture",
-                        "--test-threads=1"], cwd=work, capture_output=True, text=True, timeout=200)
+    for name, src in targets.items():
+        with open(f"{work}/{folder}/tests/{name}.rs", "w") as f:
+            f.write(open(f"{T}/common/check.rs").read() + "\n" + open(src).read())
+    args = ["cargo", "test", "-q", "-p", pkg]
+    for name in targets:
+        args += ["--test", name]
+    p = subprocess.run(args + ["--", "--nocapture", "--test-threads=1"], cwd=work, capture_output=True, text=True,
+                       timeout=200)
+    for name in targets:
+        os.remove(f"{work}/{folder}/tests/{name}.rs")
     out = p.stdout + p.stderr
     lines = [l for l in out.splitlines() if l.startswith("@@RESULT ")]
     for l in lines:
@@ -90,9 +110,14 @@ def test_mode(cid, folder, tasks, work, pkg):
     missing = [t for t in tasks if t not in reported]
     if missing and "could not compile" in out:
         show_errors(folder, p.stderr)
+        err = first_error(p.stderr)
         for t in missing:
-            result(t, False, f"your code in {folder}/ does not compile yet: {first_error(p.stderr)}. Read the compiler's "
-                             "message in Output: it says which line, and usually how to fix it.")
+            if "(tests/labbox_" in err:  # the learner's crate compiled; the check cannot reach what it needs
+                result(t, False, f"your code compiles, but the check cannot use it: {err.split(' (tests/')[0]}. "
+                                 "Check that the name exists, is `pub`, and is where the task says.")
+            else:
+                result(t, False, f"your code in {folder}/ does not compile yet: {err}. Read the compiler's message in "
+                                 "Output: it says which line, and usually how to fix it.")
     elif missing:
         print(out[-2000:])
         for t in missing:

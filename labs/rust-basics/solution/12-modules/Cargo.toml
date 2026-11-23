@@ -1,0 +1,6 @@
+[package]
+name = "ch12-modules"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
