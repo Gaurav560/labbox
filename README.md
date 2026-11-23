@@ -262,6 +262,10 @@ Templates: `python`, `java`, `node`, `go` (code exercises), `service-incident` (
 failure, live check) and `preview-app` (FastAPI in the Preview tab). `ai` and `system-design` arrive with
 Phases E and G.
 
+**Writing full courses.** `CONTENT_STANDARD.md` is what a course must be; `COURSE_PRODUCTION.md` is how one
+is built, step by step (syllabus, chapter projects, checks, real captures, photos, diagrams, handwritten
+notes, tests), with the helper scripts in `tools/authoring/`.
+
 **Writing labs at scale.** Describe a lab in a spec (`specs/README.md` has the format: story, chapters,
 tasks, hints, cover scene), then `scripts/labbox new-lab --from-spec specs/<lab>.yaml`. It creates the lab
 from its template with a chapter skeleton per chapter and an `AUTHORING.md` checklist. The lab is done
@@ -323,12 +327,10 @@ A chapter is a list of steps. Each step is one card on screen; the learner moves
 the arrow keys, or the dots. A chapter with no `:::step` markers still works and is shown as one step.
 
 ```markdown
-:::step{type=story title="Lunch orders at Dabba Express"}
-:::character{name="Priya" role="Founder"}
-Every morning we deliver 300 tiffins across Pune.
-:::
+:::step{type=story title="Night shift at the observatory"}
+Tonight the telescope records 300 radio signals, and someone has to sort them.
 :::mission
-Write three small Python functions before the lunch rush.
+Write three small Python functions before the first signal arrives.
 :::
 :::
 
@@ -423,7 +425,7 @@ medium quality, $0.165 at `--quality high`) or Gemini (`GEMINI_API_KEY`), in one
 (neon isometric dioramas, colours per track). Each lab describes its scene in one line:
 
 ```yaml
-cover_scene: "Ravi's Tapri: a tiny roadside coffee stall at night, a big brass kettle steaming..."
+cover_scene: "A small radio telescope dish under a starry sky, a glowing control room beside it..."
 ```
 
 ```bash
@@ -435,7 +437,7 @@ Stock photo covers come from Pexels (free for commercial use; put a free `PEXELS
 `backend/.env`):
 
 ```bash
-scripts/labbox cover fastapi-first-api --query "coffee stall india"   # downloads 6 candidates to tools/.covers/
+scripts/labbox cover fastapi-first-api --query "radio telescope"      # downloads 6 candidates to tools/.covers/
 scripts/labbox cover fastapi-first-api --pick 3                     # saves cover.jpg and the credit in lab.yaml
 ```
 

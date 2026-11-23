@@ -2,7 +2,34 @@
 
 Every LabBox course should be good enough to stand next to the best learning platforms in the world,
 while keeping learners calm, unhurried and confident. Depth is welcome; confusion is not. This page is
-the checklist for every chapter.
+the checklist for every chapter. How a course is built, step by step (syllabus, projects, checks,
+captures, photos, diagrams, notes, tests), is in `COURSE_PRODUCTION.md`.
+
+**The full standard in one list** (owner, 22 November: "full standard. remember this for every lab. real
+images, handwritten images, animations, tables, and much more"). A course meets it when it has all of these:
+
+| Every course has | What it means | Look at |
+|---|---|---|
+| A teacher's voice, curiosity first | one teacher talking to one learner; a question or a surprise first; guess, then run, then explain | Spring Boot 14, Python from zero |
+| Plain or story, chosen on purpose | plain with one running project when the learner is new to the technology; a story only for advanced courses | section 1 |
+| A distinctive running project | named, its own, never a drink, never Dabba Express, nothing like the Chai aur Code platform's projects | `COURSE_PRODUCTION.md` step 1 |
+| Parts and a real length | parts of 4 to 6 chapters, 35 to 60 minutes each, as many chapters as the topic needs | Spring Boot (31), Spring AI (20) |
+| History and the world before | chapter 1 tells the story of the technology; later chapters tell the history of their own idea | Redis 1, Spring AI 17 |
+| Why it exists, and what it is worth | the problem it solved; for speed and scale technologies, measured performance and the money it saves | Redis 1, 8 and 13 |
+| The official reference | a framework course follows its official docs, at their current version | Spring AI |
+| Everything quoted is real | every output captured in the lab image (AI answers through the gateway); the lesson changes when the capture disagrees | section 0, item 6 |
+| See it, break it, fix it | the wrong output first, then the task, then the right output | every chapter |
+| Real photos | 10 to 20 or more freely licensed, credited photos, each on the step that teaches its idea | section 3 |
+| Animations | playing diagrams for processes, traces with Play for changing state | section 3 |
+| Tables | comparisons, checklists and costs as tables | Spring AI 18 and 20 |
+| Handwritten notes | one checked notebook page at the end of every recap | section 3 |
+| Two real tasks a chapter | checks that run the learner's code, kind failure messages, hints that climb | section 5 |
+| Honest depth | quick checks that are real decisions; a "Go deeper" step on production | section 2 |
+| The code follows the lesson | every step about project code opens its file and lines | section 3 |
+
+The ten courses at this standard: Python, Java, JavaScript and Go from zero, Spring Boot, Redis in practice,
+SQL from zero, Git without fear, Linux on call, Spring AI. The other eight labs are still 1 or 2 chapters
+(`ROADMAP.md`, the labs table).
 
 ## 0. The template: Spring Boot (owner, 21 November)
 
@@ -32,7 +59,7 @@ What makes it the template, as a checklist for every new course:
 6. **Everything quoted is real.** Every log line, curl answer, error message, stack trace line and SQL statement
    in a lesson was captured by running the chapter's actual project in the lab image. Never invent output.
 7. **See it, break it, fix it.** Each chapter makes the learner *see* the problem first (a `try` step with the
-   real wrong output: a 404, a 500, six SQL queries, a receipt with someone else's lassi), then fix it in a task,
+   real wrong output: a 404, a 500, six SQL queries, a receipt with someone else's order), then fix it in a task,
    then see the right output. If the project has no way to see the problem, add one (a small endpoint, a fake
    service the learner runs in a second terminal).
 8. **Watch it run.** Processes (start-up, a request's journey, a bean's life, a transaction) get a calm playing
@@ -112,8 +139,9 @@ three options, and a one- or two-sentence explanation of why.
 **The recap starts "You can now ..."**, lists skills (not topics) in bullets, and ends with the next chapter:
 "Next, chapter 15: changing existing products properly, with PUT and PATCH."
 
-**Everyday, consistent world.** Prices in Rs and paise, mango lassi, samosa, GST, a nightly report: familiar,
-never jargon, the same Shop API throughout. No hype words, almost never an exclamation mark (one in 31 chapters);
+**Everyday, consistent world.** Prices in Rs and paise, GST, a nightly report: familiar, never jargon, the same
+Shop API throughout. (Some Spring Boot examples still name drinks; they were written before the rule below.
+New content never uses drinks, chai, tea or Dabba Express.) No hype words, almost never an exclamation mark (one in 31 chapters);
 calm confidence.
 
 ### Curiosity first (owner, 22 November, for the language courses)
@@ -129,7 +157,7 @@ animated, cool images, tasks and much more." On top of everything above:
   (how Python runs a file, one function call, reading a traceback), and a trace with Play for every loop.
 - **One small running project, with a name** (Python from zero: **Pocket**, a money tracker): tasks feel like
   giving it new powers, not exercises.
-- **Invite play.** "Now change `juice = 15.5` to `20` and run it again." The learner changes code and sees
+- **Invite play.** "Now change `fare = 15.5` to `20` and run it again." The learner changes code and sees
   what happens long before the task.
 - Still precise: curiosity lives in the questions and reveals, not in piling up analogies. Every output is
   still captured from the real lab image.
@@ -151,7 +179,15 @@ animated, cool images, tasks and much more." On top of everything above:
 
   Every fact must be accurate and checkable: no invented dates, people or users.
 - **Length.** As long as the topic needs (owner: "if it requires 30 lessons, do it"). Spring Boot is 31
-  chapters, 61 tasks, about 20 hours. Beginner language courses are 13 chapters or more.
+  chapters, 61 tasks, about 20 hours; Spring AI 20 chapters, about 16.5 hours; the from-zero language
+  courses 18 or 19 chapters. The full courses are 14 to 31 chapters.
+- **Every chapter's idea has a history too** when it has one (who found it, when, the problem it solved):
+  Spring AI tells the story of prompt injection, of RAG, of "Building Effective Agents". Keep it short and
+  checkable.
+- **Speed and scale.** A technology that exists for speed or scale (Redis, a database, a cache) also teaches
+  how much faster it is and what that is worth, from numbers measured in the lab and honest arithmetic.
+- **Frameworks follow their official reference.** Map every chapter to a section of the official docs, at the
+  version they show as current, so learners recognise it and nothing important is missing.
 
 ## 2. The chapter
 

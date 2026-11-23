@@ -1,7 +1,8 @@
 # Notes for coding agents working on LabBox by Telusko
 
 Read this first, then `HANDOFF.md` (where the last session stopped, file by file), then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
-`labbox-v2-upgrade-spec.md` (the full spec). **Every course follows `CONTENT_STANDARD.md`.** `README.md` explains how to run, test and author labs.
+`labbox-v2-upgrade-spec.md` (the full spec). **Every course follows `CONTENT_STANDARD.md`** (the full-standard
+list is at its top) **and is built the way `COURSE_PRODUCTION.md` describes** (helpers in `tools/authoring/`). `README.md` explains how to run, test and author labs.
 
 Naming: **LabBox** is the product, **Telusko** the parent company. Write "LabBox by Telusko" in
 titles, "LabBox" in product text, "Telusko" for the company (legal pages, copyright). All names and
@@ -54,6 +55,7 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
 
 ## How a lab is made
 
+The full recipe, with commands, is `COURSE_PRODUCTION.md`. In short:
 `specs/<lab>.yaml` -> `scripts/labbox new-lab --from-spec specs/<lab>.yaml` -> write chapters
 (every step about project code names it: `file="..." line="..."`, see CONTENT_STANDARD section 3),
 starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scripts/labbox test-lab
@@ -61,8 +63,8 @@ starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scri
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> name each course part on its first chapter (`part: ...`, the lines of the lab's skill map) -> add the lab's
 chapters to a track in `tracks/` (data only since 22 November; the app no longer shows track maps) -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go,
-service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 17; the owner
-said about 15 is enough for now, so the platform phases come next.
+service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 18 (ten at the full
+standard, eight short; see the table in `ROADMAP.md`).
 
 ## Where we are (keep this current)
 

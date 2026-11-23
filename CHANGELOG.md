@@ -1,5 +1,28 @@
 # Changelog
 
+## 23 November: the full standard and how courses are made, written down
+
+- `COURSE_PRODUCTION.md` (new): how a LabBox course is built, in 12 steps from the syllabus to the commit, the
+  way the ten full courses were built: deciding plain or story and the running project (and the banned
+  examples), following the official docs, the lab folder and its offline image, the chapter projects and
+  their TODOs, the hidden checks, writing the chapters, capturing every output for real (AI output through
+  the gateway with a separate author account and its own budget), photos from Wikimedia Commons, playing
+  diagrams, the handwritten notes and how to check them, cover and track, the tests, and the records.
+- `tools/authoring/` (new): the helper scripts that until now lived only in a session's scratchpad, cleaned
+  up and with no hard-coded paths: `commons_search.py`, `commons_fetch.py`, `insert_photos.py`,
+  `add_diagrams.py`, `notes.py`, `author_token.py`, `capture.sh` (a capture machine from the lab's image) and
+  `runcheck.sh` (one chapter's fresh checks on the starter or solution).
+- `CONTENT_STANDARD.md`: the full standard as one list at the top (what every course has, and which course to
+  look at); course length, history per chapter, measured speed and money, and official references added to
+  section 1; the drink examples it still held up as good examples replaced.
+- `ROADMAP.md`: a table of all 18 labs (chapters, tasks, hours, running project, photos, standard), what is left
+  per lab (the eight short labs, the drink words still in older examples, by lab), the AI track's first course,
+  and current pick-up instructions.
+- `HANDOFF.md`: cut to a short resume note (state, what waits for the owner, how to start, how each full
+  course is checked, ideas, flaky tests); the older file-by-file notes stay in git history and this changelog.
+- `README.md` and `AGENTS.md`: point to the new guide; the chapter-format example no longer uses Dabba Express,
+  and the cover examples no longer use a coffee stall.
+
 ## 23 November: Spring AI, Part 4 (pictures, evaluation, guardrails, cost, agents, Atlas goes live): course complete
 
 - Owner, going to sleep again: "please finish this spring ai completely". Part 4, Beyond text, and production (6

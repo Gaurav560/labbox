@@ -1,6 +1,6 @@
 # LabBox by Telusko: project status
 
-Last updated 20 November 2026. **Part A** is what is done, **part B** is what is left, in order.
+Last updated 23 November 2026. **Part A** is what is done, **part B** is what is left, in order.
 The detail of every step is in `CHANGELOG.md` and `git log`; the full plan is
 `labbox-v2-upgrade-spec.md` (section numbers below point there). How to work on the repo:
 `AGENTS.md`.
@@ -50,18 +50,46 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
 - **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
-### Labs: 17 live
+### Labs: 18, ten at the full standard
 
-| Track | Labs |
-|---|---|
-| Languages | python-basics (**Python from zero**, complete: 13 chapters, 27 tasks), python-collections, java-basics (**Java from zero**, rewritten: 18 chapters, 36 tasks), java-collections, javascript-basics (**JavaScript from zero**, complete: 13 chapters, 26 tasks), javascript-inside-out, go-basics (**Go from zero**, complete: 13 chapters, 26 tasks) |
-| Frameworks | fastapi-first-api, spring-boot-first-api, express-api |
-| Databases | **sql-from-zero** (rewritten 22 November: 14 chapters, 28 tasks, Safar the bus booking app), postgres-indexing-incident, **redis-in-practice** (full revamp, 22 November: 17 chapters, 39 tasks, about 13 hours; why Redis exists, what a cache saves in time and money, measuring performance, zero to production; Basket as the running project), **postgres-transactions-and-locks** |
-| DevOps | **linux-on-call** (rewritten 23 November: 15 chapters, 31 tasks, Tara), **git-without-fear** (rewritten 22 November: 14 chapters, 28 tasks, Trails) |
-| System design | **rate-limiter** (not on the home grid, which keeps its 15 cards) |
+"Full" means every item of the full standard (`CONTENT_STANDARD.md`, the list at the top): a running
+project, history, real photos, notes on every recap, playing diagrams, real captured output, two real
+tasks a chapter. Photos count real photos only (not the notes pages).
 
-Track skill map data (API only since 22 November; each lab shows its own skill map on its course page): `tracks/languages.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`, `tracks/system-design.yaml`.
-You chose to stop at 15 labs for now and build the platform phases next.
+| Lab | Course | Track | Chapters | Tasks | Hours | Running project | Photos | Standard |
+|---|---|---|---|---|---|---|---|---|
+| spring-ai | Spring AI | ai | 20 | 40 | 16.5 | Atlas, a science museum's guide (Spring Boot 4.2, Spring AI 2.1) | 22 | full (23 Nov) |
+| spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
+| python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
+| java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |
+| javascript-basics | JavaScript from zero | languages | 18 | 36 | 13 | Mixtape, a playlist app | 10 | full (22 Nov) |
+| go-basics | Go from zero | languages | 18 | 36 | 13.5 | Parcel, a parcel tracker | 11 | full (22 Nov) |
+| redis-in-practice | Redis in practice | databases | 17 | 39 | 13 | Basket, 10-minute grocery delivery in Pune | 15 | full (22 Nov) |
+| sql-from-zero | SQL from zero | databases | 14 | 28 | 10.5 | Safar, bus ticket booking | 9 | full (22 Nov) |
+| linux-on-call | Linux on call | devops | 15 | 31 | 11.3 | Tara, a radio telescope observatory | 17 | full (23 Nov) |
+| git-without-fear | Git without fear | devops | 14 | 28 | 10 | Trails, a trekking website | 10 | full (22 Nov) |
+| python-collections | Python collections | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
+| java-collections | Java collections | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
+| javascript-inside-out | JavaScript inside out | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
+| fastapi-first-api | FastAPI: your first API | frameworks | 1 | 2 | 0.25 | | 0 | short, to rewrite |
+| express-api | Express: an order tracking API | frameworks | 1 | 2 | 0.3 | | 0 | short, to rewrite |
+| postgres-indexing-incident | Postgres: the slow checkout | databases | 1 | 1 | 0.3 | | 0 | short, to rewrite |
+| postgres-transactions-and-locks | Postgres: transactions and locks | databases | 2 | 4 | 0.7 | | 0 | short, to rewrite |
+| rate-limiter | System design: a rate limiter | system-design | 2 | 2 | 0.7 | | 0 | short, to rewrite (not on the home grid) |
+
+**Left in the content, by lab:**
+- The eight short labs: each needs a syllabus (`COURSE_PRODUCTION.md` step 1), the owner's OK, then the full
+  rebuild.
+- Drink words still appear in older examples (owner decision pending, `HANDOFF.md`): spring-boot-first-api
+  (71 files), python-basics (22), javascript-basics (14), java-basics (6), go-basics (5), fastapi-first-api (5),
+  javascript-inside-out (5), postgres-indexing-incident, rate-limiter, redis-in-practice (2 each), express-api,
+  java-collections, postgres-transactions-and-locks (1 each). The courses built after the rule (SQL, Git,
+  Linux, Spring AI) have none.
+- The `ai` onboarding goal still starts with python-basics; spring-ai is the natural first lab (owner to decide).
+
+Track skill map data (API only since 22 November; each lab shows its own skill map on its course page):
+`tracks/languages.yaml`, `tracks/frameworks.yaml`, `tracks/databases.yaml`, `tracks/devops.yaml`,
+`tracks/system-design.yaml`, `tracks/ai.yaml`.
 
 Every lab passes `validate --strict` and `test-lab` (the starter fails, the solution passes).
 
@@ -73,13 +101,15 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - The quality gate (`validate --strict`) checks the lesson shape and refuses hints that give away the solution.
 - CI runs the tests and `test-lab` on every changed lab.
 
-### Content standard (set by the Redis course, 19 November)
+### Content standard and how courses are made
 
-`redis-in-practice` is the reference for every flagship lab: 13 chapters from zero to senior, 32
-tasks, 4 graded design reviews, about 5 hours. Short cards with one idea each, a "guess first" before
-each key idea, chapter setups that seed real data or real incidents, checks that test behaviour on
-the running system (real concurrency, load tests, `INFO commandstats`, `SLOWLOG`), a "Go deeper"
-card per chapter for experienced engineers, and verified wrong answers that fail with the right lesson.
+- `CONTENT_STANDARD.md`: what every course must be. The full standard is the list at its top; the Spring Boot
+  course is the template for the voice (section 0); curiosity first for beginners.
+- `COURSE_PRODUCTION.md`: how a course is built, in 12 steps from the syllabus to the commit, including real
+  captures (AI output through the gateway with an author account), Wikimedia photos, playing diagrams and
+  handwritten notes.
+- `tools/authoring/`: the scripts those steps use (`commons_search.py`, `commons_fetch.py`, `insert_photos.py`,
+  `add_diagrams.py`, `notes.py`, `author_token.py`, `capture.sh`, `runcheck.sh`).
 
 ### Website and brand
 
@@ -121,7 +151,9 @@ card per chapter for experienced engineers, and verified wrong answers that fail
 - **Editor:** real VS Code (not a lookalike) as the default, Lite as the fallback. "VS Code" is not
   used as a label (Microsoft trademark): the switch says "IDE | Lite".
 - **App colours:** GitHub greys everywhere, not the old blue `#7c9cff`.
-- **AI provider:** Ollama (free, local) for now. The OpenAI key stays approved for cover art only.
+- **AI provider:** Ollama (free, local) by default. The OpenAI key is approved for cover art and the handwritten
+  notes (medium quality), and for the Spring AI course through the gateway only (`ai-chat` = openai/gpt-4o-mini,
+  `ai-embed` = openai/text-embedding-3-small, daily budget on). Anything else needs your approval.
 - **Capacity target:** at most about 100 learners at once. Plan about 1 GB of RAM per running machine
   with the IDE (about 1.5 GB for Java and Spring labs): one 128 GB server or two 64 GB servers.
 - **Phase F (Docker and Kubernetes in labs) is skipped on this laptop** (its kernel 7.0 is newer than
@@ -139,7 +171,7 @@ card per chapter for experienced engineers, and verified wrong answers that fail
       advice, so this matters most before payments arrive.
 - [ ] Decide whether the GitHub repository should be private. It is probably public now, including the
       product spec.
-- [ ] Push the latest commits (`git push`). The last commits from 19 November are only on this machine.
+- [ ] Push the latest commits (`git push`): local commits wait for you to push them.
 - [ ] Serve the IDE (`/ide`) and Preview (`/preview`) from their own web address (for example
       `ide.<domain>`), so code there cannot read the learner's login token. Today they share the app's origin.
 - [ ] Host VS Code's webview files ourselves: openvscode loads them from Microsoft's `vscode-cdn.net`,
@@ -160,7 +192,8 @@ card per chapter for experienced engineers, and verified wrong answers that fail
 
 ### 2. Next: the AI track (24 labs), waiting for your OK on the plan
 
-This is the product's headline, so it comes first. Planned labs, in four stages (shown on the home page):
+This is the product's headline. **Its first course is done: Spring AI** (23 November, OpenAI through the
+gateway, your choice). Planned labs, in four stages (shown on the home page):
 - **Foundations:** How LLMs work, Prompts that hold up, Structured output, Tool calling, Streaming
   responses, Cost and latency budgets.
 - **Retrieval:** Embeddings and similarity, Vector search with pgvector, RAG from zero, Chunking and
@@ -194,7 +227,7 @@ services). Decisions needed from you before building:
   Terraform and AWS on LocalStack, observability, on-call incidents.
 - **Interview:** traps for Python, Java and JavaScript; Java and Spring interview incidents.
 - **Needs a later phase first:**
-  - the AI track (Phase E is built; the labs themselves are not written yet)
+  - the rest of the AI track (Phase E is built; Spring AI is its first course, the others are not written yet)
   - Docker and Kubernetes labs (Phase F, moved to the AWS server in Phase K)
   - more system design labs (Phase G is built: URL shortener, cache stampede, idempotency, queues, news feed)
 
@@ -205,26 +238,11 @@ services). Decisions needed from you before building:
 - build-your-own-gpt
 - docker-start-to-ship
 
-The flagship labs should reach 8 to 12 chapters. **Under way (20 November): every lab becomes a full
-course, one by one** (order: Python, Java, Spring Boot, SQL, Postgres, JavaScript, Express, FastAPI, Go,
-Linux, Git, system design). Beginner courses are plain; advanced courses start with a story. Every course follows
-`CONTENT_STANDARD.md` (history in chapter 1, worked examples, easy wins, quick checks, kind checks); Python
-from zero and Go from zero follow it in full (20 November). Python from
-zero (13 chapters, 27 tasks), Go from zero (13 chapters, 26 tasks) and Java from zero (13 chapters, 26
-tasks, written in the "explain, do not just state" style) and JavaScript from zero (13 chapters, 26 tasks, 20 November) are complete; next: Python in practice
-(with a story) and the others. **Language rewrites (22 November, owner):** Python from zero first (19 chapters in four parts, curiosity-first voice, Pocket as the running project): COMPLETE (22 November, overnight): 19 chapters, 39 tasks, about 13.5 hours, photos and handwritten notes; then Java (COMPLETE 22 November: 18 chapters, 36 tasks, about 13.5 hours); Spring Boot got notes on all 31 recaps and two real photos (22 November); JavaScript (COMPLETE 22 November: 18 chapters, 36 tasks, about 13 hours); Go from zero (COMPLETE 22 November: 18 chapters, 36 tasks). All four language rewrites are done, JavaScript, Go. **Visuals (owner's rules, 20 November):** architecture and conceptual diagrams, execution
-visualizations (interactive "watch it run" traces) first, real code always, decorative images rarely.
-JavaScript was trimmed from 114 pictures to 39 (one per idea, where it is taught) and gained seven traces.
-Done: kinder checks (coming-up tasks are not failures), "start here / continue" on the dashboard, signed-in
-learners land on it. Done (22 November): Continue follows the last chapter opened and wears that lab's colour; a lab card opens
-the lab's own course page (`/courses/<lab>`) first, then the lab. Level, streak and stars moved into a profile panel with an Exit button. The skill map is on each course page; the separate Skill maps section (lab and track maps) was removed. Done: the lab page polish (no VS Code white flash, a Machine menu for Stop and Reset, one Check
-button, no ligatures, traces keep their place). Done: phones (a reading mode that starts no machine). Done: a trace on every worked example in the four from-zero
-courses (49). Redis in practice was revamped to the full standard (22 November, owner: "remember this for every lab"): 17 chapters
-in three parts, real measured numbers, 15 real photos, notes on every recap, 8 playing diagrams. SQL from zero followed the same evening (14 chapters, Safar), then Git without fear (14 chapters, Trails), then Linux on call (15 chapters, Tara, 23 November). **Spring AI** (new, Atlas the museum guide, Spring Boot 4.2 and Spring AI 2.1, following the official reference): complete 23 November: 20 chapters, 40 tasks in four parts (first steps; conversations and tools; knowledge and RAG; pictures, evaluation, guardrails, cost and metrics, agents, and a capstone). Traces have a Play button.
-**Spring Boot (21 November, rewrite complete):** at the owner's request, a self-sufficient course in a teacher's
-voice: 31 chapters (0 to 30) in four parts (foundations, REST APIs, data, production basics), 61 tasks, every step
-about code opening its own file. Next: Python in practice (story), and later a "Spring Boot in production" course
-with a story and scenarios.
+**Every lab becomes a full course, one by one** (owner, 20 to 22 November). Done: the ten in the labs table
+(part A). Left: the eight short labs, each after a syllabus and your OK. Ideas recorded for later: "Python in
+practice" (with a story), "Spring Boot in production" (a story and incident scenarios), and query rewriting
+plus a follow-up golden question for Spring AI's capstone (the lesson already names it as the next step).
+How each course is built: `COURSE_PRODUCTION.md`.
 
 ### 4. Platform phases not started (E and G are done)
 
@@ -278,9 +296,10 @@ lab (lab 16) and the `system-design` template.
 
 ## How to pick up again
 
-Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read
-ROADMAP.md and AGENTS.md. Next is the AI track (section B.2): ask me the two decisions, then build
-stage 1 to the Redis course's standard."** Phase H's plan is in section B.4 if I choose it instead.
+Open `/home/gaurav/labs_poc` in Claude Code (or Codex) and say: **"Continue LabBox. Read AGENTS.md, then
+HANDOFF.md."** HANDOFF lists the decisions waiting for you; this page's part B is the order of the rest
+(the AWS deploy K needs you, then H4 login, then I payments; the short labs and the AI track as you choose).
+To build or rewrite a course, the agent follows `CONTENT_STANDARD.md` and `COURSE_PRODUCTION.md`.
 Claude Code reads `CLAUDE.md` (which loads `AGENTS.md`); Codex reads `AGENTS.md` by itself.
 
 **On a fresh machine, before running anything:**
