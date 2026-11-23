@@ -8,8 +8,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
 ## Resume here
 
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
-  Last full run green (23 November, after LangChain): 281 backend tests on Postgres and Redis, 27 browser tests,
-  20 labs valid,
+  Last full run green (24 November, after LangGraph): 282 backend tests on Postgres and Redis (29 minutes), 27
+  browser tests, 21 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
   LangChain is complete (27 chapters, 54 tasks). LangGraph is complete (24 chapters, 48 tasks). Still open: a Jim Gray photo for chapter 9

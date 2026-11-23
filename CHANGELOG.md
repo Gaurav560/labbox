@@ -18,6 +18,8 @@
   with LLM_DAILY_TOKENS=400000 and LLM_RPM=60 in its environment only, restored afterwards; backend/.env untouched).
 - Five playing diagrams, five notes pages, three photos (the 1947 moth log page, EDSAC, Marvin Minsky; also placed in
   chapters 16 and 17), one AI-track node. LangGraph: 24 chapters, 48 tasks, about 17 hours, 18 real photos.
+- Full run green after the course: 282 backend tests on Postgres and Redis (29 minutes), 27 browser tests, 21 labs
+  valid.
 - Open product question: a learner's daily budget is 50,000 tokens across all labs; a deep agent or research run can
   use a large part of it.
 
