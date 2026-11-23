@@ -284,6 +284,10 @@ lab (lab 16) and the `system-design` template.
 - A spoken voiceover or a recorded demo video for the hero tour (needs your recording, or approval for a paid text-to-speech service)
 - Share card images for streaks and levels, and a public profile at `/u/{username}`
 - Previews on a separate web address, and an allowlist for outbound internet (with Phase H or K)
+- Photos still to add (Wikimedia Commons refused the downloads on 24 November with 429s): Rust from zero chapter 2
+  `File:Professor Simon Peyton Jones FRS (cropped).jpg` (CC BY-SA 4.0, Duncan.Hull) and chapter 17 `File:Bjarne
+  Stroustrup (2013).jpg` (CC BY 2.0, ICPCNews), each in the chapter's history step; LangGraph's Jim Gray photo.
+  Fetch with `tools/authoring/commons_fetch.py`, insert with `insert_photos.py`, then validate.
 
 ### 6. Definition of done for v2 (spec 12)
 

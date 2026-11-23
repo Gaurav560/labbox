@@ -15,7 +15,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
   project name rule: software gets a plain English name for its job, so Windwatch). Complete: 28 chapters in 6 parts,
   56 tasks; Part 6 is a clap CLI, Box/Rc/RefCell, threads and channels, Tokio, speed against Python and an axum
   capstone. Checks: tests/run_checks.py (modes run, test, own) with one shared target dir prebuilt in the image, so a
-  check compiles only the learner's crate. Next: the full test run, then wait for the owner's next course.
+  check compiles only the learner's crate. Full run green. Still to add: two photos (Simon Peyton Jones in chapter 2,
+  Bjarne Stroustrup in chapter 17; Commons 429, see ROADMAP B.5). Next: wait for the owner's next course.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
