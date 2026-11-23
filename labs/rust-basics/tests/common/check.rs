@@ -59,3 +59,9 @@ pub fn task(name: &str, check: impl FnOnce() -> Result<String, Fail>) {
         }
     }
 }
+
+impl From<String> for Fail {
+    fn from(msg: String) -> Fail {
+        fail(&msg)
+    }
+}

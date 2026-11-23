@@ -12,7 +12,7 @@ tags:
 - rust
 - beginner
 level: beginner
-estimated_minutes: 565
+estimated_minutes: 755
 cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
@@ -342,3 +342,108 @@ chapters:
     examples:
     - call: ch12_modules::farm_summary(...)
       gives: the same summary
+- id: vec-and-string
+  title: Vectors and strings
+  file: chapters/13-vec-and-string.md
+  minutes: 45
+  folder: 13-vec-and-string
+  part: Collections and errors
+  tasks:
+  - id: moving_average
+    title: a moving average
+    xp: 20
+    hints:
+    - moving_average still says todo!().
+    - windows gives every run of readings of a given length, as a slice, one after another.
+    - For each window, add its readings, push the total divided by the window size, and return the vector.
+    examples:
+    - call: moving_average(&[10.0, 20.0, 30.0, 40.0], 2)
+      gives: '[15.0, 25.0, 35.0]'
+  - id: as_sentence
+    title: ids as a sentence
+    xp: 20
+    hints:
+    - Three or more ids still reach todo!().
+    - enumerate gives each item with its position; push_str adds text to a String.
+    - Push the ids of rest with a comma before every one but the first, then " and " and the last id.
+    examples:
+    - call: as_sentence(&["T07", "T12", "T31"])
+      gives: T07, T12 and T31
+- id: hashmap
+  title: Maps and sets
+  file: chapters/14-hashmap.md
+  minutes: 45
+  folder: 14-hashmap
+  tasks:
+  - id: energy_by_turbine
+    title: energy per turbine
+    xp: 20
+    hints:
+    - Every turbine's total stays at zero.
+    - entry finds a key's place, or_insert creates it the first time, and gives a mutable reference to the value.
+    - Add each reading's ten minutes of energy to its turbine's entry, starting from zero.
+    examples:
+    - call: energy_by_turbine of two T07 readings, 2100 and 2180 kW
+      gives: 'T07: 713.3 kWh'
+  - id: silent_turbines
+    title: the silent turbines
+    xp: 15
+    hints:
+    - silent_turbines still says todo!().
+    - A HashSet answers whether it contains a value in one step.
+    - Keep the farm's turbines the set does not contain, sorted.
+    examples:
+    - call: silent_turbines(&["T01", "T02", "T03"], &["T03"])
+      gives: '["T01", "T02"]'
+- id: errors
+  title: Result and the ? operator
+  file: chapters/15-errors.md
+  minutes: 50
+  folder: 15-errors
+  tasks:
+  - id: number
+    title: a number, or why not
+    xp: 15
+    hints:
+    - number still says todo!().
+    - parse returns Ok with the number or Err; a function returning Result gives back one or the other.
+    - Match on the parse result and return Ok of the value, or Err of a message naming the field and its text.
+    examples:
+    - call: number("windy", "wind speed")
+      gives: 'Err("wind speed is not a number: \"windy\"")'
+  - id: parse_reading
+    title: a line, or what is wrong with it
+    xp: 20
+    hints:
+    - parse_reading still says todo!() after the field count check.
+    - The question mark returns the error from the function at once, or gives the value when it is Ok.
+    - Get both numbers with number and the question mark, then return Ok of a new Reading.
+    examples:
+    - call: parse_reading("T07,10:50,13.4,22O0")
+      gives: 'Err("power is not a number: \"22O0\"")'
+- id: error-types
+  title: Your own error types
+  file: chapters/16-error-types.md
+  minutes: 50
+  folder: 16-error-types
+  tasks:
+  - id: error_enum
+    title: a variant for glitches
+    xp: 20
+    hints:
+    - ReadingError has no variant for a power reading above the turbine's rating.
+    - Each variant gets its message from an error attribute above it, filled in from its fields.
+    - Add the variant with its message, and return it from parse_reading when the power is above 2500.
+    examples:
+    - call: parse_reading("T12,10:30,8.1,9999")
+      gives: 'Err(TooMuchPower { kw: 9999.0 })'
+  - id: load_with_context
+    title: load a file, with context
+    xp: 25
+    hints:
+    - load still says todo!().
+    - with_context adds a message about where an error happened, and keeps the cause underneath.
+    - Read the file with context naming it, parse every line with context naming the file and line, and return the readings.
+    examples:
+    - call: cargo run -- data/t12.log
+      gives: 'Error: data/t12.log, line 3 ... power 9999 kW is more than ...'

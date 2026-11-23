@@ -1,0 +1,6 @@
+[package]
+name = "ch13-vec-and-string"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

@@ -25,6 +25,10 @@ CHAPTERS = [
     ("enums", "10-enums", "test", ["classify", "peak_power"]),
     ("match", "11-match", "test", ["describe_status", "parse_line"]),
     ("modules", "12-modules", "test", ["make_public", "re_export"]),
+    ("vec-and-string", "13-vec-and-string", "test", ["moving_average", "as_sentence"]),
+    ("hashmap", "14-hashmap", "test", ["energy_by_turbine", "silent_turbines"]),
+    ("errors", "15-errors", "test", ["number", "parse_reading"]),
+    ("error-types", "16-error-types", "test", ["error_enum", "load_with_context"]),
 ]
 
 

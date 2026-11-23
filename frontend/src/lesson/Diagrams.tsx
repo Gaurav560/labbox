@@ -3026,7 +3026,79 @@ function RsModules() {
   );
 }
 
+function RsWindows() {
+  return (
+    <SketchSteps
+      title="A moving average of three"
+      intro="Press Play to slide the window along T07's log."
+      label="windows(3)"
+      steps={[
+        { label: "10:10 to 10:30", says: "2100, 2180, 2490: the first window. Average 2256.7." },
+        { label: "10:20 to 10:40", says: "The window moves one reading: 2180, 2490, 1650. Average 2106.7." },
+        { label: "10:30 to 10:50", says: "2490, 1650, 2210: the gust and the drop in one window. Average 2116.7." },
+        { label: "10:40 to 11:00", says: "1650, 2210, 2240. Average 2033.3. There is no fifth window: it would run past the end." },
+        { label: "result", says: "Six readings, four averages, swinging 223 kW instead of 840." },
+      ]}
+    />
+  );
+}
+
+function RsEntry() {
+  return (
+    <SketchSteps
+      title="Totals per turbine with entry()"
+      intro="Press Play to add three log lines into the map."
+      label="HashMap entry"
+      steps={[
+        { label: "T07, 2100 kW", says: 'entry("T07") finds no slot: or_insert(0.0) makes one at 0.0, then += 350.0.' },
+        { label: "T12, 140 kW", says: "A new key again: T12 starts at 0.0, then += 23.3." },
+        { label: "T07, 2180 kW", says: 'entry("T07") finds the slot by its hash at once: 350.0 += 363.3 makes 713.3.' },
+        { label: 'get("T40")', says: "No slot for T40: None, not a crash and not a zero." },
+        { label: "order", says: "Iterating the map gives the keys in an order that depends on the hash: it changes from run to run." },
+      ]}
+    />
+  );
+}
+
+function RsQuestionMark() {
+  return (
+    <SketchSteps
+      title="Two ? exits in parse_reading"
+      intro="Press Play to follow a broken line through the function."
+      label="? operator"
+      steps={[
+        { label: "four fields", says: '"T07,10:50,13.4,22O0" has four fields: the length check passes.' },
+        { label: 'number("13.4")?', says: "Ok(13.4): ? takes the 13.4 out, and the function goes on." },
+        { label: 'number("22O0")?', says: 'Err("power is not a number: ..."): ? returns this Err from parse_reading at once.' },
+        { label: "never reached", says: "The Ok(Reading { ... }) line does not run for this line." },
+        { label: "the caller", says: 'main gets the Err and prints it: line 5: power is not a number: "22O0".' },
+      ]}
+    />
+  );
+}
+
+function RsErrorChain() {
+  return (
+    <SketchSteps
+      title="How the error message is built"
+      intro="Press Play to follow line 3 of t12.log up to main."
+      label="Error chain"
+      steps={[
+        { label: "parse_reading", says: "9999 kW is more than 2500: Err(ReadingError::TooMuchPower { kw: 9999.0 })." },
+        { label: "with_context", says: 'load wraps it: "data/t12.log, line 3", with the TooMuchPower error kept as its cause.' },
+        { label: "?", says: "load returns the wrapped error to main, converted into an anyhow::Error." },
+        { label: "main returns Err", says: 'Rust prints "Error:" and the context, then "Caused by:" and the original message.' },
+        { label: "exit code", says: "The program exits with 1, so a script or a scheduler can see it failed." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-windows": RsWindows,
+  "rs-entry": RsEntry,
+  "rs-question-mark": RsQuestionMark,
+  "rs-error-chain": RsErrorChain,
   "rs-option": RsOption,
   "rs-let-else": RsLetElse,
   "rs-modules": RsModules,

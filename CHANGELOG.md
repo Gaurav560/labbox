@@ -1,5 +1,17 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 4 (collections and errors)
+
+- Four chapters, eight tasks, every output and compiler message captured from real runs: vectors and strings (a
+  moving average that smooths an 840 kW gust to a 223 kW swing; `sort()` on `f64` refused with E0277, sorted with
+  `total_cmp`; ids joined into a sentence), maps and sets (energy per turbine with `entry().or_insert()`; two runs
+  printed the HashMap in different orders, which the lesson shows; 36 of 40 turbines silent in the sample), Result
+  and `?` (every broken line of a real log file explained in words; a missing file is an `Err`, not a crash), and
+  error types (a thiserror enum with a `TooMuchPower` variant; anyhow's two-layer messages for a 9,999 kW glitch on
+  line 3 and for a missing file). Chapter 16 is the first to use crates (anyhow, thiserror), prebuilt in the image.
+- The check helper converts `String` errors into failures (`impl From<String> for Fail`).
+- Four playing diagrams, four notes pages, one track node.
+
 ## 24 November: Rust from zero, Part 3 (shaping data)
 
 - Four chapters, eight tasks, every output and compiler message captured from real runs: structs and methods (a

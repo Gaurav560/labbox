@@ -139,3 +139,7 @@ nodes:
     title: Rust structs, enums and modules
     requires: [rust-ownership]
     chapters: [rust-basics/structs, rust-basics/enums, rust-basics/match, rust-basics/modules]
+  - id: rust-collections-errors
+    title: Rust collections and errors
+    requires: [rust-shaping-data]
+    chapters: [rust-basics/vec-and-string, rust-basics/hashmap, rust-basics/errors, rust-basics/error-types]
