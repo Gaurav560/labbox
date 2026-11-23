@@ -1,5 +1,28 @@
 # Changelog
 
+## 23 November: Spring AI, Part 4 (pictures, evaluation, guardrails, cost, agents, Atlas goes live): course complete
+
+- Owner, going to sleep again: "please finish this spring ai completely". Part 4, Beyond text, and production (6
+  chapters, 12 tasks), following the official reference:
+  - Pictures in, words out: a question and a photo in one message, and a photo turned into a record with a closed list
+    of exhibits and an honest "none". Measured: one 800 by 600 photo cost 25,596 input tokens with gpt-4o-mini; shrunk
+    to one 512 pixel tile (a provided `Photos.shrink`), 8,595. The photos learners send ship in the project, credited.
+  - Evaluation: a golden set of 15 questions and a retrieval hit rate (real: 10 of 15, each miss explained), then
+    `RelevancyEvaluator` as a judge on a fresh `ChatClient` (it rightly flagged the useless answer to a broad question).
+  - Guardrails: prompt injection's history, three real attacks (resisted, but with over-refusals), a length-limit
+    advisor returning a `GuardrailRefusal`, `SafeGuardAdvisor` as a privacy guard, and a real bypass of its word list.
+  - Cost, speed and metrics: usage metadata priced per answer (about 95 tokens in, 0.003 to 0.005 US cents), Actuator
+    and `gen_ai.client.token.usage` (the untagged total counts tokens twice: filter by type).
+  - Workflows and agents, after "Building Effective Agents": routing (three right desks) and a write, review and
+    rewrite loop that always ends. Real: the reviewer rejected a 32-word label as "46 words", so counting belongs in Java.
+  - Atlas goes live: every piece in one `ChatClient` behind a lobby screen page (a second preview). Real: a follow-up
+    ("And when did it land there?") was refused because retrieval found nothing; the lesson teaches query rewriting.
+- The course is complete: 20 chapters, 40 tasks, about 16.5 hours. Every quoted model output came from the real model
+  through the gateway, within the author account's daily budget (it stayed on; the last captures waited for midnight UTC).
+- Photos (a Foucault pendulum, a prism, a Rajasaurus skull cast, a steam engine, hallmarks, a ghat road, an electricity
+  meter, a 1907 switchboard, Bengaluru's Visvesvaraya museum), notes on all 20 recaps, 6 more playing diagrams, three
+  more ai track nodes.
+
 ## 23 November: Spring AI, Parts 2 and 3 (memory, tools, MCP, embeddings, vector stores, ETL, RAG)
 
 - Owner, going to sleep: "please finish complete spring ai. and fyi, spring ai has different logo". The syllabus

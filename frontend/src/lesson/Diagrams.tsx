@@ -1840,7 +1840,114 @@ function AiRag() {
   );
 }
 
+function AiVision() {
+  return (
+    <SketchSteps
+      title="a picture in a message"
+      intro="Press Play to follow a visitor's photo."
+      label="the visitor's photo is shrunk to fit 512 pixels; it is encoded as a data url; the question and the picture go in one user message; the model reads both and answers in text"
+      steps={[
+        { label: "1. The photo arrives", says: "pendulum.jpg, 800 by 600 pixels, from the visitor's phone." },
+        { label: "2. Shrink it", says: "Photos.shrink: 512 by 384, one tile instead of four." },
+        { label: "3. One message, two parts", says: "text: What is this exhibit? plus image: data:image/jpeg;base64,..." },
+        { label: "4. The model looks", says: "It reads the picture as tokens, together with the words." },
+        { label: "5. Words come back", says: "This exhibit looks like a Foucault pendulum." },
+      ]}
+    />
+  );
+}
+
+function AiEvaluation() {
+  return (
+    <SketchSteps
+      title="two ways to measure"
+      intro="Press Play to see retrieval and answers measured."
+      label="golden questions are searched and each hit is counted, with no model call; for an answer, a judge model reads the question, the retrieved cards and the answer, and says yes or no"
+      steps={[
+        { label: "1. Golden questions", says: "15 real questions, each with the card that must be found." },
+        { label: "2. Measure retrieval", says: "Search each one: is its card in the top 3? Count the hits. No model, no cost." },
+        { label: "3. A real answer", says: "Atlas answers a question from the cards." },
+        { label: "4. The judge reads", says: "The question, the cards and the answer go to a second call." },
+        { label: "5. The verdict", says: "YES or NO: relevant to the question and the cards?" },
+      ]}
+    />
+  );
+}
+
+function AiGuardrails() {
+  return (
+    <SketchSteps
+      title="guards before the model"
+      intro="Press Play to follow three questions."
+      label="a question passes the length limit and the privacy guard before it reaches the model; a long attack is refused by the limit; a phone number is refused by the privacy guard; neither reaches the model"
+      steps={[
+        { label: "1. A long attack", says: "336 characters of ignore all your instructions: the length limit refuses it." },
+        { label: "2. A phone number", says: "my phone number is ...: the privacy guard answers with a kind reminder." },
+        { label: "3. A normal question", says: "When do the shows start? passes both guards." },
+        { label: "4. The model", says: "Only the third question reaches it, and costs tokens." },
+      ]}
+    />
+  );
+}
+
+function AiCostMeter() {
+  return (
+    <SketchSteps
+      title="where tokens are counted"
+      intro="Press Play to follow one answer's tokens."
+      label="the model replies with its usage; spring ai reads it into the response metadata; the controller turns tokens into dollars; spring ai records the same tokens in a metric that actuator shows"
+      steps={[
+        { label: "1. The reply", says: "The model's answer, with usage: tokens in and tokens out." },
+        { label: "2. Metadata", says: "response.getMetadata().getUsage(): getPromptTokens(), getCompletionTokens()." },
+        { label: "3. Dollars", says: "in times 0.15 per million, plus out times 0.60 per million." },
+        { label: "4. Metrics", says: "Spring AI adds the same tokens to gen_ai.client.token.usage." },
+        { label: "5. Dashboards", says: "/actuator/metrics today; Prometheus and Grafana in production." },
+      ]}
+    />
+  );
+}
+
+function AiWorkflows() {
+  return (
+    <SketchSteps
+      title="routing, and review loops"
+      intro="Press Play to follow both workflows."
+      label="a router call picks a desk, and a second call answers with that desk's prompt; a writer drafts a label, a reviewer checks it against rules, and the writer rewrites with the feedback until approved or three drafts"
+      steps={[
+        { label: "1. Route", says: "Are you open on Sunday? The router says VISIT." },
+        { label: "2. Answer as that desk", says: "The front desk prompt, with the real hours, answers." },
+        { label: "3. Draft", says: "The writer drafts a label for the prism room." },
+        { label: "4. Review", says: "Too long: cut it to 40 words." },
+        { label: "5. Rewrite, review again", says: "Approved on draft 2. At most 3 drafts, so the loop always ends." },
+      ]}
+    />
+  );
+}
+
+function AiAtlasLive() {
+  return (
+    <SketchSteps
+      title="all of Atlas in one call"
+      intro="Press Play to follow one message on the lobby screen."
+      label="a message passes the length limit and the privacy guard, the session adds the visitor's conversation, retrieval adds the closest cards, the model may call tools, and the answer returns with its sources"
+      steps={[
+        { label: "1. Guards", says: "Length limit, then the privacy guard." },
+        { label: "2. Memory", says: "Ria's last turns are added from her session." },
+        { label: "3. Retrieval", says: "The 3 closest card chunks are added to her question." },
+        { label: "4. The model, with tools", says: "It may ask for openingHours or planetariumShows." },
+        { label: "5. The reply", says: "The answer, and the cards it came from." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "ai-vision": AiVision,
+  "ai-evaluation": AiEvaluation,
+  "ai-guardrails": AiGuardrails,
+  "ai-cost-meter": AiCostMeter,
+  "ai-workflows": AiWorkflows,
+  "ai-atlas-live": AiAtlasLive,
   "ai-embeddings": AiEmbeddings,
   "ai-vector-store": AiVectorStore,
   "ai-etl": AiEtl,

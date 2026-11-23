@@ -3,14 +3,14 @@ version: 2
 title: "Spring AI"
 subtitle: Build Atlas, a museum guide powered by a language model, with Spring Boot 4 and Spring AI 2.
 description: "Learn to build AI features in Java: what language models are and what they cost, prompts and system
-  prompts, options and tokens, streaming, structured output, memory, tools, embeddings, vector stores, retrieval
-  (RAG), testing, guardrails, cost control and observability, by building Atlas, the visitor guide of a science
-  museum in Pune, with Spring Boot 4 and Spring AI 2.0."
+  prompts, options and tokens, streaming, structured output, memory, tools, MCP, embeddings, vector stores, retrieval
+  (RAG), pictures, evaluation, guardrails, cost and metrics, and agent workflows, by building Atlas, the visitor
+  guide of a science museum in Pune, with Spring Boot 4 and Spring AI 2.1."
 language: java
 track: ai
 tags: [java, spring-boot, ai]
 level: intermediate
-estimated_minutes: 695
+estimated_minutes: 995
 cover_scene: "A friendly museum guide robot made of light standing in a science museum hall, with a planetarium dome and a swinging pendulum behind it."
 cover: cover.svg
 cover_credit: { by: "Logos: spring-ai", source: "Spring AI reference documentation" }
@@ -24,6 +24,7 @@ llm:
   enabled: true
 preview:
   - { name: "Atlas", port: 8080, path: "/ask?q=Hello" }
+  - { name: "Lobby screen", port: 8080, path: "/" }
 check:
   command: ["bash", "/check/tests/run_checks.sh"]
   timeout_seconds: 240
@@ -384,7 +385,7 @@ chapters:
     xp: 20
     hints:
     - 'RAG in Spring AI is an advisor: QuestionAnswerAdvisor, built on the vector store.'
-    - QuestionAnswerAdvisor.builder(store) has searchRequest(...); give it topK 3 and similarityThreshold 0.35.
+    - 'The advisor''s builder takes the vector store, and has searchRequest(...): topK 3 and similarityThreshold 0.35.'
     - Add it with defaultAdvisors(...) on the ChatClient builder, before build().
     examples:
     - call: /ask?q=How much is a ticket for a child?
@@ -399,3 +400,161 @@ chapters:
     examples:
     - call: /ask/sourced?q=What did India find on the Moon?
       gives: chandrayaan-3.md
+- id: vision
+  title: Pictures in, words out
+  file: chapters/15-vision.md
+  minutes: 45
+  folder: 15-vision
+  part: Beyond text, and production
+  tasks:
+  - id: image_question
+    title: a question about a photo
+    xp: 20
+    hints:
+    - 'The user spec can carry text and media together: .user(u -> u.text(...).media(...)).'
+    - media(...) takes the MIME type and the picture; both are ready in type and picture.
+    - Replace .user(q) with the version that sends q and the picture in one message.
+    examples:
+    - call: POST /look (pendulum.jpg, What is this exhibit?)
+      gives: a Foucault pendulum
+  - id: exhibit_from_photo
+    title: which exhibit is it?
+    xp: 20
+    hints:
+    - 'Build the question from the list: String.join(", ", EXHIBITS) gives every name.'
+    - Send the question and the picture in one user message, as in the first task.
+    - End the chain with entity(...) and the Sighting record, instead of asking for plain text.
+    examples:
+    - call: POST /identify (skull.jpg)
+      gives: '{exhibit: Rajasaurus skull, ...}'
+- id: evaluation
+  title: Is Atlas right? Evaluation
+  file: chapters/16-evaluation.md
+  minutes: 50
+  folder: 16-evaluation
+  tasks:
+  - id: retrieval_eval
+    title: measure retrieval
+    xp: 20
+    hints:
+    - Loop over Golden.QUESTIONS; each has question() and file().
+    - 'Search the store with SearchRequest.builder(): the question, topK 3, similarityThreshold 0.35.'
+    - A hit when any found document's "file" metadata equals the golden file; otherwise add the question to misses.
+    examples:
+    - call: /eval/retrieval
+      gives: '{total: 15, hits: 10, misses: [5 questions]}'
+  - id: judge_answer
+    title: a judge for answers
+    xp: 20
+    hints:
+    - 'Spring AI''s RelevancyEvaluator takes a ChatClient.Builder: give it a fresh ChatClient.builder(model).'
+    - An EvaluationRequest holds the question, the retrieved documents and the answer, in that order.
+    - evaluate(request).isPass() is the verdict; return it with the answer.
+    examples:
+    - call: /ask/judged?q=How much is a ticket for a child?
+      gives: '{answer: ..., relevant: true}'
+- id: guardrails
+  title: Guardrails
+  file: chapters/17-guardrails.md
+  minutes: 45
+  folder: 17-guardrails
+  tasks:
+  - id: question_limit
+    title: a length limit
+    xp: 20
+    hints:
+    - Compare question.length() with maxChars before anything else in adviseCall.
+    - GuardrailRefusal.generation(text) makes a refusal; ChatResponse.builder().generations(List.of(...)) wraps it.
+    - Return ChatClientResponse.builder().chatResponse(refusal).context(request.context()).build() instead of calling the
+      chain.
+    examples:
+    - call: /ask?q=(a 336-character attack)
+      gives: That question is too long for me. ...
+  - id: private_words
+    title: a privacy guard
+    xp: 20
+    hints:
+    - Spring AI ships SafeGuardAdvisor, with a builder.
+    - Its builder takes sensitiveWords(...), failureResponse(...) and order(...).
+    - Add it as the first argument of defaultAdvisors(...), with PRIVATE_WORDS, PRIVACY_REPLY and order 0.
+    examples:
+    - call: /ask?q=my phone number is ...
+      gives: Please keep personal details ... to yourself.
+- id: production
+  title: Cost, speed and metrics
+  file: chapters/18-production.md
+  minutes: 45
+  folder: 18-production
+  tasks:
+  - id: answer_cost
+    title: the cost of an answer
+    xp: 20
+    hints:
+    - End the chain with .chatResponse() to get the whole response, metadata included.
+    - response.getMetadata().getUsage() has getPromptTokens() and getCompletionTokens().
+    - Cost is tokens in times INPUT_PER_MILLION, plus tokens out times OUTPUT_PER_MILLION, each divided by a million.
+    examples:
+    - call: /ask/metered?q=When are you open?
+      gives: '{promptTokens: 95, completionTokens: 31, costUsd: 0.0000329}'
+  - id: ai_metrics
+    title: AI metrics
+    xp: 10
+    hints:
+    - Spring Boot Actuator is already in the pom; its web endpoints are hidden until you expose them.
+    - The property is management.endpoints.web.exposure.include.
+    - Expose the two endpoints health and metrics, separated by a comma.
+    examples:
+    - call: /actuator/metrics/gen_ai.client.token.usage
+      gives: 'measurements: tokens counted'
+- id: agents
+  title: Workflows and agents
+  file: chapters/19-agents.md
+  minutes: 55
+  folder: 19-agents
+  tasks:
+  - id: route_question
+    title: route to the right desk
+    xp: 20
+    hints:
+    - 'First call: the ROUTER system prompt, the question, and entity(...) with the Routing record; read its desk().'
+    - 'Second call: the chosen desk''s prompt from DESKS, the same question, and the answer''s text.'
+    - 'Return both: new Routed(desk, answer).'
+    examples:
+    - call: /agent/route?q=Are you open on Sunday?
+      gives: '{desk: VISIT, ...}'
+  - id: improve_loop
+    title: review and rewrite
+    xp: 20
+    hints:
+    - In a loop, ask system(REVIEWER) to check the draft against RULES, as .entity(Review.class).
+    - Stop when review.approved() is true or drafts has reached 3.
+    - Otherwise ask system(WRITER) to rewrite, giving it the draft and review.feedback(), and count the draft.
+    examples:
+    - call: /agent/label?exhibit=the prism room
+      gives: '{text: ..., drafts: 1 to 3}'
+- id: live
+  title: Atlas goes live
+  file: chapters/20-live.md
+  minutes: 60
+  folder: 20-live
+  tasks:
+  - id: assemble_atlas
+    title: assemble Atlas
+    xp: 20
+    hints:
+    - defaultTools(tools) offers the museum's tools on every call.
+    - 'SessionAdvisors.builder(sessions)...build() returns a list: give it its own defaultAdvisors(...) call.'
+    - A second defaultAdvisors(...) takes the SafeGuardAdvisor, new QuestionLimitAdvisor(300) and the QuestionAnswerAdvisor.
+    examples:
+    - call: 'POST /chat {visitor: ria, text: How long is the pendulum''s wire?}'
+      gives: 15 metres
+  - id: live_chat
+    title: answers with sources
+    xp: 20
+    hints:
+    - Keep the session advisor on the call, and end the chain with .chatClientResponse().
+    - The retrieved documents are in response.context() under QuestionAnswerAdvisor.RETRIEVED_DOCUMENTS.
+    - Map each to its "file" metadata, distinct(), and return them with the answer text.
+    examples:
+    - call: 'POST /chat {visitor: ria, text: What did India find on the Moon?}'
+      gives: 'sources: [chandrayaan-3.md]'

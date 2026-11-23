@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas, Deccan Science Museum</title>
+<style>
+  :root { --ink: #1b2a3a; --paper: #f6f3ea; --accent: #2d6a4f; --soft: #e3ded0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 17px/1.5 system-ui, sans-serif; background: var(--paper); color: var(--ink); }
+  header { padding: 18px 20px; background: var(--ink); color: #fff; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .8; font-size: 14px; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  #log { display: flex; flex-direction: column; gap: 10px; min-height: 50vh; }
+  .me, .atlas { padding: 10px 14px; border-radius: 12px; max-width: 85%; }
+  .me { align-self: flex-end; background: var(--accent); color: #fff; }
+  .atlas { align-self: flex-start; background: #fff; border: 1px solid var(--soft); }
+  .src { font-size: 13px; opacity: .7; margin-top: 4px; }
+  form { display: flex; gap: 8px; margin-top: 16px; }
+  input { flex: 1; padding: 12px; font: inherit; border: 1px solid var(--soft); border-radius: 10px; }
+  button { padding: 12px 18px; font: inherit; border: 0; border-radius: 10px; background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+<header><h1>Atlas</h1><p>Your guide to the Deccan Science Museum. Ask about any exhibit, show or ticket.</p></header>
+<main>
+  <div id="log"></div>
+  <form id="ask"><input id="q" maxlength="300" placeholder="Ask Atlas a question" autocomplete="off"><button>Ask</button></form>
+</main>
+<script>
+  const visitor = "screen-" + Math.random().toString(36).slice(2, 8);
+  const log = document.getElementById("log");
+  function add(cls, text, sources) {
+    const div = document.createElement("div");
+    div.className = cls;
+    div.textContent = text;
+    if (sources && sources.length) {
+      const s = document.createElement("div");
+      s.className = "src";
+      s.textContent = "From: " + sources.join(", ");
+      div.appendChild(s);
+    }
+    log.appendChild(div);
+  }
+  document.getElementById("ask").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const q = document.getElementById("q");
+    const text = q.value.trim();
+    if (!text) return;
+    add("me", text);
+    q.value = "";
+    const r = await fetch("chat", { method: "POST", headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ visitor, text }) });
+    const reply = await r.json();
+    add("atlas", reply.answer, reply.sources);
+  });
+</script>
+</body>
+</html>

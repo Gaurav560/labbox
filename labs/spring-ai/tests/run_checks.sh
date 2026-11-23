@@ -23,6 +23,12 @@ embeddings|11-embeddings|cosine_similarity nearest_exhibit
 vector-store|12-vector-store|add_documents search_cards
 etl|13-etl|read_cards split_and_load
 rag|14-rag|rag_answer cite_sources
+vision|15-vision|image_question exhibit_from_photo
+evaluation|16-evaluation|retrieval_eval judge_answer
+guardrails|17-guardrails|question_limit private_words
+production|18-production|answer_cost ai_metrics
+agents|19-agents|route_question improve_loop
+live|20-live|assemble_atlas live_chat
 "
 
 fail_all() { # tasks message

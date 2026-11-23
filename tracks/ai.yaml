@@ -26,3 +26,15 @@ nodes:
     title: Documents and RAG
     requires: [ai-retrieval]
     chapters: [spring-ai/etl, spring-ai/rag]
+  - id: ai-pictures-and-tests
+    title: Pictures and evaluation
+    requires: [ai-rag]
+    chapters: [spring-ai/vision, spring-ai/evaluation]
+  - id: ai-production
+    title: Guardrails, cost and metrics
+    requires: [ai-pictures-and-tests]
+    chapters: [spring-ai/guardrails, spring-ai/production]
+  - id: ai-agents
+    title: Agents, and Atlas goes live
+    requires: [ai-production]
+    chapters: [spring-ai/agents, spring-ai/live]

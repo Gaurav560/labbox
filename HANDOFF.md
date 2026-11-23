@@ -39,13 +39,16 @@ standard next, without waiting; write its syllabus here first.
 repository per chapter built by its setup with fixed authors and dates.
 **Linux on call: COMPLETE (23 November)**: 15 chapters, 31 tasks, Tara (a radio telescope observatory near Pune;
 owner: never Dabba Express, nothing resembling Chai aur Code). Live checks; setups build each chapter folder.
-**Spring AI (new lab `spring-ai`), in progress**: the owner said "once done, move to Spring AI" (23 November night), and
+**Spring AI (new lab `spring-ai`): COMPLETE (23 November)**: the owner said "once done, move to Spring AI" (23 November night), and
 then "please finish complete spring ai" (the syllabus follows docs.spring.io/spring-ai/reference 2.1.0). Atlas, the
 visitor guide of a fictional science museum in Pune; Spring Boot 4.2.0, Spring AI 2.1.0; models `ai-chat` and
 `ai-embed` (OpenAI through the gateway). Checks use a fake OpenAI server (`tests/common/FakeOpenAi.java`).
 Chapters (ids): Part 1 why-ai, prompts, options, streaming, structured; Part 2 memory, tools, tool-safety, advisors,
-mcp; Part 3 embeddings, vector-store, etl, rag (DONE, 14 chapters, 28 tasks); Part 4 vision, evaluation, guardrails,
-production, agents, live (in progress). Generator scripts live in the session scratchpad (`springai/gen.py` with
+mcp; Part 3 embeddings, vector-store, etl, rag; Part 4 vision, evaluation, guardrails, production, agents, live
+(20 chapters, 40 tasks). Waiting for the owner: (1) drink
+words still appear in other courses' examples (coffee, juice, milk, lassi or tea, in about 95 files across 12 labs,
+most in spring-boot-first-api and python-basics): rewrite them? (2) the `ai` onboarding goal still starts with python-basics: start it
+with spring-ai? (3) next platform step per the roadmap: K (AWS deploy, needs the owner), then H4, then I. Generator scripts live in the session scratchpad (`springai/gen.py` with
 `chapters_part*.py`, `build_yaml.py`, `add_diag.py`).
 **SQL from zero: COMPLETE (22 November evening)**, as below (14 chapters, 28 tasks, Safar). Next: ask the owner which
 lab comes next (the other ten labs are still 1 or 2 chapters). **SQL from zero syllabus** (22 November). Today it is 2 chapters and 4 tasks about "Tapri Counter", a tea and
