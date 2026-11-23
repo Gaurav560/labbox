@@ -104,3 +104,6 @@ nodes:
     title: Navin goes live
     requires: [lc-production]
     chapters: [langchain/capstone]
+  - id: lg-graphs
+    title: Thinking in graphs (LangGraph, Part 1)
+    chapters: [langgraph/why-graphs, langgraph/state, langgraph/branches, langgraph/model-nodes, langgraph/patterns, langgraph/send-command]

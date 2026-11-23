@@ -1,5 +1,20 @@
 # Changelog
 
+## 23 November: LangGraph, Part 1 (thinking in graphs): a new AI course on Harsh, a water board's repair desk
+
+- New lab `langgraph` (image `labbox/langgraph:v1`, built on `labbox/langchain:v1` with LangGraph 1.2.24 pinned).
+  Running project: **Harsh**, the complaint-to-repair desk of the fictional Ujjwal Nagar Water Board. Checks are
+  pytest with the fake OpenAI server from the LangChain lab, about a second a chapter.
+- Six chapters, twelve tasks, every output captured through the gateway: a first graph and its stream of steps,
+  reducers (a log that grows; severity that never goes down, so brown water near a hospital stays urgent), branches
+  and a spelling retry loop with a limit, model nodes (four messy complaints triaged right, including Hinglish; the
+  reply to "my children drank it" had no health advice, and the lesson says that belongs in code), the workflow
+  patterns (a parallel join; a grader that rejected a notice for the right reason, then passed one that missed the
+  area names), and `Send` and `Command` (a storm night: five triages in one step; urgent dirty water was scheduled for
+  tomorrow because `plan` only checked the cost).
+- Six playing diagrams, six notes pages, six photos (an overhead water tank in Raichur, Euler, Konigsberg on the
+  Pregel, Lillian Gilbreth, Dijkstra, a 1900s mail sorting room), a cover from the LangGraph logo, one AI-track node.
+
 ## 23 November: LangChain, Part 5 (production): the course is complete
 
 - Six chapters, twelve tasks, every output captured through the gateway: built-in middleware (an opt-in tool-error

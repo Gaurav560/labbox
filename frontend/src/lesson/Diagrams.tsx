@@ -2411,7 +2411,120 @@ function LcHumanLoop() {
   );
 }
 
+function LgRun() {
+  return (
+    <SketchSteps
+      title="One complaint through Harsh's first graph"
+      intro="Press Play to follow the state from START to END."
+      label="Graph run"
+      steps={[
+        { label: "START", says: "The state is {'text': 'Pipe burst near the school'}. Nothing else is known yet." },
+        { label: "classify", says: "The node reads the text and returns an update: {'kind': 'leak'}." },
+        { label: "Merge", says: "LangGraph merges the update into the state: now text and kind." },
+        { label: "write_reply", says: "The next node reads kind, looks up the promised hours, and returns {'reply': ...}." },
+        { label: "Merge", says: "The state now holds text, kind and reply." },
+        { label: "END", says: "invoke returns the final state; stream had shown each update as it happened." },
+      ]}
+    />
+  );
+}
+
+function LgReducer() {
+  return (
+    <SketchSteps
+      title="Two updates, one field"
+      intro="Press Play to see how the reducer joins each update."
+      label="Reducers"
+      steps={[
+        { label: "Start", says: "The state holds the text of a complaint about brown water near the hospital." },
+        { label: "classify", says: "Returns severity 'urgent' and log ['classify: dirty_water']. The state is empty, so both are taken." },
+        { label: "check_location", says: "Returns severity 'high' and log ['check_location: near a hospital or school']." },
+        { label: "log", says: "operator.add joins old and new: the log now has both lines, in order." },
+        { label: "severity", says: "higher('urgent', 'high') keeps the more serious value: urgent stays." },
+        { label: "Without reducers", says: "The later update would win: the log would lose a line, and urgent would drop to high." },
+      ]}
+    />
+  );
+}
+
+function LgRoute() {
+  return (
+    <SketchSteps
+      title="A street spelt wrong, and the way out"
+      intro="Press Play to follow 'Gandi Chowk' through the loop."
+      label="Branch and loop"
+      steps={[
+        { label: "find_zone", says: "Try 1 uses the street as written. Not on the map: zone is empty, tries is 1." },
+        { label: "after_find_zone", says: "No zone, and 1 is less than MAX_TRIES (2): go back to find_zone." },
+        { label: "find_zone", says: "Try 2 uses the corrected spelling 'gandhi chowk': North zone, tries is 2." },
+        { label: "after_find_zone", says: "A zone was found: go to route." },
+        { label: "choose_team", says: "The kind is dirty_water: go to health_team." },
+        { label: "Shivaji Path", says: "Never found: after 2 tries, after_find_zone sends it to ask_citizen. The limit is the way out." },
+      ]}
+    />
+  );
+}
+
+function LgModelNode() {
+  return (
+    <SketchSteps
+      title="Inside the triage node"
+      intro="Press Play to see a model call become a state update."
+      label="Model node"
+      steps={[
+        { label: "State in", says: "The node gets the state: text 'pani nahi aaya aaj gandhi chowk mein'." },
+        { label: "Messages", says: "It builds a system message (the TRIAGE rules) and a human message (the complaint)." },
+        { label: "Model", says: "with_structured_output(Triage) asks the model for exactly the Triage fields." },
+        { label: "Validation", says: "kind and severity must be one of the Literal values, or the call fails here." },
+        { label: "Update out", says: "model_dump() turns Triage into {'kind': 'no_water', 'severity': 'high', 'street': 'Gandhi Chowk'}." },
+        { label: "Graph", says: "The graph merges it and routes on kind, as with any other node." },
+      ]}
+    />
+  );
+}
+
+function LgJoin() {
+  return (
+    <SketchSteps
+      title="Two lookups at once, then a join"
+      intro="Press Play to watch the super-steps."
+      label="Parallel"
+      steps={[
+        { label: "Step 1", says: "START has two edges: zone_lookup and history_lookup both run in this step." },
+        { label: "Updates", says: "zone_lookup writes zone; history_lookup writes past. Different keys, so no conflict." },
+        { label: "Join", says: "assign is behind the list edge [zone_lookup, history_lookup]: it waits for both." },
+        { label: "Step 2", says: "assign runs once, with zone 'South' and 6 past complaints: a crew and a survey of the old main." },
+        { label: "Same key?", says: "If both branches wrote the same key in one step, that key would need a reducer." },
+      ]}
+    />
+  );
+}
+
+function LgSend() {
+  return (
+    <SketchSteps
+      title="A storm night: map, then reduce"
+      intro="Press Play to follow five complaints through Send."
+      label="Send"
+      steps={[
+        { label: "fan_out", says: "Reads complaints (5 texts) and returns five Send('triage_one', {'text': ...})." },
+        { label: "Map", says: "Five triage_one runs start in the same step, each with only its own text." },
+        { label: "Reduce", says: "Each returns {'tickets': [ticket]}; operator.add collects all five into one list." },
+        { label: "summarise", says: "Runs once, after all five: '5 complaints, 1 urgent'." },
+        { label: "plan", says: "For each repair, returns a Command: goto engineer_approval over Rs 50,000, otherwise schedule." },
+        { label: "The gap", says: "plan looks only at cost, so urgent dirty water was scheduled for tomorrow." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lg-run": LgRun,
+  "lg-reducer": LgReducer,
+  "lg-route": LgRoute,
+  "lg-model-node": LgModelNode,
+  "lg-join": LgJoin,
+  "lg-send": LgSend,
   "lc-middleware": LcMiddleware,
   "lc-human-loop": LcHumanLoop,
   "lc-rag": LcRag,

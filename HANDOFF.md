@@ -12,7 +12,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
   20 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain is complete (27 chapters, 54 tasks). LangGraph is next.
+  LangChain is complete (27 chapters, 54 tasks). LangGraph Part 1 (chapters 1 to 6) is done and committed; Part 2
+  (persistence and people, chapters 7 to 12) is next.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
@@ -38,6 +39,18 @@ pytest with a fake OpenAI server, about a second a chapter. Captures use the aut
 LangGraph (new lab `langgraph`, after LangChain): **Harsh**, a city water utility's complaint-to-repair desk. 24
 chapters: thinking in graphs (6), persistence and people (6), agents in graphs (7), production (5, with Deep Agents
 and a capstone). Full list in the chat of 23 November and CHANGELOG.
+Image `labbox/langgraph:v1` (FROM labbox/langchain:v1, `warm/requirements.txt` adds deepagents, the SQLite checkpointer and their dependencies). Checks reuse
+`tests/common/fake_openai.py`; `tests/run_checks.sh` has a CHAPTERS table (id|folder|tasks). Captures use a gateway
+token for an author account made with `tools/authoring/author_token.py`, and `tools/authoring/capture.sh`.
+
+- Part 1 "Thinking in graphs": 1 `why-graphs`, 2 `state`, 3 `branches`, 4 `model-nodes`, 5 `patterns`,
+  6 `send-command`. Done.
+- Part 2 "Persistence and people": 7 checkpointers and threads, 8 trimming and summarizing, 9 durable execution,
+  10 interrupts, 11 editing state and time travel, 12 stores.
+- Part 3 "Agents in graphs": 13 an agent graph by hand, 14 reflection, 15 agentic RAG, 16 subgraphs, 17 multi-agent,
+  18 streaming, 19 the Functional API.
+- Part 4 "Production": 20 testing graphs, 21 a local server and app structure, 22 Deep Agents, 23 a research team,
+  24 capstone.
 
 ## LangChain4j (new lab `langchain4j`, owner 23 November): complete, 30 chapters, 60 tasks
 

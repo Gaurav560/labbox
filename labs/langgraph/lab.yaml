@@ -1,0 +1,189 @@
+id: langgraph
+version: 2
+title: "LangGraph"
+subtitle: Build Harsh, the complaint-to-repair desk of a city water board, with LangGraph and Python, from your first graph to deep agents.
+description: "Learn to build reliable AI workflows and agents with LangGraph 1.2: state, nodes, edges and reducers,
+  branches and loops, model calls as nodes, the five workflow patterns, Send and Command, checkpointers and threads,
+  trimming and summarising, durable execution, interrupts and human approval, time travel, long-term stores, agents
+  built by hand, reflection, agentic RAG, subgraphs, multi-agent systems, streaming, the Functional API, testing,
+  Deep Agents and a capstone, by building Harsh, the complaint-to-repair desk of the Ujjwal Nagar Water Board."
+language: python
+track: ai
+tags: [python, ai, langgraph]
+level: intermediate
+estimated_minutes: 265
+cover_scene: "A calm control room of a small city water board at night, a map of pipes and a repair van outside."
+cover: cover.svg
+cover_credit: { by: "Logo: LangGraph", source: "Simple Icons (CC0)" }
+image: labbox/langgraph:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: why-graphs
+  title: Why graphs
+  file: chapters/01-why-graphs.md
+  minutes: 40
+  folder: 01-why-graphs
+  part: Thinking in graphs
+  tasks:
+  - id: first_graph
+    title: Harsh's first graph
+    xp: 15
+    hints:
+    - build_graph returns the StateGraph before any node or edge is added, and never compiles it.
+    - add_node takes a name and a function; add_edge takes two names, and START and END are names too.
+    - Two nodes, three edges in order, and compile() at the end.
+    examples:
+    - call: 'build_graph().invoke({"text": "Brown water"})'
+      gives: kind dirty_water and a reply promising 4 hours
+  - id: trace_steps
+    title: the steps of a run
+    xp: 15
+    hints:
+    - steps returns an empty list.
+    - stream with stream_mode updates yields one dict per finished node.
+    - Each dict's key is the node's name; collect them in order.
+    examples:
+    - call: steps("Pipe burst near the school")
+      gives: "['classify', 'write_reply']"
+- id: state
+  title: State and reducers
+  file: chapters/02-state.md
+  minutes: 40
+  folder: 02-state
+  tasks:
+  - id: log_reducer
+    title: a log that grows
+    xp: 15
+    hints:
+    - The log keeps only the last node's line.
+    - Annotated attaches a reducer to a type; operator.add joins lists.
+    - Change the type of log to an Annotated list of str with operator.add.
+    examples:
+    - call: build_graph().invoke(...)["log"]
+      gives: a line from classify and one from check_location
+  - id: severity_reducer
+    title: severity only goes up
+    xp: 20
+    hints:
+    - higher always returns the new value, so an urgent complaint can drop to high.
+    - ORDER lists the severities from least to most serious; ORDER.index gives a position.
+    - When there is no current value use the new one, otherwise the max of the two by their position in ORDER.
+    examples:
+    - call: higher("urgent", "high")
+      gives: urgent
+- id: branches
+  title: Branches and loops
+  file: chapters/03-branches.md
+  minutes: 45
+  folder: 03-branches
+  tasks:
+  - id: route_by_kind
+    title: route by kind
+    xp: 15
+    hints:
+    - choose_team sends every complaint to the repair crew.
+    - The routing function returns the name of the next node.
+    - Map dirty_water and billing to their nodes, with repair_crew as the default.
+    examples:
+    - call: 'choose_team({"kind": "dirty_water"})'
+      gives: health_team
+  - id: retry_loop
+    title: try again, then ask
+    xp: 20
+    hints:
+    - after_find_zone always gives up and asks the citizen.
+    - Returning find_zone makes a loop; state tries counts the attempts so far.
+    - Found zone goes on to route; no zone with tries under MAX_TRIES loops back; otherwise ask the citizen.
+    examples:
+    - call: '"Gandi Chowk"'
+      gives: 2 tries, North zone
+    - call: '"Shivaji Path"'
+      gives: 2 tries, then the front desk
+- id: model-nodes
+  title: Model calls as nodes
+  file: chapters/04-model-nodes.md
+  minutes: 45
+  folder: 04-model-nodes
+  tasks:
+  - id: triage_node
+    title: the triage node
+    xp: 20
+    hints:
+    - triage returns fixed values without asking the model.
+    - with_structured_output(Triage) gives a model that answers with a Triage object.
+    - Invoke it with the TRIAGE system message and the complaint, and return the object as a dict.
+    examples:
+    - call: 'triage({"text": "pani nahi aaya aaj gandhi chowk mein"})'
+      gives: no_water, high, Gandhi Chowk
+  - id: reply_node
+    title: the reply node
+    xp: 15
+    hints:
+    - draft_reply returns an empty reply.
+    - facts already holds the complaint and the response time.
+    - Invoke the model with the REPLY system message and the facts, and return its content under reply.
+    examples:
+    - call: draft_reply(an urgent ticket)
+      gives: a reply promising 4 hours
+- id: patterns
+  title: Workflow patterns
+  file: chapters/05-patterns.md
+  minutes: 50
+  folder: 05-patterns
+  tasks:
+  - id: parallel_branches
+    title: two lookups at once
+    xp: 20
+    hints:
+    - The parallel graph has no edge from START.
+    - Two edges from START start two nodes in the same step.
+    - Join them with one add_edge whose first argument is a list of both lookups.
+    examples:
+    - call: 'build_parallel().invoke({"street": "Station Road"})'
+      gives: South zone crew and a survey of the old main
+  - id: evaluator_loop
+    title: when to stop
+    xp: 20
+    hints:
+    - next_step always stops after the first draft.
+    - The loop ends on a good grade or at the ceiling; otherwise it goes back to the writer.
+    - Compare state drafts with MAX_DRAFTS, and return the writer node's name when neither is true.
+    examples:
+    - call: a draft rejected once, then accepted
+      gives: 2 drafts
+- id: send-command
+  title: Send and Command
+  file: chapters/06-send-command.md
+  minutes: 45
+  folder: 06-send-command
+  tasks:
+  - id: fan_out
+    title: one triage per complaint
+    xp: 20
+    hints:
+    - fan_out returns no tasks, so no complaint is triaged.
+    - Send takes a node name and that run's own input dict.
+    - Return one Send to triage_one per complaint, each with a dict holding its text.
+    examples:
+    - call: five complaints
+      gives: five tickets, 1 urgent
+  - id: command_goto
+    title: route the repair
+    xp: 20
+    hints:
+    - plan schedules every repair, however expensive.
+    - Command carries goto (the next node) and update (the state change) together.
+    - Over APPROVAL_OVER go to engineer_approval with its status, otherwise to schedule.
+    examples:
+    - call: 'plan({"estimate": 65000})'
+      gives: engineer_approval, waiting for the engineer

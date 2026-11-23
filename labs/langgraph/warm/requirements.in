@@ -1,0 +1,3 @@
+# Added on top of labbox/langchain:v1 (which pins LangChain 1.5.2, LangGraph 1.2.24 and the rest).
+deepagents==0.7.41
+langgraph-checkpoint-sqlite
