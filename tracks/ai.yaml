@@ -92,3 +92,7 @@ nodes:
     title: Images, memory and streaming agents
     requires: [lc-agents]
     chapters: [langchain/images, langchain/memory, langchain/streaming]
+  - id: lc-knowledge
+    title: Documents, vector stores, RAG and MCP
+    requires: [lc-agent-apps]
+    chapters: [langchain/documents, langchain/vector-stores, langchain/rag, langchain/retrieval-quality, langchain/mcp]

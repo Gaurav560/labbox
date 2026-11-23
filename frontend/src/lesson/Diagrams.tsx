@@ -2339,7 +2339,45 @@ function LcMemoryThreads() {
   );
 }
 
+function LcRag() {
+  return (
+    <SketchSteps
+      title="agentic RAG, one question"
+      intro="Press Play to follow the storage question."
+      label="the rule book was loaded, split and embedded once; for a question the model calls search_rules, the closest chunks above the threshold come back with their sources, and the model answers from them"
+      steps={[
+        { label: "1. Once, at start", says: "Five rule files loaded, split into 12 chunks, each embedded and stored." },
+        { label: "2. The question", says: "Can I store 80 crates of onions? reaches the agent." },
+        { label: "3. The model searches", says: "It calls search_rules with the whole question as the query." },
+        { label: "4. The store", says: "The question is embedded; chunks scoring at least 0.3 come back, best first." },
+        { label: "5. With sources", says: "Each piece starts with its file, like [storage.txt]." },
+        { label: "6. The answer", says: "The model answers only from those pieces, and names the file." },
+      ]}
+    />
+  );
+}
+
+function LcMcp() {
+  return (
+    <SketchSteps
+      title="Navin and an MCP server"
+      intro="Press Play to follow chapter 21's question."
+      label="the adapter starts the server, lists its tools, the agent calls a tool over MCP, the server runs Python and answers, and the server stops at the end"
+      steps={[
+        { label: "1. Start", says: "MCPAdapter starts coop_server.py as a child process (stdio)." },
+        { label: "2. List", says: "The server describes mandi_price and storage_cost; they become LangChain tools." },
+        { label: "3. The model asks", says: "storage_cost with crates 15 and days 4." },
+        { label: "4. Over MCP", says: "The adapter sends the call to the server; the server runs Python: 120." },
+        { label: "5. The answer", says: "The result goes back to the model, which writes the reply." },
+        { label: "6. Stop", says: "Leaving async with closes the connection and stops the server." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lc-rag": LcRag,
+  "lc-mcp": LcMcp,
   "lc-agent-loop": LcAgentLoop,
   "lc-memory-threads": LcMemoryThreads,
   "lc-ai-circles": LcAiCircles,

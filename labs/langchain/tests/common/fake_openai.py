@@ -5,8 +5,8 @@ import threading
 from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-# Toy embeddings: one number per keyword, so texts about the same thing get similar vectors.
-WORDS = ["onion", "grape", "tomato", "storage", "loan", "spray", "office", "aadhaar"]
+# Toy embeddings: one number per keyword (and one for "none of them"), so texts about the same thing get similar vectors.
+WORDS = ["onion", "grape", "tomato", "storage", "loan", "spray", "office", "aadhaar", "member", "market", "sale", "harvest", "crate"]
 
 
 @dataclass
@@ -113,10 +113,12 @@ class FakeOpenAI:
         inputs = [inputs] if isinstance(inputs, str) else inputs
         data = []
         for i, text in enumerate(inputs):
-            if not isinstance(text, str):  # token ids: the fake cannot read them
-                text = ""
+            if not isinstance(text, str):  # OpenAIEmbeddings sends token ids: read them back with its tokenizer
+                import tiktoken
+                text = tiktoken.get_encoding("cl100k_base").decode(text)
             t = text.lower()
-            v = [1.0 if w in t else 0.01 for w in WORDS]
+            v = [1.0 if w in t else 0.0 for w in WORDS]
+            v.append(0.0 if any(v) else 1.0)  # a text with none of the words points somewhere of its own
             norm = sum(x * x for x in v) ** 0.5
             data.append({"object": "embedding", "index": i, "embedding": [x / norm for x in v]})
         return {"object": "list", "data": data, "model": "ai-embed", "usage": {"prompt_tokens": 3, "total_tokens": 3}}

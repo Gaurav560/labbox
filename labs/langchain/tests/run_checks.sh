@@ -24,6 +24,11 @@ structured|13-structured|extract_booking booking_agent
 images|14-images|image_message leaf_report
 memory|15-memory|memory_agent thread_per_member
 streaming|16-streaming|stream_steps stream_answer_text
+documents|17-documents|load_rules split_rules
+vector-stores|18-vector-stores|store_chunks search_threshold
+rag|19-rag|rules_tool rag_agent
+retrieval-quality|20-retrieval-quality|hit_rate titled_chunks
+mcp|21-mcp|mcp_server mcp_agent
 "
 
 fail_all() { # tasks message

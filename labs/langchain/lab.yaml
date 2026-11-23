@@ -12,7 +12,7 @@ language: python
 track: ai
 tags: [python, ai, langchain]
 level: intermediate
-estimated_minutes: 675
+estimated_minutes: 895
 cover_scene: "A friendly help desk assistant at a farmers' cooperative near Nashik, onion fields and grape vineyards behind it."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain", source: "Simple Icons (CC0)" }
@@ -458,3 +458,134 @@ chapters:
     examples:
     - call: answer_text(agent, question, print)
       gives: the answer, word by word
+- id: documents
+  title: Documents and chunking
+  file: chapters/17-documents.md
+  minutes: 40
+  folder: 17-documents
+  part: Knowledge and MCP
+  tasks:
+  - id: load_rules
+    title: load the rule book
+    xp: 15
+    hints:
+    - load_rules returns an empty list.
+    - sorted(folder.glob("*.txt")) gives the files in name order; read_text() gives a file's text.
+    - One Document per file, with page_content and metadata holding the file name under source.
+    examples:
+    - call: load_rules(Path("rules"))
+      gives: 5 Documents, loans.txt first
+  - id: split_rules
+    title: split the rules into chunks
+    xp: 20
+    hints:
+    - split returns the documents unchanged.
+    - RecursiveCharacterTextSplitter takes chunk_size, chunk_overlap and add_start_index.
+    - Make one with size, overlap and add_start_index set to True, then call its split_documents.
+    examples:
+    - call: split(docs)
+      gives: 12 chunks of at most 300 characters
+- id: vector-stores
+  title: Embeddings and vector stores
+  file: chapters/18-vector-stores.md
+  minutes: 40
+  folder: 18-vector-stores
+  tasks:
+  - id: store_chunks
+    title: embed and store the chunks
+    xp: 20
+    hints:
+    - build_store returns an empty store.
+    - InMemoryVectorStore has a class method that embeds documents and adds them.
+    - Call from_documents with the chunks and OpenAIEmbeddings for the ai-embed model.
+    examples:
+    - call: build_store(chunks)
+      gives: a store holding 12 chunks
+  - id: search_threshold
+    title: search with a threshold
+    xp: 20
+    hints:
+    - search returns every result, however unrelated.
+    - similarity_search_with_score returns (document, score) pairs, best first.
+    - Keep the pairs whose score is at least min_score, with a list comprehension.
+    examples:
+    - call: search(store, "What is the capital of France?")
+      gives: an empty list
+- id: rag
+  title: Retrieval-augmented generation
+  file: chapters/19-rag.md
+  minutes: 50
+  folder: 19-rag
+  tasks:
+  - id: rules_tool
+    title: the search_rules tool
+    xp: 20
+    hints:
+    - search_rules returns an empty string.
+    - search(rule_store(), query) gives (document, score) pairs; the source is in the document's metadata.
+    - Return the no-rule sentence when the list is empty, else each piece with its source in brackets, joined by a blank line.
+    examples:
+    - call: search_rules("Can I store 80 crates of onions?")
+      gives: '[storage.txt] ... pieces of the storage rules'
+  - id: rag_agent
+    title: Navin as a RAG agent
+    xp: 20
+    hints:
+    - rag_agent returns None.
+    - create_agent takes the model, the tools and a system prompt.
+    - The tools are search_rules, mandi_price and storage_cost; the prompt is SYSTEM.
+    examples:
+    - call: rag_agent().invoke(...)
+      gives: an answer that names its rule file
+- id: retrieval-quality
+  title: Measuring and improving retrieval
+  file: chapters/20-retrieval-quality.md
+  minutes: 45
+  folder: 20-retrieval-quality
+  tasks:
+  - id: hit_rate
+    title: the hit rate
+    xp: 20
+    hints:
+    - hit_rate returns 0.0.
+    - sources_for(question) returns a list of file names, best first; slice it to the first k.
+    - Count the questions whose expected file is in that slice and divide by the number of questions.
+    examples:
+    - call: hit_rate(sources, GOLDEN, 3)
+      gives: 0.88 for plain chunks
+  - id: titled_chunks
+    title: titled chunks
+    xp: 20
+    hints:
+    - titled_chunks returns the chunks unchanged.
+    - titles maps a file name to its title; the chunk's file name is in its metadata.
+    - Build a new Document with the title, a colon and the text, unless the text already starts with the title.
+    examples:
+    - call: titled_chunks(chunks, titles)
+      gives: 'Membership: A new member brings an Aadhaar card...'
+- id: mcp
+  title: MCP servers and clients
+  file: chapters/21-mcp.md
+  minutes: 45
+  folder: 21-mcp
+  tasks:
+  - id: mcp_server
+    title: the co-op's MCP server
+    xp: 15
+    hints:
+    - The server offers no tools yet.
+    - FastMCP turns a function into a tool with a decorator on the mcp object.
+    - Put the tool decorator of mcp above both functions.
+    examples:
+    - call: await mcp.list_tools()
+      gives: mandi_price and storage_cost
+  - id: mcp_agent
+    title: tools from the server
+    xp: 25
+    hints:
+    - ask_over_mcp returns no tools and no answer.
+    - MCPAdapter is an async context manager; list_tools is awaited inside it.
+    - Build the agent with those tools, await its ainvoke, and return the names and the last message's content, all inside the block.
+    examples:
+    - call: asyncio.run(ask_over_mcp("15 crates for 4 days?"))
+      gives: (['mandi_price', 'storage_cost'], an answer with 120)

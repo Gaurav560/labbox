@@ -35,6 +35,12 @@ names and typos. Pieces can spell anything.
 | One short word | about 1 |
 | 100 words | about 130 |
 | One page of text | about 600 to 800 |
+
+A printer once set a page from a case of small metal pieces: letters, common pairs and spaces, reused for every word. A tokenizer's vocabulary is the same idea, with about 200,000 pieces instead of a few hundred.
+
+:::photo{src="/lesson-images/langchain/metal-type.webp" alt="Close-up of metal movable type letters for printing, set side by side in a composing stick" credit="Willi Heidelbach" license="CC BY 2.5" source="https://commons.wikimedia.org/wiki/File%3AMetal_movable_type.jpg"}
+Metal movable type for letterpress printing.
+:::
 :::
 
 :::step{type=history title="A compression trick that became the alphabet of AI"}

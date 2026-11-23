@@ -11,10 +11,10 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (23 November): 280 backend tests on Postgres and Redis, 27 browser tests, 19 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain Parts 1 to 3 (chapters 1 to 16) are committed; Parts 4 and 5 and the capstone are next.
-- **Working files** (session scratchpad, `lc/`): `gen.py` + `common.py` + `partN.py` write `starter/` and
-  `solution/`; `tests/` (pytest checks with `common/fake_openai.py`); `ch/` chapter drafts; `caps/` captures;
-  `rc.sh` runs the checks on a scratch copy. The committed folders are the record.
+  LangChain Parts 1 to 4 (chapters 1 to 21) are committed; Part 5 and the capstone (chapters 22 to 27) are next.
+- **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
+  the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
+  Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
 
 ## LangChain (new lab `langchain`, owner 23 November): Navin, a farmers' co-op help desk
 
@@ -30,7 +30,7 @@ pytest with a fake OpenAI server, about a second a chapter. Captures use the aut
 - Part 2 "Calling a model": 5 `raw-http`, 6 `openai-sdk`, 7 `first-app`, 8 `parameters`, 9 `hallucinations`. Done.
 - Part 3 "Agents": 10 an agent loop by hand, 11 `create_agent`, 12 tools and ToolRuntime, 13 structured output,
   14 images (multimodal messages), 15 short-term memory, 16 streaming agents. Done.
-- Part 4 "Knowledge and MCP": 17 documents and chunking, 18 vector stores, 19 RAG, 20 retrieval quality, 21 MCP.
+- Part 4 "Knowledge and MCP": 17 documents and chunking, 18 vector stores, 19 RAG, 20 retrieval quality, 21 MCP. Done.
 - Part 5 "Production": 22 built-in middleware, 23 custom middleware and dynamic agents, 24 guardrails and PII,
   25 human in the loop, 26 tests and evals, 27 capstone (FastAPI, with long-term memory).
 

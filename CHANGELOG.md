@@ -1,5 +1,18 @@
 # Changelog
 
+## 23 November: LangChain, Part 4 (knowledge and MCP)
+
+- Five chapters, ten tasks, every output captured through the gateway: documents and chunking (a plain-Python loader,
+  because `langchain-community` is being retired; the splitter left the heading "Cold storage" alone and cut the
+  50-crate rule in half), vector stores (real cosine scores, 0.6 for matches and 0.09 for France; the 0.3 threshold also
+  dropped a right answer at 0.298), RAG as a tool (three real failures shown: the agent never searched, then searched
+  for one word, then answered wrongly from half a rule), retrieval quality (a golden set; titled chunks raised hit@1
+  from 75% to 88%; splitting at sentences kept the rule whole; a naive query rewrite mistranslated the Marathi question
+  and a better prompt fixed it), and MCP (a FastMCP server and LangChain's `MCPAdapter`, beta).
+- The co-op's rule book (five files); the fake OpenAI server reads token ids and has more keywords.
+- Two diagrams (agentic RAG, MCP), five notes pages, two photos (metal type for chapter 2, Cranfield's library), one
+  AI-track node.
+
 ## 23 November: LangChain, Part 3 (agents)
 
 - Seven chapters, fourteen tasks, every output captured through the gateway: an agent loop by hand (two tool calls in
