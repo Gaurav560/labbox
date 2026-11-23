@@ -8,8 +8,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
 ## Resume here
 
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
-  Last full run green (24 November, after Rust from zero): 283 backend tests on Postgres and Redis (29 minutes),
-  27 browser tests (the visitor home test failed once under 4 workers and passed on its own), 22 labs valid,
+  Last full run green (24 November, after RAG and vector databases): 284 backend tests on Postgres and Redis
+  (30 minutes), 27 browser tests, 23 labs valid,
   `scripts/labbox admin list` empty.
 - **Just finished:** RAG and vector databases (`rag-vector-databases`, owner 24 November night, built without waiting
   for an OK as asked): 13 chapters in 3 parts, 26 tasks, Fieldbook. Syllabus and design below. Generator drafts in the

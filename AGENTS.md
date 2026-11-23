@@ -52,8 +52,8 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   quick-start mode); run it only when a change touches the database, migrations or the no-Redis fallbacks;
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (27 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (24 November, after the Rust course) (283 backend tests on Postgres and Redis, about
-  30 minutes with every lab's test-lab, 27 browser tests on 4 workers, 22 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (24 November, after the RAG and vector databases course) (284 backend tests on Postgres and
+  Redis, about 30 minutes with every lab's test-lab, 27 browser tests on 4 workers, 23 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 
