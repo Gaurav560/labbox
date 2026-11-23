@@ -3,7 +3,7 @@
     cd backend && .venv/bin/python ../tools/authoring/notes.py JOBS.json OUTDIR "a small doodle of ..."
 
 JOBS.json is a list of {name, lines}: name like "springai-07-notes", lines the five or six short lines the
-page must say. Writes OUTDIR/<name>.webp (1536 x 1024, medium quality). Existing files are skipped, so to
+page must say. Writes OUTDIR/<name>.webp (1536 x 1024, medium quality, saved as WebP quality 80: about 180 KB). Existing files are skipped, so to
 redraw one, move it away first.
 
 Uses the image provider from backend/.env through labbox_cli.image_provider (OpenAI first). The owner approved
@@ -15,7 +15,10 @@ See COURSE_PRODUCTION.md, "Handwritten notes".
 """
 import json
 import sys
+from io import BytesIO
 from pathlib import Path
+
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
@@ -47,7 +50,10 @@ def main() -> None:
             continue
         prompt = STYLE.format(doodle=doodle) + "\n".join(job["lines"])
         try:
-            target.write_bytes(cli.generate_image(prompt, name, key, model, quality="medium"))
+            raw = cli.generate_image(prompt, name, key, model, quality="medium")
+            # The provider's file is about 2 MB; WebP quality 80 keeps the handwriting sharp at about 180 KB.
+            image = Image.open(BytesIO(raw)).convert("RGB")
+            image.save(target, "WEBP", quality=80, method=6)
             print("ok", job["name"], flush=True)
         except Exception as e:  # keep going; the error text never contains the key
             print("fail", job["name"], str(e)[:200], flush=True)

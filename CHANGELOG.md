@@ -1,5 +1,12 @@
 # Changelog
 
+## 23 November: lesson images 11 times lighter
+
+- The handwritten-notes pages were saved exactly as the image service returned them, about 2 MB each. 47 images over
+  400 KB (30 LangChain4j notes, 15 Spring AI, one Go, one Spring) are now WebP quality 80: 82 MB down to 7 MB, the
+  handwriting still sharp. A recap page now loads about 180 KB instead of 2 MB.
+- `tools/authoring/notes.py` saves new pages the same way, so this does not come back.
+
 ## 23 November: LangChain4j, more photos and diagrams (owner: "it will be better as the lab is large")
 
 - Six more real photos (Tomas Mikolov, Douglas Crockford, telephone switchboard operators in 1915, Facebook's
