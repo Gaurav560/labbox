@@ -73,6 +73,12 @@ from the Beijing Academy of Artificial Intelligence (2023), is one of them, smal
 - **2022** OpenAI's ada-002: one embedding model for all text.
 - **2023** BGE: small open embedding models that run anywhere.
 :::
+
+**Tomáš Mikolov**, who published word2vec with his colleagues at Google in 2013, photographed in 2020.
+
+:::photo{src="/lesson-images/langchain4j/tomas-mikolov.webp" alt="A portrait of Tomas Mikolov outdoors, with long hair tied back, smiling slightly" credit="Jindřich Nosek (NoJin)" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3ATom%C3%A1%C5%A1_Mikolov_%282020%29.jpg"}
+Tomáš Mikolov in 2020.
+:::
 :::
 
 :::step{type=example title="Worked example: how similar are two arrows?" file="05-embeddings/src/main/java/com/setu/Vectors.java" line="9-13"}

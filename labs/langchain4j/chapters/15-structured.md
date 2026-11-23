@@ -76,6 +76,12 @@ the model can still put a wrong value in a correct field, as you are about to se
 - **2024** Structured Outputs with strict JSON schemas, in August.
 - **2025** LangChain4j turns records, enums and lists into schemas automatically.
 :::
+
+The contract is written in **JSON**, the data format Douglas Crockford named and specified in **2001**. It is how almost every web API sends data today, and the shape every structured answer in this chapter takes.
+
+:::photo{src="/lesson-images/langchain4j/douglas-crockford.webp" alt="Douglas Crockford, grey-haired and bearded, in glasses and a dark jacket, smiling" credit="Robert Claypool" license="CC0" source="https://commons.wikimedia.org/wiki/File%3ADouglas_Crockford%2C_February_2013.jpg"}
+Douglas Crockford, who named and specified JSON, in 2013.
+:::
 :::
 
 :::step{type=concept title="Telling LangChain4j the model can follow a schema" file="15-structured/src/main/java/com/setu/Models.java" line="14-23"}

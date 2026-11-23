@@ -44,6 +44,10 @@ Building the client starts the server and performs the MCP handshake; the folder
 server which folder it may touch, and nothing outside it. `McpClient` is `AutoCloseable`: closing it stops the
 server process.
 
+:::diagram{name="l4j-mcp"}
+The client starts the server, they shake hands, the client lists the tools and calls one when the model asks.
+:::
+
 **Check yourself:** who starts the Node.js server? (Your Java program, as a child process, when the client is built.)
 :::
 
@@ -69,6 +73,12 @@ server's tools for free.
 - **2023** Function calling: tools inside one application.
 - **2024** The Model Context Protocol, on 25 November.
 - **2025** Adopted across the industry; Streamable HTTP replaces the first HTTP transport.
+:::
+
+Telephones solved the same problem a century earlier. Instead of a wire between every pair of phones, every line ran to one **switchboard**, and an operator connected any caller to any other line. MCP plays that part between AI apps and tools.
+
+:::photo{src="/lesson-images/langchain4j/switchboard-operators.webp" alt="A black and white photo of five telephone operators in headsets, seated in a row at a tall switchboard with cords and jacks" credit="Anamosa Library and Learning Center" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3ATelephone_operators_at_Weiss_Collection.jpg"}
+Telephone operators at a switchboard in Anamosa, Iowa, in 1915.
 :::
 :::
 

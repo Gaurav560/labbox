@@ -1,5 +1,14 @@
 # Changelog
 
+## 23 November: LangChain4j, more photos and diagrams (owner: "it will be better as the lab is large")
+
+- Six more real photos (Tomas Mikolov, Douglas Crockford, telephone switchboard operators in 1915, Facebook's
+  Prineville data centre, a library card catalogue, a level-crossing gate in Kerala): 18 in all. One candidate (a
+  Great Indian Peninsula Railway ghat, 1860s) was left out: its licence is "no known restrictions", not one of ours.
+- Six more playing diagrams, each with this course's real numbers: one streamed answer (905 ms, 2103 ms), a sliding
+  memory window, an MCP client and a stdio server, one embedding-store search (0.712, threshold 0.7), guardrails
+  around one call, and the supervisor's real plan (420, then 840): 18 diagrams in all.
+
 ## 23 November: nested-oval diagrams (owner: "wasn't this better as a Venn diagram animation?")
 
 - A new playing diagram, `SketchNested` (`frontend/src/lesson/Sketch.tsx`): sets inside sets drawn as hand-drawn

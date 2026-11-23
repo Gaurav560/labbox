@@ -32,6 +32,10 @@ A memory cannot grow forever: the context window has a limit, and every remember
 
 The system message is special: it is kept even when old messages are evicted, so Setu never forgets who it is.
 
+:::diagram{name="l4j-memory-window"}
+Each call sends the whole memory; when the window is full the oldest messages go, and the system message stays.
+:::
+
 **Check yourself:** with a window of 10 messages, what happens to the passenger's first message after 6 questions and
 6 answers? (It has been evicted: 12 messages do not fit in 10, so the oldest two are gone.)
 :::

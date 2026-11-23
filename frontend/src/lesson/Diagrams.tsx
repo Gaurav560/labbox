@@ -2149,7 +2149,118 @@ function L4jWorkflow() {
   );
 }
 
+function L4jStreaming() {
+  return (
+    <SketchSteps
+      title="one streamed answer"
+      intro="Press Play to follow the real run from this chapter."
+      label="the request goes out; the first piece arrives after 905 milliseconds and onPartialResponse prints it; 56 pieces follow; onCompleteResponse runs after 2103 milliseconds"
+      steps={[
+        { label: "1. 0 ms: request", says: "Setu sends the question with stream: true; the HTTP response stays open." },
+        { label: "2. 905 ms: first piece", says: "data: [Tr] arrives; onPartialResponse prints it. The passenger starts reading." },
+        { label: "3. Piece after piece", says: "[ains] [ slow] [ down]... each one printed as it comes, 56 in all." },
+        { label: "4. 2103 ms: [DONE]", says: "onCompleteResponse gets the whole ChatResponse, with its token usage." },
+        { label: "5. Without streaming", says: "The same answer, but an empty box until 2103 ms." },
+      ]}
+    />
+  );
+}
+
+function L4jMemoryWindow() {
+  return (
+    <SketchSteps
+      title="a sliding window of messages"
+      intro="Press Play to follow one conversation."
+      label="each question and answer is added to the memory; every call sends the whole memory; when the window is full the oldest messages are evicted, but the system message stays"
+      steps={[
+        { label: "1. First question", says: "The memory holds the system message and Meera's question; both go to the model." },
+        { label: "2. First answer", says: "Setu's answer is added: the next call sends all three." },
+        { label: "3. More questions", says: "Every call sends the whole memory again, so every remembered token is paid for again." },
+        { label: "4. The window is full", says: "With maxMessages(10), the next message pushes out the oldest one." },
+        { label: "5. Always kept", says: "The system message is never evicted: Setu never forgets who it is." },
+      ]}
+    />
+  );
+}
+
+function L4jMcp() {
+  return (
+    <SketchSteps
+      title="an MCP client and a stdio server"
+      intro="Press Play to follow chapter 20's client."
+      label="the Java client starts the server as a child process, they shake hands over standard input and output, the client lists the tools, and calls one when the model asks"
+      steps={[
+        { label: "1. Start", says: "Building DefaultMcpClient starts mcp-server-filesystem as a child process." },
+        { label: "2. Handshake", says: "initialize, as JSON-RPC 2.0 messages over its standard input and output." },
+        { label: "3. tools/list", says: "The server describes its 14 tools; McpToolProvider turns them into LangChain4j tools." },
+        { label: "4. The model asks", says: "It wants read_text_file for a notice: the client sends tools/call." },
+        { label: "5. The answer", says: "The server reads the file, only inside its folder, and returns the text." },
+        { label: "6. Close", says: "Closing the client stops the server process." },
+      ]}
+    />
+  );
+}
+
+function L4jVectorSearch() {
+  return (
+    <SketchSteps
+      title="one search in the embedding store"
+      intro="Press Play to follow the bicycle question."
+      label="the question is embedded, compared with every stored card, scored as cosine plus one over two, and only scores of at least 0.7 are kept"
+      steps={[
+        { label: "1. Embed the question", says: "Can I take my bicycle? becomes 1,536 numbers." },
+        { label: "2. Compare", says: "The store measures how close it is to every card's vector." },
+        { label: "3. Score", says: "LangChain4j's score is (cosine + 1) / 2: Luggage 0.712, Lost property 0.645, Pets 0.612." },
+        { label: "4. Threshold", says: "minScore(0.7) keeps only Luggage: the right card." },
+        { label: "5. No answer here", says: "What is the capital of France? Best score 0.543: nothing is returned." },
+      ]}
+    />
+  );
+}
+
+function L4jGuardrails() {
+  return (
+    <SketchSteps
+      title="guardrails around one call"
+      intro="Press Play to follow two questions."
+      label="the input guardrail checks the question before the model; a question over 300 characters is refused and never reaches the model; the output guardrail rewrites the answer before it is returned"
+      steps={[
+        { label: "1. setu.chat(question)", says: "Your method is called." },
+        { label: "2. Input guardrail", says: "QuestionLimit: 111 characters, success(). The question goes on." },
+        { label: "3. The model", says: "It writes: ... passenger Ravi, mobile 98220 12345, ..." },
+        { label: "4. Output guardrail", says: "NoPhoneNumbers: successWith(...), the number becomes [number removed]." },
+        { label: "5. The answer returns", says: "No extra model call; the passenger never sees the number." },
+        { label: "6. A 379-character question", says: "fatal(TOO_LONG): InputGuardrailException, and no token is paid for." },
+      ]}
+    />
+  );
+}
+
+function L4jSupervisor() {
+  return (
+    <SketchSteps
+      title="a supervisor plans, step by step"
+      intro="Press Play to follow the real run from this chapter."
+      label="the planner reads the request and the agents' descriptions, calls the date agent, then the fare agent, then answers done with a summary"
+      steps={[
+        { label: "1. The request", says: "2 adults, Pune to Ratnagiri, next Sunday: the date and the total fare?" },
+        { label: "2. Plan", says: "The planner reads the agents' names and descriptions and picks the date agent." },
+        { label: "3. Date agent", says: "Its tool answers 2026-11-29." },
+        { label: "4. Plan again", says: "With that result, the planner picks the fare agent for Ratnagiri." },
+        { label: "5. Fare agent", says: "Its tool answers 420: the fare for one adult." },
+        { label: "6. Done", says: "The planner writes the summary. With CONTEXT it multiplies: 2 x 420 = 840." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-streaming": L4jStreaming,
+  "l4j-memory-window": L4jMemoryWindow,
+  "l4j-mcp": L4jMcp,
+  "l4j-vector-search": L4jVectorSearch,
+  "l4j-guardrails": L4jGuardrails,
+  "l4j-supervisor": L4jSupervisor,
   "l4j-sequence": L4jSequence,
   "l4j-workflow": L4jWorkflow,
   "l4j-tool-call": L4jToolCall,

@@ -59,6 +59,12 @@ own store; and every answer can name the pieces it came from.
 - **2023** RAG becomes the standard pattern for company chatbots.
 - **2024** Advanced RAG: query rewriting, re-ranking, hybrid search.
 :::
+
+Retrieval is older than computers. A library's **card catalogue** finds the right book from a few words, and only then do you read it. RAG works the same way: find the right pieces first, then let the model read them.
+
+:::photo{src="/lesson-images/langchain4j/card-catalog.webp" alt="Close-up of wooden card catalogue drawers, each with a brass label holder and pull handle" credit="MarkBuckawicki" license="CC0" source="https://commons.wikimedia.org/wiki/File%3AWooden_Card_Catalog_Furniture.jpg"}
+A wooden card catalogue at a public library in Nashua, New Hampshire.
+:::
 :::
 
 :::step{type=example title="Worked example: the ingestor" file="23-rag/src/main/java/com/setu/Rag.java" line="26-32"}

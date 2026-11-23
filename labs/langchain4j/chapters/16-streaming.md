@@ -42,6 +42,10 @@ Java tool for "a result that arrives later" is `CompletableFuture`: create one, 
 
 Underneath, the server keeps the HTTP response open and sends lines of **Server-Sent Events**: `data: {...one
 piece...}`, again and again, ending with `data: [DONE]`.
+
+:::diagram{name="l4j-streaming"}
+The first piece arrives after 905 ms and the passenger starts reading; the whole answer is complete after 2103 ms.
+:::
 :::
 
 :::step{type=example title="Worked example: a handler for printing" file="16-streaming/src/main/java/com/setu/Streams.java" line="26-31"}

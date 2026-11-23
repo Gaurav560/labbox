@@ -60,6 +60,12 @@ PostgreSQL, so many teams could keep vectors next to their ordinary tables.
 - **2019** Milvus, an open-source vector database.
 - **2021** pgvector: vectors inside PostgreSQL.
 :::
+
+Facebook's data centre at Prineville, Oregon, opened in **2011**. Buildings like this hold the billions of vectors that libraries like FAISS were written to search.
+
+:::photo{src="/lesson-images/langchain4j/facebook-data-center.webp" alt="A long, low, windowless white building behind a row of pine trees, in dry grassland under a grey sky" credit="Gary Halvorson, Oregon State Archives" license="CC BY 4.0" source="https://commons.wikimedia.org/wiki/File%3AFacebook%2C_Highway_126%2C_Prineville_-_DPLA_-_fd9c0cae95b43c5864c55d3eef1bf5a6.jpg"}
+Facebook's data centre at Prineville, Oregon.
+:::
 :::
 
 :::step{type=example title="Worked example: one entry" file="22-embedding-stores/src/main/java/com/setu/Store.java" line="31-37"}
@@ -98,6 +104,10 @@ List<EmbeddingMatch<TextSegment>> matches = store.search(request).matches();   /
 ```
 
 Each `EmbeddingMatch` has the `score`, the `embedded()` segment (text and metadata) and its id.
+
+:::diagram{name="l4j-vector-search"}
+The question is embedded, scored against every card, and only scores of at least 0.7 come back.
+:::
 
 Read the scores carefully. LangChain4j's **score** is not the cosine similarity of chapter 5: it is rescaled to run
 from 0 to 1, as **(cosine + 1) / 2**. So a score of **0.5 means a cosine of 0**: unrelated, not "half relevant". Here

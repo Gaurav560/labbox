@@ -81,6 +81,10 @@ Two settings shape the answer:
 | `supervisorContext("...")` | House rules added to the planner's instructions, for things the agent descriptions cannot say |
 
 Setu wants `SUMMARY`: the family asked for a date and a fare, and the last agent alone knows only one of them.
+
+:::diagram{name="l4j-supervisor"}
+The planner calls the date agent, then the fare agent, then writes the summary.
+:::
 :::
 
 :::step{type=task task=supervisor_agent title="Your turn: the supervisor" file="29-supervisor/src/main/java/com/setu/Supervisor.java" line="32-38"}

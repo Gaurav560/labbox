@@ -11,6 +11,12 @@ help desk that prints a passenger's mobile number on a shared screen, or into a 
 Both are checks that run around the model, not inside it. LangChain4j calls them **guardrails**: an **input
 guardrail** runs before the model is called, an **output guardrail** after it answers.
 
+
+A gatekeeper closes a level-crossing gate in Kerala. The gate does not drive the train or the cars; it only decides what may cross, and when. Guardrails do that job around a model.
+
+:::photo{src="/lesson-images/langchain4j/level-crossing-kerala.webp" alt="A railway gatekeeper in a khaki uniform turning the wheel that closes a level-crossing gate, with palm trees behind" credit="Joe Ravi" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File%3ARailway_Gatekeeper_in_Kerala%2C_India.jpg"}
+Closing the gate at level crossing 59A, Angamaly, Kerala.
+:::
 :::mission
 Write an input guardrail that refuses questions over 300 characters before they cost anything, and an output
 guardrail that removes mobile numbers from Setu's answers.
@@ -57,6 +63,10 @@ An AI Service call with both kinds of guardrail goes like this:
 
 A refused input throws `InputGuardrailException`; your code catches it and answers politely. The important property
 is in step 3: **a refused question never reaches the model, so it costs nothing**.
+
+:::diagram{name="l4j-guardrails"}
+The input guardrail runs before the model, the output guardrail after it; a refused question costs nothing.
+:::
 
 Guardrails are given to the builder (`.inputGuardrails(...)`, `.outputGuardrails(...)`) or named with annotations on
 the interface (`@InputGuardrails(QuestionLimit.class)`), which chapter 30 uses.
