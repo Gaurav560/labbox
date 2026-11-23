@@ -20,6 +20,13 @@ durable|09-durable|retry_sms resume_job
 interrupts|10-interrupts|pause_for_engineer resume_with_decision
 time-travel|11-time-travel|find_checkpoint correct_and_rerun
 stores|12-stores|save_preference use_preference
+agent-graph|13-agent-graph|agent_node tool_loop
+reflection|14-reflection|check_claims revise_or_finish
+agentic-rag|15-agentic-rag|grade_documents rewrite_question
+subgraphs|16-subgraphs|add_subgraph map_state
+multi-agent|17-multi-agent|supervisor_route specialist_report
+streaming|18-streaming|progress_events stream_tokens
+functional-api|19-functional-api|task_steps approval_in_flow
 "
 
 fail_all() { # tasks message

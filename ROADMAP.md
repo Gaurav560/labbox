@@ -61,7 +61,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | spring-ai | Spring AI | ai | 20 | 40 | 16.5 | Atlas, a science museum's guide (Spring Boot 4.2, Spring AI 2.1) | 22 | full (23 Nov) |
 | langchain4j | LangChain4j | ai | 30 | 60 | 22.3 | Setu, a hill railway's help desk (LangChain4j 1.24) | 18 | full (23 Nov) |
 | langchain | LangChain | ai | 27 | 54 | 19.4 | Navin, a farmers' co-op help desk (LangChain 1.5) | 13 | full (23 Nov) |
-| langgraph | LangGraph | ai | 12 of 24 | 24 | 8.8 | Harsh, a water board's complaint-to-repair desk (LangGraph 1.2) | 11 | being built (Parts 1 and 2 of 4, 23 Nov) |
+| langgraph | LangGraph | ai | 19 of 24 | 38 | 13.6 | Harsh, a water board's complaint-to-repair desk (LangGraph 1.2) | 15 | being built (Parts 1 to 3 of 4, 23 Nov) |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
 | java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |

@@ -110,3 +110,6 @@ nodes:
   - id: lg-persistence
     title: Persistence and people (LangGraph, Part 2)
     chapters: [langgraph/threads, langgraph/long-chats, langgraph/durable, langgraph/interrupts, langgraph/time-travel, langgraph/stores]
+  - id: lg-agents
+    title: Agents in graphs (LangGraph, Part 3)
+    chapters: [langgraph/agent-graph, langgraph/reflection, langgraph/agentic-rag, langgraph/subgraphs, langgraph/multi-agent, langgraph/streaming, langgraph/functional-api]

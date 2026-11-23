@@ -2624,7 +2624,139 @@ function LgStore() {
   );
 }
 
+function LgAgentLoop() {
+  return (
+    <SketchSteps
+      title="The agent loop, by hand"
+      intro="Press Play to follow '98220' through the loop."
+      label="Agent loop"
+      steps={[
+        { label: "agent", says: "The model reads the chat and the tool descriptions, and asks for find_tickets(phone='98220')." },
+        { label: "should_continue", says: "The last message has tool_calls: go to tools." },
+        { label: "tools", says: "ToolNode runs find_tickets and adds a ToolMessage: T-4471 and T-4475." },
+        { label: "agent", says: "The model reads the result and asks for ticket_status twice, in one message." },
+        { label: "tools", says: "Both calls run together; two ToolMessages come back." },
+        { label: "agent", says: "Now it has the facts and answers, with no tool calls." },
+        { label: "END", says: "should_continue sees no tool_calls: the run ends with the answer." },
+      ]}
+    />
+  );
+}
+
+function LgReflection() {
+  return (
+    <SketchSteps
+      title="Draft, check, and three exits"
+      intro="Press Play to follow 'Can my children drink the tap water now?'."
+      label="Reflection"
+      steps={[
+        { label: "agent", says: "Looks up the tickets and drafts an answer that says 'tomorrow morning' and gives advice." },
+        { label: "check", says: "The model labels each sentence; Python keeps the new_claim ones: two problems." },
+        { label: "Round 1", says: "Command(goto='agent') with the checker's feedback; rounds becomes 1." },
+        { label: "Rewrite", says: "The advice is gone, but 'tomorrow' is still there. Checked again: round 2." },
+        { label: "Round 3", says: "Still 'tomorrow'. Rounds is now over MAX_ROUNDS." },
+        { label: "hand_over", says: "A fixed message: a person will reply. No wrong day reaches the citizen." },
+      ]}
+    />
+  );
+}
+
+function LgAgenticRag() {
+  return (
+    <SketchSteps
+      title="Search, grade, rewrite once"
+      intro="Press Play to follow the bottled-water question."
+      label="Agentic RAG"
+      steps={[
+        { label: "search_or_answer", says: "The model decides the question needs the rulebook and searches 'refund bottled water'." },
+        { label: "retrieve", says: "The two closest sections come back: both about tankers." },
+        { label: "grade", says: "Do they answer the question? No, and no rewrite was tried yet: rewrite_question." },
+        { label: "rewrite", says: "The model rewrites the question in rulebook words; rewrites becomes 1." },
+        { label: "search again", says: "A second search finds reconnection and meter rules: still no answer." },
+        { label: "answer", says: "One rewrite was used, so answer runs: the rulebook does not cover it, a person will be asked." },
+      ]}
+    />
+  );
+}
+
+function LgSubgraph() {
+  return (
+    <SketchSteps
+      title="Two offices, two ways to connect"
+      intro="Press Play to follow two tickets."
+      label="Subgraphs"
+      steps={[
+        { label: "triage", says: "T-4490 is a billing complaint: go to the billing node." },
+        { label: "billing", says: "The billing graph itself is the node. It reads phone from the desk's state." },
+        { label: "inside billing", says: "load_readings, then check_jump: four times the average, so the bill is held." },
+        { label: "merge back", says: "The shared key verdict comes back to the desk; readings stays inside." },
+        { label: "repairs", says: "T-4492 is a leak. The repairs function sends {'job': 'T-4492'} to the repair graph." },
+        { label: "translate back", says: "The job's log comes back as the ticket's repair_log." },
+      ]}
+    />
+  );
+}
+
+function LgSupervisor() {
+  return (
+    <SketchSteps
+      title="A supervisor and two specialists"
+      intro="Press Play to follow a message with two problems."
+      label="Multi-agent"
+      steps={[
+        { label: "supervisor", says: "Reads the message: a high bill and a dripping meter. Command(goto='billing')." },
+        { label: "billing", says: "Its own agent checks bills and readings, holds the bill, and reports back, signed 'billing'." },
+        { label: "supervisor", says: "Reads the report: the meter is still open. Command(goto='repairs')." },
+        { label: "repairs", says: "Books a visit for the meter, and, having read everything, one for the inspection too." },
+        { label: "supervisor", says: "Every problem has a report: FINISH, and the run ends." },
+      ]}
+    />
+  );
+}
+
+function LgStream() {
+  return (
+    <SketchSteps
+      title="What reaches the screen, and when"
+      intro="Press Play to follow one update request."
+      label="Streaming"
+      steps={[
+        { label: "0.00 s", says: "lookup starts and writes 'finding your tickets': a custom event, shown at once." },
+        { label: "0.50 s", says: "The tickets are found: 'found 2, checking the crew schedule'." },
+        { label: "1.0 s", says: "lookup ends; the reply node calls the model." },
+        { label: "2.22 s", says: "The first token arrives as a messages chunk from the reply node." },
+        { label: "3.73 s", says: "The last of 72 chunks. Without streaming, the screen would have been empty until now." },
+      ]}
+    />
+  );
+}
+
+function LgFunctional() {
+  return (
+    <SketchSteps
+      title="A crash and a resume, in a function"
+      intro="Press Play to follow job J-301."
+      label="Functional API"
+      steps={[
+        { label: "start", says: "repair_job runs. book_crew(job).result(): the crew is booked, and the result saved." },
+        { label: "order_parts", says: "Ordered, and the result saved." },
+        { label: "send_sms", says: "The SMS gateway times out: the entrypoint fails; the two results stay in the checkpoint." },
+        { label: "resume", says: "invoke(None, config) runs repair_job again from its first line." },
+        { label: "replay", says: "book_crew and order_parts return their saved results at once: nothing is booked twice." },
+        { label: "send_sms", says: "This one runs for real, succeeds, and the function returns the three log lines." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lg-agent-loop": LgAgentLoop,
+  "lg-reflection": LgReflection,
+  "lg-agentic-rag": LgAgenticRag,
+  "lg-subgraph": LgSubgraph,
+  "lg-supervisor": LgSupervisor,
+  "lg-stream": LgStream,
+  "lg-functional": LgFunctional,
   "lg-threads": LgThreads,
   "lg-summary": LgSummary,
   "lg-durable": LgDurable,

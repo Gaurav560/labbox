@@ -1,5 +1,22 @@
 # Changelog
 
+## 23 November: LangGraph, Part 3 (agents in graphs)
+
+- Seven chapters, fourteen tasks, every output captured through the gateway: an agent loop by hand (`bind_tools`,
+  `ToolNode`, one conditional edge; two status calls ran in one step; safety advice still came from nowhere),
+  reflection (the first one-question checker rejected correct facts and every "I don't know", for real; the final
+  checker labels each sentence and Python decides; one answer sent, one handed to a person after "tomorrow" came back
+  three times, and the lesson names the cause: the model was never told today's date), agentic RAG (grade, rewrite
+  once, search again; the bottled-water question ends in an honest "I will ask a person"), subgraphs (shared keys and a
+  translating function; a renamed shared key was tried and silently stays empty, as the lesson says), a supervisor with
+  two `create_agent` specialists (the repairs agent read billing's report and booked a second visit: send a task, not
+  everything), streaming (progress events and tokens: first token at 2.22 s, done at 3.73 s), and the Functional API
+  (a crash resumed without repeating tasks, and an approval with `interrupt`).
+- `main.py` in chapters 14 and 15 takes one question per run: a reflection run can make a dozen model calls and the
+  gateway allows 20 a minute.
+- Seven playing diagrams, seven notes pages, four photos (Shakey, a 1943 library desk, a Teletype Model 33, Barbara
+  Liskov), one AI-track node.
+
 ## 23 November: LangGraph, Part 2 (persistence and people)
 
 - Six chapters, twelve tasks, every output captured through the gateway: checkpointers and threads (one thread per

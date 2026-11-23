@@ -11,7 +11,7 @@ language: python
 track: ai
 tags: [python, ai, langgraph]
 level: intermediate
-estimated_minutes: 525
+estimated_minutes: 815
 cover_scene: "A calm control room of a small city water board at night, a map of pipes and a repair van outside."
 cover: cover.svg
 cover_credit: { by: "Logo: LangGraph", source: "Simple Icons (CC0)" }
@@ -344,3 +344,186 @@ chapters:
     examples:
     - call: a new thread from 98220
       gives: a reply in Marathi
+- id: agent-graph
+  title: An agent graph by hand
+  file: chapters/13-agent-graph.md
+  minutes: 45
+  folder: 13-agent-graph
+  part: Agents in graphs
+  tasks:
+  - id: agent_node
+    title: give the model its tools
+    xp: 15
+    hints:
+    - The model answers without ever seeing the ticket tools.
+    - bind_tools attaches tool descriptions to a chat model, so its answer can be a request for a tool.
+    - Bind TOOLS to the model before invoking it with the system message and the conversation.
+    examples:
+    - call: agent(...) with "Any update?"
+      gives: a request that lists find_tickets and ticket_status
+  - id: tool_loop
+    title: loop through the tools
+    xp: 20
+    hints:
+    - should_continue always ends the run, so a tool request is never carried out.
+    - An AIMessage that asks for tools has a non-empty tool_calls list.
+    - Return the tools node's name when the last message asks for tools, otherwise END.
+    examples:
+    - call: '"98220"'
+      gives: find_tickets, then ticket_status, then an answer
+- id: reflection
+  title: Reflection
+  file: chapters/14-reflection.md
+  minutes: 45
+  folder: 14-reflection
+  tasks:
+  - id: check_claims
+    title: label every sentence
+    xp: 20
+    hints:
+    - check never asks a model, so every draft goes out unchecked.
+    - with_structured_output(Verdict) returns a Verdict whose sentences each have a text and a kind.
+    - Ask with CHECK and the tool results plus the answer, then keep the texts of the new_claim sentences.
+    examples:
+    - call: a draft that says "tomorrow"
+      gives: '["... tomorrow ..."]'
+  - id: revise_or_finish
+    title: send, rewrite or hand over
+    xp: 20
+    hints:
+    - check_answer sends every draft, even one with problems.
+    - Command can go to END, to agent with an update, or to hand_over.
+    - No problems ends the run; too many rounds hands over; otherwise go back to agent with the feedback and the new round count.
+    examples:
+    - call: a draft with "tomorrow", round 1
+      gives: back to the agent with the checker's feedback
+- id: agentic-rag
+  title: Agentic RAG
+  file: chapters/15-agentic-rag.md
+  minutes: 45
+  folder: 15-agentic-rag
+  tasks:
+  - id: grade_documents
+    title: check what the search found
+    xp: 20
+    hints:
+    - grade_documents always says answer, even when the search found the wrong rules.
+    - A Grade has one field, relevant; the rewrites count says whether a rewrite was tried.
+    - Ask with GRADE, the question and the text found; answer when relevant or after one rewrite, otherwise rewrite.
+    examples:
+    - call: bottled water question, first search
+      gives: rewrite_question
+  - id: rewrite_question
+    title: a better search
+    xp: 20
+    hints:
+    - rewrite_question only counts, and adds no new question.
+    - The REWRITE instruction turns the citizen's words into rulebook words.
+    - Ask the model with REWRITE and the question, and return its text as a new HumanMessage with the count raised.
+    examples:
+    - call: '"The thing on my roof overflows"'
+      gives: a search such as "roof tank overflow"
+- id: subgraphs
+  title: Subgraphs
+  file: chapters/16-subgraphs.md
+  minutes: 35
+  folder: 16-subgraphs
+  tasks:
+  - id: add_subgraph
+    title: a graph as a node
+    xp: 15
+    hints:
+    - The billing node is an empty function, so no bill is checked.
+    - A compiled graph can be added as a node directly when it shares state keys with the parent.
+    - Add build_billing() as the billing node.
+    examples:
+    - call: T-4490, a Rs 2,400 bill
+      gives: 'held: 2410 litres a day ...'
+  - id: map_state
+    title: translate in and out
+    xp: 20
+    hints:
+    - The repairs node returns nothing, so no crew is booked.
+    - The repair graph's state has job and log, not ticket and repair_log.
+    - Invoke REPAIRS with the ticket as its job, and return its log as repair_log.
+    examples:
+    - call: T-4492, a pipe burst
+      gives: crew booked, parts ordered
+- id: multi-agent
+  title: Multi-agent systems
+  file: chapters/17-multi-agent.md
+  minutes: 45
+  folder: 17-multi-agent
+  tasks:
+  - id: supervisor_route
+    title: the supervisor decides
+    xp: 20
+    hints:
+    - The supervisor always ends the run, so no specialist ever acts.
+    - Command goto names the next node; FINISH and the turn limit both end the run.
+    - End on FINISH or after MAX_TURNS, otherwise go to the chosen specialist and add one to turns.
+    examples:
+    - call: a bill problem
+      gives: Command(goto="billing")
+  - id: specialist_report
+    title: report back
+    xp: 20
+    hints:
+    - The specialist goes back to the supervisor without its report.
+    - The update of a Command is applied to the state, like a node's return value.
+    - Return a Command to the supervisor whose update adds the report to messages.
+    examples:
+    - call: the billing specialist
+      gives: a message named billing, back at the supervisor
+- id: streaming
+  title: Streaming
+  file: chapters/18-streaming.md
+  minutes: 35
+  folder: 18-streaming
+  tasks:
+  - id: progress_events
+    title: progress from a node
+    xp: 15
+    hints:
+    - The lookup takes a second and says nothing while it works.
+    - get_stream_writer returns a function; whatever you pass it arrives in the custom stream.
+    - Write a progress dict before the lookup and another one after the tickets are found.
+    examples:
+    - call: stream_mode custom
+      gives: two progress events
+  - id: stream_tokens
+    title: the reply token by token
+    xp: 20
+    hints:
+    - events waits for the whole reply and yields it in one piece.
+    - With stream_mode set to custom and messages, each chunk comes with its mode; messages chunks are a message and its metadata.
+    - Yield custom chunks as progress, and message chunks from the reply node as tokens.
+    examples:
+    - call: python main.py
+      gives: progress lines, then the reply in small pieces
+- id: functional-api
+  title: The Functional API
+  file: chapters/19-functional-api.md
+  minutes: 40
+  folder: 19-functional-api
+  tasks:
+  - id: task_steps
+    title: steps that are saved
+    xp: 20
+    hints:
+    - After a crash, resuming the job books the crew and orders the parts again.
+    - A @task call returns a future whose result is saved in the checkpoint; on resume, saved results are reused.
+    - Decorate the three steps with @task and take .result() of each call in repair_job.
+    examples:
+    - call: SMS_FAILS=1 start, then resume
+      gives: one crew, one parts order, one SMS
+  - id: approval_in_flow
+    title: approval in plain Python
+    xp: 20
+    hints:
+    - A Rs 65,000 job starts without anyone's approval.
+    - interrupt works inside an entrypoint the same way as inside a node.
+    - Over APPROVAL_OVER ask with interrupt, and return a refusal line when the answer does not approve.
+    examples:
+    - call: start J-302 65000
+      gives: __interrupt__ with the estimate

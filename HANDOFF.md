@@ -12,8 +12,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
   20 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain is complete (27 chapters, 54 tasks). LangGraph Parts 1 and 2 (chapters 1 to 12) are done and committed;
-  Part 3 (agents in graphs, chapters 13 to 19) is next.
+  LangChain is complete (27 chapters, 54 tasks). LangGraph Parts 1 to 3 (chapters 1 to 19) are done and committed;
+  Part 4 (production, chapters 20 to 24) is next. Photos still to fetch when Commons stops answering 429: Jim Gray
+  (chapter 9), EDSAC (16), Marvin Minsky (17).
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
@@ -48,7 +49,7 @@ token for an author account made with `tools/authoring/author_token.py`, and `to
 - Part 2 "Persistence and people": 7 checkpointers and threads, 8 trimming and summarizing, 9 durable execution,
   10 interrupts, 11 editing state and time travel, 12 stores. Done (folders 07-threads to 12-stores).
 - Part 3 "Agents in graphs": 13 an agent graph by hand, 14 reflection, 15 agentic RAG, 16 subgraphs, 17 multi-agent,
-  18 streaming, 19 the Functional API.
+  18 streaming, 19 the Functional API. Done (folders 13-agent-graph to 19-functional-api).
 - Part 4 "Production": 20 testing graphs, 21 a local server and app structure, 22 Deep Agents, 23 a research team,
   24 capstone.
 
