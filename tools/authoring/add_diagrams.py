@@ -41,9 +41,9 @@ def main() -> None:
 function {name}() {{
   return (
     <SketchSteps
-      title="{title}"
-      intro="{intro}"
-      label="{label}"
+      title={quote(title)}
+      intro={quote(intro)}
+      label={quote(label)}
       steps={{[
 {body}
       ]}}

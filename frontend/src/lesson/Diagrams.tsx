@@ -2838,7 +2838,97 @@ function LgCapstone() {
   );
 }
 
+function RsCargoRun() {
+  return (
+    <SketchSteps
+      title="What cargo run does"
+      intro="Press Play to follow hello_windwatch.rs to the screen."
+      label="cargo run"
+      steps={[
+        { label: "cargo run", says: "Cargo reads Cargo.toml to find the crate and the program you asked for." },
+        { label: "changed?", says: "It compares the files with the last build; if nothing changed, it skips straight to running." },
+        { label: "rustc", says: "The compiler checks every rule (types, ownership) and refuses the build if one is broken." },
+        { label: "machine code", says: "It writes a real program for this processor into the build folder." },
+        { label: "run", says: "Cargo starts that program; it prints its two lines. No compiler or interpreter is involved any more." },
+      ]}
+    />
+  );
+}
+
+function RsShadowing() {
+  return (
+    <SketchSteps
+      title="One name, four values"
+      intro='Press Play to follow "  12.5 m/s" into a number.'
+      label="Shadowing"
+      steps={[
+        { label: "let speed = text.trim()", says: 'speed is "12.5 m/s": text, without the outer spaces.' },
+        { label: 'let speed = ...trim_end_matches("m/s").trim()', says: 'A new speed: "12.5". The old one can no longer be reached.' },
+        { label: "let speed: f64 = speed.parse().unwrap()", says: "A new speed of another type: the number 12.5." },
+        { label: "speed", says: "The last line returns the number. Nothing was changed in place, so no mut was needed." },
+      ]}
+    />
+  );
+}
+
+function RsOverflow() {
+  return (
+    <SketchSteps
+      title="250 + 10 in eight bits"
+      intro="Press Play to add 10 faults to a u8 holding 250."
+      label="Overflow"
+      steps={[
+        { label: "250", says: "In binary, 250 is 11111010: all eight bits of a u8 are nearly full." },
+        { label: "+ 10", says: "The sum is 260, which needs nine bits: 1 00000100." },
+        { label: "debug build", says: "Rust checks every sum and stops: attempt to add with overflow, with the file and line." },
+        { label: "release build", says: "No check: only the low eight bits stay, 00000100, which is 4." },
+        { label: "the fix", says: "checked_add returns None when it does not fit, so the code decides what happens." },
+      ]}
+    />
+  );
+}
+
+function RsExpression() {
+  return (
+    <SketchSteps
+      title="The last line of a function"
+      intro="Press Play to compare the two versions of tip_speed."
+      label="Expressions"
+      steps={[
+        { label: "no semicolon", says: "2.0 * PI * blade_m * rotor_rpm / 60.0 is an expression: its value, an f64, is the function's value." },
+        { label: "returned", says: "The caller gets 62.83 for 12 rpm and 50 m blades." },
+        { label: "with a semicolon", says: "The same line ends with ; and becomes a statement: it computes the number and throws it away." },
+        { label: "()", says: "The function body now gives (), the unit value, but it promised an f64." },
+        { label: "refused", says: "The compiler stops: expected f64, found (), and points at the semicolon to remove." },
+      ]}
+    />
+  );
+}
+
+function RsDayLoop() {
+  return (
+    <SketchSteps
+      title="A day of wind, hour by hour"
+      intro="Press Play to count Monday's generating hours."
+      label="for loop"
+      steps={[
+        { label: "hours = 0", says: "let mut hours = 0: a counter that is allowed to change." },
+        { label: "00:00 to 03:00", says: "2.1, 1.8, 1.5, 2.4 m/s: too calm. The counter stays at 0." },
+        { label: "04:00 to 17:00", says: "3.1 to 23.5 m/s: generating, 14 times. The counter reaches 14." },
+        { label: "18:00 and 19:00", says: "26.1 and 28.4 m/s: storm stop. The counter stays at 14." },
+        { label: "20:00 to 23:00", says: "22.0 down to 6.2 m/s: generating again, 4 more hours." },
+        { label: "return", says: "The loop ends after 24 values; hours, 18, is returned." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-cargo-run": RsCargoRun,
+  "rs-shadowing": RsShadowing,
+  "rs-overflow": RsOverflow,
+  "rs-expression": RsExpression,
+  "rs-day-loop": RsDayLoop,
   "lg-mutation": LgMutation,
   "lg-server": LgServer,
   "lg-deep-agent": LgDeepAgent,

@@ -1,0 +1,6 @@
+[package]
+name = "ch01-why-rust"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

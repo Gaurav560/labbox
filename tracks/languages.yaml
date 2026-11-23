@@ -128,3 +128,6 @@ nodes:
   - id: java-concurrency
     title: Concurrency traps
     requires: [java-collections]
+  - id: rust-first-steps
+    title: Rust first steps
+    chapters: [rust-basics/why-rust, rust-basics/variables, rust-basics/types, rust-basics/functions, rust-basics/control-flow]

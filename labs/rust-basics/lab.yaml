@@ -1,0 +1,160 @@
+# Rust from zero. Every chapter is its own crate in one Cargo workspace (Cargo.toml at the top of the workspace).
+id: rust-basics
+version: 2
+title: Rust from zero
+subtitle: From your first Rust program to ownership, traits, threads and a fast web service, one curious step at a time.
+description: 'Learn Rust from the first line: Cargo, types and functions, ownership and borrowing, structs, enums and
+  pattern matching, collections, real error handling, generics, traits, lifetimes, closures and iterators, tests, a
+  command-line tool, threads, async and a web service, by building Windwatch, the turbine monitor of a wind farm.'
+language: rust
+track: languages
+tags:
+- rust
+- beginner
+level: beginner
+estimated_minutes: 225
+cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
+cover: cover.svg
+cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
+image: labbox/rust-basics:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: none
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: why-rust
+  title: Why Rust
+  file: chapters/01-why-rust.md
+  minutes: 45
+  folder: 01-why-rust
+  part: First steps
+  tasks:
+  - id: hello_windwatch
+    title: Windwatch says hello
+    xp: 10
+    hints:
+    - The program still prints the greeting every new Cargo project starts with.
+    - println! prints one line; two lines need two calls.
+    - Replace the greeting with two println! calls, one for each line, exactly as written in the TODO.
+    examples:
+    - call: cargo run --bin hello_windwatch
+      gives: Windwatch 0.1, then the farm's line
+  - id: fix_first_errors
+    title: three mistakes, fixed
+    xp: 15
+    hints:
+    - cargo run stops at the first error and says which line.
+    - Each statement ends with a semicolon, macros are called with an exclamation mark, and Rust never mixes integers and floats on its own.
+    - Add the semicolon, add the exclamation mark to println, and turn the count into an f64 before multiplying.
+    examples:
+    - call: cargo run --bin fix_first_errors
+      gives: 'Turbines: 40, then Capacity: 100 MW'
+- id: variables
+  title: Variables and constants
+  file: chapters/02-variables.md
+  minutes: 40
+  folder: 02-variables
+  tasks:
+  - id: capacity_mw
+    title: the farm's capacity
+    xp: 15
+    hints:
+    - capacity_mw still says todo!().
+    - RATED_POWER_KW is a constant you can use anywhere in the file.
+    - Multiply the turbines by the constant and divide by a thousand.
+    examples:
+    - call: capacity_mw(40)
+      gives: '100'
+  - id: wind_speed
+    title: a wind speed from text
+    xp: 15
+    hints:
+    - wind_speed trims the text and then gives up.
+    - A new let with the same name shadows the old one, and may even change its type.
+    - Remove the unit and trim again, then parse into an f64 with a new let, and return it.
+    examples:
+    - call: wind_speed("  3.2m/s ")
+      gives: '3.2'
+- id: types
+  title: Types
+  file: chapters/03-types.md
+  minutes: 45
+  folder: 03-types
+  tasks:
+  - id: energy_kwh
+    title: energy from power and time
+    xp: 15
+    hints:
+    - energy_kwh still says todo!().
+    - Rust does not mix integer and float arithmetic; as converts one number type into another.
+    - Convert both inputs to f64, multiply them, and divide by sixty.
+    examples:
+    - call: energy_kwh(2100, 10)
+      gives: '350.0'
+  - id: describe
+    title: a reading as text
+    xp: 15
+    hints:
+    - describe still says todo!().
+    - A let with a pattern in brackets takes a tuple apart into separate names.
+    - Take the tuple apart, then build the text with format!, padding the turbine number and rounding the wind to one decimal.
+    examples:
+    - call: describe((7, 12.43, 2100))
+      gives: 'T07: 12.4 m/s, 2100 kW'
+- id: functions
+  title: Functions
+  file: chapters/04-functions.md
+  minutes: 45
+  folder: 04-functions
+  tasks:
+  - id: tip_speed
+    title: how fast a blade tip moves
+    xp: 15
+    hints:
+    - tip_speed still says todo!().
+    - A function returns the value of its last expression, the one without a semicolon.
+    - One turn moves the tip around a circle of the blade's radius; multiply by turns per minute and divide by sixty.
+    examples:
+    - call: tip_speed(12.0, 50.0)
+      gives: about 62.8
+  - id: capacity_factor
+    title: the capacity factor
+    xp: 15
+    hints:
+    - capacity_factor still says todo!().
+    - max_energy_mwh already computes the most a turbine could make.
+    - Divide the energy made by the maximum from max_energy_mwh, and turn it into a percentage.
+    examples:
+    - call: capacity_factor(612.0, 2500.0, 720.0)
+      gives: '34.0'
+- id: control-flow
+  title: Control flow
+  file: chapters/05-control-flow.md
+  minutes: 50
+  folder: 05-control-flow
+  tasks:
+  - id: status
+    title: what the turbine does
+    xp: 15
+    hints:
+    - status still says todo!().
+    - if and else if can be the last expression of a function, and each branch gives a value.
+    - Check the calm limit first, then the storm limit, and return the matching text from each branch.
+    examples:
+    - call: status(25.0)
+      gives: storm stop
+  - id: hours_generating
+    title: hours of power in a day
+    xp: 15
+    hints:
+    - hours_generating still says todo!().
+    - A for loop visits each of the array's values; a counter must be declared with mut to change.
+    - Count the hours whose status is generating and return the count.
+    examples:
+    - call: a day of steady 10 m/s wind
+      gives: '24'

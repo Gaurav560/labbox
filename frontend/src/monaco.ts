@@ -132,6 +132,8 @@ const LANGUAGES: Record<string, string> = {
   js: "javascript",
   ts: "typescript",
   go: "go",
+  rs: "rust",
+  toml: "ini",
   sql: "sql",
   md: "markdown",
   sh: "shell",

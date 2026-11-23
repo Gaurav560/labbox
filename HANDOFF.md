@@ -11,9 +11,12 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (24 November, after LangGraph): 282 backend tests on Postgres and Redis (29 minutes), 27
   browser tests, 21 labs valid,
   `scripts/labbox admin list` empty.
-- **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain is complete (27 chapters, 54 tasks). LangGraph is complete (24 chapters, 48 tasks). Still open: a Jim Gray photo for chapter 9
-  (Commons keeps answering 429 for it), and the owner's call on learner token budgets for chapters 22 to 24.
+- **Now building:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
+  project name rule: software gets a plain English name for its job, so Windwatch). Part 1 (chapters 1 to 5) is done
+  and committed; Part 2 (ownership: 6 moves, 7 borrowing, 8 slices and strings) is next. Syllabus: Part 3 structs,
+  enums and Option, match, modules; Part 4 Vec and String, HashMap, Result and ?, own error types (thiserror,
+  anyhow); Part 5 generics, traits, lifetimes, closures, iterators (measured), tests; Part 6 a clap CLI, Box/Rc/RefCell,
+  threads and channels, Tokio, speed against Python, an axum service as the capstone. LangGraph is complete.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).

@@ -1,0 +1,2 @@
+{"wrong": "the program runs, but prints something else. Compare the two outputs line by line, spaces and capitals included.",
+ "passed": "It compiles and prints exactly what was asked."}

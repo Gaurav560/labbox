@@ -1,0 +1,9 @@
+# One workspace for the whole course: every chapter folder is its own crate (a package Cargo can build).
+# Build or run one chapter from inside its folder:  cd 03-types && cargo run
+[workspace]
+resolver = "3"
+members = ["[0-9][0-9]-*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"

@@ -33,6 +33,7 @@ BRANDS: dict[str, tuple[str, str, str]] = {
     "postgresql": ("#336791", "#14304a", "#ffffff"),
     "sql": ("#4338ca", "#1e1b4b", "#f59e0b"),  # our own generic SQL mark, amber on indigo
     "go": ("#00ADD8", "#00506a", "#ffffff"),
+    "rust": ("#B7410E", "#2a0d04", "#f6b26b"),  # the Rust gear (Simple Icons, CC0), on rust orange
     "javascript": ("#F7DF1E", "#b89a00", "#323330"),
     "express": ("#3a3a3a", "#0b0b0b", "#ffffff"),
     "redis": ("#DC382D", "#6e110b", "#ffffff"),

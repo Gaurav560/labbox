@@ -1,5 +1,27 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 1 (first steps): a new language course on Windwatch, a wind farm's monitor
+
+- New base image `labbox/rust:v1` (Rust 1.100.0 with rustfmt and clippy, gcc as the linker, python3 for the checks)
+  and lab image `labbox/rust-basics:v1`: every crate the course uses (anyhow, axum, clap, csv, http-body-util, serde,
+  serde_json, thiserror, tokio, tower) downloaded and compiled in advance into one shared build folder
+  (`CARGO_TARGET_DIR=/opt/rust-target`, `CARGO_NET_OFFLINE=true`), so the lab needs no internet and a check
+  compiles only the learner's crate (about 0.4 s a chapter).
+- One Cargo workspace for the course; every chapter folder is its own crate (`members = ["[0-9][0-9]-*"]`), so an
+  unfinished chapter never breaks another. Chapters pin their crates' exact versions in their own Cargo.toml (a
+  shared `[workspace.dependencies]` list made Cargo 1.100 print ten warnings on every run).
+- Checks (`tests/run_checks.py`): a "run" mode that builds and runs a chapter's programs and compares the output, and
+  a "test" mode that adds a hidden integration test; `todo!()` and panics become kind "not yet" messages, and the
+  compiler's own errors are shown in Output.
+- Five chapters, ten tasks, every output captured from real runs: Cargo and the compiler's three real errors, `let`,
+  `mut`, `const` and shadowing (whole-number division turned one turbine's 2.5 MW into 2), types (3.05 m/s printed as
+  3.0; 250 + 10 in a `u8` panics in debug and is 4 in release), functions and the semicolon error, and control flow
+  over a day of wind.
+- Running project: **Windwatch**, the turbine monitor of the fictional Kutch Coast Wind Farm (40 turbines, 100 MW).
+- Five playing diagrams, five notes pages, four photos (the Gujarat coast's wind turbines, Ferris, Ariane 5,
+  Dijkstra), a cover from the Rust logo (Simple Icons, CC0), Rust and TOML highlighting in the classic editor, one
+  track node. `tools/authoring/add_diagrams.py` now quotes titles and intros too.
+
 ## 24 November: LangGraph, Part 4 (production): the course is complete
 
 - Five chapters, ten tasks, every output captured through the gateway: testing graphs (learners write pytest tests;

@@ -3,7 +3,7 @@
 # using the image tag from its lab.yaml.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-for base in base python java node go checker ai-python; do
+for base in base python java node go rust checker ai-python; do
   echo "==> Building labbox/$base:v1"
   if [ "$base" = ai-python ]; then  # shares images/base/lab, so it builds from images/
     docker build -t "labbox/$base:v1" -f "$ROOT/images/$base/Dockerfile" "$ROOT/images"

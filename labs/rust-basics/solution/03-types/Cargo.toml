@@ -1,0 +1,6 @@
+[package]
+name = "ch03-types"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

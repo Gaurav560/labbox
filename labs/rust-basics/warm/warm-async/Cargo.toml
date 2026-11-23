@@ -1,0 +1,10 @@
+[package]
+name = "warm-async"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tokio = { version = "=1.54.1", features = ["full"] }
+
+[dev-dependencies]
+
