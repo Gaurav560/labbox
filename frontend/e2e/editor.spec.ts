@@ -39,6 +39,12 @@ test("AI completion can be switched off and stays off", async ({ page }) => {
   await page.goto("/labs/python-basics");
   await expect(page.locator(".tab.active")).toContainText("hello.py", { timeout: 60_000 }); // chapter 1 opens its first task's file
   const toggle = page.getByRole("button", { name: /✦ AI (on|off)/ });
+  // Completion is offered only when the server maps a code model (lab-code). Without one, the switch is hidden.
+  const config = await (await page.request.get("/api/ai/config", { headers: { Authorization: `Bearer ${token}` } })).json();
+  if (!config.completion) {
+    await expect(toggle).toHaveCount(0);
+    return;
+  }
   await expect(toggle).toHaveText("✦ AI on");
   await toggle.click();
   await expect(toggle).toHaveText("✦ AI off");
