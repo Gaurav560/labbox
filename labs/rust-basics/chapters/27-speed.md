@@ -64,6 +64,12 @@ needs a sixth of the servers.
 - **2020** Discord moves a service from Go to Rust.
 - **2022** Cloudflare's Pingora: 70% less CPU.
 :::
+
+Where the bill comes from: rows of server racks, each drawing power and cooling around the clock.
+
+:::photo{src="/lesson-images/rust/datacenter.webp" alt="A long, brightly lit aisle between rows of white server racks with perforated doors" credit="PiDatacenters" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3ARacks_Amravati_Data_Center.jpg"}
+Server racks in a data centre in Amaravati, India.
+:::
 :::
 
 :::step{type=concept title="Keys that borrow" file="27-speed/src/lib.rs" line="13-20"}

@@ -89,6 +89,12 @@ does not compile.
 - **2021** axum.
 - **2022** RFC 9110: HTTP's meaning, written down again.
 :::
+
+Tim Berners-Lee, who invented the web and HTTP at CERN in 1989 to 1991.
+
+:::photo{src="/lesson-images/rust/berners-lee.webp" alt="Tim Berners-Lee, an older man with thinning grey hair and a headset microphone, in a dark jacket, on a stage with a pink screen behind him" credit="Amy Martin Photography" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3ASir_Tim_Berners-_Lee.jpg"}
+Tim Berners-Lee at SXSW London, 2026.
+:::
 :::
 
 :::step{type=concept title="A summary, or a 404" file="28-capstone/src/lib.rs" line="51-58"}

@@ -74,6 +74,12 @@ others could not: the borrow checker makes sure nobody holds a reference into th
 - **1998** ArrayList in Java.
 - **2015** Rust's Vec: growth checked by the borrow checker.
 :::
+
+Alexander Stepanov, who designed C++'s Standard Template Library, where std::vector comes from.
+
+:::photo{src="/lesson-images/rust/stepanov.webp" alt="Alexander Stepanov, a man with glasses resting his chin on his hand, in front of shelves" credit="Paul R. McJones" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File%3AAlexander_Stepanov.jpg"}
+Alexander Stepanov at Adobe Systems.
+:::
 :::
 
 :::step{type=concept title="Building a String" file="13-vec-and-string/src/lib.rs" line="12-23"}

@@ -99,6 +99,12 @@ other crates.
 - **1995** Java interfaces.
 - **2015** Rust traits, and no inheritance.
 :::
+
+Philip Wadler, who designed type classes for Haskell with Stephen Blott. Rust's traits come from them. (The lambda on his shirt is chapter 20's.)
+
+:::photo{src="/lesson-images/rust/wadler.webp" alt="Philip Wadler, a man with curly grey hair and a beard, in a dark jacket and bow tie, his shirt printed with a lambda, standing at a lecture desk" credit="Clq" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File%3AWadler2.JPG"}
+Philip Wadler at the University of Edinburgh.
+:::
 :::
 
 :::step{type=task task=impl_sensor title="Your turn: a power meter is a sensor" file="18-traits/src/lib.rs" line="52-60"}

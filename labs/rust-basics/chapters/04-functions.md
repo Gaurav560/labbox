@@ -91,6 +91,12 @@ expression, so a block or an `if` gives back a value too. Rust kept that, which 
 - **1960** ALGOL 60: blocks.
 - **1973** ML: everything is an expression.
 :::
+
+The IBM 704, the machine FORTRAN was written for. FORTRAN II gave it named functions in 1958.
+
+:::photo{src="/lesson-images/rust/ibm704.webp" alt="A man and a woman at an IBM 704 computer in 1957: tall cabinets of tape drives, a control panel full of lights, and a console desk" credit="NASA" license="Public domain" source="https://commons.wikimedia.org/wiki/File%3AIBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg"}
+An IBM 704 at NACA's Langley laboratory, 1957.
+:::
 :::
 
 :::step{type=task task=capacity_factor title="Your turn: the capacity factor" file="04-functions/src/lib.rs" line="16-20"}

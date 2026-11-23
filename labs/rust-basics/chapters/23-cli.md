@@ -88,6 +88,12 @@ definition, so they cannot disagree.
 - **2015** clap for Rust.
 - **2017** serde 1.0.
 :::
+
+Ken Thompson (right), who created Unix with Dennis Ritchie, interviewed by Brian Kernighan. Unix gave the world the small command-line tool that reads arguments and files.
+
+:::photo{src="/lesson-images/rust/thompson-kernighan.webp" alt="Brian Kernighan and Ken Thompson sitting side by side at a table in front of a projection screen" credit="A.C.Diller" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3ABrian_Kernighan_and_Ken_Thompson.jpg"}
+Brian Kernighan interviews Ken Thompson, 2019.
+:::
 :::
 
 :::step{type=concept title="A CSV log, read into structs" file="23-cli/src/lib.rs" line="26-43"}

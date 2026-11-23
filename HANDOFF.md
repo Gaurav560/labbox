@@ -8,8 +8,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
 ## Resume here
 
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
-  Last full run green (24 November, after LangGraph): 282 backend tests on Postgres and Redis (29 minutes), 27
-  browser tests, 21 labs valid,
+  Last full run green (24 November, after Rust from zero): 283 backend tests on Postgres and Redis (29 minutes),
+  27 browser tests (the visitor home test failed once under 4 workers and passed on its own), 22 labs valid,
   `scripts/labbox admin list` empty.
 - **Just finished:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
   project name rule: software gets a plain English name for its job, so Windwatch). Complete: 28 chapters in 6 parts,

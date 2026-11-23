@@ -11,6 +11,12 @@ not both" (chapter 7) seem to forbid exactly that.
 Both problems have the same kind of answer: **smart pointers**, small types from the standard library that own
 data in a particular way. This chapter uses three: `Box`, `Rc` and `RefCell`.
 
+A real repair crew at work: two technicians on ropes at a turbine's blade.
+
+:::photo{src="/lesson-images/rust/turbine-crew.webp" alt="Two technicians hanging on ropes beside the blade of a large white wind turbine, seen from below against a pale sky" credit="U.S. Department of Energy" license="Public domain" source="https://commons.wikimedia.org/wiki/File%3AWind_turbine_maintenance_%2851689968067%29.jpg"}
+Rope-access technicians checking a turbine blade.
+:::
+
 :::mission
 Build an escalation chain with `Box`, then let two turbines share one crew with `Rc<RefCell<Crew>>` and add jobs
 to it.

@@ -90,6 +90,12 @@ or a generic), calling one costs the same as calling a function, and is usually 
 - **2014** Lambdas in Java 8.
 - **2015** Rust closures: Fn, FnMut, FnOnce.
 :::
+
+Guy Steele, who with Gerald Sussman created Scheme, the language that made closures work correctly.
+
+:::photo{src="/lesson-images/rust/steele.webp" alt="Guy Steele, a smiling man with grey hair in a striped shirt with pens in the pocket" credit="George Ruban" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3AGuy_Steele.jpg"}
+Guy Steele speaking at Google Boston.
+:::
 :::
 
 :::step{type=task task=alerts title="Your turn: run the rules" file="20-closures/src/lib.rs" line="24-30"}

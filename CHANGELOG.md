@@ -14,6 +14,10 @@
 - Six playing diagrams, six notes pages, one photo (Ryan Dahl, cropped so no cup shows), one track node. The course
   ends with a table of what each part taught and where to go next.
 - Rust from zero: 28 chapters, 56 tasks, about 21.7 hours; `test-lab` passes every chapter.
+- Ten more real photos across the course (owner: "add more photos to the other chapters too"; drinks that happen to
+  be in a real photo are fine): the IBM 704, Niklaus Wirth, Alexander Stepanov, Philip Wadler, Guy Steele, Ken
+  Thompson with Brian Kernighan, rope-access technicians on a turbine blade, Rob Pike, a data centre and Tim
+  Berners-Lee. 21 real photos in all. Simon Peyton Jones and Bjarne Stroustrup are still to come (Commons 429).
 
 ## 24 November: Rust from zero, Part 5 (abstractions without cost)
 

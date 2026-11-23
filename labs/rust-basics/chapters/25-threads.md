@@ -73,6 +73,12 @@ when a soundness hole was found in their design, and came back, done safely, in 
 - **2015** Rust: Send, Sync, fearless concurrency.
 - **2022** Scoped threads in the standard library.
 :::
+
+Rob Pike, one of Go's designers, whose goroutines and channels brought Hoare's message-passing idea to everyday programming.
+
+:::photo{src="/lesson-images/rust/rob-pike.webp" alt="Rob Pike, a man with glasses in a black T-shirt with a cartoon bear, speaking at a lectern" credit="Kevin Shockey" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File%3ARob-pike-oscon.jpg"}
+Rob Pike at OSCON, 2010.
+:::
 :::
 
 :::step{type=concept title="Channels: threads send, one place receives" file="25-threads/src/lib.rs" line="16-33"}

@@ -81,6 +81,12 @@ freely.
 - **1978** Modula-2: modules in the language.
 - **2015** Rust: private by default, crates and modules.
 :::
+
+Niklaus Wirth, whose Modula-2 made modules with explicit exports part of the language. He also designed Pascal.
+
+:::photo{src="/lesson-images/rust/wirth.webp" alt="Niklaus Wirth, an older man with a white beard in a blue jacket and patterned tie, seated on a panel" credit="orcmid" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File%3A2012-06-16_Turing_100_Programming_Languages_Panel_-_Nikalus_Wirth.jpg"}
+Niklaus Wirth at a programming languages panel, 2012.
+:::
 :::
 
 :::step{type=concept title="pub use: a short public path" file="12-modules/src/lib.rs" line="4-7"}
