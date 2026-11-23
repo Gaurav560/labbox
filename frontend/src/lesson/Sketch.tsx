@@ -118,3 +118,92 @@ export function SketchSteps({ title, steps, label, intro = "Press Play to watch 
     </div>
   );
 }
+
+/** The Play, Pause, Back and Next state shared by playing diagrams: -1 means nothing has started yet. */
+function usePlayer(count: number) {
+  const [at, setAt] = useState(-1);
+  const [playing, setPlaying] = useState(false);
+  const last = count - 1;
+  useEffect(() => {
+    if (!playing) return;
+    if (at >= last) {
+      setPlaying(false);
+      return;
+    }
+    const t = setTimeout(() => setAt((a) => Math.min(last, a + 1)), at < 0 ? 300 : PLAY_MS);
+    return () => clearTimeout(t);
+  }, [playing, at, last]);
+  const done = at === last;
+  const play = () => {
+    if (playing) return setPlaying(false);
+    if (done) setAt(-1);
+    setPlaying(true);
+  };
+  const by = (fn: () => void) => () => { setPlaying(false); fn(); };
+  return { at, playing, done, play, restart: by(() => setAt(-1)), back: by(() => setAt(Math.max(-1, at - 1))), next: by(() => setAt(Math.min(last, at + 1))) };
+}
+
+function PlayerControls({ p }: { p: ReturnType<typeof usePlayer> }) {
+  return (
+    <div className="trace-controls">
+      <button className="trace-play" onClick={p.play} aria-pressed={p.playing}>{p.playing ? "⏸ Pause" : p.done ? "↻ Watch again" : "▶ Play"}</button>
+      <span className="spacer" />
+      <button className="btn btn-small btn-ghost" onClick={p.restart} disabled={p.at < 0}>Restart</button>
+      <button className="btn btn-small btn-ghost" onClick={p.back} disabled={p.at < 0}>◀ Back</button>
+      <button className="btn btn-small trace-next" onClick={p.next} disabled={p.done}>Next ▶</button>
+    </div>
+  );
+}
+
+/** One hand-drawn oval of a nested (Euler) diagram, with its label near its top edge. */
+function NestedOval({ cx, cy, rx, ry, label, depth, state, seed, centreLabel }: {
+  cx: number; cy: number; rx: number; ry: number; label: string; depth: number; state: string; seed: number; centreLabel: boolean;
+}) {
+  const shape = useMemo(() => gen.ellipse(cx, cy, rx * 2, ry * 2, { ...BASE, seed, fill: "currentColor" }), [cx, cy, rx, ry, seed]);
+  return (
+    <g className={`nest nest-c${depth % 4} nest-${state}`} style={{ transformOrigin: `${cx}px ${cy + ry}px` }}>
+      {paths(shape)}
+      <text className="nest-label" x={cx} y={centreLabel ? cy + 5 : cy - ry + 21} textAnchor="middle">{label}</text>
+    </g>
+  );
+}
+
+/**
+ * A diagram of sets inside sets (an Euler diagram), drawn as hand-drawn ovals, each a little above the bottom
+ * of the one around it and well below its top, so every label has room above the next oval. Play lights them up from the biggest to the smallest; the oval
+ * being explained is outlined and its label bold, the ones not reached yet stay faint.
+ * Each step's `label` is written on its oval (keep it short), `says` goes in the line under the drawing.
+ */
+export function SketchNested({ title, steps, label, intro = "Press Play to go from the biggest set to the smallest." }: {
+  title: string; steps: PlayStep[]; label: string; intro?: string;
+}) {
+  const p = usePlayer(steps.length);
+  const W = 460, TOP = 46, BOTTOM_PAD = 10;
+  const n = steps.length;
+  const outerRy = 30 + n * 30, outerRx = 214;
+  const height = TOP + outerRy * 2 + BOTTOM_PAD;
+  const bottom = TOP + outerRy * 2;
+  return (
+    <div className="sketch-play">
+      <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={label} className="sketch tl">
+        <text className="tl-title" x={18} y={24}>{title}</text>
+        <line className="tl-rule" x1={18} y1={36} x2={W - 12} y2={36} />
+        {steps.map((s, i) => {
+          // Each oval starts 30 below the one around it (room for that one's label) and ends 14 above its bottom.
+          const top = TOP + i * 30, end = bottom - i * 14;
+          const ry = (end - top) / 2;
+          const rx = outerRx * (ry / outerRy) ** 0.8; // the small ovals get rounder, so their labels still fit
+          const state = p.at < 0 ? "idle" : i === p.at ? "now" : i < p.at ? "lit" : "off";
+          return (
+            <NestedOval key={s.label} cx={W / 2} cy={top + ry} rx={rx} ry={ry} label={s.label} depth={i}
+              state={state} seed={31 + i * 7} centreLabel={i === n - 1} />
+          );
+        })}
+      </svg>
+      <p className="sketch-says" aria-live="polite">
+        {p.at < 0 ? intro : <><b>Step {p.at + 1} of {steps.length}.</b> {steps[p.at].says}</>}
+      </p>
+      <PlayerControls p={p} />
+    </div>
+  );
+}

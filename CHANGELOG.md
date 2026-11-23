@@ -1,5 +1,15 @@
 # Changelog
 
+## 23 November: nested-oval diagrams (owner: "wasn't this better as a Venn diagram animation?")
+
+- A new playing diagram, `SketchNested` (`frontend/src/lesson/Sketch.tsx`): sets inside sets drawn as hand-drawn
+  ovals, lit from the biggest to the smallest with Play, Back and Next; the current oval is outlined and bold, the
+  ones not reached yet stay faint; one soft colour per depth, in both themes. LangChain4j chapter 1's "AI, machine
+  learning, deep learning, generative AI, LLM" now uses it instead of a list.
+- Browser test `e2e/nested-diagram.spec.ts` (27 browser tests).
+- Full run: 280 backend tests on Postgres and Redis; 27 browser tests on 4 workers (two flaky under load, green on
+  rerun).
+
 ## 23 November: LangChain4j, Part 5 (production and agents): the course is complete
 
 - Part 5, "Production and agents" (6 chapters, 12 tasks), every model output captured through the gateway:

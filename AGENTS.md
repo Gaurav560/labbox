@@ -50,10 +50,10 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   LABBOX_TEST_DATABASE_URL=... LABBOX_TEST_REDIS_URL=... .venv/bin/pytest` (see README; about 275 tests,
   Docker ones included, about 11 minutes). Plain `.venv/bin/pytest` runs on SQLite and in-memory locks (the
   quick-start mode); run it only when a change touches the database, migrations or the no-Redis fallbacks;
-  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (26 tests,
+  `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (27 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (23 November, after the drink rewrite and the dashboard categories) (279 backend
-  tests on Postgres and Redis, 26 browser tests on 4 workers, 18 labs valid). Metrics: `curl -s localhost:8000/metrics`.
+- Last known state: green (23 November, after LangChain4j Part 5 and the nested-oval diagram) (280 backend
+  tests on Postgres and Redis, 27 browser tests on 4 workers, 19 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Svg } from "./PicturePrimitives";
-import { SketchSteps } from "./Sketch";
+import { SketchNested, SketchSteps } from "./Sketch";
 
 /*
  * Built-in pictures for ideas you cannot see (Content standard: "pictures for invisible ideas").
@@ -1943,16 +1943,16 @@ function AiAtlasLive() {
 
 function L4jAiCircles() {
   return (
-    <SketchSteps
-      title="four circles, one inside the other"
+    <SketchNested
+      title="circles inside circles"
       intro="Press Play to go from the biggest circle to the smallest."
       label="artificial intelligence contains machine learning, which contains deep learning, which contains generative AI; a large language model sits in the smallest circle"
       steps={[
-        { label: "1. Artificial intelligence", says: "Any program doing something we would call intelligent: even hand-written rules." },
-        { label: "2. Machine learning", says: "The rule is learned from examples, not written: like the 12-minute threshold." },
-        { label: "3. Deep learning", says: "Machine learning with neural networks of many layers." },
-        { label: "4. Generative AI", says: "Deep learning models that create new text, images or code." },
-        { label: "5. A large language model", says: "Lives in the smallest circle: it is all four at once." },
+        { label: "Artificial intelligence", says: "Any program doing something we would call intelligent: even hand-written rules." },
+        { label: "Machine learning", says: "The rule is learned from examples, not written: like the 12-minute threshold." },
+        { label: "Deep learning", says: "Machine learning with neural networks of many layers." },
+        { label: "Generative AI", says: "Deep learning models that create new text, images or code." },
+        { label: "LLM", says: "A large language model lives in the smallest circle: it is all four at once." },
       ]}
     />
   );

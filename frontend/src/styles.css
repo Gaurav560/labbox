@@ -1459,8 +1459,23 @@ button.status-item:hover { background: var(--hover); color: var(--text); }
 .tl-now .tl-text { font-weight: 600; }
 .tl-now .tl-node { animation: tl-breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes tl-breathe { 50% { transform: scale(1.18); } }
+/* nested ovals (SketchNested): one soft colour per depth; the oval being explained is outlined and pops in */
+.nest { transition: opacity .45s ease; transform-box: view-box; }
+.nest path { transition: fill .45s ease, stroke .45s ease, stroke-width .3s; }
+.nest-c0 .sk-solid { fill: var(--figure-blue); }      .nest-c0 .sk-line { stroke: var(--figure-blue-edge); }
+.nest-c1 .sk-solid { fill: var(--figure-purple); }    .nest-c1 .sk-line { stroke: var(--figure-purple-edge); }
+.nest-c2 .sk-solid { fill: var(--figure-green); }     .nest-c2 .sk-line { stroke: var(--figure-green-edge); }
+.nest-c3 .sk-solid { fill: var(--figure-yellow); }    .nest-c3 .sk-line { stroke: var(--figure-yellow-edge); }
+.nest-label { fill: var(--figure-text); font: 500 14px var(--font-text); transition: opacity .45s ease; }
+.nest-idle { opacity: .55; }
+.nest-off { opacity: .14; }
+.nest-off .nest-label { opacity: 0; }
+.nest-now .sk-line { stroke-width: 3; }
+.nest-now .nest-label { font-weight: 700; }
+.nest-now { animation: nest-pop .5s cubic-bezier(.3, 1.4, .5, 1); }
+@keyframes nest-pop { from { transform: scale(.94); opacity: .3; } }
 @media (prefers-reduced-motion: reduce) {
-  .sk-box, .sk-arrow, .sk-box path, .sk-arrow path, .tl-rail-done, .tl-band, .tl-node, .tl-text { transition: none; animation: none; }
+  .sk-box, .sk-arrow, .sk-box path, .sk-arrow path, .tl-rail-done, .tl-band, .tl-node, .tl-text, .nest, .nest path, .nest-label { transition: none; animation: none; }
 }
 
 /* terminal tabs: Terminal 1, Terminal 2, + */
