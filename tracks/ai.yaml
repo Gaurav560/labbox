@@ -69,3 +69,11 @@ nodes:
     title: Embedding stores, RAG and local models
     requires: [l4j-tools]
     chapters: [langchain4j/embedding-stores, langchain4j/rag, langchain4j/local-models]
+  - id: l4j-production
+    title: Guardrails, observability and agents
+    requires: [l4j-knowledge]
+    chapters: [langchain4j/guardrails, langchain4j/observability, langchain4j/agents]
+  - id: l4j-agentic
+    title: Workflows, supervisors, and Setu goes live
+    requires: [l4j-production]
+    chapters: [langchain4j/workflows, langchain4j/supervisor, langchain4j/capstone]

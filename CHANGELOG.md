@@ -1,5 +1,23 @@
 # Changelog
 
+## 23 November: LangChain4j, Part 5 (production and agents): the course is complete
+
+- Part 5, "Production and agents" (6 chapters, 12 tasks), every model output captured through the gateway:
+  - guardrails: an input guardrail that refuses questions over 300 characters before any token is paid for, and an
+    output guardrail that removes mobile numbers (the real answer without it repeated "98220 12345");
+  - observability: a `ChatModelListener` counting calls and tokens, and a golden set of six questions; removing the
+    "I don't know" sentence from the prompt made the model invent "the Ghat Express does not offer wi-fi" (83%);
+  - agents (`langchain4j-agentic`): a classifier agent with an output key, and a sequence with a reply writer;
+  - workflows: a conditional route to three desk agents and a scored review loop capped at three rounds; three jobs
+    took 11 model calls, and the gateway's rate limit (20 a minute) stopped the first attempt;
+  - a supervisor over a fare agent and a date agent: its first real summary said two adults pay 420 (the fare for
+    one); `supervisorContext` fixed it (840), and the lesson says why a tool is the sturdier fix;
+  - the capstone, a Spring Boot app with tools, RAG, memory, guardrails, a listener and answers with sources; a real
+    bug found on the way: input guardrails see the message after RAG adds the rules, so the capstone's guard measures
+    `userMessageTemplate()`.
+- Two more playing diagrams (a sequence, a routed review), six notes pages, two AI-track nodes.
+- LangChain4j now has 30 chapters, 60 tasks, about 22 hours.
+
 ## 23 November: LangChain4j, Part 4 (tools, MCP and knowledge)
 
 - Part 4, "Tools, MCP and knowledge" (6 chapters, 12 tasks), every model output captured through the gateway:

@@ -33,6 +33,12 @@ mcp-server|21-mcp-server|mcp_server own_server_client
 embedding-stores|22-embedding-stores|store_cards search_store
 rag|23-rag|ingest_rules rag_answer
 local-models|24-local-models|ollama_model routing_model
+guardrails|25-guardrails|question_limit phone_redactor
+observability|26-observability|usage_listener golden_eval
+agents|27-agents|first_agent sequence_workflow
+workflows|28-workflows|conditional_route review_loop
+supervisor|29-supervisor|tool_agent supervisor_agent
+capstone|30-capstone|rules_store answer_with_sources
 "
 
 fail_all() { # tasks message

@@ -12,7 +12,7 @@ language: java
 track: ai
 tags: [java, ai, langchain4j]
 level: intermediate
-estimated_minutes: 1055
+estimated_minutes: 1340
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain4j", source: "LangChain4j project (Apache 2.0)" }
@@ -687,3 +687,168 @@ chapters:
     examples:
     - call: routing(small, large).chat("Hi!")
       gives: answered by the small model
+- id: guardrails
+  title: Guardrails
+  file: chapters/25-guardrails.md
+  minutes: 45
+  folder: 25-guardrails
+  part: Production and agents
+  tasks:
+  - id: question_limit
+    title: refuse over-long questions
+    xp: 20
+    hints:
+    - validate always returns success(), so every question reaches the model.
+    - userMessage.singleText() is the question; compare its length() with MAX.
+    - Over the limit, return the fatal result with TOO_LONG, so the model is never called; otherwise success().
+    examples:
+    - call: chat(a 357-character question)
+      gives: InputGuardrailException, no model call
+    - call: chat("When does the Ghat Express leave?")
+      gives: the model's answer
+  - id: phone_redactor
+    title: remove phone numbers from answers
+    xp: 20
+    hints:
+    - validate always returns success(), so numbers pass through.
+    - responseFromLLM.text() is the answer; MOBILE.matcher(text).find() says whether it has a number.
+    - Return successWith with the text where the matcher replaces every match with REMOVED; otherwise success().
+    examples:
+    - call: 'an answer "Call Ravi on 98220 12345"'
+      gives: '"Call Ravi on [number removed]"'
+    - call: 'an answer "The fare is Rs 420"'
+      gives: unchanged
+- id: observability
+  title: Observability and testing
+  file: chapters/26-observability.md
+  minutes: 45
+  folder: 26-observability
+  tasks:
+  - id: usage_listener
+    title: count calls and tokens
+    xp: 20
+    hints:
+    - onResponse is empty, so nothing is counted.
+    - context.chatResponse().metadata().tokenUsage() has inputTokenCount() and outputTokenCount().
+    - Increment calls, then addAndGet each token count to its AtomicInteger.
+    examples:
+    - call: two questions, 42 tokens in and 8 out each
+      gives: 2 calls, 84 in, 16 out
+  - id: golden_eval
+    title: score the golden set
+    xp: 20
+    hints:
+    - passRate returns 0 without asking anything.
+    - Loop over the golden list, ask assistant.chat(question), and test the answer with contains(...).
+    - Lower-case both texts with Locale.ROOT, count the passes, and divide by the list size as a double.
+    examples:
+    - call: 4 golden questions, 3 answered right
+      gives: '0.75'
+- id: agents
+  title: 'Agents: your first agent and a sequence'
+  file: chapters/27-agents.md
+  minutes: 45
+  folder: 27-agents
+  tasks:
+  - id: first_agent
+    title: the classifier agent
+    xp: 20
+    hints:
+    - classifier returns null.
+    - AgenticServices.agentBuilder(TopicClassifier.class) is built like the writer below it.
+    - Give it the model and the output key topic, so the writer can read the topic from the scope.
+    examples:
+    - call: classify("The train was late again!")
+      gives: Topic.COMPLAINT
+  - id: sequence_workflow
+    title: the help desk workflow
+    xp: 20
+    hints:
+    - desk returns null.
+    - AgenticServices.sequenceBuilder(DeskWorkflow.class) takes the sub-agents in the order they run.
+    - The classifier first, then the writer, and the output key reply for the workflow's answer.
+    examples:
+    - call: handle("The 7:15 was 40 minutes late!")
+      gives: a kind reply naming the complaints team
+      note: two model calls
+- id: workflows
+  title: 'Agentic workflows: condition, loop, parallel'
+  file: chapters/28-workflows.md
+  minutes: 50
+  folder: 28-workflows
+  tasks:
+  - id: conditional_route
+    title: route to a desk
+    xp: 20
+    hints:
+    - desks returns null.
+    - AgenticServices.conditionalBuilder() takes pairs of a condition on the scope and an agent.
+    - Three pairs, REFUND, TIMETABLE, and neither; build each desk with the agent helper and the key reply.
+    examples:
+    - call: a REFUND message
+      gives: the refund desk's reply, no other desk runs
+  - id: review_loop
+    title: the review loop
+    xp: 20
+    hints:
+    - reviewLoop returns null.
+    - AgenticServices.loopBuilder() takes the scorer (key score) and the editor (key reply), in that order.
+    - Cap it with maxIterations(3) and exit when the score read from the scope is at least 0.8.
+    examples:
+    - call: a reply scored 0.3, then 0.9 after one edit
+      gives: score, edit, score, then stop
+    - call: a reply that never scores 0.8
+      gives: 6 model calls, then stop
+- id: supervisor
+  title: Supervisor agents
+  file: chapters/29-supervisor.md
+  minutes: 45
+  folder: 29-supervisor
+  tasks:
+  - id: tool_agent
+    title: the fare agent, with its tool
+    xp: 20
+    hints:
+    - fareAgent returns null.
+    - It is built like dateAgent below it, with its own interface and output key.
+    - Specialists.FareAgent, the model, tools with a new RailTools, and the key fare.
+    examples:
+    - call: fare("Ratnagiri")
+      gives: '420'
+      note: from the fare tool
+  - id: supervisor_agent
+    title: the supervisor
+    xp: 20
+    hints:
+    - supervisor returns null.
+    - AgenticServices.supervisorBuilder() takes the model and the sub-agents it may plan with.
+    - Add CONTEXT with supervisorContext, and the SUMMARY response strategy, then build().
+    examples:
+    - call: 'invoke("2 adults to Ratnagiri next Sunday: date and total fare?")'
+      gives: 2026-11-29 and 840 rupees
+- id: capstone
+  title: 'Capstone: Setu goes live'
+  file: chapters/30-capstone.md
+  minutes: 55
+  folder: 30-capstone
+  tasks:
+  - id: rules_store
+    title: index the rule book at start-up
+    xp: 25
+    hints:
+    - rulesStore returns an empty store, so no question finds a rule.
+    - ClassPathDocumentLoader reads the rules folder from inside the app; ingest as in chapter 23.
+    - Use an EmbeddingStoreIngestor with recursive(300, 30), the embedding model and a new store, and return it.
+    examples:
+    - call: search "Can I take my bicycle?"
+      gives: a piece of luggage.txt
+  - id: answer_with_sources
+    title: POST /chat with sources
+    xp: 25
+    hints:
+    - There is no method for POST /chat yet.
+    - setu.chat returns a Result; content() is the answer and sources() the pieces retrieval used.
+    - Map each source to its text segment's file_name metadata, keep each once, and return a ChatReply.
+    examples:
+    - call: 'POST /chat {"passenger": "meera", "message": "Can I bring my guitar?"}'
+      gives: an answer and sources ["luggage.txt"]

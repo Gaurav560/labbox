@@ -2114,7 +2114,44 @@ function L4jRag() {
   );
 }
 
+function L4jSequence() {
+  return (
+    <SketchSteps
+      title="two agents in a sequence"
+      intro="Press Play to follow one message through the help desk."
+      label="a message goes into the scope; the classifier reads it and writes topic; the writer reads message and topic and writes reply; the workflow returns reply"
+      steps={[
+        { label: "1. handle(message)", says: "The workflow puts message into a new agentic scope." },
+        { label: "2. Classifier", says: "Reads message, answers COMPLAINT, and writes it to the scope as topic." },
+        { label: "3. Writer", says: "Reads message and topic from the scope." },
+        { label: "4. Reply", says: "Writes a kind first reply to the scope as reply." },
+        { label: "5. Return", says: "The workflow returns reply: two model calls, one method call." },
+      ]}
+    />
+  );
+}
+
+function L4jWorkflow() {
+  return (
+    <SketchSteps
+      title="classify, route, review"
+      intro="Press Play to follow a timetable question."
+      label="the classifier writes topic; a condition sends the message to the timetable desk; the scorer rates the reply; below 0.8 the editor rewrites it and the scorer rates it again"
+      steps={[
+        { label: "1. Classify", says: "When does the Monsoon Mail reach Karjat? becomes topic TIMETABLE." },
+        { label: "2. Route", says: "Only the condition topic == TIMETABLE is true, so only the timetable desk runs." },
+        { label: "3. Answer", says: "The desk writes reply from the facts: 18:40." },
+        { label: "4. Score", says: "The scorer rates the reply below 0.8." },
+        { label: "5. Edit", says: "The editor rewrites reply: shorter, no promises." },
+        { label: "6. Score again", says: "0.8 or more: the loop exits. Never more than 3 rounds." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-sequence": L4jSequence,
+  "l4j-workflow": L4jWorkflow,
   "l4j-tool-call": L4jToolCall,
   "l4j-rag": L4jRag,
   "l4j-ai-service": L4jAiService,
