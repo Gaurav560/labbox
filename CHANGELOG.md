@@ -1,5 +1,20 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 6 (real programs); the course is complete
+
+- Six chapters, twelve tasks, every output and compiler message captured from real runs: a command-line tool (clap
+  derive with `--turbine` and `--low-kw`, a CSV log read with csv and serde; real errors for a bad row, a missing
+  file and a mistyped option), smart pointers (an escalation chain in a `Box`, one crew shared by two turbines with
+  `Rc<RefCell<..>>`, owner counts 3 then 2, the "RefCell already borrowed" panic), threads (scoped threads, one
+  against forty: 15.9 against 3.6 ms on 16 CPU threads, the lesson says learners have 2; alerts over a channel;
+  E0277 for an `Rc` sent to a thread), async with Tokio (39 turbines polled at once in 0.14 s, ten one after another
+  in 1.36 s; a 500 ms timeout for the far turbine), speed (518,400 log lines: Rust release 27 ms, Python 182 ms,
+  Rust debug 177 ms, and Rust written the copying way 62 ms), and an axum capstone (POST readings with 201 and 422,
+  a summary with 404; the checks drive the router in memory with tower's `oneshot`).
+- Six playing diagrams, six notes pages, one photo (Ryan Dahl, cropped so no cup shows), one track node. The course
+  ends with a table of what each part taught and where to go next.
+- Rust from zero: 28 chapters, 56 tasks, about 21.7 hours; `test-lab` passes every chapter.
+
 ## 24 November: Rust from zero, Part 5 (abstractions without cost)
 
 - Six chapters, twelve tasks, every output and compiler message captured from real runs: generics (one `largest` for

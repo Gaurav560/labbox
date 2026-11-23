@@ -11,14 +11,11 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (24 November, after LangGraph): 282 backend tests on Postgres and Redis (29 minutes), 27
   browser tests, 21 labs valid,
   `scripts/labbox admin list` empty.
-- **Now building:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
-  project name rule: software gets a plain English name for its job, so Windwatch). Parts 1 to 5 (chapters 1 to 22) are
-  done and committed; Part 6 (23 a clap CLI, 24 Box/Rc/RefCell, 25 threads, 26 Tokio, 27 speed against Python,
-  28 an axum capstone) is next. Generators:
-  scratchpad rs/part1.py, part2.py with gen.py (lost on reboot; the lab folders are the record). Syllabus: Part 3 structs,
-  enums and Option, match, modules; Part 4 Vec and String, HashMap, Result and ?, own error types (thiserror,
-  anyhow); Part 5 generics, traits, lifetimes, closures, iterators (measured), tests; Part 6 a clap CLI, Box/Rc/RefCell,
-  threads and channels, Tokio, speed against Python, an axum service as the capstone. LangGraph is complete.
+- **Just finished:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
+  project name rule: software gets a plain English name for its job, so Windwatch). Complete: 28 chapters in 6 parts,
+  56 tasks; Part 6 is a clap CLI, Box/Rc/RefCell, threads and channels, Tokio, speed against Python and an axum
+  capstone. Checks: tests/run_checks.py (modes run, test, own) with one shared target dir prebuilt in the image, so a
+  check compiles only the learner's crate. Next: the full test run, then wait for the owner's next course.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).

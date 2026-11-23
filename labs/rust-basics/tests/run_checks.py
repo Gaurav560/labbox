@@ -35,6 +35,12 @@ CHAPTERS = [
     ("closures", "20-closures", "test", ["below", "alerts"]),
     ("iterators", "21-iterators", "test", ["total_energy", "weak_turbines"]),
     ("testing", "22-testing", "own", ["test_curve", "test_parse"]),
+    ("cli", "23-cli", "test", ["cli_args", "read_csv"]),
+    ("smart-pointers", "24-smart-pointers", "test", ["build_chain", "shared_crew"]),
+    ("threads", "25-threads", "test", ["scoped_threads", "channel_alerts"]),
+    ("async", "26-async", "test", ["concurrent_poll", "with_timeout"]),
+    ("speed", "27-speed", "test", ["fast_parse", "borrowed_keys"]),
+    ("capstone", "28-capstone", "test", ["post_reading", "summary_route"]),
 ]
 
 

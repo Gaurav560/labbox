@@ -1,0 +1,6 @@
+[package]
+name = "ch27-speed"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

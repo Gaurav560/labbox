@@ -12,7 +12,7 @@ tags:
 - rust
 - beginner
 level: beginner
-estimated_minutes: 1020
+estimated_minutes: 1300
 cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
@@ -604,3 +604,160 @@ chapters:
     examples:
     - call: cargo test
       gives: parse_rejects_broken_lines ok
+- id: cli
+  title: A command-line tool
+  file: chapters/23-cli.md
+  minutes: 45
+  folder: 23-cli
+  part: Real programs
+  tasks:
+  - id: cli_args
+    title: options, not positions
+    xp: 20
+    hints:
+    - Without long, clap reads turbine and low_kw as more positional arguments.
+    - An arg attribute with long makes a field a --name option; keep the default for low_kw.
+    - Give turbine the attribute on its own, and add long next to low_kw's default.
+    examples:
+    - call: windwatch data/farm.csv --turbine T12 --low-kw 300
+      gives: 2 readings
+  - id: read_csv
+    title: read the log
+    xp: 20
+    hints:
+    - read_readings still says todo!().
+    - csv::Reader opens the file and reads the header; deserialize gives one Result per row.
+    - Add a context to the open and to each row that names the file, push each Reading, return them in Ok.
+    examples:
+    - call: windwatch data/broken.csv
+      gives: "Error: bad row in data/broken.csv"
+- id: smart-pointers
+  title: Smart pointers
+  file: chapters/24-smart-pointers.md
+  minutes: 45
+  folder: 24-smart-pointers
+  tasks:
+  - id: build_chain
+    title: build the chain
+    xp: 20
+    hints:
+    - chain still says todo!().
+    - Match the slice three ways - empty, one contact, and a first contact with the rest.
+    - The last arm calls chain on the rest, and puts what it gives in a Box.
+    examples:
+    - call: chain(&["shift engineer", "site manager"])
+      gives: Some(CallThen("shift engineer", Call("site manager")))
+  - id: shared_crew
+    title: report a fault to the shared crew
+    xp: 15
+    hints:
+    - report_fault still says todo!().
+    - The crew is behind an Rc, so it is shared; RefCell lets you borrow it mutably while running.
+    - Borrow it mutably for one statement and push "id - fault" (written with a colon) to its jobs.
+    examples:
+    - call: t12.report_fault("blade inspection")
+      gives: "crew jobs [\"T12: blade inspection\"]"
+- id: threads
+  title: Threads
+  file: chapters/25-threads.md
+  minutes: 45
+  folder: 25-threads
+  tasks:
+  - id: scoped_threads
+    title: a thread per log
+    xp: 20
+    hints:
+    - parallel_totals still says todo!().
+    - Inside thread::scope, s.spawn starts a thread that may borrow the logs.
+    - Collect every handle first, then join them in order; joining inside the same map runs one at a time.
+    examples:
+    - call: parallel_totals(&[vec![2100.0, 2180.0], vec![305.0]])
+      gives: '[4280.0, 305.0]'
+  - id: channel_alerts
+    title: alerts over a channel
+    xp: 20
+    hints:
+    - No thread is started yet, so nothing is ever sent.
+    - Each thread owns its own clone of tx and sends a message only when it found low readings.
+    - Spawn a move closure that counts the readings below the limit and sends the formatted line when the count is not 0.
+    examples:
+    - call: collect_alerts for T12 with 140, 165, 90 and a limit of 200
+      gives: '["T12: 3 low readings"]'
+- id: async
+  title: Async with Tokio
+  file: chapters/26-async.md
+  minutes: 45
+  folder: 26-async
+  tasks:
+  - id: concurrent_poll
+    title: ask them all at once
+    xp: 20
+    hints:
+    - The loop awaits each poll before starting the next, so the waits add up.
+    - A JoinSet runs every future it is given at the same time; join_next gives them back as they finish.
+    - Spawn a poll for each id, gather the answers in a while let loop, then sort them by id.
+    examples:
+    - call: poll_all for 39 turbines
+      gives: about 0.14 s, not 5 s
+  - id: with_timeout
+    title: a time limit for T31
+    xp: 20
+    hints:
+    - The poll has no limit, so T31 takes 3 seconds.
+    - tokio::time::timeout gives Ok with the answer in time, or Err when the limit passed.
+    - Match on the timeout's result and turn Err into the message that names the id and the milliseconds.
+    examples:
+    - call: poll_with_timeout("T31", 500 ms)
+      gives: Err("T31 did not answer in 500 ms")
+- id: speed
+  title: How fast is Rust?
+  file: chapters/27-speed.md
+  minutes: 40
+  folder: 27-speed
+  tasks:
+  - id: fast_parse
+    title: parse by slicing
+    xp: 20
+    hints:
+    - turbine_and_power still says todo!().
+    - split_once finds the first comma and rsplit_once the last; both give slices, not copies.
+    - The turbine is before the first comma, the power after the last; parse the power, with a question mark for each step.
+    examples:
+    - call: turbine_and_power("T07,2026-11-24 10:10,12.4,2100")
+      gives: Some(("T07", 2100.0))
+  - id: borrowed_keys
+    title: total by turbine
+    xp: 20
+    hints:
+    - The map stays empty; nothing is added to it.
+    - The entry API gives the total for a turbine, starting at 0.0 the first time.
+    - For each line the parser accepts, add the power times ten minutes (in hours) to that turbine's total.
+    examples:
+    - call: energy_by_turbine of two T07 lines of 2100 and 2400 kW
+      gives: 'T07: 750.0 kWh'
+- id: capstone
+  title: 'Capstone: a web service'
+  file: chapters/28-capstone.md
+  minutes: 60
+  folder: 28-capstone
+  tasks:
+  - id: post_reading
+    title: accept a reading
+    xp: 25
+    hints:
+    - add_reading still answers 501 Not Implemented.
+    - A power below 0 or above 2,500 kW is impossible for these turbines; StatusCode has a constant for 422.
+    - Refuse impossible power first; otherwise lock the store, push the reading under its turbine's entry, and answer 201.
+    examples:
+    - call: POST /readings with power_kw 9999
+      gives: 422 Unprocessable Entity
+  - id: summary_route
+    title: the summary route
+    xp: 25
+    hints:
+    - summary still answers 501 Not Implemented.
+    - ok_or turns the Option from get into a Result, and a question mark returns the 404.
+    - Count the readings, average their power, count those under 80 percent of the curve where it expects power, and wrap the Summary in Json.
+    examples:
+    - call: GET /turbines/T12/summary after 140 kW at 7.5 and 305 kW at 7.9 m/s
+      gives: '{"turbine":"T12","readings":2,"average_kw":222.5,"underperforming":2}'

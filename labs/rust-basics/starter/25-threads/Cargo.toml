@@ -1,0 +1,6 @@
+[package]
+name = "ch25-threads"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

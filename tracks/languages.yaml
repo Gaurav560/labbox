@@ -147,3 +147,7 @@ nodes:
     title: Rust generics, traits, closures and tests
     requires: [rust-collections-errors]
     chapters: [rust-basics/generics, rust-basics/traits, rust-basics/lifetimes, rust-basics/closures, rust-basics/iterators, rust-basics/testing]
+  - id: rust-real-programs
+    title: Real Rust programs, from a CLI to a web service
+    requires: [rust-abstractions]
+    chapters: [rust-basics/cli, rust-basics/smart-pointers, rust-basics/threads, rust-basics/async, rust-basics/speed, rust-basics/capstone]

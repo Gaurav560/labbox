@@ -1,0 +1,6 @@
+[package]
+name = "ch24-smart-pointers"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

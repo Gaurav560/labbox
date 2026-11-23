@@ -3196,7 +3196,121 @@ function RsTestMutation() {
   );
 }
 
+function RsCli() {
+  return (
+    <SketchSteps
+      title="A command line becomes a struct"
+      intro="Press Play to follow one command line through clap."
+      label="clap"
+      steps={[
+        { label: "the words", says: "The shell hands Windwatch four words: data/farm.csv --turbine T12 --low-kw 300." },
+        { label: "positional", says: "data/farm.csv has no -- in front, so it fills the first positional field, file." },
+        { label: "--turbine T12", says: 'A long option: clap finds the field named turbine and stores Some("T12").' },
+        { label: "--low-kw 300", says: "low_kw becomes --low-kw. The text 300 is converted to the f64 300.0." },
+        { label: "left out", says: "Had --low-kw been missing, the default 200.0 would fill it, as --help says." },
+        { label: "a mistake", says: "--turbin matches no field: clap prints an error with a suggestion and exits before run() starts." },
+      ]}
+    />
+  );
+}
+
+function RsRcRefCell() {
+  return (
+    <SketchSteps
+      title="One crew, three owners"
+      intro="Press Play to follow the North crew through Rc and RefCell."
+      label="Rc and RefCell"
+      steps={[
+        { label: "Rc::new", says: "The North crew is made inside a RefCell inside an Rc. Count: 1 (north, in main)." },
+        { label: "Rc::clone twice", says: "T12 and T19 each get a pointer to the same crew. Count: 3. No crew was copied." },
+        { label: "T12 reports", says: "borrow_mut() marks the crew as borrowed, the job is pushed, and the borrow ends at the semicolon." },
+        { label: "T19 reports", says: "Nothing else is borrowing, so its borrow_mut() succeeds too: two jobs in one list." },
+        { label: "drop(t19)", says: "T19's pointer is gone. Count: 2. The crew stays, because others still hold it." },
+        { label: "the last owner", says: "When the count reaches 0, the crew and its jobs are dropped." },
+      ]}
+    />
+  );
+}
+
+function RsThreads() {
+  return (
+    <SketchSteps
+      title="Forty logs on every CPU"
+      intro="Press Play to follow parallel_totals through a scope."
+      label="Threads"
+      steps={[
+        { label: "thread::scope", says: "A scope opens. Every thread started inside must finish before it closes." },
+        { label: "spawn x 40", says: "One thread per log starts at once. Each borrows its log; nothing is copied." },
+        { label: "running", says: "The operating system runs them on every CPU it has; with 2 CPUs, two at a time." },
+        { label: "join in order", says: "join() waits for T01's thread, then T02's, and so on; the sums come back in the logs' order." },
+        { label: "the scope closes", says: "All threads are finished, so the borrows of logs end safely." },
+        { label: "Rc refused", says: "A thread given an Rc does not compile: Rc is not Send (E0277)." },
+      ]}
+    />
+  );
+}
+
+function RsAsync() {
+  return (
+    <SketchSteps
+      title="Forty polls on one thread"
+      intro="Press Play to follow poll_all through the runtime."
+      label="Async"
+      steps={[
+        { label: "spawn x 39", says: "Each poll becomes a task in the JoinSet. Spawning does not wait." },
+        { label: "first await", says: "T01's task sends its request and reaches sleep(...).await: it is parked, and the thread moves on." },
+        { label: "all parked", says: "In a few microseconds every task is waiting. The thread has nothing to do and sleeps." },
+        { label: "woken", says: "After 100 to 142 ms the timers fire one by one; each task is woken and finishes its answer." },
+        { label: "join_next", says: "Answers arrive in the order they finish; at the end they are sorted by id." },
+        { label: "timeout", says: "T31 is given 500 ms. When the time is up, its future is dropped where it waited." },
+      ]}
+    />
+  );
+}
+
+function RsSpeed() {
+  return (
+    <SketchSteps
+      title="Half a million lines, no copies"
+      intro="Press Play to follow two lines into the map."
+      label="Borrowing"
+      steps={[
+        { label: "the text", says: "read_to_string gives one String of 16 MB: every line of the quarter." },
+        { label: "lines()", says: "Each line is a slice of that String: a start and a length." },
+        { label: "split_once", says: '"T07" is a slice of the line, so a slice of the text. The power is parsed into an f64.' },
+        { label: 'entry("T07")', says: "The map's key is that slice. The first T07 line adds the key; no String is made." },
+        { label: "the next T07", says: "Later T07 lines find the same key and add to its total." },
+        { label: "the result", says: "40 keys, all pointing into the text. The map may not outlive the text, and the compiler checks it." },
+      ]}
+    />
+  );
+}
+
+function RsCapstone() {
+  return (
+    <SketchSteps
+      title="Two requests through Windwatch"
+      intro="Press Play to follow a POST and a GET."
+      label="axum"
+      steps={[
+        { label: "POST /readings", says: "A turbine sends JSON. The router matches the method and the path to add_reading." },
+        { label: "Json extractor", says: "serde turns the body into a Reading. A missing field is answered with 422 here." },
+        { label: "your rule", says: "power_kw 9999 is impossible: 422. 140 is fine: lock the store, push, answer 201." },
+        { label: "GET /turbines/T12/summary", says: "The Path extractor takes T12 from the path; summary locks the same store." },
+        { label: "the summary", says: "2 readings, average 222.5 kW, 2 below 80% of the curve: sent back as JSON with 200." },
+        { label: "T99", says: "No readings: ok_or gives Err(NOT_FOUND), and the question mark sends the 404." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-cli": RsCli,
+  "rs-rc-refcell": RsRcRefCell,
+  "rs-threads": RsThreads,
+  "rs-async": RsAsync,
+  "rs-speed": RsSpeed,
+  "rs-capstone": RsCapstone,
   "rs-monomorph": RsMonomorph,
   "rs-trait-object": RsTraitObject,
   "rs-lifetime": RsLifetime,
