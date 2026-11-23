@@ -12,8 +12,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
   browser tests, 21 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
-  project name rule: software gets a plain English name for its job, so Windwatch). Part 1 (chapters 1 to 5) is done
-  and committed; Part 2 (ownership: 6 moves, 7 borrowing, 8 slices and strings) is next. Syllabus: Part 3 structs,
+  project name rule: software gets a plain English name for its job, so Windwatch). Parts 1 and 2 (chapters 1 to 8) are
+  done and committed; Part 3 (9 structs, 10 enums and Option, 11 match, 12 modules) is next. Generators:
+  scratchpad rs/part1.py, part2.py with gen.py (lost on reboot; the lab folders are the record). Syllabus: Part 3 structs,
   enums and Option, match, modules; Part 4 Vec and String, HashMap, Result and ?, own error types (thiserror,
   anyhow); Part 5 generics, traits, lifetimes, closures, iterators (measured), tests; Part 6 a clap CLI, Box/Rc/RefCell,
   threads and channels, Tokio, speed against Python, an axum service as the capstone. LangGraph is complete.

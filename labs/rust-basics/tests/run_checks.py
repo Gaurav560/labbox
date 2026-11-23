@@ -18,6 +18,9 @@ CHAPTERS = [
     ("types", "03-types", "test", ["energy_kwh", "describe"]),
     ("functions", "04-functions", "test", ["tip_speed", "capacity_factor"]),
     ("control-flow", "05-control-flow", "test", ["status", "hours_generating"]),
+    ("ownership", "06-ownership", "test", ["fix_moved_value", "add_reading"]),
+    ("borrowing", "07-borrowing", "test", ["average_power", "cap_readings"]),
+    ("slices-and-strings", "08-slices-and-strings", "test", ["turbine_id", "last_hour"]),
 ]
 
 

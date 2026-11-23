@@ -2923,7 +2923,62 @@ function RsDayLoop() {
   );
 }
 
+function RsMove() {
+  return (
+    <SketchSteps
+      title="What let backup = log does"
+      intro="Press Play to follow a vector through a move."
+      label="Move"
+      steps={[
+        { label: "vec![2100.0, 2250.0]", says: "log's small part on the stack (pointer, length, capacity) points at two numbers on the heap." },
+        { label: "let backup = log", says: "The stack part is copied into backup. The heap numbers are not copied." },
+        { label: "log is moved", says: "The compiler marks log as moved: using it again is an error, so only one owner points at the heap." },
+        { label: "end of the block", says: "backup goes out of scope and frees the heap block, once. log frees nothing: it owns nothing." },
+        { label: "clone()", says: "log.clone() instead makes a second heap block: two owners, two blocks, each freed once." },
+      ]}
+    />
+  );
+}
+
+function RsBorrow() {
+  return (
+    <SketchSteps
+      title="Many readers, or one writer"
+      intro="Press Play to see why push is refused."
+      label="Borrowing"
+      steps={[
+        { label: "let first = &log[0]", says: "A shared reference points at the first number in log's heap block." },
+        { label: "log.push(1980.0)", says: "push needs a mutable borrow, and may move the whole block to a bigger place in memory." },
+        { label: "the danger", says: "If it moved, first would point at memory already given back: a crash in C." },
+        { label: "first is used later", says: "Because first is still used after push, the two borrows overlap." },
+        { label: "refused", says: "E0502: cannot borrow log as mutable because it is also borrowed as immutable. Nothing is built." },
+        { label: "the fix", says: "Use first before pushing, or copy the number out: let first = log[0];" },
+      ]}
+    />
+  );
+}
+
+function RsSlice() {
+  return (
+    <SketchSteps
+      title="A slice of a log line"
+      intro="Press Play to take the turbine id out of a line."
+      label="Slices"
+      steps={[
+        { label: "the line", says: '"T07,2026-11-24 10:10,12.4,2100" is 30 bytes owned by the caller.' },
+        { label: "find(',')", says: "The first comma is at byte 3." },
+        { label: "&line[..3]", says: "A slice: a pointer to byte 0 of the same text, and a length of 3. Nothing is copied." },
+        { label: '"T07"', says: "The slice reads as T07. It may not outlive the line it points into." },
+        { label: "past the end", says: "&line[..40] would panic: a slice always checks its range against the real length." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-move": RsMove,
+  "rs-borrow": RsBorrow,
+  "rs-slice": RsSlice,
   "rs-cargo-run": RsCargoRun,
   "rs-shadowing": RsShadowing,
   "rs-overflow": RsOverflow,

@@ -1,5 +1,16 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 2 (ownership)
+
+- Three chapters, six tasks, every output and compiler message captured from real runs: ownership and moves (E0382
+  with the compiler's own `.clone()` suggestion; a backup vector that is really a copy; a log moved into a function
+  and back), borrowing (`&` and `&mut`; E0502 when `push` meets a live reference, E0106 for a reference to a local;
+  one meter glitch pushed T07's average to 4,082 kW, capped it is 2,208), and slices and strings (`String` versus
+  `&str`, a turbine id sliced out of a log line without copying, the last hour of readings, and a real panic for
+  slicing inside `₹`, which is three bytes).
+- Three playing diagrams (a move, many readers or one writer, a slice), three notes pages, two photos (John McCarthy,
+  the Heartbleed logo), one track node.
+
 ## 24 November: Rust from zero, Part 1 (first steps): a new language course on Windwatch, a wind farm's monitor
 
 - New base image `labbox/rust:v1` (Rust 1.100.0 with rustfmt and clippy, gcc as the linker, python3 for the checks)

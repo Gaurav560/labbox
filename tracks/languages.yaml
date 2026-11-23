@@ -131,3 +131,7 @@ nodes:
   - id: rust-first-steps
     title: Rust first steps
     chapters: [rust-basics/why-rust, rust-basics/variables, rust-basics/types, rust-basics/functions, rust-basics/control-flow]
+  - id: rust-ownership
+    title: Rust ownership
+    requires: [rust-first-steps]
+    chapters: [rust-basics/ownership, rust-basics/borrowing, rust-basics/slices-and-strings]

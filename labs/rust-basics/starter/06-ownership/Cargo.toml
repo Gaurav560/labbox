@@ -1,0 +1,6 @@
+[package]
+name = "ch06-ownership"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

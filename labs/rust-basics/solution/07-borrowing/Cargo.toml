@@ -1,0 +1,6 @@
+[package]
+name = "ch07-borrowing"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
