@@ -1,5 +1,17 @@
 # Changelog
 
+## 23 November: LangChain4j, Part 2 (calling a model from Java)
+
+- Part 2, "Calling a model from Java" (6 chapters, 12 tasks), every model output captured from gpt-4o-mini through the
+  gateway with a separate author account: a chat completion over Java's own HttpClient (with a real HTTP/2 upgrade error
+  and its fix), the official OpenAI Java SDK (whose first real answer invented two trains), the first LangChain4j app
+  (`OpenAiChatModel` behind the `ChatModel` interface, system and user messages), parameters (temperature 1.5 against
+  0.0, a 20-token limit ending in finish reason LENGTH), open and closed models and hallucinations (without the
+  timetable the model said the 7:15 leaves at 6:00 and that a Tuesday-less train runs on Tuesdays; with it, every
+  answer was right, and it said "I don't know" about wifi), and token usage turned into a yearly bill.
+- The fake OpenAI server used by the checks also records each request's Authorization and Content-Type headers.
+- One more playing diagram (a model call through the gateway), six notes pages, two AI-track nodes.
+
 ## 23 November: LangChain4j, Part 1 (a new AI course: Setu, the help desk of a hill railway)
 
 - New lab `langchain4j`, built from the owner's syllabus (the Telusko LangChain4j video's chapter list) and the

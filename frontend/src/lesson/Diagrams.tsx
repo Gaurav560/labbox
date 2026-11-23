@@ -2044,7 +2044,25 @@ function L4jLlmPipeline() {
   );
 }
 
+function L4jHttpCall() {
+  return (
+    <SketchSteps
+      title="one call to a model"
+      intro="Press Play to follow Setu's first question."
+      label="Setu builds a JSON body with the model and the messages, posts it with its key to the LabBox gateway, the gateway checks the budget and forwards it to OpenAI, and the JSON answer comes back the same way"
+      steps={[
+        { label: "1. Build the body", says: "model ai-chat, a system message, the passenger's question." },
+        { label: "2. POST with a key", says: "Authorization: Bearer and the key; Content-Type: application/json." },
+        { label: "3. The gateway", says: "Checks the key and the daily budget, logs the call, adds the real OpenAI key." },
+        { label: "4. The model", says: "gpt-4o-mini reads 62 tokens and writes 45, one at a time." },
+        { label: "5. The answer", says: "choices[0].message.content, plus usage: what it cost." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-http-call": L4jHttpCall,
   "l4j-ai-circles": L4jAiCircles,
   "l4j-neuron": L4jNeuron,
   "l4j-context-window": L4jContextWindow,

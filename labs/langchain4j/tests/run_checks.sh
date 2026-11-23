@@ -15,6 +15,12 @@ language-models|03-language-models|count_words next_word
 tokens|04-tokens|count_tokens fit_window
 embeddings|05-embeddings|cosine closest_question
 transformers|06-transformers|softmax_temperature attention_weights
+raw-http|07-raw-http|send_request read_answer
+openai-sdk|08-openai-sdk|sdk_client sdk_ask
+first-app|09-first-app|chat_model system_message
+parameters|10-parameters|steady_model short_answer
+hallucinations|11-hallucinations|honest_prompt grounded_answer
+usage|12-usage|token_usage answer_cost
 "
 
 fail_all() { # tasks message

@@ -45,3 +45,11 @@ nodes:
     title: Tokens, embeddings and attention
     requires: [l4j-foundations]
     chapters: [langchain4j/tokens, langchain4j/embeddings, langchain4j/transformers]
+  - id: l4j-calling
+    title: Calling a model from Java
+    requires: [l4j-inside-llms]
+    chapters: [langchain4j/raw-http, langchain4j/openai-sdk, langchain4j/first-app]
+  - id: l4j-controlling
+    title: Parameters, hallucinations and cost
+    requires: [l4j-calling]
+    chapters: [langchain4j/parameters, langchain4j/hallucinations, langchain4j/usage]

@@ -13,7 +13,7 @@ import com.sun.net.httpserver.HttpServer;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
-/** A fake OpenAI-compatible server for checks: records every request, answers from a script. No network, no model. */
+/** A fake OpenAI-compatible server for checks: records every request (and its key), answers from a script. No network, no model. */
 public final class FakeOpenAi {
     /** What the fake model says: plain text, or a request to call one tool with JSON arguments. */
     public record Reply(String text, String toolName, String toolArgs) {
@@ -23,6 +23,9 @@ public final class FakeOpenAi {
 
     public final List<String> chatRequests = new CopyOnWriteArrayList<>();
     public final List<String> embeddingRequests = new CopyOnWriteArrayList<>();
+    /** The Authorization and Content-Type headers of every request, in order. */
+    public final List<String> authorizations = new CopyOnWriteArrayList<>();
+    public final List<String> contentTypes = new CopyOnWriteArrayList<>();
     public volatile Function<String, Reply> script = body -> Reply.text("Hello from the fake model.");
     private final HttpServer server;
 
@@ -44,6 +47,8 @@ public final class FakeOpenAi {
     public void reset() {
         chatRequests.clear();
         embeddingRequests.clear();
+        authorizations.clear();
+        contentTypes.clear();
         script = body -> Reply.text("Hello from the fake model.");
     }
 
@@ -77,6 +82,8 @@ public final class FakeOpenAi {
     private void handle(HttpExchange ex) throws IOException {
         String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         String path = ex.getRequestURI().getPath();
+        authorizations.add(String.valueOf(ex.getRequestHeaders().getFirst("Authorization")));
+        contentTypes.add(String.valueOf(ex.getRequestHeaders().getFirst("Content-Type")));
         if (path.endsWith("/embeddings")) {
             embeddingRequests.add(body);
             send(ex, 200, "application/json", embeddings(body));

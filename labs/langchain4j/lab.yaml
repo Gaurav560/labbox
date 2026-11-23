@@ -12,7 +12,7 @@ language: java
 track: ai
 tags: [java, ai, langchain4j]
 level: intermediate
-estimated_minutes: 275
+estimated_minutes: 530
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
 cover_credit: { by: "Logos: java", source: "devicon (MIT)" }
@@ -207,3 +207,161 @@ chapters:
     examples:
     - call: weights(the query of "it", keys of train, station, it)
       gives: '[0.46, 0.18, 0.36]'
+- id: raw-http
+  title: A model over plain HTTP
+  file: chapters/07-raw-http.md
+  minutes: 45
+  folder: 07-raw-http
+  part: Calling a model from Java
+  tasks:
+  - id: send_request
+    title: send a chat completion request
+    xp: 20
+    hints:
+    - send returns an empty string and never calls the server. It needs an HttpRequest to baseUrl + "/chat/completions".
+    - 'Use HttpRequest.newBuilder(URI.create(...)) with two .header(...) calls and .POST(BodyPublishers.ofString(...)).'
+    - The Authorization header's value is the word Bearer, a space, then apiKey. Send with CLIENT and return the body.
+    examples:
+    - call: send(gateway, key, "Which trains do you run?")
+      gives: the response JSON
+  - id: read_answer
+    title: read the answer from the JSON
+    xp: 20
+    hints:
+    - answer returns an empty string. The text is deep inside the response JSON.
+    - JSON.readTree(responseJson) gives a tree; path(...) walks it without throwing.
+    - 'Walk choices, then index 0, then message, then content, and return it with asString().'
+    examples:
+    - call: answer(the response JSON)
+      gives: the assistant's text, quotes and line breaks intact
+- id: openai-sdk
+  title: The official OpenAI Java SDK
+  file: chapters/08-openai-sdk.md
+  minutes: 40
+  folder: 08-openai-sdk
+  tasks:
+  - id: sdk_client
+    title: build an OpenAI client
+    xp: 20
+    hints:
+    - client returns null. The SDK builds clients with OpenAIOkHttpClient.builder().
+    - The builder takes the base URL and the API key, each with a method of the same name.
+    - Chain the two settings on the builder and finish with build().
+    examples:
+    - call: client(gateway, key)
+      gives: an OpenAIClient for the gateway
+  - id: sdk_ask
+    title: ask with typed parameters
+    xp: 20
+    hints:
+    - ask returns an empty string. Build ChatCompletionCreateParams with its builder first.
+    - 'The params builder takes the model alias, then addSystemMessage and addUserMessage, then build().'
+    - 'Send with client.chat().completions().create(params); the text is in choices().get(0).message().content(), an Optional.'
+    examples:
+    - call: ask(client, "Which trains do you run?")
+      gives: Setu's answer as a String
+- id: first-app
+  title: Your first LangChain4j app
+  file: chapters/09-first-app.md
+  minutes: 45
+  folder: 09-first-app
+  tasks:
+  - id: chat_model
+    title: build an OpenAiChatModel
+    xp: 20
+    hints:
+    - chatModel returns null. LangChain4j models are built with a builder.
+    - OpenAiChatModel.builder() takes the base URL, the API key and a model name.
+    - The model name is the gateway's alias for this course, ai-chat. Return the built model as a ChatModel.
+    examples:
+    - call: chatModel(gateway, key).chat("Hello")
+      gives: a real answer from gpt-4o-mini
+  - id: system_message
+    title: send a system message and a user message
+    xp: 20
+    hints:
+    - ask sends only the question, so the model does not know it is Setu.
+    - model.chat(...) accepts several messages; SystemMessage.from(...) and UserMessage.from(...) make them.
+    - The result is a ChatResponse; the answer text is in its aiMessage().
+    examples:
+    - call: ask(model, "Who are you?")
+      gives: Hello! I am Setu, ...
+- id: parameters
+  title: Model parameters and requests
+  file: chapters/10-parameters.md
+  minutes: 40
+  folder: 10-parameters
+  tasks:
+  - id: steady_model
+    title: a model with temperature 0
+    xp: 20
+    hints:
+    - steadyModel builds a model without a temperature, so the default (1.0) applies.
+    - The OpenAiChatModel builder has a method for the sampling temperature.
+    - Add the temperature call before build(), with the value zero as a double.
+    examples:
+    - call: steadyModel(...).chat(a slogan question) three times
+      gives: the same slogan three times
+  - id: short_answer
+    title: limit one answer's length
+    xp: 20
+    hints:
+    - ask sends the messages without any limit on the answer.
+    - ChatRequest.builder() takes the messages and per-request parameters, then build().
+    - The parameter is maxOutputTokens; pass the request to model.chat(...) and return its ChatResponse.
+    examples:
+    - call: ask(model, "Describe the journey to Ratnagiri.", 20)
+      gives: an answer cut after 20 tokens
+      note: finish reason LENGTH
+- id: hallucinations
+  title: Open and closed models, and hallucinations
+  file: chapters/11-hallucinations.md
+  minutes: 45
+  folder: 11-hallucinations
+  tasks:
+  - id: honest_prompt
+    title: allow "I don't know"
+    xp: 20
+    hints:
+    - honestSystem returns SYSTEM unchanged, so the model is never told what to do when it does not know.
+    - Add one more sentence to SYSTEM; it must contain the exact words I don't know.
+    - Say when to use it (the answer is not in the facts), where to send the passenger, and never to invent times or fares.
+    examples:
+    - call: honestSystem()
+      gives: Setu's instructions plus a rule for not knowing
+  - id: grounded_answer
+    title: answer from the facts
+    xp: 20
+    hints:
+    - ask sends only SYSTEM, so the model never sees the timetable.
+    - 'The system message should hold honestSystem(), then a blank line, then Facts: and the timetable from facts().'
+    - Join them into one string for SystemMessage.from(...), send it with the question, and return the answer's text.
+    examples:
+    - call: ask(model, "Does the Konkan Breeze run on Tuesdays?")
+      gives: No, it does not run on Tuesdays.
+- id: usage
+  title: Response metadata and token usage
+  file: chapters/12-usage.md
+  minutes: 40
+  folder: 12-usage
+  tasks:
+  - id: token_usage
+    title: read the token usage
+    xp: 20
+    hints:
+    - usage returns zeros. The counts come with every ChatResponse.
+    - response.metadata() holds a TokenUsage, with a count for input and one for output.
+    - Return a new Usage made from the input token count and the output token count.
+    examples:
+    - call: usage(response to "Hi!")
+      gives: Usage[inputTokens=37, outputTokens=9]
+  - id: answer_cost
+    title: turn tokens into dollars
+    xp: 20
+    hints:
+    - dollars returns 0. Input and output tokens have different prices.
+    - Each price is per million tokens, so multiply by the price and divide by 1,000,000.
+    - Add the input part and the output part; the price constants are doubles, so keep them first in the formula.
+    examples:
+    - call: dollars(new Usage(180, 60))
+      gives: '0.000063'
