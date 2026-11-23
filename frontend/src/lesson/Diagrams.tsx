@@ -2254,7 +2254,62 @@ function L4jSupervisor() {
   );
 }
 
+function LcNextToken() {
+  return (
+    <SketchSteps
+      title="how a model writes an answer"
+      intro="Press Play to follow the first words of an answer."
+      label="the model reads the whole text so far, scores every possible next token, softmax turns the scores into probabilities, one token is picked and added, and the loop runs again"
+      steps={[
+        { label: "1. Read everything so far", says: "The system message, the question, and the answer written so far." },
+        { label: "2. Attention", says: "Every token looks at every other token to work out the meaning." },
+        { label: "3. Score every token", says: "About 200,000 scores, one for each piece in the vocabulary." },
+        { label: "4. Softmax", says: "The scores become probabilities; temperature 0 makes the top one win." },
+        { label: "5. Pick and add", says: "Today is added to the answer." },
+        { label: "6. Again", says: "The loop runs once per output token, until the model chooses to stop." },
+      ]}
+    />
+  );
+}
+
+function LcChatRequest() {
+  return (
+    <SketchSteps
+      title="one chat request, there and back"
+      intro="Press Play to follow Navin's first question."
+      label="Python posts the model name and messages with a lab token; the gateway checks it and calls OpenAI with the real key; the answer and the token usage come back as JSON"
+      steps={[
+        { label: "1. Python builds JSON", says: "model ai-chat, a system message, and the member's question." },
+        { label: "2. POST with a token", says: "To OPENAI_BASE_URL/chat/completions, with Authorization: Bearer and the lab token." },
+        { label: "3. The gateway", says: "Checks the token and the budget, adds max_tokens 1024, and calls OpenAI with the real key." },
+        { label: "4. The model", says: "gpt-4o-mini writes the answer, one token at a time." },
+        { label: "5. JSON comes back", says: "choices[0].message.content holds the answer; usage says 61 in, 38 out." },
+      ]}
+    />
+  );
+}
+
+function LcAiCircles() {
+  return (
+    <SketchNested
+      title="circles inside circles"
+      intro="Press Play to go from the biggest circle to the smallest."
+      label="artificial intelligence contains machine learning, which contains deep learning, which contains generative AI; a large language model sits in the smallest circle"
+      steps={[
+        { label: "Artificial intelligence", says: "Any program doing something we would call intelligent: even Navin's hand-written rules." },
+        { label: "Machine learning", says: "The rule is learned from examples, not written: like the 8 mm rain threshold." },
+        { label: "Deep learning", says: "Machine learning with neural networks of many layers: telling a healthy grape leaf from a diseased one." },
+        { label: "Generative AI", says: "Deep learning models that create new text, images or code." },
+        { label: "LLM", says: "A large language model lives in the smallest circle: it is all four at once." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lc-ai-circles": LcAiCircles,
+  "lc-next-token": LcNextToken,
+  "lc-chat-request": LcChatRequest,
   "l4j-streaming": L4jStreaming,
   "l4j-memory-window": L4jMemoryWindow,
   "l4j-mcp": L4jMcp,

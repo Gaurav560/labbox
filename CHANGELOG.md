@@ -1,5 +1,21 @@
 # Changelog
 
+## 23 November: LangChain, Parts 1 and 2 (a new AI course: Navin, a farmers' co-op help desk)
+
+- New lab `langchain` (image `labbox/langchain:v1`: LangChain 1.5.2, LangGraph 1.2.24, OpenAI SDK 3.57, all 109
+  packages pinned and installed offline). Syllabus from docs.langchain.com plus a scan of what LangChain Academy,
+  DeepLearning.AI, Udemy, Coursera and freeCodeCamp teach; owner chose two labs (LangChain, then LangGraph) and the
+  names Navin and Harsh.
+- Part 1 "How language models work" (4 chapters, plain Python): rules against a learned threshold (8 mm), tokens with
+  tiktoken (English 7, Devanagari 8, Marathi in English letters 11), real 256-dimension embeddings ("kanda bhav" found
+  the onion rate with a cosine of only 0.155), softmax and attention.
+- Part 2 "Calling a model" (5 chapters): raw HTTP (the gateway's real request log), the OpenAI SDK (a real hallucination:
+  "No, we do not store tomatoes"), init_chat_model and messages, temperature and streaming (first piece after 769 ms),
+  an honest prompt with facts ("I don't know" for garlic) and the cost of each answer.
+- Checks are pytest with a fake OpenAI server (`tests/common/fake_openai.py`), about a second per chapter.
+- Cover with the real LangChain mark (Simple Icons, CC0), colour #4fd1a5, the nested-oval AI circles, two more playing
+  diagrams, nine notes pages, four photos; two AI-track nodes; `test_test_lab` includes the lab.
+
 ## 23 November: lesson images 11 times lighter
 
 - The handwritten-notes pages were saved exactly as the image service returned them, about 2 MB each. 47 images over

@@ -8,13 +8,35 @@ update it at the end of every session. Earlier, longer versions of it are in git
 ## Resume here
 
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
-  Last full run green: 279 backend tests on Postgres and Redis, 25 browser tests, 18 labs valid,
+  Last full run green (23 November): 280 backend tests on Postgres and Redis, 27 browser tests, 19 labs valid,
   `scripts/labbox admin list` empty.
-- **Last work (23 November):** the Spring AI course is complete (20 chapters, 40 tasks, about 16.5 hours,
-  commits `7584fbe`, `3c4e98c`, `34d2f53`). Then the way courses are made was written down:
-  `COURSE_PRODUCTION.md`, the full-standard list at the top of `CONTENT_STANDARD.md`, the per-lab table in
-  `ROADMAP.md`, and the helper scripts in `tools/authoring/`.
-- **Nothing is half-built.** No capture machine is running.
+- **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
+  LangChain Parts 1 and 2 (chapters 1 to 9) are committed; Parts 3 to 5 and the capstone are next.
+- **Working files** (session scratchpad, `lc/`): `gen.py` + `common.py` + `partN.py` write `starter/` and
+  `solution/`; `tests/` (pytest checks with `common/fake_openai.py`); `ch/` chapter drafts; `caps/` captures;
+  `rc.sh` runs the checks on a scratch copy. The committed folders are the record.
+
+## LangChain (new lab `langchain`, owner 23 November): Navin, a farmers' co-op help desk
+
+Syllabus from docs.langchain.com (LangChain 1.5.2, langchain-core 1.8.4, langchain-openai 1.8.5, LangGraph 1.2.24,
+OpenAI SDK 3.57, Python 3.12) and a scan of what others teach (LangChain Academy, DeepLearning.AI, Udemy, Coursera,
+freeCodeCamp). Running project: **Navin**, the help desk of the fictional Pimpalgaon Farmers' Cooperative near Nashik
+(onions, grapes, tomatoes; mandi rates, cold storage, crop loans, a spraying rule). Image `labbox/langchain:v1`
+(FROM ai-python; `warm/requirements.txt` pins all 109 packages; tiktoken encodings in /opt/tiktoken). Checks are
+pytest with a fake OpenAI server, about a second a chapter. Captures use the author account `navin-author`.
+
+- Part 1 "How language models work" (plain Python): 1 `ai-basics`, 2 `tokens`, 3 `embeddings` (real 256-dimension
+  vectors in vectors.json), 4 `transformers`. Done.
+- Part 2 "Calling a model": 5 `raw-http`, 6 `openai-sdk`, 7 `first-app`, 8 `parameters`, 9 `hallucinations`. Done.
+- Part 3 "Agents": 10 an agent loop by hand, 11 `create_agent`, 12 tools and ToolRuntime, 13 structured output,
+  14 images (multimodal messages), 15 short-term memory, 16 streaming agents.
+- Part 4 "Knowledge and MCP": 17 documents and chunking, 18 vector stores, 19 RAG, 20 retrieval quality, 21 MCP.
+- Part 5 "Production": 22 built-in middleware, 23 custom middleware and dynamic agents, 24 guardrails and PII,
+  25 human in the loop, 26 tests and evals, 27 capstone (FastAPI, with long-term memory).
+
+LangGraph (new lab `langgraph`, after LangChain): **Harsh**, a city water utility's complaint-to-repair desk. 24
+chapters: thinking in graphs (6), persistence and people (6), agents in graphs (7), production (5, with Deep Agents
+and a capstone). Full list in the chat of 23 November and CHANGELOG.
 
 ## LangChain4j (new lab `langchain4j`, owner 23 November): complete, 30 chapters, 60 tasks
 

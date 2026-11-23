@@ -1,0 +1,274 @@
+id: langchain
+version: 2
+title: "LangChain"
+subtitle: Build Navin, the help desk of a farmers' cooperative, with LangChain and Python, from how language models work to agents in production.
+description: "Learn AI engineering in Python with LangChain 1.5: how language models work (rules and learning, tokens,
+  embeddings, attention, in plain Python), calling a model over HTTP, with the OpenAI SDK and with LangChain, model
+  parameters, streaming, hallucinations and token costs, agents built by hand and with create_agent, tools, structured
+  output, images, memory, streaming agents, documents, vector stores, RAG, retrieval quality, MCP, middleware,
+  guardrails, human in the loop, testing and evals, by building Navin, the help desk of the Pimpalgaon Farmers'
+  Cooperative near Nashik."
+language: python
+track: ai
+tags: [python, ai, langchain]
+level: intermediate
+estimated_minutes: 365
+cover_scene: "A friendly help desk assistant at a farmers' cooperative near Nashik, onion fields and grape vineyards behind it."
+cover: cover.svg
+cover_credit: { by: "Logo: LangChain", source: "Simple Icons (CC0)" }
+image: labbox/langchain:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: ai-basics
+  title: AI, machine learning, deep learning and generative AI
+  file: chapters/01-ai-basics.md
+  minutes: 40
+  folder: 01-ai-basics
+  part: How language models work
+  tasks:
+  - id: rule_reply
+    title: a rule-based help desk
+    xp: 15
+    hints:
+    - rule_reply always returns UNKNOWN.
+    - Lower-case the message once, then test for words with the in operator.
+    - Office words first (office, open), then price words (price, rate), and UNKNOWN when nothing matched.
+    examples:
+    - call: rule_reply("When is the OFFICE open?")
+      gives: OFFICE
+    - call: rule_reply("kanda bhav?")
+      gives: UNKNOWN
+      note: no rule mentions it
+  - id: learn_threshold
+    title: learn a rule from examples
+    xp: 20
+    hints:
+    - learn_threshold returns 0 whatever the examples are.
+    - Every rain value in the examples is a candidate; accuracy(candidate, examples) scores it.
+    - Go through the candidates from the smallest and keep one only when its score is strictly better.
+    examples:
+    - call: learn_threshold(EXAMPLES)
+      gives: '8'
+      note: 8 and 11 tie at 11 of 12
+- id: tokens
+  title: Tokens and the context window
+  file: chapters/02-tokens.md
+  minutes: 40
+  folder: 02-tokens
+  tasks:
+  - id: count_tokens
+    title: count tokens
+    xp: 15
+    hints:
+    - count_tokens returns 0.
+    - ENCODING.encode(text) returns a list of token numbers.
+    - The count is the length of that list.
+    examples:
+    - call: count_tokens("What is the onion rate today?")
+      gives: '7'
+  - id: fit_window
+    title: fit a conversation into a budget
+    xp: 20
+    hints:
+    - fit_window returns every message, whatever the budget.
+    - Walk with reversed(messages), adding each message's count_tokens to a running total.
+    - Stop at the first message that would go over the budget, then reverse what you kept.
+    examples:
+    - call: fit_window(chat, 25)
+      gives: the last two messages
+- id: embeddings
+  title: Embeddings, vectors and similarity
+  file: chapters/03-embeddings.md
+  minutes: 40
+  folder: 03-embeddings
+  tasks:
+  - id: cosine
+    title: cosine similarity
+    xp: 15
+    hints:
+    - cosine returns 0.0.
+    - The dot product is the sum of x * y over zip(a, b); a length is math.sqrt of the sum of squares.
+    - Divide the dot product by the product of the two lengths.
+    examples:
+    - call: cosine([3, 4], [6, 8])
+      gives: '1.0'
+    - call: cosine([1, 0], [0, 1])
+      gives: '0.0'
+  - id: closest_question
+    title: the closest FAQ question
+    xp: 20
+    hints:
+    - closest_question returns an empty string.
+    - max can choose among the keys of faq with a key function.
+    - The key function gives each question the cosine of the query with that question's vector.
+    examples:
+    - call: closest_question(vector of "I need money to buy seeds", faq)
+      gives: How much crop loan can I get?
+- id: transformers
+  title: Transformers, attention and the next token
+  file: chapters/04-transformers.md
+  minutes: 45
+  folder: 04-transformers
+  tasks:
+  - id: softmax_temperature
+    title: softmax with a temperature
+    xp: 20
+    hints:
+    - softmax returns the scores unchanged.
+    - Subtract max(scores) from each score and divide by the temperature before math.exp.
+    - Divide each exponential by the sum of all of them.
+    examples:
+    - call: softmax([2.0, 1.0, 0.0])
+      gives: '[0.665, 0.245, 0.090]'
+  - id: attention_weights
+    title: attention weights
+    xp: 20
+    hints:
+    - attention returns zeros.
+    - Score each key with the dot product of query and key, divided by math.sqrt(len(query)).
+    - The weights are softmax of those scores.
+    examples:
+    - call: attention([1, 0], [[1, 0], [0, 1]])
+      gives: '[0.670, 0.330]'
+- id: raw-http
+  title: A model over plain HTTP
+  file: chapters/05-raw-http.md
+  minutes: 40
+  folder: 05-raw-http
+  part: Calling a model
+  tasks:
+  - id: send_request
+    title: send the chat request
+    xp: 20
+    hints:
+    - ask never sends anything yet.
+    - httpx.post takes the url, a headers dict and a json dict; the key goes after the word Bearer.
+    - The body has model ai-chat and messages with a system dict (SYSTEM) and a user dict (the question).
+    examples:
+    - call: ask("When is the co-op office open?")
+      gives: one POST to /chat/completions
+  - id: read_answer
+    title: read the answer
+    xp: 15
+    hints:
+    - ask returns an empty string.
+    - response.json() is a dict; the answer is in its choices list.
+    - The first choice, then its message, then its content.
+    examples:
+    - call: ask("When is the co-op office open?")
+      gives: the model's answer as text
+- id: openai-sdk
+  title: The OpenAI Python SDK
+  file: chapters/06-openai-sdk.md
+  minutes: 35
+  folder: 06-openai-sdk
+  tasks:
+  - id: sdk_client
+    title: a client with retries
+    xp: 15
+    hints:
+    - client returns None.
+    - OpenAI(...) takes base_url, api_key, timeout and max_retries.
+    - Read the two values with os.environ, and use 60 seconds and 2 retries.
+    examples:
+    - call: client().max_retries
+      gives: '2'
+  - id: sdk_ask
+    title: ask and read the usage
+    xp: 20
+    hints:
+    - ask returns an empty answer and no usage.
+    - openai.chat.completions.create takes model and messages, the same shape as chapter 5.
+    - The text is in the first choice's message; the usage is an attribute of the completion.
+    examples:
+    - call: ask(client(), "Do you store tomatoes?")
+      gives: (the answer, usage)
+      note: usage.prompt_tokens, usage.completion_tokens
+- id: first-app
+  title: Your first LangChain app
+  file: chapters/07-first-app.md
+  minutes: 40
+  folder: 07-first-app
+  tasks:
+  - id: chat_model
+    title: Navin's chat model
+    xp: 15
+    hints:
+    - chat_model returns None.
+    - init_chat_model takes "provider:model" and the parameters.
+    - The provider is openai, the model ai-chat, and the temperature 0.
+    examples:
+    - call: chat_model()
+      gives: a ChatOpenAI
+  - id: system_message
+    title: ask with a system message
+    xp: 20
+    hints:
+    - ask returns an empty string.
+    - model.invoke takes a list of message objects.
+    - A SystemMessage with SYSTEM, a HumanMessage with the question, and return the reply's content.
+    examples:
+    - call: ask(model, "What can you do?")
+      gives: Navin's answer as text
+- id: parameters
+  title: Model parameters and streaming
+  file: chapters/08-parameters.md
+  minutes: 40
+  folder: 08-parameters
+  tasks:
+  - id: steady_model
+    title: a steady, capped model
+    xp: 15
+    hints:
+    - steady_model returns None.
+    - init_chat_model accepts max_tokens as well as temperature.
+    - Temperature 0 and at most 120 tokens.
+    examples:
+    - call: steady_model()
+      gives: temperature 0, max_tokens 120
+  - id: stream_tokens
+    title: stream the answer
+    xp: 20
+    hints:
+    - stream_answer returns an empty string and never calls the model.
+    - model.stream takes the same messages as invoke and yields chunks.
+    - Pass each chunk's content to on_piece, keep it in a list, and join the list at the end.
+    examples:
+    - call: stream_answer(model, "Why?", print)
+      gives: the pieces as they arrive, then the whole text
+- id: hallucinations
+  title: Hallucinations, usage and cost
+  file: chapters/09-hallucinations.md
+  minutes: 45
+  folder: 09-hallucinations
+  tasks:
+  - id: honest_prompt
+    title: the honest prompt
+    xp: 20
+    hints:
+    - honest_prompt returns SYSTEM only, with no facts and no permission to not know.
+    - Add the instruction with the exact words I don't know, then a blank line.
+    - Finish with Facts and a colon on its own line, then FACTS.
+    examples:
+    - call: ask("What is today's garlic rate?")
+      gives: I don't know, call the co-op office
+  - id: answer_cost
+    title: the cost of an answer
+    xp: 15
+    hints:
+    - answer_cost returns 0.0.
+    - reply.usage_metadata is a dict with input_tokens and output_tokens.
+    - Multiply each by its price per million, add them, and divide by 1,000,000.
+    examples:
+    - call: answer_cost(1,000 tokens in, 200 out)
+      gives: $0.000270

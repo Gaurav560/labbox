@@ -77,3 +77,10 @@ nodes:
     title: Workflows, supervisors, and Setu goes live
     requires: [l4j-production]
     chapters: [langchain4j/workflows, langchain4j/supervisor, langchain4j/capstone]
+  - id: lc-foundations
+    title: How language models work (LangChain, Part 1)
+    chapters: [langchain/ai-basics, langchain/tokens, langchain/embeddings, langchain/transformers]
+  - id: lc-calling
+    title: Calling a model from Python
+    requires: [lc-foundations]
+    chapters: [langchain/raw-http, langchain/openai-sdk, langchain/first-app, langchain/parameters, langchain/hallucinations]

@@ -1,0 +1,10 @@
+# The packages the LangChain course uses; requirements.txt pins every one, dependencies included.
+langchain[mcp]==1.5.2
+langchain-core==1.8.4
+langchain-openai==1.8.5
+langchain-text-splitters
+langchain-community
+tiktoken
+fastapi
+uvicorn
+pytest

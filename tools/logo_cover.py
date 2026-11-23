@@ -28,6 +28,7 @@ BRANDS: dict[str, tuple[str, str, str]] = {
     "spring": ("#6DB33F", "#24501a", "#ffffff"),
     "spring-ai": ("#2d5a1b", "#0f2408", "#7eb050"),  # the Spring AI brain-and-leaf mark, on a deep green
     "langchain4j": ("#2f6b3a", "#0e2614", "#f5a623"),  # LangChain4j's parrot (its own logo, Apache 2.0 repository), on a deep green
+    "langchain": ("#1C3C3C", "#0a1a1a", "#4fd1a5"),  # the LangChain mark (Simple Icons, CC0), on its own dark teal
     "postgresql": ("#336791", "#14304a", "#ffffff"),
     "sql": ("#4338ca", "#1e1b4b", "#f59e0b"),  # our own generic SQL mark, amber on indigo
     "go": ("#00ADD8", "#00506a", "#ffffff"),
