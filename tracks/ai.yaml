@@ -96,3 +96,11 @@ nodes:
     title: Documents, vector stores, RAG and MCP
     requires: [lc-agent-apps]
     chapters: [langchain/documents, langchain/vector-stores, langchain/rag, langchain/retrieval-quality, langchain/mcp]
+  - id: lc-production
+    title: Middleware, guardrails, approvals and evals
+    requires: [lc-knowledge]
+    chapters: [langchain/middleware, langchain/custom-middleware, langchain/guardrails, langchain/human-in-the-loop, langchain/evals]
+  - id: lc-capstone
+    title: Navin goes live
+    requires: [lc-production]
+    chapters: [langchain/capstone]

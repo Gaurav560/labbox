@@ -12,7 +12,7 @@ language: python
 track: ai
 tags: [python, ai, langchain]
 level: intermediate
-estimated_minutes: 895
+estimated_minutes: 1165
 cover_scene: "A friendly help desk assistant at a farmers' cooperative near Nashik, onion fields and grape vineyards behind it."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain", source: "Simple Icons (CC0)" }
@@ -589,3 +589,162 @@ chapters:
     examples:
     - call: asyncio.run(ask_over_mcp("15 crates for 4 days?"))
       gives: (['mandi_price', 'storage_cost'], an answer with 120)
+- id: middleware
+  title: Built-in middleware
+  file: chapters/22-middleware.md
+  minutes: 45
+  folder: 22-middleware
+  part: Production
+  tasks:
+  - id: tool_errors
+    title: which errors the model may see
+    xp: 20
+    hints:
+    - on_tool_error returns None for every error, so every tool error stops the run.
+    - isinstance(error, ValueError) tells a member's mistake from an internal error.
+    - For a ValueError return the tool's name from request.tool_call, the word failed, and the error; else None.
+    examples:
+    - call: on_tool_error(ValueError("no rate for garlic"), request)
+      gives: 'mandi_price failed: no rate for garlic'
+    - call: on_tool_error(KeyError("db password"), request)
+      gives: None
+  - id: limits_and_summaries
+    title: add the middleware
+    xp: 20
+    hints:
+    - navin_agent has no middleware yet.
+    - create_agent takes middleware as a list, applied in order.
+    - ToolErrorMiddleware with your handler, ModelCallLimitMiddleware with a run limit of 5, then SummarizationMiddleware.
+    examples:
+    - call: a model that keeps calling tools
+      gives: stopped after 5 calls
+- id: custom-middleware
+  title: Custom middleware
+  file: chapters/23-custom-middleware.md
+  minutes: 40
+  folder: 23-custom-middleware
+  tasks:
+  - id: member_prompt
+    title: a prompt for each member
+    xp: 20
+    hints:
+    - member_prompt returns SYSTEM only.
+    - request.runtime.context is the Member the app passed in, with a name and a language.
+    - Add the sentence about who Navin is talking to and the language to answer in, after SYSTEM.
+    examples:
+    - call: Member("M-104", "Ravi", "Marathi")
+      gives: '... You are talking to Ravi. Answer in Marathi.'
+  - id: audit_tools
+    title: the audit log
+    xp: 20
+    hints:
+    - audit_tools runs the tool but logs nothing.
+    - The member id is in request.runtime.context; the name and args are in request.tool_call.
+    - Append one line with the three of them to AUDIT before returning handler(request).
+    examples:
+    - call: storage_cost(25, 8) for M-221
+      gives: "M-221 storage_cost {'crates': 25, 'days': 8}"
+- id: guardrails
+  title: Guardrails
+  file: chapters/24-guardrails.md
+  minutes: 40
+  folder: 24-guardrails
+  tasks:
+  - id: aadhaar_detector
+    title: find Aadhaar numbers
+    xp: 20
+    hints:
+    - find_aadhaar finds nothing.
+    - AADHAAR.finditer(text) yields match objects with group(), start() and end().
+    - Return a list with one dict per match, its type set to aadhaar.
+    examples:
+    - call: find_aadhaar("Aadhaar 4821 3390 1176")
+      gives: '[{"type": "aadhaar", "value": "4821 3390 1176", "start": 8, "end": 22}]'
+  - id: length_guard
+    title: the length guard
+    xp: 20
+    hints:
+    - length_guard lets every message through.
+    - The last message is state["messages"][-1]; compare the length of its content with MAX_CHARS.
+    - When it is too long, return the messages list with an AIMessage of TOO_LONG and jump_to set to end.
+    examples:
+    - call: a 600-character message
+      gives: TOO_LONG, and no model call
+- id: human-in-the-loop
+  title: Human in the loop
+  file: chapters/25-human-in-the-loop.md
+  minutes: 45
+  folder: 25-human-in-the-loop
+  tasks:
+  - id: approval_middleware
+    title: every booking waits
+    xp: 20
+    hints:
+    - Bookings run without anyone approving them.
+    - HumanInTheLoopMiddleware takes interrupt_on, a dict from tool name to its settings.
+    - Interrupt on book_storage, allowing approve, edit and reject.
+    examples:
+    - call: '"Book 80 crates"'
+      gives: an __interrupt__, and no booking yet
+  - id: resume_decision
+    title: the manager decides
+    xp: 20
+    hints:
+    - manager_decides returns None.
+    - A paused run continues when you invoke the same thread with a Command.
+    - Command(resume=...) carries a dict with a decisions list; the config names the thread.
+    examples:
+    - call: '{"type": "edit", ... "crates": 50}'
+      gives: 50 crates booked, not 80
+- id: evals
+  title: Tests and evals
+  file: chapters/26-evals.md
+  minutes: 45
+  folder: 26-evals
+  tasks:
+  - id: golden_eval
+    title: the pass rate
+    xp: 20
+    hints:
+    - pass_rate returns 0.0.
+    - zip the answers with the golden entries; the phrase is the second item of each entry.
+    - Count answers containing their phrase, both lower-cased, and divide by the number of entries.
+    examples:
+    - call: 3 of 4 answers contain their phrase
+      gives: '0.75'
+  - id: judge_answer
+    title: the judge
+    xp: 20
+    hints:
+    - judge returns None.
+    - with_structured_output(Grade) gives a model that answers with a Grade.
+    - Invoke it with the JUDGE text, formatted with the rule, the question and the answer.
+    examples:
+    - call: judge("80 crates?", "Yes, at the counter.", storage rule)
+      gives: Grade(correct=False, reason=...)
+- id: capstone
+  title: 'Capstone: Navin goes live'
+  file: chapters/27-capstone.md
+  minutes: 55
+  folder: 27-capstone
+  tasks:
+  - id: remember_fact
+    title: remember a fact
+    xp: 25
+    hints:
+    - remember does not save anything.
+    - runtime.store.put takes a namespace tuple, a key and a value dict.
+    - The namespace is the member id and facts; the key the next number as text; the value holds the fact.
+    examples:
+    - call: remember("grows onions on 3 acres") for M-104
+      gives: the fact in the next conversation's prompt
+  - id: chat_endpoint
+    title: the chat endpoint
+    xp: 25
+    hints:
+    - POST /chat answers with an empty answer.
+    - agent.invoke takes the state, the config with the thread id, and context.
+    - The thread is the member id; the context a Member with the name from NAMES; pass the result to the reply helper.
+    examples:
+    - call: 'POST /chat {"member_id": "M-104", "message": "Hello"}'
+      gives: '{"status": "answered", "answer": ...}'

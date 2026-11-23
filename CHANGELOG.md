@@ -1,5 +1,21 @@
 # Changelog
 
+## 23 November: LangChain, Part 5 (production): the course is complete
+
+- Six chapters, twelve tasks, every output captured through the gateway: built-in middleware (an opt-in tool-error
+  handler, a 5-call limit, a thread summarised once it passed 8 messages), custom middleware (a prompt per member:
+  Ravi answered in Marathi, Asha in English; an audit of every tool call), guardrails (Aadhaar numbers masked to
+  `****1176` by a custom detector; a 717-character message refused with no model call; the "block" strategy turned out
+  to raise an error, and the lesson says so), human in the loop (the manager edits, approves and rejects real
+  bookings), evals (a golden set scored 67% and a judge model found two real bugs: the half 50-crate rule and a missed
+  joining fee), and the capstone (FastAPI with tools, the fixed rule book, PII masking, approvals, and long-term facts
+  per member that reached a new thread).
+- The capture account's daily budget ran out mid-part; the owner approved raising it for this session (backend started
+  with LLM_DAILY_TOKENS=300000 and LLM_RPM=60 in its environment only, restored afterwards; backend/.env untouched).
+- Two diagrams (middleware around a run, a booking waiting for the manager), six notes pages, four photos (Xerox PARC,
+  a two-key vault lock, Kent Beck, onion grading), two AI-track nodes. LangChain: 27 chapters, 54 tasks, about 19
+  hours, 13 real photos.
+
 ## 23 November: LangChain, Part 4 (knowledge and MCP)
 
 - Five chapters, ten tasks, every output captured through the gateway: documents and chunking (a plain-Python loader,

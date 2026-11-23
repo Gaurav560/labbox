@@ -2375,7 +2375,45 @@ function LcMcp() {
   );
 }
 
+function LcMiddleware() {
+  return (
+    <SketchSteps
+      title="middleware around one agent run"
+      intro="Press Play to follow one run through chapter 22's middleware."
+      label="before the agent starts, guards run; before each model call, the summarizer and the call limit; the model is called; around each tool call, the tool-error handler; then the loop continues until the answer"
+      steps={[
+        { label: "1. before_agent", says: "Guards run once, before anything else (chapter 24's length guard)." },
+        { label: "2. before_model", says: "SummarizationMiddleware shortens a long thread; ModelCallLimitMiddleware counts calls." },
+        { label: "3. The model", says: "Called with the prepared messages; it asks for mandi_price twice." },
+        { label: "4. wrap_tool_call", says: "ToolErrorMiddleware runs each tool: 1850, and garlic's ValueError becomes a message." },
+        { label: "5. Again", says: "before_model, then the model writes the answer from both results." },
+        { label: "6. after_agent", says: "The run ends; hooks here could check what was written." },
+      ]}
+    />
+  );
+}
+
+function LcHumanLoop() {
+  return (
+    <SketchSteps
+      title="a booking waits for the manager"
+      intro="Press Play to follow Ravi's booking."
+      label="the model asks for book_storage, the middleware pauses the run and saves it, the manager decides, and the same thread resumes"
+      steps={[
+        { label: "1. The member asks", says: "Please book 80 crates of onions for 10 days." },
+        { label: "2. The model asks", says: "book_storage with crates 80, days 10, crop onion." },
+        { label: "3. Pause", says: "HumanInTheLoopMiddleware stops before the tool runs; the checkpointer saves the thread." },
+        { label: "4. The manager", says: "Sees the request and decides: approve, edit (50 crates) or reject." },
+        { label: "5. Resume", says: "Command(resume=...) on the same thread: the tool runs, or the model hears why not." },
+        { label: "6. The answer", says: "Navin tells the member what was booked." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lc-middleware": LcMiddleware,
+  "lc-human-loop": LcHumanLoop,
   "lc-rag": LcRag,
   "lc-mcp": LcMcp,
   "lc-agent-loop": LcAgentLoop,

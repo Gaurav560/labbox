@@ -29,6 +29,12 @@ vector-stores|18-vector-stores|store_chunks search_threshold
 rag|19-rag|rules_tool rag_agent
 retrieval-quality|20-retrieval-quality|hit_rate titled_chunks
 mcp|21-mcp|mcp_server mcp_agent
+middleware|22-middleware|tool_errors limits_and_summaries
+custom-middleware|23-custom-middleware|member_prompt audit_tools
+guardrails|24-guardrails|aadhaar_detector length_guard
+human-in-the-loop|25-human-in-the-loop|approval_middleware resume_decision
+evals|26-evals|golden_eval judge_answer
+capstone|27-capstone|remember_fact chat_endpoint
 "
 
 fail_all() { # tasks message

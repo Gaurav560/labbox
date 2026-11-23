@@ -11,7 +11,7 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (23 November): 280 backend tests on Postgres and Redis, 27 browser tests, 19 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain Parts 1 to 4 (chapters 1 to 21) are committed; Part 5 and the capstone (chapters 22 to 27) are next.
+  LangChain is complete (27 chapters, 54 tasks). LangGraph is next.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
@@ -32,7 +32,7 @@ pytest with a fake OpenAI server, about a second a chapter. Captures use the aut
   14 images (multimodal messages), 15 short-term memory, 16 streaming agents. Done.
 - Part 4 "Knowledge and MCP": 17 documents and chunking, 18 vector stores, 19 RAG, 20 retrieval quality, 21 MCP. Done.
 - Part 5 "Production": 22 built-in middleware, 23 custom middleware and dynamic agents, 24 guardrails and PII,
-  25 human in the loop, 26 tests and evals, 27 capstone (FastAPI, with long-term memory).
+  25 human in the loop, 26 tests and evals, 27 capstone (FastAPI, with long-term memory). Done.
 
 LangGraph (new lab `langgraph`, after LangChain): **Harsh**, a city water utility's complaint-to-repair desk. 24
 chapters: thinking in graphs (6), persistence and people (6), agents in graphs (7), production (5, with Deep Agents
