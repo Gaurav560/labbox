@@ -3304,7 +3304,97 @@ function RsCapstone() {
   );
 }
 
+function RagFlow() {
+  return (
+    <SketchSteps
+      title="One question through Fieldbook"
+      intro="Press Play to follow a ranger's question."
+      label="RAG"
+      steps={[
+        { label: "the question", says: "A guard asks: how often do we change the batteries in the camera traps?" },
+        { label: "retrieve", says: "Search finds the sections most likely to answer it: FM-3.2 Batteries and memory cards first." },
+        { label: "augment", says: "Those sections and the question are written into one prompt, with the rule: answer only from them." },
+        { label: "generate", says: "The model reads the sections and answers: every 21 days, swapping the memory card at the same visit [FM-3.2]." },
+        { label: "check", says: "The answer names its section, so the guard, or anyone, can open FM-3.2 and check it." },
+      ]}
+    />
+  );
+}
+
+function RagIvf() {
+  return (
+    <SketchSteps
+      title="Search only the nearest lists"
+      intro="Press Play to follow one query through an IVF index."
+      label="IVF"
+      steps={[
+        { label: "the lists", says: "100,000 vectors are filed in 316 lists, each under its centroid, the middle of a group." },
+        { label: "compare with centroids", says: "The query is compared with the 316 centroids only: 316 dot products, not 100,000." },
+        { label: "pick nprobe lists", says: "The 16 closest centroids are chosen; their lists hold about 5,000 vectors." },
+        { label: "score the candidates", says: "Only those 5,000 vectors are scored exactly against the query." },
+        { label: "the answer", says: "The 10 best candidates come back. A true neighbour filed in an unopened list is missed: recall 92%." },
+      ]}
+    />
+  );
+}
+
+function RagHnsw() {
+  return (
+    <SketchSteps
+      title="A walk through the layers"
+      intro="Press Play to follow a search down an HNSW graph."
+      label="HNSW"
+      steps={[
+        { label: "top layer", says: "The search starts at the entry point, on the top layer, where a few nodes have long links." },
+        { label: "long hops", says: "It moves to whichever linked node is closest to the query, crossing large parts of the space in a few hops." },
+        { label: "down a layer", says: "When no neighbour is closer, it drops to the layer below, which has more nodes and shorter links." },
+        { label: "bottom layer", says: "On the bottom layer, which holds every vector, it keeps a list of efSearch candidates and explores around them." },
+        { label: "the answer", says: "The best 10 of the candidates are returned: a few hundred vectors visited instead of 100,000." },
+      ]}
+    />
+  );
+}
+
+function RagBinary() {
+  return (
+    <SketchSteps
+      title="Bits for the shortlist"
+      intro="Press Play to follow a query through binary search with rescoring."
+      label="Quantization"
+      steps={[
+        { label: "bits", says: "Every vector is stored as 384 bits, 48 bytes: 1 where a number is above zero." },
+        { label: "the query's bits", says: "The query becomes 384 bits the same way." },
+        { label: "Hamming distance", says: "XOR with every code and count the ones: how many bits differ. Very cheap for all 100,000." },
+        { label: "shortlist", says: "The 200 codes with the fewest differing bits are kept: rough, but the true neighbours are almost all in there." },
+        { label: "rescore", says: "Those 200 are scored with their full float vectors, and the 10 best are returned: recall 100%." },
+      ]}
+    />
+  );
+}
+
+function RagTwoStage() {
+  return (
+    <SketchSteps
+      title="Wide, then careful"
+      intro="Press Play to follow the jeep question through two stages."
+      label="Reranking"
+      steps={[
+        { label: "the question", says: "Can tourists get out of the jeep to take photos?" },
+        { label: "stage 1: hybrid", says: "Dense search and BM25 each rank the 55 chunks; fusion keeps the best 20. FM-6.2 is in, but only 8th." },
+        { label: "stage 2: rerank", says: "The cross-encoder reads the question with each of the 20 chunks, one pair at a time, about 100 ms each." },
+        { label: "new order", says: "FM-6.2 Visitor rules gets the highest score of the 20 and moves to the top." },
+        { label: "the best 5", says: "The top 5 go to the model as numbered sources." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rag-flow": RagFlow,
+  "rag-ivf": RagIvf,
+  "rag-hnsw": RagHnsw,
+  "rag-binary": RagBinary,
+  "rag-two-stage": RagTwoStage,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
   "rs-threads": RsThreads,

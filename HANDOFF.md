@@ -11,15 +11,47 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (24 November, after Rust from zero): 283 backend tests on Postgres and Redis (29 minutes),
   27 browser tests (the visitor home test failed once under 4 workers and passed on its own), 22 labs valid,
   `scripts/labbox admin list` empty.
-- **Just finished:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
-  project name rule: software gets a plain English name for its job, so Windwatch). Complete: 28 chapters in 6 parts,
-  56 tasks; Part 6 is a clap CLI, Box/Rc/RefCell, threads and channels, Tokio, speed against Python and an axum
-  capstone. Checks: tests/run_checks.py (modes run, test, own) with one shared target dir prebuilt in the image, so a
-  check compiles only the learner's crate. Full run green. Still to add: two photos (Simon Peyton Jones in chapter 2,
-  Bjarne Stroustrup in chapter 17; Commons 429, see ROADMAP B.5). Next: wait for the owner's next course.
+- **Just finished:** RAG and vector databases (`rag-vector-databases`, owner 24 November night, built without waiting
+  for an OK as asked): 13 chapters in 3 parts, 26 tasks, Fieldbook. Syllabus and design below. Generator drafts in the
+  session scratchpad (`rag/gen.py`, `blocks.py`, `scripts.py`); the committed folders are the record. Before it: Rust
+  from zero, complete (28 chapters). Photos still to add: Spärck Jones (RAG ch 9), Peyton Jones and Stroustrup (Rust);
+  see ROADMAP B.5. Next: wait for the owner.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).
+
+## RAG and vector databases (new lab `rag-vector-databases`, owner 24 November night): Fieldbook, complete
+
+Owner, going to sleep: "build a micro lab in python for rag and vector databases. easy to understand, world class.
+... draft a world class syllabus and then start implementing it. with full standard." Built without waiting for an OK.
+
+Research (24 November): DeepLearning.AI's short courses (Vector Databases with Weaviate, Advanced Retrieval with
+Chroma), IBM's RAG: Vector Databases and Retrievers, Udemy and O'Reilly courses on HNSW, IVF, PQ, hybrid search and
+reranking. They split into "use a vector store" courses and "index internals" courses; few do both, and fewer measure
+anything. This lab builds each piece by hand first, measures it, then uses the real tool. The LangChain course
+already uses vector stores through LangChain; this lab goes underneath.
+
+Running project: **Fieldbook**, the question-answering assistant for rangers of the fictional Vanrai Hills Wildlife
+Sanctuary in the Western Ghats: its field manual (zones, patrols, camera traps, encounters, fire, permits) and
+patrol reports. Everything runs offline and free: embeddings with BAAI/bge-small-en-v1.5 and reranking with
+Xenova/ms-marco-MiniLM-L-6-v2 through fastembed 0.9.1 (both in the image), FAISS 1.16, Qdrant's Python client
+1.20 in local mode; only answers call the model (lab-chat through the gateway; checks use the fake server).
+
+| Part | Ch | id | Idea | Tasks |
+|---|---|---|---|---|
+| Retrieval from scratch | 1 | why-rag | a model does not know your documents; keyword search; context in the prompt | keyword_search, context_prompt |
+| | 2 | embeddings | text as 384 numbers, on your own CPU; cosine similarity | embed_texts, cosine |
+| | 3 | vector-search | brute-force nearest neighbours with one matrix product; measured to 300,000 vectors | normalize, top_k |
+| | 4 | chunking | word windows with overlap, sections with titles; hit rate by chunk size | word_chunks, section_chunks |
+| Inside a vector database | 5 | ivf | clusters first: k-means and inverted lists; recall against nprobe | build_lists, ivf_search |
+| | 6 | hnsw | graphs: HNSW with FAISS; recall, efSearch, build time and memory | recall_at_k, tune_ef |
+| | 7 | quantization | int8 and binary vectors, rescoring; memory and money | quantize_int8, binary_rescore |
+| | 8 | qdrant | a real vector database: collections, points, payloads, filters | make_store, filtered_search |
+| RAG that works | 9 | hybrid | BM25 by hand, reciprocal rank fusion | bm25_scores, rrf_fuse |
+| | 10 | rerank | a cross-encoder reads question and chunk together | rerank, two_stage |
+| | 11 | grounded-answers | numbered sources, citations, refusing when retrieval is weak | grounded_prompt, refuse_unsure |
+| | 12 | evaluation | golden questions, hit rate and MRR for four pipelines | hit_rate, mrr |
+| | 13 | capstone | Fieldbook as a FastAPI service: /search with filters, /ask with sources | search_endpoint, ask_endpoint |
 
 ## LangChain (new lab `langchain`, owner 23 November): Navin, a farmers' co-op help desk
 

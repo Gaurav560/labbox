@@ -1,0 +1,9 @@
+# The packages the RAG and vector databases course uses; requirements.txt pins every one, dependencies included.
+fastembed==0.9.1
+qdrant-client==1.20.0
+faiss-cpu==1.16.0
+numpy
+fastapi
+uvicorn
+httpx
+pytest

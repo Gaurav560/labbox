@@ -1,5 +1,26 @@
 # Changelog
 
+## 24 November (night): RAG and vector databases, a new 13-chapter AI lab
+
+- Owner, going to sleep: "build a micro lab in python for rag and vector databases ... world class ... full standard".
+  Syllabus in `HANDOFF.md` after a scan of what others teach (DeepLearning.AI, IBM, Udemy, O'Reilly): this lab builds
+  every piece by hand, measures it, then uses the real tool.
+- Fieldbook, the rangers' assistant of the fictional Vanrai Hills Wildlife Sanctuary: a 31-section field manual and 24
+  patrol reports written for the course, plus 26 test questions in the rangers' own words.
+- Everything offline and free: BAAI/bge-small-en-v1.5 embeddings and the ms-marco-MiniLM-L-6-v2 reranker through
+  fastembed 0.9.1, baked into `labbox/rag-vector-databases:v1`; FAISS 1.16; Qdrant's client 1.20 in local mode. Only
+  chapters 1, 11 and 13 call the model (lab-chat through the gateway); the checks use the fake server. The image limits
+  OpenMP and OpenBLAS to 2 threads (a 2-CPU machine sees every host core: brute force took 44 ms instead of 7).
+- Measured, not claimed: "closed" and "open" score 0.834, above a true paraphrase (0.796); chunking along sections with
+  titles finds the right section first 91% of the time against 73% for 15-word windows; IVF at nprobe 16 keeps 92% recall
+  4.5 times faster than brute force; HNSW keeps 98.9% 35 times faster; int8 keeps 99% recall in a quarter of the memory,
+  binary bits plus rescoring 100% in a 32nd; hybrid search fixes code questions (CT-112) and loses paraphrases, so its
+  hit@1 drops below dense (58% against 77%); reranking reaches 88% first time and 100% in the top 5, at 1.7 s a question.
+  The model, asked alone, said camera trap batteries need changing every 1 to 3 months (the manual: 21 days).
+- 26 tasks with checks that recognise common mistakes (rows divided by one norm, argpartition left unsorted, an extra
+  tail window, summing every right rank in MRR); a task that needs an unfinished one says which. Five playing diagrams,
+  13 notes pages, 14 photos (Spärck Jones still to come: Commons 429), three track nodes, a Python and FastAPI cover.
+
 ## 24 November: Rust from zero, Part 6 (real programs); the course is complete
 
 - Six chapters, twelve tasks, every output and compiler message captured from real runs: a command-line tool (clap

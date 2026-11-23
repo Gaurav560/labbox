@@ -116,3 +116,14 @@ nodes:
   - id: lg-production
     title: Production (LangGraph, Part 4)
     chapters: [langgraph/testing, langgraph/server, langgraph/deep-agents, langgraph/research-team, langgraph/capstone]
+  - id: rag-scratch
+    title: Retrieval from scratch (RAG and vector databases, Part 1)
+    chapters: [rag-vector-databases/why-rag, rag-vector-databases/embeddings, rag-vector-databases/vector-search, rag-vector-databases/chunking]
+  - id: rag-inside
+    title: Inside a vector database (RAG and vector databases, Part 2)
+    requires: [rag-scratch]
+    chapters: [rag-vector-databases/ivf, rag-vector-databases/hnsw, rag-vector-databases/quantization, rag-vector-databases/qdrant]
+  - id: rag-works
+    title: RAG that works (RAG and vector databases, Part 3)
+    requires: [rag-inside]
+    chapters: [rag-vector-databases/hybrid, rag-vector-databases/rerank, rag-vector-databases/grounded-answers, rag-vector-databases/evaluation, rag-vector-databases/capstone]

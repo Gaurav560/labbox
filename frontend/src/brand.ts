@@ -31,6 +31,7 @@ export const LAB_TONES: Record<string, string> = {
   "langchain4j": "#f5a623",
   "langgraph": "#5fb3d9",
   "rust-basics": "#e8743b",
+  "rag-vector-databases": "#3fae7a",
   "postgres-indexing-incident": "#4a8fd1",
   "postgres-transactions-and-locks": "#4a8fd1",
   "python-basics": "#4b8bbe",

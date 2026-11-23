@@ -1,0 +1,378 @@
+# RAG and vector databases. Every chapter is its own folder with fieldbook.py (everything built so far, the
+# chapter's two functions at the bottom) and the sanctuary's documents in data/. Embeddings and reranking run on the
+# learner's CPU (fastembed, models in the image); only chapters 1, 11 and 13 call the model, through the gateway.
+id: rag-vector-databases
+version: 2
+title: "RAG and vector databases"
+subtitle: Build Fieldbook, the rangers' assistant of a wildlife sanctuary, from keyword search to a vector database and answers with sources.
+description: "Learn retrieval-augmented generation from the inside, in Python: why a model needs your documents, embeddings on
+  your own CPU, nearest-neighbour search by brute force, chunking, the indexes inside every vector database (IVF, HNSW),
+  quantization, Qdrant with payload filters, BM25 and hybrid search, reranking with a cross-encoder, answers that cite
+  their sources, evaluation with hit rate and MRR, and a FastAPI service, by building Fieldbook, the assistant of the
+  rangers of the Vanrai Hills Wildlife Sanctuary. Every claim is measured."
+language: python
+track: ai
+tags: [python, ai, rag, vector-databases]
+level: intermediate
+estimated_minutes: 560
+cover_scene: "A ranger's field notebook open on a rock in an evergreen forest of the Western Ghats, a camera trap strapped to a tree behind."
+cover: cover.svg
+cover_credit: { by: "Logos: python,fastapi", source: "devicon (MIT)" }
+image: labbox/rag-vector-databases:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: why-rag
+  title: Why RAG
+  file: chapters/01-why-rag.md
+  minutes: 40
+  folder: 01-why-rag
+  part: Retrieval from scratch
+  tasks:
+  - id: keyword_search
+    title: find sections by their words
+    xp: 15
+    hints:
+    - keyword_search still raises NotImplementedError.
+    - words() gives the meaningful words of any text; a set intersection counts the shared ones.
+    - Score each section by its shared words, drop the zeros, sort by score (ties keep the manual order) and keep k.
+    examples:
+    - call: keyword_search("How often do we change camera trap batteries?", sections)
+      gives: FM-3.2 first
+    - call: keyword_search("big cat", sections)
+      gives: '[] (no section says "big cat")'
+  - id: context_prompt
+    title: put the sections in the prompt
+    xp: 15
+    hints:
+    - build_prompt still raises NotImplementedError.
+    - Two messages, a system one and a user one; the user one carries the sections and then the question.
+    - Write each section as its id in square brackets and its title, then its text, separated by blank lines.
+    examples:
+    - call: build_prompt(question, [tiger section])
+      gives: system SYSTEM, then "Manual sections:" ... "[FM-4.2] Meeting a tiger" ... "Question:" ...
+- id: embeddings
+  title: Text as numbers
+  file: chapters/02-embeddings.md
+  minutes: 40
+  folder: 02-embeddings
+  tasks:
+  - id: embed_texts
+    title: 384 numbers for every text
+    xp: 15
+    hints:
+    - embed still raises NotImplementedError.
+    - The model gives its vectors one by one; collect them all before making a matrix.
+    - Turn the list of vectors into a NumPy array with dtype float32, one row per text.
+    examples:
+    - call: embed(["A tiger crossed the path.", "Change the batteries."])
+      gives: a 2 x 384 float32 matrix
+  - id: cosine
+    title: how alike two vectors are
+    xp: 15
+    hints:
+    - cosine still raises NotImplementedError.
+    - Cosine similarity is the dot product divided by both lengths.
+    - np.dot for the top, np.linalg.norm for each length, and float() around the result.
+    examples:
+    - call: cosine([1, 0], [1, 0])
+      gives: '1.0'
+    - call: cosine([1, 0], [0, 1])
+      gives: '0.0'
+- id: vector-search
+  title: Nearest neighbours by brute force
+  file: chapters/03-vector-search.md
+  minutes: 45
+  folder: 03-vector-search
+  tasks:
+  - id: normalize
+    title: vectors of length one
+    xp: 15
+    hints:
+    - normalize still raises NotImplementedError.
+    - A vector divided by its own length has length 1; keepdims makes the division work row by row.
+    - Divide by np.linalg.norm along the last axis, keeping dimensions, as float32.
+    examples:
+    - call: normalize([3, 4])
+      gives: '[0.6, 0.8]'
+  - id: top_k
+    title: the k closest rows
+    xp: 20
+    hints:
+    - top_k still raises NotImplementedError.
+    - One matrix product scores every row; argpartition finds the best k without a full sort.
+    - Partition the negative scores, sort just those k by score, and return (row, score) pairs as int and float.
+    examples:
+    - call: top_k(normalize(embed(["a big cat on the trail"])[0]), sections_matrix, k=3)
+      gives: FM-4.2 first
+- id: chunking
+  title: Cutting documents into chunks
+  file: chapters/04-chunking.md
+  minutes: 40
+  folder: 04-chunking
+  tasks:
+  - id: word_chunks
+    title: windows of words
+    xp: 15
+    hints:
+    - word_chunks still raises NotImplementedError.
+    - Windows start every size minus overlap words, so neighbours share the overlap.
+    - Join each window's words with spaces, and stop once a window reaches the last word.
+    examples:
+    - call: word_chunks("a b c d e f g", size=3, overlap=1)
+      gives: '["a b c", "c d e", "e f g"]'
+  - id: section_chunks
+    title: one chunk per section
+    xp: 20
+    hints:
+    - section_chunks still raises NotImplementedError.
+    - Every section starts on a line beginning with "## "; whatever comes before the first one is the title.
+    - Split on that marker, take the heading line apart into id and title, and squeeze the text's whitespace.
+    examples:
+    - call: section_chunks(manual)[10]
+      gives: '{"id": "FM-4.2", "title": "Meeting a tiger", "text": "If you meet a tiger, ..."}'
+- id: ivf
+  title: Clusters first, the IVF index
+  file: chapters/05-ivf.md
+  minutes: 45
+  folder: 05-ivf
+  part: Inside a vector database
+  tasks:
+  - id: build_lists
+    title: the inverted lists
+    xp: 20
+    hints:
+    - build_lists still raises NotImplementedError.
+    - Every vector belongs to the centroid it has the highest dot product with.
+    - One matrix product against all centroids, argmax per row, then the row numbers for each centroid in order.
+    examples:
+    - call: build_lists(vectors, centroids) for 100,000 vectors and 316 centroids
+      gives: 316 arrays of row numbers, 100,000 rows in all
+  - id: ivf_search
+    title: search only the nearest lists
+    xp: 20
+    hints:
+    - ivf_search still raises NotImplementedError.
+    - Rank the centroids against the query, take nprobe of them, and gather their lists.
+    - Score only the gathered rows exactly, then keep the k best as (row, score) pairs.
+    examples:
+    - call: ivf_search(q, vectors, centroids, lists, k=10, nprobe=16)
+      gives: 92% of the true neighbours, about five times faster
+- id: hnsw
+  title: Graphs, the HNSW index
+  file: chapters/06-hnsw.md
+  minutes: 45
+  folder: 06-hnsw
+  tasks:
+  - id: recall_at_k
+    title: measure recall
+    xp: 15
+    hints:
+    - recall_at_k still raises NotImplementedError.
+    - For one query, recall is the true neighbours found divided by k.
+    - Compare sets row by row (found cut to k), then average over the queries as a float.
+    examples:
+    - call: recall_at_k([[1, 2, 3]], [[1, 2, 4]])
+      gives: '0.667'
+  - id: tune_ef
+    title: the smallest efSearch that is good enough
+    xp: 20
+    hints:
+    - smallest_ef still raises NotImplementedError.
+    - efSearch is a setting on index.hnsw; a larger value searches more of the graph.
+    - Try each choice in order, search, measure recall against truth, and return the first that reaches the target.
+    examples:
+    - call: smallest_ef(index, queries, truth, k=10, target=0.95)
+      gives: '64'
+- id: quantization
+  title: Smaller vectors
+  file: chapters/07-quantization.md
+  minutes: 45
+  folder: 07-quantization
+  tasks:
+  - id: quantize_int8
+    title: 8 bits instead of 32
+    xp: 20
+    hints:
+    - quantize_int8 still raises NotImplementedError.
+    - Each column gets a scale so that its largest absolute value becomes 127.
+    - Divide by the scales, round, store as int8, and guard against a column of zeros.
+    examples:
+    - call: quantize_int8(vectors) for 100,000 vectors
+      gives: 38.4 MB of codes instead of 153.6 MB, recall 99%
+  - id: binary_rescore
+    title: bits for the shortlist, floats for the answer
+    xp: 20
+    hints:
+    - binary_search still raises NotImplementedError.
+    - The Hamming distance counts differing bits; the smallest distances make the shortlist.
+    - Partition the distances to keep `candidates` rows, score them exactly with the float vectors, and keep k.
+    examples:
+    - call: binary_search(q, bits, vectors, k=10, candidates=200)
+      gives: recall 100% from 4.8 MB of bits
+- id: qdrant
+  title: A real vector database, Qdrant
+  file: chapters/08-qdrant.md
+  minutes: 45
+  folder: 08-qdrant
+  tasks:
+  - id: make_store
+    title: a collection of points
+    xp: 20
+    hints:
+    - make_store still raises NotImplementedError.
+    - A collection needs the vector size and the distance; each point has an id, a vector and a payload.
+    - Create the collection for cosine distance, then upsert one PointStruct per chunk with the chunk as its payload.
+    examples:
+    - call: make_store(chunks, vectors)
+      gives: a client whose collection "fieldbook" holds 55 points
+  - id: filtered_search
+    title: search with payload filters
+    xp: 20
+    hints:
+    - filtered_search still raises NotImplementedError.
+    - A filter is a list of conditions; a FieldCondition matches one payload key to one value.
+    - Add a condition for kind and one for zone only when given, put them under must, and add each hit's score.
+    examples:
+    - call: filtered_search(client, query, k=3, kind="report", zone="buffer")
+      gives: R-0410, R-0302, R-0307
+- id: hybrid
+  title: Words and meaning, hybrid search
+  file: chapters/09-hybrid.md
+  minutes: 45
+  folder: 09-hybrid
+  part: RAG that works
+  tasks:
+  - id: bm25_scores
+    title: BM25 by hand
+    xp: 20
+    hints:
+    - bm25_scores still raises NotImplementedError.
+    - Rare words count more (idf); repeats help less and less; long documents are held back (b).
+    - Loop over the distinct query terms, compute df and idf, and add each document's share to a NumPy array.
+    examples:
+    - call: index.keyword("CT-112")
+      gives: '["R-0301"]'
+  - id: rrf_fuse
+    title: reciprocal rank fusion
+    xp: 15
+    hints:
+    - rrf still raises NotImplementedError.
+    - Each ranking gives an id 1 / (k + rank), rank counting from 1.
+    - Add up the shares per id in a dict and sort the ids by their totals, highest first.
+    examples:
+    - call: rrf([["a", "b"], ["b", "c"]])
+      gives: '["b", "a", "c"]'
+- id: rerank
+  title: Reranking with a cross-encoder
+  file: chapters/10-rerank.md
+  minutes: 40
+  folder: 10-rerank
+  tasks:
+  - id: rerank
+    title: score question and chunk together
+    xp: 20
+    hints:
+    - rerank still raises NotImplementedError.
+    - The reranker gives one score per text, in the same order as the chunks.
+    - Order the chunks by score, highest first, keep top_n, and copy each with its score under "rerank".
+    examples:
+    - call: rerank("Who is allowed into the core zone?", candidates)
+      gives: FM-6.4 (7.0), then FM-1.1 (4.0)
+  - id: two_stage
+    title: wide, then careful
+    xp: 15
+    hints:
+    - two_stage still raises NotImplementedError.
+    - The first stage is the hybrid search of chapter 9, asked for `first` chunks.
+    - Rerank those candidates and keep the best `final`.
+    examples:
+    - call: two_stage(question, index, first=20, final=5)
+      gives: five chunks, each with a "rerank" score
+- id: grounded-answers
+  title: Answers with sources
+  file: chapters/11-grounded-answers.md
+  minutes: 45
+  folder: 11-grounded-answers
+  tasks:
+  - id: grounded_prompt
+    title: numbered sources
+    xp: 20
+    hints:
+    - grounded_messages still raises NotImplementedError.
+    - The model cites by number, so every source needs one, starting from 1.
+    - The system message is GROUNDED; the user message lists each numbered source with its id and title, then its text, then the question.
+    examples:
+    - call: grounded_messages(question, [FM-5.3 chunk])
+      gives: '"[1] FM-5.3: Fighting a ground fire" in the user message'
+  - id: refuse_unsure
+    title: no answer without a source
+    xp: 25
+    hints:
+    - answer still raises NotImplementedError.
+    - A weak best source means the documents do not cover the question; then the model must not be asked.
+    - Check for no sources or a best rerank below MIN_RERANK first; otherwise call lab-chat at temperature 0 with the grounded messages.
+    examples:
+    - call: answer("What is the entry fee for a foreign tourist?", sources, client)
+      gives: '{"answer": "I could not find this in the Fieldbook.", "sources": []} with no model call'
+- id: evaluation
+  title: Measuring retrieval
+  file: chapters/12-evaluation.md
+  minutes: 40
+  folder: 12-evaluation
+  tasks:
+  - id: hit_rate
+    title: hit rate at k
+    xp: 15
+    hints:
+    - hit_rate still raises NotImplementedError.
+    - A question is a hit when any of its first k results is one of its right ids.
+    - Count the hits with sets and divide by the number of questions.
+    examples:
+    - call: hit_rate([["a", "b"], ["c"]], [["b"], ["d"]], k=2)
+      gives: '0.5'
+  - id: mrr
+    title: mean reciprocal rank
+    xp: 20
+    hints:
+    - mrr still raises NotImplementedError.
+    - Only the first right result counts, and it counts 1 divided by its position.
+    - Walk each result list from position 1, add 1 / position at the first right id and stop; average at the end.
+    examples:
+    - call: mrr([["a", "b"], ["c", "d"]], [["b"], ["x"]])
+      gives: '0.25'
+- id: capstone
+  title: 'Capstone: Fieldbook as a service'
+  file: chapters/13-capstone.md
+  minutes: 50
+  folder: 13-capstone
+  tasks:
+  - id: search_endpoint
+    title: GET /search with filters
+    xp: 25
+    hints:
+    - search still raises NotImplementedError.
+    - find() already does the two-stage search with the filters; the endpoint shapes its answer.
+    - Return the query and, for each chunk, its id, title and rerank score rounded to 2 places.
+    examples:
+    - call: GET /search?q=leopard+in+a+village&kind=report
+      gives: '{"query": "...", "results": [{"id": "R-0410", ...}, ...]}'
+  - id: ask_endpoint
+    title: POST /ask with sources
+    xp: 25
+    hints:
+    - ask still raises NotImplementedError.
+    - Chapter 11's answer() already gates, prompts and cites; it needs the sources and a client.
+    - Find the best chunks for the question with no filters, and return answer() for them with client().
+    examples:
+    - call: 'POST /ask {"question": "Which animal injures the most people?"}'
+      gives: '{"answer": "... sloth bear ... [1]", "sources": ["FM-4.5", ...]}'

@@ -50,7 +50,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
 - **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
-### Labs: 22, fourteen at the full standard
+### Labs: 23, fifteen at the full standard
 
 "Full" means every item of the full standard (`CONTENT_STANDARD.md`, the list at the top): a running
 project, history, real photos, notes on every recap, playing diagrams, real captured output, two real
@@ -62,6 +62,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | langchain4j | LangChain4j | ai | 30 | 60 | 22.3 | Setu, a hill railway's help desk (LangChain4j 1.24) | 18 | full (23 Nov) |
 | langchain | LangChain | ai | 27 | 54 | 19.4 | Navin, a farmers' co-op help desk (LangChain 1.5) | 13 | full (23 Nov) |
 | langgraph | LangGraph | ai | 24 | 48 | 17.3 | Harsh, a water board's complaint-to-repair desk (LangGraph 1.2) | 18 | full (24 Nov) |
+| rag-vector-databases | RAG and vector databases | ai | 13 | 26 | 9.3 | Fieldbook, a wildlife sanctuary's rangers' assistant (fastembed, FAISS, Qdrant) | 14 | full (24 Nov) |
 | rust-basics | Rust from zero | languages | 28 | 56 | 21.7 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 21 | full (24 Nov) |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
@@ -286,7 +287,8 @@ lab (lab 16) and the `system-design` template.
 - Previews on a separate web address, and an allowlist for outbound internet (with Phase H or K)
 - Photos still to add (Wikimedia Commons refused the downloads on 24 November with 429s): Rust from zero chapter 2
   `File:Professor Simon Peyton Jones FRS (cropped).jpg` (CC BY-SA 4.0, Duncan.Hull) and chapter 17 `File:Bjarne
-  Stroustrup (2013).jpg` (CC BY 2.0, ICPCNews), each in the chapter's history step; LangGraph's Jim Gray photo.
+  Stroustrup (2013).jpg` (CC BY 2.0, ICPCNews), each in the chapter's history step; LangGraph's Jim Gray photo; and Karen Spärck Jones
+  (`File:Karen Spärck.jpg`, CC BY 2.5, Markus Kuhn) for chapter 9's history step in RAG and vector databases.
   Fetch with `tools/authoring/commons_fetch.py`, insert with `insert_photos.py`, then validate.
 
 ### 6. Definition of done for v2 (spec 12)
