@@ -27,6 +27,7 @@ export const LAB_TONES: Record<string, string> = {
   "javascript-basics": "#F7DF1E",
   "javascript-inside-out": "#F7DF1E",
   "linux-on-call": "#FCC624",
+  "langchain4j": "#e8a33d",
   "postgres-indexing-incident": "#4a8fd1",
   "postgres-transactions-and-locks": "#4a8fd1",
   "python-basics": "#4b8bbe",

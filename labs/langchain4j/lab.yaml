@@ -1,0 +1,209 @@
+id: langchain4j
+version: 2
+title: "LangChain4j"
+subtitle: Build Setu, the help desk of a hill railway, with LangChain4j and Java, from how language models work to agents.
+description: "Learn AI engineering in Java with LangChain4j: how language models really work (neurons, tokens,
+  embeddings, attention, built yourself in plain Java), calling a model over HTTP, with the official OpenAI SDK and
+  with LangChain4j, model parameters, hallucinations and token costs, AI Services, prompt templates, structured output,
+  streaming, chat memory, a Spring Boot AI API, tools, MCP clients and servers, embedding stores, RAG, local models,
+  guardrails, observability and testing, and agents and agentic workflows, by building Setu, the passenger help desk
+  of Sahyadri Rail, with LangChain4j 1.24."
+language: java
+track: ai
+tags: [java, ai, langchain4j]
+level: intermediate
+estimated_minutes: 275
+cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
+cover: cover.svg
+cover_credit: { by: "Logos: java", source: "devicon (MIT)" }
+image: labbox/langchain4j:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+check:
+  command: ["bash", "/check/tests/run_checks.sh"]
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: ai-basics
+  title: AI, machine learning, deep learning and generative AI
+  file: chapters/01-ai-basics.md
+  minutes: 45
+  folder: 01-ai-basics
+  part: How language models work
+  tasks:
+  - id: rule_reply
+    title: answer with hand-written rules
+    xp: 20
+    hints:
+    - Rules.reply still returns UNKNOWN for every question. Look for each rule's keyword in the question.
+    - Lower-case the question once at the start, with toLowerCase(Locale.ROOT), so "REFUND" matches "refund".
+    - 'Check the rules in order with String.contains: refund, then luggage or bag, then pet or dog; otherwise UNKNOWN.'
+    examples:
+    - call: Rules.reply("REFUND please")
+      gives: the REFUND answer
+      note: capitals do not matter
+    - call: Rules.reply("Can I bring two bags?")
+      gives: the LUGGAGE answer
+  - id: learn_threshold
+    title: learn a threshold from examples
+    xp: 20
+    hints:
+    - bestThreshold returns 0 for every data set. It should try each delay in minutesLate as the threshold.
+    - mistakes(candidate, minutesLate, complained) already counts how wrong one candidate is. Keep the candidate with the fewest.
+    - When two candidates make the same number of mistakes, keep the smaller candidate.
+    examples:
+    - call: bestThreshold(last week's ten trains)
+      gives: '12'
+      note: 1 of 10 examples wrong
+- id: neurons
+  title: 'Neural networks: a neuron in Java'
+  file: chapters/02-neurons.md
+  minutes: 45
+  folder: 02-neurons
+  tasks:
+  - id: neuron_fire
+    title: make the neuron fire
+    xp: 20
+    hints:
+    - fire always returns 0. It should add up every input times its weight, plus the bias.
+    - Start a running total at the bias, then loop over the inputs adding inputs[i] * weights[i].
+    - Return 1 only when the total is strictly greater than 0; a total of exactly 0 does not fire.
+    examples:
+    - call: fire([1, 0], [0.5, 0.5], -0.4)
+      gives: '1'
+      note: 0.5 - 0.4 = 0.1
+    - call: fire([1, 1], [0.5, -0.5], 0)
+      gives: '0'
+      note: exactly zero does not fire
+  - id: train_neuron
+    title: train it with the perceptron rule
+    xp: 20
+    hints:
+    - train returns zero weights without learning. Each epoch should go through every example and correct the weights.
+    - 'For one example: error = the answer minus what fire(...) guesses with the current weights.'
+    - Add rate * error * that example's input to each weight, and rate * error to the bias, then move to the next example.
+    examples:
+    - call: train(the 8 late-train days, 20 epochs, rate 0.1)
+      gives: weights [0.1, 0.2, 0.3], bias -0.2
+      note: every day predicted right
+- id: language-models
+  title: From NLP to language models
+  file: chapters/03-language-models.md
+  minutes: 45
+  folder: 03-language-models
+  tasks:
+  - id: count_words
+    title: count words in a bag of words
+    xp: 20
+    hints:
+    - count returns an empty map. It should hold every word of the text with how often it appears.
+    - Words.split(text) gives the words, lower-cased and without punctuation. Count each one.
+    - Map.merge(word, 1, Integer::sum) adds one to a word's count; a TreeMap keeps the words A to Z.
+    examples:
+    - call: count("The Ghat Express, the GHAT express!")
+      gives: '{express=2, ghat=2, the=2}'
+  - id: next_word
+    title: predict the next word with a bigram model
+    xp: 20
+    hints:
+    - next returns null for every word. Look up the word's followers in follows first.
+    - follows.get(word) is null for a word never seen with a follower; return null then.
+    - Go through the followers (a TreeMap, so A to Z) and keep the one with the highest count; on a tie, keep the first.
+    examples:
+    - call: next("the") after training on the announcements
+      gives: '"ghat"'
+    - call: next("platform")
+      gives: '"one"'
+- id: tokens
+  title: Tokens and the context window
+  file: chapters/04-tokens.md
+  minutes: 45
+  folder: 04-tokens
+  tasks:
+  - id: count_tokens
+    title: count tokens like gpt-4o-mini
+    xp: 20
+    hints:
+    - Tokens.count returns 0. The ESTIMATOR above it already knows gpt-4o-mini's tokenizer.
+    - OpenAiTokenCountEstimator has a method that counts the tokens in one text.
+    - Return what ESTIMATOR.estimateTokenCountInText gives for the text.
+    examples:
+    - call: count("Lonavala")
+      gives: '3'
+      note: '[L][onav][ala]'
+    - call: count("पुणे ते लोणावळा गाडी किती वाजता आहे?")
+      gives: '18'
+  - id: fit_window
+    title: keep the newest messages that fit
+    xp: 20
+    hints:
+    - fit returns every message. It should keep only the newest ones whose tokens fit in the budget.
+    - Loop from the last message to the first, adding Tokens.count of each to a running total.
+    - Stop at the first message that would go over the budget; insert kept messages at the front so they stay oldest first.
+    examples:
+    - call: fit(the five-message chat, 40)
+      gives: the last two messages
+- id: embeddings
+  title: Embeddings, vectors and dimensions
+  file: chapters/05-embeddings.md
+  minutes: 45
+  folder: 05-embeddings
+  tasks:
+  - id: cosine
+    title: compute cosine similarity
+    xp: 20
+    hints:
+    - cosine returns 0 for every pair. It needs a dot product and two vector lengths.
+    - In one loop, add up a[i] * b[i], a[i] * a[i] and b[i] * b[i].
+    - Divide the dot product by the square root of each sum of squares multiplied together.
+    examples:
+    - call: cosine([3, 4], [4, 3])
+      gives: '0.96'
+    - call: cosine([1, 2], [10, 20])
+      gives: '1.0'
+      note: same direction
+  - id: closest_question
+    title: answer by meaning
+    xp: 20
+    hints:
+    - answer always says it does not know. It should compare the question with every FAQ question by meaning.
+    - embed(question) gives the question's vector; embed each key of ENTRIES too, and score the pair with Vectors.cosine.
+    - Keep the entry with the highest score and return its value, the answer.
+    examples:
+    - call: answer("How heavy can my suitcase be?")
+      gives: the 40 kg luggage answer
+      note: no shared keyword
+- id: transformers
+  title: Transformers, attention, and how an LLM answers
+  file: chapters/06-transformers.md
+  minutes: 50
+  folder: 06-transformers
+  tasks:
+  - id: softmax_temperature
+    title: softmax with temperature
+    xp: 20
+    hints:
+    - softmax returns zeros. It should turn the scores into probabilities that add up to 1.
+    - First divide every score by the temperature and find the largest result.
+    - Use Math.exp of each scaled score minus that largest, then divide every value by the sum of them all.
+    examples:
+    - call: softmax([2, 1, 0], 1.0)
+      gives: '[0.665, 0.245, 0.090]'
+    - call: softmax([1000, 999], 1.0)
+      gives: '[0.731, 0.269]'
+      note: no overflow
+  - id: attention_weights
+    title: compute attention weights
+    xp: 20
+    hints:
+    - weights returns zeros. Each key needs a score against the query first.
+    - A key's score is dot(query, key) divided by Math.sqrt of the query's length.
+    - Turn the array of scores into weights with your softmax, at temperature 1.0.
+    examples:
+    - call: weights(the query of "it", keys of train, station, it)
+      gives: '[0.46, 0.18, 0.36]'

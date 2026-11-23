@@ -1,5 +1,25 @@
 # Changelog
 
+## 23 November: LangChain4j, Part 1 (a new AI course: Setu, the help desk of a hill railway)
+
+- New lab `langchain4j`, built from the owner's syllabus (the Telusko LangChain4j video's chapter list) and the
+  official documentation at docs.langchain4j.dev, at LangChain4j 1.24.0. Running project: **Setu**, the passenger help
+  desk of Sahyadri Rail, a fictional hill railway from Pune through the Western Ghats. 30 chapters are planned in five
+  parts (`HANDOFF.md`); this commit is Part 1.
+- Part 1, "How language models work" (6 chapters, 12 tasks), in plain Java with nothing calling a model: rules versus a
+  threshold learned from examples; a neuron trained with Rosenblatt's perceptron rule (and why it cannot learn XOR);
+  a bag of words and a bigram model that writes station announcements; tokens counted with gpt-4o-mini's real tokenizer
+  (Marathi takes twice the tokens of English) and a context window; embeddings from a real model running inside the
+  program (BGE small, offline) with cosine similarity and search by meaning; softmax with temperature and attention
+  weights. Every output in the lessons was captured from the real programs.
+- New image `labbox/langchain4j:v1` (Java 21, an offline Maven repository with LangChain4j, the OpenAI Java SDK, agents,
+  MCP, easy RAG, Ollama and the Spring Boot 4 starters; Node for the filesystem MCP server; the local embedding
+  model's tokenizer cached in the image). The image pre-fetches each chapter's exact dependencies.
+- Checks are JUnit tests copied into each chapter's project; from chapter 7 on they use a fake OpenAI server.
+- 5 real photos (the Bhor Ghat railway, Alan Turing, the Mark I Perceptron, Andrey Markov, the transformer), 6 playing
+  diagrams, 6 handwritten notes pages, two AI-track nodes.
+- The cover uses the Java logo for now: LangChain4j's own logo shows a cup of coffee (owner to decide).
+
 ## 23 November: the AI tutor uses OpenAI; Ollama stopped to free memory
 
 - Owner: "I am not using Ollama in the AI tutor, use OpenAI", and "do all the required to free up memory".

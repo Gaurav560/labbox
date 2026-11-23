@@ -16,6 +16,33 @@ update it at the end of every session. Earlier, longer versions of it are in git
   `ROADMAP.md`, and the helper scripts in `tools/authoring/`.
 - **Nothing is half-built.** No capture machine is running.
 
+## Now building: LangChain4j (new lab `langchain4j`, owner 23 November)
+
+Owner: "start with new ai lab: LangChain4j ... fetch everything from the url (docs.langchain4j.dev) ... create a world
+class lab, go on". Syllabus = the Telusko LangChain4j video's chapter list + the official tutorials, at the current
+version: LangChain4j 1.24.0 (agentic, MCP, Spring Boot starter, easy RAG: 1.24.0-beta34), OpenAI Java SDK 4.111.0,
+Java 21, Spring Boot 4.2 for the web chapters. Models through the gateway: `ai-chat` (gpt-4o-mini), `ai-embed`.
+Running project: **Setu**, the passenger help desk of **Sahyadri Rail**, a fictional hill railway from Pune down
+the Western Ghats to the Konkan coast (trains, stations, timetables, fares, rules for luggage, refunds and pets).
+A folder per chapter (`NN-id/`, Maven), checks are JUnit with a fake model server (no network, no cost).
+
+- Part 1 "How language models work" (plain Java, no AI library, no API calls): 1 AI, ML, deep learning and
+  generative AI (`ai-basics`), 2 Neural networks: a neuron in Java (`neurons`), 3 From NLP to language models: a
+  bigram model that predicts the next word (`language-models`), 4 Tokens and the context window (`tokens`),
+  5 Embeddings, vectors and dimensions (`embeddings`), 6 Transformers and attention, and how an LLM answers
+  (`transformers`).
+- Part 2 "Calling a model from Java": 7 A model over plain HTTP (`raw-http`), 8 The official OpenAI Java SDK
+  (`openai-sdk`), 9 Your first LangChain4j app (`first-app`), 10 Model parameters and messages (`parameters`),
+  11 Open and closed models, and hallucinations (`hallucinations`), 12 Response metadata and token usage (`usage`).
+- Part 3 "AI Services": 13 AI Services (`ai-services`), 14 Prompt templates (`templates`), 15 Structured output
+  (`structured`), 16 Streaming (`streaming`), 17 Chat memory (`memory`), 18 An AI REST API with Spring Boot (`rest-api`).
+- Part 4 "Tools, MCP and knowledge": 19 Tools (`tools`), 20 MCP: use a filesystem MCP server (`mcp-client`),
+  21 Build your own MCP server in Java (`mcp-server`), 22 Embedding models and stores (`embedding-stores`), 23 RAG
+  (`rag`), 24 Local models with Ollama, and model routing (`local-models`).
+- Part 5 "Production and agents": 25 Guardrails (`guardrails`), 26 Observability and testing (`observability`),
+  27 Agents: your first agent and two agents in sequence (`agents`), 28 Agentic workflows: loop, parallel,
+  conditional (`workflows`), 29 Supervisor agents (`supervisor`), 30 Capstone: Setu goes live (`capstone`).
+
 ## Waiting for the owner
 
 1. **Drink examples are gone** (rewritten 23 November). Left on purpose: the SQL task id `q_paid_coffee` (progress

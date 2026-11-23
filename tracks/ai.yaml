@@ -38,3 +38,10 @@ nodes:
     title: Agents, and Atlas goes live
     requires: [ai-production]
     chapters: [spring-ai/agents, spring-ai/live]
+  - id: l4j-foundations
+    title: How AI learns (LangChain4j, Part 1)
+    chapters: [langchain4j/ai-basics, langchain4j/neurons, langchain4j/language-models]
+  - id: l4j-inside-llms
+    title: Tokens, embeddings and attention
+    requires: [l4j-foundations]
+    chapters: [langchain4j/tokens, langchain4j/embeddings, langchain4j/transformers]

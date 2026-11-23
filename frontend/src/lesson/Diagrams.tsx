@@ -1941,7 +1941,116 @@ function AiAtlasLive() {
   );
 }
 
+function L4jAiCircles() {
+  return (
+    <SketchSteps
+      title="four circles, one inside the other"
+      intro="Press Play to go from the biggest circle to the smallest."
+      label="artificial intelligence contains machine learning, which contains deep learning, which contains generative AI; a large language model sits in the smallest circle"
+      steps={[
+        { label: "1. Artificial intelligence", says: "Any program doing something we would call intelligent: even hand-written rules." },
+        { label: "2. Machine learning", says: "The rule is learned from examples, not written: like the 12-minute threshold." },
+        { label: "3. Deep learning", says: "Machine learning with neural networks of many layers." },
+        { label: "4. Generative AI", says: "Deep learning models that create new text, images or code." },
+        { label: "5. A large language model", says: "Lives in the smallest circle: it is all four at once." },
+      ]}
+    />
+  );
+}
+
+function L4jNeuron() {
+  return (
+    <SketchSteps
+      title="one neuron deciding"
+      intro="Press Play to follow one morning's prediction."
+      label="the inputs rain, holiday and track work are multiplied by their weights, added together with the bias, and the neuron fires if the total is above zero"
+      steps={[
+        { label: "1. Inputs", says: "Rain 0, holiday 1, track work 1." },
+        { label: "2. Times the weights", says: "0 x 0.1, 1 x 0.2, 1 x 0.3: each input counts as much as its weight says." },
+        { label: "3. Add the bias", says: "0 + 0.2 + 0.3 - 0.2 = 0.3." },
+        { label: "4. Fire or not", says: "0.3 is above zero: the neuron says 1, late." },
+        { label: "5. Learning", says: "If it was wrong, training nudges each weight a little and tries again." },
+      ]}
+    />
+  );
+}
+
+function L4jContextWindow() {
+  return (
+    <SketchSteps
+      title="a window that slides"
+      intro="Press Play to watch a chat grow past the window."
+      label="messages arrive one after another; while they fit in the token budget the model sees them all; when a new message arrives the oldest falls out of the window"
+      steps={[
+        { label: "1. A short chat", says: "Three messages, 45 tokens: all inside the window." },
+        { label: "2. It grows", says: "Every new message is added at the end." },
+        { label: "3. Over the budget", says: "The total passes the budget: something has to go." },
+        { label: "4. The oldest falls out", says: "Travelling with my grandmother next Sunday is no longer sent." },
+        { label: "5. What the model sees", says: "Only the newest messages that fit, oldest first." },
+      ]}
+    />
+  );
+}
+
+function L4jEmbeddingSpace() {
+  return (
+    <SketchSteps
+      title="search by meaning"
+      intro="Press Play to follow one passenger's question."
+      label="each text becomes a vector of 384 numbers; vectors with similar meaning point in similar directions; the question is compared with every FAQ question and the closest wins"
+      steps={[
+        { label: "1. Embed the question", says: "How heavy can my suitcase be? becomes 384 numbers." },
+        { label: "2. Embed the FAQ", says: "Every FAQ question becomes 384 numbers too, by the same model." },
+        { label: "3. Compare directions", says: "Cosine similarity of the question with each FAQ question." },
+        { label: "4. Rank", says: "How much baggage can I carry? scores highest." },
+        { label: "5. Answer", says: "Return that entry's answer: 40 kg free." },
+      ]}
+    />
+  );
+}
+
+function L4jAttention() {
+  return (
+    <SketchSteps
+      title="what does it attend to"
+      intro="Press Play to follow attention for one word."
+      label="the query of it is compared with the key of every word by a dot product; the scores are divided by the square root of the vector length; softmax turns them into weights; the train gets the most attention"
+      steps={[
+        { label: "1. A query", says: "The word it asks: who here moves on a schedule?" },
+        { label: "2. Compare with keys", says: "Dot product of the query with the key of train, station and it." },
+        { label: "3. Scale", says: "Divide each score by the square root of 3, the vector length." },
+        { label: "4. Softmax", says: "Scores become weights that add up to 1." },
+        { label: "5. The answer", says: "train 0.46, it 0.36, station 0.18: it mostly means the train." },
+      ]}
+    />
+  );
+}
+
+function L4jLlmPipeline() {
+  return (
+    <SketchSteps
+      title="how an LLM answers"
+      intro="Press Play to follow one question through the model."
+      label="the question is split into tokens; each token becomes an embedding; layers of attention refine them; the last layer scores every possible next token; softmax with temperature picks one; the token is added and the loop repeats"
+      steps={[
+        { label: "1. Tokens", says: "When does the Ghat Express leave Pune? becomes 9 tokens." },
+        { label: "2. Embeddings", says: "Each token becomes a vector of numbers." },
+        { label: "3. Layers", says: "Attention and neurons, dozens of layers, refine every vector." },
+        { label: "4. Scores", says: "One score for each of about 200,000 possible next tokens." },
+        { label: "5. Pick one", says: "Softmax and temperature, then a weighted draw: The." },
+        { label: "6. Repeat", says: "Add the token, run the model again, until the answer ends." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-ai-circles": L4jAiCircles,
+  "l4j-neuron": L4jNeuron,
+  "l4j-context-window": L4jContextWindow,
+  "l4j-embedding-space": L4jEmbeddingSpace,
+  "l4j-attention": L4jAttention,
+  "l4j-llm-pipeline": L4jLlmPipeline,
   "ai-vision": AiVision,
   "ai-evaluation": AiEvaluation,
   "ai-guardrails": AiGuardrails,

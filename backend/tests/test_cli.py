@@ -88,7 +88,7 @@ def test_new_lab_refuses(tmp_path: Path):
 
 
 @pytest.mark.docker
-@pytest.mark.parametrize("lab", ["python-basics", "java-basics", "fastapi-first-api", "spring-boot-first-api", "postgres-indexing-incident", "javascript-inside-out", "go-basics", "sql-from-zero", "express-api", "redis-in-practice", "linux-on-call", "git-without-fear", "postgres-transactions-and-locks", "rate-limiter", "javascript-basics", "spring-ai"])  # one or more per template
+@pytest.mark.parametrize("lab", ["python-basics", "java-basics", "fastapi-first-api", "spring-boot-first-api", "postgres-indexing-incident", "javascript-inside-out", "go-basics", "sql-from-zero", "express-api", "redis-in-practice", "linux-on-call", "git-without-fear", "postgres-transactions-and-locks", "rate-limiter", "javascript-basics", "spring-ai", "langchain4j"])  # one or more per template
 def test_test_lab(lab: str, capsys):
     """Starter fails every task, solution passes every task (image must be built)."""
     from tests.test_e2e_docker import _docker_ready
