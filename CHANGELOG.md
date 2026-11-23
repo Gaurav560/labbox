@@ -1,5 +1,25 @@
 # Changelog
 
+## 23 November: no drinks anywhere (owner: "yes rewrite the drink examples")
+
+- Every drink example is rewritten, in all 13 labs that had one, the app, the drills, the lab templates and the specs.
+  Replacements keep the same length and the same alphabetical place, so sorted output, padded columns, slices and
+  quoted outputs stay true without recapturing:
+  - Spring Boot: Mango lassi becomes Mango kulfi, Filter coffee becomes Fruit custard, Rose milk becomes Rasmalai
+    (SKUs KUL-1, CUS-1, RAS-1), the `drinks` category becomes `sweets`, Brew Point becomes Book Point.
+  - Python, JavaScript, Go and Java from zero, Redis: juice becomes jelly, milk becomes mint, coffee becomes cookie.
+    Java's printed HashMap orders were checked against Java's hashing: unchanged.
+  - Go from zero, chapter 8: the UTF-8 example "café" becomes the name "José" (same bytes: 5 bytes, 4 runes, the
+    accent at byte 3); `cafe.go` is now `jose.go`, its output was rerun in the lab image, and the chapter's notes
+    page was redrawn and checked letter by letter.
+  - Small labs: Ravi's Tapri (a tea stall) becomes Ravi's Snack Corner (FastAPI, JavaScript inside out), Tapri
+    Counter becomes Dosa Counter, Brew Point (a coffee chain) becomes Book Point, a bookshop (Java collections, rate
+    limiter, Postgres transactions); the Postgres labs' database `tapri` is now `shop` (a learner who already
+    opened one of them needs Reset lab); the ai template's barista bot is a bookshop assistant.
+  - App: the home page tour, the login terminal, a drill, the CLI help, and the tests that quoted the old text.
+- Java from zero's history now says the name Java was "borrowed from the island of Java in Indonesia".
+- Left on purpose: the SQL task id `q_paid_coffee` (learner progress is stored under it), and the owner's spec files.
+
 ## 23 November: the full standard and how courses are made, written down
 
 - `COURSE_PRODUCTION.md` (new): how a LabBox course is built, in 12 steps from the syllabus to the commit, the

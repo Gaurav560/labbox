@@ -1,6 +1,6 @@
 :::step{type=story title="Two plus two is twenty-two"}
-:::character{name="Ravi" role="Owner, Ravi's Tapri"}
-A customer typed "2" cold coffee and the bot billed him for 22 cups. Yesterday it said an order
+:::character{name="Ravi" role="Owner, Ravi's Snack Corner"}
+A customer typed "2" next to vada pav and the bot billed him for 22 plates. Yesterday it said an order
 was new when it was the same as the last one. My nephew says "that is just JavaScript".
 :::
 
@@ -24,7 +24,7 @@ Convert first, then check what you got: `Number.isInteger(n)` is `true` only for
 
 :::step{type=predict title="Guess first"}
 :::question
-What is `["coffee"] === ["coffee"]`?
+What is `["cookie"] === ["cookie"]`?
 :::
 - [ ] `true`: same contents
 - [x] `false`: two different arrays
@@ -51,7 +51,7 @@ Anything that is not a whole number from 1 to 20 (like `"two"`, `"2.5"` or `"0"`
 :::step{type=task task=same_items title="Same order?"}
 Make `sameItems(a, b)` return `true` when both arrays hold the same items in the same order.
 
-`sameItems(["coffee", "bun"], ["coffee", "bun"])` is `true`; `sameItems(["coffee", "bun"], ["bun", "coffee"])` is `false`.
+`sameItems(["cookie", "bun"], ["cookie", "bun"])` is `true`; `sameItems(["cookie", "bun"], ["bun", "cookie"])` is `false`.
 
 :::mistake
 `JSON.stringify(a) === JSON.stringify(b)` looks like a shortcut, but it breaks on `undefined`,

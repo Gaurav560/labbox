@@ -1,6 +1,6 @@
 //go:build ignore
 
-// Chapter 8: how long is the word café?
+// Chapter 8: how long is the name José?
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	word := "café"
+	word := "José"
 	fmt.Println(len(word), utf8.RuneCountInString(word))
 	fmt.Println(word[3], string(word[3]))
 	for i, r := range word {

@@ -6,10 +6,10 @@ track: languages
 tags: [javascript, node]
 level: intermediate
 story:
-  company: Ravi's Tapri
-  character: { name: Ravi, role: "Owner, Ravi's Tapri" }
+  company: Ravi's Snack Corner
+  character: { name: Ravi, role: "Owner, Ravi's Snack Corner" }
   pitch: "Ravi's WhatsApp ordering bot is in JavaScript, and it keeps getting the small things wrong."
-cover_scene: "Ravi's Tapri at night: a tiny coffee stall where a glowing chat bubble robot pours coffee, little glowing curly braces and arrows floating up with the steam."
+cover_scene: "Ravi's Snack Corner at night: a small snack counter where a glowing chat bubble robot hands out vada pav, little glowing curly braces and arrows floating up from the counter."
 chapters:
   - id: 01-values-and-equality
     title: Two plus two is twenty-two

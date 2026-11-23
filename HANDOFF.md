@@ -18,9 +18,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Waiting for the owner
 
-1. **Drink words in older examples** (coffee, juice, milk, lassi or tea): 137 files across 13 labs (counted with a wider word list than before),
-   most in spring-boot-first-api (71) and python-basics (22); the per-lab counts are in `ROADMAP.md`. Rewrite
-   them? (The rule is never drinks; these were written before it.)
+1. **Drink examples are gone** (rewritten 23 November). Left on purpose: the SQL task id `q_paid_coffee` (progress
+   hangs on it; renaming needs a data migration, ask first), the Java name history (now "a name borrowed from the
+   island of Java"), and the owner's spec files (`labbox-v2-upgrade-spec.md`, `labbox-poc-spec.md`).
 2. **The `ai` onboarding goal** still starts with python-basics. Start it with spring-ai?
 3. **Next step:** the roadmap order is K (the AWS deploy, needs the owner), then H4 (Google and GitHub login),
    then I (payments). The eight short labs and the rest of the AI track wait for a syllabus and an OK each.

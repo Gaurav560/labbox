@@ -1,7 +1,7 @@
-:::step{type=story title="A barista bot"}
-:::character{name="Kabir" role="Backend lead, Brew Point"}
-Customers keep asking the counter staff the same questions. Let's put a small assistant on the menu
-screen. First step: talk to a language model from code.
+:::step{type=story title="A bookshop bot"}
+:::character{name="Kabir" role="Backend lead, Book Point"}
+Customers keep asking the counter staff the same questions. Let's put a small assistant on the
+shop's screen. First step: talk to a language model from code.
 :::
 
 :::mission
@@ -12,7 +12,7 @@ Send a question to a model with a system message, and return its answer.
 :::step{type=concept title="Messages in, a message out"}
 A chat model takes a list of **messages**, each with a `role` and `content`:
 
-- `system`: the rules ("you are a barista, answer briefly");
+- `system`: the rules ("you are a bookshop assistant, answer briefly");
 - `user`: what the person asked.
 
 It answers with one new `assistant` message. In this lab the model is called by its alias,

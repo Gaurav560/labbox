@@ -139,7 +139,7 @@ Nothing to fail yet. Your test comes next.
 Write a test in `ProductRepositoryTest` that:
 
 1. **saves** a few products of **two categories**, with the snacks **out of alphabetical order**
-   (for example Samosa, then a drink, then Bhel puri, then Kachori);
+   (for example Samosa, then a sweet, then Bhel puri, then Kachori);
 2. calls **`findByCategoryOrderByNameAsc("snacks")`** and maps the result to names;
 3. asserts the **exact** names, in order.
 

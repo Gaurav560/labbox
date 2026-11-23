@@ -37,7 +37,7 @@ class Ch01Check {
             MvcResult r = mvc.perform(get("/merchants")).andReturn();
             int code = r.getResponse().getStatus();
             String body = r.getResponse().getContentAsString().replace(" ", "");
-            String want = "[\"AnnapurnaMess\",\"BrewPoint\",\"KiranaKing\"]";
+            String want = "[\"AnnapurnaMess\",\"BookPoint\",\"KiranaKing\"]";
             if (code == 404) {
                 R.fail("merchants", "GET /merchants returned 404: there is no method mapped to /merchants yet.", "200", "404");
             } else if (code == 200 && body.equals(want)) {

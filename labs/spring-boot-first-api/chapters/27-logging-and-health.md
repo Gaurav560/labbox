@@ -51,7 +51,7 @@ no class, and no way to switch it off.
 There are five levels, from the chattiest to the most serious:
 
 - **TRACE**: extremely detailed, step-by-step internals. You saw Spring's TRACE log in chapter 10.
-- **DEBUG**: details useful while developing or investigating ("loaded 3 prices", "cache miss for LAS-1").
+- **DEBUG**: details useful while developing or investigating ("loaded 3 prices", "cache miss for KUL-1").
 - **INFO**: normal, important events ("Started ShopApiApplication", "order 4711 placed").
 - **WARN**: something unusual that the app handled, but someone may want to know ("out of stock", "retrying a
   slow supplier").

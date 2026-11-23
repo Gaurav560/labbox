@@ -146,7 +146,7 @@ Sighting s = chat.prompt()
 
 1. Listing the museum's own names turns an open question ("what is this?") into a choice, so the model answers
    "Rajasaurus skull", not "a dinosaur fossil".
-2. "If it shows none of them, answer none" gives the model an honest way out: without it, a photo of the café would
+2. "If it shows none of them, answer none" gives the model an honest way out: without it, a photo of the gift shop would
    still be matched to some exhibit.
 3. `.entity(Sighting.class)` is chapter 5's structured output, working the same with a picture in the message.
 :::

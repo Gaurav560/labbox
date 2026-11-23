@@ -38,9 +38,9 @@ code to price). The `load()` method reads them from a file, `prices.csv`, in `sr
 
 ```text
 sku,price_paise
-LAS-1,2000
+KUL-1,2000
 SAM-1,1800
-COF-1,3000
+CUS-1,3000
 ```
 
 Reading a file is slow compared to looking in a map, so the plan is: read the file **once**, at start-up,
@@ -67,7 +67,7 @@ cd 09-bean-lifecycle && mvn -q -o package -DskipTests && java -jar target/bean-l
 In a second terminal:
 
 ```bash run
-curl -i localhost:8080/prices/LAS-1; echo; curl localhost:8080/prices/count
+curl -i localhost:8080/prices/KUL-1; echo; curl localhost:8080/prices/count
 ```
 
 `404`, and a count of `0`. Look at the start-up log in Terminal 1 too: there is no `Loaded ... prices`
@@ -84,7 +84,7 @@ Rebuild and run. This time, the start-up log has a new line just before `Started
 INFO ... com.shop.prices.PriceCatalog : Loaded 3 prices
 ```
 
-Then `curl localhost:8080/prices/LAS-1` answers `2000`. Press **Check**.
+Then `curl localhost:8080/prices/KUL-1` answers `2000`. Press **Check**.
 :::
 
 :::step{type=concept title="Scopes: how many copies?"}
@@ -127,12 +127,12 @@ customers:
 :::trace{title="Two customers, one shared ReceiptPrinter"}
 | request | what getObject() returns | lines in the receipt | answer |
 |---|---|---|---|
-| Asha buys lassi | the one ReceiptPrinter | [1 x lassi] | [1 x lassi] |
-| Ravi buys a samosa | the same ReceiptPrinter | [1 x lassi, 1 x samosa] | [1 x lassi, 1 x samosa] |
-| Meera buys coffee | the same ReceiptPrinter | [1 x lassi, 1 x samosa, 1 x coffee] | all three |
+| Asha buys kulfi | the one ReceiptPrinter | [1 x kulfi] | [1 x kulfi] |
+| Ravi buys a samosa | the same ReceiptPrinter | [1 x kulfi, 1 x samosa] | [1 x kulfi, 1 x samosa] |
+| Meera buys custard | the same ReceiptPrinter | [1 x kulfi, 1 x samosa, 1 x custard] | all three |
 :::
 
-Ravi's receipt shows Asha's lassi. Meera's shows everything. In a real shop, that is a privacy problem
+Ravi's receipt shows Asha's kulfi. Meera's shows everything. In a real shop, that is a privacy problem
 and a billing problem at once.
 :::
 
@@ -144,10 +144,10 @@ mvn -q -o package -DskipTests && java -jar target/bean-lifecycle.jar
 ```
 
 ```bash run
-curl localhost:8080/receipt/lassi; echo; curl localhost:8080/receipt/samosa; echo
+curl localhost:8080/receipt/kulfi; echo; curl localhost:8080/receipt/samosa; echo
 ```
 
-The second answer contains the lassi. Stop the app.
+The second answer contains the kulfi. Stop the app.
 :::
 
 :::step{type=task task=prototype_scope title="Your turn: a fresh receipt for every customer"}

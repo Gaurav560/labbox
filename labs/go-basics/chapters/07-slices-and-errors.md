@@ -206,5 +206,5 @@ You can now:
 One page of notes for this chapter.
 :::
 
-Next, chapter 8: strings, and why the word café has 5 bytes but 4 letters.
+Next, chapter 8: strings, and why the name José has 5 bytes but 4 letters.
 :::

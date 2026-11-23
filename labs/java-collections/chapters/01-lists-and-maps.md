@@ -1,7 +1,7 @@
 :::step{type=story title="The midnight settlement"}
 :::character{name="Kabir" role="Lead engineer, PaySetu"}
 Every night at 12 we pay each merchant what they earned that day. Last night a spreadsheet
-formula broke and three coffee stalls got nothing. I want the settlement in plain, tested Java.
+formula broke and three bookshops got nothing. I want the settlement in plain, tested Java.
 :::
 
 :::mission
@@ -13,10 +13,10 @@ Add up a day of payments, and work out one total per merchant.
 A **List** keeps values in order. A **Map** stores a value under a key, so you can find it again:
 
 ```java
-List<Payment> today = List.of(new Payment("Brew Point", 2000));
+List<Payment> today = List.of(new Payment("Book Point", 2000));
 Map<String, Long> totals = new HashMap<>();
-totals.put("Brew Point", 2000L);
-totals.get("Brew Point");   // 2000
+totals.put("Book Point", 2000L);
+totals.get("Book Point");   // 2000
 ```
 
 `Payment` is a **record**: a small class whose fields you read with methods like `p.merchant()`.
@@ -54,8 +54,8 @@ No payments add up to `0`.
 
 ```java
 Map<String, Long> m = new HashMap<>();
-m.merge("Brew Point", 2000L, Long::sum);  // {Brew Point=2000}
-m.merge("Brew Point", 3000L, Long::sum);  // {Brew Point=5000}
+m.merge("Book Point", 2000L, Long::sum);  // {Book Point=2000}
+m.merge("Book Point", 3000L, Long::sum);  // {Book Point=5000}
 ```
 
 `Long::sum` is a method reference: "add the old and the new value".

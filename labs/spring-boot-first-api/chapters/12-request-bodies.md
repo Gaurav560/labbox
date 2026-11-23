@@ -33,10 +33,10 @@ curl localhost:8080/products
 ```
 
 ```text
-[{"id":1,"name":"Mango lassi","pricePaise":2000,"costPaise":900}, ...]
+[{"id":1,"name":"Mango kulfi","pricePaise":2000,"costPaise":900}, ...]
 ```
 
-There it is: lassi costs the shop Rs 9 and sells for Rs 20. Jackson writes **every field** of the object you
+There it is: kulfi costs the shop Rs 9 and sells for Rs 20. Jackson writes **every field** of the object you
 return. It has no idea which ones are secret. Keep that in mind; we will fix it in the second task. Leave
 the app running.
 :::
@@ -121,7 +121,7 @@ the shop stored a **`Product`** (id, name, price *and cost*). Why not just use `
 Try to imagine `@RequestBody Product body`. The client could then send:
 
 ```json
-{"id": 1, "name": "Mango lassi", "pricePaise": 1, "costPaise": 999999}
+{"id": 1, "name": "Mango kulfi", "pricePaise": 1, "costPaise": 999999}
 ```
 
 and choose the id (overwrite someone else's product?) and the cost (corrupt the shop's accounts). Fields
@@ -184,7 +184,7 @@ curl localhost:8080/products/1/view
 ```
 
 ```text
-{"id":1,"name":"Mango lassi","price":"Rs 20.00"}
+{"id":1,"name":"Mango kulfi","price":"Rs 20.00"}
 ```
 
 No `costPaise` anywhere. Press **Check**.
@@ -192,7 +192,7 @@ No `costPaise` anywhere. Press **Check**.
 
 :::step{type=predict title="Quick check (1 of 3)"}
 :::question
-A client POSTs `{"name": "Lassi", "pricePaise": 2000, "discount": 50}`, and `NewProduct` has no `discount`. What happens?
+A client POSTs `{"name": "Kulfi", "pricePaise": 2000, "discount": 50}`, and `NewProduct` has no `discount`. What happens?
 :::
 - [ ] 400 Bad Request: unknown field
 - [x] The product is created; discount is ignored
@@ -205,7 +205,7 @@ client cannot set fields the DTO does not have.
 
 :::step{type=predict title="Quick check (2 of 3)"}
 :::question
-`curl -X POST localhost:8080/products -d '{"name": "Lassi", "pricePaise": 2000}'` (no -H) answers 415. Why?
+`curl -X POST localhost:8080/products -d '{"name": "Kulfi", "pricePaise": 2000}'` (no -H) answers 415. Why?
 :::
 - [ ] The JSON is invalid
 - [x] Without the Content-Type header, the body is labelled as a form, which Spring cannot turn into a NewProduct

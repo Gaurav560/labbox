@@ -1,6 +1,6 @@
 :::step{type=story title="Things change"}
 So far the Shop API can list products, show one, create new ones and delete them. But shops change their
-products all the time: the coffee gets a bigger cup and a new price, the samosa price goes up by two
+products all the time: the custard gets a bigger bowl and a new price, the samosa price goes up by two
 rupees, a delivery arrives and the stock goes up.
 
 HTTP has two methods for changing something that already exists, **PUT** and **PATCH**, and the
@@ -36,7 +36,7 @@ controller talks to the repository directly; in chapter 14 you saw where a servi
 PUT /products/2
 Content-Type: application/json
 
-{"name": "Filter coffee (large)", "pricePaise": 3500, "stock": 20}
+{"name": "Fruit custard (large)", "pricePaise": 3500, "stock": 20}
 ```
 
 The client sends **every field**. The server throws away the old version and stores this one, under the
@@ -96,17 +96,17 @@ cd 15-updating-and-deleting && mvn -q -o package -DskipTests && java -jar target
 ```
 
 ```bash run
-curl -i -X PUT localhost:8080/products/2 -H "Content-Type: application/json" -d '{"name": "Filter coffee (large)", "pricePaise": 3500, "stock": 20}'
+curl -i -X PUT localhost:8080/products/2 -H "Content-Type: application/json" -d '{"name": "Fruit custard (large)", "pricePaise": 3500, "stock": 20}'
 ```
 
 Now see rule 2 for yourself: PUT again **without** `stock`:
 
 ```bash run
-curl -X PUT localhost:8080/products/2 -H "Content-Type: application/json" -d '{"name": "Filter coffee (large)", "pricePaise": 3500}'
+curl -X PUT localhost:8080/products/2 -H "Content-Type: application/json" -d '{"name": "Fruit custard (large)", "pricePaise": 3500}'
 ```
 
 ```text
-{"id":2,"name":"Filter coffee (large)","pricePaise":3500,"stock":0}
+{"id":2,"name":"Fruit custard (large)","pricePaise":3500,"stock":0}
 ```
 
 The stock is now 0. Not a bug in your code: that is what "replace the whole thing" means. Press **Check**.
@@ -181,14 +181,14 @@ At the second TODO, add **`PATCH /products/{id}`** with a `ProductPatch` body: e
 `null` replaces the old value, each `null` keeps it. Answer `200` with the updated product, or `404` if
 there is no such product.
 
-Rebuild, run, and change just the price of the mango lassi:
+Rebuild, run, and change just the price of the mango kulfi:
 
 ```bash run
 curl -X PATCH localhost:8080/products/1 -H "Content-Type: application/json" -d '{"pricePaise": 2200}'
 ```
 
 ```text
-{"id":1,"name":"Mango lassi","pricePaise":2200,"stock":40}
+{"id":1,"name":"Mango kulfi","pricePaise":2200,"stock":40}
 ```
 
 The price changed; the name and the stock (40) did not. Press **Check**.

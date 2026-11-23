@@ -220,7 +220,7 @@ Content-Type: application/json
 Transfer-Encoding: chunked
 Date: Sat, 21 Nov 2026 11:25:13 GMT
 
-[{"id":1,"name":"Mango lassi","pricePaise":2000},{"id":2,"name":"Samosa","pricePaise":1800},{"id":3,"name":"Filter coffee","pricePaise":3000}]
+[{"id":1,"name":"Mango kulfi","pricePaise":2000},{"id":2,"name":"Samosa","pricePaise":1800},{"id":3,"name":"Fruit custard","pricePaise":3000}]
 ```
 
 Read it the way you learned: status `200`, so it worked. `Content-Type: application/json`, so the body is
@@ -354,9 +354,9 @@ hide the action in the path.
 :::question
 Which of these is valid JSON?
 :::
-- [ ] {'name': 'Lassi', 'price': 20}
-- [ ] {name: "Lassi", price: 20}
-- [x] {"name": "Lassi", "price": 20}
+- [ ] {'name': 'Kulfi', 'price': 20}
+- [ ] {name: "Kulfi", price: 20}
+- [x] {"name": "Kulfi", "price": 20}
 :::explain
 JSON needs double quotes around names and string values. Single quotes, or names without quotes, are
 fine in JavaScript code but not in JSON.

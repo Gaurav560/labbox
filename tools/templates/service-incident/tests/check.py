@@ -26,7 +26,7 @@ def nodes(plan):
 
 
 try:
-    conn = psycopg.connect(host="db", user="postgres", password="labpass", dbname="tapri", connect_timeout=5)
+    conn = psycopg.connect(host="db", user="postgres", password="labpass", dbname="shop", connect_timeout=5)
 except Exception as e:
     report("add_index", False, f"Could not connect to the database: {e}")
     raise SystemExit(0)

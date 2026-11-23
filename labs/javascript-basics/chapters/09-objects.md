@@ -149,7 +149,7 @@ Then press **Check**.
 In `cart.js`, make `withDiscount(item, percent)` give back a **new** item with the price lowered by `percent`, rounded
 to two decimals. The item it was given must not change.
 
-`withDiscount({ name: "juice", price: 20 }, 10)` gives `{ name: "juice", price: 18 }`, and the original still costs 20.
+`withDiscount({ name: "jelly", price: 20 }, 10)` gives `{ name: "jelly", price: 18 }`, and the original still costs 20.
 
 ```bash run
 cd /workspace/09-objects && node cart.js

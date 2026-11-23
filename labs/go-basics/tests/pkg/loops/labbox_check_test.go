@@ -38,7 +38,7 @@ func TestLabboxCheckSumTo(t *testing.T) {
 
 func TestLabboxCheckCountVowels(t *testing.T) {
 	defer guard("count_vowels")
-	cases := map[string]int{"Hello World": 3, "AEIOU": 5, "rhythm": 0, "": 0, "Go is fun": 3, "naive cafe": 5}
+	cases := map[string]int{"Hello World": 3, "AEIOU": 5, "rhythm": 0, "": 0, "Go is fun": 3, "naive jose": 5}
 	for in, want := range cases {
 		if got := CountVowels(in); got != want {
 			report("count_vowels", false, fmt.Sprintf("CountVowels(%q) returned %d", in, got), want, got)

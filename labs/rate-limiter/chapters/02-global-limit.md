@@ -1,5 +1,5 @@
 :::step{type=story title="Ten polite partners"}
-:::character{name="Kabir" role="Backend lead, Brew Point"}
+:::character{name="Kabir" role="Backend lead, Book Point"}
 Good news: every partner now stays under 10 a second. Bad news: we have ten partners, and our quotes
 database falls over above 50 requests a second in total. Each partner is polite; together they are not.
 :::

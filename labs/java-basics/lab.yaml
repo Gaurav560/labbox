@@ -12,7 +12,7 @@ tags:
 - beginner
 level: beginner
 estimated_minutes: 815
-cover_scene: A calm desk with a laptop showing a few lines of Java and a coffee cup, soft morning light.
+cover_scene: A calm desk with a laptop showing a few lines of Java and a small potted plant, soft morning light.
 cover: cover.svg
 cover_credit:
   by: 'Logos: duke-waving,java'
@@ -349,10 +349,10 @@ chapters:
     hints:
     - A HashMap<String, Integer> holds one count per word.
     - getOrDefault(word, 0) gives the count so far, or 0 the first time.
-    - Lower-case each word before counting, so Juice and juice count together.
+    - Lower-case each word before counting, so Jelly and jelly count together.
     examples:
-    - call: count([juice, Coffee, JUICE, juice])
-      gives: '{coffee=1, juice=3}'
+    - call: count([jelly, Cookie, JELLY, jelly])
+      gives: '{cookie=1, jelly=3}'
     - call: count([])
       gives: '{}'
 - id: generics-records-enums

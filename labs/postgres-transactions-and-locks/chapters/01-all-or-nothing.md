@@ -1,5 +1,5 @@
 :::step{type=story title="Money that vanishes"}
-:::character{name="Kabir" role="Backend lead, Brew Point"}
+:::character{name="Kabir" role="Backend lead, Book Point"}
 Customers can send loyalty money to friends. This week Sana's wallet went to minus 25 rupees, and
 one transfer took money from Asha and gave it to nobody: the app crashed halfway. Money must never
 appear, vanish, or go below zero. The database can promise that; the app cannot.

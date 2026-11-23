@@ -12,7 +12,7 @@ function withDiscount(item, percent) {
 
 if (require.main === module) {
   console.log(cartTotal([{ price: 20, qty: 2 }, { price: 15, qty: 1 }]));
-  console.log(withDiscount({ name: "juice", price: 20 }, 10));
+  console.log(withDiscount({ name: "jelly", price: 20 }, 10));
 }
 
 module.exports = { cartTotal, withDiscount };

@@ -15,8 +15,8 @@ track: languages            # languages | frameworks | databases | devops | syst
 tags: [python]
 level: beginner             # beginner | intermediate | advanced
 story:
-  company: Dabba Express
-  character: { name: Priya, role: "Founder, Dabba Express" }
+  company: Thali House
+  character: { name: Priya, role: "Founder, Thali House" }
   pitch: One line of story for the lab card.
 cover_scene: "One line: what the cover diorama shows."
 chapters:

@@ -256,8 +256,8 @@ chapters:
     - includes tells you whether an array already holds a value.
     - Loop over items, and push an item when the new array does not include it yet.
     examples:
-    - call: unique(["juice", "coffee", "juice", "milk"])
-      gives: '["juice", "coffee", "milk"]'
+    - call: unique(["jelly", "cookie", "jelly", "mint"])
+      gives: '["jelly", "cookie", "mint"]'
     - call: unique([])
       gives: '[]'
 - id: 07-objects
@@ -284,8 +284,8 @@ chapters:
     - '{ ...item } copies every field into a new object.'
     - After the copy, give the new object a price lowered by percent, rounded to paise.
     examples:
-    - call: 'withDiscount({ name: "juice", price: 20 }, 10)'
-      gives: '{ name: "juice", price: 18 }'
+    - call: 'withDiscount({ name: "jelly", price: 20 }, 10)'
+      gives: '{ name: "jelly", price: 18 }'
       note: the item passed in stays as it was
 - id: 08-objects-and-sets
   title: Counting with objects, sets and maps
@@ -300,8 +300,8 @@ chapters:
     - counts[key] is undefined the first time; ?? 0 turns that into 0.
     - For each word, store the count so far plus one under its key.
     examples:
-    - call: wordCounts(["juice", "Coffee", "JUICE", "juice"])
-      gives: '{ juice: 3, coffee: 1 }'
+    - call: wordCounts(["jelly", "Cookie", "JELLY", "jelly"])
+      gives: '{ jelly: 3, cookie: 1 }'
     - call: wordCounts([])
       gives: '{}'
   - id: common_items
@@ -311,8 +311,8 @@ chapters:
     - Make a Set from b, then keep the items of a that it has.
     - Remove the repeats from a with a Set too, then sort the result.
     examples:
-    - call: commonItems(["toast", "coffee", "milk"], ["milk", "toast", "juice"])
-      gives: '["milk", "toast"]'
+    - call: commonItems(["toast", "cookie", "mint"], ["mint", "toast", "jelly"])
+      gives: '["mint", "toast"]'
 - id: 09-array-methods
   title: Array methods and arrow functions
   file: chapters/11-array-methods.md
@@ -437,7 +437,7 @@ chapters:
     - Call fetchPrice for every item first, without await, to get an array of promises.
     - Promise.all waits for all of them and keeps their order.
     examples:
-    - call: fetchAll(["coffee", "bun"], fetchPrice)
+    - call: fetchAll(["cookie", "bun"], fetchPrice)
       gives: '[30, 15]'
       note: same order as the items
     - call: four fetches of about 100 ms

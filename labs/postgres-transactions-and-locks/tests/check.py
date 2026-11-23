@@ -146,7 +146,7 @@ def idle_timeout(conn):
         settings = [r[0] for r in cur.fetchall()]
     value = next((s.split("=", 1)[1] for s in settings if s.startswith("idle_in_transaction_session_timeout=")), None)
     if value is None:
-        return report("idle_timeout", False, "The tapri database has no idle_in_transaction_session_timeout yet.", "a timeout on the database", "none")
+        return report("idle_timeout", False, "The shop database has no idle_in_transaction_session_timeout yet.", "a timeout on the database", "none")
     m = re.fullmatch(r"(\d+)\s*(ms|s|min)?", value.strip())
     if not m:
         return report("idle_timeout", False, f"Could not read the timeout {value!r}.")
@@ -159,7 +159,7 @@ def idle_timeout(conn):
 
 
 try:
-    conn = psycopg.connect(host="db", user="postgres", password="labpass", dbname="tapri", connect_timeout=5, autocommit=True)
+    conn = psycopg.connect(host="db", user="postgres", password="labpass", dbname="shop", connect_timeout=5, autocommit=True)
 except Exception as e:
     for t in TASKS:
         report(t, False, f"Could not connect to the database: {e}")

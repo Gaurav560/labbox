@@ -162,7 +162,7 @@ Rebuild, run, and try:
 curl localhost:8080/products/budget
 ```
 
-You should get the mango lassi, the filter coffee and the samosa; not the paneer roll (Rs 90). Press **Check**.
+You should get the mango kulfi, the fruit custard and the samosa; not the paneer roll (Rs 90). Press **Check**.
 :::
 
 :::step{type=concept title="Where do things go? A quick guide"}

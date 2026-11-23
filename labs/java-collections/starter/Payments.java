@@ -27,10 +27,10 @@ public class Payments {
 
     public static void main(String[] args) {
         List<Payment> today = List.of(
-                new Payment("Brew Point", 2000), new Payment("Kirana King", 15000), new Payment("Brew Point", 3000));
+                new Payment("Book Point", 2000), new Payment("Kirana King", 15000), new Payment("Book Point", 3000));
         System.out.println(totalPaise(today));        // 20000
-        System.out.println(totalsByMerchant(today));  // {Brew Point=5000, Kirana King=15000}
-        System.out.println(uniqueMerchants(today));   // [Brew Point, Kirana King]
+        System.out.println(totalsByMerchant(today));  // {Book Point=5000, Kirana King=15000}
+        System.out.println(uniqueMerchants(today));   // [Book Point, Kirana King]
         System.out.println(topMerchants(today, 1));   // [Kirana King]
     }
 }

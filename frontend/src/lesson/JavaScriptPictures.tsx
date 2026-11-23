@@ -123,8 +123,8 @@ export function InitialAndTail() {
 export function SearchSigns() {
   return (
     <Fork
-      label="Coffee appears at slot one. One sign answers present and the other answers slot one."
-      input="coffee"
+      label="Cookie appears at slot one. One sign answers present and the other answers slot one."
+      input="cookie"
       paths={[["is it there?", "yes"], ["where is it?", "slot 1"]]}
     />
   );
@@ -133,10 +133,10 @@ export function SearchSigns() {
 export function CartShelves() {
   return (
     <Board
-      label="Cart slot zero holds juice, 20 and two. Slot one holds bun, 15 and one."
+      label="Cart slot zero holds jelly, 20 and two. Slot one holds bun, 15 and one."
       rows={[
         { left: "fields", right: ["name", "price", "qty"] },
-        { left: "slot 0", right: ["juice", "20", "2"] },
+        { left: "slot 0", right: ["jelly", "20", "2"] },
         { left: "slot 1", right: ["bun", "15", "1"] },
       ]}
     />

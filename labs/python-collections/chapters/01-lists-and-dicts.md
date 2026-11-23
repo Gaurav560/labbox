@@ -1,6 +1,6 @@
-:::step{type=story title="900 tiffins a day"}
-:::character{name="Priya" role="Founder, Dabba Express"}
-We went from 300 to 900 tiffins a day, and my order sheet is a mess of copy and paste.
+:::step{type=story title="900 meals a day"}
+:::character{name="Priya" role="Founder, Thali House"}
+We went from 300 to 900 meals a day, and my order sheet is a mess of copy and paste.
 I need two answers every morning: how much each office owes, and which dishes to cook more of.
 :::
 

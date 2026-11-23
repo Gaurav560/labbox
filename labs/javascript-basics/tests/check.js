@@ -158,25 +158,25 @@ const CHAPTERS = {
       if (!same(nums, [72, 45, 90, 66])) { fail("top_n", `topN changed the array it was given: it is now ${show(nums)}. Sort a copy: [...numbers].`, show([72, 45, 90, 66]), show(nums)); ok = false; }
     }
     if (ok) pass("top_n");
-    if (cases("unique", m, "unique", [[[["juice", "coffee", "juice", "milk"]], ["juice", "coffee", "milk"]], [[[3, 1, 3, 2, 1]], [3, 1, 2]], [[[]], []]])) pass("unique");
+    if (cases("unique", m, "unique", [[[["jelly", "cookie", "jelly", "mint"]], ["jelly", "cookie", "mint"]], [[[3, 1, 3, 2, 1]], [3, 1, 2]], [[[]], []]])) pass("unique");
   }],
   "07-objects": ["09-objects/cart.js", (m) => {
-    const cart = [{ name: "juice", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }];
+    const cart = [{ name: "jelly", price: 20, qty: 2 }, { name: "bun", price: 15, qty: 1 }];
     if (cases("cart_total", m, "cartTotal", [[[cart], 55], [[[]], 0], [[[{ name: "pen", price: 12.5, qty: 4 }]], 50]], (a, got) =>
       got === 35 ? "Multiply each price by its qty before adding." : "")) pass("cart_total");
-    let ok = cases("with_discount", m, "withDiscount", [[[{ name: "juice", price: 20 }, 10], { name: "juice", price: 18 }], [[{ name: "bag", price: 999, stock: 3 }, 50], { name: "bag", price: 499.5, stock: 3 }]], (a, got) =>
+    let ok = cases("with_discount", m, "withDiscount", [[[{ name: "jelly", price: 20 }, 10], { name: "jelly", price: 18 }], [[{ name: "bag", price: 999, stock: 3 }, 50], { name: "bag", price: 499.5, stock: 3 }]], (a, got) =>
       got && got.name === undefined ? "Keep every other field: start the new object with ...item." : "");
     if (ok) {
-      const item = { name: "juice", price: 20 };
+      const item = { name: "jelly", price: 20 };
       m.withDiscount(item, 10);
       if (item.price !== 20) { fail("with_discount", "withDiscount changed the item it was given. Build a new object: { ...item, price: ... }.", "20", show(item.price)); ok = false; }
     }
     if (ok) pass("with_discount");
   }],
   "08-objects-and-sets": ["10-counting/counting.js", (m) => {
-    if (cases("word_counts", m, "wordCounts", [[[["juice", "Coffee", "JUICE", "juice"]], { juice: 3, coffee: 1 }], [[[]], {}]], (a, got) =>
-      got && got.JUICE ? "Lower-case each word before counting." : "")) pass("word_counts");
-    if (cases("common_items", m, "commonItems", [[[["toast", "coffee", "milk"], ["milk", "toast", "juice"]], ["milk", "toast"]], [[["b", "a", "b"], ["b", "b", "a"]], ["a", "b"]], [[[], ["juice"]], []]], (a, got) =>
+    if (cases("word_counts", m, "wordCounts", [[[["jelly", "Cookie", "JELLY", "jelly"]], { jelly: 3, cookie: 1 }], [[[]], {}]], (a, got) =>
+      got && got.JELLY ? "Lower-case each word before counting." : "")) pass("word_counts");
+    if (cases("common_items", m, "commonItems", [[[["toast", "cookie", "mint"], ["mint", "toast", "jelly"]], ["mint", "toast"]], [[["b", "a", "b"], ["b", "b", "a"]], ["a", "b"]], [[[], ["jelly"]], []]], (a, got) =>
       Array.isArray(got) && new Set(got).size !== got.length ? "Each item once: a Set removes the repeats." : "Sort the result so the order is always the same.")) pass("common_items");
   }],
   "09-array-methods": ["11-array-methods/marks.js", (m) => {
@@ -259,7 +259,7 @@ const CHAPTERS = {
         return new Promise((ok) => setTimeout(() => { running--; ok(item.length * 5); }, 150 - item.length * 10));
       };
       const started = Date.now();
-      const got = await m.fetchAll(["coffee", "bun", "samosa", "poha"], fetchPrice);
+      const got = await m.fetchAll(["cookie", "bun", "samosa", "poha"], fetchPrice);
       if (!same(got, [30, 15, 30, 20])) fail("fetch_all", "The prices must come back in the order of the items. Promise.all keeps that order for you.", show([30, 15, 30, 20]), show(got));
       else if (most < 4) fail("fetch_all", `The fetches ran one after another (${Date.now() - started} ms). Start them all, then await them together.`, "4 at once", `${most} at once`);
       else pass("fetch_all");

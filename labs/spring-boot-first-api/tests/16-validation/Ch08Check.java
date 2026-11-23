@@ -23,8 +23,8 @@ class Ch08Check {
     void validateProduct() {
         R.task("validate_product", () -> {
             String[][] bad = {{"{\"name\": \"\", \"pricePaise\": 2000}", "an empty name"},
-                    {"{\"name\": \"Lassi\", \"pricePaise\": 0}", "a price of 0"},
-                    {"{\"name\": \"Lassi\", \"pricePaise\": -5}", "a negative price"},
+                    {"{\"name\": \"Kulfi\", \"pricePaise\": 0}", "a price of 0"},
+                    {"{\"name\": \"Kulfi\", \"pricePaise\": -5}", "a negative price"},
                     {"{\"name\": \"" + "x".repeat(41) + "\", \"pricePaise\": 2000}", "a 41-character name"}};
             for (String[] b : bad) {
                 int code = send("/products", b[0]);
@@ -33,7 +33,7 @@ class Ch08Check {
                     return;
                 }
             }
-            int ok = send("/products", "{\"name\": \"Lassi\", \"pricePaise\": 2000}");
+            int ok = send("/products", "{\"name\": \"Kulfi\", \"pricePaise\": 2000}");
             if (ok != 201) {
                 R.fail("validate_product", "A valid product should still be created.", "201", String.valueOf(ok));
             } else {

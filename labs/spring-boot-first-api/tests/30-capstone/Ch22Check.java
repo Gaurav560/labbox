@@ -36,8 +36,8 @@ class Ch22Check {
     @Test
     void checkoutHappyPath() {
         R.task("checkout", () -> {
-            int lassiBefore = qty("LAS-1");
-            MvcResult r = checkout("{\"customerEmail\": \"asha@shop.in\", \"items\": [{\"sku\": \"LAS-1\", \"quantity\": 2}, {\"sku\": \"COF-1\", \"quantity\": 1}]}");
+            int kulfiBefore = qty("KUL-1");
+            MvcResult r = checkout("{\"customerEmail\": \"asha@shop.in\", \"items\": [{\"sku\": \"KUL-1\", \"quantity\": 2}, {\"sku\": \"CUS-1\", \"quantity\": 1}]}");
             int code = r.getResponse().getStatus();
             String location = r.getResponse().getHeader("Location");
             if (code == 404 || code == 405) {
@@ -48,9 +48,9 @@ class Ch22Check {
             if (code != 201 || location == null || !location.matches(".*/orders/[0-9]+$")) {
                 R.fail("checkout", "A checkout should answer 201 Created with a Location /orders/{id}.", "201, Location /orders/1", code + ", Location " + location);
             } else if (!Integer.valueOf(7000).equals(order.get("totalPaise"))) {
-                R.fail("checkout", "The total should be 2 lassis (2 x 2000) plus 1 coffee (3000).", "7000", String.valueOf(order.get("totalPaise")));
-            } else if (qty("LAS-1") != lassiBefore - 2) {
-                R.fail("checkout", "The stock should go down by what was bought.", "LAS-1: " + (lassiBefore - 2), "LAS-1: " + qty("LAS-1"));
+                R.fail("checkout", "The total should be 2 kulfis (2 x 2000) plus 1 custard (3000).", "7000", String.valueOf(order.get("totalPaise")));
+            } else if (qty("KUL-1") != kulfiBefore - 2) {
+                R.fail("checkout", "The stock should go down by what was bought.", "KUL-1: " + (kulfiBefore - 2), "KUL-1: " + qty("KUL-1"));
             } else if (mvc.perform(get(location)).andReturn().getResponse().getStatus() != 200) {
                 R.fail("checkout", "The order should be saved and readable at its Location.");
             } else {
@@ -64,15 +64,15 @@ class Ch22Check {
         R.task("checkout_errors", () -> {
             MvcResult bad = checkout("{\"customerEmail\": \"not-an-email\", \"items\": []}");
             Map<?, ?> p = bad.getResponse().getContentAsString().startsWith("{") ? json.readValue(bad.getResponse().getContentAsString(), Map.class) : Map.of();
-            int lassiBefore = qty("LAS-1");
-            MvcResult oos = checkout("{\"customerEmail\": \"ravi@shop.in\", \"items\": [{\"sku\": \"LAS-1\", \"quantity\": 1}, {\"sku\": \"SAM-1\", \"quantity\": 5}]}");
+            int kulfiBefore = qty("KUL-1");
+            MvcResult oos = checkout("{\"customerEmail\": \"ravi@shop.in\", \"items\": [{\"sku\": \"KUL-1\", \"quantity\": 1}, {\"sku\": \"SAM-1\", \"quantity\": 5}]}");
             Map<?, ?> o = oos.getResponse().getContentAsString().startsWith("{") ? json.readValue(oos.getResponse().getContentAsString(), Map.class) : Map.of();
             if (bad.getResponse().getStatus() != 400 || !"Invalid request".equals(p.get("title")) || !(p.get("errors") instanceof Map<?, ?> e) || !e.containsKey("customerEmail") || !e.containsKey("items")) {
                 R.fail("checkout_errors", "An invalid checkout should answer 400 with a ProblemDetail titled Invalid request and errors for customerEmail and items.", "400 {\"title\":\"Invalid request\",\"errors\":{...}}", bad.getResponse().getStatus() + " " + bad.getResponse().getContentAsString());
             } else if (oos.getResponse().getStatus() != 409 || !"Out of stock".equals(o.get("title")) || !"SAM-1".equals(o.get("sku"))) {
                 R.fail("checkout_errors", "An out-of-stock checkout should answer 409 with a ProblemDetail titled Out of stock and the sku.", "409 {\"title\":\"Out of stock\",\"sku\":\"SAM-1\"}", oos.getResponse().getStatus() + " " + oos.getResponse().getContentAsString());
-            } else if (qty("LAS-1") != lassiBefore) {
-                R.fail("checkout_errors", "The samosas ran out, but the lassi was still taken: the checkout must be one transaction.", "LAS-1: " + lassiBefore, "LAS-1: " + qty("LAS-1"));
+            } else if (qty("KUL-1") != kulfiBefore) {
+                R.fail("checkout_errors", "The samosas ran out, but the kulfi was still taken: the checkout must be one transaction.", "KUL-1: " + kulfiBefore, "KUL-1: " + qty("KUL-1"));
             } else {
                 R.pass("checkout_errors", "Every failure is a clear ProblemDetail, and a failed checkout changes nothing. You have built a real Spring Boot API.");
             }

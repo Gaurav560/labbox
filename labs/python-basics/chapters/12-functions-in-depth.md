@@ -127,11 +127,11 @@ def add_item(item, basket=[]):
 It looks harmless: "add the item to the basket, or to a new empty basket if none was given". Call it twice:
 
 ```python
-add_item("milk")     # ['milk']
-add_item("bread")    # ['milk', 'bread']   ... wait, what?
+add_item("mint")     # ['mint']
+add_item("bread")    # ['mint', 'bread']   ... wait, what?
 ```
 
-The second customer got the first customer's milk! Here is why. A default value is created **once**, when Python
+The second customer got the first customer's mint! Here is why. A default value is created **once**, when Python
 reads the `def` line, not each time the function is called. So every call without a basket shares the **same**
 list, and it keeps growing. It is chapter 8's "two names, one list", hidden inside a function.
 
@@ -158,7 +158,7 @@ def log(message, history=None):
 With the buggy `add_item`, what does a **third** call, `add_item("eggs")`, give back?
 :::
 - [ ] `['eggs']`
-- [x] `['milk', 'bread', 'eggs']`
+- [x] `['mint', 'bread', 'eggs']`
 - [ ] An error
 :::explain
 All three calls share the one default list made when `def` ran, so it keeps everything ever added to it.
@@ -168,13 +168,13 @@ All three calls share the one default list made when `def` ran, so it keeps ever
 :::step{type=task task=add_item title="Your turn: fix the basket that never empties"}
 Fix `add_item` in `functions.py`, so every call without a basket starts with its own, new, empty basket.
 
-- `add_item("milk")` gives `["milk"]`, and then `add_item("bread")` gives `["bread"]`.
-- With a basket given, it still adds to that basket: `add_item("juice", ["milk"])` gives `["milk", "juice"]`.
+- `add_item("mint")` gives `["mint"]`, and then `add_item("bread")` gives `["bread"]`.
+- With a basket given, it still adds to that basket: `add_item("jelly", ["mint"])` gives `["mint", "jelly"]`.
 
 Use the pattern from the trap step.
 
 ```bash run
-cd /workspace/12-functions-in-depth && python3 -c "from functions import add_item; print(add_item('milk')); print(add_item('bread'))"
+cd /workspace/12-functions-in-depth && python3 -c "from functions import add_item; print(add_item('mint')); print(add_item('bread'))"
 ```
 
 Then press **Check**.

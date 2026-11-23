@@ -1,4 +1,4 @@
-# Tapri Counter: order database
+# Dosa Counter: order database
 
 You are connected to the production-like database already: `psql` needs no arguments.
 

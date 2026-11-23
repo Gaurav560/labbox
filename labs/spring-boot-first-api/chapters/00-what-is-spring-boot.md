@@ -77,7 +77,7 @@ It says: *get* me the thing at the address `/products`. The server answers with 
 and the data, usually written as **JSON**:
 
 ```json
-[{"id": 1, "name": "Mango lassi", "price": 20}, {"id": 2, "name": "Samosa", "price": 18}]
+[{"id": 1, "name": "Mango kulfi", "price": 20}, {"id": 2, "name": "Samosa", "price": 18}]
 ```
 
 Chapter 1 goes through HTTP and JSON properly, with a real server you can poke at. For now, keep just

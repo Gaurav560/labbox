@@ -10,6 +10,6 @@ public class WordCounter {
     }
 
     public static void main(String[] args) {
-        System.out.println(count(List.of("juice", "Coffee", "JUICE", "juice")));
+        System.out.println(count(List.of("jelly", "Cookie", "JELLY", "jelly")));
     }
 }

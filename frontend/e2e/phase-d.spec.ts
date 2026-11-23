@@ -52,7 +52,7 @@ test("FastAPI app in the Preview tab", async ({ page }) => {
 
   await page.getByRole("tab", { name: "Preview" }).click();
   const frame = page.frameLocator("iframe.preview-frame");
-  await expect(frame.locator("body")).toContainText("Welcome to Ravi's Tapri", { timeout: 20_000 });
+  await expect(frame.locator("body")).toContainText("Welcome to Ravi's Snack Corner", { timeout: 20_000 });
   await page.getByLabel("Path").fill("/menu");
   await page.getByRole("button", { name: "Go" }).click();
   await expect(frame.locator("body")).toContainText("Not Found"); // starter: no /menu yet
@@ -74,7 +74,7 @@ public class MerchantController {
     public String hello() { return "Hello from the Shop API!"; }
 
     @GetMapping("/merchants")
-    public List<String> merchants() { return List.of("Annapurna Mess", "Brew Point", "Kirana King"); }
+    public List<String> merchants() { return List.of("Annapurna Mess", "Book Point", "Kirana King"); }
 }
 `;
   await page.goto("/labs/spring-boot-first-api?chapter=03-first-endpoints");

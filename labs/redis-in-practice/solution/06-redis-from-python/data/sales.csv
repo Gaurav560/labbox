@@ -9,7 +9,7 @@ store01,paneer,69
 store01,bread,13
 store01,potatoes,47
 store01,tomatoes,75
-store01,milk,8
+store01,mint,8
 store01,curd,65
 store01,butter,28
 store01,ghee,5
@@ -59,7 +59,7 @@ store02,paneer,92
 store02,bread,9
 store02,potatoes,73
 store02,tomatoes,8
-store02,milk,80
+store02,mint,80
 store02,curd,27
 store02,butter,64
 store02,ghee,88
@@ -109,7 +109,7 @@ store03,paneer,77
 store03,bread,64
 store03,potatoes,75
 store03,tomatoes,59
-store03,milk,9
+store03,mint,9
 store03,curd,12
 store03,butter,35
 store03,ghee,61
@@ -159,7 +159,7 @@ store04,paneer,36
 store04,bread,91
 store04,potatoes,54
 store04,tomatoes,46
-store04,milk,88
+store04,mint,88
 store04,curd,49
 store04,butter,30
 store04,ghee,20
@@ -209,7 +209,7 @@ store05,paneer,27
 store05,bread,57
 store05,potatoes,21
 store05,tomatoes,15
-store05,milk,44
+store05,mint,44
 store05,curd,77
 store05,butter,7
 store05,ghee,14
@@ -259,7 +259,7 @@ store06,paneer,89
 store06,bread,70
 store06,potatoes,4
 store06,tomatoes,98
-store06,milk,68
+store06,mint,68
 store06,curd,39
 store06,butter,83
 store06,ghee,12
@@ -309,7 +309,7 @@ store07,paneer,30
 store07,bread,61
 store07,potatoes,26
 store07,tomatoes,44
-store07,milk,27
+store07,mint,27
 store07,curd,62
 store07,butter,80
 store07,ghee,79
@@ -359,7 +359,7 @@ store08,paneer,17
 store08,bread,3
 store08,potatoes,2
 store08,tomatoes,93
-store08,milk,84
+store08,mint,84
 store08,curd,14
 store08,butter,68
 store08,ghee,96
@@ -409,7 +409,7 @@ store09,paneer,16
 store09,bread,72
 store09,potatoes,8
 store09,tomatoes,42
-store09,milk,88
+store09,mint,88
 store09,curd,67
 store09,butter,68
 store09,ghee,72
@@ -459,7 +459,7 @@ store10,paneer,41
 store10,bread,10
 store10,potatoes,86
 store10,tomatoes,31
-store10,milk,55
+store10,mint,55
 store10,curd,10
 store10,butter,28
 store10,ghee,86
@@ -509,7 +509,7 @@ store11,paneer,80
 store11,bread,38
 store11,potatoes,66
 store11,tomatoes,9
-store11,milk,15
+store11,mint,15
 store11,curd,30
 store11,butter,14
 store11,ghee,11
@@ -559,7 +559,7 @@ store12,paneer,80
 store12,bread,17
 store12,potatoes,6
 store12,tomatoes,68
-store12,milk,91
+store12,mint,91
 store12,curd,31
 store12,butter,15
 store12,ghee,21
@@ -609,7 +609,7 @@ store13,paneer,30
 store13,bread,44
 store13,potatoes,26
 store13,tomatoes,91
-store13,milk,94
+store13,mint,94
 store13,curd,82
 store13,butter,18
 store13,ghee,52
@@ -659,7 +659,7 @@ store14,paneer,11
 store14,bread,61
 store14,potatoes,36
 store14,tomatoes,65
-store14,milk,84
+store14,mint,84
 store14,curd,26
 store14,butter,32
 store14,ghee,65
@@ -709,7 +709,7 @@ store15,paneer,68
 store15,bread,97
 store15,potatoes,65
 store15,tomatoes,73
-store15,milk,3
+store15,mint,3
 store15,curd,88
 store15,butter,75
 store15,ghee,92
@@ -759,7 +759,7 @@ store16,paneer,27
 store16,bread,30
 store16,potatoes,95
 store16,tomatoes,84
-store16,milk,59
+store16,mint,59
 store16,curd,64
 store16,butter,49
 store16,ghee,10
@@ -809,7 +809,7 @@ store17,paneer,26
 store17,bread,40
 store17,potatoes,11
 store17,tomatoes,61
-store17,milk,3
+store17,mint,3
 store17,curd,38
 store17,butter,59
 store17,ghee,10
@@ -859,7 +859,7 @@ store18,paneer,1
 store18,bread,42
 store18,potatoes,97
 store18,tomatoes,44
-store18,milk,51
+store18,mint,51
 store18,curd,16
 store18,butter,26
 store18,ghee,92
@@ -909,7 +909,7 @@ store19,paneer,53
 store19,bread,58
 store19,potatoes,79
 store19,tomatoes,97
-store19,milk,18
+store19,mint,18
 store19,curd,83
 store19,butter,37
 store19,ghee,63
@@ -959,7 +959,7 @@ store20,paneer,23
 store20,bread,44
 store20,potatoes,72
 store20,tomatoes,12
-store20,milk,41
+store20,mint,41
 store20,curd,31
 store20,butter,48
 store20,ghee,34
@@ -1009,7 +1009,7 @@ store21,paneer,63
 store21,bread,1
 store21,potatoes,10
 store21,tomatoes,51
-store21,milk,68
+store21,mint,68
 store21,curd,60
 store21,butter,58
 store21,ghee,32
@@ -1059,7 +1059,7 @@ store22,paneer,1
 store22,bread,2
 store22,potatoes,69
 store22,tomatoes,39
-store22,milk,59
+store22,mint,59
 store22,curd,36
 store22,butter,41
 store22,ghee,83
@@ -1109,7 +1109,7 @@ store23,paneer,26
 store23,bread,40
 store23,potatoes,99
 store23,tomatoes,25
-store23,milk,30
+store23,mint,30
 store23,curd,60
 store23,butter,29
 store23,ghee,34
@@ -1159,7 +1159,7 @@ store24,paneer,86
 store24,bread,93
 store24,potatoes,49
 store24,tomatoes,48
-store24,milk,43
+store24,mint,43
 store24,curd,57
 store24,butter,22
 store24,ghee,14
@@ -1209,7 +1209,7 @@ store25,paneer,25
 store25,bread,96
 store25,potatoes,9
 store25,tomatoes,78
-store25,milk,44
+store25,mint,44
 store25,curd,47
 store25,butter,35
 store25,ghee,43
@@ -1259,7 +1259,7 @@ store26,paneer,66
 store26,bread,26
 store26,potatoes,51
 store26,tomatoes,97
-store26,milk,21
+store26,mint,21
 store26,curd,32
 store26,butter,53
 store26,ghee,9
@@ -1309,7 +1309,7 @@ store27,paneer,57
 store27,bread,32
 store27,potatoes,24
 store27,tomatoes,32
-store27,milk,31
+store27,mint,31
 store27,curd,20
 store27,butter,37
 store27,ghee,75
@@ -1359,7 +1359,7 @@ store28,paneer,80
 store28,bread,45
 store28,potatoes,28
 store28,tomatoes,5
-store28,milk,48
+store28,mint,48
 store28,curd,44
 store28,butter,19
 store28,ghee,6
@@ -1409,7 +1409,7 @@ store29,paneer,40
 store29,bread,96
 store29,potatoes,73
 store29,tomatoes,46
-store29,milk,54
+store29,mint,54
 store29,curd,54
 store29,butter,3
 store29,ghee,99
@@ -1459,7 +1459,7 @@ store30,paneer,63
 store30,bread,97
 store30,potatoes,26
 store30,tomatoes,39
-store30,milk,17
+store30,mint,17
 store30,curd,6
 store30,butter,62
 store30,ghee,41
@@ -1509,7 +1509,7 @@ store31,paneer,81
 store31,bread,40
 store31,potatoes,84
 store31,tomatoes,54
-store31,milk,40
+store31,mint,40
 store31,curd,75
 store31,butter,32
 store31,ghee,55
@@ -1559,7 +1559,7 @@ store32,paneer,97
 store32,bread,65
 store32,potatoes,49
 store32,tomatoes,84
-store32,milk,18
+store32,mint,18
 store32,curd,4
 store32,butter,9
 store32,ghee,79
@@ -1609,7 +1609,7 @@ store33,paneer,49
 store33,bread,22
 store33,potatoes,34
 store33,tomatoes,15
-store33,milk,99
+store33,mint,99
 store33,curd,68
 store33,butter,7
 store33,ghee,82
@@ -1659,7 +1659,7 @@ store34,paneer,38
 store34,bread,79
 store34,potatoes,81
 store34,tomatoes,56
-store34,milk,54
+store34,mint,54
 store34,curd,66
 store34,butter,47
 store34,ghee,7
@@ -1709,7 +1709,7 @@ store35,paneer,8
 store35,bread,83
 store35,potatoes,72
 store35,tomatoes,45
-store35,milk,77
+store35,mint,77
 store35,curd,83
 store35,butter,75
 store35,ghee,57
@@ -1759,7 +1759,7 @@ store36,paneer,92
 store36,bread,69
 store36,potatoes,1
 store36,tomatoes,49
-store36,milk,56
+store36,mint,56
 store36,curd,96
 store36,butter,60
 store36,ghee,11
@@ -1809,7 +1809,7 @@ store37,paneer,77
 store37,bread,31
 store37,potatoes,49
 store37,tomatoes,81
-store37,milk,89
+store37,mint,89
 store37,curd,86
 store37,butter,69
 store37,ghee,61
@@ -1859,7 +1859,7 @@ store38,paneer,47
 store38,bread,26
 store38,potatoes,69
 store38,tomatoes,86
-store38,milk,9
+store38,mint,9
 store38,curd,97
 store38,butter,92
 store38,ghee,50
@@ -1909,7 +1909,7 @@ store39,paneer,4
 store39,bread,53
 store39,potatoes,4
 store39,tomatoes,56
-store39,milk,67
+store39,mint,67
 store39,curd,99
 store39,butter,13
 store39,ghee,45
@@ -1959,7 +1959,7 @@ store40,paneer,11
 store40,bread,63
 store40,potatoes,90
 store40,tomatoes,72
-store40,milk,14
+store40,mint,14
 store40,curd,81
 store40,butter,42
 store40,ghee,46

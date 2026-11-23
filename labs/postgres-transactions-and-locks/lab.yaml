@@ -9,10 +9,10 @@ tags: [postgres, sql, transactions]
 level: intermediate
 estimated_minutes: 40
 story:
-  company: Brew Point
-  character: { name: Kabir, role: "Backend lead, Brew Point" }
+  company: Book Point
+  character: { name: Kabir, role: "Backend lead, Book Point" }
   pitch: "Loyalty money is vanishing and checkout keeps freezing. Both live in the database."
-cover_scene: "A glowing database vault with a padlock, coins moving between two cups."
+cover_scene: "A glowing database vault with a padlock, coins moving between two wallets."
 cover: cover.svg
 cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
 image: labbox/postgres-transactions-and-locks:v1
@@ -21,11 +21,11 @@ workspace:
   mount_path: /workspace
   shell: /bin/bash
   network: lab
-  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: tapri }
+  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: shop }
 services:
   - name: db
     image: postgres:16
-    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: tapri }
+    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: shop }
     resources: { cpus: 1, memory: 512m, pids_limit: 256 }
     command: [postgres, -c, shared_buffers=32MB, -c, work_mem=4MB]
     data: /var/lib/postgresql/data
@@ -75,4 +75,4 @@ chapters:
         hints:
           - "Postgres can end sessions that sit idle inside a transaction for too long, on its own."
           - "The setting is idle_in_transaction_session_timeout. ALTER DATABASE can set it for every new session of one database."
-          - "Set it on the tapri database to something like 60s. SHOW in a new psql session confirms it."
+          - "Set it on the shop database to something like 60s. SHOW in a new psql session confirms it."

@@ -80,11 +80,9 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 **Left in the content, by lab:**
 - The eight short labs: each needs a syllabus (`COURSE_PRODUCTION.md` step 1), the owner's OK, then the full
   rebuild.
-- Drink words still appear in older examples (owner decision pending, `HANDOFF.md`): spring-boot-first-api
-  (71 files), python-basics (22), javascript-basics (14), java-basics (6), go-basics (5), fastapi-first-api (5),
-  javascript-inside-out (5), postgres-indexing-incident, rate-limiter, redis-in-practice (2 each), express-api,
-  java-collections, postgres-transactions-and-locks (1 each). The courses built after the rule (SQL, Git,
-  Linux, Spring AI) have none.
+- Drink examples: none left (owner, 23 November: rewritten in every lab, the app, drills, templates and specs).
+  One internal task id stays, `q_paid_coffee` in sql-from-zero (learner progress is stored under it; it shows only
+  in a code comment). Renaming it needs a data migration: ask first. The owner's own spec files were not touched.
 - The `ai` onboarding goal still starts with python-basics; spring-ai is the natural first lab (owner to decide).
 
 Track skill map data (API only since 22 November; each lab shows its own skill map on its course page):

@@ -33,7 +33,7 @@ class Ch13Check {
             String body = mvc.perform(get("/orders/1")).andReturn().getResponse().getContentAsString();
             Map<?, ?> o = body.startsWith("{") ? new ObjectMapper().readValue(body, Map.class) : Map.of();
             if (!Integer.valueOf(2).equals(o.get("items")) || !Integer.valueOf(9400).equals(o.get("totalPaise"))) {
-                R.fail("order_items", "Order 1 should have its 2 items (2 lassi, 3 samosas), totalling 9400 paise.", "{\"items\":2,\"totalPaise\":9400}", body);
+                R.fail("order_items", "Order 1 should have its 2 items (2 kulfi, 3 samosas), totalling 9400 paise.", "{\"items\":2,\"totalPaise\":9400}", body);
             } else {
                 R.pass("order_items", "@OneToMany and @ManyToOne map the order_id foreign key in both directions: order.getItems() just works.");
             }

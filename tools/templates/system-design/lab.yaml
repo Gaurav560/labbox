@@ -11,9 +11,9 @@ tags: [system-design, redis, python]
 level: intermediate
 estimated_minutes: 40
 story:
-  company: Brew Point
-  character: { name: Kabir, role: "Backend lead, Brew Point" }
-  pitch: "Brew Point opened its quotes API to partners. One partner's script is now melting both servers."
+  company: Book Point
+  character: { name: Kabir, role: "Backend lead, Book Point" }
+  pitch: "Book Point opened its quotes API to partners. One partner's script is now melting both servers."
 cover_scene: "TODO(author): one line, what the cover shows"
 cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
 image: labbox/{{lab_id}}:v1

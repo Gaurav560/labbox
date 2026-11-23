@@ -22,7 +22,7 @@ statement does the opening and, crucially, the closing for you:
 
 ```python
 with open("diary.txt", "w") as f:
-    f.write("juice 15\n")
+    f.write("jelly 15\n")
 ```
 
 `open(path, mode)` gives back a file object, here named `f`. The **mode** says what you want to do:
@@ -52,7 +52,7 @@ cd /workspace/14-files && python3 diary.py
 ```
 
 ```text
-['juice', '15']
+['jelly', '15']
 ['bus', '30']
 ['lunch', '120']
 ```
@@ -129,11 +129,11 @@ comma between the values. Spreadsheets, banks and shops export data like this ev
 It looks like `line.split(",")` would be enough. It is not. A value can itself contain a comma, inside quotes:
 
 ```text
-2026,"snacks, juice",30
+2026,"snacks, jelly",30
 ```
 
-`split(",")` cuts that into `['2026', '"snacks', ' juice"', '30']`: four pieces, quotes and all. Python's `csv`
-module understands the quoting rules and gives `['2026', 'snacks, juice', '30']`. Never split CSV by hand.
+`split(",")` cuts that into `['2026', '"snacks', ' jelly"', '30']`: four pieces, quotes and all. Python's `csv`
+module understands the quoting rules and gives `['2026', 'snacks, jelly', '30']`. Never split CSV by hand.
 
 The best tool is `csv.DictReader`: it reads the header line and gives you every row as a **dictionary** (chapter
 9), with the column names as keys:

@@ -41,7 +41,7 @@ public class Payments {
 
     public static void main(String[] args) {
         List<Payment> today = List.of(
-                new Payment("Brew Point", 2000), new Payment("Kirana King", 15000), new Payment("Brew Point", 3000));
+                new Payment("Book Point", 2000), new Payment("Kirana King", 15000), new Payment("Book Point", 3000));
         System.out.println(totalPaise(today));
         System.out.println(totalsByMerchant(today));
         System.out.println(uniqueMerchants(today));

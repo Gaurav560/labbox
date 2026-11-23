@@ -155,13 +155,13 @@ from chapter 8 instead.
 In `sets_tuples.py`, make `common_items(a, b)` give back a **sorted list** of the items that appear in both
 lists, each once.
 
-`common_items(["bread", "coffee", "milk"], ["milk", "bread", "juice"])` gives `["bread", "milk"]`, and
+`common_items(["bread", "cookie", "mint"], ["mint", "bread", "jelly"])` gives `["bread", "mint"]`, and
 `common_items([1, 2, 2, 3], [2, 2, 4])` gives `[2]`.
 
 Three moves: turn both into sets, keep what is in both, and give back a sorted list.
 
 ```bash run
-cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import common_items; print(common_items(['bread', 'coffee', 'milk'], ['milk', 'bread', 'juice']))"
+cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import common_items; print(common_items(['bread', 'cookie', 'mint'], ['mint', 'bread', 'jelly']))"
 ```
 
 Then press **Check**.
@@ -198,7 +198,7 @@ Tuples cannot change, so assigning to `t[0]` raises a `TypeError`. Reading and u
 
 :::step{type=predict title="Quick check (2 of 3)"}
 :::question
-What is `len({"pen", "pen", "milk"})`?
+What is `len({"pen", "pen", "mint"})`?
 :::
 - [x] `2`
 - [ ] `3`

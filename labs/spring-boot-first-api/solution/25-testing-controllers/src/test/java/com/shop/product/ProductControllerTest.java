@@ -24,10 +24,10 @@ class ProductControllerTest {
 
     @Test
     void returnsTheProduct() throws Exception {
-        when(service.find(1)).thenReturn(Optional.of(new Product(1, "Mango lassi", 2000)));
+        when(service.find(1)).thenReturn(Optional.of(new Product(1, "Mango kulfi", 2000)));
         mvc.perform(get("/products/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Mango lassi"));
+                .andExpect(jsonPath("$.name").value("Mango kulfi"));
     }
 
     @Test

@@ -33,8 +33,8 @@ class FakeClient:
 try:
     import bot
 
-    client = FakeClient("A flat white is espresso with velvety steamed milk.")
-    got = bot.ask(client, "What is a flat white?")
+    client = FakeClient("A first edition is the first printing of a book.")
+    got = bot.ask(client, "What is a first edition?")
     if not client.calls:
         report("ask", False, "ask() never called client.chat.completions.create.")
     else:
@@ -44,9 +44,9 @@ try:
             report("ask", False, "Use the model alias lab-chat.", "lab-chat", repr(call.get("model")))
         elif [m.get("role") for m in msgs] != ["system", "user"]:
             report("ask", False, "Send two messages: the system rules, then the user's question.", "['system', 'user']", str([m.get("role") for m in msgs]))
-        elif msgs[0].get("content") != bot.SYSTEM or msgs[1].get("content") != "What is a flat white?":
+        elif msgs[0].get("content") != bot.SYSTEM or msgs[1].get("content") != "What is a first edition?":
             report("ask", False, "The system message must be SYSTEM and the user message the question, unchanged.")
-        elif got != "A flat white is espresso with velvety steamed milk.":
+        elif got != "A first edition is the first printing of a book.":
             report("ask", False, "Return the text of the model's reply.", "the reply text", repr(got))
         else:
             report("ask", True, "Right model, right messages, reply returned.")

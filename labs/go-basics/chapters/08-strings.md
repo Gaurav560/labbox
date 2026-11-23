@@ -1,5 +1,5 @@
-:::step{type=story title="How long is the word café?"}
-Count the letters: c, a, f, é. Four. Ask Go:
+:::step{type=story title="How long is the name José?"}
+Count the letters: J, o, s, é. Four. Ask Go:
 
 ```text
 5
@@ -15,11 +15,11 @@ Write `CountWords`, which counts the words in messy text, and `CleanName`, which
 :::
 :::
 
-:::step{type=try title="Bytes and runes" file="08-strings/cafe.go" line="10-16"}
-Open `cafe.go` and run it:
+:::step{type=try title="Bytes and runes" file="08-strings/jose.go" line="10-16"}
+Open `jose.go` and run it:
 
 ```go
-word := "café"
+word := "José"
 fmt.Println(len(word), utf8.RuneCountInString(word))
 fmt.Println(word[3], string(word[3]))
 for i, r := range word {
@@ -28,15 +28,15 @@ for i, r := range word {
 ```
 
 ```bash run
-cd /workspace/08-strings && go run cafe.go
+cd /workspace/08-strings && go run jose.go
 ```
 
 ```text
 5 4
 195 Ã
-0 c
-1 a
-2 f
+0 J
+1 o
+2 s
 3 é
 ```
 
@@ -170,7 +170,7 @@ What does `range` over a string give you?
 - [ ] Each byte
 - [x] Each rune (whole character), with the byte position where it starts
 :::explain
-That is why the positions jumped in `cafe.go`: the é starts at byte 3 and takes two bytes.
+That is why the positions jumped in `jose.go`: the é starts at byte 3 and takes two bytes.
 :::
 :::
 
@@ -188,12 +188,12 @@ them the same before comparing.
 :::step{type=recap title="What you can do now"}
 You can now:
 
-- Explain bytes versus runes: `len("café")` is 5, but it has 4 characters.
+- Explain bytes versus runes: `len("José")` is 5, but it has 4 characters.
 - Walk text by characters with `range`, and convert to `[]rune` to cut or capitalise safely.
 - Tidy text with `TrimSpace`, `Fields`, `ToUpper`, `ToLower` and `Join`.
 - Tell `Fields` (words) from `Split` (every separator, empty pieces included).
 
-:::photo{src="/lesson-images/go/go-08-notes.webp" alt="Handwritten notes about Go strings: len counts bytes, runes are characters, range walks by rune, cafe has 5 bytes and 4 letters, Fields for words, strings never change, rune slice to capitalise" ai="true"}
+:::photo{src="/lesson-images/go/go-08-notes.webp" alt="Handwritten notes about Go strings: len counts bytes, Jose with an accent has 5 bytes and 4 letters, range walks by rune, Fields for words, rune slice to cut safely" ai="true"}
 One page of notes for this chapter.
 :::
 

@@ -1,4 +1,4 @@
-# Brew Point: wallets and orders
+# Book Point: wallets and orders
 
 You are connected to the database already: `psql` needs no arguments.
 

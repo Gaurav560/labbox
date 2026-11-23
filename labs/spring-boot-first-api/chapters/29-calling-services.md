@@ -22,14 +22,14 @@ curl  ->  Shop API (server)  ->  supplier (server)
 curl  <-  Shop API's answer
 ```
 
-A customer asks the Shop API "how many lassis can the supplier deliver?". The Shop API cannot know; it **asks the
+A customer asks the Shop API "how many kulfis can the supplier deliver?". The Shop API cannot know; it **asks the
 supplier** with its own HTTP request, waits for the answer, and builds its response from it. Everything you know
 about HTTP (methods, paths, status codes, JSON) applies, from the other side.
 
 The supplier's API (pretend, but realistic) works like this:
 
 ```text
-GET /stock/LAS-1     ->  200  {"sku": "LAS-1", "available": 120}
+GET /stock/KUL-1     ->  200  {"sku": "KUL-1", "available": 120}
 GET /stock/MISSING   ->  404  (the supplier does not stock it)
 ```
 :::
@@ -42,7 +42,7 @@ GET /stock/MISSING   ->  404  (the supplier does not stock it)
 RestClient http = builder.baseUrl("https://supplier.example").build();
 
 SupplierStock s = http.get()                       // a GET request...
-        .uri("/stock/{sku}", "LAS-1")              // ...to /stock/LAS-1 (the placeholder is filled in, safely encoded)
+        .uri("/stock/{sku}", "KUL-1")              // ...to /stock/KUL-1 (the placeholder is filled in, safely encoded)
         .retrieve()                                // send it, and look at the response
         .body(SupplierStock.class);                // read the JSON body into a record
 ```
@@ -82,15 +82,15 @@ Leave it running. In **Terminal 2**, build and start the Shop API (its `supplier
 cd 29-calling-services && mvn -q -o package -DskipTests && java -jar target/calling-services.jar
 ```
 
-In **Terminal 3**, ask the Shop API about lassi:
+In **Terminal 3**, ask the Shop API about kulfi:
 
 ```bash run
-curl -i localhost:8080/supplier-stock/LAS-1
+curl -i localhost:8080/supplier-stock/KUL-1
 ```
 
 ```text
 HTTP/1.1 200
-{"available":-1,"sku":"LAS-1"}
+{"available":-1,"sku":"KUL-1"}
 ```
 
 `-1`: the client code is not written yet, and the supplier's terminal shows nobody called it.
@@ -130,14 +130,14 @@ In `29-calling-services/src/main/java/com/shop/supplier/SupplierClient.java`, ma
 Rebuild and restart the Shop API (Terminal 2), then ask again in Terminal 3:
 
 ```bash run
-curl localhost:8080/supplier-stock/LAS-1
+curl localhost:8080/supplier-stock/KUL-1
 ```
 
 ```text
-{"available":120,"sku":"LAS-1"}
+{"available":120,"sku":"KUL-1"}
 ```
 
-And in Terminal 1, the supplier says `Supplier: someone asked for LAS-1`. Two servers just talked. Press **Check**.
+And in Terminal 1, the supplier says `Supplier: someone asked for KUL-1`. Two servers just talked. Press **Check**.
 :::
 
 :::step{type=concept title="When the other side says no: 404"}
@@ -216,7 +216,7 @@ curl -i localhost:8080/supplier-stock/MISSING; echo; curl -i -w "\ntook %{time_t
 ```
 
 `200` with `"available":0`, then `503` after about **1 second**, not 3. Finally, stop the supplier (Ctrl+C in
-Terminal 1) and ask for lassi: still a calm `503`, `{"sku":"LAS-1","error":"Supplier unavailable"}`. Press **Check**.
+Terminal 1) and ask for kulfi: still a calm `503`, `{"sku":"KUL-1","error":"Supplier unavailable"}`. Press **Check**.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}

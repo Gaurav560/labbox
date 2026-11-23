@@ -32,7 +32,7 @@ class Ch15Check {
     void putProduct() {
         R.task("put_product", () -> {
             MvcResult r = mvc.perform(put("/products/2").contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\": \"Filter coffee (large)\", \"pricePaise\": 3500, \"stock\": 20}")).andReturn();
+                    .content("{\"name\": \"Fruit custard (large)\", \"pricePaise\": 3500, \"stock\": 20}")).andReturn();
             int code = r.getResponse().getStatus();
             int missing = mvc.perform(put("/products/99").contentType(MediaType.APPLICATION_JSON)
                     .content("{\"name\": \"Ghost\", \"pricePaise\": 1, \"stock\": 1}")).andReturn().getResponse().getStatus();
@@ -41,8 +41,8 @@ class Ch15Check {
                 return;
             }
             Map<?, ?> p = product(2);
-            if (code != 200 || !"Filter coffee (large)".equals(p.get("name")) || !Integer.valueOf(3500).equals(p.get("pricePaise")) || !Integer.valueOf(20).equals(p.get("stock"))) {
-                R.fail("put_product", "PUT /products/2 should replace the product with the body, and GET /products/2 should then show it.", "200, then {name: Filter coffee (large), pricePaise: 3500, stock: 20}", code + ", then " + p);
+            if (code != 200 || !"Fruit custard (large)".equals(p.get("name")) || !Integer.valueOf(3500).equals(p.get("pricePaise")) || !Integer.valueOf(20).equals(p.get("stock"))) {
+                R.fail("put_product", "PUT /products/2 should replace the product with the body, and GET /products/2 should then show it.", "200, then {name: Fruit custard (large), pricePaise: 3500, stock: 20}", code + ", then " + p);
             } else if (!Integer.valueOf(2).equals(p.get("id"))) {
                 R.fail("put_product", "The id must stay the one from the path.", "id 2", "id " + p.get("id"));
             } else if (missing != 404) {
@@ -66,8 +66,8 @@ class Ch15Check {
             Map<?, ?> p = product(1);
             if (code != 200 || !Integer.valueOf(2200).equals(p.get("pricePaise"))) {
                 R.fail("patch_price", "PATCH /products/1 with only a price should change the price.", "pricePaise 2200", code + ", " + p);
-            } else if (!"Mango lassi".equals(p.get("name")) || !Integer.valueOf(40).equals(p.get("stock"))) {
-                R.fail("patch_price", "The fields that were not sent must keep their old values: a null in the ProductPatch means keep it.", "{name: Mango lassi, pricePaise: 2200, stock: 40}", String.valueOf(p));
+            } else if (!"Mango kulfi".equals(p.get("name")) || !Integer.valueOf(40).equals(p.get("stock"))) {
+                R.fail("patch_price", "The fields that were not sent must keep their old values: a null in the ProductPatch means keep it.", "{name: Mango kulfi, pricePaise: 2200, stock: 40}", String.valueOf(p));
             } else if (missing != 404) {
                 R.fail("patch_price", "PATCH on a product that does not exist should answer 404.", "404", String.valueOf(missing));
             } else {

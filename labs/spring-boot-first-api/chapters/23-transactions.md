@@ -37,8 +37,8 @@ moment it runs. So if a method runs three updates and the third fails, the first
 
 :::step{type=try title="See the half-done order" file="23-transactions/src/main/java/com/shop/stock/OrderService.java" line="17-25"}
 `OrderService.placeOrder`, on the right, loops over the ordered items. For each one it loads the stock, takes
-the quantity (which throws `OutOfStockException` if there is not enough), and saves. The stock starts at: lassi
-10, samosa **1**, coffee 5.
+the quantity (which throws `OutOfStockException` if there is not enough), and saves. The stock starts at: kulfi
+10, samosa **1**, custard 5.
 
 Start the app:
 
@@ -46,28 +46,28 @@ Start the app:
 cd 23-transactions && mvn -q -o package -DskipTests && java -jar target/transactions.jar
 ```
 
-Now order 2 lassis and 5 samosas, then look at the lassi:
+Now order 2 kulfis and 5 samosas, then look at the kulfi:
 
 ```bash run
-curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"LAS-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/LAS-1
+curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"KUL-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/KUL-1
 ```
 
 ```text
 HTTP/1.1 409
 Not enough stock for SAM-1
-{"quantity":8,"sku":"LAS-1"}
+{"quantity":8,"sku":"KUL-1"}
 ```
 
-The order failed with 409, correctly. But the lassi stock is **8**. Two lassis left the shelf for an order that
+The order failed with 409, correctly. But the kulfi stock is **8**. Two kulfis left the shelf for an order that
 never happened. Follow it step by step:
 
-:::trace{title="placeOrder(lassi x2, samosa x5) without a transaction"}
-| step | lassi in the database | samosa in the database | note |
+:::trace{title="placeOrder(kulfi x2, samosa x5) without a transaction"}
+| step | kulfi in the database | samosa in the database | note |
 |---|---|---|---|
 | start | 10 | 1 | |
-| take 2 lassi, save | 8 | 1 | saved immediately: a statement on its own is committed at once |
+| take 2 kulfi, save | 8 | 1 | saved immediately: a statement on its own is committed at once |
 | take 5 samosa | 8 | 1 | only 1 left: OutOfStockException |
-| the request fails | 8 | 1 | the lassi change is already permanent |
+| the request fails | 8 | 1 | the kulfi change is already permanent |
 :::
 :::
 
@@ -108,10 +108,10 @@ In `OrderService`, make `placeOrder` run in **one transaction**. (`org.springfra
 Rebuild, run (the stock resets at every start), and repeat the order:
 
 ```bash run
-curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"LAS-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/LAS-1
+curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"KUL-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/KUL-1
 ```
 
-Still `409`, and now the lassi stays at **10**. The lassi change was made, inside the transaction, then undone when
+Still `409`, and now the kulfi stays at **10**. The kulfi change was made, inside the transaction, then undone when
 the samosas ran out. Press **Check**.
 :::
 
@@ -140,17 +140,17 @@ everywhere, to make every exception roll back.)
 `PaymentDeclinedException` is a **checked** exception (`extends Exception`). Watch:
 
 ```bash run
-curl -i -X POST "localhost:8080/paid-orders?card=DECLINE-4242" -H "Content-Type: application/json" -d '{"COF-1": 1}'; echo; curl localhost:8080/stock/COF-1
+curl -i -X POST "localhost:8080/paid-orders?card=DECLINE-4242" -H "Content-Type: application/json" -d '{"CUS-1": 1}'; echo; curl localhost:8080/stock/CUS-1
 ```
 
 ```text
 HTTP/1.1 402
 Card DECLINE-4242 was declined
-{"quantity":4,"sku":"COF-1"}
+{"quantity":4,"sku":"CUS-1"}
 ```
 
 (`402 Payment Required` is the HTTP status for exactly this.) The card was declined, the customer pays nothing,
-and yet the coffee stock went from 5 to 4. The transaction **committed**, because the exception was checked.
+and yet the custard stock went from 5 to 4. The transaction **committed**, because the exception was checked.
 That is a real, common bug: in production it shows up as stock that slowly drifts away from reality.
 :::
 
@@ -158,7 +158,7 @@ That is a real, common bug: in production it shows up as stock that slowly drift
 In `OrderService`, change the `@Transactional` on `placePaidOrder` so that **`PaymentDeclinedException` rolls the
 transaction back** too.
 
-Rebuild, run, and decline the card again: the coffee now stays at **5**. Press **Check**.
+Rebuild, run, and decline the card again: the custard now stays at **5**. Press **Check**.
 :::
 
 :::step{type=concept title="The other surprise: calls inside the same class"}

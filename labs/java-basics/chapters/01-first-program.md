@@ -73,7 +73,7 @@ new version comes out every six months. Every few years one becomes a long-term 
 
 :::funfact
 Java's first name, Oak, came from an oak tree that stood outside James Gosling's office. The name was already
-taken by another company, so the team picked a new one in a brainstorm: Java, after the coffee. And every compiled
+taken by another company, so the team picked a new one in a brainstorm: Java, a name borrowed from the island of Java in Indonesia. And every compiled
 Java file still starts with four bytes that spell a joke in hexadecimal: **CA FE BA BE**. You will see them
 yourself in this chapter.
 :::

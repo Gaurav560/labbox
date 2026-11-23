@@ -6,7 +6,7 @@
     scripts/labbox preview <lab_id>
     scripts/labbox cover <lab_id> --logo redis[,python]   (real logos on brand colours)
     scripts/labbox cover <lab_id> --generate              (AI art, then --pick N)
-    scripts/labbox cover <lab_id> --query "coffee stall"   (stock photo, then --pick N)
+    scripts/labbox cover <lab_id> --query "radio telescope"   (stock photo, then --pick N)
 
 Runs with the backend's virtualenv and reuses the backend's own lab loader and checker,
 so a lab that passes here behaves the same in the app.
@@ -873,7 +873,7 @@ def cmd_cover(args: argparse.Namespace) -> int:
             print("Set PEXELS_API_KEY in backend/.env (free key: https://www.pexels.com/api/)")
             return 2
         if not args.query:
-            print("Say what the photo should show, for example --query \"coffee stall street india\"")
+            print("Say what the photo should show, for example --query \"radio telescope at night\"")
             return 2
         r = httpx.get(PEXELS_SEARCH, params={"query": args.query, "orientation": "landscape", "per_page": args.count},
                       headers={"Authorization": key}, timeout=20)

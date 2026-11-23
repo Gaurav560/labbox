@@ -1,7 +1,7 @@
-:::step{type=story title="Lunch rush at Tapri Counter"}
-:::character{name="Meera" role="CTO, Tapri Counter"}
+:::step{type=story title="Lunch rush at Dosa Counter"}
+:::character{name="Meera" role="CTO, Dosa Counter"}
 Forty outlets, six hundred orders a minute at lunch, and checkout has started to crawl.
-Customers are walking out with their coffee unpaid. The database is the only thing that
+Customers are walking out with their dosa unpaid. The database is the only thing that
 changed since yesterday. Can you find out why?
 :::
 
@@ -49,7 +49,7 @@ Look for `Seq Scan on orders` and the `Execution Time` at the bottom.
 :::
 
 :::step{type=incident task=add_index minutes=15 title="Pager: checkout p95 is 9 seconds"}
-**Tapri Counter on-call.** Checkout p95 latency 9.4 s across all outlets.
+**Dosa Counter on-call.** Checkout p95 latency 9.4 s across all outlets.
 Lunch rush starts in 15 minutes.
 
 Make the customer lookup in `checkout.sql` use an index and run in **under 5 ms**.

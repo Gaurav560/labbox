@@ -1,4 +1,4 @@
-# Brew Point: quotes API
+# Book Point: quotes API
 
 - `app.py`: the API. Two copies run at once (`bash run.sh`), and a real nginx load balancer at
   `http://lb:8080` sends each request to one of them, like two servers in production.

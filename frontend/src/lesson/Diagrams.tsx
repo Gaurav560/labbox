@@ -69,7 +69,7 @@ function DefaultList() {
   return (
     <Svg viewBox="0 0 440 190" label="Three calls to add_item all point to the same default list, which keeps growing">
       <g className="dg-cells-small">
-        <Box x={10} y={14} w={150} h={34} label='add_item("milk")' tone="accent" code />
+        <Box x={10} y={14} w={150} h={34} label='add_item("mint")' tone="accent" code />
         <Box x={10} y={74} w={150} h={34} label='add_item("bread")' tone="accent" code />
         <Box x={10} y={134} w={150} h={34} label='add_item("eggs")' tone="accent" code />
       </g>
@@ -78,7 +78,7 @@ function DefaultList() {
       <Arrow x1={162} y1={151} x2={238} y2={98} />
       <text className="dg-note" x={242} y={66}><tspan className="dg-code">basket=[]</tspan> (made once)</text>
       <g className="dg-cells-small">
-        <Box x={242} y={74} w={60} h={34} label="milk" />
+        <Box x={242} y={74} w={60} h={34} label="mint" />
         <Box x={306} y={74} w={64} h={34} label="bread" />
         <Box x={374} y={74} w={58} h={34} label="eggs" />
       </g>
@@ -574,7 +574,7 @@ function OneToMany() {
       <text className="dg-note" x={10} y={18}>orders</text>
       <Box x={10} y={26} w={150} h={30} label="id 1 | Asha" tone="accent" code />
       <text className="dg-note" x={210} y={18}>order_item</text>
-      <Box x={210} y={26} w={220} h={30} label="lassi x2 | order_id 1" code />
+      <Box x={210} y={26} w={220} h={30} label="kulfi x2 | order_id 1" code />
       <Box x={210} y={62} w={220} h={30} label="samosa x3 | order_id 1" code />
       <Arrow x1={208} y1={41} x2={162} y2={41} />
       <Arrow x1={208} y1={77} x2={162} y2={48} />
@@ -588,15 +588,15 @@ function OneToMany() {
 /** A transaction: every change commits together, or none does. */
 function TransactionFlow() {
   return (
-    <Svg viewBox="0 0 440 200" label="Inside one transaction, the lassi stock goes from 10 to 8, then the samosa check fails; the transaction rolls back and the lassi stock is 10 again">
-      <Box x={10} y={10} w={420} h={30} label="@Transactional placeOrder(lassi x2, samosa x5)" tone="accent" code />
-      <Box x={30} y={50} w={180} h={30} label="lassi: 10 -> 8" />
+    <Svg viewBox="0 0 440 200" label="Inside one transaction, the kulfi stock goes from 10 to 8, then the samosa check fails; the transaction rolls back and the kulfi stock is 10 again">
+      <Box x={10} y={10} w={420} h={30} label="@Transactional placeOrder(kulfi x2, samosa x5)" tone="accent" code />
+      <Box x={30} y={50} w={180} h={30} label="kulfi: 10 -> 8" />
       <Arrow x1={212} y1={65} x2={240} y2={65} />
       <Box x={244} y={50} w={186} h={30} label="samosa: only 1 left!" tone="highlight" />
       <Arrow x1={337} y1={82} x2={337} y2={110} />
       <Box x={244} y={114} w={186} h={30} label="exception: roll back" tone="highlight" />
       <Arrow x1={242} y1={129} x2={212} y2={129} />
-      <Box x={30} y={114} w={180} h={30} label="lassi: back to 10" tone="accent" />
+      <Box x={30} y={114} w={180} h={30} label="kulfi: back to 10" tone="accent" />
       <text className="dg-note" x={10} y={180}>all the changes commit together, or none of them do</text>
     </Svg>
   );

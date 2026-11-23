@@ -73,7 +73,7 @@ def test_v2_catalog_fields(lab_copy: Path):
             estimated_minutes=240,
             free_chapters=1,
             prerequisites=["java-basics"],
-            story={"company": "Tapri Counter", "character": {"name": "Meera", "role": "CTO"}, "pitch": "Lunch rush."},
+            story={"company": "Dosa Counter", "character": {"name": "Meera", "role": "CTO"}, "pitch": "Lunch rush."},
         )
         del d["description"], d["language"]
         d["chapters"][0]["minutes"] = 15

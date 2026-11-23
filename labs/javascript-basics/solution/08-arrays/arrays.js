@@ -18,7 +18,7 @@ function unique(items) {
 
 if (require.main === module) {
   console.log(topN([72, 45, 90, 66], 2));
-  console.log(unique(["juice", "coffee", "juice", "milk"]));
+  console.log(unique(["jelly", "cookie", "jelly", "mint"]));
 }
 
 module.exports = { topN, unique };

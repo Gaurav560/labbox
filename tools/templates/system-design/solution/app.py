@@ -1,4 +1,4 @@
-"""Brew Point's quotes API for partners. Two copies run behind a load balancer: start them with
+"""Book Point's quotes API for partners. Two copies run behind a load balancer: start them with
 bash run.sh, then call http://lb:8080/quote with an X-API-Key header."""
 import os
 import random
@@ -14,7 +14,7 @@ PER_KEY_LIMIT = 10  # requests per second for one API key
 GLOBAL_LIMIT = 50  # requests per second for all keys together
 
 QUOTES = [
-    "Coffee first, code second.",
+    "Read first, code second.",
     "A cache is a promise you have to keep.",
     "Every queue is a backlog with good manners.",
     "Measure twice, deploy once.",

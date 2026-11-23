@@ -19,10 +19,10 @@ public class CheckCollections {
             }
         } catch (Throwable e) { T.crashed("top_n", e); }
         try {
-            Map<String, Integer> got = WordCounter.count(List.of("juice", "Coffee", "JUICE", "juice"));
-            Map<String, Integer> want = Map.of("juice", 3, "coffee", 1);
+            Map<String, Integer> got = WordCounter.count(List.of("jelly", "Cookie", "JELLY", "jelly"));
+            Map<String, Integer> want = Map.of("jelly", 3, "cookie", 1);
             if (!want.equals(got)) {
-                T.fail("word_counts", "count([juice, Coffee, JUICE, juice]) gave " + got + ", but it should be " + want + ". Lower-case each word before counting.", want, got);
+                T.fail("word_counts", "count([jelly, Cookie, JELLY, jelly]) gave " + got + ", but it should be " + want + ". Lower-case each word before counting.", want, got);
             } else if (!WordCounter.count(List.of()).isEmpty()) {
                 T.fail("word_counts", "count of no words should be an empty map.");
             } else {

@@ -195,10 +195,10 @@ What is `[n * n for n in range(4)]`?
 
 :::step{type=predict title="Quick check (3 of 3)"}
 :::question
-What does `lambda e: e["amount"]` give back for `{"name": "juice", "amount": 15}`?
+What does `lambda e: e["amount"]` give back for `{"name": "jelly", "amount": 15}`?
 :::
 - [x] `15`
-- [ ] `"juice"`
+- [ ] `"jelly"`
 - [ ] The whole dictionary
 :::explain
 A lambda returns whatever comes after its colon: here, the value under `"amount"`.

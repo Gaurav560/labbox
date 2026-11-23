@@ -32,7 +32,7 @@ const TOURS: Tour[] = [
   {
     lab: "java-basics", step: "Step 3 of 7", title: "Strings join with +",
     read: "In Java, + glues strings together. Duke uses it to greet every new learner by name.",
-    q: 'What is "coffee" + "cup"?', options: ['"coffeecup"', '"coffee cup"', "A compile error"], answer: 0,
+    q: 'What is "book" + "shelf"?', options: ['"bookshelf"', '"book shelf"', "A compile error"], answer: 0,
     file: "Greet.java", code: 'public class Greet {\n    public static void main(String[] a) {\n        System.out.println("Hello, " + a[0]);\n    }\n}',
     run: "javac Greet.java && java Greet Asha", out: ["Hello, Asha"],
     result: "2 of 2 checks passed", xp: 40,
@@ -58,7 +58,7 @@ const TOURS: Tour[] = [
     read: "WHERE keeps only the rows that match. ORDER BY then sorts what is left.",
     q: "Which rows does WHERE price > 20 keep?", options: ["Prices above 20", "Prices of 20 and up", "Every row"], answer: 0,
     file: "query.sql", code: "SELECT item, price\nFROM menu\nWHERE price > 20\nORDER BY price;",
-    run: "psql -f query.sql", out: [" vada pav    |    25", " cold coffee |    40", "(2 rows)"],
+    run: "psql -f query.sql", out: [" vada pav    |    25", " corn cutlet |    40", "(2 rows)"],
     result: "1 of 1 check passed", xp: 50,
   },
   {
@@ -82,7 +82,7 @@ const TOURS: Tour[] = [
     read: "A controller method answers a URL. Spring turns what it returns into JSON for you.",
     q: "Which annotation answers GET /orders?", options: ['@GetMapping("/orders")', '@PostMapping("/orders")', "@Bean"], answer: 0,
     file: "OrderController.java", code: '@GetMapping("/orders")\nList<Order> all() {\n    return repo.findAll();\n}',
-    run: "curl localhost:8080/orders", out: ['[{"id":1,"item":"filter coffee"}]'],
+    run: "curl localhost:8080/orders", out: ['[{"id":1,"item":"fruit custard"}]'],
     result: "3 of 3 checks passed", xp: 60,
   },
   {
@@ -96,17 +96,17 @@ const TOURS: Tour[] = [
   {
     lab: "python-collections", step: "Step 3 of 6", title: "Count with a dict",
     read: "A dict maps keys to values. get() with a default makes counting things a one liner.",
-    q: 'counts is empty. What is counts.get("latte", 0)?', options: ["0", "None", "KeyError"], answer: 0,
+    q: 'counts is empty. What is counts.get("ladoo", 0)?', options: ["0", "None", "KeyError"], answer: 0,
     file: "orders.py", code: "counts = {}\nfor item in orders:\n    counts[item] = counts.get(item, 0) + 1\nprint(counts)",
-    run: "python3 orders.py", out: ["{'coffee': 3, 'latte': 1}"],
+    run: "python3 orders.py", out: ["{'samosa': 3, 'ladoo': 1}"],
     result: "3 of 3 checks passed", xp: 60,
   },
   {
     lab: "java-collections", step: "Step 2 of 6", title: "A map holds one value per key",
     read: "put() on a key that is already there replaces the old value. merge() can add to it instead.",
-    q: 'put("coffee", 1), then put("coffee", 5). What is get("coffee")?', options: ["5", "1", "6"], answer: 0,
-    file: "Stock.java", code: 'Map<String, Integer> stock = new HashMap<>();\nstock.merge("coffee", 1, Integer::sum);\nSystem.out.println(stock);',
-    run: "java Stock.java", out: ["{coffee=1}"],
+    q: 'put("pens", 1), then put("pens", 5). What is get("pens")?', options: ["5", "1", "6"], answer: 0,
+    file: "Stock.java", code: 'Map<String, Integer> stock = new HashMap<>();\nstock.merge("pens", 1, Integer::sum);\nSystem.out.println(stock);',
+    run: "java Stock.java", out: ["{pens=1}"],
     result: "2 of 2 checks passed", xp: 40,
   },
   {
@@ -130,7 +130,7 @@ const TOURS: Tour[] = [
     read: "Never rewrite history other people have. git revert adds a new commit that undoes the bad one.",
     q: "The bad commit is already pushed. What is safe?", options: ["git revert", "git reset --hard", "git commit --amend"], answer: 0,
     file: "terminal", code: "git log --oneline\ngit revert --no-edit 6af4e0e",
-    run: "grep coffee menu.txt", out: ["filter coffee 30", "cold coffee 40"],
+    run: "grep pav menu.txt", out: ["vada pav 30", "misal pav 40"],
     result: "2 of 2 checks passed", xp: 80,
   },
   {

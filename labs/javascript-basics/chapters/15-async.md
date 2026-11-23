@@ -132,10 +132,10 @@ values **in the order you asked**, whichever finished first.
 :::step{type=example title="Worked example: two prices at once"}
 ```js
 async function priceOfTwo() {
-  const juiceP = fetchPrice("juice");
+  const jellyP = fetchPrice("jelly");
   const bunP = fetchPrice("bun");
-  const [juice, bun] = await Promise.all([juiceP, bunP]);
-  return juice + bun;
+  const [jelly, bun] = await Promise.all([jellyP, bunP]);
+  return jelly + bun;
 }
 ```
 

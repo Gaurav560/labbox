@@ -176,9 +176,9 @@ A key can only appear once. The second `put` replaced the value 1 with 2, so the
 
 :::step{type=task task=word_counts title="Your turn: count each word"}
 Open `WordCounter.java` and make `count(words)` give back a map of each word, in **lower case**, to how many times it
-appears. Capitals should not matter: `Juice` and `JUICE` are the same word.
+appears. Capitals should not matter: `Jelly` and `JELLY` are the same word.
 
-`count([juice, Coffee, JUICE, juice])` gives `{coffee=1, juice=3}` (a `HashMap` may print the pairs in any order),
+`count([jelly, Cookie, JELLY, jelly])` gives `{cookie=1, jelly=3}` (a `HashMap` may print the pairs in any order),
 and no words give an empty map.
 
 ```bash run

@@ -17,8 +17,8 @@ Add `GET /products/{id}` (with a proper 404) and `GET /products/search` with opt
 `ProductController` is on the right, with a `ProductRepository` that holds four products:
 
 ```text
-1 Mango lassi      2000 paise
-2 Filter coffee   3000
+1 Mango kulfi      2000 paise
+2 Fruit custard   3000
 3 Samosa          1800
 4 Paneer roll     9000
 ```
@@ -120,7 +120,7 @@ cd 11-reading-the-request && mvn -q -o package -DskipTests && java -jar target/r
 curl -i localhost:8080/products/2; echo; curl -i localhost:8080/products/99; echo; curl -i localhost:8080/products/abc
 ```
 
-You should get `200` with the filter coffee, `404`, and `400` (Spring could not turn `abc` into a number,
+You should get `200` with the fruit custard, `404`, and `400` (Spring could not turn `abc` into a number,
 so your method never ran). Press **Check**.
 :::
 
@@ -194,7 +194,7 @@ curl "localhost:8080/products/search?maxPrice=2500"; echo; curl "localhost:8080/
 
 (The quotes around the URL matter: without them, your shell would treat `&` as a command of its own.)
 
-You should get the mango lassi and the samosa (sorted by name), then all four from cheapest to dearest,
+You should get the mango kulfi and the samosa (sorted by name), then all four from cheapest to dearest,
 then a `400`, because `cheap` is not a number. Press **Check**.
 :::
 

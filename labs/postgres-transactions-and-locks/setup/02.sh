@@ -10,9 +10,9 @@ CREATE TABLE orders (
   status       text    NOT NULL DEFAULT 'pending'
 );
 INSERT INTO orders (id, item)
-SELECT n, (ARRAY['filter coffee', 'cold coffee', 'vada pav', 'samosa'])[1 + n % 4]
+SELECT n, (ARRAY['novel', 'atlas', 'comic', 'diary'])[1 + n % 4]
 FROM generate_series(1, 100) AS n;
-ALTER DATABASE tapri RESET idle_in_transaction_session_timeout;
+ALTER DATABASE shop RESET idle_in_transaction_session_timeout;
 SQL
 PGAPPNAME=nightly-report setsid nohup bash -c \
   '(echo "BEGIN; UPDATE orders SET item = item WHERE id = 42;"; sleep 86400) | psql -q' \

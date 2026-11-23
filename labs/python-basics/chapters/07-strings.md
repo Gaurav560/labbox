@@ -135,7 +135,7 @@ python3 -c "print('  lots   of   spaces  '.split(' ')); print('  lots   of   spa
    ignores them at both ends. Three real words, three pieces.
 
 When the text comes from people, `split()` with no argument is almost always what you want. You can split at
-anything else, too: `"rice,milk,,bread".split(",")` gives `['rice', 'milk', '', 'bread']`.
+anything else, too: `"rice,mint,,bread".split(",")` gives `['rice', 'mint', '', 'bread']`.
 :::
 
 :::step{type=task task=count_words title="Your turn: count the words"}
@@ -160,7 +160,7 @@ first.
 ```python
 " ".join(["Riya", "Sharma"])        # "Riya Sharma"
 "-".join(["2026", "11", "22"])      # "2026-11-22"
-", ".join(["rice", "milk"])         # "rice, milk"
+", ".join(["rice", "mint"])         # "rice, mint"
 ```
 
 So a classic way to fix messy spacing is to take the text apart with `split()` (which throws the extra spaces

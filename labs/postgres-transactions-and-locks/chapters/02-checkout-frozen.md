@@ -1,5 +1,5 @@
 :::step{type=story title="Checkout is frozen"}
-:::character{name="Kabir" role="Backend lead, Brew Point"}
+:::character{name="Kabir" role="Backend lead, Book Point"}
 Pager again. Paying for order 42 just spins forever, and more orders are piling up behind it.
 Postgres is up, the CPU is idle, nothing is slow. Everything is just... waiting.
 :::
@@ -44,18 +44,18 @@ psql -c "SET lock_timeout = '3s'" -c "UPDATE orders SET status = 'paid' WHERE id
 Now look at who is connected:
 
 ```bash run
-psql -c "SELECT pid, application_name, state, now() - xact_start AS open_for, query FROM pg_stat_activity WHERE datname = 'tapri'"
+psql -c "SELECT pid, application_name, state, now() - xact_start AS open_for, query FROM pg_stat_activity WHERE datname = 'shop'"
 ```
 :::
 
 :::step{type=incident task=kill_blocker minutes=10 title="Pager: checkout frozen"}
-**Brew Point on-call.** Order 42 cannot be paid; the payment request waits forever.
+**Book Point on-call.** Order 42 cannot be paid; the payment request waits forever.
 
 Find the session that holds the lock and **end it**, from SQL. Do not delete the order.
 :::
 
 :::step{type=task task=idle_timeout title="Never again"}
-Make Postgres end any session of the `tapri` database that sits **idle inside a transaction** for
+Make Postgres end any session of the `shop` database that sits **idle inside a transaction** for
 more than a minute (anything from 1 second to 5 minutes passes).
 :::
 

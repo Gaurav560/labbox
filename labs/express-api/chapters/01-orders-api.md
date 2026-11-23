@@ -1,5 +1,5 @@
-:::step{type=story title="Where is my tiffin?"}
-:::character{name="Priya" role="Founder, Dabba Express"}
+:::step{type=story title="Where is my order?"}
+:::character{name="Priya" role="Founder, Thali House"}
 Every day at 12:45 the phone does not stop: "Where is our lunch?" Our riders already update the
 status on their phones. If offices could ask an API, my team could finally eat their own lunch.
 :::

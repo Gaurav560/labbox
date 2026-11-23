@@ -2,7 +2,7 @@
 The check calls ask() with a fake client, so it can see exactly what you send."""
 import sys
 
-SYSTEM = "You are a helpful barista. Answer in one short sentence."
+SYSTEM = "You are a helpful bookshop assistant. Answer in one short sentence."
 
 
 def ask(client, question: str) -> str:
@@ -16,4 +16,4 @@ def ask(client, question: str) -> str:
 if __name__ == "__main__":
     from openai import OpenAI
 
-    print(ask(OpenAI(), " ".join(sys.argv[1:]) or "What is a flat white?"))
+    print(ask(OpenAI(), " ".join(sys.argv[1:]) or "What is a first edition?"))

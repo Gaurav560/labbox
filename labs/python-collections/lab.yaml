@@ -2,8 +2,8 @@
 id: python-collections
 version: 2
 title: Python collections
-subtitle: Lists, dicts, sets and sorting, on a real tiffin delivery day.
-description: Lists, dicts, sets and sorting, on a real tiffin delivery day.
+subtitle: Lists, dicts, sets and sorting, on a real meal delivery day.
+description: Lists, dicts, sets and sorting, on a real meal delivery day.
 language: python
 track: languages
 tags:
@@ -67,10 +67,10 @@ chapters:
     - sorted() accepts key=, a function that says what to sort by.
     - Use a key that returns (distance, area), so equal distances fall back to A to Z, then keep only the area names.
 story:
-  company: Dabba Express
+  company: Thali House
   character:
     name: Priya
-    role: Founder, Dabba Express
-  pitch: Dabba Express now delivers 900 tiffins a day, and the order sheet needs real data structures.
-cover_scene: 'Dabba Express sorting hub at dawn: a tiny warehouse with conveyor belts of stacked steel tiffins sorted
+    role: Founder, Thali House
+  pitch: Thali House now delivers 900 meals a day, and the order sheet needs real data structures.
+cover_scene: 'Thali House sorting hub at dawn: a tiny warehouse with conveyor belts of stacked meal boxes sorted
   into glowing colour-coded lanes, delivery bicycles waiting at the gate.'

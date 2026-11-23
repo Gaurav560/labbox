@@ -1,4 +1,4 @@
-// Dabba Express order tracking API. Start it with: node server.js  (then open the Preview tab)
+// Thali House order tracking API. Start it with: node server.js  (then open the Preview tab)
 const express = require("express");
 
 const app = express();
@@ -11,7 +11,7 @@ const ORDERS = {
 let nextId = 3;
 
 app.get("/", (req, res) => {
-  res.json({ service: "dabba-express", orders: Object.keys(ORDERS).length });
+  res.json({ service: "thali-house", orders: Object.keys(ORDERS).length });
 });
 
 app.get("/orders/:id", (req, res) => {
@@ -32,4 +32,4 @@ app.post("/orders", (req, res) => {
 });
 
 const port = Number(process.env.PORT || 3000);
-app.listen(port, "0.0.0.0", () => console.log(`Dabba Express API on http://0.0.0.0:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Thali House API on http://0.0.0.0:${port}`));

@@ -2,8 +2,8 @@
 id: express-api
 version: 2
 title: 'Express: an order tracking API'
-subtitle: Build Dabba Express's order API in Node and watch it answer in the Preview tab.
-description: Build Dabba Express's order API in Node and watch it answer in the Preview tab.
+subtitle: Build Thali House's order API in Node and watch it answer in the Preview tab.
+description: Build Thali House's order API in Node and watch it answer in the Preview tab.
 language: javascript
 track: frameworks
 tags:
@@ -12,13 +12,13 @@ tags:
 level: beginner
 estimated_minutes: 20
 story:
-  company: Dabba Express
+  company: Thali House
   character:
     name: Priya
-    role: Founder, Dabba Express
-  pitch: Offices keep calling to ask where their tiffins are. Priya wants an API for it.
-cover_scene: 'Dabba Express dispatch at night: a tiny glowing control tower above a street of delivery bicycles,
-  light trails connecting each tiffin to floating order status cards.'
+    role: Founder, Thali House
+  pitch: Offices keep calling to ask where their meals are. Priya wants an API for it.
+cover_scene: 'Thali House dispatch at night: a tiny glowing control tower above a street of delivery bicycles,
+  light trails connecting each meal to floating order status cards.'
 cover: cover.svg
 cover_credit: { by: "Logos: express,nodejs", source: "devicon (MIT)" }
 image: labbox/express-api:v1
@@ -39,7 +39,7 @@ check:
   network: none
 chapters:
 - id: 01-orders-api
-  title: Where is my tiffin?
+  title: Where is my order?
   file: chapters/01-orders-api.md
   minutes: 20
   tasks:

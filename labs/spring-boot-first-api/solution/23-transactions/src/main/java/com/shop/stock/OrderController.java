@@ -19,7 +19,7 @@ public class OrderController {
         this.orders = orders;
     }
 
-    /** POST /orders with a body like {"LAS-1": 2, "SAM-1": 5}. */
+    /** POST /orders with a body like {"KUL-1": 2, "SAM-1": 5}. */
     @PostMapping("/orders")
     public ResponseEntity<String> place(@RequestBody Map<String, Integer> items) {
         try {

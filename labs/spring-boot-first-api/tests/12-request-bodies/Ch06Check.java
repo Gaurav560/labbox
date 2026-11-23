@@ -52,9 +52,9 @@ class Ch06Check {
             Map<?, ?> v = r.getResponse().getStatus() == 200 ? json.readValue(body, Map.class) : Map.of();
             int missing = mvc.perform(get("/products/99/view")).andReturn().getResponse().getStatus();
             if (v.containsKey("costPaise")) {
-                R.fail("product_view", "The view still includes costPaise, the shop's internal cost. Return a ProductView instead of the Product.", "{\"id\":1,\"name\":\"Mango lassi\",\"price\":\"Rs 20.00\"}", body);
-            } else if (!"Rs 20.00".equals(v.get("price")) || !"Mango lassi".equals(v.get("name"))) {
-                R.fail("product_view", "The view should show the name and the price formatted as Rs 20.00.", "{\"id\":1,\"name\":\"Mango lassi\",\"price\":\"Rs 20.00\"}", body);
+                R.fail("product_view", "The view still includes costPaise, the shop's internal cost. Return a ProductView instead of the Product.", "{\"id\":1,\"name\":\"Mango kulfi\",\"price\":\"Rs 20.00\"}", body);
+            } else if (!"Rs 20.00".equals(v.get("price")) || !"Mango kulfi".equals(v.get("name"))) {
+                R.fail("product_view", "The view should show the name and the price formatted as Rs 20.00.", "{\"id\":1,\"name\":\"Mango kulfi\",\"price\":\"Rs 20.00\"}", body);
             } else if (missing != 404) {
                 R.fail("product_view", "An unknown id should still answer 404.", "404", String.valueOf(missing));
             } else {

@@ -295,8 +295,8 @@ chapters:
     - Loop in the original order and append an item only the first time you see it.
     - Start the result as an empty slice, not nil, so an empty input gives an empty slice.
     examples:
-    - call: "Unique([]string{\"juice\", \"coffee\", \"juice\", \"milk\"})"
-      gives: "[juice coffee milk]"
+    - call: "Unique([]string{\"jelly\", \"cookie\", \"jelly\", \"mint\"})"
+      gives: "[jelly cookie mint]"
     - call: "Unique(nil)"
       gives: "[]"
 - id: 02-maps-and-structs
@@ -313,8 +313,8 @@ chapters:
     - A map[string]int is the counter; a missing key reads as 0, so you can add to it directly.
     - Make the map with make, loop over orders and add o.Qty to the entry for o.Item.
     examples:
-    - call: "CountByItem([]Order{{\"juice\", 2}, {\"milk\", 1}, {\"juice\", 3}})"
-      gives: "map[juice:5 milk:1]"
+    - call: "CountByItem([]Order{{\"jelly\", 2}, {\"mint\", 1}, {\"jelly\", 3}})"
+      gives: "map[jelly:5 mint:1]"
     - call: "CountByItem(nil)"
       gives: "map[]"
       note: "empty, not nil"
@@ -327,8 +327,8 @@ chapters:
     - Loop over the counts and keep the best item, replacing it when a count is bigger, or equal with a smaller
       name.
     examples:
-    - call: "Busiest([]Order{{\"juice\", 2}, {\"milk\", 1}, {\"juice\", 3}})"
-      gives: "\"juice\""
+    - call: "Busiest([]Order{{\"jelly\", 2}, {\"mint\", 1}, {\"jelly\", 3}})"
+      gives: "\"jelly\""
     - call: "Busiest(nil)"
       gives: "\"\""
 - id: 11-pointers

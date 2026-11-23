@@ -1,5 +1,5 @@
 :::step{type=story title="One partner, two melting servers"}
-:::character{name="Kabir" role="Backend lead, Brew Point"}
+:::character{name="Kabir" role="Backend lead, Book Point"}
 We opened our quotes API to partners: 10 requests a second each. I wrote the limiter myself and it
 passed every test on my laptop. In production we run two servers behind a load balancer, and one
 partner's script is getting twice its limit and slowing everyone down. Can you see why?
@@ -32,7 +32,7 @@ balancer that splits requests evenly. A client sends 30 requests a second. About
 - [ ] 30 a second
 :::explain
 Each copy sees about 15 of the 30 and allows 10 of them, so about 20 a second get through: the limit
-is multiplied by the number of servers. That is exactly what is happening to Brew Point.
+is multiplied by the number of servers. That is exactly what is happening to Book Point.
 :::
 :::
 

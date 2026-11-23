@@ -1,8 +1,8 @@
 [
   {
     "src": "/images/labs/express-api-01-orders-api.webp",
-    "caption": "labbox \u00b7 Express: an order tracking API \u00b7 Ch 1, Where is my tiffin?",
-    "alt": "A LabBox lab, Express: an order tracking API (Ch 1, Where is my tiffin?): the lesson, VS Code and a live terminal"
+    "caption": "labbox \u00b7 Express: an order tracking API \u00b7 Ch 1, Where is my order?",
+    "alt": "A LabBox lab, Express: an order tracking API (Ch 1, Where is my order?): the lesson, VS Code and a live terminal"
   },
   {
     "src": "/images/labs/fastapi-first-api-01-menu-api.webp",

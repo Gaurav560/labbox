@@ -171,7 +171,7 @@ A membership question gives yes or no. A position question gives a slot number.
 :::step{type=task task=unique title="Your turn: each item once"}
 In `arrays.js`, make `unique(items)` give back each item once, in the order it first appears.
 
-`unique(["juice", "coffee", "juice", "milk"])` gives `["juice", "coffee", "milk"]`, and `unique([])` gives `[]`.
+`unique(["jelly", "cookie", "jelly", "mint"])` gives `["jelly", "cookie", "mint"]`, and `unique([])` gives `[]`.
 
 ```bash run
 cd /workspace/08-arrays && node arrays.js

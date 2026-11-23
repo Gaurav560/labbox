@@ -34,8 +34,8 @@ class Ch11Check {
             String body = mvc.perform(get("/products")).andReturn().getResponse().getContentAsString();
             List<Map<String, Object>> list = new ObjectMapper().readValue(body, new TypeReference<>() {});
             List<Object> names = list.stream().map(m -> m.get("name")).toList();
-            if (!names.equals(List.of("Mango lassi", "Filter coffee", "Samosa")) || list.get(0).get("id") == null) {
-                R.fail("product_entity", "GET /products should return the three products from data.sql, each with an id.", "[Mango lassi, Filter coffee, Samosa]", names.toString());
+            if (!names.equals(List.of("Mango kulfi", "Fruit custard", "Samosa")) || list.get(0).get("id") == null) {
+                R.fail("product_entity", "GET /products should return the three products from data.sql, each with an id.", "[Mango kulfi, Fruit custard, Samosa]", names.toString());
             } else {
                 R.pass("product_entity", "Product is an entity: Hibernate created its table, data.sql filled it, and Spring Data read it back, with no SQL written by you.");
             }
@@ -47,7 +47,7 @@ class Ch11Check {
         R.task("unique_sku", () -> {
             boolean duplicateRefused;
             try {
-                repository.saveAndFlush(new Product("Copy of lassi", 1000, "LAS-1"));
+                repository.saveAndFlush(new Product("Copy of kulfi", 1000, "KUL-1"));
                 duplicateRefused = false;
             } catch (DataIntegrityViolationException e) {
                 duplicateRefused = true;
@@ -60,7 +60,7 @@ class Ch11Check {
                 nullRefused = true;
             }
             if (!duplicateRefused) {
-                R.fail("unique_sku", "The database accepted a second product with sku LAS-1. Mark the sku column unique.");
+                R.fail("unique_sku", "The database accepted a second product with sku KUL-1. Mark the sku column unique.");
             } else if (!nullRefused) {
                 R.fail("unique_sku", "The database accepted a product without a sku. Mark the column as not nullable.");
             } else {

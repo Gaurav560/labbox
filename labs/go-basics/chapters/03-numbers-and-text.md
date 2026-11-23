@@ -209,7 +209,7 @@ At least 2 digits wide, padded with zeros: exactly what the paise part of a pric
 `uint` versions. Use plain `int` unless you have a reason.
 
 **Runes.** A single character in single quotes, `'A'`, is a **rune**: a number (65) that stands for a character.
-Chapter 8 shows why that matters for text like "café".
+Chapter 8 shows why that matters for text like "José".
 
 **math/big.** For money that must never overflow, or numbers with hundreds of digits, the `math/big` package gives
 exact big integers and decimals.

@@ -13,7 +13,7 @@ public class ShopController {
 
     @GetMapping("/products")
     public List<String> products() {
-        return List.of("Mango lassi", "Samosa");
+        return List.of("Mango kulfi", "Samosa");
     }
 
     @GetMapping("/admin/report")

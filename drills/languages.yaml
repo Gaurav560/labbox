@@ -24,8 +24,8 @@ drills:
   - id: py-string-slice
     kind: predict
     question: |
-      What does `"coffeecup"[0:6]` give?
-    options: ['"coffee"', '"coffeec"', '"cup"']
+      What does `"cookiejar"[0:6]` give?
+    options: ['"cookie"', '"cookiej"', '"jar"']
     answer: 0
     explain: "A slice includes the start index and stops just before the end index: characters 0 to 5."
   - id: py-default-none

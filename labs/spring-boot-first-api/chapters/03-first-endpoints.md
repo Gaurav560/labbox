@@ -97,12 +97,12 @@ public class ProductController {
 
     @GetMapping("/products/featured")
     public Product featured() {
-        return new Product(1, "Mango lassi", 2000);
+        return new Product(1, "Mango kulfi", 2000);
     }
 
     @GetMapping("/products/names")
     public List<String> names() {
-        return List.of("Mango lassi", "Samosa");
+        return List.of("Mango kulfi", "Samosa");
     }
 }
 ```
@@ -113,8 +113,8 @@ and Java writes the constructor and the getters for you. You will use them a lot
 The responses:
 
 ```text
-GET /products/featured  ->  {"id":1,"name":"Mango lassi","pricePaise":2000}
-GET /products/names     ->  ["Mango lassi","Samosa"]
+GET /products/featured  ->  {"id":1,"name":"Mango kulfi","pricePaise":2000}
+GET /products/names     ->  ["Mango kulfi","Samosa"]
 ```
 
 Each field of the record became a `"name": value` pair of a JSON **object**. The `List` became a JSON
@@ -147,7 +147,7 @@ It is a `@RestController` already, so Spring creates it and is ready to route re
 list of the merchants who sell on our platform:
 
 ```java
-static final List<String> MERCHANTS = List.of("Kirana King", "Brew Point", "Annapurna Mess");
+static final List<String> MERCHANTS = List.of("Kirana King", "Book Point", "Annapurna Mess");
 ```
 
 (`static final` means it belongs to the class and never changes: a constant. `List.of` makes a list that
@@ -236,7 +236,7 @@ curl -i localhost:8080/merchants
 ```
 
 You should see `Content-Type: application/json` and the array
-`["Annapurna Mess","Brew Point","Kirana King"]`. Spring and Jackson turned your list into JSON. Press **Check**.
+`["Annapurna Mess","Book Point","Kirana King"]`. Spring and Jackson turned your list into JSON. Press **Check**.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}

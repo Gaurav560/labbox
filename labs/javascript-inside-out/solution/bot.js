@@ -1,4 +1,4 @@
-// Ravi's Tapri ordering bot helpers. Run the examples with: node bot.js
+// Ravi's Snack Corner ordering bot helpers. Run the examples with: node bot.js
 
 function parseQuantity(text) {
   const n = Number(String(text).trim());
@@ -25,9 +25,9 @@ module.exports = { parseQuantity, sameItems, makeTokenCounter, fetchAllPrices };
 
 if (require.main === module) {
   console.log(parseQuantity("2"), parseQuantity("two"));
-  console.log(sameItems(["coffee"], ["coffee"]));
+  console.log(sameItems(["cookie"], ["cookie"]));
   const next = makeTokenCounter("T");
   console.log(next(), next());
   const slow = (item) => new Promise((ok) => setTimeout(() => ok(item.length * 5), 100));
-  fetchAllPrices(["coffee", "bun"], slow).then(console.log);
+  fetchAllPrices(["cookie", "bun"], slow).then(console.log);
 }

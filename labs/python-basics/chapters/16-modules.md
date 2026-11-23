@@ -118,7 +118,7 @@ included". A few you will use again and again:
 | `statistics` | averages and spread | `statistics.median([120, 45, 900])` | `120` |
 | `math` | maths functions | `math.sqrt(16)` | `4.0` |
 | `datetime` | dates and times | `date(2026, 11, 22).strftime("%A")` | `'Sunday'` |
-| `random` | random choices | `random.choice(["juice", "coffee"])` | either one |
+| `random` | random choices | `random.choice(["jelly", "cookie"])` | either one |
 | `csv`, `json` | data files | chapter 14 | |
 | `pathlib` | file paths | chapter 14 | |
 

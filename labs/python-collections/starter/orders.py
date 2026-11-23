@@ -1,4 +1,4 @@
-"""Dabba Express order helpers. Run the examples with: python3 orders.py"""
+"""Thali House order helpers. Run the examples with: python3 orders.py"""
 
 PRICES = {"veg thali": 120, "dal rice": 90, "paneer roll": 110, "curd rice": 80}
 

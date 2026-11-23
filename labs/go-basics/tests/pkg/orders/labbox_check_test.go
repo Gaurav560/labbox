@@ -28,8 +28,8 @@ func guard(task string) {
 
 func TestLabboxCheckCountByItem(t *testing.T) {
 	defer guard("count_by_item")
-	orders := []Order{{"coffee", 2}, {"vada pav", 1}, {"coffee", 1}, {"poha", 4}}
-	want := map[string]int{"coffee": 3, "vada pav": 1, "poha": 4}
+	orders := []Order{{"cookie", 2}, {"vada pav", 1}, {"cookie", 1}, {"poha", 4}}
+	want := map[string]int{"cookie": 3, "vada pav": 1, "poha": 4}
 	if got := CountByItem(orders); !reflect.DeepEqual(got, want) {
 		report("count_by_item", false, "CountByItem does not add up the quantities per item.", want, got)
 		return
@@ -47,8 +47,8 @@ func TestLabboxCheckBusiest(t *testing.T) {
 		in   []Order
 		want string
 	}{
-		{[]Order{{"coffee", 2}, {"vada pav", 1}, {"coffee", 1}}, "coffee"},
-		{[]Order{{"poha", 3}, {"bun", 3}, {"coffee", 2}}, "bun"},
+		{[]Order{{"cookie", 2}, {"vada pav", 1}, {"cookie", 1}}, "cookie"},
+		{[]Order{{"poha", 3}, {"bun", 3}, {"cookie", 2}}, "bun"},
 		{nil, ""},
 	}
 	for _, c := range cases {

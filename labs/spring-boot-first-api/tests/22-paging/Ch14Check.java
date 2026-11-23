@@ -37,8 +37,8 @@ class Ch14Check {
             List<?> names = content instanceof List<?> l ? l.stream().map(x -> ((Map<?, ?>) x).get("name")).toList() : List.of();
             if (!(content instanceof List)) {
                 R.fail("paged_products", "GET /products should return a page (with content and page fields), not a plain list.", "{\"content\": [...], \"page\": {...}}", body.length() > 120 ? body.substring(0, 120) + "..." : body);
-            } else if (!Integer.valueOf(6).equals(meta.get("totalElements")) || !names.equals(List.of("Kachori", "Mango lassi"))) {
-                R.fail("paged_products", "Page 1 (the second page) of 2, sorted by name, should hold Kachori and Mango lassi, out of 6 products.", "[Kachori, Mango lassi], totalElements 6", names + ", totalElements " + meta.get("totalElements"));
+            } else if (!Integer.valueOf(6).equals(meta.get("totalElements")) || !names.equals(List.of("Kachori", "Mango kulfi"))) {
+                R.fail("paged_products", "Page 1 (the second page) of 2, sorted by name, should hold Kachori and Mango kulfi, out of 6 products.", "[Kachori, Mango kulfi], totalElements 6", names + ", totalElements " + meta.get("totalElements"));
             } else {
                 R.pass("paged_products", "Pageable turned ?page=1&size=2&sort=name into LIMIT, OFFSET and ORDER BY, and the page reports the total for the client.");
             }
@@ -55,8 +55,8 @@ class Ch14Check {
             List<Object> names = list.stream().map(m -> m.get("name")).toList();
             if (!annotated) {
                 R.fail("price_range", "ProductRepository needs a method inPriceRange marked with @Query.");
-            } else if (!names.equals(List.of("Mango lassi", "Kachori", "Vada pav", "Filter coffee"))) {
-                R.fail("price_range", "min=2000&max=3000 should list the products from 2000 to 3000 paise, both included, cheapest first.", "[Mango lassi, Kachori, Vada pav, Filter coffee]", names.toString());
+            } else if (!names.equals(List.of("Mango kulfi", "Kachori", "Vada pav", "Fruit custard"))) {
+                R.fail("price_range", "min=2000&max=3000 should list the products from 2000 to 3000 paise, both included, cheapest first.", "[Mango kulfi, Kachori, Vada pav, Fruit custard]", names.toString());
             } else {
                 R.pass("price_range", "A JPQL query with named parameters: BETWEEN includes both ends, and ORDER BY ran in the database.");
             }

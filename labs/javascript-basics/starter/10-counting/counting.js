@@ -11,8 +11,8 @@ function commonItems(a, b) {
 }
 
 if (require.main === module) {
-  console.log(wordCounts(["juice", "Coffee", "JUICE", "juice"]));
-  console.log(commonItems(["toast", "coffee", "milk"], ["milk", "toast", "juice"]));
+  console.log(wordCounts(["jelly", "Cookie", "JELLY", "jelly"]));
+  console.log(commonItems(["toast", "cookie", "mint"], ["mint", "toast", "jelly"]));
 }
 
 module.exports = { wordCounts, commonItems };

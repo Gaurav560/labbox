@@ -166,7 +166,7 @@ if fn is None:
     report("remove_duplicates", False, err)
 else:
     try:
-        for items, expected in [([3, 1, 3, 2, 1], [3, 1, 2]), (["rice", "coffee", "rice"], ["rice", "coffee"]), ([], []),
+        for items, expected in [([3, 1, 3, 2, 1], [3, 1, 2]), (["rice", "cookie", "rice"], ["rice", "cookie"]), ([], []),
                                 ([5, 5, 5], [5]), ([2, 1], [2, 1])]:
             got = fn(list(items))
             if got == expected:
@@ -265,7 +265,7 @@ st_mod, st_err = load("sets_tuples")
 
 fn, err = get_func(st_mod, st_err, "common_items")
 run_cases("common_items", fn, err, [
-    ((["bread", "coffee", "milk"], ["milk", "bread", "juice"]), ["bread", "milk"]), (([1, 2, 2, 3], [2, 2, 4]), [2]),
+    ((["bread", "cookie", "mint"], ["mint", "bread", "jelly"]), ["bread", "mint"]), (([1, 2, 2, 3], [2, 2, 4]), [2]),
     (([1, 2], [3, 4]), []), (([], [1]), []), (([3, 2, 1], [1, 2, 3]), [1, 2, 3]),
 ])
 
@@ -282,17 +282,17 @@ if fn is None:
     report("add_item", False, err)
 else:
     try:
-        first, second, third = fn("milk"), fn("bread"), fn("eggs")
-        mine = ["milk"]
-        given = fn("juice", mine)
+        first, second, third = fn("mint"), fn("bread"), fn("eggs")
+        mine = ["mint"]
+        given = fn("jelly", mine)
         if second != ["bread"]:
-            report("add_item", False, f'add_item("milk") then add_item("bread") gave {second!r}: the calls share one basket. '
+            report("add_item", False, f'add_item("mint") then add_item("bread") gave {second!r}: the calls share one basket. '
                    "A default list is made once and reused; use None as the default.", "['bread']", repr(second))
-        elif first != ["milk"] or third != ["eggs"]:
+        elif first != ["mint"] or third != ["eggs"]:
             report("add_item", False, f"Three calls without a basket gave {first!r}, {second!r}, {third!r}; each should hold one item.")
-        elif given is not mine or mine != ["milk", "juice"]:
-            report("add_item", False, 'add_item("juice", basket) should add to the basket it was given and return that same '
-                   f"basket, but the caller's basket is still {mine!r} (a copy was changed instead).", "['milk', 'juice']", repr(mine))
+        elif given is not mine or mine != ["mint", "jelly"]:
+            report("add_item", False, 'add_item("jelly", basket) should add to the basket it was given and return that same '
+                   f"basket, but the caller's basket is still {mine!r} (a copy was changed instead).", "['mint', 'jelly']", repr(mine))
         else:
             report("add_item", True, "ok")
     except Exception as e:
@@ -392,7 +392,7 @@ else:
         cases = [
             ("sample.csv", SAMPLE, {"food": 200.0, "travel": 40.5}),
             ("header_only.csv", "date,category,amount\n", {}),
-            ("quoted.csv", 'date,category,amount\n2026-03-05,"snacks, juice",30\n2026-03-06,"snacks, juice",12.25\n', {"snacks, juice": 42.25}),
+            ("quoted.csv", 'date,category,amount\n2026-03-05,"snacks, jelly",30\n2026-03-06,"snacks, jelly",12.25\n', {"snacks, jelly": 42.25}),
         ]
         for name, text, expected in cases:
             got = fn(tmp_file(name, text))

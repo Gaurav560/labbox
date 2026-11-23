@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MerchantController {
 
-    static final List<String> MERCHANTS = List.of("Kirana King", "Brew Point", "Annapurna Mess");
+    static final List<String> MERCHANTS = List.of("Kirana King", "Book Point", "Annapurna Mess");
 
     @GetMapping("/hello")
     public String hello() {

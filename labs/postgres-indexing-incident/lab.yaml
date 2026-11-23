@@ -9,10 +9,10 @@ tags: [postgres, sql, indexes]
 level: intermediate
 estimated_minutes: 20
 story:
-  company: Tapri Counter
-  character: { name: Meera, role: "CTO, Tapri Counter" }
-  pitch: "Tapri Counter's checkout falls over every lunch rush. You are the new backend engineer."
-cover_scene: "Tapri Counter at lunch rush: a tiny busy cafe checkout counter with a long queue of tiny people, a huge glowing database cylinder behind the counter with a red rotating alarm light on top, a pager on the counter flashing red."
+  company: Dosa Counter
+  character: { name: Meera, role: "CTO, Dosa Counter" }
+  pitch: "Dosa Counter's checkout falls over every lunch rush. You are the new backend engineer."
+cover_scene: "Dosa Counter at lunch rush: a tiny busy restaurant checkout counter with a long queue of tiny people, a huge glowing database cylinder behind the counter with a red rotating alarm light on top, a pager on the counter flashing red."
 cover: cover.svg
 cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
 image: labbox/postgres-indexing-incident:v1
@@ -21,11 +21,11 @@ workspace:
   mount_path: /workspace
   shell: /bin/bash
   network: lab
-  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: tapri }
+  env: { PGHOST: db, PGUSER: postgres, PGPASSWORD: labpass, PGDATABASE: shop }
 services:
   - name: db
     image: postgres:16
-    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: tapri }
+    env: { POSTGRES_PASSWORD: labpass, POSTGRES_DB: shop }
     resources: { cpus: 1, memory: 768m, pids_limit: 256 }
     # Sized for a small container: no parallel index builds, modest buffers (defaults get OOM-killed).
     command: [postgres, -c, shared_buffers=64MB, -c, maintenance_work_mem=64MB, -c, work_mem=8MB,

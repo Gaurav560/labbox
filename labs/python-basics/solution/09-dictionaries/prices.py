@@ -1,9 +1,9 @@
 # Chapter 9: a price list is a dictionary: each item name is a key, each price its value.
-prices = {"juice": 15, "samosa": 20, "coffee": 30}
+prices = {"jelly": 15, "samosa": 20, "cookie": 30}
 
-print(prices["juice"])
+print(prices["jelly"])
 prices["vada"] = 25
-prices["juice"] = 18
+prices["jelly"] = 18
 print(prices)
 
 for item, price in prices.items():

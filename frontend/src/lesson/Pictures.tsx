@@ -474,9 +474,9 @@ function Postman() {
 /** An object is a filled-in form: each field has a label and a value. */
 function FormCard() {
   return (
-    <Svg label="An object drawn as a form card with three labelled fields: name juice, price 20, qty 2">
+    <Svg label="An object drawn as a form card with three labelled fields: name jelly, price 20, qty 2">
       <Card x={30} y={14} w={200} h={122} />
-      {[["name", "juice"], ["price", "20"], ["qty", "2"]].map(([k, v], i) => (
+      {[["name", "jelly"], ["price", "20"], ["qty", "2"]].map(([k, v], i) => (
         <g key={k}>
           <Hand x={44} y={46 + i * 34} kind="label">{`${k}:`}</Hand>
           <rect className="pc-cell" x={110} y={30 + i * 34} width={108} height={24} rx={4} />

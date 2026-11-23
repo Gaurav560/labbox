@@ -33,8 +33,8 @@ table: product
 +----+---------------+-------------+-------+
 | id | name          | price_paise | sku   |
 +----+---------------+-------------+-------+
-|  1 | Mango lassi   |        2000 | LAS-1 |
-|  2 | Filter coffee |        3000 | COF-1 |
+|  1 | Mango kulfi   |        2000 | KUL-1 |
+|  2 | Fruit custard |        3000 | CUS-1 |
 |  3 | Samosa        |        1800 | SAM-1 |
 +----+---------------+-------------+-------+
 ```
@@ -63,7 +63,7 @@ changing a setting.
 :::
 
 :::step{type=concept title="From objects to rows: ORM, JPA and Hibernate"}
-Your Java code thinks in **objects** (`new Product("Lassi", 2000, "LAS-1")`); the database thinks in **rows**.
+Your Java code thinks in **objects** (`new Product("Kulfi", 2000, "KUL-1")`); the database thinks in **rows**.
 Writing SQL by hand to convert between them for every class is long, repetitive work. The tool that does it
 for you is called an **ORM**, an Object-Relational Mapper.
 
@@ -208,7 +208,7 @@ curl localhost:8080/products
 ```
 
 ```text
-[{"id":1,"name":"Mango lassi","pricePaise":2000,"sku":"LAS-1"},{"id":2,"name":"Filter coffee","pricePaise":3000,"sku":"COF-1"},{"id":3,"name":"Samosa","pricePaise":1800,"sku":"SAM-1"}]
+[{"id":1,"name":"Mango kulfi","pricePaise":2000,"sku":"KUL-1"},{"id":2,"name":"Fruit custard","pricePaise":3000,"sku":"CUS-1"},{"id":3,"name":"Samosa","pricePaise":1800,"sku":"SAM-1"}]
 ```
 
 Those three products came from `data.sql`, through a real database table. Press **Check**.
@@ -274,7 +274,7 @@ Rebuild and run with `--spring.jpa.show-sql=true` again, and look at the new tab
 create table product (..., sku varchar(255) not null unique, primary key (id))
 ```
 
-The check saves a second product with `LAS-1`, and one with no SKU, and expects the database to refuse both.
+The check saves a second product with `KUL-1`, and one with no SKU, and expects the database to refuse both.
 Press **Check**.
 :::
 
@@ -311,7 +311,7 @@ Why also enforce uniqueness in the database, if the Java code already checks for
 - [x] Java checks can be bypassed (other code, scripts, two requests at the same instant); the constraint never is
 - [ ] JPA requires it
 :::explain
-Two requests can both check "no LAS-1 yet" at the same moment, and both save. Only the database sees every
+Two requests can both check "no KUL-1 yet" at the same moment, and both save. Only the database sees every
 write, one at a time, so its constraint is the real guarantee.
 :::
 :::

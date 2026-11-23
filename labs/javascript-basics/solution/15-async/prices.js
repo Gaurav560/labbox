@@ -18,7 +18,7 @@ async function retry(task, times) {
 
 if (require.main === module) {
   const fetchPrice = (item) => new Promise((resolve) => setTimeout(() => resolve(item.length * 5), 100));
-  fetchAll(["coffee", "bun", "poha"], fetchPrice).then((prices) => console.log(prices));
+  fetchAll(["cookie", "bun", "poha"], fetchPrice).then((prices) => console.log(prices));
 }
 
 module.exports = { fetchAll, retry };

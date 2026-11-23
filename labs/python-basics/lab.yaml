@@ -325,8 +325,8 @@ chapters:
           - "The & operator (or .intersection) keeps what is in both sets."
           - "Sets have no order, so give back sorted(...) of the result."
         examples:
-        - call: "common_items([\"bread\", \"coffee\", \"milk\"], [\"milk\", \"bread\", \"juice\"])"
-          gives: "[\"bread\", \"milk\"]"
+        - call: "common_items([\"bread\", \"cookie\", \"mint\"], [\"mint\", \"bread\", \"jelly\"])"
+          gives: "[\"bread\", \"mint\"]"
         - call: "common_items([1, 2, 2, 3], [2, 2, 4])"
           gives: "[2]"
   - id: sorting-and-comprehensions
@@ -382,8 +382,8 @@ chapters:
           - "Use None as the default instead, because None is never changed."
           - "Inside the function, if basket is still None, make a fresh empty list before appending."
         examples:
-        - call: "add_item(\"milk\")"
-          gives: "[\"milk\"]"
+        - call: "add_item(\"mint\")"
+          gives: "[\"mint\"]"
         - call: "add_item(\"bread\")"
           gives: "[\"bread\"]"
           note: "a fresh basket each time"

@@ -85,7 +85,7 @@ letterCounts("Noon")   // { n: 2, o: 2 }
 Open `counting.js` and make `wordCounts(words)` give back an object of each word, in **lower case**, to how many times
 it appears. Capitals should not matter.
 
-`wordCounts(["juice", "Coffee", "JUICE", "juice"])` gives `{ juice: 3, coffee: 1 }`, and no words give `{}`.
+`wordCounts(["jelly", "Cookie", "JELLY", "jelly"])` gives `{ jelly: 3, cookie: 1 }`, and no words give `{}`.
 
 ```bash run
 cd /workspace/10-counting && node counting.js
@@ -156,7 +156,7 @@ A Set keeps each value once: only 3 and 1 are left.
 :::step{type=task task=common_items title="Your turn: what two lists share"}
 In `counting.js`, make `commonItems(a, b)` give back the items that are in **both** arrays, each once, sorted.
 
-`commonItems(["toast", "coffee", "milk"], ["milk", "toast", "juice"])` gives `["milk", "toast"]`.
+`commonItems(["toast", "cookie", "mint"], ["mint", "toast", "jelly"])` gives `["mint", "toast"]`.
 
 Put one list in a Set, then keep the items of the other that the Set `has`.
 

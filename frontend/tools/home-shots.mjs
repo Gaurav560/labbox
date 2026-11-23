@@ -12,7 +12,7 @@ const USER = { username: "riya", password: "labbox-demo-1" };
 // [lab, chapter, step, file to open, terminal command, wait ms (default 6000)]. Each lab is reset first; Redis chapter 10
 // fills Redis on purpose (the OOM incident), so it comes last.
 export const SHOTS = [
-  ["redis-in-practice", "01-what-redis-is", 2, "README.md", "redis-cli PING && redis-cli SET greeting \"hello, Brew Point\" && redis-cli GET greeting"],
+  ["redis-in-practice", "01-what-redis-is", 2, "README.md", "redis-cli PING && redis-cli SET greeting \"hello, Basket\" && redis-cli GET greeting"],
   ["redis-in-practice", "04-sets-and-sorted-sets", 4, "README.md", "redis-cli ZADD leaderboard 120 asha 95 kabir 140 riya && redis-cli ZREVRANGE leaderboard 0 2 WITHSCORES"],
   ["redis-in-practice", "06-caching-for-real", 2, "app.py", "redis-cli PING && redis-cli HSET customer:42 name Riya visits 7 && redis-cli HGETALL customer:42"],
   ["redis-in-practice", "08-distributed-locks", 5, "app.py", "redis-cli SET lock:slot:5 c1 NX PX 5000 && redis-cli PTTL lock:slot:5"],

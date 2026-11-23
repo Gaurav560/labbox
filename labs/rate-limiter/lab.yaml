@@ -9,9 +9,9 @@ tags: [system-design, redis, python]
 level: intermediate
 estimated_minutes: 40
 story:
-  company: Brew Point
-  character: { name: Kabir, role: "Backend lead, Brew Point" }
-  pitch: "Brew Point opened its quotes API to partners. One partner's script is now melting both servers."
+  company: Book Point
+  character: { name: Kabir, role: "Backend lead, Book Point" }
+  pitch: "Book Point opened its quotes API to partners. One partner's script is now melting both servers."
 cover_scene: "Two small servers behind a gate, with a counter that lets a steady stream of requests through."
 cover: cover.svg
 cover_credit: { by: "Logos: nginx,redis", source: "devicon (MIT)" }

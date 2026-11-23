@@ -244,7 +244,7 @@ def test_preview_proxy(client: TestClient):
 
     assert wait_http(client, ca) == 200
     r = client.get(f"/preview/{API_LAB}/8000/", headers={"cookie": f"labbox_preview={ca}"})
-    assert r.json() == {"message": "Welcome to Ravi's Tapri"}
+    assert r.json() == {"message": "Welcome to Ravi's Snack Corner"}
     assert client.get(f"/preview/{API_LAB}/8000/menu", headers={"cookie": f"labbox_preview={ca}"}).status_code == 404
 
     # No cookie, a broken cookie, a login token instead of a preview ticket: all refused.
@@ -267,8 +267,8 @@ def test_preview_proxy(client: TestClient):
     sh("docker", "exec", "-d", "-u", "1000", ws_a, "python3", "-c", ECHO_SERVER)
     time.sleep(1.5)
     with client.websocket_connect(f"/preview/{API_LAB}/8000/echo", headers={"cookie": f"labbox_preview={ca}"}) as wsock:
-        wsock.send_text("ek cold coffee")
-        assert wsock.receive_text() == "ek cold coffee"
+        wsock.send_text("ek vada pav")
+        assert wsock.receive_text() == "ek vada pav"
 
 
 def test_service_data_dir_is_outside_workspace(pg_user):

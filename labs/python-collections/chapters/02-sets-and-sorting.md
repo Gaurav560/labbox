@@ -1,5 +1,5 @@
 :::step{type=story title="The morning route"}
-:::character{name="Priya" role="Founder, Dabba Express"}
+:::character{name="Priya" role="Founder, Thali House"}
 Our riders leave at 11. They need two lists: every area we deliver to today, once,
 and the order to ride them in, nearest first. Right now they guess.
 :::

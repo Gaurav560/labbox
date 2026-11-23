@@ -30,8 +30,8 @@ cases("parse_quantity", "parseQuantity", [
   [["2"], 2], [[" 3 "], 3], [["20"], 20], [["two"], 0], [["2.5"], 0], [["0"], 0], [["21"], 0], [[""], 0], [["-1"], 0],
 ]);
 cases("same_items", "sameItems", [
-  [[["coffee", "bun"], ["coffee", "bun"]], true], [[["coffee"], ["bun"]], false], [[["coffee", "bun"], ["bun", "coffee"]], false],
-  [[[], []], true], [[["coffee"], ["coffee", "coffee"]], false],
+  [[["cookie", "bun"], ["cookie", "bun"]], true], [[["cookie"], ["bun"]], false], [[["cookie", "bun"], ["bun", "cookie"]], false],
+  [[[], []], true], [[["cookie"], ["cookie", "cookie"]], false],
 ]);
 
 try {
@@ -54,7 +54,7 @@ try {
       return new Promise((ok) => setTimeout(() => { running -= 1; ok(item.length * 5); }, 150 - item.length * 10));
     };
     const started = Date.now();
-    const got = await bot.fetchAllPrices(["coffee", "bun", "samosa", "poha"], fetchPrice);
+    const got = await bot.fetchAllPrices(["cookie", "bun", "samosa", "poha"], fetchPrice);
     const want = [30, 15, 30, 20];
     if (show(got) !== show(want)) report("fetch_all", false, "The prices must come back in the order of items.", show(want), show(got));
     else if (most < 4) report("fetch_all", false, `The fetches ran one after another (${Date.now() - started} ms). Start them all at once.`, "4 at once", `${most} at once`);

@@ -67,7 +67,7 @@ Parameters are matched **in order**: the first parameter goes to the first condi
 :::
 
 :::step{type=try title="The project" file="20-repositories/src/main/java/com/shop/product/ProductRepository.java" line="5-10"}
-`ProductRepository` is on the right, with two TODOs. Products now have a **category** (`drinks` or
+`ProductRepository` is on the right, with two TODOs. Products now have a **category** (`sweets` or
 `snacks`), and `data.sql` loads five of them. The controller's `GET /products` takes an optional `category`
 parameter, but ignores it for now.
 
@@ -81,7 +81,7 @@ cd 20-repositories && mvn -q -o package -DskipTests && java -jar target/reposito
 curl "localhost:8080/products?category=snacks"
 ```
 
-All five products come back, drinks included, and the log shows one plain `select ... from product`.
+All five products come back, sweets included, and the log shows one plain `select ... from product`.
 :::
 
 :::step{type=task task=find_by_category title="Your turn: products by category, A to Z"}
@@ -113,7 +113,7 @@ Chapter 19 made `sku` unique in the database. Now see what happens when a client
 that is already taken:
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi again", "pricePaise": 1000, "category": "drinks", "sku": "LAS-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Kulfi again", "pricePaise": 1000, "category": "sweets", "sku": "KUL-1"}'
 ```
 
 ```text
@@ -124,7 +124,7 @@ HTTP/1.1 500
 And in the server log, deep in the stack trace:
 
 ```text
-Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'LAS-1' )"
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'KUL-1' )"
 ```
 
 The good news: the database protected the data, as designed. Nothing was saved. The bad news: the **client**
@@ -170,11 +170,11 @@ rare case into a 409 as well is what an exception handler from chapter 17 is for
 Rebuild, run, and try the duplicate again, then a new SKU:
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Lassi again", "pricePaise": 1000, "category": "drinks", "sku": "LAS-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Kulfi again", "pricePaise": 1000, "category": "sweets", "sku": "KUL-1"}'
 ```
 
 ```bash run
-curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Rose milk", "pricePaise": 4500, "category": "drinks", "sku": "ROS-1"}'
+curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Rasmalai", "pricePaise": 4500, "category": "sweets", "sku": "RAS-1"}'
 ```
 
 `409`, then `201`. Press **Check**.

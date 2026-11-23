@@ -112,7 +112,7 @@ chapters:
           - "Build a sorted copy with a stream: take MERCHANTS, sort it, collect it to a list, and return that."
         examples:
           - call: "GET /merchants"
-            gives: "[\"Annapurna Mess\",\"Brew Point\",\"Kirana King\"]"
+            gives: "[\"Annapurna Mess\",\"Book Point\",\"Kirana King\"]"
   - id: 04-app-startup
     title: How a Spring Boot app starts
     file: chapters/04-app-startup.md
@@ -148,7 +148,7 @@ chapters:
           - "Mark PriceCalculator as a service, then give PriceController a constructor with a PriceCalculator parameter."
           - "In the constructor, assign the parameter to the calculator field, and make the field final."
         examples:
-          - call: "GET /lassi/price"
+          - call: "GET /kulfi/price"
             gives: "2360"
             note: "2000 paise plus 18% GST"
       - id: one_counter
@@ -245,7 +245,7 @@ chapters:
           - "Spring can call a method once, right after it creates the bean, if you mark it."
           - "The annotation is PostConstruct, from jakarta.annotation; it goes on the line above load()."
         examples:
-          - call: "GET /prices/LAS-1"
+          - call: "GET /prices/KUL-1"
             gives: "2000"
           - call: "GET /prices/count"
             gives: "3"
@@ -256,7 +256,7 @@ chapters:
           - "A bean's scope decides how many copies Spring makes."
           - "Use the Scope annotation (org.springframework.context.annotation.Scope) on ReceiptPrinter, with the value prototype."
         examples:
-          - call: "GET /receipt/lassi, then GET /receipt/samosa"
+          - call: "GET /receipt/kulfi, then GET /receipt/samosa"
             gives: "[\"1 x samosa\"]"
   - id: 10-how-spring-handles-requests
     part: REST APIs
@@ -308,9 +308,9 @@ chapters:
           - "For sort=price use Comparator.comparingInt on the price; otherwise compare the names."
         examples:
           - call: "GET /products/search?maxPrice=2000"
-            gives: "[Mango lassi, Samosa]"
+            gives: "[Mango kulfi, Samosa]"
           - call: "GET /products/search?sort=price"
-            gives: "[Samosa, Mango lassi, Filter coffee, Paneer roll]"
+            gives: "[Samosa, Mango kulfi, Fruit custard, Paneer roll]"
   - id: 12-request-bodies
     title: Request bodies and DTOs
     file: chapters/12-request-bodies.md
@@ -333,7 +333,7 @@ chapters:
           - "Format the price with String.format(\"Rs %d.%02d\", ...) using paise / 100 and paise % 100."
         examples:
           - call: "GET /products/1/view"
-            gives: "{\"id\": 1, \"name\": \"Mango lassi\", \"price\": \"Rs 20.00\"}"
+            gives: "{\"id\": 1, \"name\": \"Mango kulfi\", \"price\": \"Rs 20.00\"}"
             note: "no costPaise"
   - id: 13-status-codes
     title: Status codes and ResponseEntity
@@ -383,7 +383,7 @@ chapters:
           - "In ProductService.budgetProducts(), return the repository's result for BUDGET_PAISE."
         examples:
           - call: "GET /products/budget"
-            gives: "Mango lassi, Filter coffee, Samosa"
+            gives: "Mango kulfi, Fruit custard, Samosa"
             note: "under Rs 50"
   - id: 15-updating-and-deleting
     title: Updating and deleting
@@ -397,7 +397,7 @@ chapters:
           - "If findById(id) is empty, answer ResponseEntity.notFound().build()."
           - "Otherwise save new Product(id, name, price, stock) from the body, and answer ResponseEntity.ok with the saved product."
         examples:
-          - call: "PUT /products/2 {\"name\": \"Filter coffee (large)\", \"pricePaise\": 3500, \"stock\": 20}"
+          - call: "PUT /products/2 {\"name\": \"Fruit custard (large)\", \"pricePaise\": 3500, \"stock\": 20}"
             gives: "200 with the new product"
           - call: "PUT /products/99"
             gives: "404"
@@ -409,7 +409,7 @@ chapters:
           - "Save the result and answer 200 with it, or 404 when the product does not exist (the map and orElse shape works well)."
         examples:
           - call: "PATCH /products/1 {\"pricePaise\": 2200}"
-            gives: "{\"id\":1,\"name\":\"Mango lassi\",\"pricePaise\":2200,\"stock\":40}"
+            gives: "{\"id\":1,\"name\":\"Mango kulfi\",\"pricePaise\":2200,\"stock\":40}"
   - id: 16-validation
     title: Validation
     file: chapters/16-validation.md
@@ -424,7 +424,7 @@ chapters:
         examples:
           - call: "POST /products {\"name\": \"\", \"pricePaise\": 2000}"
             gives: "400"
-          - call: "POST /products {\"name\": \"Lassi\", \"pricePaise\": 2000}"
+          - call: "POST /products {\"name\": \"Kulfi\", \"pricePaise\": 2000}"
             gives: "201"
       - id: validate_customer
         title: "validate NewCustomer"
@@ -501,7 +501,7 @@ chapters:
           - "JPA also needs a constructor with no arguments; make it protected so other code keeps using the real one."
         examples:
           - call: "GET /products"
-            gives: "[Mango lassi, Filter coffee, Samosa], each with an id"
+            gives: "[Mango kulfi, Fruit custard, Samosa], each with an id"
       - id: unique_sku
         title: "one product per SKU"
         hints:
@@ -509,7 +509,7 @@ chapters:
           - "The column must be unique and must not be null."
           - "Use @Column with nullable = false and unique = true on the sku field."
         examples:
-          - call: "save a second product with sku LAS-1"
+          - call: "save a second product with sku KUL-1"
             gives: "DataIntegrityViolationException"
             note: "the database refuses it"
   - id: 20-repositories
@@ -533,9 +533,9 @@ chapters:
           - "Declare a method named existsBySku with a String parameter, returning boolean."
           - "In POST /products, return ResponseEntity.status(HttpStatus.CONFLICT).build() before saving when it is true."
         examples:
-          - call: "POST /products with sku LAS-1"
+          - call: "POST /products with sku KUL-1"
             gives: "409"
-          - call: "POST /products with sku ROS-1"
+          - call: "POST /products with sku RAS-1"
             gives: "201"
   - id: 21-relationships
     title: Relationships and the N+1 problem
@@ -574,7 +574,7 @@ chapters:
           - "JpaRepository already has findAll(Pageable): return its result."
         examples:
           - call: "GET /products?page=1&size=2&sort=name"
-            gives: "content [Kachori, Mango lassi], totalElements 6"
+            gives: "content [Kachori, Mango kulfi], totalElements 6"
       - id: price_range
         title: "a price range with @Query"
         hints:
@@ -583,7 +583,7 @@ chapters:
           - "Declare inPriceRange(int min, int max) with that @Query, and return it from the controller."
         examples:
           - call: "GET /products/price-range?min=2000&max=3000"
-            gives: "[Mango lassi, Kachori, Vada pav, Filter coffee]"
+            gives: "[Mango kulfi, Kachori, Vada pav, Fruit custard]"
   - id: 23-transactions
     title: Transactions
     file: chapters/23-transactions.md
@@ -596,8 +596,8 @@ chapters:
           - "One annotation makes the whole method run in one transaction."
           - "Mark placeOrder as transactional with Spring's annotation; OutOfStockException is unchecked, so it rolls back."
         examples:
-          - call: "placeOrder(lassi x2, samosa x5), samosas run out"
-            gives: "lassi stock unchanged"
+          - call: "placeOrder(kulfi x2, samosa x5), samosas run out"
+            gives: "kulfi stock unchanged"
       - id: rollback_checked
         title: "a declined card undoes the order"
         hints:
@@ -605,8 +605,8 @@ chapters:
           - "Checked exceptions commit by default; the annotation can list exceptions that roll back."
           - "Add rollbackFor = PaymentDeclinedException.class to the transactional annotation on placePaidOrder."
         examples:
-          - call: "placePaidOrder(coffee x1, \"DECLINE-4242\")"
-            gives: "coffee stock unchanged"
+          - call: "placePaidOrder(custard x1, \"DECLINE-4242\")"
+            gives: "custard stock unchanged"
   - id: 24-migrations
     title: Database migrations with Flyway
     file: chapters/24-migrations.md
@@ -628,10 +628,10 @@ chapters:
         hints:
           - "A data change is a migration too, with the next version number."
           - "Use UPDATE product SET category = ... WHERE sku ..."
-          - "LAS-1 and COF-1 are drinks; SAM-1 is snacks."
+          - "KUL-1 and CUS-1 are sweets; SAM-1 is snacks."
         examples:
           - call: "SELECT sku, category FROM product"
-            gives: "LAS-1 drinks, COF-1 drinks, SAM-1 snacks"
+            gives: "KUL-1 sweets, CUS-1 sweets, SAM-1 snacks"
   - id: 25-testing-controllers
     part: Production basics
     title: Testing the web layer
@@ -747,8 +747,8 @@ chapters:
           - "Give uri(...) the path with a {sku} placeholder and the sku, then retrieve() and read the body as SupplierStock.class."
           - "Return the record's available() value."
         examples:
-          - call: "GET /supplier-stock/LAS-1"
-            gives: "{\"sku\": \"LAS-1\", \"available\": 120}"
+          - call: "GET /supplier-stock/KUL-1"
+            gives: "{\"sku\": \"KUL-1\", \"available\": 120}"
       - id: handle_supplier_errors
         title: "not stocked, down, or too slow"
         hints:
@@ -772,7 +772,7 @@ chapters:
           - "Loop over request.items(): find the StockItem by sku (orElseThrow an OutOfStockException), call take, and add price times quantity."
           - "In the controller, the parameter is @Valid and @RequestBody; answer ResponseEntity.created(...) with the order's id in the URI."
         examples:
-          - call: "POST /checkout, 2 x LAS-1 and 1 x COF-1"
+          - call: "POST /checkout, 2 x KUL-1 and 1 x CUS-1"
             gives: "201, Location: /orders/1, totalPaise 7000"
       - id: checkout_errors
         title: "clear errors, nothing half-done"

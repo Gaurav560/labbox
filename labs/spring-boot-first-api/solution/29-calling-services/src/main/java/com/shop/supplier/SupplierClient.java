@@ -12,7 +12,7 @@ import org.springframework.web.client.RestClient;
 @Component
 public class SupplierClient {
 
-    /** The supplier's answer: {"sku": "LAS-1", "available": 120}. */
+    /** The supplier's answer: {"sku": "KUL-1", "available": 120}. */
     public record SupplierStock(String sku, int available) {
     }
 

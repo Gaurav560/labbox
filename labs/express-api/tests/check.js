@@ -59,7 +59,7 @@ async function waitForServer() {
         return;
       }
     }
-    const made = await call("POST", "/orders", { items: ["poha", "coffee"], area: "Kothrud" });
+    const made = await call("POST", "/orders", { items: ["poha", "cookie"], area: "Kothrud" });
     if (made.status !== 201 || made.json?.status !== "preparing" || typeof made.json?.id !== "number") {
       report("create_order", false, "A valid order should answer 201 with the new order.", '201 {"id": ..., "status": "preparing"}', `${made.status} ${JSON.stringify(made.json)}`);
       return;

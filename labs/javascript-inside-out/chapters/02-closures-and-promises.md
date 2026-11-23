@@ -1,5 +1,5 @@
 :::step{type=story title="Tokens and slow suppliers"}
-:::character{name="Ravi" role="Owner, Ravi's Tapri"}
+:::character{name="Ravi" role="Owner, Ravi's Snack Corner"}
 At rush hour I hand out tokens, T1, T2, T3, and the bot keeps restarting at T1. And when it asks
 my three suppliers for today's prices, the customer waits for one, then the next, then the next.
 :::
