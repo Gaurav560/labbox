@@ -29,6 +29,12 @@ CHAPTERS = [
     ("hashmap", "14-hashmap", "test", ["energy_by_turbine", "silent_turbines"]),
     ("errors", "15-errors", "test", ["number", "parse_reading"]),
     ("error-types", "16-error-types", "test", ["error_enum", "load_with_context"]),
+    ("generics", "17-generics", "test", ["largest", "series_peak"]),
+    ("traits", "18-traits", "test", ["impl_display", "impl_sensor"]),
+    ("lifetimes", "19-lifetimes", "test", ["stronger", "zero_copy"]),
+    ("closures", "20-closures", "test", ["below", "alerts"]),
+    ("iterators", "21-iterators", "test", ["total_energy", "weak_turbines"]),
+    ("testing", "22-testing", "own", ["test_curve", "test_parse"]),
 ]
 
 
@@ -84,6 +90,46 @@ def run_mode(cid, folder, tasks, work, pkg):
             result(task, True, messages["passed"])
 
 
+# For "own" chapters: the learner's test function for each task, and the bug it must catch in the reference library.
+OWN = {
+    "test_curve": ("power_curve_edges", "the storm stop starts above 25 m/s instead of at 25",
+                   ("wind_ms >= 25.0", "wind_ms > 25.0")),
+    "test_parse": ("parse_rejects_broken_lines", "the power error names the wind field instead",
+                   ('format!("bad power {:?}", parts[3])', 'format!("bad power {:?}", parts[2])')),
+}
+
+
+def own_mode(cid, folder, tasks, work, pkg):
+    """The learner wrote the tests (tests/windwatch.rs). Each test must pass on the reference library and fail when
+    the bug is planted in it."""
+    reference = open(f"{T}/{cid}/lib_reference.rs").read()
+    mine = open(f"{work}/{folder}/tests/windwatch.rs").read()
+    for t in tasks:
+        name, bug, (good, bad) = OWN[t]
+        if f"fn {name}(" not in mine:
+            result(t, False, f"keep the test function {name} in tests/windwatch.rs.")
+            continue
+        outcomes = []
+        for lib in (reference, reference.replace(good, bad)):
+            with open(f"{work}/{folder}/src/lib.rs", "w") as f:
+                f.write(lib)
+            p = subprocess.run(["cargo", "test", "-q", "-p", pkg, "--test", "windwatch", "--", "--exact", name],
+                               cwd=work, capture_output=True, text=True, timeout=200)
+            outcomes.append((p.returncode == 0, p.stdout + p.stderr))
+        (ok, log), (caught_fail, _) = outcomes[0], outcomes[1]
+        if "could not compile" in log:
+            show_errors(folder, log)
+            result(t, False, f"tests/windwatch.rs does not compile yet: {first_error(log)}.")
+        elif not ok:
+            result(t, False, f"{name} fails on the correct code. Read its assertion message in Output.")
+            print(log[-1500:])
+        elif caught_fail:
+            result(t, False, f"{name} still passes when {bug}. Add asserts this bug would break (an empty test always "
+                             "passes).", "fails with the bug", "passed")
+        else:
+            result(t, True, f"Your test passes on the correct code and catches the bug where {bug}.")
+
+
 def test_mode(cid, folder, tasks, work, pkg):
     """One hidden test for the chapter (check.rs), or one per task (check_<task>.rs) when a task's test would not
     even compile until that task is done (like a missing `pub use`): then each task is built on its own."""
@@ -137,7 +183,7 @@ for cid, folder, mode, tasks in CHAPTERS:
         continue
     work, pkg = scratch(folder), package(folder)
     try:
-        (run_mode if mode == "run" else test_mode)(cid, folder, tasks, work, pkg)
+        {"run": run_mode, "test": test_mode, "own": own_mode}[mode](cid, folder, tasks, work, pkg)
     except subprocess.TimeoutExpired:
         for t in tasks:
             result(t, False, "your code ran for too long (an endless loop?). Check your loops and try again.")

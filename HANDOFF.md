@@ -12,8 +12,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
   browser tests, 21 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** Rust from zero (`rust-basics`, owner 24 November: "make a complete full standard lab on Rust";
-  project name rule: software gets a plain English name for its job, so Windwatch). Parts 1 to 4 (chapters 1 to 16) are
-  done and committed; Part 5 (17 generics, 18 traits, 19 lifetimes, 20 closures, 21 iterators, 22 tests) is next. Generators:
+  project name rule: software gets a plain English name for its job, so Windwatch). Parts 1 to 5 (chapters 1 to 22) are
+  done and committed; Part 6 (23 a clap CLI, 24 Box/Rc/RefCell, 25 threads, 26 Tokio, 27 speed against Python,
+  28 an axum capstone) is next. Generators:
   scratchpad rs/part1.py, part2.py with gen.py (lost on reboot; the lab folders are the record). Syllabus: Part 3 structs,
   enums and Option, match, modules; Part 4 Vec and String, HashMap, Result and ?, own error types (thiserror,
   anyhow); Part 5 generics, traits, lifetimes, closures, iterators (measured), tests; Part 6 a clap CLI, Box/Rc/RefCell,

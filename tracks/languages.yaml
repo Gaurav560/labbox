@@ -143,3 +143,7 @@ nodes:
     title: Rust collections and errors
     requires: [rust-shaping-data]
     chapters: [rust-basics/vec-and-string, rust-basics/hashmap, rust-basics/errors, rust-basics/error-types]
+  - id: rust-abstractions
+    title: Rust generics, traits, closures and tests
+    requires: [rust-collections-errors]
+    chapters: [rust-basics/generics, rust-basics/traits, rust-basics/lifetimes, rust-basics/closures, rust-basics/iterators, rust-basics/testing]

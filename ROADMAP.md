@@ -62,7 +62,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | langchain4j | LangChain4j | ai | 30 | 60 | 22.3 | Setu, a hill railway's help desk (LangChain4j 1.24) | 18 | full (23 Nov) |
 | langchain | LangChain | ai | 27 | 54 | 19.4 | Navin, a farmers' co-op help desk (LangChain 1.5) | 13 | full (23 Nov) |
 | langgraph | LangGraph | ai | 24 | 48 | 17.3 | Harsh, a water board's complaint-to-repair desk (LangGraph 1.2) | 18 | full (24 Nov) |
-| rust-basics | Rust from zero | languages | 16 of 28 | 32 | 12.6 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 8 | being built (Parts 1 to 4 of 6, 24 Nov) |
+| rust-basics | Rust from zero | languages | 22 of 28 | 44 | 17 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 10 | being built (Parts 1 to 5 of 6, 24 Nov) |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
 | java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |

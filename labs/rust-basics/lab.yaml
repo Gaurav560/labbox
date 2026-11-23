@@ -12,7 +12,7 @@ tags:
 - rust
 - beginner
 level: beginner
-estimated_minutes: 755
+estimated_minutes: 1020
 cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
@@ -447,3 +447,160 @@ chapters:
     examples:
     - call: cargo run -- data/t12.log
       gives: 'Error: data/t12.log, line 3 ... power 9999 kW is more than ...'
+- id: generics
+  title: Generics
+  file: chapters/17-generics.md
+  minutes: 40
+  folder: 17-generics
+  part: Abstractions without cost
+  tasks:
+  - id: largest
+    title: the largest of anything
+    xp: 20
+    hints:
+    - largest still says todo!().
+    - A question mark on first() returns None for an empty list; the bounds let you compare and copy items.
+    - Start from the first item, keep the larger in a loop, and return it in Some.
+    examples:
+    - call: largest(&[204_u16, 512, 87])
+      gives: Some(512)
+  - id: series_peak
+    title: the peak of a series
+    xp: 15
+    hints:
+    - peak still says todo!().
+    - The generic function above already works for any type with these bounds.
+    - Call it on the series' values and return what it gives.
+    examples:
+    - call: a Series<u16> of 204, 512, 87
+      gives: Some(512)
+- id: traits
+  title: Traits
+  file: chapters/18-traits.md
+  minutes: 45
+  folder: 18-traits
+  tasks:
+  - id: impl_display
+    title: Reading for people
+    xp: 20
+    hints:
+    - Reading cannot be printed with {} yet.
+    - Display has one method, fmt, which writes to a Formatter with write!.
+    - Implement Display for Reading, writing the id, the wind with one decimal and the power with none.
+    examples:
+    - call: Reading::new("T07", 12.43, 2100.0).to_string()
+      gives: 'T07: 12.4 m/s, 2100 kW'
+  - id: impl_sensor
+    title: a power meter is a sensor
+    xp: 20
+    hints:
+    - PowerMeter does not implement Sensor yet.
+    - A trait's required methods must all be written; describe has a default.
+    - Implement Sensor for PowerMeter with its id, its kW value and the unit kW.
+    examples:
+    - call: PowerMeter for T07 at 2100 kW, describe()
+      gives: T07 power meter reads 2100.0 kW
+- id: lifetimes
+  title: Lifetimes
+  file: chapters/19-lifetimes.md
+  minutes: 45
+  folder: 19-lifetimes
+  tasks:
+  - id: stronger
+    title: connect the inputs and the output
+    xp: 15
+    hints:
+    - The crate does not compile; the compiler asks for a lifetime.
+    - One named lifetime on both inputs and the output says the answer lives as long as both.
+    - Add a lifetime parameter to the function and use it on all three references.
+    examples:
+    - call: stronger(&t07, &t12)
+      gives: T07's reading
+  - id: zero_copy
+    title: parse without copying
+    xp: 20
+    hints:
+    - parse still says todo!().
+    - next on the split gives Some field or None; the question mark returns None for a short line.
+    - Take four fields, return None if a fifth exists, and build the LogLine from the four slices.
+    examples:
+    - call: LogLine::parse("T07,2026-11-24 10:10,12.4,2100")
+      gives: four fields pointing into the line
+- id: closures
+  title: Closures
+  file: chapters/20-closures.md
+  minutes: 45
+  folder: 20-closures
+  tasks:
+  - id: below
+    title: a rule that remembers its limit
+    xp: 20
+    hints:
+    - The rule still says todo!().
+    - A closure returned from a function must own what it captures; move does that.
+    - Return a moving closure that checks the wind is at least 6 m/s and the power is below the limit.
+    examples:
+    - call: below(200.0) for 140 kW at 7.5 m/s
+      gives: 'true'
+  - id: alerts
+    title: run the rules
+    xp: 20
+    hints:
+    - alerts still says todo!().
+    - A boxed closure is called like a function; each rule has a name next to it.
+    - For every reading and every rule, push the turbine and the rule name when the rule is true.
+    examples:
+    - call: T12 at 140 kW with a low-power rule
+      gives: 'T12: low power'
+- id: iterators
+  title: Iterators
+  file: chapters/21-iterators.md
+  minutes: 45
+  folder: 21-iterators
+  tasks:
+  - id: total_energy
+    title: total energy in one chain
+    xp: 15
+    hints:
+    - total_energy_mwh still says todo!().
+    - map turns each reading into a number; sum adds them up, given the type to add into.
+    - Map every reading to its ten minutes of energy, sum them, and turn kWh into MWh.
+    examples:
+    - call: 2100 and 1450 kW
+      gives: about 0.592 MWh
+  - id: weak_turbines
+    title: weak in strong wind
+    xp: 20
+    hints:
+    - weak_in_strong_wind still says todo!().
+    - filter keeps items for which a closure is true; map turns them into ids; collect gathers them.
+    - Keep strong (but not storm) winds, then low power, map to the ids, and collect.
+    examples:
+    - call: T12 at 13 m/s making 1450 kW
+      gives: '["T12"]'
+- id: testing
+  title: Writing tests
+  file: chapters/22-testing.md
+  minutes: 45
+  folder: 22-testing
+  tasks:
+  - id: test_curve
+    title: the edges of the power curve
+    xp: 25
+    hints:
+    - The test is empty, so it passes even when the storm stop moves.
+    - Bugs hide at edges; assert_eq! compares two values and shows both when they differ.
+    - Assert the curve just below and at 3 m/s, near 7.5, just below and at 25 m/s.
+    examples:
+    - call: cargo test
+      gives: power_curve_edges ok
+  - id: test_parse
+    title: broken lines, tested
+    xp: 20
+    hints:
+    - The test is empty, so a parser that blames the wrong field would pass.
+    - Results can be compared with Ok and Err values directly.
+    - Assert a good line, a short line that is an error, and the exact message for a bad power field.
+    examples:
+    - call: cargo test
+      gives: parse_rejects_broken_lines ok

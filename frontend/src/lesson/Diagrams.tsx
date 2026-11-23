@@ -3094,7 +3094,115 @@ function RsErrorChain() {
   );
 }
 
+function RsMonomorph() {
+  return (
+    <SketchSteps
+      title="One generic function, three real ones"
+      intro="Press Play to follow largest through the compiler."
+      label="Generics"
+      steps={[
+        { label: "the source", says: "largest<T: PartialOrd + Copy> is written once." },
+        { label: "checked once", says: "The compiler checks the body against the bounds: > needs PartialOrd, copying needs Copy." },
+        { label: "used with f64", says: "A call with power readings makes a copy of largest for f64." },
+        { label: "used with u16 and char", says: "Fault codes and hour letters make two more copies, each for its own type." },
+        { label: "optimised", says: "Each copy is optimised like code written for that type by hand: no checks at run time." },
+      ]}
+    />
+  );
+}
+
+function RsTraitObject() {
+  return (
+    <SketchSteps
+      title="One report, different sensors"
+      intro="Press Play to follow report() through a Vec<Box<dyn Sensor>>."
+      label="Trait objects"
+      steps={[
+        { label: "the Vec", says: "Three boxes. Each holds a sensor's data and a pointer to its type's Sensor methods (a vtable)." },
+        { label: "T07 anemometer", says: "describe() asks the vtable for Anemometer's id, value and unit: 12.4 m/s." },
+        { label: "T07 power meter", says: "The next box points at PowerMeter's methods: 2100.0 kW." },
+        { label: "the default", says: "describe() itself was written once, in the trait, for every sensor." },
+        { label: "next year", says: "A new sensor type is one new impl Sensor; report() does not change." },
+      ]}
+    />
+  );
+}
+
+function RsLifetime() {
+  return (
+    <SketchSteps
+      title="A LogLine and its line"
+      intro="Press Play to see why the LogLine may not outlive the line."
+      label="Lifetimes"
+      steps={[
+        { label: "the line", says: 'A String holds "T07,2026-11-24 10:10,12.4,2100" on the heap.' },
+        { label: "LogLine::parse", says: "Four &str fields point into that String: nothing is copied." },
+        { label: "'a", says: "LogLine<'a> says: these fields are valid only while the line is." },
+        { label: "the line is dropped", says: "At the end of its block the String frees its memory." },
+        { label: "refused", says: "Using the LogLine after that would read freed memory, so E0597 stops the build." },
+      ]}
+    />
+  );
+}
+
+function RsClosure() {
+  return (
+    <SketchSteps
+      title="Rules as values"
+      intro="Press Play to follow T19 through three rules."
+      label="Closures"
+      steps={[
+        { label: "below(200.0)", says: "Returns a closure that owns its own copy of 200.0 (move)." },
+        { label: "the list", says: "Three rules, each a different closure, boxed so they share one type." },
+        { label: "low power", says: "T19: wind 26 >= 6 and power 0 < 200: true. A false alarm: T19 is stopped for a storm." },
+        { label: "storm stop", says: "The closure captured storm_limit, 25.0: 26 >= 25, true." },
+        { label: "idle in good wind", says: "Wind 26 >= 6 and power 0: true again. Each rule is right alone and wrong together." },
+      ]}
+    />
+  );
+}
+
+function RsIteratorChain() {
+  return (
+    <SketchSteps
+      title="Items through a chain"
+      intro="Press Play to follow three readings through filter, filter, map, collect."
+      label="Iterators"
+      steps={[
+        { label: "collect asks", says: "Nothing has happened yet. collect asks the chain for its first item." },
+        { label: "T07, 12.4 m/s, 2100 kW", says: "Strong wind: kept. Power 2100 is not below 2000: dropped. No list was made." },
+        { label: "T12, 13.0 m/s, 1450 kW", says: 'Strong wind: kept. 1450 < 2000: kept. map gives "T12"; collect stores it.' },
+        { label: "T31, 26.0 m/s", says: "26 is a storm: dropped by the first filter." },
+        { label: "done", says: 'The chain runs out; collect returns ["T12"]. In release, all of this is one loop.' },
+      ]}
+    />
+  );
+}
+
+function RsTestMutation() {
+  return (
+    <SketchSteps
+      title="How your tests are judged"
+      intro="Press Play to follow power_curve_edges through the check."
+      label="Tests"
+      steps={[
+        { label: "correct code", says: "Your test runs on the reference library: every assert must hold." },
+        { label: "plant a bug", says: "The check changes one thing: wind_ms >= 25.0 becomes wind_ms > 25.0." },
+        { label: "run again", says: "At exactly 25 m/s the curve now says 2500 kW instead of 0." },
+        { label: "caught", says: "If your test asserts power_curve(25.0) == 0.0, it fails: the task passes." },
+        { label: "not caught", says: "A test that never looks at 25 m/s still passes: the check says it is too weak." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "rs-monomorph": RsMonomorph,
+  "rs-trait-object": RsTraitObject,
+  "rs-lifetime": RsLifetime,
+  "rs-closure": RsClosure,
+  "rs-iterator-chain": RsIteratorChain,
+  "rs-test-mutation": RsTestMutation,
   "rs-windows": RsWindows,
   "rs-entry": RsEntry,
   "rs-question-mark": RsQuestionMark,

@@ -1,0 +1,6 @@
+[package]
+name = "ch20-closures"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

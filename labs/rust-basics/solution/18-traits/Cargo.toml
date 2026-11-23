@@ -1,0 +1,6 @@
+[package]
+name = "ch18-traits"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]

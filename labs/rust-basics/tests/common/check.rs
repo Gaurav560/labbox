@@ -7,7 +7,7 @@ fn esc(s: &str) -> String {
     s.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n")
 }
 
-fn report(task: &str, passed: bool, message: &str, expected: Option<String>, actual: Option<String>) {
+fn emit_result(task: &str, passed: bool, message: &str, expected: Option<String>, actual: Option<String>) {
     let mut line = format!("{{\"task\": \"{}\", \"passed\": {}, \"message\": \"{}\"", esc(task), passed, esc(message));
     if let (Some(e), Some(a)) = (expected, actual) {
         line += &format!(", \"expected\": \"{}\", \"actual\": \"{}\"", esc(&e), esc(&a));
@@ -42,8 +42,8 @@ pub fn task(name: &str, check: impl FnOnce() -> Result<String, Fail>) {
     let outcome = panic::catch_unwind(AssertUnwindSafe(check));
     let _ = panic::take_hook();
     match outcome {
-        Ok(Ok(msg)) => report(name, true, &msg, None, None),
-        Ok(Err(f)) => report(name, false, &format!("Not yet: {}", f.msg), f.expected, f.actual),
+        Ok(Ok(msg)) => emit_result(name, true, &msg, None, None),
+        Ok(Err(f)) => emit_result(name, false, &format!("Not yet: {}", f.msg), f.expected, f.actual),
         Err(payload) => {
             let text = payload
                 .downcast_ref::<&str>()
@@ -55,7 +55,7 @@ pub fn task(name: &str, check: impl FnOnce() -> Result<String, Fail>) {
             } else {
                 format!("Not yet: your code panicked: {text}")
             };
-            report(name, false, &msg, None, None);
+            emit_result(name, false, &msg, None, None);
         }
     }
 }

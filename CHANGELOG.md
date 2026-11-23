@@ -1,5 +1,21 @@
 # Changelog
 
+## 24 November: Rust from zero, Part 5 (abstractions without cost)
+
+- Six chapters, twelve tasks, every output and compiler message captured from real runs: generics (one `largest` for
+  f64, u16 and char; E0369 asking for the `PartialOrd` bound), traits (`Display` for people, a `Sensor` trait with a
+  default method, two sensor types in one `Vec<Box<dyn Sensor>>`; the demo is an example, `cargo run --example
+  sensors`, so an unfinished starter does not stop the hidden tests from building), lifetimes (E0106 fixed with
+  `'a`; a zero-copy `LogLine` whose fields borrow from the line; E0597 when it outlives it), closures (a rule that
+  remembers its limit with `move`, E0373 without it; three boxed rules raised two false alarms for a turbine stopped
+  for a storm, and the lesson says so), iterators (2.1 million readings totalled in about 4 ms by both an iterator and a
+  loop in release; in debug the iterator was slower, 13.0 against 9.6 ms), and tests (the learner's own tests run on a
+  reference library and must catch a planted bug: `>=` turned into `>` at the storm cut-off).
+- The check runner has an "own" mode for learner-written tests; the helper's result function is `emit_result`, so it
+  never shadows a learner's function (a chapter's own `report` was hidden by it).
+- Six playing diagrams, six notes pages (page 19 redrawn: the first lost the apostrophe of `'a`), two photos (Barbara
+  Liskov, Kent Beck, reused), one track node.
+
 ## 24 November: Rust from zero, Part 4 (collections and errors)
 
 - Four chapters, eight tasks, every output and compiler message captured from real runs: vectors and strings (a
