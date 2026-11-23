@@ -84,3 +84,11 @@ nodes:
     title: Calling a model from Python
     requires: [lc-foundations]
     chapters: [langchain/raw-http, langchain/openai-sdk, langchain/first-app, langchain/parameters, langchain/hallucinations]
+  - id: lc-agents
+    title: Agents, tools and structured output
+    requires: [lc-calling]
+    chapters: [langchain/agent-loop, langchain/create-agent, langchain/tools, langchain/structured]
+  - id: lc-agent-apps
+    title: Images, memory and streaming agents
+    requires: [lc-agents]
+    chapters: [langchain/images, langchain/memory, langchain/streaming]

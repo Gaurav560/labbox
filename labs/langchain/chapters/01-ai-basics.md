@@ -73,6 +73,12 @@ measures again and again.
 :::photo{src="/lesson-images/langchain/geoffrey-hinton.webp" alt="Geoffrey Hinton, grey-haired, in a dark jacket, speaking at a press conference" credit="Arthur Petron" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File%3AGeoffrey_E._Hinton%2C_2024_Nobel_Prize_Laureate_in_Physics_%28cropped1%29.jpg"}
 Geoffrey Hinton at the 2024 Nobel Prize press conference.
 :::
+
+Arthur Samuel's checkers program, the one that gave machine learning its name, ran on an **IBM 701**, IBM's first commercial scientific computer (1952). This is its operator's console.
+
+:::photo{src="/lesson-images/langchain/ibm-701.webp" alt="The grey operator's console of an IBM 701 computer, with rows of small lights and push buttons" credit="Dan" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File%3AIBM_701console.jpg"}
+The operator's console of an IBM 701.
+:::
 :::
 
 :::step{type=example title="Worked example: one rule, written by hand" file="01-ai-basics/rules.py" line="8-11"}

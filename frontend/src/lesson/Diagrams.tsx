@@ -2306,7 +2306,42 @@ function LcAiCircles() {
   );
 }
 
+function LcAgentLoop() {
+  return (
+    <SketchSteps
+      title="one agent run, step by step"
+      intro="Press Play to follow chapter 10's question."
+      label="the model receives the question and the tool descriptions, asks for two tools, Python runs them, the results go back, and the model answers"
+      steps={[
+        { label: "1. Question and tools", says: "The onion rate, and 60 crates for 10 days? Plus the descriptions of mandi_price and storage_cost." },
+        { label: "2. The model asks", says: "No text: two tool calls, mandi_price(onion) and storage_cost(60, 10)." },
+        { label: "3. Python runs them", says: "1850 from the rate table, 1200 from 60 x 10 x 2." },
+        { label: "4. Results go back", says: "Two ToolMessages, each with the id of the call it answers." },
+        { label: "5. The answer", says: "One more model call turns two numbers into a sentence. No tool calls: stop." },
+      ]}
+    />
+  );
+}
+
+function LcMemoryThreads() {
+  return (
+    <SketchSteps
+      title="a checkpointer and two threads"
+      intro="Press Play to follow Ravi and Asha."
+      label="each message is added to its thread's saved state; the model receives that thread's whole conversation; another thread starts empty"
+      steps={[
+        { label: "1. Ravi, thread M-104", says: "I am Ravi, 40 crates of onions. Saved under M-104." },
+        { label: "2. Ravi again", says: "How much for 15 days? The model receives Ravi's whole thread, so them means 40 crates." },
+        { label: "3. Asha, thread M-221", says: "The same words, but her thread is empty: the model asks how many crates." },
+        { label: "4. Ravi a third time", says: "What is my name? His thread still holds it." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lc-agent-loop": LcAgentLoop,
+  "lc-memory-threads": LcMemoryThreads,
   "lc-ai-circles": LcAiCircles,
   "lc-next-token": LcNextToken,
   "lc-chat-request": LcChatRequest,

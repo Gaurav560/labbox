@@ -11,7 +11,7 @@ update it at the end of every session. Earlier, longer versions of it are in git
   Last full run green (23 November): 280 backend tests on Postgres and Redis, 27 browser tests, 19 labs valid,
   `scripts/labbox admin list` empty.
 - **Now building:** two new AI labs, LangChain then LangGraph (syllabus below, owner: "go on. full standard").
-  LangChain Parts 1 and 2 (chapters 1 to 9) are committed; Parts 3 to 5 and the capstone are next.
+  LangChain Parts 1 to 3 (chapters 1 to 16) are committed; Parts 4 and 5 and the capstone are next.
 - **Working files** (session scratchpad, `lc/`): `gen.py` + `common.py` + `partN.py` write `starter/` and
   `solution/`; `tests/` (pytest checks with `common/fake_openai.py`); `ch/` chapter drafts; `caps/` captures;
   `rc.sh` runs the checks on a scratch copy. The committed folders are the record.
@@ -29,7 +29,7 @@ pytest with a fake OpenAI server, about a second a chapter. Captures use the aut
   vectors in vectors.json), 4 `transformers`. Done.
 - Part 2 "Calling a model": 5 `raw-http`, 6 `openai-sdk`, 7 `first-app`, 8 `parameters`, 9 `hallucinations`. Done.
 - Part 3 "Agents": 10 an agent loop by hand, 11 `create_agent`, 12 tools and ToolRuntime, 13 structured output,
-  14 images (multimodal messages), 15 short-term memory, 16 streaming agents.
+  14 images (multimodal messages), 15 short-term memory, 16 streaming agents. Done.
 - Part 4 "Knowledge and MCP": 17 documents and chunking, 18 vector stores, 19 RAG, 20 retrieval quality, 21 MCP.
 - Part 5 "Production": 22 built-in middleware, 23 custom middleware and dynamic agents, 24 guardrails and PII,
   25 human in the loop, 26 tests and evals, 27 capstone (FastAPI, with long-term memory).

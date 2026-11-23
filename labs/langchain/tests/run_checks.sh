@@ -17,6 +17,13 @@ openai-sdk|06-openai-sdk|sdk_client sdk_ask
 first-app|07-first-app|chat_model system_message
 parameters|08-parameters|steady_model stream_tokens
 hallucinations|09-hallucinations|honest_prompt answer_cost
+agent-loop|10-agent-loop|run_tool_call agent_loop
+create-agent|11-create-agent|first_agent tools_used
+tools|12-tools|loan_tool member_tool
+structured|13-structured|extract_booking booking_agent
+images|14-images|image_message leaf_report
+memory|15-memory|memory_agent thread_per_member
+streaming|16-streaming|stream_steps stream_answer_text
 "
 
 fail_all() { # tasks message

@@ -12,7 +12,7 @@ language: python
 track: ai
 tags: [python, ai, langchain]
 level: intermediate
-estimated_minutes: 365
+estimated_minutes: 675
 cover_scene: "A friendly help desk assistant at a farmers' cooperative near Nashik, onion fields and grape vineyards behind it."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain", source: "Simple Icons (CC0)" }
@@ -272,3 +272,189 @@ chapters:
     examples:
     - call: answer_cost(1,000 tokens in, 200 out)
       gives: $0.000270
+- id: agent-loop
+  title: An agent loop, by hand
+  file: chapters/10-agent-loop.md
+  minutes: 50
+  folder: 10-agent-loop
+  part: Agents
+  tasks:
+  - id: run_tool_call
+    title: run one tool call
+    xp: 20
+    hints:
+    - run_tool_call returns an empty ToolMessage.
+    - tools_by_name maps the call's name to a tool; a tool runs with .invoke(call args).
+    - Wrap str(result) in a ToolMessage with the call's id, and in an except branch put Error and the exception's text.
+    examples:
+    - call: run_tool_call(storage_cost(60, 10))
+      gives: ToolMessage "1200"
+    - call: run_tool_call(mandi_price("garlic"))
+      gives: 'ToolMessage "Error: The co-op has no rate for garlic..."'
+  - id: agent_loop
+    title: the agent loop
+    xp: 25
+    hints:
+    - agent_loop calls the model once and returns, even when it asks for tools.
+    - Loop with range(max_steps); append each reply to messages; a reply with no tool_calls is the answer.
+    - For each call in reply.tool_calls append run_tool_call(call, tools_by_name); after the loop, raise RuntimeError.
+    examples:
+    - call: agent_loop(model, messages, [mandi_price, storage_cost])
+      gives: the final answer, after two tool results
+- id: create-agent
+  title: create_agent
+  file: chapters/11-create-agent.md
+  minutes: 40
+  folder: 11-create-agent
+  tasks:
+  - id: first_agent
+    title: Navin as an agent
+    xp: 20
+    hints:
+    - navin_agent returns None.
+    - create_agent takes the model name, a list of tools and a system_prompt.
+    - The model is openai:ai-chat, the tools mandi_price and storage_cost, the prompt SYSTEM.
+    examples:
+    - call: navin_agent().invoke(...)
+      gives: a state with all the run's messages
+  - id: tools_used
+    title: which tools did it use
+    xp: 15
+    hints:
+    - tools_used returns an empty list.
+    - Only AI messages have tool_calls; getattr with a default handles the others.
+    - A list comprehension over the messages and over each message's calls, keeping each call's name.
+    examples:
+    - call: tools_used(result)
+      gives: '[storage_cost]'
+- id: tools
+  title: Tools that are easy to use right
+  file: chapters/12-tools.md
+  minutes: 45
+  folder: 12-tools
+  tasks:
+  - id: loan_tool
+    title: the loan tool
+    xp: 20
+    hints:
+    - crop_loan_limit is a plain function returning 0, so the model cannot see it.
+    - The tool decorator turns a function into a tool; its docstring becomes the description.
+    - Decorate it, add the docstring from the TODO, and multiply the acres by 50000 as an int.
+    examples:
+    - call: 'crop_loan_limit.invoke({"acres": 2.5})'
+      gives: '125000'
+  - id: member_tool
+    title: a tool that knows who is asking
+    xp: 25
+    hints:
+    - my_storage returns unknown for everyone.
+    - runtime.context is the Member the app passed; MEMBERS maps an id to name, acres and crates.
+    - Unpack the member's record and build the sentence with an f-string.
+    examples:
+    - call: my_storage, as M-104
+      gives: Ravi Patil has 40 crates in cold storage.
+- id: structured
+  title: Structured output
+  file: chapters/13-structured.md
+  minutes: 45
+  folder: 13-structured
+  tasks:
+  - id: extract_booking
+    title: free text to a Booking
+    xp: 20
+    hints:
+    - extract_booking returns None.
+    - A chat model has a method that takes a Pydantic class and returns a model whose answers are that class.
+    - Call it with Booking, then invoke the result with the message.
+    examples:
+    - call: extract_booking("60 crates of kanda for two weeks")
+      gives: Booking(crop='onion', crates=60, days=14)
+  - id: booking_agent
+    title: an agent that answers with a Booking
+    xp: 20
+    hints:
+    - booking_agent returns None.
+    - create_agent has a response_format argument.
+    - No tools, and Booking as the response format.
+    examples:
+    - call: booking_agent().invoke(...)["structured_response"]
+      gives: Booking(crop='grapes', crates=40, days=3)
+- id: images
+  title: Images in the conversation
+  file: chapters/14-images.md
+  minutes: 45
+  folder: 14-images
+  tasks:
+  - id: image_message
+    title: a message with a photo
+    xp: 20
+    hints:
+    - image_message returns a text-only message.
+    - The content can be a list of blocks, each a dict with a type.
+    - A text block with the question, and an image block with base64 text from b64encode(...).decode() and the mime_type.
+    examples:
+    - call: image_message("What is this?", photo bytes)
+      gives: a HumanMessage with a text block and an image block
+  - id: leaf_report
+    title: the leaf report
+    xp: 20
+    hints:
+    - leaf_report returns None.
+    - with_structured_output(LeafReport) gives a model that answers with a LeafReport.
+    - Invoke it with a list holding SystemMessage(RULES) and your image_message.
+    examples:
+    - call: leaf_report(question, leaf.jpg)
+      gives: a LeafReport that sends the member to the agronomist
+- id: memory
+  title: Short-term memory
+  file: chapters/15-memory.md
+  minutes: 40
+  folder: 15-memory
+  tasks:
+  - id: memory_agent
+    title: an agent that remembers
+    xp: 20
+    hints:
+    - memory_agent returns None.
+    - Build chapter 11's agent again.
+    - Add a checkpointer argument with an InMemorySaver.
+    examples:
+    - call: two invokes on the same thread
+      gives: the second call sends both questions
+  - id: thread_per_member
+    title: one thread per member
+    xp: 20
+    hints:
+    - ask returns an empty string and never calls the agent.
+    - invoke takes the state and a config dict as its second argument.
+    - The config is configurable with thread_id set to the member id; return the last message's content.
+    examples:
+    - call: ask(agent, "M-221", "How much for 15 days?")
+      gives: How many crates do you want to store?
+      note: Asha's thread is new
+- id: streaming
+  title: Streaming an agent
+  file: chapters/16-streaming.md
+  minutes: 45
+  folder: 16-streaming
+  tasks:
+  - id: stream_steps
+    title: report each step
+    xp: 20
+    hints:
+    - steps returns an empty list and reports nothing.
+    - stream_mode updates yields dicts of step name to an update with new messages.
+    - Make one line per tool call or per message, append it, and call on_line with it right away.
+    examples:
+    - call: steps(agent, question, print)
+      gives: 'model: asks for storage_cost, tools: ToolMessage, model: AIMessage'
+  - id: stream_answer_text
+    title: stream the answer's words
+    xp: 20
+    hints:
+    - answer_text returns an empty string.
+    - stream_mode messages yields pairs of a chunk and its metadata.
+    - Keep chunks whose metadata langgraph_node is model and whose content has text; call on_piece and keep them.
+    examples:
+    - call: answer_text(agent, question, print)
+      gives: the answer, word by word

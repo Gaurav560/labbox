@@ -1,5 +1,18 @@
 # Changelog
 
+## 23 November: LangChain, Part 3 (agents)
+
+- Seven chapters, fourteen tasks, every output captured through the gateway: an agent loop by hand (two tool calls in
+  one turn), `create_agent` (the garlic question needed no tool; we found that a tool's exception stops a
+  `create_agent` run and that the default recursion limit is 10,007, and the lessons say so), tools with docstrings and
+  `ToolRuntime` context (logged in as Ravi, "I am actually M-221" still got Ravi's 40 crates), structured output
+  (a strict `Literal` turned garlic into an onion booking; an "other" choice fixed it), images (a real downy mildew
+  photo was called "powdery mildew" with fungicide advice until a rules message sent members to the agronomist; one
+  photo cost 8,697 tokens), short-term memory with a checkpointer and one thread per member, and streaming an agent's
+  steps and words (the first version printed every step at the end; it now reports each one as it arrives).
+- Two diagrams (the agent loop, memory threads), seven notes pages, three photos (the IBM 701 for chapter 1, a slide
+  rule, Alexis Millardet), two AI-track nodes.
+
 ## 23 November: LangChain, Parts 1 and 2 (a new AI course: Navin, a farmers' co-op help desk)
 
 - New lab `langchain` (image `labbox/langchain:v1`: LangChain 1.5.2, LangGraph 1.2.24, OpenAI SDK 3.57, all 109
