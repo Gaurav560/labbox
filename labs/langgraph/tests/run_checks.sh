@@ -14,6 +14,12 @@ branches|03-branches|route_by_kind retry_loop
 model-nodes|04-model-nodes|triage_node reply_node
 patterns|05-patterns|parallel_branches evaluator_loop
 send-command|06-send-command|fan_out command_goto
+threads|07-threads|thread_memory sqlite_saver
+long-chats|08-long-chats|trim_history summarise_old
+durable|09-durable|retry_sms resume_job
+interrupts|10-interrupts|pause_for_engineer resume_with_decision
+time-travel|11-time-travel|find_checkpoint correct_and_rerun
+stores|12-stores|save_preference use_preference
 "
 
 fail_all() { # tasks message

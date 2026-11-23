@@ -11,7 +11,7 @@ language: python
 track: ai
 tags: [python, ai, langgraph]
 level: intermediate
-estimated_minutes: 265
+estimated_minutes: 525
 cover_scene: "A calm control room of a small city water board at night, a map of pipes and a repair van outside."
 cover: cover.svg
 cover_credit: { by: "Logo: LangGraph", source: "Simple Icons (CC0)" }
@@ -187,3 +187,160 @@ chapters:
     examples:
     - call: 'plan({"estimate": 65000})'
       gives: engineer_approval, waiting for the engineer
+- id: threads
+  title: Checkpointers and threads
+  file: chapters/07-threads.md
+  minutes: 45
+  folder: 07-threads
+  part: Persistence and people
+  tasks:
+  - id: thread_memory
+    title: one thread per phone
+    xp: 20
+    hints:
+    - Every message reaches the model alone, as if the citizen had never written before.
+    - compile takes a checkpointer, and invoke takes a config whose configurable part names the thread.
+    - Pass the checkpointer to compile, and use the phone number as the thread_id in the config you give invoke.
+    examples:
+    - call: ask(app, "98220", ...) twice
+      gives: the second answer knows the first message
+  - id: sqlite_saver
+    title: a chat that survives a restart
+    xp: 15
+    hints:
+    - open_saver returns None, so nothing is written to disk.
+    - SqliteSaver wraps a sqlite3 connection; the graph may use it from another thread.
+    - Connect to the path with check_same_thread set to False, and wrap the connection in SqliteSaver.
+    examples:
+    - call: python main.py 98220 "..." (twice)
+      gives: 2, then 4 messages saved in thread 98220
+- id: long-chats
+  title: Long chats
+  file: chapters/08-long-chats.md
+  minutes: 45
+  folder: 08-long-chats
+  tasks:
+  - id: trim_history
+    title: send only recent messages
+    xp: 20
+    hints:
+    - recent returns every message, so each turn costs more than the last.
+    - trim_messages can count messages instead of tokens when token_counter is len.
+    - Keep the last KEEP messages, starting on a human message.
+    examples:
+    - call: recent(10 messages)
+      gives: the last 4, starting with the citizen's
+  - id: summarise_old
+    title: fold old messages into a summary
+    xp: 25
+    hints:
+    - summarise returns an empty update, so nothing is summarised or removed.
+    - RemoveMessage with a message's id deletes that message from a MessagesState list.
+    - Ask the model with the prompt and the transcript, then return its text as summary and a RemoveMessage per old message.
+    examples:
+    - call: a chat of 8 messages
+      gives: a summary and the last 2 messages
+- id: durable
+  title: Durable execution
+  file: chapters/09-durable.md
+  minutes: 40
+  folder: 09-durable
+  tasks:
+  - id: retry_sms
+    title: try the SMS again
+    xp: 15
+    hints:
+    - One timeout from the SMS gateway fails the whole job.
+    - add_node accepts a retry_policy; RetryPolicy says how many attempts, how long to wait, and for which errors.
+    - Give notify_citizen a RetryPolicy with 3 attempts, half a second to start, retrying on SmsTimeout.
+    examples:
+    - call: SMS_FAILS=2 python main.py J-101
+      gives: three SMS attempts, then done
+  - id: resume_job
+    title: continue, do not start over
+    xp: 25
+    hints:
+    - After a crash, run_job starts the job from the beginning and books everything again.
+    - get_state(config).next names the step a stopped run was about to do; invoke with None as input continues it.
+    - When next is not empty, continue the saved run instead of passing a new input.
+    examples:
+    - call: python main.py J-102 (after a crash)
+      gives: continuing at notify_citizen, one parts order
+- id: interrupts
+  title: Interrupts and approval
+  file: chapters/10-interrupts.md
+  minutes: 45
+  folder: 10-interrupts
+  tasks:
+  - id: pause_for_engineer
+    title: wait for the engineer
+    xp: 20
+    hints:
+    - Every big repair is approved at once, without asking anyone.
+    - interrupt(value) pauses the run and hands value to the caller; on resume it returns the answer.
+    - Call interrupt with the job, estimate, brief and question, and build the update from the dict it returns.
+    examples:
+    - call: a Rs 65,000 repair
+      gives: __interrupt__ with the brief, paused at approval
+  - id: resume_with_decision
+    title: resume with her decision
+    xp: 20
+    hints:
+    - decide returns an empty dict and the job stays paused.
+    - A paused thread continues when invoked with Command(resume=...) and the same thread_id.
+    - Invoke with a Command whose resume is the approve and note dict, and the job's config.
+    examples:
+    - call: decide(app, "J-201", True, "Before the festival, please")
+      gives: scheduled (Before the festival, please)
+- id: time-travel
+  title: Time travel
+  file: chapters/11-time-travel.md
+  minutes: 40
+  folder: 11-time-travel
+  tasks:
+  - id: find_checkpoint
+    title: find the moment
+    xp: 20
+    hints:
+    - snapshot_before always returns None.
+    - get_state_history yields snapshots newest first, and each has next, the nodes it was about to run.
+    - Return the first snapshot whose next is a tuple holding just that node.
+    examples:
+    - call: snapshot_before(app, "C-311", "route")
+      gives: the checkpoint after triage, kind other
+  - id: correct_and_rerun
+    title: correct a step and run on
+    xp: 25
+    hints:
+    - correct returns an empty dict, and the complaint stays with the repair crew.
+    - update_state writes values into a checkpoint as if a node had returned them, and gives back a new config.
+    - Update the snapshot's config as triage, then invoke with None and the config it returned.
+    examples:
+    - call: correct(app, "C-311", {"kind":"dirty_water", "severity":"urgent"})
+      gives: health team, within 4 hours
+- id: stores
+  title: Long-term memory with stores
+  file: chapters/12-stores.md
+  minutes: 45
+  folder: 12-stores
+  tasks:
+  - id: save_preference
+    title: remember the language
+    xp: 20
+    hints:
+    - The citizen asked for Marathi, and the store is still empty.
+    - runtime.store saves items by namespace and key; runtime.context.phone says whose they are.
+    - When prefs.language is set, put a profile dict with it under the citizens namespace for this phone.
+    examples:
+    - call: '"Please reply in Marathi from now on."'
+      gives: '("citizens", "98220") / profile: {"language": "Marathi"}'
+  - id: use_preference
+    title: use it in every thread
+    xp: 20
+    hints:
+    - A new complaint from the same phone is answered in English.
+    - runtime.store.get returns the saved item, or None, and item.value is the saved dict.
+    - Read the profile for this phone and use its language when there is one.
+    examples:
+    - call: a new thread from 98220
+      gives: a reply in Marathi

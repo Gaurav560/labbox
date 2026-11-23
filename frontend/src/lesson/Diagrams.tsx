@@ -2518,7 +2518,119 @@ function LgSend() {
   );
 }
 
+function LgThreads() {
+  return (
+    <SketchSteps
+      title="Two phones, two threads"
+      intro="Press Play to follow three WhatsApp messages."
+      label="Threads"
+      steps={[
+        { label: "98220 writes", says: "invoke with thread_id 98220. The checkpointer has nothing for it yet: the state starts empty." },
+        { label: "Run and save", says: "The message and Harsh's answer are added, and the thread is saved: 2 messages." },
+        { label: "Process ends", says: "Everything in memory is gone. harsh.db still holds thread 98220." },
+        { label: "98220 again", says: "A new process loads thread 98220 from the file, adds the new message: the model sees all 3." },
+        { label: "Saved again", says: "The thread now holds 4 messages." },
+        { label: "70300 writes", says: "Another thread_id: nothing saved for it, so it starts empty, and sees nothing of 98220." },
+      ]}
+    />
+  );
+}
+
+function LgSummary() {
+  return (
+    <SketchSteps
+      title="Folding old messages into a summary"
+      intro="Press Play to watch the state stay small."
+      label="Summary"
+      steps={[
+        { label: "Turns 1 to 3", says: "The state grows: 2, 4, 6 messages. Not more than 6 yet, so no summary." },
+        { label: "Turn 4", says: "respond answers with 7 messages in front of it; now there are 8, more than 6." },
+        { label: "summarise", says: "The model turns the first 6 messages into a short summary." },
+        { label: "RemoveMessage", says: "Those 6 messages are removed from the state by id: 2 are kept." },
+        { label: "Turn 5", says: "respond sends the summary in its system message, plus the few messages left." },
+        { label: "Turn 6", says: "Asked for the address, the model finds it in the summary." },
+      ]}
+    />
+  );
+}
+
+function LgDurable() {
+  return (
+    <SketchSteps
+      title="A crash, and a resume that does only what is left"
+      intro="Press Play to follow job J-102."
+      label="Durable run"
+      steps={[
+        { label: "book_crew", says: "Runs, writes 'crew booked', and the checkpoint is saved." },
+        { label: "order_parts", says: "Runs, writes 'parts ordered, Rs 18,000', and the checkpoint is saved." },
+        { label: "notify_citizen", says: "The SMS gateway times out. The retry policy waits 0.5 s, then 1 s: three attempts in all." },
+        { label: "Crash", says: "All three failed: invoke raises the error. The thread is saved with next = notify_citizen." },
+        { label: "Resume", says: "Later, invoke(None, config) loads the thread and runs only notify_citizen." },
+        { label: "Record", says: "One crew, one parts order, one SMS. Starting over would have booked both again." },
+      ]}
+    />
+  );
+}
+
+function LgInterrupt() {
+  return (
+    <SketchSteps
+      title="A repair that waits for the engineer"
+      intro="Press Play to follow J-201 through two processes."
+      label="Interrupt"
+      steps={[
+        { label: "write_brief", says: "The model writes a two-sentence brief. Rs 65,000 is over 50,000: go to approval." },
+        { label: "interrupt", says: "approval calls interrupt({...}). The run stops, the thread is saved with next = approval." },
+        { label: "Returned", says: "invoke returns the state with __interrupt__: the job, the estimate and the brief for the engineer." },
+        { label: "Next morning", says: "A new process calls invoke(Command(resume={'approve': True, ...}), same thread_id)." },
+        { label: "approval again", says: "The node runs from its first line; this time interrupt returns her answer." },
+        { label: "schedule", says: "approved is true: the repair is scheduled, with her note." },
+      ]}
+    />
+  );
+}
+
+function LgFork() {
+  return (
+    <SketchSteps
+      title="Correcting a step, and the branch it makes"
+      intro="Press Play to follow complaint C-311."
+      label="Time travel"
+      steps={[
+        { label: "First run", says: "triage says 'other', route picks the repair crew, reply promises 72 hours. Checkpoints at every step." },
+        { label: "History", says: "get_state_history lists them, newest first. The one with next = ('route',) holds triage's answer." },
+        { label: "update_state", says: "Write kind dirty_water and severity urgent there, as triage: a new checkpoint, source 'update'." },
+        { label: "invoke(None)", says: "From the new checkpoint, route runs again: health team. Then reply: 4 hours." },
+        { label: "Two branches", says: "The old steps with 'other' are still in the history; the newest checkpoint is the corrected one." },
+      ]}
+    />
+  );
+}
+
+function LgStore() {
+  return (
+    <SketchSteps
+      title="One fact, many threads"
+      intro="Press Play to follow phone 98220."
+      label="Store"
+      steps={[
+        { label: "complaint-1", says: "'Please reply in Marathi from now on.' note_preferences asks the model: language = Marathi." },
+        { label: "put", says: "store.put(('citizens', '98220'), 'profile', {'language': 'Marathi'}): outside the thread." },
+        { label: "respond", says: "Reads the profile and replies in Marathi." },
+        { label: "complaint-2", says: "A new thread, nothing about language in it. respond reads the same profile: Marathi again." },
+        { label: "70300", says: "Another phone: no profile in the store, so English." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "lg-threads": LgThreads,
+  "lg-summary": LgSummary,
+  "lg-durable": LgDurable,
+  "lg-interrupt": LgInterrupt,
+  "lg-fork": LgFork,
+  "lg-store": LgStore,
   "lg-run": LgRun,
   "lg-reducer": LgReducer,
   "lg-route": LgRoute,

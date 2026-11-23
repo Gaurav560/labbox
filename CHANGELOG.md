@@ -1,5 +1,20 @@
 # Changelog
 
+## 23 November: LangGraph, Part 2 (persistence and people)
+
+- Six chapters, twelve tasks, every output captured through the gateway: checkpointers and threads (one thread per
+  phone, kept in SQLite across processes; the model also invented "a crew is still working" and ignored brown water,
+  and the lesson says memory is not facts), long chats (the same six messages trimmed and summarised: the trimmed chat
+  forgot the address, the summarised one read it back; the summary also bent a fact), durable execution (a retry
+  policy for a flaky SMS gateway; a crashed job resumed with `invoke(None, config)`, and the start-over version booked
+  the crew and the Rs 18,000 parts twice, for real), interrupts (big repairs wait for the engineer across processes;
+  the approval node visibly runs twice; the brief invented "frequent leaks" as a reason), time travel (a rust complaint
+  mis-triaged by the rules, its history, and a correction that branches from the step after triage; `as_node="route"`
+  was tried and fails with KeyError, as the lesson says), and stores (a reply language kept across threads per phone,
+  and crew notes searched by meaning).
+- Seven playing diagrams, six notes pages, five photos (an IBM System/360, the Central Telegraph Office in Kolkata, the
+  first Type G loom, a flight data recorder, a Rolodex), one AI-track node.
+
 ## 23 November: LangGraph, Part 1 (thinking in graphs): a new AI course on Harsh, a water board's repair desk
 
 - New lab `langgraph` (image `labbox/langgraph:v1`, built on `labbox/langchain:v1` with LangGraph 1.2.24 pinned).

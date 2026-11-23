@@ -107,3 +107,6 @@ nodes:
   - id: lg-graphs
     title: Thinking in graphs (LangGraph, Part 1)
     chapters: [langgraph/why-graphs, langgraph/state, langgraph/branches, langgraph/model-nodes, langgraph/patterns, langgraph/send-command]
+  - id: lg-persistence
+    title: Persistence and people (LangGraph, Part 2)
+    chapters: [langgraph/threads, langgraph/long-chats, langgraph/durable, langgraph/interrupts, langgraph/time-travel, langgraph/stores]
