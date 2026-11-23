@@ -59,7 +59,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | Lab | Course | Track | Chapters | Tasks | Hours | Running project | Photos | Standard |
 |---|---|---|---|---|---|---|---|---|
 | spring-ai | Spring AI | ai | 20 | 40 | 16.5 | Atlas, a science museum's guide (Spring Boot 4.2, Spring AI 2.1) | 22 | full (23 Nov) |
-| langchain4j | LangChain4j | ai | 18 of 30 | 36 | 13.2 so far | Setu, a hill railway's help desk (LangChain4j 1.24) | 5 | being built: Parts 1 to 3 of 5 done |
+| langchain4j | LangChain4j | ai | 24 of 30 | 48 | 17.6 so far | Setu, a hill railway's help desk (LangChain4j 1.24) | 5 | being built: Parts 1 to 4 of 5 done |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
 | java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |

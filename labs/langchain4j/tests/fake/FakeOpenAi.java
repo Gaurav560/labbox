@@ -118,7 +118,7 @@ public final class FakeOpenAi {
     }
 
     /** A tiny, predictable embedding: 8 numbers counting a few keywords, so similar texts get similar vectors. */
-    static final String[] WORDS = {"pendulum", "planetarium", "show", "gallery", "dinosaur", "robot", "ticket", "hours"};
+    static final String[] WORDS = {"refund", "luggage", "bicycle", "pet", "heavy rain", "wheelchair", "instrument", "landslide"};
 
     private static String embeddings(String body) {
         java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"input\"\\s*:\\s*\\[(.*?)\\]", java.util.regex.Pattern.DOTALL).matcher(body);

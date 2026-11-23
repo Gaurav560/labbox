@@ -61,3 +61,11 @@ nodes:
     title: Streaming, memory and a Spring Boot API
     requires: [l4j-ai-services]
     chapters: [langchain4j/streaming, langchain4j/memory, langchain4j/rest-api]
+  - id: l4j-tools
+    title: Tools and MCP
+    requires: [l4j-apps]
+    chapters: [langchain4j/tools, langchain4j/mcp-client, langchain4j/mcp-server]
+  - id: l4j-knowledge
+    title: Embedding stores, RAG and local models
+    requires: [l4j-tools]
+    chapters: [langchain4j/embedding-stores, langchain4j/rag, langchain4j/local-models]

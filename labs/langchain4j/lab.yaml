@@ -12,7 +12,7 @@ language: java
 track: ai
 tags: [java, ai, langchain4j]
 level: intermediate
-estimated_minutes: 790
+estimated_minutes: 1055
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain4j", source: "LangChain4j project (Apache 2.0)" }
@@ -524,3 +524,166 @@ chapters:
     examples:
     - call: 'POST /chat {"passenger": "meera", "message": "What did I just ask you about?"}'
       gives: '{"passenger": "meera", "answer": "You asked if the Konkan Breeze ..."}'
+- id: tools
+  title: Tools (function calling)
+  file: chapters/19-tools.md
+  minutes: 45
+  folder: 19-tools
+  part: Tools, MCP and knowledge
+  tasks:
+  - id: date_tool
+    title: a date tool in Java
+    xp: 20
+    hints:
+    - nextDate returns an empty string, and the model cannot see it because it has no annotation.
+    - DayOfWeek.valueOf turns "SATURDAY" into a day; trim and upper-case the text first. TemporalAdjusters has next(day).
+    - Annotate the method with the Tool description and the parameter with the P description from the TODO.
+    examples:
+    - call: nextDate("saturday") on Monday 2026-11-23
+      gives: '"2026-11-28"'
+    - call: nextDate("Monday") on Monday 2026-11-23
+      gives: '"2026-11-30"'
+      note: the next one, not today
+  - id: tools_in_service
+    title: give Setu its tools
+    xp: 20
+    hints:
+    - assistant uses AiServices.create, which gives the model no tools.
+    - AiServices.builder(Assistant.class) has a method that takes objects with @Tool methods.
+    - Pass the RailTools object to that method, with the chat model, then build().
+    examples:
+    - call: chat("3 tickets to Karjat this Saturday?")
+      gives: 28 November, Rs 420
+      note: the model called nextDate and fare
+- id: mcp-client
+  title: 'MCP: using a filesystem MCP server'
+  file: chapters/20-mcp-client.md
+  minutes: 45
+  folder: 20-mcp-client
+  tasks:
+  - id: mcp_client
+    title: connect to the filesystem server
+    xp: 20
+    hints:
+    - filesystem returns null. An MCP client needs a transport first.
+    - StdioMcpTransport.builder() takes the command that starts the server, as a list of the program and its arguments.
+    - The command is mcp-server-filesystem followed by the folder; give the transport to DefaultMcpClient.builder() with the key notices.
+    examples:
+    - call: filesystem(notices).listTools()
+      gives: 14 tools, list_directory and read_text_file among them
+  - id: mcp_tool_provider
+    title: offer only two of the tools
+    xp: 20
+    hints:
+    - assistant gives the model none of the server's tools.
+    - Build it like assistantWithAllTools, with a McpToolProvider for the client.
+    - The McpToolProvider builder can keep only some tools by name; keep list_directory and read_text_file.
+    examples:
+    - call: chat("Is any work planned that affects the Konkan Breeze?")
+      gives: Yes, 40 minutes late on 29 and 30 November
+- id: mcp-server
+  title: Building your own MCP server in Java
+  file: chapters/21-mcp-server.md
+  minutes: 40
+  folder: 21-mcp-server
+  tasks:
+  - id: mcp_server
+    title: serve RailTools over MCP
+    xp: 20
+    hints:
+    - main does nothing, so the process ends before a client can talk to it.
+    - An McpServer takes the list of tool objects and an McpImplementation with a name and a version.
+    - Wrap it in a StdioMcpServerTransport on System.in and System.out, then join the current thread so the process stays alive.
+    examples:
+    - call: an MCP client listing the server's tools
+      gives: fare and nextDate
+  - id: own_server_client
+    title: connect to your own server
+    xp: 20
+    hints:
+    - connect returns null. It needs a transport that starts your server.
+    - The command is java, -cp, the classpath, then the server class com.setu.RailMcpServer.
+    - Give that StdioMcpTransport to DefaultMcpClient.builder() with the key sahyadri-rail, then build().
+    examples:
+    - call: connect(classpath) then fare(Ratnagiri) over MCP
+      gives: '420'
+- id: embedding-stores
+  title: Embedding models and stores
+  file: chapters/22-embedding-stores.md
+  minutes: 45
+  folder: 22-embedding-stores
+  tasks:
+  - id: store_cards
+    title: store the cards with metadata
+    xp: 20
+    hints:
+    - load returns an empty store.
+    - For each card, make a TextSegment from its text with title and type as Metadata, and embed it with the model.
+    - Add each embedding with its segment to an InMemoryEmbeddingStore, and return the store.
+    examples:
+    - call: load(model, Cards.ALL)
+      gives: a store with 6 entries
+  - id: search_store
+    title: search with a threshold
+    xp: 20
+    hints:
+    - search returns an empty list.
+    - EmbeddingSearchRequest.builder() takes the question's embedding, the number of results and a minimum score.
+    - Use a minimum score of 0.7, call store.search(...), and collect each match's title metadata in order.
+    examples:
+    - call: search(store, model, "Can I take my bicycle?", 2)
+      gives: '[Luggage]'
+    - call: search(store, model, "What is the capital of France?", 2)
+      gives: '[]'
+- id: rag
+  title: Retrieval-augmented generation (RAG)
+  file: chapters/23-rag.md
+  minutes: 50
+  folder: 23-rag
+  tasks:
+  - id: ingest_rules
+    title: index the rule documents
+    xp: 20
+    hints:
+    - ingest returns an empty store.
+    - FileSystemDocumentLoader.loadDocuments reads every file in a folder with a parser; TextDocumentParser reads plain text.
+    - An EmbeddingStoreIngestor with a recursive splitter of 300 characters and overlap 30, the model and a store ingests them.
+    examples:
+    - call: ingest(model, docs)
+      gives: a store with about 10 pieces, each knowing its file_name
+  - id: rag_answer
+    title: answer from the rules
+    xp: 20
+    hints:
+    - assistant has no content retriever, so the model never sees the rules.
+    - AiServices.builder(Assistant.class) takes a content retriever as well as the chat model.
+    - Pass retriever(store, embeddingModel), which is already written, then build().
+    examples:
+    - call: chat("Can I bring my guitar?")
+      gives: Yes, up to 1.5 metres, free
+- id: local-models
+  title: Local models with Ollama, and model routing
+  file: chapters/24-local-models.md
+  minutes: 40
+  folder: 24-local-models
+  tasks:
+  - id: ollama_model
+    title: a model on your own machine
+    xp: 20
+    hints:
+    - ollama returns null.
+    - OllamaChatModel.builder() takes the server's base URL and the model name, like the other models.
+    - Set the temperature to zero as well, then build().
+    examples:
+    - call: ollama("http://localhost:11434", "qwen2.5:0.5b").chat("What is a hill railway?")
+      gives: an answer from the local model
+  - id: routing_model
+    title: route between two models
+    xp: 20
+    hints:
+    - routing always returns the large model.
+    - RoutingChatModel.builder() takes routes (name, description, model), a router and a default route.
+    - The router returns ChatModelRoutingResult.route("complex") when lastLength(...) is over 120, else "simple"; the default route is complex.
+    examples:
+    - call: routing(small, large).chat("Hi!")
+      gives: answered by the small model

@@ -2079,7 +2079,44 @@ function L4jAiService() {
   );
 }
 
+function L4jToolCall() {
+  return (
+    <SketchSteps
+      title="a tool call, step by step"
+      intro="Press Play to follow one question that needs Java."
+      label="the question goes to the model with the tool descriptions; the model asks for nextDate and fare; LangChain4j runs the Java methods; the results go back; the model answers"
+      steps={[
+        { label: "1. Question and tools", says: "3 tickets to Karjat this Saturday? plus the descriptions of fare and nextDate." },
+        { label: "2. The model asks", says: "No text: two tool calls, nextDate(SATURDAY) and fare(Karjat)." },
+        { label: "3. Java runs", says: "LangChain4j calls RailTools: 2026-11-28 and 140." },
+        { label: "4. Results go back", says: "Two tool messages are added to the conversation." },
+        { label: "5. The answer", says: "Saturday 28 November, three tickets for Rs 420." },
+      ]}
+    />
+  );
+}
+
+function L4jRag() {
+  return (
+    <SketchSteps
+      title="retrieval-augmented generation"
+      intro="Press Play to follow indexing, then one question."
+      label="documents are loaded, split into pieces, embedded and stored once; a question is embedded, the closest pieces are found, and they travel to the model with the question"
+      steps={[
+        { label: "1. Load", says: "Five rule documents from the docs folder." },
+        { label: "2. Split", says: "Pieces of at most 300 characters, overlapping by 30." },
+        { label: "3. Embed and store", says: "Each piece becomes 1,536 numbers, kept with its text and file name." },
+        { label: "4. A question", says: "Can I bring my guitar? is embedded too." },
+        { label: "5. Retrieve", says: "The closest piece above 0.7: Musical instruments up to 1.5 metres travel free." },
+        { label: "6. Generate", says: "The model answers from that piece, and only from it." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "l4j-tool-call": L4jToolCall,
+  "l4j-rag": L4jRag,
   "l4j-ai-service": L4jAiService,
   "l4j-http-call": L4jHttpCall,
   "l4j-ai-circles": L4jAiCircles,

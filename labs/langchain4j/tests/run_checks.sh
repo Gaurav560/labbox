@@ -27,6 +27,12 @@ structured|15-structured|extract_trip classify_topic
 streaming|16-streaming|stream_tokens token_stream
 memory|17-memory|window_memory memory_per_passenger
 rest-api|18-rest-api|ai_service_bean chat_endpoint
+tools|19-tools|date_tool tools_in_service
+mcp-client|20-mcp-client|mcp_client mcp_tool_provider
+mcp-server|21-mcp-server|mcp_server own_server_client
+embedding-stores|22-embedding-stores|store_cards search_store
+rag|23-rag|ingest_rules rag_answer
+local-models|24-local-models|ollama_model routing_model
 "
 
 fail_all() { # tasks message

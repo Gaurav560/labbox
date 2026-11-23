@@ -1,5 +1,22 @@
 # Changelog
 
+## 23 November: LangChain4j, Part 4 (tools, MCP and knowledge)
+
+- Part 4, "Tools, MCP and knowledge" (6 chapters, 12 tasks), every model output captured through the gateway:
+  - tools: a Java date tool fixed chapter 15's wrong Saturday (the model called `nextDate` and `fare` in one reply);
+  - an MCP client for the reference filesystem server (Node.js, pinned, offline in the image): with all 14 tools the
+    model searched file names and wrongly said there were no notices (1,222 tokens a call); filtered to two reading
+    tools it found the track work (305 tokens);
+  - our own MCP server in Java (`langchain4j-community-mcp-server`), with a real misleading timeout whose cause was the
+    classpath under `exec:java`;
+  - embedding stores with OpenAI embeddings: LangChain4j scores are (cosine + 1) / 2, so the 0.5 threshold matched
+    "capital of France"; 0.7, chosen from real scores, does not;
+  - RAG over five rule documents (the real augmented prompt is quoted; for wifi the retriever brought only a heading,
+    and the "answer only from the information" instruction kept Setu honest);
+  - a local model through Ollama (Qwen 2.5 0.5B, captured on this machine, Ollama stopped again) and `RoutingChatModel`.
+- The fake OpenAI server's toy embeddings use railway keywords.
+- Two more playing diagrams (a tool call, RAG), six notes pages, two AI-track nodes.
+
 ## 23 November: LangChain4j, Part 3 (AI Services)
 
 - Part 3, "AI Services" (6 chapters, 12 tasks), every model output captured from gpt-4o-mini through the gateway: an
