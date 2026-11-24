@@ -1824,41 +1824,7 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 
 .lib-intro { margin: 22px 0 24px; color: var(--muted); font-size: 16px; }
 
-/* The three sections as big tiles (owner: "very good, impressive, attractive to look"). */
-.lib-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
-.lib-tile { position: relative; display: flex; align-items: flex-start; gap: 14px; min-height: 148px; padding: 20px 20px 18px;
-  text-align: left; font: inherit; color: var(--text); cursor: pointer; overflow: hidden; border-radius: 18px;
-  border: 1px solid var(--border); background:
-    radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--t) 10%, transparent), transparent 60%), var(--panel);
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
-.lib-tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--t) 55%, var(--border)); }
-.lib-tile[aria-current="page"] { border-color: var(--t); background:
-    radial-gradient(130% 130% at 100% 0%, color-mix(in srgb, var(--t) 26%, transparent), transparent 62%), var(--panel);
-  box-shadow: 0 0 0 1px var(--t), 0 18px 40px -24px var(--t); }
-.lib-tile[aria-current="page"]::after { content: ""; position: absolute; left: 20px; right: 20px; bottom: 0; height: 3px;
-  border-radius: 3px 3px 0 0; background: var(--t); }
-.lib-tile-icon { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px;
-  color: var(--t); background: color-mix(in srgb, var(--t) 16%, transparent); border: 1px solid color-mix(in srgb, var(--t) 35%, transparent); }
-.lib-tile-text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 4px; max-width: 60%; }
-.lib-tile-name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
-.lib-tile-line { font-size: 13.5px; line-height: 1.4; color: var(--muted); }
-.lib-tile-count { margin-top: 10px; font-size: 13px; color: var(--muted); }
-.lib-tile-count strong { font-size: 22px; font-weight: 800; color: var(--text); margin-right: 4px; letter-spacing: -0.02em; }
-.lib-tile-fan { position: absolute; right: -6px; bottom: -18px; width: 132px; height: 120px; pointer-events: none; }
-.lib-tile-fan img { position: absolute; bottom: 0; width: 66px; aspect-ratio: 2 / 3; object-fit: cover; object-position: top;
-  border-radius: 4px 6px 6px 4px; background: #fff; box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .12);
-  transform-origin: bottom center; transition: transform .25s ease;
-  right: calc(var(--n) * 30px); transform: rotate(calc(8deg - var(--n) * 8deg)) translateY(calc(var(--n) * 4px)); z-index: calc(3 - var(--n)); }
-.lib-tile.is-blog .lib-tile-fan img { width: 96px; aspect-ratio: 16 / 10; right: calc(var(--n) * 14px); }
-.lib-tile:hover .lib-tile-fan img, .lib-tile[aria-current="page"] .lib-tile-fan img {
-  transform: rotate(calc(12deg - var(--n) * 12deg)) translateY(calc(var(--n) * 4px - 6px)); }
-@media (max-width: 900px) {
-  .lib-tiles { grid-template-columns: 1fr; gap: 10px; }
-  .lib-tile { min-height: 0; padding: 16px; }
-  .lib-tile-fan { width: 110px; height: 96px; bottom: -22px; }
-  .lib-tile-fan img { width: 54px; }
-  .lib-tile.is-blog .lib-tile-fan img { width: 80px; }
-}
+/* SECTION TILES: see the block at the end of the file. */
 
 .lib-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
 .lib-topics button { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border);
@@ -2004,13 +1970,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-paper .lib-actions:empty, .lib-blog .lib-actions:empty { display: none; }
 .lib-paper .lib-actions, .lib-blog .lib-actions { justify-content: flex-start; }
 
-/* "Last updated" on each section tile (owner, 24 November): the newest change in that section. */
-.lib-tile-updated { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 3px 10px;
-  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--t) 40%, var(--border));
-  background: color-mix(in srgb, var(--t) 14%, var(--panel)); font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap;
-  position: relative; z-index: 2; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
-.lib-tile-updated > span { color: var(--t); }
-.lib-tile-fan { z-index: 0; }  /* the covers stay under the tile text and its Last updated pill */
 
 /* "Last updated" beside the Premium Reads heading (owner, 24 November: plain and simple). */
 .lib-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
@@ -2025,7 +1984,56 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-featured:hover h2 a { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 .lib-featured .lib-actions a { position: relative; z-index: 2; }
 .lib-featured .lib-actions:empty { display: none; }
-/* Picking a section puts the other two out of focus (owner, 24 November); pointing at one brings it back. */
-.lib-tile:not([aria-current="page"]) { opacity: .5; filter: saturate(.35); }
-.lib-tile:not([aria-current="page"]):hover, .lib-tile:not([aria-current="page"]):focus-visible { opacity: 1; filter: none; }
-.lib-tile { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease, opacity .2s ease, filter .2s ease; }
+
+/* SECTION TILES (owner, 24 November: "impressive", "more cool design", then "try something different").
+   Each tile is a dark card filled with a tilted wall of its section's real pictures; the words sit on a shade at the
+   left. The picked section gets a ring and a glow in its colour; the other two blur and dim, until pointed at. */
+.lib-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+.lib-tile { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
+  gap: 18px; min-height: 196px; padding: 18px 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, .08);
+  background: #0c0e12; color: #fff; font: inherit; text-align: left; cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease, opacity .25s ease; }
+.lib-tile-wall { position: absolute; z-index: -2; inset: -40% -30% -40% 18%; display: flex; flex-wrap: wrap; align-content: center;
+  gap: 10px; transform: rotate(-12deg); pointer-events: none; transition: filter .3s ease, transform .5s ease; }
+.lib-tile-wall img { height: 128px; aspect-ratio: 2 / 3; object-fit: cover; object-position: top; border-radius: 6px; background: #fff;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .8); }
+.lib-tile.is-paper .lib-tile-wall img { aspect-ratio: 3 / 4; }
+.lib-tile.is-blog .lib-tile-wall img { height: 92px; aspect-ratio: 16 / 10; }
+/* The shade: dark under the words, clear on the right, with a wash of the section's colour from the bottom left. */
+.lib-tile::after { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--t) 45%, transparent), transparent 60%),
+    linear-gradient(90deg, rgba(10, 12, 16, .96) 0%, rgba(10, 12, 16, .82) 42%, rgba(10, 12, 16, .2) 100%); transition: opacity .3s ease; }
+.lib-tile-head { display: flex; align-items: center; gap: 10px; }
+.lib-tile-icon { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; color: #0c0e12; background: var(--t);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--t) 22%, transparent); }
+.lib-tile-icon svg { width: 18px; height: 18px; }
+.lib-tile-kicker { font: 700 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--t); }
+.lib-tile-text { display: flex; flex-direction: column; gap: 4px; max-width: 62%; }
+.lib-tile-name { font-size: 24px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; color: #fff; }
+.lib-tile-line { font-size: 13.5px; line-height: 1.4; color: rgba(255, 255, 255, .72); }
+.lib-tile-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.lib-tile-updated { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+  font-size: 12px; font-weight: 600; color: #fff; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .18);
+  backdrop-filter: blur(6px); }
+.lib-tile-updated > span { color: var(--t); }
+.lib-tile:hover { transform: translateY(-3px); }
+.lib-tile:hover .lib-tile-wall { transform: rotate(-12deg) scale(1.05); }
+/* The picked section. */
+.lib-tile[aria-current="page"] { border-color: transparent;
+  box-shadow: 0 0 0 2px var(--t), 0 22px 48px -18px color-mix(in srgb, var(--t) 75%, transparent); }
+.lib-tile[aria-current="page"] .lib-tile-wall { transform: rotate(-12deg) scale(1.05); }
+.lib-tile[aria-current="page"]::after {
+  background: radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--t) 50%, transparent), transparent 60%),
+    linear-gradient(90deg, rgba(10, 12, 16, .95) 0%, rgba(10, 12, 16, .82) 38%, rgba(10, 12, 16, 0) 100%); }
+/* The two not picked step back; pointing at one brings it forward. */
+.lib-tiles:has([aria-current="page"]) .lib-tile:not([aria-current="page"]) { opacity: .55; }
+.lib-tiles:has([aria-current="page"]) .lib-tile:not([aria-current="page"]) .lib-tile-wall { filter: blur(3px) grayscale(.6); }
+.lib-tiles .lib-tile:not([aria-current="page"]):hover, .lib-tiles .lib-tile:not([aria-current="page"]):focus-visible { opacity: 1; }
+.lib-tiles .lib-tile:not([aria-current="page"]):hover .lib-tile-wall { filter: none; }
+@media (max-width: 900px) {
+  .lib-tiles { grid-template-columns: 1fr; gap: 10px; }
+  .lib-tile { min-height: 168px; padding: 16px; }
+  .lib-tile-wall img { height: 108px; }
+  .lib-tile.is-blog .lib-tile-wall img { height: 78px; }
+}
+@media (prefers-reduced-motion: reduce) { .lib-tile, .lib-tile-wall { transition: none; } }

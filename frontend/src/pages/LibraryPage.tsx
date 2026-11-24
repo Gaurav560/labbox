@@ -53,20 +53,24 @@ function SectionTile({ kind, label, items, active, onPick }: {
   kind: LibraryKind; label: string; items: LibraryItem[]; active: boolean; onPick: () => void;
 }) {
   const { tone: t, line } = SECTION[kind];
-  const shots = items.filter((i) => i.image).slice(0, 3);
+  const shots = items.filter((i) => i.image).slice(0, 10);
   const updated = lastUpdated(items);
   return (
     <button className={`lib-tile is-${kind}`} aria-current={active ? "page" : undefined} onClick={onPick}
       style={{ "--t": t } as CSSProperties}>
-      <span className="lib-tile-icon"><SectionIcon kind={kind} /></span>
+      <span className="lib-tile-wall" aria-hidden="true">
+        {shots.map((i) => <img key={i.id} src={libraryImage(i.image)} alt="" loading="eager" />)}
+      </span>
+      <span className="lib-tile-head">
+        <span className="lib-tile-icon"><SectionIcon kind={kind} /></span>
+        <span className="lib-tile-kicker">{items.length} hand-picked</span>
+      </span>
       <span className="lib-tile-text">
         <span className="lib-tile-name">{label}</span>
         <span className="lib-tile-line">{line}</span>
-        <span className="lib-tile-count"><strong>{items.length}</strong> hand-picked</span>
-        {updated && <span className="lib-tile-updated"><span aria-hidden="true">↻</span> Last updated {updated}</span>}
       </span>
-      <span className="lib-tile-fan" aria-hidden="true">
-        {shots.map((i, n) => <img key={i.id} src={libraryImage(i.image)} alt="" style={{ "--n": n } as CSSProperties} />)}
+      <span className="lib-tile-foot">
+        {updated && <span className="lib-tile-updated"><span aria-hidden="true">↻</span> Last updated {updated}</span>}
       </span>
     </button>
   );

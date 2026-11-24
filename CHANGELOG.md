@@ -41,6 +41,9 @@
   section puts the other two tiles out of focus; the Start here card lost its read button and opens the item as a
   whole (its lab chip replaces the long "Practise it hands-on" line); Attention Is All You Need is the papers' Start
   here pick; blogs run Lil'Log, Anthropic Engineering, OpenAI News, Hacker News, Claude blog.
+- Then (owner: "more cool design", "try something different"): the three section tiles became dark cards filled
+  with a tilted wall of the section's real pictures, the words on a shade at the left; the picked section has a
+  ring and glow in its colour, the other two blur and dim until pointed at.
 
 - Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to
   Read, and Tech Blogs to Read"; after the first version, "rubbish ui ... i want to market my lab via these sources",
