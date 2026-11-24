@@ -41,8 +41,10 @@ const AdminPage = lazyPage(() => import("./pages/AdminPage")); // only admins ev
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
+  const { pathname, search } = useLocation();
   if (loading) return <div className="center-screen">Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  // Logged out: log in first, then come back here (owner, 25 November: "AI labs" must land on the AI labs).
+  if (!user) return <Navigate to={`/login?next=${encodeURIComponent(pathname + search)}`} replace />;
   return <>{children}</>;
 }
 

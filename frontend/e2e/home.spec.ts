@@ -22,9 +22,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(languages).toHaveAttribute("href", "/login?signup=1");
   await expect(page.locator("#labs .u-row")).toHaveCount(0);
   await expect(page.locator("#labs .uh-all a")).toHaveText(/^See all \d+ labs →$/);
-  // The AI section (pagoda, "24 labs ... your own GPT") is off for now (owner, 25 November); "AI labs" jumps to the labs.
+  // The AI section (pagoda, "24 labs ... your own GPT") is off for now (owner, 25 November); "AI labs" opens the AI labs.
   await expect(page.locator("#ai")).toHaveCount(0);
-  await expect(page.locator(".home-nav").getByRole("link", { name: "AI labs" })).toHaveAttribute("href", "#labs");
+  await expect(page.locator(".home-nav").getByRole("link", { name: "AI labs" })).toHaveAttribute("href", "/labs?category=ai");
   await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
   await expect(page.locator("#labs .uh-panel", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   // The closing panel has no "first win" line.

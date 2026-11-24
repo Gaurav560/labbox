@@ -40,7 +40,7 @@ export default function HomePage() {
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#labs">AI labs</a>
+          <Link to="/labs?category=ai">AI labs</Link>
           <Link to="/library">Premium Reads</Link>
           <a href="#faq">FAQs</a>
         </nav>
@@ -114,8 +114,8 @@ learner:~$ python agent.py
 
         <section className="uh-final" aria-labelledby="final-title">
           <figure className="uh-final-print">
-            <div className="uh-frame"><img src="/ukiyo/ishiyama-moon.webp" width={1200} height={558} alt="Woodblock print: Utagawa Hiroshige, Autumn Moon at Ishiyama, about 1834" /></div>
-            <figcaption className="u-print-credit">Utagawa Hiroshige, Autumn Moon at Ishiyama, Eight Views of Omi, about 1834</figcaption>
+            <div className="uh-frame"><img src="/ukiyo/hira-evening-snow.webp" width={1200} height={607} alt="Woodblock print: Utagawa Hiroshige, Evening Snow on Mount Hira, about 1834" /></div>
+            <figcaption className="u-print-credit">Utagawa Hiroshige, Evening Snow on Mount Hira, Eight Views of Omi, about 1834</figcaption>
           </figure>
           <div className="uh-final-text">
             <p className="u-kicker">Begin</p>

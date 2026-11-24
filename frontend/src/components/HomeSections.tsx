@@ -107,10 +107,9 @@ export function HomeFaq() {
   const items = [...AI_FAQ, ...FAQS.filter((f) => !f.q.startsWith("What is"))].slice(0, 8);
   return (
     <div className="h-faq">
-      {items.map((f, i) => (
+      {items.map((f) => (
         <details key={f.q} className="h-faq-item" name="home-faq">
           <summary>
-            <span className="h-faq-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
             <span className="h-faq-q">{f.q}</span>
             <span className="h-faq-icon" aria-hidden="true" />
           </summary>

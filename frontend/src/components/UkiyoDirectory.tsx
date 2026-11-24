@@ -107,8 +107,8 @@ export function LabRow({ lab, to }: { lab: DirectoryLab; to: string }) {
 }
 
 /** Category tiles, then one ruled group of rows per category. `link` gives each row's target. */
-export function Directory<L extends DirectoryLab>({ labs, link }: { labs: L[]; link: (lab: L) => string }) {
-  const [shown, setShown] = useState<string>("all");
+export function Directory<L extends DirectoryLab>({ labs, link, initial = "all" }: { labs: L[]; link: (lab: L) => string; initial?: string }) {
+  const [shown, setShown] = useState<string>(initial);
   const groups = useMemo(() => byCategory(labs), [labs]);
   return (
     <>

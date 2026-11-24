@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
 import { chapterNumber } from "../components/StatusBar";
 import { InkProgress, LabPrint, Seal, TRACK_INK } from "../components/UkiyoArt";
@@ -20,6 +20,8 @@ export default function LabsPage() {
   const toast = useToast();
   const { stats } = useStats();
   const navigate = useNavigate();
+  // /labs?category=ai opens the directory on that category (the home page menu's "AI labs" links here).
+  const category = useSearchParams()[0].get("category") ?? "";
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [next, setNext] = useState<NextStep | null>(null);
   const [nextLab, setNextLab] = useState<LabDetail | null>(null);   // the lab of the next step (chapters, track)
@@ -32,6 +34,11 @@ export default function LabsPage() {
   useEffect(() => {
     if (next) api.lab(next.lab_id).then(setNextLab).catch(() => setNextLab(null));
   }, [next]);
+
+  // With a category asked for, scroll to the directory once the labs are in.
+  useEffect(() => {
+    if (category && labs) document.getElementById(`category-${category}`)?.scrollIntoView({ block: "start" });
+  }, [category, labs]);
 
   // Brand new learners start with the 60 second onboarding.
   useEffect(() => {
@@ -71,7 +78,7 @@ export default function LabsPage() {
             <span className="u-rule-fill" aria-hidden="true" />
           </div>
           {!labs && <p className="muted">Loading...</p>}
-          {labs && <Directory labs={labs} link={(lab) => `/courses/${lab.id}`} />}
+          {labs && <Directory labs={labs} link={(lab) => `/courses/${lab.id}`} initial={category || "all"} />}
         </section>
       </main>
     </div>

@@ -385,7 +385,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .u-home .h-faq { border-top: 2px solid var(--text); }
 .u-home .h-faq-item[open] { background: none; }
 .u-home .h-faq-item::before { width: 2px; }
-.u-home .h-faq-item summary { border-radius: 0; font: 600 18px/1.35 var(--font-serif); letter-spacing: 0; }
+.u-home .h-faq-item summary { grid-template-columns: minmax(0, 1fr) auto; border-radius: 0; font: 600 18px/1.35 var(--font-serif); letter-spacing: 0; }
 .u-home .h-faq-icon { border: 0; border-radius: 0; width: 18px; height: 18px; }
 .u-home .h-faq-item[open] .h-faq-icon { transform: none; background: none; }
 .u-home .h-faq-item[open] .h-faq-icon::after { transform: scaleY(0); }

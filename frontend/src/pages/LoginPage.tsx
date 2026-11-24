@@ -48,14 +48,18 @@ function Showcase() {
 export default function LoginPage() {
   const { user, login, signup } = useAuth();
   const navigate = useNavigate();
-  const signupMode = useSearchParams()[0].get("signup") === "1"; // from "Start free" on the home page
+  const [params] = useSearchParams();
+  const signupMode = params.get("signup") === "1"; // from "Start free" on the home page
+  // Where to go after logging in: a path on this site (never another site), else the dashboard.
+  const wanted = params.get("next") ?? "";
+  const next = wanted.startsWith("/") && !wanted.startsWith("//") && !wanted.startsWith("/\\") ? wanted : "/labs";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [reveal, setReveal] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  if (user) return <Navigate to="/labs" replace />;
+  if (user) return <Navigate to={next} replace />;
 
   async function submit(action: "login" | "signup", e?: FormEvent) {
     e?.preventDefault();
@@ -63,7 +67,7 @@ export default function LoginPage() {
     setError("");
     try {
       await (action === "login" ? login : signup)(username.trim(), password);
-      navigate("/labs");
+      navigate(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

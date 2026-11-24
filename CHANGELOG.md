@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November (Ukiyo): "AI labs" opens the AI labs (after logging in); Mount Hira; FAQs without numbers
+
+- Owner: "when I click on AI labs in the navbar, it should open the AI labs if logged in; if not, log in and redirect
+  to the AI labs". The menu link goes to `/labs?category=ai`: the dashboard opens with only the AI category shown
+  and scrolls to it. Logged out, every page behind login now sends you to `/login?next=<that page>` and back there
+  after logging in or signing up (`next` must be a path on this site; anything else goes to the dashboard).
+  New browser test `e2e/ai-labs-link.spec.ts`.
+- Owner: another image for the closing panel. Hiroshige's Evening Snow on Mount Hira (Eight Views of Omi, about 1834,
+  public domain): soft snow on the mountains, a quiet village, a little blue water.
+- Owner: "remove numbers from FAQ". The 01 to 08 before each question are gone.
+
 ## 25 November (Ukiyo): Autumn Moon at Ishiyama, and a shorter closing panel
 
 - Owner: "na, some other image, and keep the height a little less". The closing panel shows Hiroshige's Autumn
