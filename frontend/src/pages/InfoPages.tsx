@@ -26,7 +26,7 @@ function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNo
         {user ? (
           <Link className="btn btn-small btn-primary" to="/labs">Your labs</Link>
         ) : (
-          <Link className="btn btn-small btn-primary" to="/login?signup=1">Start free</Link>
+          <Link className="btn btn-small btn-ghost" to="/login">Log in</Link>
         )}
       </header>
       <main className="info-main">

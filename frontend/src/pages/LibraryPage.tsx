@@ -257,10 +257,7 @@ export default function LibraryPage() {
             <ProfileMenu username={user?.username ?? ""} />
           </>
         ) : (
-          <>
-            <Link className="btn btn-small btn-ghost" to="/login">Log in</Link>
-            <Link className="lib-btn lib-btn-primary lib-btn-sm" to="/login?signup=1">Start free</Link>
-          </>
+          <Link className="btn btn-small btn-ghost" to="/login">Log in</Link>
         )}
       </header>
 

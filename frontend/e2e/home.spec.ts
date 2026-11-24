@@ -62,7 +62,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await page.evaluate(() => localStorage.setItem("labbox.token", "expired-or-garbage"));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator(".home-header").getByRole("link", { name: "Start free" })).toBeVisible();
+  await expect(page.locator(".home-header").getByRole("link", { name: "Log in" })).toBeVisible();
+  await expect(page.locator(".home-header").getByRole("link", { name: "Start free" })).toHaveCount(0);
   expect(errors.filter((e) => !e.includes("401"))).toEqual([]);
 });
 
