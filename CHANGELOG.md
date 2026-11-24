@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November (Ukiyo): home page with one card per category; Red Fuji behind the hero; the Great Wave on login
+
+- Owner: "you have put all the labs on the home page ... remove most of them, find a different way". The home page
+  shows one card per category (its print, how many labs, three titles) and "See all 23 labs"; the full list stays
+  on the dashboard.
+- Owner: "maybe this image in hero section background". Red Fuji now fills the hero's width behind the headline and
+  fades into the paper on the left (and under the text on phones), with its credit in the corner.
+- Owner: "change this image on login page". The login and sign-up page shows the Great Wave instead of Red Fuji.
+
 ## 25 November (Ukiyo): home page without "Inside a lab" and the AI stage ladder
 
 - Owner: "remove this portion" (the whole Inside a lab section: heading, screenshot, tour and features, so the hero's

@@ -13,22 +13,20 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
-  await expect(page.locator(".uh-hero-print img")).toBeVisible();
-  await expect(page.locator(".uh-hero-print figcaption")).toContainText("Hokusai");
-  // The catalog comes from the server, shown as the dashboard's directory: category tiles and lab rows.
-  await expect(page.locator("#labs .u-cat", { hasText: "Languages" })).toContainText(/\d+/);
-  await expect(page.locator("#category-languages .u-row").first()).toHaveAttribute("class", /u-row/);
-  await expect(page.locator("#category-languages .u-row-link").first()).toHaveAttribute("href", "/login?signup=1");
+  await expect(page.locator(".uh-hero-bg")).toHaveCSS("background-image", /red-fuji/);
+  await expect(page.locator(".uh-hero-credit")).toContainText("Hokusai");
+  // The catalog comes from the server: one card per category with a few titles, not every lab (owner, 25 November).
+  const languages = page.locator("#labs .uh-cat-card", { hasText: "Languages" });
+  await expect(languages).toContainText(/\d+ labs/);
+  await expect(languages).toHaveAttribute("href", "/login?signup=1");
+  await expect(page.locator("#labs .u-row")).toHaveCount(0);
+  await expect(page.locator("#labs .uh-all a")).toHaveText(/^See all \d+ labs →$/);
   // The AI track is the headline, honestly marked as launching, with its 24 planned labs.
   await expect(page.locator("#ai .h-launch")).toHaveText("Launching");
   await expect(page.locator("#ai .h-ai-stage")).toHaveCount(0); // the stage ladder is gone (owner, 25 November)
   await expect(page.locator("#ai-title")).toContainText("24 labs");
   await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
-  await expect(page.locator("#category-devops .u-group-count")).toHaveText(/\d+ labs?/);
-  // A category tile narrows the directory to that category.
-  await page.locator("#labs .u-cat", { hasText: "Databases" }).click();
-  await expect(page.locator("#labs .u-group")).toHaveCount(1);
-  await expect(page.locator("#category-databases .u-row").first()).toBeVisible();
+  await expect(page.locator("#labs .uh-cat-card", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   // The closing panel has no "first win" line.
   await expect(page.locator(".uh-final")).not.toContainText("first win");
 

@@ -69,7 +69,7 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
   probably still in copyright. If either cannot be licensed, the drawn SVG versions are in git history
   (commit 49cba89).
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
-  home hero) and Red Fuji (the login page).
+  home page's All labs tile and the login page) and Red Fuji (the home page hero, full width behind the headline).
 - Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),
   shown on its course page with a credit line and on the dashboard's Continue feature. The category tiles keep
   the shared category print; "All labs" shows the Great Wave. Files: `public/ukiyo/labs/<lab>.webp` (1280 px,
@@ -110,10 +110,11 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 - Dashboard: rewritten (`pages/LabsPage.tsx`).
 - Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
-- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): a framed Red Fuji beside the headline
+- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): Red Fuji full width behind the headline,
+  fading into the paper on the left;
   (vermilion brush underline, no highlighter), the four numbers between fine rules (no logo strip), the lab
-  screenshot with the tour beside six ruled features, the AI track as a ladder of four stages under the pagoda
-  picture, the dashboard's own directory (`components/UkiyoDirectory.tsx`, shared with `/labs`), a closing paper
+  AI section (the pagoda picture and one line), one card per category (print, count, three titles, then "See all
+  labs"; the full directory stays on `/labs`, `components/UkiyoDirectory.tsx`), a closing paper
   panel with Hiroshige's Nihonbashi, and the FAQs with a thin plus and minus.
 - Premium Reads, login: restyled through tokens and sections 9 and 11 of `ukiyo.css`.
 - Lab page: the frame only (Check button, step marks, labels, headings); the lesson watermark is off.

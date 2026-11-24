@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { HomeFaq } from "../components/HomeSections";
-import { byCategory, Directory } from "../components/UkiyoDirectory";
+import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
+import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
 
@@ -33,13 +34,13 @@ export default function HomePage() {
   }, []);
 
   const live = useMemo(() => catalog ?? [], [catalog]);
-  const categories = useMemo(() => byCategory(live).filter((g) => g.labs.length).length, [live]);
+  const groups = useMemo(() => byCategory(live).filter((g) => g.labs.length), [live]);
   const cta = user ? (
     <Link className="h-btn h-btn-primary" to="/labs">Continue learning →</Link>
   ) : (
     <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
-  const labLink = (lab: CatalogLab) => (user ? `/courses/${lab.id}` : "/login?signup=1");
+  const allLabs = user ? "/labs" : "/login?signup=1";
 
   return (
     <div className="home u-home">
@@ -73,12 +74,9 @@ export default function HomePage() {
               {cta}
             </div>
           </div>
-          <figure className="uh-hero-print">
-            <div className="uh-frame">
-              <img src="/ukiyo/red-fuji.webp" width={1280} height={854} alt="Woodblock print: Katsushika Hokusai, Fine Wind, Clear Morning (Red Fuji), about 1831" />
-            </div>
-            <figcaption className="u-print-credit">Katsushika Hokusai, Fine Wind, Clear Morning, about 1831</figcaption>
-          </figure>
+          {/* Red Fuji as the hero's background, fading into the paper behind the words (owner, 25 November) */}
+          <div className="uh-hero-bg" role="img" aria-label="Woodblock print: Katsushika Hokusai, Fine Wind, Clear Morning (Red Fuji), about 1831" />
+          <p className="u-print-credit uh-hero-credit">Katsushika Hokusai, Fine Wind, Clear Morning, about 1831</p>
         </section>
 
         <section className="uh-stats" aria-label="LabBox in numbers">
@@ -106,9 +104,26 @@ export default function HomePage() {
             <header className="uh-head">
               <p className="u-kicker">Labs</p>
               <h2 id="labs-title">Pick a lab. <em>Start in a minute.</em></h2>
-              <p className="uh-section-lead">{live.length} labs in {categories} categories, from your first line of Python to a system under load. Every one runs in a real machine.</p>
+              <p className="uh-section-lead">{live.length} labs in {groups.length} categories, from your first line of Python to a system under load. Every one runs in a real machine.</p>
             </header>
-            <Directory labs={live} link={labLink} />
+            {/* One card per category, not every lab (owner, 25 November: "remove most of them, find a different way") */}
+            <ul className="uh-cats">
+              {groups.map((g) => (
+                <li key={g.id} style={{ "--ink": TRACK_INK[g.id] ?? "var(--text)" } as CSSProperties}>
+                  <Link to={allLabs} className="uh-cat-card">
+                    <span className="uh-cat-art" aria-hidden="true"><TrackArt track={g.id} /></span>
+                    <span className="uh-cat-body">
+                      <span className="uh-cat-head">
+                        <strong>{TRACK_LABEL[g.id] ?? g.id}</strong>
+                        <span className="uh-cat-count">{g.labs.length} lab{g.labs.length === 1 ? "" : "s"}</span>
+                      </span>
+                      <span className="uh-cat-labs">{g.labs.slice(0, 3).map((l) => l.title).join(" · ")}{g.labs.length > 3 ? " and more" : ""}</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="uh-all"><Link to={allLabs}>See all {live.length} labs →</Link></p>
           </section>
         )}
 
