@@ -16,9 +16,6 @@ import { useTheme } from "../theme";
  * one red button per screen, and the dashboard's own directory of labs.
  */
 
-// Real technology logos (devicon, MIT: /logos/LICENSE-devicon) for the moving strip.
-const STRIP = ["python", "java", "go", "javascript", "typescript", "postgresql", "redis", "docker", "kubernetes", "spring", "fastapi", "nodejs", "git", "linux"];
-
 /** A vermilion brush stroke under a word, drawn once when the page opens. */
 function Brush({ children }: { children: string }) {
   return (
@@ -84,16 +81,6 @@ export default function HomePage() {
             </div>
             <figcaption className="u-print-credit">Katsushika Hokusai, Fine Wind, Clear Morning, about 1831</figcaption>
           </figure>
-        </section>
-
-        <section className="h-strip uh-strip" aria-label="Technologies you practise on">
-          <div className="h-strip-track">
-            {[...STRIP, ...STRIP].map((n, i) => (
-              <span key={i} className="h-strip-logo" aria-hidden={i >= STRIP.length || undefined}>
-                <img src={`/logos/${n}.svg`} alt={i < STRIP.length ? n : ""} />
-              </span>
-            ))}
-          </div>
         </section>
 
         <section className="uh-stats" aria-label="LabBox in numbers">

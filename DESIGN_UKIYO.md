@@ -111,7 +111,7 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 - Dashboard: rewritten (`pages/LabsPage.tsx`).
 - Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
 - Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): a framed Red Fuji beside the headline
-  (vermilion brush underline, no highlighter), logos on paper chips, the four numbers between fine rules, the lab
+  (vermilion brush underline, no highlighter), the four numbers between fine rules (no logo strip), the lab
   screenshot with the tour beside six ruled features, the AI track as a ladder of four stages under the pagoda
   picture, the dashboard's own directory (`components/UkiyoDirectory.tsx`, shared with `/labs`), a closing paper
   panel with Hiroshige's Nihonbashi, and the FAQs with a thin plus and minus.

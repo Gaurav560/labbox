@@ -339,12 +339,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-hero-print { margin: 0; }
 .uh-hero-print .u-print-credit { text-align: right; }
 
-/* logos on paper chips, the numbers between fine rules */
-.uh-strip { border-block: 1px solid var(--rule); padding: 16px 0; }
-.uh-strip .h-strip-track { gap: 18px; }
-.uh-strip .h-strip-logo { width: 52px; height: 52px; padding: 10px; background: #fffdf8; border: 1px solid var(--rule); }
-.uh-strip .h-strip-logo:hover { transform: none; }
-.uh-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--rule); }
+/* the numbers between fine rules (the logo strip was removed, owner 25 November) */
+.uh-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--rule); }
 .uh-stats > div { display: grid; gap: 6px; padding: 30px 24px; }
 .uh-stats > div + div { border-left: 1px solid var(--rule); }
 .uh-stats strong { font: 600 clamp(34px, 4vw, 52px)/1 var(--font-serif); color: var(--text); }

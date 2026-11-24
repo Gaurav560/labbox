@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): home page without the logo strip
+
+- Owner: "remove this from home page" (the moving row of technology logos). The numbers now sit right under the hero,
+  between two fine rules.
+
 ## 25 November (Ukiyo): the home page redesigned to match the inside
 
 - Owner: "redesign the home page. The inside part looks cool; the home page looks off". It mixed the old design's
