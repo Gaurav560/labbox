@@ -147,8 +147,9 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.getByRole("button", { name: "Close results" }).click();
 
   // Theme and panel size, then reload: everything is remembered.
-  await page.getByRole("button", { name: "Switch to light theme" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  // Ukiyo opens on washi (light); switching to sumi (dark) must be remembered.
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   const panel = page.locator(".left-panel");
   const before = (await panel.boundingBox())!.width;
   const bar = (await page.getByRole("separator", { name: "Resize lesson panel" }).boundingBox())!;
@@ -164,7 +165,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   // The page reloads on chapter 2 (the URL names it), still on its recap.
   await expect(page.locator("#chapter-select")).toHaveValue("01-functions");
   await expect(stepCount(page)).toHaveText("Step 16 of 16");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
   // The answered predict is still answered (it comes from the server).
   await page.getByRole("button", { name: "Step 4: Guess first" }).click();

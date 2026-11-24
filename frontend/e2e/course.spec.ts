@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 // Owner, 22 November: the dashboard deck takes the colour of the lab it continues, and a lab card opens that
 // lab's own page first; its buttons and chapters then open the lab (lesson, editor and terminal).
-test("a lab card opens the lab's page; the deck wears the lab's colour", async ({ page, request }) => {
+test("a lab card opens the lab's page; the feature wears the category's print", async ({ page, request }) => {
   const signup = await request.post("/api/auth/signup", { data: { username: `course${Date.now()}`, password: "secret123" } });
   const { token } = await signup.json();
   const headers = { Authorization: `Bearer ${token}` };
@@ -13,13 +13,12 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await page.goto("/labs");
   const deck = page.getByRole("region", { name: "Continue where you left off" });
   await expect(deck).toContainText("Go from zero", { timeout: 30_000 }); // slow under a full parallel run
-  await expect(deck.locator(".deck-initial")).toHaveCSS("color", "rgb(0, 173, 216)"); // Go's cyan, not the default red
-  // A lab where you write code gets the retro computer, its screen showing the step; the others keep the cassette.
-  await expect(deck.locator(".retro-crt")).toBeVisible();
-  await expect(deck.locator(".cassette")).toHaveCount(0);
+  // Ukiyo: the feature shows the category's woodblock print (Go is a language: the sun behind Fuji).
+  await expect(deck.locator(".u-feature-art .u-print")).toBeVisible();
+  await expect(deck).toContainText("Languages");
   await expect(deck.getByRole("link", { name: "Continue", exact: true })).toHaveAttribute("href", "/labs/go-basics?chapter=02-numbers-and-text");
 
-  await page.locator(".labs-tiles .h-lab", { hasText: "Go from zero" }).click();
+  await page.locator(".u-row", { hasText: "Go from zero" }).click();
   await expect(page).toHaveURL(/\/courses\/go-basics$/);
   await expect(page.getByRole("heading", { level: 1, name: "Go from zero" })).toBeVisible();
   await expect(page.locator(".metro-now")).toContainText("Numbers and text"); // the chapters as a metro map
@@ -33,8 +32,7 @@ test("a lab card opens the lab's page; the deck wears the lab's colour", async (
   await request.put("/api/labs/sql-from-zero/chapters/01-select-and-where/progress", { headers, data: { current_step: 1 } });
   await page.goto("/labs");
   await expect(deck).toContainText("SQL", { timeout: 30_000 });
-  await expect(deck.locator(".cassette")).toBeVisible();
-  await expect(deck.locator(".retro")).toHaveCount(0);
+  await expect(deck).toContainText("Databases");  // and SQL gets the databases print
 
   await page.goto("/courses/go-basics");
   await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();

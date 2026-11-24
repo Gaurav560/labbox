@@ -63,10 +63,9 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
 
   // 4. The daily drill on the labs page counts for the streak (answers are checked on the server).
   await page.goto("/labs");
-  // Every lab card has cover art (drawn per track and lab when the lab ships no image).
-  await expect(page.locator(".labs-tiles .h-lab").first()).toBeVisible();
-  // Every lab tile has its cover, like the home page.
-  await expect(page.locator(".labs-tiles .h-lab-img img")).toHaveCount(await page.locator(".labs-tiles .h-lab").count());
+  // Ukiyo: the labs are rows in a directory, each with its logo or initial and its title.
+  await expect(page.locator(".u-row").first()).toBeVisible();
+  await expect(page.locator(".u-row .u-row-title")).toHaveCount(await page.locator(".u-row").count());
   const drill = page.locator(".drill-card");
   await expect(drill).toBeVisible();
   const options = drill.locator(".predict-option");

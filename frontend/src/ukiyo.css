@@ -123,7 +123,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---------- 4. the LabBox mark and the top bar ---------- */
 .logo-word { font-family: var(--font-serif); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; }
 .logo-by { font: 500 10px var(--font-code); letter-spacing: .14em; text-transform: uppercase; }
-.topbar { background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+/* a solid bar: a blur here would trap its menus (Text size, Profile) under the editor */
+.topbar { background: var(--panel); border-bottom: 1px solid var(--rule); }
 .topbar .btn-ghost { font-weight: 500; }
 
 /* ---------- 5. toasts and panels ---------- */
@@ -364,3 +365,4 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .drawer-list li, .recap-stats > div, .step-history, .history-box, .lesson-photo, .task-card, .phone-note { border-radius: 4px; }
 .lesson-photo { border-color: var(--rule); }
 .task-card { border-color: var(--rule); background: var(--card); }
+@media (max-width: 860px) { .course-hero { grid-template-columns: 1fr; gap: 20px; } .course-cover.u-course-print { max-width: 520px; } }
