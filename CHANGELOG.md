@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): new AI and Languages prints
+
+- Owner: "this ai and language should get a more cool classy logo ... the red one ... is pretty awesome", with
+  reference images. Redrawn as original SVG in their style: AI is a brushed red sun over one sweep of sumi ink;
+  Languages is a vermilion pagoda among snow-laden cedars behind a stone wall. System design, which had the pagoda,
+  is now a red arched bridge over still water. The reference images are not used (stock, AI-made or in copyright).
+
 ## 25 November (Ukiyo): real lab logos, straight icons, a classy profile panel
 
 - Owner: "use real logo of the respective labs". LangChain, LangChain4j, LangGraph and Rust showed a letter: their

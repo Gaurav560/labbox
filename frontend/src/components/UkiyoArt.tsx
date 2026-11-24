@@ -2,9 +2,9 @@
  * The Ukiyo artwork (owner, 24 November): original illustrations in the manner of Japanese woodblock prints,
  * one per category, drawn as SVG so they are sharp at every size, load with the page and cost nothing.
  * Flat colour blocks, an ink outline where it helps, and a faint paper grain, like a printed sheet.
- *   AI: waves (the great wave and seigaiha)       Languages: the sun behind Fuji
+ *   AI: a brushed red sun over a sumi wave         Languages: a vermilion pagoda among snowy cedars
  *   Frameworks: bamboo                             Databases: a river through layered hills
- *   DevOps: geometric mountains and terraces       System design: a pagoda
+ *   DevOps: geometric mountains and terraces       System design: a red arched bridge
  *   Cloud (coming soon): scrolling clouds
  * Also the small signature pieces: the seal, the brush-mark level, and the ink progress line.
  */
@@ -36,79 +36,110 @@ function Print({ children, label, bg = PAPER }: { children: (id: string) => Reac
   );
 }
 
-/** Seigaiha: rows of overlapping wave arcs, for the bottom of the AI print. */
-function SeigaihaRows({ y, rows, color, fill }: { y: number; rows: number; color: string; fill: string }) {
-  const out: ReactNode[] = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = -1; c < 12; c++) {
-      const cx = c * 36 + (r % 2 ? 18 : 0);
-      const cy = y + r * 12;
-      out.push(
-        <g key={`${r}-${c}`}>
-          <circle cx={cx} cy={cy + 18} r="18" fill={fill} stroke={color} strokeWidth="1.6" />
-          <circle cx={cx} cy={cy + 18} r="12.5" fill="none" stroke={color} strokeWidth="1.4" />
-          <circle cx={cx} cy={cy + 18} r="7" fill="none" stroke={color} strokeWidth="1.3" />
-        </g>,
-      );
-    }
-  }
-  return <g>{out}</g>;
-}
-
 function AiPrint() {
+  // A red sun laid down with a loaded brush, and one sweep of sumi ink beneath it, like a wave (owner, 25 November:
+  // "more cool classy"). Rough edges come from a displacement filter, so the marks read as brush, not geometry.
   return (
-    <Print bg="#efe3c8">{() => (
+    <Print bg="#f3eee3">{(id) => (
       <>
-        {/* a pale sky and a small, distant Fuji */}
-        <rect width="400" height="240" fill="#e9dcc0" />
-        <path d="M262 150 L292 116 L322 150 Z" fill="#7f93ad" />
-        <path d="M284 125 L292 116 L300 125 L296 128 L292 124 L288 128 Z" fill="#f6f1e6" />
-        {/* the great curl, rising from the left */}
-        <path d="M-10 240 L-10 150 C 30 92, 110 54, 186 70 C 232 80, 252 116, 230 140 C 214 157, 186 150, 190 132
-                 C 194 118, 214 120, 210 104 C 200 82, 150 86, 120 112 C 92 136, 84 190, 120 240 Z" fill="#1f3a64" />
-        <path d="M10 240 C 20 184, 56 134, 110 110 C 80 140, 70 190, 96 240 Z" fill="#2f5487" />
-        <path d="M36 240 C 44 200, 64 170, 92 150 C 80 180, 80 214, 92 240 Z" fill="#a9bdd6" />
-        {/* the white claw of foam along the crest */}
-        <path d="M120 112 C 150 86, 200 82, 210 104 C 214 120, 194 118, 190 132 C 186 150, 214 157, 230 140
-                 C 222 152, 196 160, 182 146 C 172 134, 186 118, 200 112 C 186 94, 148 98, 120 112 Z" fill="#f6f1e6" />
-        {[[134, 104], [150, 96], [168, 92], [186, 93], [200, 99], [214, 132], [224, 142], [204, 148]].map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r={2.6 + (i % 3)} fill="#f6f1e6" />
+        <defs>
+          <filter id={`${id}-brush`} x="-10%" y="-20%" width="120%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency=".012 .22" numOctaves="3" seed="7" />
+            <feDisplacementMap in="SourceGraphic" scale="8" />
+          </filter>
+          <filter id={`${id}-rough`} x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="2" />
+            <feDisplacementMap in="SourceGraphic" scale="7" />
+          </filter>
+        </defs>
+        {/* faint mottled paper at the edges */}
+        {[[-20, -10, 70], [60, -30, 46], [350, -20, 64], [420, 70, 50], [-30, 200, 60], [90, 262, 54], [330, 258, 66]].map(([x, y, r], i) => (
+          <circle key={i} cx={x} cy={y} r={r} fill="#ddd5c8" opacity=".7" filter={`url(#${id}-rough)`} />
         ))}
-        {/* the ocean pattern beneath */}
-        <SeigaihaRows y={168} rows={6} color="#1f3a64" fill="#e9dcc0" />
-        <path d="M-10 240 L-10 150 C 30 92, 110 54, 186 70" fill="none" stroke={INK} strokeWidth="2" opacity=".55" />
+        {/* the sun: a solid disc and two dry rings around it */}
+        <g filter={`url(#${id}-rough)`}>
+          <circle cx="250" cy="96" r="52" fill="#d7261c" />
+          <circle cx="248" cy="95" r="58" fill="none" stroke="#d7261c" strokeWidth="3" strokeDasharray="60 9 30 14" opacity=".85" />
+          <circle cx="253" cy="98" r="62" fill="none" stroke="#d7261c" strokeWidth="1.6" strokeDasharray="22 16 50 30" opacity=".6" />
+        </g>
+        {/* the ink wave: one tapering sweep, its bristle gaps left in paper */}
+        <g filter={`url(#${id}-brush)`}>
+          <path d="M52 172 C 100 162, 140 176, 190 170 C 236 164, 270 150, 294 124 C 304 112, 316 104, 330 104
+                   L 340 114 C 330 142, 304 166, 264 178 C 220 190, 160 190, 116 188 C 88 187, 66 184, 52 172 Z" fill="#141210" />
+          {[0, 1, 2, 3, 4].map((k) => (
+            <path key={k} d={`M${66 + k * 6} ${176 + k * 2.4} C 112 ${168 + k * 3}, 150 ${180 + k * 2}, 196 ${175 + k * 2}
+                     C 240 ${170 + k * 2}, 276 ${156 + k * 2}, 306 ${126 + k * 3}`}
+              fill="none" stroke="#f3eee3" strokeWidth={k % 2 ? 1.1 : 1.8} opacity=".9" />
+          ))}
+        </g>
       </>
     )}</Print>
   );
 }
 
 function LanguagesPrint() {
-  const rays = Array.from({ length: 18 }, (_, i) => i);
+  // A vermilion pagoda among snow-laden cedars, after the shin-hanga prints of temple towers (owner, 25 November:
+  // "the red one ... is pretty awesome"). Dark roofs with lifted eaves, white bracket rows, a stone wall below.
+  const tier = (y: number, w: number, h: number, k: number) => (
+    <g key={k}>
+      {/* the body: vermilion posts with pale panels */}
+      <rect x={200 - w * 0.62} y={y} width={w * 1.24} height={h} fill="#d0442a" />
+      {[-0.42, -0.14, 0.14].map((f) => (
+        <rect key={f} x={200 + w * f} y={y + 6} width={w * 0.26} height={h - 12} fill="#f1e6d6" opacity=".9" />
+      ))}
+      {[-0.44, -0.16, 0.12, 0.4].map((f) => <rect key={f} x={200 + w * f} y={y} width="3" height={h} fill="#8f2716" />)}
+      {/* the bracket row under the roof */}
+      <rect x={200 - w * 0.7} y={y - 7} width={w * 1.4} height="7" fill="#e45a3c" />
+      {Array.from({ length: 12 }, (_, i) => (
+        <rect key={i} x={200 - w * 0.68 + i * (w * 1.36 / 12)} y={y - 7} width="3" height="7" fill="#f3e9da" />
+      ))}
+      {/* the roof: dark, wide, its eaves lifting at the ends */}
+      <path d={`M${200 - w - 14} ${y - 12} C ${200 - w} ${y - 9}, ${200 - w * 0.5} ${y - 20}, ${200 - w * 0.45} ${y - 22}
+               L ${200 + w * 0.45} ${y - 22} C ${200 + w * 0.5} ${y - 20}, ${200 + w} ${y - 9}, ${200 + w + 14} ${y - 12}
+               L ${200 + w + 6} ${y - 6} L ${200 - w - 6} ${y - 6} Z`} fill="#3a2b25" />
+      <path d={`M${200 - w * 0.45} ${y - 22} L ${200 + w * 0.45} ${y - 22}`} stroke="#f4f1ea" strokeWidth="2.4" />
+    </g>
+  );
+  // A snow clump: a dark green underside and a white top whose edge rises and falls in uneven bumps.
+  const clump = (x: number, y: number, w: number, k: number) => {
+    const bumps = 4 + (k % 3);
+    let top = `M${x - w / 2} ${y + 10}`;
+    for (let b = 0; b < bumps; b++) {
+      const x1 = x - w / 2 + ((b + 1) * w) / bumps;
+      top += ` Q ${x1 - w / bumps / 2} ${y - 6 - ((b * 7 + k * 3) % 9)}, ${x1} ${y + ((b * 5 + k) % 4)}`;
+    }
+    return (
+      <g key={k}>
+        <path d={`M${x - w / 2 - 4} ${y + 12} Q ${x} ${y + 30 + (k % 3) * 3}, ${x + w / 2 + 4} ${y + 12} Z`} fill="#3d5a53" />
+        <path d={`${top} Q ${x} ${y + 18}, ${x - w / 2} ${y + 10} Z`} fill="#f4f1ea" />
+      </g>
+    );
+  };
+  const cedar = (x: number, s: number, k: number) => (
+    <g key={k} opacity={s < 1 ? 0.7 : 1}>
+      <path d={`M${x - 3 * s} 0 L ${x + 3 * s} 0 L ${x + 5 * s} 240 L ${x - 5 * s} 240 Z`} fill="#4f453d" />
+      {[[10, 0, 70], [52, -10, 54], [92, 12, 76], [136, -6, 60], [172, 8, 72]].map(([y, dx, w], i) =>
+        clump(x + dx * s, y, w * s, k * 5 + i))}
+    </g>
+  );
   return (
-    <Print bg="#f0c46a">{() => (
+    <Print bg="#c9d3c9">{() => (
       <>
-        {/* sun rays fanning out from behind the mountain */}
-        <g transform="translate(232 128)">
-          {rays.map((i) => (
-            <path key={i} d="M0 0 L-14 -260 L14 -260 Z" fill={i % 2 ? "#f6d58f" : "#eab352"} transform={`rotate(${-90 + i * 10.6})`} />
-          ))}
-        </g>
-        <circle cx="232" cy="118" r="54" fill="#d9472c" />
-        <circle cx="232" cy="118" r="54" fill="none" stroke="#b9361f" strokeWidth="3" />
-        {/* Fuji: indigo slopes, a snow cap with long fingers */}
-        <path d="M70 240 L196 112 C 214 100, 252 100, 268 112 L 410 240 Z" fill="#2a4a78" />
-        <path d="M196 112 C 214 100, 252 100, 268 112 L 300 148 L 288 142 L 280 162 L 266 140 L 256 170 L 246 138 L 234 166
-                 L 224 136 L 212 158 L 204 134 L 188 150 L 170 142 Z" fill="#f6f1e6" />
-        <path d="M70 240 L196 112 C 214 100, 252 100, 268 112 L 410 240" fill="none" stroke={INK} strokeWidth="2.2" />
-        {/* ridge lines down the slopes */}
-        {[[150, 170, 120, 240], [176, 150, 160, 240], [300, 160, 330, 240], [320, 180, 352, 240]].map(([x1, y1, x2, y2], i) => (
-          <path key={i} d={`M${x1} ${y1} L${x2} ${y2}`} stroke="#1f3a64" strokeWidth="5" opacity=".6" />
+        <rect width="400" height="240" fill="#c7d2c8" />
+        <rect y="120" width="400" height="120" fill="#b4c2b7" />
+        {[[30, 0.8], [96, 1], [312, 1], [374, 0.8]].map(([x, s], i) => cedar(x, s, i))}
+        {/* snow on the ground */}
+        <path d="M0 196 C 80 188, 160 192, 200 190 C 260 188, 330 192, 400 186 L 400 240 L 0 240 Z" fill="#eef0ea" />
+        {/* the pagoda, its top running off the print */}
+        <rect x="196" y="0" width="8" height="30" fill="#3a2b25" />
+        {tier(32, 46, 34, 1)}{tier(88, 52, 36, 2)}{tier(146, 58, 40, 3)}
+        {/* the stone wall in front */}
+        <rect x="110" y="186" width="180" height="10" fill="#d9d6cf" />
+        {[[112, 196, 26, 15], [140, 197, 18, 14], [160, 196, 30, 15], [192, 197, 22, 14], [216, 196, 28, 15], [246, 197, 20, 14],
+          [268, 196, 22, 15], [112, 212, 20, 16], [134, 213, 30, 15], [166, 212, 24, 16], [192, 213, 32, 15], [226, 212, 22, 16],
+          [250, 213, 40, 15]].map(([x, y, w, h], i) => (
+          <rect key={i} x={x} y={y} width={w} height={h} rx="6" fill={["#8f8b84", "#7f7b75", "#9a968f"][i % 3]} stroke="#3d3a36" strokeWidth="1.2" />
         ))}
-        {/* a band of cloud at the foot */}
-        <path d="M-10 214 C 30 200, 60 220, 96 206 C 130 194, 160 214, 196 204 C 230 194, 262 214, 300 204 C 336 194, 370 210, 410 202 L 410 240 L -10 240 Z"
-          fill="#f6f1e6" />
-        <path d="M-10 214 C 30 200, 60 220, 96 206 C 130 194, 160 214, 196 204 C 230 194, 262 214, 300 204 C 336 194, 370 210, 410 202"
-          fill="none" stroke="#c9a15a" strokeWidth="2" />
       </>
     )}</Print>
   );
@@ -206,41 +237,33 @@ function DevopsPrint() {
 }
 
 function SystemDesignPrint() {
-  const roof = (y: number, w: number, k: number) => (
-    <g key={k}>
-      <path d={`M${200 - w} ${y} C ${200 - w + 10} ${y - 4}, ${200 - w * 0.4} ${y - 16}, 200 ${y - 22} C ${200 + w * 0.4} ${y - 16}, ${200 + w - 10} ${y - 4}, ${200 + w} ${y}
-               L ${200 + w - 8} ${y + 4} L ${200 - w + 8} ${y + 4} Z`} fill="#2b2622" />
-      <path d={`M${200 - w + 6} ${y + 4} L ${200 + w - 6} ${y + 4}`} stroke="#c9a15a" strokeWidth="1.6" />
-    </g>
-  );
+  // A red arched bridge over still water: parts joined into one structure (the pagoda moved to Languages).
   return (
     <Print bg="#e7dcc4">{() => (
       <>
-        <rect width="400" height="240" fill="#e4d8bd" />
-        {/* pines either side, in grey-green blocks */}
-        {[[30, 40], [70, 70], [330, 50], [366, 80]].map(([x, y], i) => (
-          <g key={i}>
-            <rect x={x + 10} y={y + 40} width="6" height="160" fill="#4a4036" />
-            <path d={`M${x - 20} ${y + 70} L${x + 13} ${y} L${x + 46} ${y + 70} Z`} fill="#5d6f5a" opacity=".85" />
-            <path d={`M${x - 14} ${y + 110} L${x + 13} ${y + 50} L${x + 40} ${y + 110} Z`} fill="#4d5e4a" opacity=".85" />
-          </g>
+        <rect width="400" height="240" fill="#e6dbc1" />
+        {/* distant hills in two indigo washes */}
+        <path d="M0 120 C 60 96, 110 92, 170 110 C 230 86, 300 84, 400 108 L 400 150 L 0 150 Z" fill="#9fb0c4" />
+        <path d="M0 140 C 80 124, 150 126, 220 136 C 290 124, 350 126, 400 132 L 400 160 L 0 160 Z" fill="#7f93ad" />
+        {/* water, with a few ink ripple lines */}
+        <rect y="156" width="400" height="84" fill="#cdd8de" />
+        {[172, 190, 208, 226].map((y, i) => (
+          <path key={y} d={`M${20 + i * 14} ${y} q 30 -5 60 0 M${180 - i * 10} ${y + 4} q 40 -6 80 0 M${300 + i * 8} ${y} q 26 -4 52 0`}
+            fill="none" stroke="#5f7894" strokeWidth="1.4" opacity=".7" />
         ))}
-        {/* the pagoda: three tiers of vermilion posts under dark curved roofs */}
-        <rect x="184" y="18" width="32" height="6" fill="#c9a15a" />
-        <rect x="197" y="2" width="6" height="22" fill="#c9a15a" />
-        {[[176, 44, 30], [168, 92, 40], [158, 142, 52]].map(([x, y, w], i) => (
-          <g key={i}>
-            <rect x={x} y={y} width={(200 - x) * 2} height={w} fill="#c63f28" />
-            {[0.2, 0.5, 0.8].map((f) => <rect key={f} x={x + (200 - x) * 2 * f - 2} y={y} width="4" height={w} fill="#8e2a1a" />)}
-            <rect x={x} y={y + w - 8} width={(200 - x) * 2} height="8" fill="#e9dcc0" opacity=".8" />
-          </g>
+        {/* the reflection, broken by the water */}
+        <path d="M70 176 C 140 214, 260 214, 330 176" fill="none" stroke="#c63f28" strokeWidth="6" opacity=".25" strokeDasharray="18 8" />
+        {/* the bridge: an arched deck, posts and a rail */}
+        <path d="M54 170 C 120 96, 280 96, 346 170 L 336 174 C 274 110, 126 110, 64 174 Z" fill="#c63f28" />
+        <path d="M60 160 C 124 86, 276 86, 340 160" fill="none" stroke="#c63f28" strokeWidth="4" />
+        {Array.from({ length: 11 }, (_, i) => {
+          const t = i / 10, x = 60 + 280 * t, y = 160 - 222 * t * (1 - t);
+          return <rect key={i} x={x - 2.5} y={y} width="5" height="12" fill="#a8321f" />;
+        })}
+        {[[86, 150], [130, 126], [270, 126], [314, 150]].map(([x, y], i) => (
+          <rect key={i} x={x - 4} y={y} width="8" height={190 - y} fill="#3a2b25" />
         ))}
-        {roof(48, 50, 1)}{roof(96, 62, 2)}{roof(146, 76, 3)}
-        {/* stone base and steps */}
-        <rect x="132" y="194" width="136" height="18" fill="#8d877c" />
-        <path d="M132 194 L268 194" stroke={INK} strokeWidth="1.5" />
-        {[0, 1, 2].map((i) => <rect key={i} x={182 - i * 6} y={212 + i * 9} width={36 + i * 12} height="9" fill={["#a39d90", "#958f83", "#88827a"][i]} />)}
-        <rect y="232" width="400" height="8" fill="#9a9384" />
+        <path d="M54 170 C 120 96, 280 96, 346 170" fill="none" stroke={INK} strokeWidth="1.6" opacity=".6" />
       </>
     )}</Print>
   );
@@ -334,8 +357,8 @@ export const TRACK_INK: Record<string, string> = {
   devops: "var(--slate)", "system-design": "var(--earth)", cloud: "var(--cloud)", aws: "var(--cloud)",
 };
 export const TRACK_MOTIF: Record<string, string> = {
-  ai: "Waves", languages: "Rising sun", frameworks: "Bamboo", databases: "River", devops: "Mountains",
-  "system-design": "Pagoda", cloud: "Clouds", aws: "Clouds",
+  ai: "Sun and wave", languages: "Pagoda", frameworks: "Bamboo", databases: "River", devops: "Mountains",
+  "system-design": "Bridge", cloud: "Clouds", aws: "Clouds",
 };
 
 /** A small vermilion hanko seal with up to two short lines (for milestones and picks). */

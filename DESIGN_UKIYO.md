@@ -62,8 +62,10 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 ## Artwork
 
 - Category prints are original SVG, flat colour blocks with a paper grain (`components/UkiyoArt.tsx`):
-  AI waves, Languages sun and Fuji, Frameworks bamboo, Databases river, DevOps mountains, System design pagoda,
-  Cloud clouds.
+  AI a brushed red sun over a sumi ink wave, Languages a vermilion pagoda among snowy cedars, Frameworks bamboo,
+  Databases river, DevOps mountains, System design a red arched bridge, Cloud clouds. The AI and Languages prints
+  were redrawn on 25 November after the owner's reference images (a brush-stroke sun, a shin-hanga pagoda); the
+  references themselves are not used (stock, AI-made or still in copyright), only their style.
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
   home hero) and Red Fuji (the login page).
 - Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),
