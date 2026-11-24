@@ -343,13 +343,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-frame { padding: 10px; background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
 .uh-frame img { display: block; width: 100%; height: auto; outline: 1px solid #1b253322; }
 
-/* the numbers between fine rules (the logo strip was removed, owner 25 November) */
-.uh-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--rule); }
-.uh-stats > div { display: grid; gap: 6px; padding: 30px 24px; }
-.uh-stats > div + div { border-left: 1px solid var(--rule); }
-.uh-stats strong { font: 600 clamp(34px, 4vw, 52px)/1 var(--font-serif); color: var(--text); }
-.uh-stats span { font: 600 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-
 /* sections: a kicker, a serif heading, a lead, then the content */
 .uh-section { padding: clamp(56px, 8vw, 96px) 0 0; }
 .uh-head { margin-bottom: 32px; }
@@ -406,19 +399,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   .uh-hero { min-height: 0; }
   .uh-hero-bg::after { background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 55%, color-mix(in srgb, var(--bg) 45%, transparent) 100%); }
   .uh-ai-print { max-width: 420px; }
-  .uh-stats { grid-template-columns: 1fr 1fr; }
-  .uh-stats > div:nth-child(3) { border-left: 0; }
-  .uh-stats > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
 }
 @media (max-width: 560px) {
   .u-home main { width: calc(100% - 32px); }
-  .uh-stats > div { padding: 22px 14px; }
   .uh-cats { grid-template-columns: 1fr; }
 }
 
-/* ---------- 11. login and sign-up: the Great Wave on the left, a paper card on the right ---------- */
+/* ---------- 11. login and sign-up: Hiroshige's Plum Garden on the left, a paper card on the right ---------- */
 .auth, :root[data-theme="light"] .auth { background: var(--bg); }
-.auth-show { background: #1b2533 url(/ukiyo/great-wave.webp) 30% center / cover no-repeat; align-items: flex-end; }
+.auth-show { background: #1b2533 url(/ukiyo/plum-garden.webp) center top / cover no-repeat; align-items: flex-end; }
 .auth-show::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #14120fe6 0%, #14120f66 45%, transparent 75%); }
 .auth-glow, .auth-grid { display: none; }
 .auth-pitch { z-index: 1; }

@@ -79,12 +79,6 @@ export default function HomePage() {
           <p className="u-print-credit uh-hero-credit">Katsushika Hokusai, Fine Wind, Clear Morning, about 1831</p>
         </section>
 
-        <section className="uh-stats" aria-label="LabBox in numbers">
-          <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
-          <div><strong>~60 s</strong><span>to a real machine</span></div>
-          <div><strong>0</strong><span>videos to sit through</span></div>
-          <div><strong>24</strong><span>AI labs on the way</span></div>
-        </section>
 
         <section id="ai" className="uh-section uh-ai" aria-labelledby="ai-title">
           <div className="uh-ai-head">

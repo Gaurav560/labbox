@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): Plum Garden on login; no numbers strip on the home page
+
+- Owner: the Great Wave "does not suit" the login page. It now shows Hiroshige's Plum Garden at Kameido (1857,
+  public domain): a calm vermilion sky, and a dark lower half where the words and the terminal sit.
+- Owner: "remove this data also". The four numbers under the home page hero are gone.
+
 ## 25 November (Ukiyo): home page with one card per category; Red Fuji behind the hero; the Great Wave on login
 
 - Owner: "you have put all the labs on the home page ... remove most of them, find a different way". The home page
