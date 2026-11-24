@@ -117,6 +117,6 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
   AI section (the pagoda picture and one line), a folding screen of six tall panels, one per category (the panel
   under the pointer opens wider and lists its labs; stacked rows on phones; picked by the owner from eight layouts),
   then "See all labs" (the full directory stays on `/labs`, `components/UkiyoDirectory.tsx`), a closing paper
-  panel with Hiroshige's Nihonbashi, and the FAQs with a thin plus and minus.
+  panel with Hiroshige's Returning Sails at Yabase (Eight Views of Omi, about 1834, public domain), and the FAQs with a thin plus and minus.
 - Premium Reads, login: restyled through tokens and sections 9 and 11 of `ukiyo.css`.
 - Lab page: the frame only (Check button, step marks, labels, headings); the lesson watermark is off.

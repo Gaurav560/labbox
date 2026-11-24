@@ -114,8 +114,8 @@ learner:~$ python agent.py
 
         <section className="uh-final" aria-labelledby="final-title">
           <figure className="uh-final-print">
-            <div className="uh-frame"><img src="/ukiyo/labs/python-basics.webp" alt="" /></div>
-            <figcaption className="u-print-credit">Utagawa Hiroshige, Nihonbashi: Morning View, about 1833. Every journey on the Tōkaidō road began here.</figcaption>
+            <div className="uh-frame"><img src="/ukiyo/yabase-sails.webp" width={1200} height={784} alt="Woodblock print: Utagawa Hiroshige, Returning Sails at Yabase, about 1834" /></div>
+            <figcaption className="u-print-credit">Utagawa Hiroshige, Returning Sails at Yabase, Eight Views of Omi, about 1834</figcaption>
           </figure>
           <div className="uh-final-text">
             <p className="u-kicker">Begin</p>

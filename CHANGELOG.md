@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): a calmer print in the closing panel
+
+- Owner: "change this image to something eye soothing". The "Your machine is ready when you are." panel now shows
+  Hiroshige's Returning Sails at Yabase (Eight Views of Omi, about 1834, public domain): a golden sky over a still
+  blue lake with sailboats, instead of the busy Nihonbashi street scene.
+
 ## 25 November (Ukiyo): calm Hiroshige prints for five categories
 
 - Owner: "now I need cool images that soothe the eyes for the rest 5". Languages, Frameworks, System design,
