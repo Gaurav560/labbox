@@ -1,5 +1,18 @@
 # Changelog
 
+## 24 November: a second design to compare, "Ukiyo" (branch design/ukiyo, http://localhost:5174)
+
+- Owner: "make two copies of the same website, just different UI, so that I can judge which UI to keep", with a brief
+  for Japanese Ukiyo-e and Swiss editorial minimalism. Built on the branch `design/ukiyo` in a git worktree
+  (`../labs_poc_ukiyo`), served on port 5174 next to the current design on 5173; one backend for both.
+- Six phases, one commit each on the branch: washi (light, now the default) and sumi (dark) tokens with Fraunces
+  headlines and a hanko seal mark; seven original SVG woodblock prints, one per category, plus the seal, brush-mark
+  levels and an ink progress line; the dashboard rewritten as an editorial index (feature for the next step, category
+  tiles, lab rows); course page, Premium Reads, home (the Great Wave faint behind the hero) and login (Red Fuji), both
+  public-domain Hokusai prints stored locally; the lab page frame (editor and terminal unchanged, the lesson watermark
+  off); polish and tests. `DESIGN_UKIYO.md` on the branch documents it.
+- Not paid for anything: no AI-generated art. Nothing on `master` changed except these notes.
+
 ## 24 November: the rule book after the owner's review, and Before you start on every lab
 
 - Owner, after reading the RAG and Rust courses: "cutting corners"; lessons "more elaborative, easy to understand,

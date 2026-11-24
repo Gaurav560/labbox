@@ -7,6 +7,15 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Design comparison (owner, 24 November): two copies of the site, same backend.** The current design on `master`
+  at http://localhost:5173; the "Ukiyo" design (Japanese woodblock prints and Swiss editorial layout) on branch
+  `design/ukiyo` in the worktree `../labs_poc_ukiyo`, at http://localhost:5174 (start it with
+  `cd ../labs_poc_ukiyo/frontend && npx vite --port 5174 --strictPort`). Six phases committed there: tokens and fonts,
+  SVG woodblock prints, the dashboard, course page / Premium Reads / home / login, the lab page frame, polish and
+  tests (29 browser tests pass against it; home and engagement are flaky under load as on master).
+  `DESIGN_UKIYO.md` on that branch is the design system. **Waiting for the owner to pick one.** Keep: merge
+  `design/ukiyo` into `master` (only the frontend differs). Drop: `git worktree remove ../labs_poc_ukiyo` and delete
+  the branch. Until then, frontend changes on `master` need the same change on the branch, or a merge.
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
   Last full run green (24 November, after RAG and vector databases): 284 backend tests on Postgres and Redis
   (30 minutes), 27 browser tests, 23 labs valid,

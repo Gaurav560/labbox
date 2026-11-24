@@ -142,6 +142,8 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 
 - **Dashboard by category** (23 November): `/labs` groups labs as AI, Languages, Frameworks, System design,
   Databases, DevOps, then Cloud and AWS (coming soon), with jump chips; full courses first in each.
+- **Design comparison, "Ukiyo"** (24 November, owner): a second frontend on branch `design/ukiyo`, served at
+  http://localhost:5174 beside the current one; waiting for the owner to keep one (see HANDOFF, Resume here).
 - **Premium Reads** (the Library; 24 November, owner): `/library`, public, "Premium reads.": Books, Research papers and Tech
   blogs with real pictures stored in LabBox (covers, first pages, blog views), a "Start here" pick per section, topic
   filters, levels, "Last updated" dates, and a lab chip linking to the lab for every item; whole cards open the item.
