@@ -19,7 +19,7 @@ const TABS = [
   ["machines", "Machines"],
   ["ai", "AI spend"],
   ["errors", "Errors"],
-  ["library", "Library"],
+  ["library", "Premium Reads"],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
@@ -424,7 +424,7 @@ function LibraryTab() {
   };
   return (
     <>
-      <Panel title="Library" note="Books, research papers and tech blogs every learner sees on the Library page. Changes show at once."
+      <Panel title="Premium Reads" note="Books, research papers and tech blogs everyone sees on the Premium Reads page. Changes show at once."
         actions={
           <div className="adm-seg" role="group" aria-label="Section">
             {LIBRARY_TABS.map(([k, label]) => (

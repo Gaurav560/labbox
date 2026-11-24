@@ -89,7 +89,7 @@ export default function HomePage() {
           <a href="#inside">Inside a lab</a>
           <a href="#ai">AI labs</a>
           <a href="#labs">Labs</a>
-          <Link to="/library">Library</Link>
+          <Link to="/library">Premium Reads</Link>
           <a href="#faq">FAQs</a>
         </nav>
         <span className="spacer" />

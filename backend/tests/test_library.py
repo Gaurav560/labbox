@@ -86,7 +86,9 @@ def test_anyone_reads_the_library_in_order(api):
         assert positions == sorted(positions)
     assert any(i["title"] == "Attention Is All You Need" for i in items)
     rag = next(i for i in items if i["title"].startswith("Retrieval-Augmented Generation"))
-    assert (rag["lab"], rag["free"], rag["featured"]) == ("rag-vector-databases", True, True)
+    assert (rag["lab"], rag["free"]) == ("rag-vector-databases", True)
+    papers = [i for i in items if i["kind"] == "paper"]
+    assert papers[0]["title"] == "Attention Is All You Need" and papers[0]["featured"]  # the first paper (owner)
 
 
 def test_only_admins_change_it(api):

@@ -74,7 +74,7 @@ export default function LabsPage() {
         <Logo to="/" />
         <span className="spacer" />
         <ThemeButton />
-        <Link className="btn btn-small btn-ghost" to="/library">Library</Link>
+        <Link className="btn btn-small btn-ghost" to="/library">Premium Reads</Link>
         {user?.is_admin && <Link className="btn btn-small btn-ghost" to="/admin">Admin</Link>}
         <ProfileMenu username={user?.username ?? ""} />
       </header>

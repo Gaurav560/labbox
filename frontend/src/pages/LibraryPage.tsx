@@ -39,11 +39,22 @@ function SectionIcon({ kind }: { kind: LibraryKind }) {
   );
 }
 
+/** The newest change to any item of a section, as "24 Nov 2026" (the backend stores UTC without a zone). Moving or removing
+    an item does not count. */
+function lastUpdated(items: LibraryItem[], fullYear = false): string {
+  const newest = Math.max(0, ...items.map((i) => Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(i.updated_at) ? i.updated_at : `${i.updated_at}Z`) || 0));
+  if (!newest) return "";
+  const date = new Date(newest);
+  const year = !fullYear && date.getFullYear() === new Date().getFullYear() ? undefined : "numeric";  // "24 Nov", or "24 Nov 2025" for an older year
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year });
+}
+
 function SectionTile({ kind, label, items, active, onPick }: {
   kind: LibraryKind; label: string; items: LibraryItem[]; active: boolean; onPick: () => void;
 }) {
   const { tone: t, line } = SECTION[kind];
   const shots = items.filter((i) => i.image).slice(0, 3);
+  const updated = lastUpdated(items);
   return (
     <button className={`lib-tile is-${kind}`} aria-current={active ? "page" : undefined} onClick={onPick}
       style={{ "--t": t } as CSSProperties}>
@@ -52,6 +63,7 @@ function SectionTile({ kind, label, items, active, onPick }: {
         <span className="lib-tile-name">{label}</span>
         <span className="lib-tile-line">{line}</span>
         <span className="lib-tile-count"><strong>{items.length}</strong> hand-picked</span>
+        {updated && <span className="lib-tile-updated"><span aria-hidden="true">↻</span> Last updated {updated}</span>}
       </span>
       <span className="lib-tile-fan" aria-hidden="true">
         {shots.map((i, n) => <img key={i.id} src={libraryImage(i.image)} alt="" style={{ "--n": n } as CSSProperties} />)}
@@ -61,7 +73,6 @@ function SectionTile({ kind, label, items, active, onPick }: {
 }
 
 const SINGULAR: Record<LibraryKind, string> = { book: "book", paper: "paper", blog: "blog" };
-const ACTION: Record<LibraryKind, string> = { book: "See the book", paper: "Read the paper", blog: "Visit the blog" };
 
 /** One colour per topic, shared by covers, monograms and badges. */
 const TOPIC_TONES: Record<string, string> = {
@@ -91,7 +102,7 @@ function Badges({ item, topic = false }: { item: LibraryItem; topic?: boolean })
   );
 }
 
-/** On a card: one small chip in the lab's colour. The chapter shows on hover; the Start here card has the full line. */
+/** On a card: one small chip in the lab's colour. The chapter shows on hover (owner, 24 November: on every card, Start here too). */
 function PracticeChip({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
   const lab = item.lab ? labs.get(item.lab) : undefined;
   if (!lab) return null;
@@ -101,17 +112,6 @@ function PracticeChip({ item, labs, signedIn }: { item: LibraryItem; labs: Map<s
       style={{ "--lt": labTone(lab.id) } as CSSProperties}>
       <span className="lib-chip-play" aria-hidden="true">▶</span>
       <span className="lib-chip-name">{lab.title}</span>
-    </Link>
-  );
-}
-
-function Practice({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
-  const lab = item.lab ? labs.get(item.lab) : undefined;
-  if (!lab) return null;
-  return (
-    <Link className="lib-practice" to={signedIn ? `/courses/${lab.id}` : "/login?signup=1"}>
-      <span className="lib-practice-kicker">Practise it hands-on</span>
-      <span className="lib-practice-lab">{lab.title}{item.practice ? `, ${item.practice}` : ""} →</span>
     </Link>
   );
 }
@@ -139,15 +139,6 @@ function Monogram({ item }: { item: LibraryItem }) {
   return <div className="lib-mono" style={{ "--t": tone(item.topic) } as CSSProperties} aria-hidden="true">{letters}</div>;
 }
 
-function ReadLink({ item, primary = false }: { item: LibraryItem; primary?: boolean }) {
-  if (!item.url) return null;
-  return (
-    <a className={`lib-btn ${primary ? "lib-btn-primary" : ""}`} href={item.url} target="_blank" rel="noopener noreferrer">
-      {ACTION[item.kind]} ↗
-    </a>
-  );
-}
-
 function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
   return (
     <article className="lib-featured" aria-label={`Start here: ${item.title}`}>
@@ -161,13 +152,12 @@ function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
       </div>
       <div className="lib-featured-text">
         <span className="lib-start">Start here</span>
-        <h2>{item.title}</h2>
+        <h2>{item.url ? <a className="lib-stretch" href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h2>
         <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
         {item.kind === "paper" && item.note && <p className="lib-why">{item.note}</p>}
         <Badges item={item} topic />
         <div className="lib-actions">
-          <ReadLink item={item} primary />
-          <Practice item={item} labs={labs} signedIn={signedIn} />
+          <PracticeChip item={item} labs={labs} signedIn={signedIn} />
         </div>
       </div>
     </article>
@@ -273,12 +263,15 @@ export default function LibraryPage() {
 
       <main className="lib-main">
         <section className="lib-hero" aria-labelledby="lib-title">
-          <span className="lib-kicker">The LabBox Library</span>
+          <div className="lib-hero-text">
+          <span className="lib-kicker">Hand-picked by the Telusko team</span>
           <h1 id="lib-title">Premium reads.</h1>
           <p className="lib-sub">
             The books, research papers and engineering blogs behind every LabBox course, hand-picked, with the lab
             that lets you build each idea yourself.
           </p>
+          </div>
+          {items && items.length > 0 && <p className="lib-updated">Last updated {lastUpdated(items, true)}</p>}
         </section>
 
         <nav className="lib-tiles" aria-label="Library sections">

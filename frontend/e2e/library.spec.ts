@@ -25,12 +25,14 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
   await expect(page.getByRole("article", { name: "Start here: AI Engineering" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Start free" }).first()).toBeVisible();
+  await expect(page.locator(".lib-updated")).toHaveText(/^Last updated \d{1,2} [A-Z][a-z]{2} \d{4}$/);
+  await expect(page.locator(".lib-tile-updated").first()).toContainText(/^.*Last updated \d{1,2} [A-Z][a-z]{2}/);
   await expect(page.getByRole("link", { name: /^Practise it hands-on/ }).first()).toHaveAttribute("href", "/login?signup=1");
 
   // A learner finds the Library from the dashboard: three sections, each with items and a note.
   await signup(page, "libreader");
   await page.goto("/labs");
-  await page.getByRole("link", { name: "Library" }).click();
+  await page.getByRole("link", { name: "Premium Reads" }).click();
   await expect(page).toHaveURL(/\/library$/);
   await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Practise it hands-on/ }).first()).toHaveAttribute("href", /^\/courses\//);
@@ -40,20 +42,26 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await tabs.getByRole("button", { name: /Research papers/ }).click();
   await expect(page).toHaveURL(/tab=paper/);
   const papers = page.getByRole("list", { name: "Research papers" });
-  await expect(papers.getByRole("link", { name: "Attention Is All You Need" })).toHaveAttribute("href", "https://arxiv.org/abs/1706.03762");
+  // Attention Is All You Need is the first paper, the Start here card (owner); the whole card opens it, no read button.
+  const start = page.getByRole("article", { name: "Start here: Attention Is All You Need" });
+  await expect(start.getByRole("link", { name: "Attention Is All You Need" })).toHaveAttribute("href", "https://arxiv.org/abs/1706.03762");
+  await expect(page.getByRole("link", { name: /^(Read the paper|See the book|Visit the blog)/ })).toHaveCount(0);
   // The whole card opens the paper; the lab chip on it still opens the lab. "Free to read" is not shown (owner).
   const card = papers.getByRole("listitem").first();
+  const cardHref = await card.getByRole("heading").getByRole("link").getAttribute("href");
   const at = async (target: import("@playwright/test").Locator) => {
     await target.scrollIntoViewIfNeeded();
     const box = (await target.boundingBox())!;
     return page.evaluate(([x, y]) => (document.elementFromPoint(x, y)?.closest("a") as HTMLAnchorElement | null)?.getAttribute("href"),
       [box.x + box.width / 2, box.y + box.height / 2]);
   };
-  expect(await at(card)).toBe("https://arxiv.org/abs/1706.03762");
+  expect(await at(start)).toBe("https://arxiv.org/abs/1706.03762");
+  expect(await at(start.locator(".lib-chip"))).toMatch(/^\/courses\//);
+  expect(await at(card)).toBe(cardHref);
   expect(await at(card.locator(".lib-chip"))).toMatch(/^\/courses\//);
   await expect(page.getByText("Free to read", { exact: true })).toHaveCount(0);
   await page.getByRole("group", { name: /Filter research papers by topic/ }).getByRole("button", { name: /^Databases/ }).click();
-  await expect(papers.getByRole("link", { name: "Attention Is All You Need" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Attention Is All You Need" })).toHaveCount(0);
   await expect(papers.getByRole("listitem").first()).toBeVisible();
   await tabs.getByRole("button", { name: /Tech blogs/ }).click();
   await expect(page.getByRole("list", { name: "Tech blogs" }).getByRole("listitem").first()).toBeVisible();

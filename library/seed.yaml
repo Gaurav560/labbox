@@ -240,6 +240,7 @@ books:
   image: book-spring-in-action.webp
 papers:
 - title: Attention Is All You Need
+  featured: true
   authors: Ashish Vaswani and others
   year: 2017
   url: https://arxiv.org/abs/1706.03762
@@ -282,7 +283,6 @@ papers:
   practice: chapter 1, why RAG
   level: intermediate
   free: true
-  featured: true
   image: paper-retrieval-augmented-generation-for-knowl.webp
 - title: Efficient Estimation of Word Representations in Vector Space
   authors: Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean
@@ -433,6 +433,15 @@ blogs:
   free: true
   image: blog-lil-log.webp
   featured: true
+- title: Anthropic Engineering
+  authors: Anthropic
+  url: https://www.anthropic.com/engineering
+  topic: AI
+  note: How a model lab builds agents, tools and evaluations, with lessons from real systems.
+  lab: langgraph
+  practice: Part 3, agents in graphs
+  free: true
+  image: blog-anthropic-engineering.webp
 - title: OpenAI News
   authors: OpenAI
   url: https://openai.com/news/
@@ -450,15 +459,6 @@ blogs:
   image: blog-hacker-news.webp
   note: 'The front page engineers check every day: new tools, papers and blog posts, with long discussions by the people
     who build things.'
-- title: Anthropic Engineering
-  authors: Anthropic
-  url: https://www.anthropic.com/engineering
-  topic: AI
-  note: How a model lab builds agents, tools and evaluations, with lessons from real systems.
-  lab: langgraph
-  practice: Part 3, agents in graphs
-  free: true
-  image: blog-anthropic-engineering.webp
 - title: Claude blog
   authors: Anthropic
   url: https://claude.com/blog
