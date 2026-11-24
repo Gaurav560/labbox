@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: a light and dark switch on the login page
+
+- Owner: "give the option of light and dark theme on this page". The login and sign-up card has the same switch as
+  every top bar, next to "Home". The switch is now a plain button (`type="button"`), so inside the form it never
+  submits it. Done on master and `design/ukiyo`.
+
 ## 25 November: sharp book covers in Premium Reads
 
 - Owner: the book covers "feel very low quality". They were 240 to 500 pixels tall thumbnails shown about 370 px

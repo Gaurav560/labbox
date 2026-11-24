@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
+import ThemeButton from "../components/ThemeButton";
 import { useTyped } from "../components/useTyped";
 
 // A lab run, typed out in the showcase terminal. "$ " lines are typed, the rest appear at once.
@@ -81,7 +82,10 @@ export default function LoginPage() {
         <form className="auth-card" onSubmit={(e) => submit(primary, e)}>
           <div className="auth-top">
             <Logo to="/" />
-            <Link to="/" className="link small">← Home</Link>
+            <span className="auth-top-links">
+              <ThemeButton />
+              <Link to="/" className="link small">← Home</Link>
+            </span>
           </div>
           <h1>{signupMode ? "Create your account" : "Welcome back"}</h1>
           {!signupMode && <p className="muted auth-sub">Your machines are where you left them.</p>}
