@@ -93,6 +93,7 @@ class ChapterOut(BaseModel):
 
 
 class LabDetail(LabInfo):
+    before_you_start: dict | None = None  # {summary, needs: [{know, why, lab, lab_title, where}]}
     preview: list[PreviewPort] = []
     services: list[str] = []
     check_mode: str = "fresh"
@@ -161,6 +162,17 @@ def list_labs(user: User = Depends(get_current_user), session: Session = Depends
     return out
 
 
+def _before_you_start(lab: LabConfig) -> dict | None:
+    """The lab's "Before you start" box, with each needed lab's title for the link."""
+    if lab.before_you_start is None:
+        return None
+    titles = {other.id: other.title for other in all_labs()}
+    out = lab.before_you_start.model_dump()
+    for need in out["needs"]:
+        need["lab_title"] = titles.get(need["lab"]) if need["lab"] else None
+    return out
+
+
 @router.get("/{lab_id}", response_model=LabDetail)
 def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> LabDetail:
     assert user.id is not None
@@ -169,6 +181,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
     used = progress.hints_used(session, user.id, lab.id)
     return LabDetail(
         **_info(lab),
+        before_you_start=_before_you_start(lab),
         preview=lab.preview,
         services=[s.name for s in lab.services],
         check_mode=lab.check.mode,

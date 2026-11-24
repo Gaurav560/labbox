@@ -18,6 +18,21 @@ estimated_minutes: 560
 cover_scene: "A ranger's field notebook open on a rock in an evergreen forest of the Western Ghats, a camera trap strapped to a tree behind."
 cover: cover.svg
 cover_credit: { by: "Logos: python,fastapi", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Python, including a little NumPy. This course builds search and RAG by hand, so you should be comfortable writing
+    Python functions; every idea about vectors, indexes and models is explained from the beginning.
+  needs:
+  - know: Python functions, lists, dictionaries, sets and loops
+    why: Every task is a Python function in fieldbook.py.
+    lab: python-basics
+    where: chapters 1 to 12
+  - know: NumPy arrays (helpful, not required)
+    why: Chapters 3 to 7 use NumPy for vectors and matrices; each operation is explained where it is used.
+  - know: What a language model and a prompt are (helpful)
+    why: Chapter 1 explains the idea; the LangChain course goes deeper.
+    lab: langchain
+    where: chapters 1 to 7
 image: labbox/rag-vector-databases:v1
 resources: m
 workspace:

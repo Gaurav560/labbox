@@ -68,7 +68,9 @@ export interface TaskExample { call: string; gives: string; note: string | null 
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number; examples?: TaskExample[] }
 export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; part?: string | null; topics?: { title: string; step: number }[]; has_setup: boolean }
 export interface PreviewPort { name: string; port: number; path: string }
-export interface LabDetail extends LabInfo { preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
+export interface Need { know: string; why: string; lab: string | null; lab_title: string | null; where: string }
+export interface BeforeYouStart { summary: string; needs: Need[] }
+export interface LabDetail extends LabInfo { before_you_start?: BeforeYouStart | null; preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
 export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive" | "design" | "history";
 // The answer and explanation are not sent with the chapter; they come back once answered correctly.
 export interface Predict { question: string; options: { text: string }[] }

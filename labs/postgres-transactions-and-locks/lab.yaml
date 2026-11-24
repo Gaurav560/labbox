@@ -15,6 +15,15 @@ story:
 cover_scene: "A glowing database vault with a padlock, coins moving between two wallets."
 cover: cover.svg
 cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Basic SQL. You move money between accounts and then untangle a frozen checkout, so you should be comfortable
+    with INSERT, UPDATE and SELECT.
+  needs:
+  - know: SELECT, INSERT and UPDATE
+    why: Both chapters change rows inside transactions and check the result.
+    lab: sql-from-zero
+    where: chapters 1 to 3 and 10, Changing data safely
 image: labbox/postgres-transactions-and-locks:v1
 resources: s
 workspace:

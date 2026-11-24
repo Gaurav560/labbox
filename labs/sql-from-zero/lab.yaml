@@ -14,6 +14,11 @@ estimated_minutes: 625
 cover_scene: "A bus booking app's data room: rows of seats on a bus seat map turning into rows of a table, a route map of Indian cities, a glowing database cylinder."
 cover: cover.svg
 cover_credit: { by: "Logos: sql", source: "LabBox" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing. You type your first query in chapter 1, on a real Postgres database, and every idea is explained as
+    it comes.
+  needs: []
 image: labbox/sql-from-zero:v1
 resources: s
 workspace:

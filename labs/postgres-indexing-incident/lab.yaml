@@ -15,6 +15,19 @@ story:
 cover_scene: "Dosa Counter at lunch rush: a tiny busy restaurant checkout counter with a long queue of tiny people, a huge glowing database cylinder behind the counter with a red rotating alarm light on top, a pager on the counter flashing red."
 cover: cover.svg
 cover_credit: { by: "Logos: postgresql", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Basic SQL. This is a short incident lab on a real Postgres with a million orders, so you should already be able
+    to write a SELECT with a WHERE clause.
+  needs:
+  - know: SELECT, WHERE and ORDER BY
+    why: You read the slow query, change it, and run it again to measure the difference.
+    lab: sql-from-zero
+    where: chapters 1 to 3
+  - know: What an index is, roughly
+    why: The fix is an index; the lab explains how Postgres uses it, but the word should not be new.
+    lab: sql-from-zero
+    where: chapter 12, Indexes and EXPLAIN
 image: labbox/postgres-indexing-incident:v1
 resources: s
 workspace:

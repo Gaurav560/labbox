@@ -19,10 +19,12 @@ images, handwritten images, animations, tables, and much more"). A course meets 
 | The official reference | a framework course follows its official docs, at their current version | Spring AI |
 | Everything quoted is real | every output captured in the lab image (AI answers through the gateway); the lesson changes when the capture disagrees | section 0, item 6 |
 | See it, break it, fix it | the wrong output first, then the task, then the right output | every chapter |
-| Real photos | 10 to 20 or more freely licensed, credited photos, each on the step that teaches its idea | section 3 |
+| Real photos | freely licensed, credited photos, each on the step that teaches its idea, with a lead sentence that makes the link obvious; at least one for every chapter or two (a 28-chapter course needs well over 20) | section 3, section 7 |
 | Animations | playing diagrams for processes, traces with Play for changing state | section 3 |
 | Tables | comparisons, checklists and costs as tables | Spring AI 18 and 20 |
-| Handwritten notes | one checked notebook page at the end of every recap | section 3 |
+| Handwritten notes | one checked notebook page at the end of every recap, in short plain sentences a beginner can read alone | section 3, section 7 |
+| Before you start | `before_you_start` in `lab.yaml`: who the lab is for, what to know first, why, and the LabBox lab and chapters that teach it (or "Nothing") | section 7 |
+| Full lessons, not summaries | every concept step explains like a teacher, at length; never a shorthand chapter | section 7 |
 | Two real tasks a chapter | checks that run the learner's code, kind failure messages, hints that climb | section 5 |
 | Honest depth | quick checks that are real decisions; a "Go deeper" step on production | section 2 |
 | The code follows the lesson | every step about project code opens its file and lines | section 3 |
@@ -306,6 +308,33 @@ lines of the chapter's key ideas, checked letter by letter before use (image mod
 digits). Photos never go on task or quick-check steps; one per step, two on a history step. The validator
 rejects unknown picture and diagram names, traces without a table, code in a picture that is not also in a
 code block of its step, and photos without a file, alt text or credit.
+
+## 7. The owner's review of 24 November
+
+After reading the RAG and Rust courses the owner said the content is "cutting corners", and also that "lesson titles
+and way of expressing content is fantastic. its just should be more elaborative, easy to understand, expressive."
+Keep the titles and the voice exactly as they are; change the depth. Every course, new or rewritten, follows these:
+
+1. **Full lessons, not summaries.** A concept step is a lesson, not notes: why the idea exists, what it looks like,
+   the code read line by line, what the learner will see, the usual confusion, a small check-yourself line. If a
+   paragraph would make sense only to someone who already knows the topic, it is too short. More, smaller steps beat
+   dense ones; no word limit.
+2. **Photo leads make the link obvious.** The sentence before a real photo says, in words a beginner understands, who or
+   what this is and exactly why it belongs in this lesson ("Georgy Voronoi described these cells in 1908; IVF files
+   every vector in one of them"). Never a clever one-liner that assumes the learner sees the connection.
+3. **More photos in long courses.** Scale with the course: at least one real photo for every chapter or two, spread
+   through it (the history step, the story step, a real object an idea is named after). A 13-chapter course needs
+   about 15; a 28-chapter course well over 20.
+4. **Notes pages a beginner can read alone.** The handwritten page at the end of each recap uses five or six short,
+   plain sentences, not cryptic fragments. "Embeddings capture the topic, not yes or no" instead of "Not does not move
+   much"; "Hybrid search merges two rankings by their positions" instead of "RRF: 1 / (60 + rank)". Formulas and code
+   belong in the lesson, not on the page. Check every page letter by letter, as before.
+5. **Before you start, in detail.** Every `lab.yaml` has `before_you_start`: a summary of who the lab is for and what
+   it assumes, then each thing to know (`know`), why the lab needs it (`why`), and the LabBox lab and chapters that
+   teach it (`lab`, `where`). A course from zero says so ("Nothing. ..."). The course page shows it; the validator
+   refuses a lab without it and a `lab` that does not exist.
+6. **Photos always load.** Photos are files in `frontend/public/lesson-images/`, never links to other sites. The lab
+   page fetches a chapter's photos as soon as it opens and retries a failed load; keep it that way.
 
 ## 4. Words
 

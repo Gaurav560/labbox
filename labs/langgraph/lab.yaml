@@ -15,6 +15,19 @@ estimated_minutes: 1035
 cover_scene: "A calm control room of a small city water board at night, a map of pipes and a repair van outside."
 cover: cover.svg
 cover_credit: { by: "Logo: LangGraph", source: "Simple Icons (CC0)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Python and some LangChain. LangGraph builds on LangChain's models and tools, so this course assumes you have
+    called a model and written a tool before.
+  needs:
+  - know: Python functions, dictionaries, classes and type hints
+    why: Graphs are Python functions that read and return a state dictionary.
+    lab: python-basics
+    where: chapters 1 to 16
+  - know: Calling a chat model, tools and messages in LangChain
+    why: Every node that thinks calls a LangChain chat model.
+    lab: langchain
+    where: chapters 6 to 13
 image: labbox/langgraph:v1
 resources: m
 workspace:

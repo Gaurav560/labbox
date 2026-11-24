@@ -202,6 +202,19 @@ class Chapter(_Strict):
     setup_user: Literal["root", "learner"] = "root"
 
 
+class Need(_Strict):
+    """One thing to know before starting a lab (owner, 24 November: "add prerequisites for every lab, in detail")."""
+    know: str = Field(min_length=1)  # what to know, in plain words
+    why: str = ""  # why this lab needs it
+    lab: str | None = None  # the LabBox lab that teaches it
+    where: str = ""  # where in that lab, like "chapters 1 to 9"
+
+
+class BeforeYouStart(_Strict):
+    summary: str = Field(min_length=1)  # who the lab is for and what it assumes, in a sentence or two
+    needs: list[Need] = []  # empty: nothing needed
+
+
 class LabConfig(_Strict):
     id: str
     title: str
@@ -222,6 +235,7 @@ class LabConfig(_Strict):
     estimated_minutes: int | None = Field(default=None, gt=0)
     free_chapters: int = Field(default=2, ge=0)
     prerequisites: list[str] = []  # other lab ids, a recommendation only
+    before_you_start: BeforeYouStart | None = None  # shown on the course page; the validator wants one in every lab
     story: Story | None = None
     cover: str | None = None  # optional cover image in the lab folder; otherwise the UI draws one
     cover_credit: CoverCredit | None = None

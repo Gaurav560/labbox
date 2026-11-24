@@ -13,6 +13,14 @@ estimated_minutes: 610
 cover_scene: "A trekking trail map in the Sahyadri hills drawn as a branching tree of commits, with small flags at each merge."
 cover: cover.svg
 cover_credit: { by: "Logos: git", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing about Git. You only need to be able to type commands in a terminal; the first chapter shows how.
+  needs:
+  - know: Typing commands in a terminal and moving between folders
+    why: Every Git command in the course runs in the terminal.
+    lab: linux-on-call
+    where: chapters 1 and 2
 image: labbox/git-without-fear:v1
 resources: xs
 workspace:

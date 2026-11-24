@@ -12,6 +12,15 @@ level: beginner
 estimated_minutes: 30
 cover: cover.svg
 cover_credit: { by: "Logos: duke-thumbsup,java", source: "devicon (MIT), Duke (BSD)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Java basics. This short lab uses Lists, Maps and Sets on a day of payments, so you should already be able to
+    write a small Java method.
+  needs:
+  - know: Java classes, methods, if and loops
+    why: Every task is a Java method that loops over payments and returns a result.
+    lab: java-basics
+    where: chapters 1 to 10
 image: labbox/java-collections:v1
 resources:
   cpus: 0.5

@@ -18,6 +18,10 @@ story:
 cover_scene: "A radio telescope dish under a starry night sky, with a glowing terminal window in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logos: linux", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing. You type your first command in chapter 1 and every command is explained as it appears.
+  needs: []
 image: labbox/linux-on-call:v1
 resources: xs
 workspace:

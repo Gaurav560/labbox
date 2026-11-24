@@ -16,6 +16,19 @@ estimated_minutes: 1340
 cover_scene: "A friendly help desk assistant made of light at a small hill railway station in the Western Ghats, a train climbing a green ghat behind it in the monsoon."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain4j", source: "LangChain4j project (Apache 2.0)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Java. This course explains every AI idea from the beginning, but every chapter is Java code, and later chapters
+    use a small web service.
+  needs:
+  - know: Java, meaning classes, interfaces, lists, maps and records
+    why: Every chapter writes Java with LangChain4j.
+    lab: java-basics
+    where: chapters 1 to 15
+  - know: Building a small REST endpoint (helpful for the later chapters)
+    why: The help desk goes on the web in the last part.
+    lab: spring-boot-first-api
+    where: chapters 3 to 7, Your first endpoints to Configuration and profiles
 image: labbox/langchain4j:v1
 resources: m
 workspace:

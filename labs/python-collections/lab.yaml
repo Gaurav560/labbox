@@ -12,6 +12,15 @@ level: beginner
 estimated_minutes: 30
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Python basics. This short lab works with lists, dictionaries and sets on real data, so you should already be
+    able to write a small Python function.
+  needs:
+  - know: Python variables, if, loops and functions
+    why: Every task is a Python function that loops over data and returns a result.
+    lab: python-basics
+    where: chapters 1 to 9
 image: labbox/python-collections:v1
 resources:
   cpus: 0.5

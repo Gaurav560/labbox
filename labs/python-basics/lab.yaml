@@ -11,6 +11,11 @@ estimated_minutes: 815
 cover_scene: "A calm desk with a laptop showing a few lines of Python, a notebook with marks and prices, soft morning light."
 cover: cover.svg
 cover_credit: { by: "Logos: python", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing. This course starts from your very first line of code and explains every word as it appears. If you can
+    use a web browser and type, you are ready.
+  needs: []
 image: labbox/python-basics:v1
 resources:
   cpus: 0.5

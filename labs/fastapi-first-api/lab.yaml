@@ -15,6 +15,15 @@ story:
 cover_scene: "Ravi's Snack Corner: a small roadside snack counter at night, plates of vada pav and bun maska on the counter, glowing translucent menu cards floating above it connected by thin lines of light to a smartphone."
 cover: cover.svg
 cover_credit: { by: "Logos: fastapi,python", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Python basics. You build a small web API with FastAPI, so you should be comfortable with functions and dictionaries
+    in Python.
+  needs:
+  - know: Python functions, lists and dictionaries
+    why: Every endpoint in FastAPI is a Python function that returns data.
+    lab: python-basics
+    where: chapters 1 to 12
 image: labbox/fastapi-first-api:v1
 resources: xs
 workspace:

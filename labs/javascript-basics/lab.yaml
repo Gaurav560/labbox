@@ -12,6 +12,11 @@ level: beginner
 estimated_minutes: 795
 cover: cover.svg
 cover_credit: { by: "Logos: javascript", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing. This course starts from your very first line of JavaScript and explains every term the first time it
+    appears. You do not need to know HTML or how websites work.
+  needs: []
 image: labbox/javascript-basics:v1
 resources:
   cpus: 0.5

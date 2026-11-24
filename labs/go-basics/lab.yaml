@@ -17,6 +17,11 @@ cover: cover.svg
 cover_credit:
   by: 'Logos: go'
   source: devicon (MIT)
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Nothing. This course starts from your very first line of Go and explains every term the first time it appears.
+    Some experience with any other language makes the first chapters faster, but it is not needed.
+  needs: []
 image: labbox/go-basics:v1
 resources:
   cpus: 0.5

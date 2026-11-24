@@ -288,6 +288,15 @@ def validate_lab(folder: Path, check_image: bool = True, known_labs: set[str] | 
     for pre in lab.prerequisites:
         if known_labs is not None and pre not in known_labs:
             rep.warnings.append(f"prerequisite {pre!r} is not a lab in this repo")
+    if lab.before_you_start is None:
+        rep.warnings.append("before_you_start is missing: say what a learner needs to know first, or that nothing is "
+                            "needed (owner, 24 November; see CONTENT_STANDARD.md)")
+    else:
+        for need in lab.before_you_start.needs:
+            if need.lab and known_labs is not None and need.lab not in known_labs:
+                rep.errors.append(f"before_you_start names {need.lab!r}, which is not a lab in this repo")
+            if need.lab == lab.id:
+                rep.errors.append("before_you_start names this lab itself")
 
     lint_errors, lint_warnings = content_lint(lab, folder)
     rep.errors += lint_errors

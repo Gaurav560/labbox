@@ -15,6 +15,19 @@ story:
 cover_scene: "Two small servers behind a gate, with a counter that lets a steady stream of requests through."
 cover: cover.svg
 cover_credit: { by: "Logos: nginx,redis", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Some programming and a little Redis. This is a system design lab with two servers and a shared limit, so you
+    should know what an API is and have used Redis commands.
+  needs:
+  - know: Reading and changing a small Python web service
+    why: The limiter is code inside the service; you change it and run a load test.
+    lab: fastapi-first-api
+    where: the whole lab
+  - know: Redis basics, especially counters and keys that expire (INCR, EXPIRE)
+    why: The shared limit lives in Redis.
+    lab: redis-in-practice
+    where: chapters 1 to 3, and 10 for atomic operations
 image: labbox/rate-limiter:v1
 resources: s
 workspace:

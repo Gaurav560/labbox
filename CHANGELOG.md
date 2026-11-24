@@ -1,5 +1,18 @@
 # Changelog
 
+## 24 November: the rule book after the owner's review, and Before you start on every lab
+
+- Owner, after reading the RAG and Rust courses: "cutting corners"; lessons "more elaborative, easy to understand,
+  expressive" while keeping the titles and voice ("fantastic"); photo leads that make the link easy to understand; more
+  photos in long labs; notes pages a beginner can read ("like rocket science" now); detailed prerequisites for every lab.
+- `CONTENT_STANDARD.md` section 7 (new) and the full-standard table, `COURSE_PRODUCTION.md` (syllabus item 7, photos,
+  notes) now say all of that, with examples.
+- **Before you start** on every course page: `before_you_start` in all 23 `lab.yaml` files (a plain summary, then each
+  thing to know, why the lab needs it, and the LabBox lab and chapters that teach it, checked against those labs' real
+  chapter lists; courses from zero say "Nothing."). The lab API sends it with each needed lab's title; the validator
+  warns when a lab has none (an error with `--strict`) and refuses a lab that does not exist.
+- Test: `tests/test_before_you_start.py`.
+
 ## 24 November: lesson photos that always load
 
 - Owner: images sometimes did not show ("why don't you download images instead of embedding url ... sometimes it fetches

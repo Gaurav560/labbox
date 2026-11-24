@@ -47,6 +47,9 @@ Answer these before writing a line, and write the answers into `HANDOFF.md` as t
    measures it: real latency, real throughput, the money it saves, with honest arithmetic.
 6. **Rewriting an existing lab:** keep every chapter id and every task id (learner progress hangs on them);
    new ones are added. Task ids are unique across the whole lab.
+7. **Before you start.** Write the lab's `before_you_start` (CONTENT_STANDARD.md section 7): who it is for, what to
+   know first, why, and which LabBox lab and chapters teach it; check every chapter you point to against that lab's
+   real chapter list.
 
 Write the syllabus as: parts, then per chapter its number, id, title, the idea it teaches, its two task ids,
 and the docs section. Then wait for the owner's OK, unless the owner said to build without asking.
@@ -173,8 +176,10 @@ tools/authoring/capture.sh stop
 
 Real, freely licensed photos of real things: the person who made the technology, a historic machine, the
 real-world thing an idea is named after or works like (a 1907 switchboard for routing, hallmarks for
-evaluation, a ghat road wall for guardrails). 10 to 22 per course, spread through it, each on the step that
-teaches its idea, never on task, quick-check or recap steps.
+evaluation, a ghat road wall for guardrails). At least one for every chapter or two, so long courses get more (a
+28-chapter course well over 20), spread through it, each on the step that teaches its idea, never on task, quick-check
+or recap steps. The lead sentence before each photo must make the link obvious to a beginner (CONTENT_STANDARD.md
+section 7).
 
 ```bash
 python3 tools/authoring/commons_search.py $SP/cands.json "switchboard=telephone switchboard operators 1907" "meter=electricity meter"
@@ -227,7 +232,9 @@ EOF
 cd backend && .venv/bin/python ../tools/authoring/notes.py $SP/notes.json $SP/notes "a small doodle of a museum building with a planetarium dome"
 ```
 
-- Short lines (a few words each), plain words, no code longer than a name. One doodle per course,
+- Five or six short, plain sentences a beginner can read on their own (CONTENT_STANDARD.md section 7): "Embeddings
+  capture the topic, not yes or no", never fragments like "Not does not move much"; no formulas, no code longer than a
+  name. One doodle per course,
   related to its project; never a drink, an animal, a robot with a face or a logo.
 - **Check every page letter by letter.** Image models misspell, drop the last line, repeat a line and change
   digits. A wrong page is redrawn (move it away and run again), or its lines are shortened or merged. Never

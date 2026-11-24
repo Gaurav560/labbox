@@ -89,6 +89,31 @@ export default function CoursePage() {
           </ul>
         </section>
 
+        {lab.before_you_start && (
+          <section className="course-before" aria-labelledby="course-before-title">
+            <h2 id="course-before-title">Before you start</h2>
+            <p className="course-before-summary">{lab.before_you_start.summary}</p>
+            {lab.before_you_start.needs.length > 0 && (
+              <ul className="course-needs">
+                {lab.before_you_start.needs.map((n, i) => (
+                  <li key={i}>
+                    <span className="course-need-check" aria-hidden="true">✓</span>
+                    <div>
+                      <strong>{n.know}</strong>
+                      {n.why && <p>{n.why}</p>}
+                      {n.lab && n.lab_title && (
+                        <Link className="course-need-link" to={`/courses/${n.lab}`}>
+                          Learn it in {n.lab_title}{n.where ? `, ${n.where}` : ""} →
+                        </Link>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
         <section className="course-syllabus" aria-label="Chapters">
           <h2>What you will learn</h2>
           <h3 className="course-map-title">Skill map</h3>

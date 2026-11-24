@@ -16,6 +16,19 @@ estimated_minutes: 1300
 cover_scene: "Wind turbines on a flat coast at dusk, a laptop showing a terminal on a crate in the foreground."
 cover: cover.svg
 cover_credit: { by: "Logo: Rust", source: "Simple Icons (CC0)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: No Rust at all. Rust is a demanding language, so this course moves step by step and explains every idea (ownership,
+    borrowing, traits) from the beginning. A little programming experience in any language makes it much easier.
+  needs:
+  - know: Programming basics in any language, such as variables, if, loops and functions
+    why: The course explains Rust's own ideas in depth, but it moves faster through what every language shares.
+    lab: python-basics
+    where: chapters 1 to 9
+  - know: Using a terminal to run a command
+    why: You build and run every program with cargo in the terminal. The first chapter shows the exact commands.
+    lab: linux-on-call
+    where: chapters 1 and 2
 image: labbox/rust-basics:v1
 resources: m
 workspace:

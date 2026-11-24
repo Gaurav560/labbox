@@ -16,6 +16,19 @@ estimated_minutes: 1165
 cover_scene: "A friendly help desk assistant at a farmers' cooperative near Nashik, onion fields and grape vineyards behind it."
 cover: cover.svg
 cover_credit: { by: "Logo: LangChain", source: "Simple Icons (CC0)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: Python. This course explains how language models work from the beginning (tokens, embeddings, attention) and
+    then builds a help desk with LangChain, so you should be comfortable writing Python.
+  needs:
+  - know: Python functions, lists, dictionaries and classes
+    why: Every chapter writes Python with LangChain.
+    lab: python-basics
+    where: chapters 1 to 16
+  - know: What an HTTP request is (helpful for chapter 5)
+    why: Chapter 5 calls the model over plain HTTP before using the SDK.
+    lab: fastapi-first-api
+    where: the whole lab
 image: labbox/langchain:v1
 resources: m
 workspace:

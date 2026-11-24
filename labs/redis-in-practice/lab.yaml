@@ -14,6 +14,19 @@ estimated_minutes: 770
 cover_scene: "A grocery delivery app's backend: a glowing red Redis cube beside a server, a stopwatch showing under one millisecond, delivery bags on a shelf."
 cover: cover.svg
 cover_credit: { by: "Logos: redis,python", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: No Redis knowledge. Some code in the course is Python, and it explains why things are fast or slow in milliseconds,
+    so a little programming helps.
+  needs:
+  - know: Reading simple Python code (functions and dictionaries)
+    why: From chapter 6 on, the course talks to Redis from a small Python program and measures the difference.
+    lab: python-basics
+    where: chapters 1 to 9
+  - know: Running commands in a terminal
+    why: You talk to Redis with redis-cli in the terminal from the first chapters.
+    lab: linux-on-call
+    where: chapters 1 and 2
 image: labbox/redis-in-practice:v1
 resources: s
 workspace:

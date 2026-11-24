@@ -111,6 +111,9 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - `COURSE_PRODUCTION.md`: how a course is built, in 12 steps from the syllabus to the commit, including real
   captures (AI output through the gateway with an author account), Wikimedia photos, playing diagrams and
   handwritten notes.
+- `CONTENT_STANDARD.md` section 7 (24 November, the owner's review): full lessons not summaries, photo leads that make
+  the link obvious, more photos in long courses, notes pages in plain sentences, a detailed `before_you_start` in every
+  `lab.yaml` (shown on the course page as "Before you start"), photos that always load.
 - `tools/authoring/`: the scripts those steps use (`commons_search.py`, `commons_fetch.py`, `insert_photos.py`,
   `add_diagrams.py`, `notes.py`, `author_token.py`, `capture.sh`, `runcheck.sh`).
 

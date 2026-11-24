@@ -21,6 +21,19 @@ cover_scene: 'Thali House dispatch at night: a tiny glowing control tower above 
   light trails connecting each meal to floating order status cards.'
 cover: cover.svg
 cover_credit: { by: "Logos: express,nodejs", source: "devicon (MIT)" }
+# What a learner needs to know first (shown on the course page; owner, 24 November).
+before_you_start:
+  summary: JavaScript basics. You build a small web API with Express in Node, so you should be comfortable with functions
+    and objects in JavaScript.
+  needs:
+  - know: JavaScript functions, objects and arrays
+    why: Every route in Express is a function that receives a request object and sends back an answer.
+    lab: javascript-basics
+    where: chapters 1 to 12
+  - know: What an HTTP request and a status code are
+    why: The lab sends requests to your API and reads the answers. A short explanation is in the lesson.
+    lab: spring-boot-first-api
+    where: chapter 1, How the web works
 image: labbox/express-api:v1
 resources: xs
 workspace:
