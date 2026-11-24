@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: sign-up form without "Your first win is about three minutes away."
+
+- Owner: "remove this line". The sign-up form goes straight from "Create your account" to the fields; the log-in
+  form keeps "Your machines are where you left them." Done on master and `design/ukiyo`.
+
 ## 25 November: pages open at their top
 
 - Owner: opening a course page jumped down to "You are here", and Premium Reads (signed out) opened scrolled down.
