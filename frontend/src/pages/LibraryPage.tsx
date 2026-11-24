@@ -202,7 +202,6 @@ function PaperRow({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
         <p className="lib-why">{item.note}</p>
         <Badges item={item} />
         <div className="lib-actions">
-          <ReadLink item={item} />
           <PracticeChip item={item} labs={labs} signedIn={signedIn} />
         </div>
       </div>
@@ -223,7 +222,6 @@ function BlogCard({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
       </div>
       <Badges item={item} />
       <div className="lib-actions">
-        <ReadLink item={item} />
         <PracticeChip item={item} labs={labs} signedIn={signedIn} />
       </div>
     </li>

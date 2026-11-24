@@ -442,15 +442,14 @@ blogs:
   lab: langchain
   practice: chapter 6, the OpenAI Python SDK
   free: true
-- title: Claude blog
-  authors: Anthropic
-  url: https://claude.com/blog
-  topic: AI
-  image: blog-claude.webp
-  note: News, guides and stories about Claude, Anthropic's AI assistant, and about how people build products with it.
-  lab: langgraph
-  practice: Part 3, agents in graphs
+- title: Hacker News
+  authors: Y Combinator
+  url: https://news.ycombinator.com/
+  topic: Programming
   free: true
+  image: blog-hacker-news.webp
+  note: 'The front page engineers check every day: new tools, papers and blog posts, with long discussions by the people
+    who build things.'
 - title: Anthropic Engineering
   authors: Anthropic
   url: https://www.anthropic.com/engineering
@@ -460,6 +459,15 @@ blogs:
   practice: Part 3, agents in graphs
   free: true
   image: blog-anthropic-engineering.webp
+- title: Claude blog
+  authors: Anthropic
+  url: https://claude.com/blog
+  topic: AI
+  image: blog-claude.webp
+  note: News, guides and stories about Claude, Anthropic's AI assistant, and about how people build products with it.
+  lab: langgraph
+  practice: Part 3, agents in graphs
+  free: true
 - title: Anthropic Research
   authors: Anthropic
   url: https://www.anthropic.com/research
@@ -723,14 +731,6 @@ blogs:
   lab: rate-limiter
   practice: the whole lab
   free: true
-- title: Hacker News
-  authors: Y Combinator
-  url: https://news.ycombinator.com/
-  topic: Programming
-  free: true
-  image: blog-hacker-news.webp
-  note: 'The front page engineers check every day: new tools, papers and blog posts, with long discussions by the people
-    who build things.'
 - title: The Pragmatic Engineer
   authors: Gergely Orosz
   url: https://newsletter.pragmaticengineer.com/

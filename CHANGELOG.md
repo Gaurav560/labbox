@@ -32,6 +32,9 @@
   on hover; the Start here card keeps the full line); book cards show only the cover (it already shows the title and
   authors), and the cover opens the book; whole paper and blog cards open the item, while their lab chip still opens
   the lab; "Free to read" and the topic badge are gone from the cards (the topic filter stays).
+- Then: paper and blog cards lost their "Read the paper" and "Visit the blog" buttons (the whole card opens the item;
+  the Start here card keeps its button); blogs now open with OpenAI News, Hacker News, Anthropic Engineering, Claude blog
+  (owner's order; seed.yaml and the development database).
 
 - Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to
   Read, and Tech Blogs to Read"; after the first version, "rubbish ui ... i want to market my lab via these sources",

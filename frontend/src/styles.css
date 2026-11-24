@@ -2006,3 +2006,5 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-paper:has(.lib-stretch):hover, .lib-blog:has(.lib-stretch):hover { border-color: color-mix(in srgb, var(--text) 35%, var(--border)); transform: translateY(-2px); }
 .lib-stretch::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
 .lib-paper .lib-actions a, .lib-blog .lib-actions a { position: relative; z-index: 2; }
+.lib-paper .lib-actions:empty, .lib-blog .lib-actions:empty { display: none; }
+.lib-paper .lib-actions, .lib-blog .lib-actions { justify-content: flex-start; }
