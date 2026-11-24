@@ -1919,7 +1919,7 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-cover-img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px 10px 10px 4px;
   background: #fff; box-shadow: inset 6px 0 0 rgba(0, 0, 0, .18), 0 14px 28px -14px rgba(0, 0, 0, .6), 0 0 0 1px rgba(0, 0, 0, .06); }
 .lib-cover-img.is-big { width: 220px; }
-.lib-book .lib-cover-img { margin-bottom: 18px; }
+.lib-book .lib-cover-img { margin-bottom: 14px; }
 .lib-shot { display: block; width: 100%; object-fit: cover; object-position: top; background: #fff; }
 .lib-shot.is-paper { aspect-ratio: 4 / 3; border-bottom: 1px solid var(--border); }
 .lib-shot.is-blog { aspect-ratio: 1280 / 500; border-bottom: 1px solid var(--border); }
@@ -1984,3 +1984,25 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .course-needs strong { font-size: 15.5px; }
 .course-needs p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--muted); }
 .course-need-link { display: inline-block; margin-top: 6px; font-size: 14px; font-weight: 600; }
+/* The lab chip on Library cards: one quiet line in the lab's colour (owner: the long practise line was crowded). */
+.lib-chip { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; margin-top: 14px; padding: 5px 12px 5px 6px;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, var(--lt) 45%, var(--border));
+  background: color-mix(in srgb, var(--lt) 10%, transparent); color: var(--text); font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: background .15s ease, border-color .15s ease; }
+.lib-chip:hover { text-decoration: none; background: color-mix(in srgb, var(--lt) 22%, transparent); border-color: var(--lt); }
+.lib-chip-play { flex: none; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; font-size: 8px;
+  color: #fff; background: var(--lt); padding-left: 1px; }
+.lib-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-actions .lib-chip { margin-top: 0; }
+.lib-paper .lib-actions, .lib-blog .lib-actions { flex-wrap: nowrap; justify-content: space-between; gap: 10px; }
+.lib-paper .lib-actions .lib-btn, .lib-blog .lib-actions .lib-btn { flex: none; }
+.lib-paper .lib-actions .lib-chip, .lib-blog .lib-actions .lib-chip { flex: 0 1 auto; min-width: 0; }
+.lib-cover-link { display: block; border-radius: 4px 10px 10px 4px; transition: transform .18s ease; }
+.lib-cover-link:hover { transform: translateY(-3px); }
+.lib-book .lib-badges { margin-top: 0; }
+/* Whole paper and blog cards open the item (owner, 24 November): the title link stretches over the card; the buttons
+   and the lab chip sit above it, so they still go where they say. */
+.lib-paper, .lib-blog { position: relative; transition: border-color .15s ease, transform .15s ease; }
+.lib-paper:has(.lib-stretch):hover, .lib-blog:has(.lib-stretch):hover { border-color: color-mix(in srgb, var(--text) 35%, var(--border)); transform: translateY(-2px); }
+.lib-stretch::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.lib-paper .lib-actions a, .lib-blog .lib-actions a { position: relative; z-index: 2; }

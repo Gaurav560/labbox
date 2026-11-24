@@ -6,6 +6,7 @@ import Logo from "../components/Logo";
 import ProfileMenu from "../components/ProfileMenu";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import ThemeButton from "../components/ThemeButton";
+import { labTone } from "../brand";
 
 // The Library (owner, 24 November): books, research papers and tech blogs worth reading next to the labs. Public, so
 // it can be shared and found by search engines; every pick says why it matters and which lab lets you practise it.
@@ -80,13 +81,27 @@ function tone(topic: string): string {
 
 const levelLabel = (l: string) => (l ? `${l[0].toUpperCase()}${l.slice(1)}` : "");
 
-function Badges({ item }: { item: LibraryItem }) {
+function Badges({ item, topic = false }: { item: LibraryItem; topic?: boolean }) {
+  if (!item.level && !(topic && item.topic)) return null;
   return (
     <div className="lib-badges">
-      {item.free && <span className="lib-badge lib-badge-free">Free to read</span>}
       {item.level && <span className="lib-badge">{levelLabel(item.level)}</span>}
-      {item.topic && <span className="lib-badge lib-badge-topic" style={{ "--t": tone(item.topic) } as CSSProperties}>{item.topic}</span>}
+      {topic && item.topic && <span className="lib-badge lib-badge-topic" style={{ "--t": tone(item.topic) } as CSSProperties}>{item.topic}</span>}
     </div>
+  );
+}
+
+/** On a card: one small chip in the lab's colour. The chapter shows on hover; the Start here card has the full line. */
+function PracticeChip({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
+  const lab = item.lab ? labs.get(item.lab) : undefined;
+  if (!lab) return null;
+  const where = `Practise it hands-on in ${lab.title}${item.practice ? `, ${item.practice}` : ""}`;
+  return (
+    <Link className="lib-chip" to={signedIn ? `/courses/${lab.id}` : "/login?signup=1"} title={where} aria-label={where}
+      style={{ "--lt": labTone(lab.id) } as CSSProperties}>
+      <span className="lib-chip-play" aria-hidden="true">▶</span>
+      <span className="lib-chip-name">{lab.title}</span>
+    </Link>
   );
 }
 
@@ -149,7 +164,7 @@ function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
         <h2>{item.title}</h2>
         <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
         {item.kind === "paper" && item.note && <p className="lib-why">{item.note}</p>}
-        <Badges item={item} />
+        <Badges item={item} topic />
         <div className="lib-actions">
           <ReadLink item={item} primary />
           <Practice item={item} labs={labs} signedIn={signedIn} />
@@ -161,13 +176,16 @@ function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
 
 function BookCard({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
   return (
-    <li className="lib-book">
-      <Cover item={item} />
+    <li className="lib-book" aria-label={item.title}>
+      {/* The cover already shows the title and the authors (owner, 24 November), so the card does not repeat them. */}
+      {item.url ? (
+        <a className="lib-cover-link" href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`${item.title}, by ${item.authors}`}>
+          <Cover item={item} />
+        </a>
+      ) : <Cover item={item} />}
       <div className="lib-card-body">
-        <h3>{item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
-        <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
         <Badges item={item} />
-        <Practice item={item} labs={labs} signedIn={signedIn} />
+        <PracticeChip item={item} labs={labs} signedIn={signedIn} />
       </div>
     </li>
   );
@@ -179,13 +197,13 @@ function PaperRow({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
       {item.image && <Picture item={item} className="lib-shot is-paper" />}
       <div className="lib-card-body">
         <p className="lib-year">{item.year ?? ""}</p>
-        <h3>{item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
+        <h3>{item.url ? <a className="lib-stretch" href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
         <p className="lib-by">{item.authors}</p>
         <p className="lib-why">{item.note}</p>
         <Badges item={item} />
         <div className="lib-actions">
           <ReadLink item={item} />
-          <Practice item={item} labs={labs} signedIn={signedIn} />
+          <PracticeChip item={item} labs={labs} signedIn={signedIn} />
         </div>
       </div>
     </li>
@@ -199,14 +217,14 @@ function BlogCard({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
       <div className="lib-blog-head">
         {!item.image && <Monogram item={item} />}
         <div>
-          <h3>{item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
+          <h3>{item.url ? <a className="lib-stretch" href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
           <p className="lib-by">{item.authors}</p>
         </div>
       </div>
       <Badges item={item} />
       <div className="lib-actions">
         <ReadLink item={item} />
-        <Practice item={item} labs={labs} signedIn={signedIn} />
+        <PracticeChip item={item} labs={labs} signedIn={signedIn} />
       </div>
     </li>
   );

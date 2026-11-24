@@ -41,6 +41,17 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await expect(page).toHaveURL(/tab=paper/);
   const papers = page.getByRole("list", { name: "Research papers" });
   await expect(papers.getByRole("link", { name: "Attention Is All You Need" })).toHaveAttribute("href", "https://arxiv.org/abs/1706.03762");
+  // The whole card opens the paper; the lab chip on it still opens the lab. "Free to read" is not shown (owner).
+  const card = papers.getByRole("listitem").first();
+  const at = async (target: import("@playwright/test").Locator) => {
+    await target.scrollIntoViewIfNeeded();
+    const box = (await target.boundingBox())!;
+    return page.evaluate(([x, y]) => (document.elementFromPoint(x, y)?.closest("a") as HTMLAnchorElement | null)?.getAttribute("href"),
+      [box.x + box.width / 2, box.y + box.height / 2]);
+  };
+  expect(await at(card)).toBe("https://arxiv.org/abs/1706.03762");
+  expect(await at(card.locator(".lib-chip"))).toMatch(/^\/courses\//);
+  await expect(page.getByText("Free to read", { exact: true })).toHaveCount(0);
   await page.getByRole("group", { name: /Filter research papers by topic/ }).getByRole("button", { name: /^Databases/ }).click();
   await expect(papers.getByRole("link", { name: "Attention Is All You Need" })).toHaveCount(0);
   await expect(papers.getByRole("listitem").first()).toBeVisible();

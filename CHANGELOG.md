@@ -28,6 +28,10 @@
 
 - Owner's later changes: the headline is now "Premium reads."; the row of counts under it is gone; books and blogs show
   no description (papers keep theirs; the text stays saved, and Admin > Library says "shown for research papers only").
+- Then: the long "Practise it hands-on" line on each card became one small chip in the lab's colour (the chapter shows
+  on hover; the Start here card keeps the full line); book cards show only the cover (it already shows the title and
+  authors), and the cover opens the book; whole paper and blog cards open the item, while their lab chip still opens
+  the lab; "Free to read" and the topic badge are gone from the cards (the topic filter stays).
 
 - Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to
   Read, and Tech Blogs to Read"; after the first version, "rubbish ui ... i want to market my lab via these sources",
