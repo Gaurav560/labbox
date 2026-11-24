@@ -1708,7 +1708,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 
 .course-syllabus h2 { margin: 36px 0 4px; font-size: 22px; }
 .course-syllabus > p { margin: 0 0 14px; }
-.course-map-title { margin: 22px 0 4px; font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 @media (max-width: 760px) {
   .course-hero { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
   .course-hero h1 { font-size: 30px; }

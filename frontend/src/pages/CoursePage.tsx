@@ -115,8 +115,7 @@ export default function CoursePage() {
         )}
 
         <section className="course-syllabus" aria-label="Chapters">
-          <h2>What you will learn</h2>
-          <h3 className="course-map-title">Skill map</h3>
+          <h2>Skill map</h2>
           <p className="muted">Every chapter on its line; each subtopic opens its lesson.</p>
           <MetroMap lines={lines} />
         </section>
