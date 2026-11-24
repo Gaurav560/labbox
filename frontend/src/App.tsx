@@ -1,5 +1,5 @@
-import { lazy, Suspense, type ReactNode } from "react";
-import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { lazy, Suspense, useLayoutEffect, type ReactNode } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigationType, useParams } from "react-router-dom";
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
 import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
@@ -50,8 +50,24 @@ function SkillsRedirect() {
   return <Navigate to={`/courses/${labId}`} replace />;
 }
 
+/**
+ * A new page opens at its top (owner, 25 November: pages "auto scroll downwards"). Without this, an in-app link keeps
+ * the old page's scroll position. Back and forward (POP) keep the browser's own restore; a #section link and a
+ * ?tab= change on the same page do not jump.
+ */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  const nav = useNavigationType();
+  useLayoutEffect(() => {
+    if (nav !== "POP" && !hash) window.scrollTo(0, 0);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
 export default function App() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<HomeOrDashboard />} />
       <Route path="/login" element={<LoginPage />} />
@@ -79,6 +95,7 @@ export default function App() {
       />
       <Route path="*" element={<Navigate to="/labs" replace />} />
     </Routes>
+    </>
   );
 }
 

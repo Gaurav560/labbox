@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November: pages open at their top
+
+- Owner: opening a course page jumped down to "You are here", and Premium Reads (signed out) opened scrolled down.
+  Two causes: the course map scrolled its current chapter into view, and an in-app link kept the old page's scroll
+  position. Now the map only marks "You are here", and a small `ScrollToTop` in `App.tsx` starts every new page at
+  its top (back and forward, #section links and ?tab= changes are left alone). New `e2e/scroll.spec.ts`.
+
 ## 25 November: home page menu: AI labs, Premium Reads, FAQs
 
 - Owner: "remove Inside a lab and Labs from the navbar. AI labs is good enough". The sections stay on the page
