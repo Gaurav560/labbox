@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: no Premium Reads in the footer; the lesson logo stands straight
+
+- Owner: "remove premium reads from footer". The footer links are FAQs, Privacy policy and Terms of Service;
+  Premium Reads stays in the menu. `e2e/scroll.spec.ts` now opens Premium Reads from the menu and Privacy policy
+  from the footer, both from the bottom of the home page, and checks they start at their top.
+- Owner: "do not tilt it or any icon. keep it straight and fixed", "for all". The faint logo behind the lesson
+  was turned 10 degrees; it is straight now. Done on master and `design/ukiyo`.
+
 ## 25 November: sign-up form without "Your first win is about three minutes away."
 
 - Owner: "remove this line". The sign-up form goes straight from "Create your account" to the fields; the log-in

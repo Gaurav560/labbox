@@ -2,13 +2,24 @@ import { expect, test } from "@playwright/test";
 
 // Owner, 25 November: a course page and Premium Reads must open at their top, not scrolled down to "You are here"
 // or to wherever the previous page was scrolled.
-test("Premium Reads opens at its top from the bottom of the home page", async ({ page }) => {
+test("pages opened from low on the home page start at their top", async ({ page }) => {
+  // Premium Reads from the menu, clicked while the home page is scrolled to the bottom.
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator("footer").getByRole("link", { name: "Premium Reads" })).toHaveCount(0); // not in the footer
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.evaluate(() => (document.querySelector('.home-nav a[href="/library"]') as HTMLElement).click());
+  await expect(page).toHaveURL(/\/library$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+  // A footer page.
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await page.locator("footer").getByRole("link", { name: "Premium Reads" }).click();
-  await expect(page).toHaveURL(/\/library$/);
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await page.locator("footer").getByRole("link", { name: "Privacy policy" }).click();
+  await expect(page).toHaveURL(/\/privacy$/);
   await page.waitForTimeout(800);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
