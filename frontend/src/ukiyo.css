@@ -299,32 +299,135 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .lib-btn-primary { border-radius: 4px; background: var(--text); color: var(--bg); }
 .lib-btn-primary:hover { background: var(--vermilion); color: #fff; }
 
-/* ---------- 10. the home page ---------- */
+/* ---------- 10. the home page (owner, 25 November: redesigned to match the inside) ---------- */
+/* styles.css gives .home its own dark palette; here every colour comes back from the Ukiyo tokens on :root. */
 .home, :root[data-theme="light"] .home {
+  --bg: inherit; --panel: inherit; --card: inherit; --text: inherit; --muted: inherit; --chip: inherit; --hover: inherit;
   --red: var(--vermilion); --red-deep: color-mix(in srgb, var(--vermilion) 80%, #000); --yellow: var(--gold); --ink: var(--text);
-  --bg: transparent; --panel: var(--card); --card: var(--card); --text: inherit; --border: var(--rule); --chip: var(--chip);
-  --accent: var(--vermilion); --success: var(--gold); --on-accent: #fff;
+  --border: var(--rule); --accent: var(--vermilion); --success: var(--gold); --on-accent: #fff; --brand-red: var(--vermilion);
   background: none; color: var(--text);
 }
-.home { --text: var(--text); }
-.home-header { background: color-mix(in srgb, var(--panel) 88%, transparent); border-bottom: 1px solid var(--rule); }
+.home::before, .home::after { display: none; }
+.home-header { background: var(--panel); backdrop-filter: none; border-bottom: 1px solid var(--rule); }
 .home-nav a { font-weight: 500; }
+.h-icon { border-radius: 4px; border-color: var(--rule); }
 .h-btn { border-radius: 4px; }
 .h-btn-primary, :root[data-theme="light"] .h-btn-primary { background: var(--vermilion); color: #fff; }
 .h-btn-primary:hover, :root[data-theme="light"] .h-btn-primary:hover { background: color-mix(in srgb, var(--vermilion) 85%, #000); }
 .h-btn-ghost { border-color: var(--text); }
-.hero h1, .h-section h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.03em; }
-.h-pill { border-radius: 2px; border-color: var(--rule); background: var(--card); }
-.h-strike { color: var(--muted); }
-/* the Great Wave, faint behind the hero (Hokusai, about 1831, public domain) */
-.h-hero-bg::after { width: 760px; height: 510px; left: auto; right: 6vw; top: 20px; transform: none; border-radius: 0;
-  background: url(/ukiyo/great-wave.webp) center / cover no-repeat; opacity: .14; filter: sepia(.2);
-  mask-image: radial-gradient(closest-side, #000 55%, transparent); }
-:root:not([data-theme="light"]) .h-hero-bg::after { opacity: .1; }
-.h-stats > div { border-left-color: var(--vermilion); }
-.h-stats strong { font-family: var(--font-serif); color: var(--text); font-weight: 600; }
-.home .h-lab, .home .h-lab-img { border-radius: 0; }
-.home .h-lab { border-color: var(--rule); background: var(--card); }
+.u-home main { width: min(1200px, 100% - 48px); margin: 0 auto; }
+.u-home h1, .u-home h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.025em; color: var(--text); }
+.u-home h2 em, .u-home h1 em { font-style: italic; font-weight: 400; }
+
+/* the hero: words on the left, a framed print on the right */
+.uh-hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center;
+  padding: clamp(40px, 7vw, 88px) 0 clamp(36px, 5vw, 64px); }
+.uh-hero h1 { font-size: clamp(42px, 5.6vw, 78px); line-height: 1.02; margin: 18px 0 22px; }
+.uh-dot { display: inline-block; width: 5px; height: 5px; margin: 0 8px 2px; background: var(--vermilion); transform: rotate(45deg); }
+.uh-brush { position: relative; color: var(--vermilion); white-space: nowrap; }
+.uh-brush svg { position: absolute; left: 0; right: 0; bottom: -.1em; width: 100%; height: .26em; overflow: visible; }
+.uh-brush path { fill: none; stroke: var(--vermilion); stroke-width: 5; stroke-linecap: round; opacity: .55;
+  stroke-dasharray: 220; stroke-dashoffset: 220; animation: h-draw .9s .4s ease-out forwards; }
+.uh-strike { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--vermilion); text-decoration-thickness: .06em; }
+.uh-lead { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 32em; margin: 0 0 30px; }
+.uh-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
+.uh-link { font-weight: 600; color: var(--text); border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+.uh-link:hover { text-decoration: none; border-color: var(--vermilion); color: var(--vermilion); }
+/* a print in a paper mat with a fine ink line, like a framed sheet */
+.uh-frame { padding: 10px; background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
+.uh-frame img { display: block; width: 100%; height: auto; outline: 1px solid #1b253322; }
+.uh-hero-print { margin: 0; }
+.uh-hero-print .u-print-credit { text-align: right; }
+
+/* logos on paper chips, the numbers between fine rules */
+.uh-strip { border-block: 1px solid var(--rule); padding: 16px 0; }
+.uh-strip .h-strip-track { gap: 18px; }
+.uh-strip .h-strip-logo { width: 52px; height: 52px; padding: 10px; background: #fffdf8; border: 1px solid var(--rule); }
+.uh-strip .h-strip-logo:hover { transform: none; }
+.uh-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--rule); }
+.uh-stats > div { display: grid; gap: 6px; padding: 30px 24px; }
+.uh-stats > div + div { border-left: 1px solid var(--rule); }
+.uh-stats strong { font: 600 clamp(34px, 4vw, 52px)/1 var(--font-serif); color: var(--text); }
+.uh-stats span { font: 600 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+/* sections: a kicker, a serif heading, a lead, then the content */
+.uh-section { padding: clamp(56px, 8vw, 96px) 0 0; }
+.uh-head { margin-bottom: 32px; }
+.uh-head h2 { font-size: clamp(32px, 4.2vw, 54px); line-height: 1.05; margin: 12px 0 14px; max-width: 18em; }
+.uh-section-lead { margin: 0; font-size: 17px; line-height: 1.65; color: var(--muted); max-width: 40em; }
+.h-launch { margin-left: 10px; padding: 2px 7px; border-radius: 2px; background: var(--vermilion); color: #fff;
+  font: 600 10px var(--font-code); letter-spacing: .12em; vertical-align: 1px; }
+
+/* inside a lab: the screenshot, then the tour beside six ruled features */
+.u-home .h-shot { border-radius: 4px; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
+.u-home .h-shot::before, .u-home .h-shot::after { display: none; }
+.uh-inside-below { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+.u-home .tour { border-radius: 4px; border: 1px solid var(--rule); overflow: hidden; }
+.uh-feats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--text); }
+.uh-feats li { padding: 18px 18px 20px 0; border-bottom: 1px solid var(--rule); }
+.uh-feats li:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--rule); }
+.uh-feat-n { font: 600 11px var(--font-code); letter-spacing: .1em; color: var(--vermilion); }
+.uh-feats h3 { margin: 6px 0 6px; font: 600 19px/1.25 var(--font-serif); }
+.uh-feats p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+
+/* the AI track: the pagoda print beside the heading, then a ladder of four stages */
+.uh-ai-head { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: end; margin-bottom: 36px; }
+.uh-ai-print { margin: 0; }
+.uh-ai-head .uh-head { margin-bottom: 0; }
+.uh-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--text); }
+.uh-ladder { gap: 0; }
+.uh-ladder > li.h-ai-stage { display: block; padding: 20px 22px 24px; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0;
+  background: none; box-shadow: none; }
+.uh-ladder > li.h-ai-stage:hover { border-color: var(--rule); }
+.uh-ladder > li.h-ai-stage:first-child { padding-left: 0; }
+.uh-ladder > li + li.h-ai-stage { border-left: 1px solid var(--rule); }
+.uh-stage { font: 600 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--vermilion); }
+.uh-ladder h3 { margin: 8px 0 8px; font: 600 24px/1.15 var(--font-serif); }
+.uh-ladder > li > p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+.uh-stage-labs { list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px dashed var(--rule); display: grid; gap: 7px; }
+.uh-stage-labs li { font-size: 14px; padding-left: 14px; position: relative; }
+.uh-stage-labs li::before { content: ""; position: absolute; left: 0; top: .55em; width: 6px; height: 1px; background: var(--vermilion); }
+
+/* labs: the dashboard's directory */
+.uh-labs .u-group { margin-top: 28px; }
+
+/* the closing panel: a print and one line */
+.uh-final { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center;
+  margin-top: clamp(64px, 9vw, 112px); padding: clamp(28px, 4vw, 48px); background: var(--card); border: 1px solid var(--rule);
+  border-top: 3px solid var(--vermilion); }
+.uh-final-print { margin: 0; }
+.uh-final-text h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.05; margin: 12px 0 14px; }
+.uh-final-text p:not(.u-kicker) { margin: 0 0 26px; font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 28em; }
+
+/* FAQs: fine rules, a thin plus that turns into a minus */
+.u-home .h-faq-intro h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.05; margin: 12px 0 14px; }
+.u-home .h-faq { border-top: 2px solid var(--text); }
+.u-home .h-faq-item[open] { background: none; }
+.u-home .h-faq-item::before { width: 2px; }
+.u-home .h-faq-item summary { border-radius: 0; font: 600 18px/1.35 var(--font-serif); letter-spacing: 0; }
+.u-home .h-faq-icon { border: 0; border-radius: 0; width: 18px; height: 18px; }
+.u-home .h-faq-item[open] .h-faq-icon { transform: none; background: none; }
+.u-home .h-faq-item[open] .h-faq-icon::after { transform: scaleY(0); }
+.u-home .h-faq-icon::after { transform: rotate(90deg); transition: transform .3s ease; }
+.home-footer { margin-top: clamp(56px, 8vw, 96px); border-top: 1px solid var(--rule); }
+
+@media (max-width: 900px) {
+  .uh-hero, .uh-inside-below, .uh-ai-head, .uh-final { grid-template-columns: 1fr; }
+  .uh-hero-print { max-width: 560px; }
+  .uh-ai-print { max-width: 420px; }
+  .uh-stats { grid-template-columns: 1fr 1fr; }
+  .uh-stats > div:nth-child(3) { border-left: 0; }
+  .uh-stats > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .uh-ladder { grid-template-columns: 1fr 1fr; }
+  .uh-ladder > li.h-ai-stage:nth-child(3) { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 560px) {
+  .u-home main { width: calc(100% - 32px); }
+  .uh-ladder, .uh-feats { grid-template-columns: 1fr; }
+  .uh-ladder > li.h-ai-stage { padding-left: 0; border-left: 0; }
+  .uh-feats li:nth-child(even) { padding-left: 0; border-left: 0; }
+  .uh-stats > div { padding: 22px 14px; }
+}
 
 /* ---------- 11. login and sign-up: Red Fuji on the left, a paper card on the right ---------- */
 .auth, :root[data-theme="light"] .auth { background: var(--bg); }

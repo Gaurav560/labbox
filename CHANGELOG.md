@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November (Ukiyo): the home page redesigned to match the inside
+
+- Owner: "redesign the home page. The inside part looks cool; the home page looks off". It mixed the old design's
+  pieces (yellow highlights, rounded cards, a pink gradient banner, cover-art lab cards) with the new colours.
+  Now: a framed Red Fuji (Hokusai, public domain) beside the headline with a vermilion brush underline; logos on
+  paper chips; the numbers between fine rules; the lab screenshot, then the tour beside six ruled features (no
+  icon bubbles); the AI track as a ladder of four stages under the pagoda picture, every planned lab listed; the
+  dashboard's own category tiles and lab rows (one shared component, `UkiyoDirectory.tsx`), replacing both "Pick
+  a lab" and "Also on LabBox"; a closing paper panel with Hiroshige's Nihonbashi ("Your machine is ready when you
+  are", no "first win" line); FAQs with a thin plus and minus. Fixed on the way: the home page's colour variables
+  referred to themselves, which hid the selected "All labs" label in dark mode.
+
 ## 25 November (Ukiyo): AI shows the pagoda, Languages the brushed sun
 
 - Owner: "for ai use kathmandu image". The two category pictures swap: AI is the vermilion pagoda, Languages the

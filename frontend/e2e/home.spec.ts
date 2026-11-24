@@ -12,16 +12,26 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The logo, as a link home and as the favicon.
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
-  // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
-  await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
+  // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
+  await expect(page.locator(".uh-hero-print img")).toBeVisible();
+  await expect(page.locator(".uh-hero-print figcaption")).toContainText("Hokusai");
+  // The catalog comes from the server, shown as the dashboard's directory: category tiles and lab rows.
+  await expect(page.locator("#labs .u-cat", { hasText: "Languages" })).toContainText(/\d+/);
+  await expect(page.locator("#category-languages .u-row").first()).toHaveAttribute("class", /u-row/);
+  await expect(page.locator("#category-languages .u-row-link").first()).toHaveAttribute("href", "/login?signup=1");
   // The AI track is the headline, honestly marked as launching, with its 24 planned labs.
   await expect(page.locator("#ai .h-launch")).toHaveText("Launching");
   await expect(page.locator("#ai .h-ai-stage")).toHaveCount(4);
   await expect(page.locator("#ai-title")).toContainText("24 labs");
   await expect(page.locator("#inside .h-shot img")).toBeVisible();
-  await expect(page.locator(".track-chip", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
-  await expect(page.locator(".live-labs")).toContainText(/^Live now: .+/);  // first few titles, then "and N more"
-  await expect(page.locator(".track-chip", { hasText: "Databases" })).toContainText(/\d+ labs?/);
+  await expect(page.locator("#category-devops .u-group-count")).toHaveText(/\d+ labs?/);
+  // A category tile narrows the directory to that category.
+  await page.locator("#labs .u-cat", { hasText: "Databases" }).click();
+  await expect(page.locator("#labs .u-group")).toHaveCount(1);
+  await expect(page.locator("#category-databases .u-row").first()).toBeVisible();
+  // The four AI stages list every planned lab; the closing panel has no "first win" line.
+  await expect(page.locator("#ai .h-ai-stage").first().locator(".uh-stage-labs li")).toHaveCount(6);
+  await expect(page.locator(".uh-final")).not.toContainText("first win");
 
   // The hero tour plays the four lesson moves; picking a step shows it and pauses.
   const tour = page.getByRole("region", { name: "A short tour of a LabBox lab" });
@@ -39,7 +49,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".home-footer").getByRole("link", { name: "FAQs" })).toHaveCount(0);
 
   // Start free goes to sign up (Enter signs up), then onboarding.
-  await page.locator(".hero").getByRole("link", { name: "Start free →" }).click();
+  await page.locator(".uh-hero").getByRole("link", { name: "Start free →" }).click();
   await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   await page.getByLabel("Username").fill(`home${Date.now() % 1_000_000_000}`);
   await page.getByLabel("Password").fill("secret123");
