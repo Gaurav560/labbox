@@ -4,8 +4,7 @@ import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
-import HeroTour from "../components/HeroTour";
-import { AiTrack, HomeFaq, InsideLab } from "../components/HomeSections";
+import { HomeFaq } from "../components/HomeSections";
 import { byCategory, Directory } from "../components/UkiyoDirectory";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
@@ -72,7 +71,6 @@ export default function HomePage() {
             <p className="uh-lead">Hands-on AI labs on your own machine in the browser: call real models, build RAG search and agents, write evals, with a guide checking every step. And the engineering around them: system design, languages, databases and DevOps.</p>
             <div className="uh-cta">
               {cta}
-              <a className="uh-link" href="#inside">See inside a lab →</a>
             </div>
           </div>
           <figure className="uh-hero-print">
@@ -90,14 +88,6 @@ export default function HomePage() {
           <div><strong>24</strong><span>AI labs on the way</span></div>
         </section>
 
-        <section id="inside" className="uh-section" aria-labelledby="inside-title">
-          <header className="uh-head">
-            <p className="u-kicker">Inside a lab</p>
-            <h2 id="inside-title">Not exercises. <em>Real systems.</em></h2>
-          </header>
-          <InsideLab tour={<HeroTour />} />
-        </section>
-
         <section id="ai" className="uh-section uh-ai" aria-labelledby="ai-title">
           <div className="uh-ai-head">
             <figure className="uh-ai-print">
@@ -106,10 +96,9 @@ export default function HomePage() {
             <header className="uh-head">
               <p className="u-kicker">AI labs <span className="h-launch">Launching</span></p>
               <h2 id="ai-title">24 labs, from your first model call to <em>your own GPT.</em></h2>
-              <p className="uh-section-lead">Four stages, each lab a real build on your own machine with real models. The AI track is being crafted now; these are the labs it launches with.</p>
+              <p className="uh-section-lead">Each lab is a real build on your own machine with real models: model calls, RAG search, agents, evals. The AI track is being crafted now.</p>
             </header>
           </div>
-          <AiTrack />
         </section>
 
         {live.length > 0 && (

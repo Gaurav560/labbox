@@ -21,27 +21,16 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator("#category-languages .u-row-link").first()).toHaveAttribute("href", "/login?signup=1");
   // The AI track is the headline, honestly marked as launching, with its 24 planned labs.
   await expect(page.locator("#ai .h-launch")).toHaveText("Launching");
-  await expect(page.locator("#ai .h-ai-stage")).toHaveCount(4);
+  await expect(page.locator("#ai .h-ai-stage")).toHaveCount(0); // the stage ladder is gone (owner, 25 November)
   await expect(page.locator("#ai-title")).toContainText("24 labs");
-  await expect(page.locator("#inside .h-shot img")).toBeVisible();
+  await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
   await expect(page.locator("#category-devops .u-group-count")).toHaveText(/\d+ labs?/);
   // A category tile narrows the directory to that category.
   await page.locator("#labs .u-cat", { hasText: "Databases" }).click();
   await expect(page.locator("#labs .u-group")).toHaveCount(1);
   await expect(page.locator("#category-databases .u-row").first()).toBeVisible();
-  // The four AI stages list every planned lab; the closing panel has no "first win" line.
-  await expect(page.locator("#ai .h-ai-stage").first().locator(".uh-stage-labs li")).toHaveCount(6);
+  // The closing panel has no "first win" line.
   await expect(page.locator(".uh-final")).not.toContainText("first win");
-
-  // The hero tour plays the four lesson moves; picking a step shows it and pauses.
-  const tour = page.getByRole("region", { name: "A short tour of a LabBox lab" });
-  await expect(tour.getByRole("tab", { name: /Read a little/ })).toHaveAttribute("aria-selected", "true");
-  await tour.getByRole("tab", { name: /Get instant feedback/ }).click();
-  await expect(tour.locator(".tour-pass")).toBeVisible();
-  await expect(tour.locator(".tour-xp")).toContainText(/\+\d+ XP/);
-  await expect(tour.getByRole("button", { name: "Play the tour" })).toBeVisible();
-  await tour.getByRole("button", { name: "Turn sound on" }).click();
-  await expect(tour.getByRole("button", { name: "Turn sound off" })).toHaveAttribute("aria-pressed", "true");
 
   // FAQs sit just above the footer, and the footer itself no longer links to them.
   await page.locator(".h-faq-item summary", { hasText: "Do I need an API key" }).click();

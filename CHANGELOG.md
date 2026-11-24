@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): home page without "Inside a lab" and the AI stage ladder
+
+- Owner: "remove this portion" (the whole Inside a lab section: heading, screenshot, tour and features, so the hero's
+  "See inside a lab" link went too) and "this one also" (the four AI stages). The AI section keeps the pagoda
+  picture, the heading and one line.
+
 ## 25 November (Ukiyo): home page without the logo strip
 
 - Owner: "remove this from home page" (the moving row of technology logos). The numbers now sit right under the hero,
