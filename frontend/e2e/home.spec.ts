@@ -15,8 +15,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
   await expect(page.locator(".uh-hero-bg")).toHaveCSS("background-image", /red-fuji/);
   await expect(page.locator(".uh-hero-credit")).toContainText("Hokusai");
-  // The catalog comes from the server: one card per category with a few titles, not every lab (owner, 25 November).
-  const languages = page.locator("#labs .uh-cat-card", { hasText: "Languages" });
+  // The catalog comes from the server: a folding screen, one panel per category, not every lab (owner, 25 November).
+  const languages = page.locator("#labs .uh-panel", { hasText: "Languages" });
   await expect(languages).toContainText(/\d+ labs/);
   await expect(languages).toHaveAttribute("href", "/login?signup=1");
   await expect(page.locator("#labs .u-row")).toHaveCount(0);
@@ -26,7 +26,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator("#ai .h-ai-stage")).toHaveCount(0); // the stage ladder is gone (owner, 25 November)
   await expect(page.locator("#ai-title")).toContainText("24 labs");
   await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
-  await expect(page.locator("#labs .uh-cat-card", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
+  await expect(page.locator("#labs .uh-panel", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   // The closing panel has no "first win" line.
   await expect(page.locator(".uh-final")).not.toContainText("first win");
 

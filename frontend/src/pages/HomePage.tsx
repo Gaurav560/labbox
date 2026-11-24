@@ -100,23 +100,28 @@ export default function HomePage() {
               <h2 id="labs-title">Pick a lab. <em>Start in a minute.</em></h2>
               <p className="uh-section-lead">{live.length} labs in {groups.length} categories, from your first line of Python to a system under load. Every one runs in a real machine.</p>
             </header>
-            {/* One card per category, not every lab (owner, 25 November: "remove most of them, find a different way") */}
-            <ul className="uh-cats">
-              {groups.map((g) => (
-                <li key={g.id} style={{ "--ink": TRACK_INK[g.id] ?? "var(--text)" } as CSSProperties}>
-                  <Link to={allLabs} className="uh-cat-card">
-                    <span className="uh-cat-art" aria-hidden="true"><TrackArt track={g.id} /></span>
-                    <span className="uh-cat-body">
-                      <span className="uh-cat-head">
-                        <strong>{TRACK_LABEL[g.id] ?? g.id}</strong>
-                        <span className="uh-cat-count">{g.labs.length} lab{g.labs.length === 1 ? "" : "s"}</span>
-                      </span>
-                      <span className="uh-cat-labs">{g.labs.slice(0, 3).map((l) => l.title).join(" · ")}{g.labs.length > 3 ? " and more" : ""}</span>
+            {/* A folding screen: one tall panel per category; the one under the pointer opens wider and lists its labs
+                (owner, 25 November, picked from eight layouts) */}
+            <div className="uh-screen">
+              {groups.map((g, i) => {
+                const label = TRACK_LABEL[g.id] ?? g.id;
+                const n = `${g.labs.length} lab${g.labs.length === 1 ? "" : "s"}`;
+                return (
+                  <Link key={g.id} to={allLabs} className="uh-panel" aria-label={`${label}: ${n}`}
+                    style={{ "--ink": TRACK_INK[g.id] ?? "var(--text)" } as CSSProperties}>
+                    <span className="uh-panel-art" aria-hidden="true"><TrackArt track={g.id} /></span>
+                    <span className="uh-panel-shade" aria-hidden="true" />
+                    <span className="uh-panel-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="uh-panel-name" aria-hidden="true">{label}</span>
+                    <span className="uh-panel-open" aria-hidden="true">
+                      <strong>{label}</strong>
+                      <span className="uh-panel-count">{n}</span>
+                      <ul>{g.labs.slice(0, 5).map((l) => <li key={l.id}>{l.title}</li>)}</ul>
                     </span>
                   </Link>
-                </li>
-              ))}
-            </ul>
+                );
+              })}
+            </div>
             <p className="uh-all"><Link to={allLabs}>See all {live.length} labs →</Link></p>
           </section>
         )}

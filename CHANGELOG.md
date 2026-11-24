@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): the folding screen on the home page
+
+- Owner picked layout 2 of the eight ("done this"). The home page's categories are now a folding screen: six tall
+  panels, one per category, each with its print, a red number and its name written vertically; the panel under the
+  pointer opens wider and lists up to five of its labs. On phones the panels stack as rows. The review page
+  `/ukiyo/layouts` is removed.
+
 ## 25 November (Ukiyo): eight category layouts to compare at /ukiyo/layouts
 
 - Owner: "in how many ways can you put this content? ... I want to see all one by one". A review page (not linked
