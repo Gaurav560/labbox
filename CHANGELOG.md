@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): eight category layouts to compare at /ukiyo/layouts
+
+- Owner: "in how many ways can you put this content? ... I want to see all one by one". A review page (not linked
+  from the app) shows the same live categories eight ways, numbered, with a jump menu and the theme switch: 1 card
+  grid (the home page now), 2 folding screen, 3 editorial index, 4 feature and list, 5 gallery wall, 6 hand scroll,
+  7 tabs, 8 uneven grid. The owner picks one for the home page; the page then goes.
+
 ## 25 November: a light and dark switch on the login page
 
 - Owner: "give the option of light and dark theme on this page". The login and sign-up card has the same switch as
