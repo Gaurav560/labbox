@@ -63,7 +63,6 @@ function SectionTile({ kind, label, items, active, onPick }: {
       </span>
       <span className="lib-tile-head">
         <span className="lib-tile-icon"><SectionIcon kind={kind} /></span>
-        <span className="lib-tile-kicker">{items.length} hand-picked</span>
       </span>
       <span className="lib-tile-text">
         <span className="lib-tile-name">{label}</span>

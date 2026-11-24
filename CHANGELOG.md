@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: Premium Reads tiles without the item count
+
+- Owner: remove "21 hand-picked", "17 hand-picked" and "39 hand-picked" from the section tiles. Each tile now shows
+  only its icon, name, line and the "Last updated" pill. Done on master and on `design/ukiyo`.
+
 ## 24 November: a second design to compare, "Ukiyo" (branch design/ukiyo, http://localhost:5174)
 
 - Owner: "make two copies of the same website, just different UI, so that I can judge which UI to keep", with a brief
