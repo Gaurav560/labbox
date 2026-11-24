@@ -394,7 +394,7 @@ function LibraryForm({ start, labs, image, onSave, onCancel, onRemoveImage }: {
         </label>
         {image && !picture && onRemoveImage && <button className="btn btn-small" type="button" onClick={onRemoveImage}>Remove the picture</button>}
       </div>
-      <label className="lib-form-wide">Why read it
+      <label className="lib-form-wide">Why read it (shown for research papers only)
         <textarea maxLength={1000} rows={3} value={item.note} onChange={(e) => set("note", e.target.value)} />
       </label>
       {error && <p className="adm-error lib-form-wide" role="alert">{error}</p>}

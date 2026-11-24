@@ -142,7 +142,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 
 - **Dashboard by category** (23 November): `/labs` groups labs as AI, Languages, Frameworks, System design,
   Databases, DevOps, then Cloud and AWS (coming soon), with jump chips; full courses first in each.
-- **Library** (24 November, owner): `/library`, public, "Read what the builders read.": Books, Research papers and Tech
+- **Library** (24 November, owner): `/library`, public, "Premium reads.": Books, Research papers and Tech
   blogs with real pictures stored in LabBox (covers, first pages, blog views), a "Start here" pick per section, topic
   filters, levels, "free to read", and a "Practise it hands-on" link to the lab and chapter for every item. Linked from
   the home page, every footer and the dashboard. Admins edit everything, including pictures, in Admin > Library. The

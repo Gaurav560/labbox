@@ -22,7 +22,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
 
   // A visitor, with no account: the page, a Start here pick, links to the labs that practise each idea, Start free.
   await page.goto("/library");
-  await expect(page.getByRole("heading", { level: 1, name: "Read what the builders read." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
   await expect(page.getByRole("article", { name: "Start here: AI Engineering" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Start free" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /^Practise it hands-on/ }).first()).toHaveAttribute("href", "/login?signup=1");
@@ -32,7 +32,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await page.goto("/labs");
   await page.getByRole("link", { name: "Library" }).click();
   await expect(page).toHaveURL(/\/library$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Read what the builders read." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Practise it hands-on/ }).first()).toHaveAttribute("href", /^\/courses\//);
   await expect(page.getByRole("link", { name: "Edit the library" })).toHaveCount(0);
   const tabs = page.getByRole("navigation", { name: "Library sections" });
@@ -58,7 +58,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
     await form.getByLabel("Title").fill(title);
     await form.getByLabel("Link").fill("https://example.org/");
     await form.getByLabel("Topic").fill("Testing");
-    await form.getByLabel("Why read it").fill("Added by the browser test.");
+    await form.getByLabel(/^Why read it/).fill("Added by the browser test.");
     // A picture, as an admin would upload a cover: a tiny PNG, stored by LabBox as WebP.
     const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
     await form.getByLabel(/^Picture/).setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: png });
@@ -67,7 +67,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
 
     await page.goto("/library?tab=blog");
     await expect(page.getByRole("link", { name: title })).toBeVisible();
-    await expect(page.getByText("Added by the browser test.")).toBeVisible();
+    await expect(page.getByText("Added by the browser test.")).toHaveCount(0);  // blogs show no description
     await expect(page.getByRole("img", { name: `The ${title} home page` })).toHaveAttribute("src", /^\/api\/library\/images\/upload-/);
 
     await page.goto("/admin?tab=library");

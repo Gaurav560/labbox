@@ -148,7 +148,7 @@ function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
         <span className="lib-start">Start here</span>
         <h2>{item.title}</h2>
         <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
-        <p className="lib-why">{item.note}</p>
+        {item.kind === "paper" && item.note && <p className="lib-why">{item.note}</p>}
         <Badges item={item} />
         <div className="lib-actions">
           <ReadLink item={item} primary />
@@ -166,7 +166,6 @@ function BookCard({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
       <div className="lib-card-body">
         <h3>{item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h3>
         <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
-        <p className="lib-why">{item.note}</p>
         <Badges item={item} />
         <Practice item={item} labs={labs} signedIn={signedIn} />
       </div>
@@ -204,7 +203,6 @@ function BlogCard({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
           <p className="lib-by">{item.authors}</p>
         </div>
       </div>
-      <p className="lib-why">{item.note}</p>
       <Badges item={item} />
       <div className="lib-actions">
         <ReadLink item={item} />
@@ -228,17 +226,14 @@ export default function LibraryPage() {
     library.list().then(setItems).catch((e) => setError(e instanceof ApiError ? e.message : String(e)));
     api.catalog().then((all) => setLabs(new Map(all.map((l) => [l.id, l])))).catch(() => setLabs(new Map()));
   }, []);
-  useEffect(() => { document.title = "Library: books, papers and blogs | LabBox by Telusko"; }, []);
+  useEffect(() => { document.title = "Premium reads: books, papers and blogs | LabBox by Telusko"; }, []);
 
-  const count = (k: LibraryKind) => (items ?? []).filter((i) => i.kind === k).length;
   const ofKind = useMemo(() => (items ?? []).filter((i) => i.kind === kind), [items, kind]);
   const topics = useMemo(() => [...new Set(ofKind.map((i) => i.topic).filter(Boolean))], [ofKind]);
   const filtered = topic && topics.includes(topic) ? ofKind.filter((i) => i.topic === topic) : ofKind;
   const featured = topic ? undefined : ofKind.find((i) => i.featured);
   const rest = filtered.filter((i) => i !== featured);
   const [, title, intro] = LIBRARY_TABS.find(([k]) => k === kind)!;
-  const free = (items ?? []).filter((i) => i.free).length;
-  const practised = (items ?? []).filter((i) => i.lab && labs.has(i.lab)).length;
 
   return (
     <div className="lib-page">
@@ -263,20 +258,11 @@ export default function LibraryPage() {
       <main className="lib-main">
         <section className="lib-hero" aria-labelledby="lib-title">
           <span className="lib-kicker">The LabBox Library</span>
-          <h1 id="lib-title">Read what the builders read.</h1>
+          <h1 id="lib-title">Premium reads.</h1>
           <p className="lib-sub">
-            Hand-picked books, research papers and engineering blogs behind every LabBox course. Each pick tells you,
-            in plain words, why it is worth your time, and which lab lets you build the idea yourself.
+            The books, research papers and engineering blogs behind every LabBox course, hand-picked, with the lab
+            that lets you build each idea yourself.
           </p>
-          {items && (
-            <ul className="lib-stats" aria-label="In the library">
-              <li><strong>{count("book")}</strong> books</li>
-              <li><strong>{count("paper")}</strong> research papers</li>
-              <li><strong>{count("blog")}</strong> tech blogs</li>
-              <li><strong>{free}</strong> free to read</li>
-              {practised > 0 && <li><strong>{practised}</strong> you can practise in a lab</li>}
-            </ul>
-          )}
         </section>
 
         <nav className="lib-tiles" aria-label="Library sections">

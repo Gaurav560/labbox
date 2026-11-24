@@ -26,6 +26,9 @@
 
 ## 24 November: the Library (books, research papers, tech blogs), a public page
 
+- Owner's later changes: the headline is now "Premium reads."; the row of counts under it is gone; books and blogs show
+  no description (papers keep theirs; the text stays saved, and Admin > Library says "shown for research papers only").
+
 - Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to
   Read, and Tech Blogs to Read"; after the first version, "rubbish ui ... i want to market my lab via these sources",
   then "use the real images for book, papers and blogs". Owner's choices: public, real pictures.
