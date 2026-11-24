@@ -63,9 +63,9 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 - Category prints are original SVG, flat colour blocks with a paper grain (`components/UkiyoArt.tsx`): Frameworks
   bamboo, Databases river, DevOps mountains, System design a red arched bridge, Cloud clouds.
-- AI and Languages use two pictures the owner chose on 25 November (`public/ukiyo/tracks/`, `TRACK_IMAGES`): a
-  brushed red sun over an ink wave, and a vermilion pagoda among snowy cedars (a shin-hanga print dated Showa 26,
-  1951). **Before launch, confirm the licence of both**: the sun looks like a stock graphic, and a 1951 print is
+- AI and Languages use two pictures the owner chose on 25 November (`public/ukiyo/tracks/`, `TRACK_IMAGES`): AI is
+  a vermilion pagoda among snowy cedars (a shin-hanga print dated Showa 26, 1951; the owner's `kathmandu.jpeg`),
+  Languages a brushed red sun over an ink wave. **Before launch, confirm the licence of both**: the sun looks like a stock graphic, and a 1951 print is
   probably still in copyright. If either cannot be licensed, the drawn SVG versions are in git history
   (commit 49cba89).
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the

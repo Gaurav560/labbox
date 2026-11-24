@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): AI shows the pagoda, Languages the brushed sun
+
+- Owner: "for ai use kathmandu image". The two category pictures swap: AI is the vermilion pagoda, Languages the
+  brushed red sun over an ink wave.
+
 ## 25 November: Premium Reads featured card without "Start here"
 
 - Owner: "remove start here from this card". The first pick of each section (AI Engineering, Attention Is All You

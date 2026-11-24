@@ -181,10 +181,10 @@ function CloudPrint() {
 }
 
 /**
- * Two categories use pictures the owner chose (25 November): AI the brushed red sun over an ink wave, Languages the
- * vermilion pagoda among snowy cedars. Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
+ * Two categories use pictures the owner chose (25 November): AI the vermilion pagoda among snowy cedars (owner: "for
+ * ai use kathmandu image"), Languages the brushed red sun over an ink wave. Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
  */
-const TRACK_IMAGES: Record<string, string> = { ai: "/ukiyo/tracks/ai.webp", languages: "/ukiyo/tracks/languages.webp" };
+const TRACK_IMAGES: Record<string, string> = { ai: "/ukiyo/tracks/ai-pagoda.webp", languages: "/ukiyo/tracks/languages-sun.webp" };
 
 const PRINTS: Record<string, () => JSX.Element> = {
   frameworks: FrameworksPrint, databases: DatabasesPrint,
