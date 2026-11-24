@@ -86,9 +86,7 @@ export default function HomePage() {
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#inside">Inside a lab</a>
           <a href="#ai">AI labs</a>
-          <a href="#labs">Labs</a>
           <Link to="/library">Premium Reads</Link>
           <a href="#faq">FAQs</a>
         </nav>

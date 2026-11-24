@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: home page menu: AI labs, Premium Reads, FAQs
+
+- Owner: "remove Inside a lab and Labs from the navbar. AI labs is good enough". The sections stay on the page
+  ("See inside a lab" in the hero still jumps to the demo). Done on master and `design/ukiyo`.
+
 ## 25 November (Ukiyo): a real woodblock print for every lab
 
 - Owner: "for every language, there is this same image, pick some classy unique images for each one of the lab. and
