@@ -147,3 +147,109 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .u-gallery figure { margin: 0; }
 .u-gallery figure > div { aspect-ratio: 5 / 3; border: 1px solid var(--rule); overflow: hidden; }
 .u-gallery figcaption { margin-top: 10px; display: flex; justify-content: space-between; font-size: 14px; }
+
+/* ---------- 7. the dashboard (/labs) ---------- */
+.u-dash { max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; }
+.u-dash-head { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: start; margin-bottom: 32px; }
+.u-dash-head .u-vertical { padding-top: 4px; border-right: 1px solid var(--rule); padding-right: 12px; min-height: 120px; }
+.u-dash-title { margin: 8px 0 10px; font-size: clamp(34px, 4.6vw, 56px); line-height: 1.04; font-weight: 600; }
+.u-dash-title em { font-style: italic; font-weight: 400; color: var(--vermilion); }
+.u-dash-sub { margin: 0; max-width: 60ch; color: var(--muted); font-size: 16px; }
+
+/* the next step, as an editorial feature */
+.u-feature { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 0; margin-bottom: 28px;
+  border: 1px solid var(--rule); background: var(--card); }
+.u-feature-art { position: relative; min-height: 300px; border-right: 1px solid var(--rule); overflow: hidden; }
+.u-feature-art .u-print { position: absolute; inset: 0; }
+.u-feature-seal { position: absolute; right: 16px; bottom: 16px; }
+.u-feature-text { padding: 30px 34px 26px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.u-feature .u-kicker { color: var(--ink); }
+.u-feature-title { margin: 0; font-size: clamp(30px, 3.4vw, 44px); line-height: 1.05; }
+.u-feature-where { margin: 0; color: var(--muted); font-size: 15px; }
+.u-feature-where strong { color: var(--text); font-weight: 600; }
+.u-feature-reason { margin: 0; font-size: 15px; }
+.u-feature .u-ink { max-width: 420px; }
+.u-feature-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
+.u-feature-actions .btn { white-space: nowrap; }
+.u-feature-go { padding: 11px 24px; font-size: 15px; }
+.u-ladder { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.u-rung { width: 30px; height: 30px; display: grid; place-items: center; font: 600 11.5px var(--font-code); color: var(--muted);
+  border: 1px solid var(--rule); text-decoration: none; transition: border-color var(--t-soft), color var(--t-soft); }
+.u-rung:hover { text-decoration: none; border-color: var(--text); color: var(--text); }
+.u-rung.is-done { background: var(--text); border-color: var(--text); color: var(--bg); }
+.u-rung.is-now { background: var(--vermilion); border-color: var(--vermilion); color: #fff; }
+
+/* the drill, quieter */
+.u-dash .drill-card { background: var(--card); border: 1px solid var(--rule); border-radius: 0; margin-bottom: 40px; }
+.u-dash .drill-head h2 { font-size: 24px; }
+
+/* a section heading with a rule running to the edge */
+.u-section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+.u-section-head h2 { margin: 0; font-size: 34px; }
+.u-rule-fill { flex: 1; height: 1px; background: var(--rule); transform: translateY(-8px); }
+
+/* categories: compact tiles with their print */
+.u-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; margin-bottom: 36px; }
+.u-cat { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 2px 8px; min-height: 104px;
+  padding: 10px 12px; text-align: left; font: inherit; color: var(--text); cursor: pointer; overflow: hidden;
+  background: var(--card); border: 1px solid var(--rule); border-radius: 0; transition: border-color var(--t-soft), transform var(--t-soft); }
+.u-cat-art { position: absolute; inset: 0 0 46px 0; overflow: hidden; border-bottom: 1px solid var(--rule); }
+.u-cat-art .u-print { transition: transform .6s ease; }
+.u-cat:hover .u-cat-art .u-print { transform: scale(1.06); }
+.u-cat-name { position: relative; font: 600 14px var(--font-text); grid-column: 1; align-self: end; }
+.u-cat-count { position: relative; font: 600 12px var(--font-code); color: var(--muted); grid-column: 2; }
+.u-cat-motif { position: relative; grid-column: 1 / -1; font-size: 11px; color: var(--muted); display: none; }
+.u-cat:hover { border-color: var(--text); }
+.u-cat[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 -3px 0 var(--ink, var(--vermilion)); }
+.u-cat.is-all { align-content: end; background: var(--text); color: var(--bg); border-color: var(--text); }
+.u-cat.is-all .u-cat-name { font: 600 22px/1.1 var(--font-serif); }
+.u-cat.is-all .u-cat-count { color: color-mix(in srgb, var(--bg) 70%, transparent); }
+.u-cat.is-all[aria-pressed="false"] { background: var(--card); color: var(--text); border-color: var(--rule); }
+.u-cat.is-all[aria-pressed="false"] .u-cat-count { color: var(--muted); }
+.u-cat.is-all[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--vermilion); }
+.u-cat.is-soon { color: var(--muted); }
+.u-cat.is-soon .u-cat-art { filter: grayscale(.7) opacity(.7); }
+
+/* the directory, grouped by category */
+.u-group { scroll-margin-top: 80px; }
+.u-group + .u-group { margin-top: 44px; }
+.u-group-title { display: flex; align-items: center; gap: 14px; margin: 0 0 6px; padding-bottom: 12px; border-bottom: 2px solid var(--text); }
+.u-group-art { width: 64px; height: 38px; flex: none; overflow: hidden; border: 1px solid var(--rule); }
+.u-group-name { font: 600 26px/1.1 var(--font-serif); letter-spacing: -0.015em; }
+.u-group-count { margin-left: auto; font: 600 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.u-rows { list-style: none; margin: 0; padding: 0; }
+.u-row { border-bottom: 1px solid var(--rule); }
+.u-row-link { display: grid; grid-template-columns: 40px minmax(0, 1fr) 128px 96px 150px 20px; gap: 18px; align-items: center;
+  padding: 16px 8px; color: var(--text); text-decoration: none; transition: background var(--t-soft), padding var(--t-soft); }
+.u-row-link:hover { text-decoration: none; background: color-mix(in srgb, var(--ink, var(--text)) 7%, transparent); padding-left: 14px; }
+.u-row-logo { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--rule); background: var(--card); }
+.u-row-logo img { width: 24px; height: 24px; object-fit: contain; }
+.u-row-mono { font: 700 18px var(--font-serif); color: var(--ink, var(--text)); }
+.u-row-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.u-row-title { font: 600 19px/1.2 var(--font-serif); letter-spacing: -0.01em; }
+.u-row-line { font-size: 13.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.u-row-size { font: 500 12px/1.5 var(--font-code); color: var(--muted); }
+.u-row-progress { display: flex; align-items: center; gap: 10px; }
+.u-row-progress .u-ink { flex: 1; }
+.u-row-progress small { font: 500 12px var(--font-code); color: var(--muted); white-space: nowrap; }
+.u-row-go { color: var(--muted); transition: transform var(--t-soft), color var(--t-soft); }
+.u-row-link:hover .u-row-go { transform: translateX(4px); color: var(--vermilion); }
+.u-row.is-done .u-row-title { text-decoration: line-through; text-decoration-color: var(--vermilion); text-decoration-thickness: 2px; }
+.u-soon { margin: 0; padding: 18px 8px; color: var(--muted); border-bottom: 1px solid var(--rule); font-style: italic; }
+
+@media (max-width: 980px) {
+  .u-feature { grid-template-columns: 1fr; }
+  .u-feature-art { min-height: 200px; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .u-row-link { grid-template-columns: 40px minmax(0, 1fr) 120px 20px; }
+  .u-row-level, .u-row-size { display: none; }
+}
+@media (max-width: 640px) {
+  .u-dash { padding: 24px 16px 64px; }
+  .u-dash-head { grid-template-columns: 1fr; }
+  .u-dash-head .u-vertical { display: none; }
+  .u-feature-text { padding: 22px 18px; }
+  .u-row-link { grid-template-columns: 36px minmax(0, 1fr) 20px; gap: 12px; }
+  .u-row-progress { display: none; }
+  .u-cats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1100px) { .u-cats { grid-template-columns: repeat(var(--n, 8), minmax(0, 1fr)); } .u-cat-name { font-size: 13px; } }

@@ -294,7 +294,7 @@ export function Seal({ lines, size = 44, title }: { lines: string[]; size?: numb
       <rect x="5.5" y="5.5" width="33" height="33" rx="2" fill="none" stroke="#fff" strokeWidth="1" transform="rotate(-4 22 22)" opacity=".85" />
       <g transform="rotate(-4 22 22)" fill="#fff" fontFamily="Fraunces, Georgia, serif" fontWeight="700" textAnchor="middle">
         {lines.length === 1
-          ? <text x="22" y={lines[0].length > 2 ? 26 : 27} fontSize={lines[0].length > 2 ? 10 : 13}>{lines[0]}</text>
+          ? <text x="22" y={lines[0].length > 2 ? 25.5 : 27} fontSize={[13, 13, 13, 10.5, 9, 7.6][Math.min(lines[0].length, 5)]}>{lines[0]}</text>
           : <><text x="22" y="20" fontSize="10.5">{lines[0]}</text><text x="22" y="32" fontSize="10.5">{lines[1]}</text></>}
       </g>
     </svg>
