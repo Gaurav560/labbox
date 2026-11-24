@@ -16,13 +16,6 @@ import { useTheme } from "../theme";
  * one red button per screen, and the dashboard's own directory of labs.
  */
 
-/** A vermilion brush stroke under a word, drawn once when the page opens. */
-function Brush({ children }: { children: string }) {
-  return (
-    <span className="uh-brush">{children}<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span>
-  );
-}
-
 export default function HomePage() {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
@@ -63,20 +56,26 @@ export default function HomePage() {
       </header>
 
       <main>
+        {/* The hero (owner, 25 November, from the eight options): two short lines, what you get, and a real lab
+            session over Hiroshige's snowy Kinryuzan temple. */}
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
-            <p className="u-kicker">
-              {catalog === null ? "Hands-on labs" : `${live.length} labs live`} <span className="uh-dot" aria-hidden="true" /> AI track launching
-            </p>
-            <h1 id="hero-title">Learn AI by <Brush>building</Brush> it, not <span className="uh-strike">watching</span>.</h1>
-            <p className="uh-lead">Hands-on AI labs on your own machine in the browser: call real models, build RAG search and agents, write evals, with a guide checking every step. And the engineering around them: system design, languages, databases and DevOps.</p>
-            <div className="uh-cta">
-              {cta}
-            </div>
+            <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to build on it.</em></h1>
+            <p className="uh-lead">Open a lab and a Linux machine starts for you in about a minute, with VS Code, a terminal and a model gateway.</p>
+            <div className="uh-cta">{cta}</div>
           </div>
-          {/* Red Fuji as the hero's background, fading into the paper behind the words (owner, 25 November) */}
-          <div className="uh-hero-bg" role="img" aria-label="Woodblock print: Katsushika Hokusai, Fine Wind, Clear Morning (Red Fuji), about 1831" />
-          <p className="u-print-credit uh-hero-credit">Katsushika Hokusai, Fine Wind, Clear Morning, about 1831</p>
+          <figure className="uh-hero-art">
+            <div className="uh-hero-pic">
+              <img src="/ukiyo/heroes/kinryuzan.webp" width={1000} height={1526} alt="Woodblock print: Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856" />
+              <pre className="uh-term" aria-label="A lab terminal">{`learner:~$ labbox start langchain
+✓ machine ready in 58 s
+learner:~$ python agent.py
+> Which train leaves first?
+  The 7:40 to Ooty, platform 2.
+✓ task passed  +20 XP`}</pre>
+            </div>
+            <figcaption className="u-print-credit">Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856</figcaption>
+          </figure>
         </section>
 
 

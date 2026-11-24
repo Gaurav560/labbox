@@ -7,14 +7,15 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn AI by building it, not watching.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("The AI wave is here. Learn to build on it.");
   await expect(page).toHaveTitle(/LabBox by Telusko/);
   // The logo, as a link home and as the favicon.
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
-  await expect(page.locator(".uh-hero-bg")).toHaveCSS("background-image", /red-fuji/);
-  await expect(page.locator(".uh-hero-credit")).toContainText("Hokusai");
+  await expect(page.locator(".uh-hero-pic img")).toBeVisible();
+  await expect(page.locator(".uh-term")).toContainText("labbox start");
+  await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
   // The catalog comes from the server: a folding screen, one panel per category, not every lab (owner, 25 November).
   const languages = page.locator("#labs .uh-panel", { hasText: "Languages" });
   await expect(languages).toContainText(/\d+ labs/);

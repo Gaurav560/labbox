@@ -319,26 +319,21 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .u-home h1, .u-home h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.025em; color: var(--text); }
 .u-home h2 em, .u-home h1 em { font-style: italic; font-weight: 400; }
 
-/* the hero: the words over Red Fuji, which fills the width and fades into the paper on the left */
-.uh-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center;
-  min-height: min(78vh, 720px); padding: clamp(40px, 7vw, 88px) 0 clamp(48px, 6vw, 72px); isolation: isolate; }
-.uh-hero-text { max-width: 600px; }
-.uh-hero-bg { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%);
-  background: url(/ukiyo/red-fuji.webp) 72% 40% / cover no-repeat; }
-.uh-hero-bg::after { content: ""; position: absolute; inset: 0;
-  background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 26%, color-mix(in srgb, var(--bg) 78%, transparent) 42%,
-    color-mix(in srgb, var(--bg) 20%, transparent) 62%, transparent 78%),
-    linear-gradient(to top, var(--bg) 0%, transparent 18%); }
-.uh-hero-credit { position: absolute; right: 0; bottom: 14px; margin: 0; color: #fffdf8; text-shadow: 0 1px 3px #000a; }
-.uh-hero h1 { font-size: clamp(42px, 5.6vw, 78px); line-height: 1.02; margin: 18px 0 22px; }
-.uh-dot { display: inline-block; width: 5px; height: 5px; margin: 0 8px 2px; background: var(--vermilion); transform: rotate(45deg); }
-.uh-brush { position: relative; color: var(--vermilion); white-space: nowrap; }
-.uh-brush svg { position: absolute; left: 0; right: 0; bottom: -.1em; width: 100%; height: .26em; overflow: visible; }
-.uh-brush path { fill: none; stroke: var(--vermilion); stroke-width: 5; stroke-linecap: round; opacity: .55;
-  stroke-dasharray: 220; stroke-dashoffset: 220; animation: h-draw .9s .4s ease-out forwards; }
-.uh-strike { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--vermilion); text-decoration-thickness: .06em; }
-.uh-lead { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 32em; margin: 0 0 30px; }
+/* the hero: two short lines and what you get on the left; a lab session over a print on the right */
+.uh-hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: clamp(32px, 5vw, 72px); align-items: center;
+  padding: clamp(40px, 6vw, 80px) 0 clamp(40px, 6vw, 72px); }
+.uh-hero h1 { font-size: clamp(40px, 4.7vw, 72px); line-height: 1.04; margin: 0 0 26px; }
+@media (min-width: 901px) { .uh-line { white-space: nowrap; } }
+.uh-line { display: block; }
+.uh-hero h1 em { font-style: italic; font-weight: 400; color: var(--vermilion); margin-top: .08em; }
+.uh-lead { font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 30em; margin: 0 0 32px; }
 .uh-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
+.uh-hero-art { margin: 0; justify-self: end; width: min(420px, 100%); }
+.uh-hero-pic { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0008; }
+.uh-hero-pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+.uh-term { position: absolute; left: 6%; right: 6%; bottom: 6%; margin: 0; padding: 16px 18px; background: #14120fec; color: #e9e2d4;
+  font: 13px/1.75 var(--font-code); border: 1px solid #ffffff22; box-shadow: 0 20px 40px -20px #000; white-space: pre; overflow: hidden; }
+.uh-hero-art .u-print-credit { text-align: right; }
 /* a print in a paper mat with a fine ink line, like a framed sheet */
 .uh-frame { padding: 10px; background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
 .uh-frame img { display: block; width: 100%; height: auto; outline: 1px solid #1b253322; }
@@ -398,12 +393,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 
 @media (max-width: 900px) {
   .uh-hero, .uh-ai-head, .uh-final { grid-template-columns: 1fr; }
+  .uh-hero-art { justify-self: start; }
   .uh-screen { flex-direction: column; height: auto; }
   .uh-panel { min-height: 120px; }
   .uh-panel:hover { flex: 1; }
   .uh-panel-name { writing-mode: horizontal-tb; left: 22px; transform: none; }
-  .uh-hero { min-height: 0; }
-  .uh-hero-bg::after { background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 55%, color-mix(in srgb, var(--bg) 45%, transparent) 100%); }
   .uh-ai-print { max-width: 420px; }
 }
 @media (max-width: 560px) {
@@ -482,93 +476,3 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .profile-exit { justify-content: flex-start; height: 40px; padding: 0; margin-top: -4px; border: 0; border-top: 1px solid var(--rule);
   border-radius: 0; background: none; color: var(--muted); font: 600 13px var(--font-text); }
 .profile-exit:hover { border-color: var(--rule); background: none; color: var(--vermilion); }
-
-/* ---------- 15. eight hero options to compare (/ukiyo/heroes, owner 25 November) ---------- */
-.ul-page { min-height: 100vh; }
-.ul-top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 20px; padding: 10px 24px;
-  background: var(--panel); border-bottom: 1px solid var(--rule); }
-.ul-top nav { display: flex; flex-wrap: wrap; gap: 4px 16px; flex: 1; }
-.ul-top nav a { font: 600 12px var(--font-code); letter-spacing: .04em; color: var(--muted); }
-.ul-top nav a:hover { color: var(--vermilion); text-decoration: none; }
-.hx-section { scroll-margin-top: 56px; border-bottom: 8px solid var(--text); }
-.hx-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 14px 24px; background: var(--card);
-  border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
-.hx-label strong { font: 600 20px var(--font-serif); color: var(--text); }
-.hx { position: relative; min-height: min(86vh, 760px); padding: clamp(40px, 6vw, 80px) max(24px, calc((100vw - 1200px) / 2));
-  display: grid; align-items: center; gap: clamp(28px, 5vw, 72px); overflow: hidden; isolation: isolate; }
-.hx h1 { font: 600 clamp(42px, 5.6vw, 80px)/1.02 var(--font-serif); letter-spacing: -0.025em; margin: 14px 0 20px; }
-.hx h1 em { font-weight: 400; color: var(--vermilion); }
-.hx-lead { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 32em; margin: 0 0 28px; }
-.hx > .u-print-credit { position: absolute; right: 24px; bottom: 12px; margin: 0; }
-.hx img { display: block; }
-
-/* 1 type only */
-.hx-1 { justify-items: center; text-align: center; align-content: center; }
-.hx-1 h1 { font-size: clamp(56px, 8.5vw, 132px); line-height: .98; margin: 8px 0 22px; }
-.hx-1 .hx-lead { margin-inline: auto; }
-.hx1-seal { width: 64px; height: 64px; display: grid; place-items: center; background: var(--vermilion); color: #fff;
-  font: 600 34px var(--font-serif); box-shadow: inset 0 0 0 3px var(--vermilion), inset 0 0 0 5px #fff8; }
-.hx1-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; width: 100%; margin-top: 48px; }
-.hx1-strip img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--rule); filter: saturate(.9); }
-
-/* 2 tall print */
-.hx-2 { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
-.hx-2 figure { margin: 0; justify-self: end; width: min(420px, 100%); }
-.hx-2 .uh-frame img { aspect-ratio: 2 / 3; object-fit: cover; width: 100%; }
-.hx-2 .u-print-credit { text-align: right; }
-
-/* 3 full-bleed wave */
-.hx-3 { align-items: end; color: #fffdf8; }
-.hx3-bg { position: absolute; inset: 0; z-index: -1; background: url(/ukiyo/great-wave.webp) center 35% / cover no-repeat; }
-.hx3-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #0d0c0bf2 0%, #0d0c0b99 40%, #0d0c0b22 75%); }
-.hx-3 h1 { color: #fffdf8; } .hx-3 h1 em { color: #ffb4a3; }
-.hx-3 .hx-lead { color: #e9e2d4; } .hx-3 .u-kicker { color: #e9e2d4; }
-.hx-3 > .u-print-credit { color: #e9e2d4; }
-
-/* 4 triptych */
-.hx-4 { align-content: center; justify-items: center; text-align: center; }
-.hx4-tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: min(860px, 100%); padding: 10px;
-  background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
-.hx4-tri img { width: 100%; aspect-ratio: 2 / 2.4; object-fit: cover; }
-.hx-4 h1 { font-size: clamp(36px, 4.6vw, 64px); margin-top: 8px; }
-.hx-4 .hx-lead { margin-inline: auto; }
-
-/* 5 the seal */
-.hx-5 { grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); }
-.hx5-seal { justify-self: center; width: min(320px, 70vw); aspect-ratio: 1; display: grid; place-content: center; gap: 0;
-  background: var(--vermilion); color: #fff; font: 600 clamp(56px, 7vw, 96px)/1 var(--font-serif); text-align: center;
-  box-shadow: inset 0 0 0 10px var(--vermilion), inset 0 0 0 14px #fff9; }
-.hx5-seal span:last-child { margin-top: -6px; }
-
-/* 6 terminal over rain */
-.hx-6 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.hx6-art { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--rule); }
-.hx6-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
-.hx6-term { position: absolute; left: 7%; right: 7%; bottom: 7%; margin: 0; padding: 18px 20px; background: #14120fe8; color: #e9e2d4;
-  font: 14px/1.75 var(--font-code); border: 1px solid #ffffff22; box-shadow: 0 20px 40px -20px #000; white-space: pre-wrap; }
-
-/* 7 magazine cover */
-.hx-7 { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
-.hx7-cover { position: relative; aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 30px 60px -30px #0008; }
-.hx7-cover img { width: 100%; height: 100%; object-fit: cover; }
-.hx7-mast { position: absolute; top: 4%; left: 0; right: 0; text-align: center; font: 700 clamp(48px, 6vw, 84px)/1 var(--font-serif);
-  color: #fffdf8; text-shadow: 0 2px 12px #0009; letter-spacing: -.02em; }
-.hx7-issue { position: absolute; bottom: 3%; right: 4%; font: 600 11px var(--font-code); letter-spacing: .12em; color: #fff;
-  background: var(--vermilion); padding: 3px 7px; }
-.hx-7 ul { list-style: none; margin: 0 0 28px; padding: 0; border-top: 2px solid var(--text); }
-.hx-7 li { padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 17px; color: var(--muted); }
-.hx-7 li b { display: inline-block; min-width: 90px; font: 600 20px var(--font-serif); color: var(--text); }
-
-/* 8 mosaic */
-.hx-8 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.hx8-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.hx8-grid span { aspect-ratio: 1; overflow: hidden; border: 1px solid var(--rule); }
-.hx8-grid span:nth-child(1) { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
-.hx8-grid .u-print { width: 100%; height: 100%; object-fit: cover; }
-
-@media (max-width: 860px) {
-  .ul-top nav { display: none; }
-  .hx-2, .hx-5, .hx-6, .hx-7, .hx-8 { grid-template-columns: 1fr; }
-  .hx1-strip { grid-template-columns: repeat(3, 1fr); }
-  .hx-2 figure { justify-self: start; }
-}

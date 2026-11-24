@@ -69,7 +69,7 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
   probably still in copyright. If either cannot be licensed, the drawn SVG versions are in git history
   (commit 49cba89).
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
-  home page's All labs tile) and Red Fuji (the home page hero, full width behind the headline).
+  home page's All labs tile) and Red Fuji (no longer used on a page).
 - Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),
   shown on its course page with a credit line and on the dashboard's Continue feature. The category tiles keep
   the shared category print; "All labs" shows the Great Wave. Files: `public/ukiyo/labs/<lab>.webp` (1280 px,
@@ -111,8 +111,8 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 - Dashboard: rewritten (`pages/LabsPage.tsx`).
 - Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
-- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): Red Fuji full width behind the headline,
-  fading into the paper on the left (no numbers strip);
+- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): the hero "The AI wave is here. / Learn to build on it." with a
+  lab terminal over Hiroshige's Kinryuzan Temple in snow (picked from eight options; no numbers strip);
   (vermilion brush underline, no highlighter), the four numbers between fine rules (no logo strip), the lab
   AI section (the pagoda picture and one line), a folding screen of six tall panels, one per category (the panel
   under the pointer opens wider and lists its labs; stacked rows on phones; picked by the owner from eight layouts),

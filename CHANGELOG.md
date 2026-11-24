@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November (Ukiyo): the new home hero
+
+- Owner picked from eight options: option 6's layout with option 7's picture, and new words. Two lines, each on
+  its own: "The AI wave is here." and, in vermilion italic, "Learn to build on it." Under them: "Open a lab and a
+  Linux machine starts for you in about a minute, with VS Code, a terminal and a model gateway." and Start free. On
+  the right, a real lab session (labbox start, an agent's answer, task passed) over Hiroshige's Kinryuzan Temple at
+  Asakusa in snow (1856, CC0). Red Fuji, the brush underline and the old headline are gone; `/ukiyo/heroes` and its
+  two unused prints are removed.
+
 ## 25 November (Ukiyo): eight hero options to compare at /ukiyo/heroes
 
 - Owner: "this image and this text look off ... how many ways, new design, new images, new text, I want to see it".
