@@ -144,7 +144,7 @@ function Monogram({ item }: { item: LibraryItem }) {
 
 function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<string, CatalogLab>; signedIn: boolean }) {
   return (
-    <article className="lib-featured" aria-label={`Start here: ${item.title}`}>
+    <article className="lib-featured" aria-label={`Featured: ${item.title}`}>
       <div className={`lib-featured-art is-${item.kind}`}>
         {item.kind === "book" ? <Cover item={item} big /> : item.image ? <Picture item={item} className={`lib-shot is-${item.kind}`} /> :
           item.kind === "blog" ? <Monogram item={item} /> : (
@@ -154,7 +154,6 @@ function Featured({ item, labs, signedIn }: { item: LibraryItem; labs: Map<strin
         )}
       </div>
       <div className="lib-featured-text">
-        <span className="lib-start">Start here</span>
         <h2>{item.url ? <a className="lib-stretch" href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</h2>
         <p className="lib-by">{[item.authors, item.year].filter(Boolean).join(" · ")}</p>
         {item.kind === "paper" && item.note && <p className="lib-why">{item.note}</p>}

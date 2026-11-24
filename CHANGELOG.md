@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: Premium Reads featured card without "Start here"
+
+- Owner: "remove start here from this card". The first pick of each section (AI Engineering, Attention Is All You
+  Need, Lil'Log) keeps its big card, without the "Start here" label. Done on master and `design/ukiyo`.
+
 ## 25 November (Ukiyo): the owner's pictures for AI and Languages
 
 - Owner: "use this image for ai" and the pagoda saved as `~/Pictures/kathmandu.jpeg`. The AI tile shows the brushed
