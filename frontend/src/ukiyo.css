@@ -363,8 +363,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-panel:hover, .uh-panel:focus-visible { flex: 2.8; text-decoration: none; }
 .uh-panel-art { position: absolute; inset: 0; }
 .uh-panel-shade { position: absolute; inset: 0; background: linear-gradient(to top, #14120fdd 0%, #14120f33 45%, transparent 70%); }
-.uh-panel-n { position: absolute; top: 14px; left: 14px; font: 600 11px var(--font-code); letter-spacing: .12em;
-  background: var(--vermilion); color: #fff; padding: 3px 6px; }
 .uh-panel-name { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); writing-mode: vertical-rl;
   font: 600 26px var(--font-serif); white-space: nowrap; transition: opacity .3s; text-shadow: 0 1px 8px #000a; }
 .uh-panel-open { position: absolute; left: 22px; right: 22px; bottom: 22px; display: grid; gap: 6px; opacity: 0;

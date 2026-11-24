@@ -91,7 +91,7 @@ export default function HomePage() {
             {/* A folding screen: one tall panel per category; the one under the pointer opens wider and lists its labs
                 (owner, 25 November, picked from eight layouts) */}
             <div className="uh-screen">
-              {groups.map((g, i) => {
+              {groups.map((g) => {
                 const label = TRACK_LABEL[g.id] ?? g.id;
                 const n = `${g.labs.length} lab${g.labs.length === 1 ? "" : "s"}`;
                 return (
@@ -99,7 +99,6 @@ export default function HomePage() {
                     style={{ "--ink": TRACK_INK[g.id] ?? "var(--text)" } as CSSProperties}>
                     <span className="uh-panel-art" aria-hidden="true"><TrackArt track={g.id} /></span>
                     <span className="uh-panel-shade" aria-hidden="true" />
-                    <span className="uh-panel-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                     <span className="uh-panel-name" aria-hidden="true">{label}</span>
                     <span className="uh-panel-open" aria-hidden="true">
                       <strong>{label}</strong>

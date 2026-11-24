@@ -1,5 +1,9 @@
 # Changelog
 
+## 25 November (Ukiyo): folding screen panels without numbers
+
+- Owner: "remove 01 02 03 and so on". The red number tags are gone from the panels.
+
 ## 25 November (Ukiyo): home page without the AI section, for now
 
 - Owner: "remove this for now, but keep in memory, might use later". The AI section (the pagoda picture, "AI labs ·
