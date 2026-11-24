@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = ""
     # Background worker (Phase H3, app/worker.py): nightly database backups, newest BACKUP_KEEP kept.
     BACKUP_DIR: Path = Path("/srv/labbox/backups")
+    LIBRARY_UPLOADS_DIR: Path = Path("/srv/labbox/library")  # pictures admins upload for Library items
     BACKUP_KEEP: int = 14
     BACKUP_HOUR_UTC: int = 21  # 21:00 UTC is 02:30 in India, the quietest hour
     # Safety limits (Phase H5, app/limits.py). 0 turns a limit off.

@@ -248,3 +248,26 @@ export function terminalUrl(labId: string): string {
   const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
   return `${proto}//${window.location.host}/ws/terminal/${q(labId)}?token=${q(getToken() ?? "")}`;
 }
+
+// ---------- library (owner, 24 November): books, research papers, tech blogs ----------
+
+export type LibraryKind = "book" | "paper" | "blog";
+export type LibraryLevel = "" | "beginner" | "intermediate" | "advanced";
+export interface LibraryItem {
+  id: number; kind: LibraryKind; title: string; authors: string; year: number | null; url: string; note: string; topic: string;
+  lab: string; practice: string; level: LibraryLevel; free: boolean; featured: boolean; image: string;
+  position: number; updated_at: string;
+}
+export type LibraryItemIn = Omit<LibraryItem, "id" | "position" | "updated_at" | "image">;
+/** A Library picture: stored with LabBox and served by it, never fetched from another site. */
+export const libraryImage = (name: string) => `/api/library/images/${encodeURIComponent(name)}`;
+
+export const library = {
+  list: () => request<LibraryItem[]>("GET", "/api/library"),
+  add: (item: LibraryItemIn) => request<LibraryItem>("POST", "/api/admin/library", item),
+  change: (id: number, item: LibraryItemIn) => request<LibraryItem>("PUT", `/api/admin/library/${id}`, item),
+  move: (id: number, direction: "up" | "down") => request<LibraryItem[]>("POST", `/api/admin/library/${id}/move`, { direction }),
+  remove: (id: number) => request<{ ok: boolean }>("DELETE", `/api/admin/library/${id}`),
+  setImage: (id: number, dataUrl: string) => request<LibraryItem>("PUT", `/api/admin/library/${id}/image`, { data: dataUrl }),
+  removeImage: (id: number) => request<LibraryItem>("DELETE", `/api/admin/library/${id}/image`),
+};

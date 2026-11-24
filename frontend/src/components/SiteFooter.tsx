@@ -5,6 +5,7 @@ import { SITE } from "../site";
 export function SiteLinks({ className = "", faq = true }: { className?: string; faq?: boolean }) {
   return (
     <nav aria-label="About" className={`site-links ${className}`}>
+      <Link to="/library">Library</Link>
       {faq && <Link to="/faq">FAQs</Link>}
       <Link to="/privacy">Privacy policy</Link>
       <Link to="/terms">Terms of Service</Link>

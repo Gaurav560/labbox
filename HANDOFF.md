@@ -16,6 +16,10 @@ update it at the end of every session. Earlier, longer versions of it are in git
   session scratchpad (`rag/gen.py`, `blocks.py`, `scripts.py`); the committed folders are the record. Before it: Rust
   from zero, complete (28 chapters). Photos still to add: Spärck Jones (RAG ch 9), Peyton Jones and Stroustrup (Rust);
   see ROADMAP B.5. Next: wait for the owner.
+- **Parked by the owner (24 November, "keep it saved, we will think about it later"):** lesson readability. Proposed:
+  move the lab-logo watermark (`.lesson-watermark`) out from behind the text; soften dark-theme text from `#f0f3f1` to an
+  off-white; tables at 15px with roomier cells; fold the task bar to one line on reading steps; more space between
+  paragraphs; 17px by default on large screens. Show before and after screenshots in both themes when it comes back.
 - **Working files:** the session scratchpad was lost when the laptop restarted (23 November, 19:16; /tmp is RAM), so
   the generator drafts are gone; the committed folders are the record. Part 5 is written straight into the lab.
   Captures need a new gateway token for the author account `navin-author` (tools/authoring/author_token.py).

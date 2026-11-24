@@ -23,6 +23,7 @@ from .routers import (
     engagement_routes,
     file_routes,
     lab_routes,
+    library_routes,
     preview_routes,
     progress_routes,
     terminal_routes,
@@ -70,6 +71,8 @@ app.include_router(engagement_routes.router)
 app.include_router(preview_routes.router)
 app.include_router(ai_routes.router)
 app.include_router(admin_routes.router)
+app.include_router(library_routes.router)
+app.include_router(library_routes.admin_router)
 
 
 class Health(BaseModel):

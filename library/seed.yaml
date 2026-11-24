@@ -1,0 +1,765 @@
+# The Library's starting list: books, research papers and tech blogs worth reading next to the labs.
+# Loaded once, by migrations 0009 and 0010, into the library_item table; after that admins change the list in the app
+# (Admin > Library). Editing this file later changes nothing in an existing database.
+# note: why it is worth reading, in plain words. topic: a short label for the filter. lab and practice: the LabBox lab
+# (and where in it) that puts the idea into practice. level: beginner | intermediate | advanced. free: free to read
+# online. featured: the big "Start here" card of its section (one per section).
+
+books:
+- title: AI Engineering
+  authors: Chip Huyen
+  year: 2025
+  url: https://github.com/chiphuyen/aie-book
+  topic: AI
+  note: How to build real products on top of foundation models, from prompts and RAG to evaluation and cost. The best single
+    book to read alongside the AI labs.
+  lab: rag-vector-databases
+  practice: chapters 11 and 12, answers with sources and evaluation
+  level: intermediate
+  free: false
+  featured: true
+  image: book-ai-engineering.webp
+- title: Build a Large Language Model (From Scratch)
+  authors: Sebastian Raschka
+  year: 2024
+  url: https://www.manning.com/books/build-a-large-language-model-from-scratch
+  topic: AI
+  note: Builds a small GPT step by step in Python, so tokens, attention and training stop being magic.
+  lab: langchain
+  practice: chapters 1 to 4, how language models work
+  level: intermediate
+  free: false
+  image: book-build-a-large-language-model-from-scratc.webp
+- title: Hands-On Large Language Models
+  authors: Jay Alammar, Maarten Grootendorst
+  year: 2024
+  url: https://www.llm-book.com/
+  topic: AI
+  note: Hundreds of clear illustrations of how language models, embeddings and semantic search work, with runnable code.
+  lab: rag-vector-databases
+  practice: chapters 2 and 3, embeddings and search
+  level: intermediate
+  free: false
+  image: book-hands-on-large-language-models.webp
+- title: Introduction to Information Retrieval
+  authors: Christopher D. Manning, Prabhakar Raghavan, Hinrich Schütze
+  year: 2008
+  url: https://nlp.stanford.edu/IR-book/
+  topic: RAG and search
+  note: The classic textbook on search, free online. Inverted indexes, ranking, BM25 and evaluation, all explained from
+    first principles; the foundation under every RAG system.
+  lab: rag-vector-databases
+  practice: chapter 9, BM25 and hybrid search
+  level: intermediate
+  free: true
+  image: book-introduction-to-information-retrieval.webp
+- title: Speech and Language Processing (3rd edition draft)
+  authors: Dan Jurafsky, James H. Martin
+  year: 2025
+  url: https://web.stanford.edu/~jurafsky/slp3/
+  topic: AI
+  note: The standard university text on language processing, free online and kept up to date, including chapters on transformers,
+    embeddings and retrieval.
+  lab: langchain
+  practice: chapters 2 to 4, tokens, embeddings and attention
+  level: advanced
+  free: true
+  image: book-speech-and-language-processing-3rd-editi.webp
+- title: Deep Learning
+  authors: Ian Goodfellow, Yoshua Bengio, Aaron Courville
+  year: 2016
+  url: https://www.deeplearningbook.org/
+  topic: AI
+  note: The mathematics and ideas behind neural networks, free online. Read it when you want to know why things work.
+  level: advanced
+  free: true
+  image: book-deep-learning.webp
+- title: Designing Data-Intensive Applications
+  authors: Martin Kleppmann
+  year: 2017
+  url: https://dataintensive.net/
+  topic: Databases
+  note: How databases, replication, partitioning and streams really work, and how to choose between them. Many engineers
+    call it the most useful book of their career.
+  lab: redis-in-practice
+  practice: chapters 15 and 16, persistence and replication
+  level: intermediate
+  free: false
+  image: book-designing-data-intensive-applications.webp
+- title: Database Internals
+  authors: Alex Petrov
+  year: 2019
+  url: https://www.databass.dev/
+  topic: Databases
+  note: What happens inside a storage engine and a distributed database, from B-trees to consensus.
+  lab: sql-from-zero
+  practice: chapter 12, indexes and EXPLAIN
+  level: advanced
+  free: false
+  image: book-database-internals.webp
+- title: The Pragmatic Programmer (20th anniversary edition)
+  authors: David Thomas, Andrew Hunt
+  year: 2019
+  url: https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/
+  topic: Programming
+  note: Habits of good programmers, in short practical chapters you can read one at a time.
+  level: beginner
+  free: false
+  image: book-the-pragmatic-programmer-20th-anniversar.webp
+- title: Fluent Python (2nd edition)
+  authors: Luciano Ramalho
+  year: 2022
+  url: https://www.fluentpython.com/
+  topic: Programming
+  note: The next step after Python from zero, written for people who want to use the language the way its designers meant.
+  lab: python-basics
+  practice: read it after the course
+  level: intermediate
+  free: false
+  image: book-fluent-python-2nd-edition.webp
+- title: The Rust Programming Language
+  authors: Steve Klabnik, Carol Nichols
+  year: 2023
+  url: https://doc.rust-lang.org/book/
+  topic: Programming
+  note: The official Rust book, free online, known as "the Book". Goes deeper into every chapter of Rust from zero.
+  lab: rust-basics
+  practice: every chapter
+  level: beginner
+  free: true
+  image: book-the-rust-programming-language.webp
+- title: 'System Design Interview: An Insider''s Guide'
+  authors: Alex Xu
+  year: 2020
+  url: https://bytebytego.com/
+  topic: Systems
+  level: intermediate
+  free: false
+  note: How to design systems like a URL shortener, a chat app or a rate limiter, step by step with clear diagrams. The
+    best-known first book on system design.
+  lab: rate-limiter
+  practice: the whole lab
+  image: book-system-design-interview.webp
+- title: A Philosophy of Software Design
+  authors: John Ousterhout
+  year: 2018
+  url: https://web.stanford.edu/~ouster/cgi-bin/book.php
+  topic: Programming
+  level: intermediate
+  free: false
+  note: 'A short book about the one idea behind good design: fight complexity with simple, deep modules. By a co-author
+    of the Raft paper.'
+  image: book-a-philosophy-of-software-design.webp
+- title: Site Reliability Engineering
+  authors: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (editors)
+  year: 2016
+  url: https://sre.google/sre-book/table-of-contents/
+  topic: DevOps
+  level: intermediate
+  free: true
+  note: 'How Google runs its production systems: monitoring, being on call, incidents and error budgets. Free to read online.'
+  lab: linux-on-call
+  practice: chapter 15, on call
+  image: book-site-reliability-engineering.webp
+- title: The Linux Command Line (2nd edition)
+  authors: William Shotts
+  year: 2019
+  url: https://linuxcommand.org/tlcl.php
+  topic: DevOps
+  level: beginner
+  free: true
+  note: The friendliest complete guide to the terminal, from your first command to shell scripts. Free to read online.
+  lab: linux-on-call
+  practice: chapters 1 to 6
+  image: book-the-linux-command-line.webp
+- title: Pro Git (2nd edition)
+  authors: Scott Chacon, Ben Straub
+  year: 2014
+  url: https://git-scm.com/book/en/v2
+  topic: DevOps
+  level: beginner
+  free: true
+  note: 'The official Git book, free online: how Git really stores your work, branching, remotes and undoing mistakes.'
+  lab: git-without-fear
+  practice: the whole course
+  image: book-pro-git.webp
+- title: Python Crash Course (3rd edition)
+  authors: Eric Matthes
+  year: 2023
+  url: https://nostarch.com/python-crash-course-3rd-edition
+  topic: Programming
+  level: beginner
+  free: false
+  note: 'A friendly, project-based introduction to Python: a game, data charts and a web app, one step at a time.'
+  lab: python-basics
+  practice: every chapter
+  image: book-python-crash-course.webp
+- title: Effective Java (3rd edition)
+  authors: Joshua Bloch
+  year: 2018
+  url: https://www.informit.com/store/effective-java-9780134685991
+  topic: Programming
+  level: intermediate
+  free: false
+  note: 90 short items on writing clear, correct Java, by one of the designers of the Java platform's libraries.
+  lab: java-basics
+  practice: read it after the course
+  image: book-effective-java.webp
+- title: Grokking Algorithms (2nd edition)
+  authors: Aditya Y. Bhargava
+  year: 2024
+  url: https://www.manning.com/books/grokking-algorithms-second-edition
+  topic: Programming
+  level: beginner
+  free: false
+  note: Searching, sorting, recursion, graphs and hash tables explained with hand-drawn pictures. Algorithms without fear.
+  lab: python-basics
+  practice: chapters 8 to 11, lists, dictionaries and sorting
+  image: book-grokking-algorithms.webp
+- title: Natural Language Processing with Transformers
+  authors: Lewis Tunstall, Leandro von Werra, Thomas Wolf
+  year: 2022
+  url: https://github.com/nlp-with-transformers/notebooks
+  topic: AI
+  level: intermediate
+  free: false
+  note: Building with transformer models in practice, from the Hugging Face team; all of the book's code is free on GitHub.
+  lab: rag-vector-databases
+  practice: chapters 2 and 10, embeddings and reranking
+  image: book-natural-language-processing-with-transfo.webp
+- title: Spring in Action (6th edition)
+  authors: Craig Walls
+  year: 2022
+  url: https://www.manning.com/books/spring-in-action-sixth-edition
+  topic: Programming
+  level: intermediate
+  free: false
+  note: The long-running guide to the Spring framework and Spring Boot, building one application across the book.
+  lab: spring-boot-first-api
+  practice: read it after the course
+  image: book-spring-in-action.webp
+papers:
+- title: Attention Is All You Need
+  authors: Ashish Vaswani and others
+  year: 2017
+  url: https://arxiv.org/abs/1706.03762
+  topic: AI
+  note: The paper that introduced the transformer, the design behind every modern language model.
+  lab: langchain
+  practice: chapter 4, transformers and attention
+  level: advanced
+  free: true
+  image: paper-attention-is-all-you-need.webp
+- title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+  authors: Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova
+  year: 2018
+  url: https://arxiv.org/abs/1810.04805
+  topic: AI
+  note: A transformer that reads text in both directions; the base of most embedding and reranking models.
+  lab: rag-vector-databases
+  practice: chapter 10, reranking
+  level: advanced
+  free: true
+  image: paper-bert-pre-training-of-deep-bidirectional.webp
+- title: Language Models are Few-Shot Learners
+  authors: Tom B. Brown and others
+  year: 2020
+  url: https://arxiv.org/abs/2005.14165
+  topic: AI
+  note: The GPT-3 paper, which showed that a large enough model can do new tasks from a few examples in the prompt.
+  lab: langchain
+  practice: chapter 1, AI and generative AI
+  level: intermediate
+  free: true
+  image: paper-language-models-are-few-shot-learners.webp
+- title: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+  authors: Patrick Lewis and others
+  year: 2020
+  url: https://arxiv.org/abs/2005.11401
+  topic: RAG and search
+  note: The paper that named RAG. Read it after chapter 1 of RAG and vector databases.
+  lab: rag-vector-databases
+  practice: chapter 1, why RAG
+  level: intermediate
+  free: true
+  featured: true
+  image: paper-retrieval-augmented-generation-for-knowl.webp
+- title: Efficient Estimation of Word Representations in Vector Space
+  authors: Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean
+  year: 2013
+  url: https://arxiv.org/abs/1301.3781
+  topic: RAG and search
+  note: word2vec, the paper that made word embeddings fast and popular.
+  lab: rag-vector-databases
+  practice: chapter 2, embeddings
+  level: intermediate
+  free: true
+  image: paper-efficient-estimation-of-word-representat.webp
+- title: 'Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks'
+  authors: Nils Reimers, Iryna Gurevych
+  year: 2019
+  url: https://arxiv.org/abs/1908.10084
+  topic: RAG and search
+  note: How to get one good vector per sentence, the idea behind the embedding models used for search today.
+  lab: rag-vector-databases
+  practice: chapters 2 and 3, embeddings and search
+  level: intermediate
+  free: true
+  image: paper-sentence-bert-sentence-embeddings-using.webp
+- title: Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs
+  authors: Yu. A. Malkov, D. A. Yashunin
+  year: 2016
+  url: https://arxiv.org/abs/1603.09320
+  topic: RAG and search
+  note: The HNSW paper, the index inside most vector databases. Chapter 6 of RAG and vector databases builds on it.
+  lab: rag-vector-databases
+  practice: chapter 6, the HNSW index
+  level: advanced
+  free: true
+  image: paper-efficient-and-robust-approximate-nearest.webp
+- title: Billion-scale similarity search with GPUs
+  authors: Jeff Johnson, Matthijs Douze, Hervé Jégou
+  year: 2017
+  url: https://arxiv.org/abs/1702.08734
+  topic: RAG and search
+  note: The paper behind FAISS, with IVF and product quantization at very large scale.
+  lab: rag-vector-databases
+  practice: chapters 5 to 7, IVF, HNSW and quantization
+  level: advanced
+  free: true
+  image: paper-billion-scale-similarity-search-with-gpu.webp
+- title: Passage Re-ranking with BERT
+  authors: Rodrigo Nogueira, Kyunghyun Cho
+  year: 2019
+  url: https://arxiv.org/abs/1901.04085
+  topic: RAG and search
+  note: A short paper that showed how much a cross-encoder improves search results; the idea behind reranking.
+  lab: rag-vector-databases
+  practice: chapter 10, reranking
+  level: intermediate
+  free: true
+  image: paper-passage-re-ranking-with-bert.webp
+- title: Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods
+  authors: Gordon V. Cormack, Charles L. A. Clarke, Stefan Büttcher
+  year: 2009
+  url: https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf
+  topic: RAG and search
+  note: Two pages that introduced the simple rule hybrid search uses to merge rankings.
+  lab: rag-vector-databases
+  practice: chapter 9, hybrid search
+  level: beginner
+  free: true
+  image: paper-reciprocal-rank-fusion-outperforms-condo.webp
+- title: 'Lost in the Middle: How Language Models Use Long Contexts'
+  authors: Nelson F. Liu and others
+  year: 2023
+  url: https://arxiv.org/abs/2307.03172
+  topic: RAG and search
+  note: Models pay less attention to the middle of a long prompt, which is why retrieval still matters with big context
+    windows.
+  lab: rag-vector-databases
+  practice: chapter 11, answers with sources
+  level: intermediate
+  free: true
+  image: paper-lost-in-the-middle-how-language-models-u.webp
+- title: 'ReAct: Synergizing Reasoning and Acting in Language Models'
+  authors: Shunyu Yao and others
+  year: 2022
+  url: https://arxiv.org/abs/2210.03629
+  topic: AI
+  note: The reason, act, observe loop that most AI agents still follow.
+  lab: langchain
+  practice: chapter 10, an agent loop by hand
+  level: intermediate
+  free: true
+  image: paper-react-synergizing-reasoning-and-acting-i.webp
+- title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+  authors: Jason Wei and others
+  year: 2022
+  url: https://arxiv.org/abs/2201.11903
+  topic: AI
+  note: Showing a model worked steps makes it reason better; a short paper with a big influence.
+  level: intermediate
+  free: true
+  image: paper-chain-of-thought-prompting-elicits-reaso.webp
+- title: A Relational Model of Data for Large Shared Data Banks
+  authors: E. F. Codd
+  year: 1970
+  url: https://dl.acm.org/doi/10.1145/362384.362685
+  topic: Databases
+  note: The paper that started relational databases and, later, SQL.
+  lab: sql-from-zero
+  practice: chapter 1, why databases exist
+  level: intermediate
+  free: false
+  image: paper-a-relational-model-of-data-for-large-sha.webp
+- title: 'MapReduce: Simplified Data Processing on Large Clusters'
+  authors: Jeffrey Dean, Sanjay Ghemawat
+  year: 2004
+  url: https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+  topic: Systems
+  note: How Google processed the whole web on thousands of ordinary machines; the start of big data.
+  level: intermediate
+  free: true
+  image: paper-mapreduce-simplified-data-processing-on.webp
+- title: 'Dynamo: Amazon''s Highly Available Key-value Store'
+  authors: Giuseppe DeCandia and others
+  year: 2007
+  url: https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf
+  topic: Systems
+  note: How Amazon kept its shopping cart available through failures, and the ideas many NoSQL databases copied.
+  lab: redis-in-practice
+  practice: chapter 16, replication and clusters
+  level: advanced
+  free: true
+  image: paper-dynamo-amazon-s-highly-available-key-val.webp
+- title: In Search of an Understandable Consensus Algorithm (Raft)
+  authors: Diego Ongaro, John Ousterhout
+  year: 2014
+  url: https://raft.github.io/raft.pdf
+  topic: Systems
+  note: A consensus algorithm designed to be understood; how a group of servers agrees on one truth.
+  level: advanced
+  free: true
+  image: paper-in-search-of-an-understandable-consensus.webp
+blogs:
+- title: Lil'Log
+  authors: Lilian Weng
+  url: https://lilianweng.github.io/
+  topic: AI
+  note: Long, careful articles on agents, hallucinations, prompting and how models are trained.
+  lab: langchain
+  practice: chapters 9 to 12, hallucinations, agents and tools
+  free: true
+  image: blog-lil-log.webp
+  featured: true
+- title: OpenAI News
+  authors: OpenAI
+  url: https://openai.com/news/
+  topic: AI
+  image: blog-openai-news.webp
+  note: 'Announcements and research from the makers of ChatGPT and the GPT models: read every model launch at the source.'
+  lab: langchain
+  practice: chapter 6, the OpenAI Python SDK
+  free: true
+- title: Claude blog
+  authors: Anthropic
+  url: https://claude.com/blog
+  topic: AI
+  image: blog-claude.webp
+  note: News, guides and stories about Claude, Anthropic's AI assistant, and about how people build products with it.
+  lab: langgraph
+  practice: Part 3, agents in graphs
+  free: true
+- title: Anthropic Engineering
+  authors: Anthropic
+  url: https://www.anthropic.com/engineering
+  topic: AI
+  note: How a model lab builds agents, tools and evaluations, with lessons from real systems.
+  lab: langgraph
+  practice: Part 3, agents in graphs
+  free: true
+  image: blog-anthropic-engineering.webp
+- title: Anthropic Research
+  authors: Anthropic
+  url: https://www.anthropic.com/research
+  topic: AI
+  image: blog-anthropic-research.webp
+  note: How the team behind Claude studies what happens inside language models, how to make them safe, and how people use
+    them.
+  lab: langchain
+  practice: chapter 9, hallucinations, usage and cost
+  free: true
+- title: Google DeepMind blog
+  authors: Google DeepMind
+  url: https://deepmind.google/discover/blog/
+  topic: AI
+  image: blog-google-deepmind.webp
+  note: Research from the lab behind AlphaGo, AlphaFold and Gemini, explained for a general audience.
+  free: true
+- title: Google Research blog
+  authors: Google Research
+  url: https://research.google/blog/
+  topic: AI
+  image: blog-google-research.webp
+  note: Where Google explains its research, from search to language models. The transformer was invented by a Google team.
+  lab: langchain
+  practice: chapter 4, transformers and attention
+  free: true
+- title: Meta AI blog
+  authors: Meta
+  url: https://ai.meta.com/blog/
+  topic: AI
+  image: blog-meta-ai.webp
+  note: Open models such as Llama, and the research behind them. The paper that named RAG came from Meta's AI researchers.
+  lab: rag-vector-databases
+  practice: chapter 1, why RAG
+  free: true
+- title: Microsoft Research blog
+  authors: Microsoft Research
+  url: https://www.microsoft.com/en-us/research/blog/
+  topic: AI
+  image: blog-microsoft-research.webp
+  note: Research from Microsoft's labs on AI and systems. MS MARCO, the dataset most rerankers learned from, came from Microsoft.
+  lab: rag-vector-databases
+  practice: chapter 10, reranking
+  free: true
+- title: NVIDIA Technical Blog
+  authors: NVIDIA
+  url: https://developer.nvidia.com/blog/
+  topic: AI
+  image: blog-nvidia-technical-blog.webp
+  note: 'How to run AI fast on GPUs: training, inference and vector search, with code and measurements.'
+  lab: rag-vector-databases
+  practice: chapter 7, smaller vectors
+  free: true
+- title: Simon Willison's Weblog
+  authors: Simon Willison
+  url: https://simonwillison.net/
+  topic: AI
+  note: Daily, hands-on notes on new models and tools, with honest tests of what works and what does not.
+  free: true
+  image: blog-simon-willison-s-weblog.webp
+- title: 'Jay Alammar: Language Models & Co.'
+  authors: Jay Alammar
+  url: https://newsletter.languagemodels.co/
+  topic: AI
+  image: blog-jay-alammar.webp
+  note: 'The author of The Illustrated Transformer now writes on Substack: the clearest pictures of how language models
+    work.'
+  lab: langchain
+  practice: chapter 4, transformers and attention
+  free: true
+- title: Andrej Karpathy blog
+  authors: Andrej Karpathy
+  url: https://karpathy.github.io/
+  topic: AI
+  image: blog-andrej-karpathy.webp
+  note: Classic essays from a founding member of OpenAI and former head of AI at Tesla, written so that neural networks
+    make sense.
+  lab: langchain
+  practice: chapter 4, transformers and attention
+  free: true
+- title: Ahead of AI
+  authors: Sebastian Raschka
+  url: https://magazine.sebastianraschka.com/
+  topic: AI
+  image: blog-ahead-of-ai.webp
+  note: A careful look at new language model research, by the author of Build a Large Language Model (From Scratch).
+  lab: langchain
+  practice: chapters 1 to 4, how language models work
+  free: true
+- title: Chip Huyen's blog
+  authors: Chip Huyen
+  url: https://huyenchip.com/blog/
+  topic: AI
+  note: Practical essays on building AI systems in production, from RAG to evaluation and agents.
+  lab: rag-vector-databases
+  practice: chapter 12, evaluation
+  free: true
+  image: blog-chip-huyen-s-blog.webp
+- title: Hugging Face blog
+  authors: Hugging Face
+  url: https://huggingface.co/blog
+  topic: AI
+  note: Tutorials and announcements for open models, embeddings and rerankers.
+  lab: rag-vector-databases
+  practice: chapter 2, embeddings
+  free: true
+  image: blog-hugging-face-blog.webp
+- title: Pinecone Learn
+  authors: Pinecone
+  url: https://www.pinecone.io/learn/
+  topic: RAG and search
+  note: Clear articles on vector search, HNSW, product quantization, hybrid search and RAG.
+  lab: rag-vector-databases
+  practice: chapters 5 to 9, inside a vector database
+  free: true
+  image: blog-pinecone-learn.webp
+- title: Eugene Yan
+  authors: Eugene Yan
+  url: https://eugeneyan.com/
+  topic: RAG and search
+  image: blog-eugene-yan.webp
+  note: Practical writing on search, recommendations, RAG and how to evaluate language models, from someone who builds them.
+  lab: rag-vector-databases
+  practice: chapter 12, measuring retrieval
+  free: true
+- title: Netflix TechBlog
+  authors: Netflix engineers
+  url: https://netflixtechblog.com/
+  topic: Systems
+  image: blog-netflix-techblog.webp
+  note: 'How Netflix streams to members all over the world: microservices, data pipelines, caching and chaos engineering.'
+  lab: redis-in-practice
+  practice: chapter 7, caching
+  free: true
+- title: Uber Engineering
+  authors: Uber engineers
+  url: https://www.uber.com/blog/engineering/
+  topic: Systems
+  image: blog-uber-engineering.webp
+  note: Real-time systems for millions of trips a day, from maps and pricing to databases and machine learning.
+  lab: sql-from-zero
+  practice: chapter 12, indexes and EXPLAIN
+  free: true
+- title: Engineering at Meta
+  authors: Meta engineers
+  url: https://engineering.fb.com/
+  topic: Systems
+  image: blog-engineering-at-meta.webp
+  note: 'How Meta runs Facebook, Instagram and WhatsApp: data centres, databases, mobile apps and AI infrastructure.'
+  free: true
+- title: 'The GitHub Blog: Engineering'
+  authors: GitHub engineers
+  url: https://github.blog/engineering/
+  topic: Systems
+  note: How GitHub builds and runs the platform that millions of developers use every day, written by the engineers who
+    do it.
+  lab: git-without-fear
+  practice: the whole course
+  free: true
+  image: blog-the-github-blog-engineering.webp
+- title: The Cloudflare Blog
+  authors: Cloudflare engineers
+  url: https://blog.cloudflare.com/
+  topic: Systems
+  note: Deep technical stories about networks, outages and performance, often with real numbers.
+  lab: linux-on-call
+  practice: chapter 13, networking for servers
+  free: true
+  image: blog-the-cloudflare-blog.webp
+- title: Stripe Engineering
+  authors: Stripe engineers
+  url: https://stripe.com/blog/engineering
+  topic: Systems
+  image: blog-stripe-engineering.webp
+  note: 'Engineering at a payments company where every request is money: reliability, APIs that last, and developer tools.'
+  lab: postgres-transactions-and-locks
+  practice: the whole lab
+  free: true
+- title: Discord Engineering
+  authors: Discord engineers
+  url: https://discord.com/category/engineering
+  topic: Systems
+  note: Real stories of scaling a chat service, including the move of a service from Go to Rust.
+  lab: rust-basics
+  practice: chapter 27, how fast is Rust?
+  free: true
+  image: blog-discord-engineering.webp
+- title: Spotify Engineering
+  authors: Spotify engineers
+  url: https://engineering.atspotify.com/
+  topic: Systems
+  image: blog-spotify-engineering.webp
+  note: 'How Spotify builds for hundreds of millions of listeners: experiments, data and the platform its developers use.'
+  free: true
+- title: LinkedIn Engineering
+  authors: LinkedIn engineers
+  url: https://www.linkedin.com/blog/engineering
+  topic: Systems
+  image: blog-linkedin-engineering.webp
+  note: The team that created Kafka writes about data pipelines, search and feeds at very large scale.
+  lab: redis-in-practice
+  practice: chapter 12, streams and consumer groups
+  free: true
+- title: Dropbox Tech
+  authors: Dropbox engineers
+  url: https://dropbox.tech/
+  topic: Systems
+  image: blog-dropbox-tech.webp
+  note: Storage and sync for hundreds of millions of users, with deep posts on infrastructure, performance and security.
+  free: true
+- title: Slack Engineering
+  authors: Slack engineers
+  url: https://slack.engineering/
+  topic: Systems
+  image: blog-slack-engineering.webp
+  note: How Slack delivers messages in real time, and honest write-ups of what it learned from its outages.
+  lab: linux-on-call
+  practice: chapter 15, on call
+  free: true
+- title: Shopify Engineering
+  authors: Shopify engineers
+  url: https://shopify.engineering/
+  topic: Systems
+  image: blog-shopify-engineering.webp
+  note: Keeping a huge Ruby and React platform fast and up through the busiest shopping days of the year.
+  free: true
+- title: All Things Distributed
+  authors: Werner Vogels
+  url: https://www.allthingsdistributed.com/
+  topic: Systems
+  image: blog-all-things-distributed.webp
+  note: Essays by Amazon's CTO on building systems that keep working when parts fail. The Dynamo paper in this library lives
+    here.
+  lab: redis-in-practice
+  practice: chapter 16, replication and clusters
+  free: true
+- title: Zerodha Tech
+  authors: Zerodha engineers
+  url: https://zerodha.tech/blog/
+  topic: Systems
+  image: blog-zerodha-tech.webp
+  note: One of India's largest stockbrokers on running its systems with a small team, simple designs and open-source tools.
+  lab: sql-from-zero
+  practice: the whole course
+  free: true
+- title: PhonePe Tech Blog
+  authors: PhonePe engineers
+  url: https://tech.phonepe.com/
+  topic: Systems
+  image: blog-phonepe-tech.webp
+  note: How one of India's largest UPI payment apps handles money and traffic at very large scale.
+  lab: postgres-transactions-and-locks
+  practice: the whole lab
+  free: true
+- title: ByteByteGo
+  authors: Alex Xu
+  url: https://blog.bytebytego.com/
+  topic: Systems
+  image: blog-bytebytego.webp
+  note: System design explained with clear diagrams, from the author of the System Design Interview books.
+  lab: rate-limiter
+  practice: the whole lab
+  free: true
+- title: Hacker News
+  authors: Y Combinator
+  url: https://news.ycombinator.com/
+  topic: Programming
+  free: true
+  image: blog-hacker-news.webp
+  note: 'The front page engineers check every day: new tools, papers and blog posts, with long discussions by the people
+    who build things.'
+- title: The Pragmatic Engineer
+  authors: Gergely Orosz
+  url: https://newsletter.pragmaticengineer.com/
+  topic: Programming
+  image: blog-the-pragmatic-engineer.webp
+  note: 'Inside stories from big tech and startups: how engineering teams really work, ship and hire.'
+  free: true
+- title: Martin Fowler
+  authors: Martin Fowler and guests
+  url: https://martinfowler.com/
+  topic: Programming
+  note: Software design and architecture explained calmly, including recent articles on building with AI.
+  lab: spring-boot-first-api
+  practice: the chapter on layers
+  free: true
+  image: blog-martin-fowler.webp
+- title: Julia Evans
+  authors: Julia Evans
+  url: https://jvns.ca/
+  topic: Programming
+  note: Friendly explanations of Linux, networking, Git and debugging, often with hand-drawn comics.
+  lab: linux-on-call
+  practice: the whole course
+  free: true
+  image: blog-julia-evans.webp
+- title: Dan Luu
+  authors: Dan Luu
+  url: https://danluu.com/
+  topic: Programming
+  note: Careful essays on performance, hardware and how software is really built.
+  free: true
+  image: blog-dan-luu.webp

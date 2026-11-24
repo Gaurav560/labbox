@@ -17,6 +17,9 @@ from . import models  # noqa: F401  (registers every table on SQLModel.metadata)
 from .db import alembic_config, init_db
 
 BATCH = 1000
+# Tables the migrations fill with starting data (the Library's first reading list). A fresh target already has those
+# rows; the source has its own (perhaps edited by admins), so they are replaced instead of counting as "not empty".
+SEEDED = {"library_item"}
 
 
 class CopyError(Exception):
@@ -65,11 +68,14 @@ def copy_database(source: Engine, target: Engine) -> list[TableCount]:
                         "(it upgrades itself), then copy.")
     init_db(target)  # schema from the migrations, the same as a fresh install
     tables = SQLModel.metadata.sorted_tables  # parents before children (foreign keys)
-    full = [t.name for t in tables if count(target, t)]
+    full = [t.name for t in tables if t.name not in SEEDED and count(target, t)]
     if full:
         raise CopyError(f"The target already has rows in: {', '.join(full)}. Copy only into an empty database.")
 
     with source.connect() as src, target.begin() as dst:
+        for t in tables:
+            if t.name in SEEDED:
+                dst.execute(t.delete())
         for t in tables:
             rows = src.execute(select(t)).mappings()
             while batch := [dict(r) for r in rows.fetchmany(BATCH)]:

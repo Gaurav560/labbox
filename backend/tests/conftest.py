@@ -37,6 +37,7 @@ if _RD:
     os.environ["REDIS_URL"] = _RD
 os.environ["VOLUMES_DIR"] = str(_TMP / "volumes")
 os.environ["CHECKS_DIR"] = str(_TMP / "checks")
+os.environ["LIBRARY_UPLOADS_DIR"] = str(_TMP / "library")
 os.environ["BACKUP_DIR"] = str(_TMP / "backups")  # never the real backups (rotation deletes old ones)
 os.environ["LABS_DIR"] = str(Path(__file__).resolve().parents[2] / "labs")
 os.environ["ALLOW_SIGNUP"] = "true"

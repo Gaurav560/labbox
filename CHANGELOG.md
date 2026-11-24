@@ -1,5 +1,33 @@
 # Changelog
 
+## 24 November: the Library (books, research papers, tech blogs), a public page
+
+- Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to
+  Read, and Tech Blogs to Read"; after the first version, "rubbish ui ... i want to market my lab via these sources",
+  then "use the real images for book, papers and blogs". Owner's choices: public, real pictures.
+- `/library` is public (no account needed; linked from the home page header, every footer and the dashboard), titled
+  "Read what the builders read.": counts, three section tabs, a big "Start here" pick per section, topic filters with
+  colours, and a closing "Start free" panel. Every item has a plain "why read it" note, its level, whether it is free to
+  read, and a "Practise it hands-on" link to the LabBox lab and chapter that builds the idea (to sign-up for visitors).
+- Real pictures, all stored in LabBox (`library/images/`, 77 WebP files): the 21 book covers (Open Library's cover
+  service, current editions by ISBN; the free Speech and Language Processing draft shows its real title page), the first
+  page of each of the 17 papers (rendered from the PDFs), and a view of each of the 39 blogs (home page screenshots
+  cropped above any cookie banner, nothing clicked; share images or logos where a site blocks automated visits or shows
+  a pop-up: OpenAI, NVIDIA, the Substack newsletters, and Netflix's logo from Wikimedia Commons, public domain).
+- Owner asked for more: blogs from OpenAI, Claude and Anthropic, Google DeepMind and Research, Meta, Microsoft Research,
+  NVIDIA, Karpathy, Eugene Yan, Ahead of AI, Netflix, Uber, Stripe, Spotify, LinkedIn, Dropbox, Slack, Shopify, Werner
+  Vogels, Zerodha, PhonePe, ByteByteGo, The Pragmatic Engineer and Hacker News (Jay Alammar's entry now points to his
+  Substack), and ten more books (System Design Interview, A Philosophy of Software Design, Site Reliability Engineering,
+  The Linux Command Line, Pro Git, Python Crash Course, Effective Java, Grokking Algorithms, NLP with Transformers, Spring
+  in Action). Airbnb's, Razorpay's and Swiggy's blogs could not be pictured (bot checks, time-outs) and are left out.
+- Admin > Library: add, edit, reorder, remove (with a confirmation), set the "Start here" pick (one per section), the
+  lab link, level, "free to read", and upload a picture (JPEG, PNG or WebP up to 6 MB; checked, resized and stored as
+  WebP in `LIBRARY_UPLOADS_DIR`, default `/srv/labbox/library`). Only admins; every change logged with the admin's name.
+- Data: table `library_item` (migrations 0009 to 0011, additive), filled once from `library/seed.yaml`. `db-copy`
+  replaces the seeded rows in a fresh target instead of refusing it (found by the full test run).
+- Tests: `tests/test_library.py` (seeding once, public list, pictures served safely, uploads, admin-only changes, one
+  "Start here" per section, known labs only, bad input) and `e2e/library.spec.ts` (a visitor, a learner and an admin).
+
 ## 24 November (night): RAG and vector databases, a new 13-chapter AI lab
 
 - Owner, going to sleep: "build a micro lab in python for rag and vector databases ... world class ... full standard".

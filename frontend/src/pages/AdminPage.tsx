@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import {
-  admin, ApiError,
+  admin, api, ApiError, library, libraryImage, type CatalogLab, type LibraryItem, type LibraryItemIn, type LibraryKind, type LibraryLevel,
   type AdminError, type AdminLabReport, type AdminLabRow, type AdminLearner, type AdminMachine, type AdminSpend, type AdminWindow, type FunnelStep,
 } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import ThemeButton from "../components/ThemeButton";
+import { LIBRARY_TABS } from "./LibraryPage";
 
 // The admin area (Phase J): what to improve, and what is running. Only for accounts with is_admin;
 // the backend refuses everyone else, this page only hides itself.
@@ -18,6 +19,7 @@ const TABS = [
   ["machines", "Machines"],
   ["ai", "AI spend"],
   ["errors", "Errors"],
+  ["library", "Library"],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
@@ -325,6 +327,166 @@ function ErrorsTab() {
   );
 }
 
+const EMPTY: LibraryItemIn = { kind: "book", title: "", authors: "", year: null, url: "", note: "", topic: "", lab: "", practice: "", level: "", free: false, featured: false };
+
+const readFile = (file: File) => new Promise<string>((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(String(reader.result));
+  reader.onerror = () => reject(new Error("The file could not be read"));
+  reader.readAsDataURL(file);
+});
+
+function LibraryForm({ start, labs, image, onSave, onCancel, onRemoveImage }: {
+  start: LibraryItemIn; labs: CatalogLab[]; image?: string;
+  onSave: (item: LibraryItemIn, picture: string | null) => Promise<void>; onCancel?: () => void; onRemoveImage?: () => Promise<void>;
+}) {
+  const [item, setItem] = useState<LibraryItemIn>(start);
+  const [picture, setPicture] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const set = <K extends keyof LibraryItemIn>(key: K, value: LibraryItemIn[K]) => setItem((i) => ({ ...i, [key]: value }));
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await onSave(item, picture);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <form className="lib-form" onSubmit={submit} aria-label={onCancel ? "Edit library item" : "Add a library item"}>
+      <label>Section
+        <select value={item.kind} onChange={(e) => set("kind", e.target.value as LibraryKind)}>
+          {LIBRARY_TABS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+        </select>
+      </label>
+      <label>Title<input required maxLength={200} value={item.title} onChange={(e) => set("title", e.target.value)} /></label>
+      <label>Authors<input maxLength={200} value={item.authors} onChange={(e) => set("authors", e.target.value)} /></label>
+      <label>Year<input type="number" min={1000} max={2100} value={item.year ?? ""} onChange={(e) => set("year", e.target.value ? Number(e.target.value) : null)} /></label>
+      <label>Link<input type="url" maxLength={500} placeholder="https://" value={item.url} onChange={(e) => set("url", e.target.value)} /></label>
+      <label>Topic<input maxLength={40} placeholder="AI, Databases, Systems..." value={item.topic} onChange={(e) => set("topic", e.target.value)} /></label>
+      <label>Level
+        <select value={item.level} onChange={(e) => set("level", e.target.value as LibraryLevel)}>
+          <option value="">(not shown)</option><option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option><option value="advanced">Advanced</option>
+        </select>
+      </label>
+      <label>Practise it in (lab)
+        <select value={item.lab} onChange={(e) => set("lab", e.target.value)}>
+          <option value="">(no lab)</option>
+          {labs.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
+        </select>
+      </label>
+      <label>Where in the lab<input maxLength={80} placeholder="chapter 6, the HNSW index" value={item.practice} onChange={(e) => set("practice", e.target.value)} /></label>
+      <label className="lib-check"><input type="checkbox" checked={item.free} onChange={(e) => set("free", e.target.checked)} />Free to read online</label>
+      <label className="lib-check"><input type="checkbox" checked={item.featured} onChange={(e) => set("featured", e.target.checked)} />Start here (the big card of its section)</label>
+      <div className="lib-form-wide lib-form-picture">
+        {(picture || image) && <img src={picture ?? libraryImage(image!)} alt="The picture shown on the Library page" />}
+        <label>Picture (a book cover, a paper's first page, a view of the blog: JPEG, PNG or WebP, up to 6 MB)
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={async (e) => {
+            const file = e.target.files?.[0];
+            setPicture(file ? await readFile(file) : null);
+          }} />
+        </label>
+        {image && !picture && onRemoveImage && <button className="btn btn-small" type="button" onClick={onRemoveImage}>Remove the picture</button>}
+      </div>
+      <label className="lib-form-wide">Why read it
+        <textarea maxLength={1000} rows={3} value={item.note} onChange={(e) => set("note", e.target.value)} />
+      </label>
+      {error && <p className="adm-error lib-form-wide" role="alert">{error}</p>}
+      <div className="lib-form-wide lib-form-actions">
+        <button className="btn btn-small btn-primary" type="submit" disabled={busy}>{onCancel ? "Save changes" : "Add to the library"}</button>
+        {onCancel && <button className="btn btn-small" type="button" onClick={onCancel}>Cancel</button>}
+      </div>
+    </form>
+  );
+}
+
+function LibraryTab() {
+  const [kind, setKind] = useState<LibraryKind>("book");
+  const [items, error, reload] = useLoad<LibraryItem[]>(() => library.list(), []);
+  const [editing, setEditing] = useState<LibraryItem | null>(null);
+  const [added, setAdded] = useState(0);
+  const [labs] = useLoad<CatalogLab[]>(() => api.catalog(), []);
+  const rows = (items ?? []).filter((i) => i.kind === kind);
+  const fields = (i: LibraryItem): LibraryItemIn => ({
+    kind: i.kind, title: i.title, authors: i.authors, year: i.year, url: i.url, note: i.note, topic: i.topic,
+    lab: i.lab, practice: i.practice, level: i.level, free: i.free, featured: i.featured,
+  });
+  const remove = async (i: LibraryItem) => {
+    if (!window.confirm(`Remove "${i.title}" from the library? This cannot be undone.`)) return;
+    await library.remove(i.id);
+    reload();
+  };
+  return (
+    <>
+      <Panel title="Library" note="Books, research papers and tech blogs every learner sees on the Library page. Changes show at once."
+        actions={
+          <div className="adm-seg" role="group" aria-label="Section">
+            {LIBRARY_TABS.map(([k, label]) => (
+              <button key={k} aria-pressed={k === kind} onClick={() => { setKind(k); setEditing(null); }}>{label}</button>
+            ))}
+          </div>
+        }>
+        {!items ? <Loading error={error} /> : rows.length === 0 ? <p className="muted">Nothing in this section yet.</p> : (
+          <table className="adm-table">
+            <thead><tr><th>Order</th><th>Title</th><th>Topic</th><th>Year</th><th /></tr></thead>
+            <tbody>
+              {rows.map((i, n) => (
+                <tr key={i.id}>
+                  <td className="lib-order">
+                    <button className="btn btn-small btn-ghost" aria-label={`Move ${i.title} up`} disabled={n === 0}
+                      onClick={() => library.move(i.id, "up").then(reload)}>↑</button>
+                    <button className="btn btn-small btn-ghost" aria-label={`Move ${i.title} down`} disabled={n === rows.length - 1}
+                      onClick={() => library.move(i.id, "down").then(reload)}>↓</button>
+                  </td>
+                  <td>
+                    {i.url ? <a href={i.url} target="_blank" rel="noopener noreferrer">{i.title}</a> : i.title}
+                    <div className="muted small-text">{i.authors}{i.featured ? " · Start here" : ""}</div>
+                  </td>
+                  <td>{i.topic}</td>
+                  <td className="adm-num">{i.year ?? ""}</td>
+                  <td className="lib-row-actions">
+                    <button className="btn btn-small" onClick={() => setEditing(i)}>Edit</button>
+                    <button className="btn btn-small" onClick={() => remove(i)}>Remove</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Panel>
+      {editing ? (
+        <Panel title={`Edit: ${editing.title}`}>
+          <LibraryForm key={editing.id} labs={labs ?? []} start={fields(editing)} image={editing.image} onCancel={() => setEditing(null)}
+            onRemoveImage={async () => { setEditing(await library.removeImage(editing.id)); reload(); }}
+            onSave={async (item, picture) => {
+              await library.change(editing.id, item);
+              if (picture) await library.setImage(editing.id, picture);
+              setEditing(null);
+              reload();
+            }} />
+        </Panel>
+      ) : (
+        <Panel title="Add an item" note="It goes to the end of its section; move it up from the list.">
+          <LibraryForm key={`${added}-${kind}`} labs={labs ?? []} start={{ ...EMPTY, kind }}
+            onSave={async (item, picture) => {
+              const made = await library.add(item);
+              if (picture) await library.setImage(made.id, picture);
+              setKind(item.kind);
+              setAdded((x) => x + 1);
+              reload();
+            }} />
+        </Panel>
+      )}
+    </>
+  );
+}
+
 export default function AdminPage() {
   const { user } = useAuth();
   const [params, setParams] = useSearchParams();
@@ -351,6 +513,7 @@ export default function AdminPage() {
         {tab === "machines" && <MachinesTab />}
         {tab === "ai" && <SpendTab />}
         {tab === "errors" && <ErrorsTab />}
+        {tab === "library" && <LibraryTab />}
       </main>
     </div>
   );

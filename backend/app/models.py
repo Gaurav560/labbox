@@ -185,3 +185,27 @@ class AnalyticsEvent(SQLModel, table=True):
     step_index: int | None = None
     data_json: str = ""
     created_at: datetime = Field(default_factory=utcnow, index=True)
+
+
+class LibraryItem(SQLModel, table=True):
+    """One entry of the Library (owner, 24 November): a book, a research paper or a tech blog worth reading.
+    Seeded once from library/seed.yaml by migration 0009; after that admins edit the list in the app."""
+    __tablename__ = "library_item"
+
+    id: int | None = Field(default=None, primary_key=True)
+    kind: str = Field(index=True)  # book | paper | blog
+    title: str
+    authors: str = ""
+    year: int | None = None
+    url: str = ""
+    note: str = ""  # why it is worth reading, in plain words
+    topic: str = ""  # a short label for the filter, like "AI" or "Databases"
+    lab: str = ""  # the LabBox lab where you practise it (a lab id), or empty
+    practice: str = ""  # where in that lab, like "chapter 6, the HNSW index"
+    level: str = ""  # beginner | intermediate | advanced, or empty
+    free: bool = False  # free to read online
+    featured: bool = False  # the "Start here" card of its section (at most one per kind)
+    image: str = ""  # a picture stored with LabBox: library/images/ (the starting list) or LIBRARY_UPLOADS_DIR
+    position: int = 0  # order within its kind, smallest first
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
