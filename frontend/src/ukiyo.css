@@ -325,6 +325,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-hero h1 { font-size: clamp(40px, 4.7vw, 72px); line-height: 1.04; margin: 0 0 26px; }
 @media (min-width: 901px) { .uh-line { white-space: nowrap; } }
 .uh-line { display: block; }
+.uh-sting { color: var(--muted); }
 .uh-hero h1 em { font-style: italic; font-weight: 400; color: var(--vermilion); margin-top: .08em; }
 .uh-lead { font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 30em; margin: 0 0 32px; }
 .uh-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }

@@ -7,7 +7,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("The AI wave is here. Learn to build on it.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("The AI wave is here. Learn to build AI apps, or get left behind.");
   await expect(page).toHaveTitle(/LabBox by Telusko/);
   // The logo, as a link home and as the favicon.
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();

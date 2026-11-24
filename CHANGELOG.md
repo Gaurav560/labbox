@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): "Learn to build AI apps, or get left behind."
+
+- Owner: change "Learn to build on it." to something like "Learn to build AI applications or get left behind", keeping
+  the fear of being left behind. The headline is now three lines: "The AI wave is here." / "Learn to build AI apps,"
+  (vermilion italic) / "or get left behind." (muted, the sting on its own line).
+
 ## 25 November (Ukiyo): the new home hero
 
 - Owner picked from eight options: option 6's layout with option 7's picture, and new words. Two lines, each on
