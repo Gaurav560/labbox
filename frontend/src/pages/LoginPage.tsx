@@ -84,9 +84,7 @@ export default function LoginPage() {
             <Link to="/" className="link small">← Home</Link>
           </div>
           <h1>{signupMode ? "Create your account" : "Welcome back"}</h1>
-          <p className="muted auth-sub">
-            {signupMode ? "Your first win is about three minutes away." : "Your machines are where you left them."}
-          </p>
+          {!signupMode && <p className="muted auth-sub">Your machines are where you left them.</p>}
 
           <label className="auth-field">
             <span>Username</span>

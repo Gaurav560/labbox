@@ -126,10 +126,8 @@ export default function MetroMap({ lines, selected, onSelect }: {
     return { placed: out, height: y - 60, cardW: Math.min(CARD, gap - 24) };
   }, [lines, width, expanded]);
 
+  // The page opens at its top; "You are here" marks the current chapter without scrolling to it (owner, 25 November).
   const nowRef = useRef<HTMLLIElement>(null);
-  useLayoutEffect(() => {
-    nowRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
-  }, [placed.length > 0, lines]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const narrow = width > 0 && width < NARROW;
 
