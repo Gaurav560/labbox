@@ -223,7 +223,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .u-row-link { display: grid; grid-template-columns: 40px minmax(0, 1fr) 128px 96px 150px 20px; gap: 18px; align-items: center;
   padding: 16px 8px; color: var(--text); text-decoration: none; transition: background var(--t-soft), padding var(--t-soft); }
 .u-row-link:hover { text-decoration: none; background: color-mix(in srgb, var(--ink, var(--text)) 7%, transparent); padding-left: 14px; }
-.u-row-logo { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--rule); background: var(--card); }
+.u-row-logo { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--rule); background: #fffdf8; }
 .u-row-logo img { width: 24px; height: 24px; object-fit: contain; }
 .u-row-mono { font: 700 18px var(--font-serif); color: var(--ink, var(--text)); }
 .u-row-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -264,7 +264,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .u-course-figure .course-cover { overflow: hidden; }
 .u-print-credit { margin-top: 8px; font: italic 13px/1.4 var(--font-serif); color: var(--muted); }
 .u-course-logo { position: absolute; right: 14px; bottom: 14px; width: 52px; height: 52px; display: grid; place-items: center;
-  background: #fffdf8; border: 2px solid var(--vermilion); transform: rotate(-4deg); box-shadow: 0 4px 12px -6px #0006; }
+  background: #fffdf8; border: 2px solid var(--vermilion); box-shadow: 0 4px 12px -6px #0006; }
 .u-course-logo img { width: 30px; height: 30px; object-fit: contain; }
 .course-kicker { font: 600 11px var(--font-code); letter-spacing: .16em; color: var(--tone); }
 .course-hero h1 { font-size: clamp(38px, 4.4vw, 60px); line-height: 1.02; margin: 10px 0 12px; }
@@ -369,3 +369,32 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .lesson-photo { border-color: var(--rule); }
 .task-card { border-color: var(--rule); background: var(--card); }
 @media (max-width: 860px) { .course-hero { grid-template-columns: 1fr; gap: 20px; } .course-cover.u-course-print { max-width: 520px; } }
+
+/* ---------- 13. the profile panel (owner, 25 November: "make this classy and same theme") ---------- */
+.profile-btn { width: 32px; height: 32px; border-radius: 0; background: none; }
+.profile-avatar { width: 28px; height: 28px; border-radius: 3px; background: var(--vermilion); color: #fff;
+  font: 600 15px var(--font-serif); box-shadow: inset 0 0 0 2px var(--vermilion), inset 0 0 0 3px #ffffffa0; }
+.profile-btn:hover .profile-avatar { background: var(--vermilion); filter: brightness(1.08); }
+.ts-pop.profile-pop { width: 300px; gap: 16px; padding: 20px 22px 14px; border-radius: 4px; background: var(--card);
+  border: 1px solid var(--rule); border-top: 3px solid var(--vermilion); box-shadow: 0 28px 60px -28px #000a; }
+.profile-head { gap: 14px; }
+.profile-avatar-big { width: 48px; height: 48px; font-size: 22px; }
+.profile-head > div { gap: 2px; }
+.profile-head strong { font: 600 22px/1.15 var(--font-serif); }
+.profile-pop .level-badge { order: -1; padding: 0; border-radius: 0; background: none; color: var(--vermilion);
+  font: 600 10.5px var(--font-code); letter-spacing: .16em; text-transform: uppercase; }
+.profile-level { gap: 8px; }
+.profile-level span { font: 500 11.5px var(--font-code); letter-spacing: .04em; color: var(--muted); }
+.profile-bar { height: 2px; border-radius: 0; background: var(--rule); }
+.profile-bar > div { border-radius: 0; background: var(--vermilion); }
+.profile-stats { gap: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.profile-stat { padding: 14px 0 12px; border: 0; border-radius: 0; background: none; gap: 6px; }
+.profile-stat + .profile-stat { padding-left: 18px; border-left: 1px solid var(--rule); }
+.profile-stat .stat { font: 600 32px/1 var(--font-serif); color: var(--text); }
+.profile-stat.is-lit .stat-streak { color: var(--vermilion); }
+.profile-stat small { font: 600 10px var(--font-code); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.profile-stat small.profile-best { margin-top: -4px; letter-spacing: .08em; text-transform: none; font-weight: 500; }
+.profile-today { font: italic 14px/1.45 var(--font-serif); color: var(--muted); }
+.profile-exit { justify-content: flex-start; height: 40px; padding: 0; margin-top: -4px; border: 0; border-top: 1px solid var(--rule);
+  border-radius: 0; background: none; color: var(--muted); font: 600 13px var(--font-text); }
+.profile-exit:hover { border-color: var(--rule); background: none; color: var(--vermilion); }

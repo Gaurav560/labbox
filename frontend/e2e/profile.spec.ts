@@ -12,9 +12,9 @@ test("the profile panel shows level, streak and stars, and Exit signs out", asyn
   await expect(bar.getByLabel(/day streak/)).toHaveCount(0); // not in the bar itself any more
   await bar.getByRole("button", { name: /^Profile/ }).click();
   const panel = page.getByRole("dialog", { name: "Profile" });
-  await expect(panel.getByLabel("Level 1")).toHaveText("Lv 1");
-  await expect(panel.getByLabel(/day streak/)).toHaveText("🔥 0");
-  await expect(panel.getByLabel(/XP$/)).toHaveText("⭐ 0");
+  await expect(panel.getByLabel("Level 1")).toHaveText("Level 1");
+  await expect(panel.getByLabel(/day streak/)).toHaveText("0");
+  await expect(panel.getByLabel(/XP$/)).toHaveText("0");
   await expect(panel).toContainText("XP to level 2");
   await page.keyboard.press("Escape");
   await expect(panel).toBeHidden();

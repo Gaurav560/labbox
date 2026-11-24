@@ -343,9 +343,9 @@ export function Seal({ lines, size = 44, title }: { lines: string[]; size?: numb
   return (
     <svg className="u-seal" width={size} height={size} viewBox="0 0 44 44" role={title ? "img" : undefined} aria-label={title}
       aria-hidden={title ? undefined : true}>
-      <rect x="2" y="2" width="40" height="40" rx="5" fill="var(--vermilion)" transform="rotate(-4 22 22)" />
-      <rect x="5.5" y="5.5" width="33" height="33" rx="2" fill="none" stroke="#fff" strokeWidth="1" transform="rotate(-4 22 22)" opacity=".85" />
-      <g transform="rotate(-4 22 22)" fill="#fff" fontFamily="Fraunces, Georgia, serif" fontWeight="700" textAnchor="middle">
+      <rect x="2" y="2" width="40" height="40" rx="5" fill="var(--vermilion)" />
+      <rect x="5.5" y="5.5" width="33" height="33" rx="2" fill="none" stroke="#fff" strokeWidth="1" opacity=".85" />
+      <g fill="#fff" fontFamily="Fraunces, Georgia, serif" fontWeight="700" textAnchor="middle">
         {lines.length === 1
           ? <text x="22" y={lines[0].length > 2 ? 25.5 : 27} fontSize={[13, 13, 13, 10.5, 9, 7.6][Math.min(lines[0].length, 5)]}>{lines[0]}</text>
           : <><text x="22" y="20" fontSize="10.5">{lines[0]}</text><text x="22" y="32" fontSize="10.5">{lines[1]}</text></>}

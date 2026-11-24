@@ -57,8 +57,8 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   const auth = { Authorization: `Bearer ${token}` };
   userId = (await (await page.request.get("/api/me", { headers: auth })).json()).id;
   await openProfile(page);
-  await expect(badge(page, /day streak/)).toHaveText("🔥 0");
-  await expect(badge(page, /Level/)).toHaveText("Lv 1");
+  await expect(badge(page, /day streak/)).toHaveText("0");
+  await expect(badge(page, /Level/)).toHaveText("Level 1");
   await page.keyboard.press("Escape");
 
   // 4. The daily drill on the labs page counts for the streak (answers are checked on the server).
@@ -80,8 +80,8 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await expect(drill.locator(".xp-chip")).toHaveText("Done ✓");
   await expect(page.locator(".toast-info")).toContainText("+20 XP");
   await openProfile(page);
-  await expect(badge(page, /day streak/)).toHaveText("🔥 1");
-  await expect(badge(page, /XP$/)).toHaveText("⭐ 20");
+  await expect(badge(page, /day streak/)).toHaveText("1");
+  await expect(badge(page, /XP$/)).toHaveText("20");
 
   // 5. The skill map on the lab's course page, before: chapter 1 is where you are, not done.
   await page.goto("/courses/python-basics");
@@ -100,8 +100,8 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   await expect(page.locator(".toast-info").last()).toContainText("+90 XP");
   await expect(page.locator(".recap-stats")).toContainText("⭐ 90");
   await openProfile(page);
-  await expect(badge(page, /XP$/)).toHaveText("⭐ 110");
-  await expect(badge(page, /Level/)).toHaveText("Lv 2");
+  await expect(badge(page, /XP$/)).toHaveText("110");
+  await expect(badge(page, /Level/)).toHaveText("Level 2");
 
   await page.goto("/courses/python-basics");
   await expect(pyNode).toHaveClass(/metro-done/);  // the station lights up

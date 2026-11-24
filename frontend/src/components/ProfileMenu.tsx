@@ -39,7 +39,7 @@ export default function ProfileMenu({ username }: { username: string }) {
             <span className="profile-avatar profile-avatar-big">{initial}</span>
             <div>
               <strong>{username}</strong>
-              {stats && <span className="level-badge" aria-label={`Level ${stats.level}`}>Lv {stats.level}</span>}
+              {stats && <span className="level-badge" aria-label={`Level ${stats.level}`}>Level {stats.level}</span>}
             </div>
           </div>
           {stats && (
@@ -50,12 +50,13 @@ export default function ProfileMenu({ username }: { username: string }) {
               </div>
               <div className="profile-stats">
                 <div className={`profile-stat ${todayDone ? "is-lit" : ""}`}>
-                  <span className="stat stat-streak" aria-label={`${stats.streak_current} day streak`}>🔥 {stats.streak_current}</span>
-                  <small>days · best {stats.streak_best}</small>
+                  <span className="stat stat-streak" aria-label={`${stats.streak_current} day streak`}>{stats.streak_current}</span>
+                  <small>day streak</small>
+                  <small className="profile-best">best {stats.streak_best}</small>
                 </div>
                 <div className="profile-stat">
-                  <span className="stat stat-xp" aria-label={`${stats.xp_total} XP`}>⭐ {stats.xp_total}</span>
-                  <small>stars (XP) in total</small>
+                  <span className="stat stat-xp" aria-label={`${stats.xp_total} XP`}>{stats.xp_total}</span>
+                  <small>stars (XP)</small>
                 </div>
               </div>
               <p className="profile-today">

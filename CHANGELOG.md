@@ -1,5 +1,22 @@
 # Changelog
 
+## 25 November (Ukiyo): real lab logos, straight icons, a classy profile panel
+
+- Owner: "use real logo of the respective labs". LangChain, LangChain4j, LangGraph and Rust showed a letter: their
+  credits say "Logo: LangChain4j" and `labBrand` only read "Logos: ...". It reads both now, and their logo files
+  (already in `tools/logos/`) are served from `public/logos/`. Logos sit on a paper chip in both themes, so dark
+  marks (Rust, LangGraph) read on sumi too.
+- Owner: "do not tilt it or any icon. keep it straight and fixed", "for all". The hanko seal and the logo stamp on
+  the course print stand straight.
+- Owner: "make this classy and same theme" (the profile panel). Paper card with a vermilion top rule, a hanko seal
+  for the initial (also the top bar button), "Level 2" as a small vermilion kicker, a fine ink progress line, serif
+  numbers for the streak and stars (no emoji), the streak note in italic serif, a quiet Exit row.
+
+## 25 November: pages open at their top; sign-up without the first-win line; footer without Premium Reads
+
+- Same changes as on master: `ScrollToTop` and no jump to "You are here"; the sign-up form's first-win line is gone;
+  the footer links are FAQs, Privacy policy and Terms of Service; the lesson's faint logo stands straight.
+
 ## 25 November: home page menu: AI labs, Premium Reads, FAQs
 
 - Owner: "remove Inside a lab and Labs from the navbar. AI labs is good enough". The sections stay on the page
