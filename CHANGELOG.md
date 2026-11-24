@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: Premium Reads featured card without "Start here"
+
+- Owner: "remove start here from this card". The first pick of each section (AI Engineering, Attention Is All You
+  Need, Lil'Log) keeps its big card, without the "Start here" label. Done on master and `design/ukiyo`.
+
 ## 25 November: no Premium Reads in the footer; the lesson logo stands straight
 
 - Owner: "remove premium reads from footer". The footer links are FAQs, Privacy policy and Terms of Service;

@@ -23,7 +23,8 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   // A visitor, with no account: the page, a Start here pick, links to the labs that practise each idea, Start free.
   await page.goto("/library");
   await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
-  await expect(page.getByRole("article", { name: "Start here: AI Engineering" })).toBeVisible();
+  await expect(page.getByRole("article", { name: "Featured: AI Engineering" })).toBeVisible();
+  await expect(page.locator(".lib-featured")).not.toContainText("Start here"); // no kicker on the card (owner, 25 November)
   await expect(page.getByRole("link", { name: "Start free" }).first()).toBeVisible();
   await expect(page.locator(".lib-updated")).toHaveText(/^Last updated \d{1,2} [A-Z][a-z]{2} \d{4}$/);
   await expect(page.locator(".lib-tile-updated").first()).toContainText(/^.*Last updated \d{1,2} [A-Z][a-z]{2}/);
@@ -43,7 +44,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await expect(page).toHaveURL(/tab=paper/);
   const papers = page.getByRole("list", { name: "Research papers" });
   // Attention Is All You Need is the first paper, the Start here card (owner); the whole card opens it, no read button.
-  const start = page.getByRole("article", { name: "Start here: Attention Is All You Need" });
+  const start = page.getByRole("article", { name: "Featured: Attention Is All You Need" });
   await expect(start.getByRole("link", { name: "Attention Is All You Need" })).toHaveAttribute("href", "https://arxiv.org/abs/1706.03762");
   await expect(page.getByRole("link", { name: /^(Read the paper|See the book|Visit the blog)/ })).toHaveCount(0);
   // The whole card opens the paper; the lab chip on it still opens the lab. "Free to read" is not shown (owner).
