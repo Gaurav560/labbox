@@ -6,7 +6,7 @@ export type Theme = "dark" | "light";
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({ theme: "dark", toggle: () => {} });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = usePersistentState<Theme>("theme", "dark");
+  const [theme, setTheme] = usePersistentState<Theme>("theme", "light"); // Ukiyo opens on washi paper
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);

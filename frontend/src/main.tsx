@@ -10,10 +10,15 @@ import { ThemeProvider } from "./theme";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
+import "@fontsource/fraunces/400.css";
+import "@fontsource/fraunces/600.css";
+import "@fontsource/fraunces/700.css";
+import "@fontsource/fraunces/400-italic.css";
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import "@xterm/xterm/css/xterm.css";
 import "./styles.css";
+import "./ukiyo.css";  // the Ukiyo design (owner, 24 November), on top of the base styles
 
 // Monaco cancels its own pending timers when the editor switches files quickly (a lesson step opening
 // its file) and rejects a promise nobody awaits, named "Canceled". It is harmless; drop that one only.
