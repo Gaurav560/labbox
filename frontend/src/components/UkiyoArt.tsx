@@ -2,7 +2,7 @@
  * The Ukiyo artwork (owner, 24 November): original illustrations in the manner of Japanese woodblock prints,
  * one per category, drawn as SVG so they are sharp at every size, load with the page and cost nothing.
  * Flat colour blocks, an ink outline where it helps, and a faint paper grain, like a printed sheet.
- *   AI: a brushed red sun over a sumi wave         Languages: a vermilion pagoda among snowy cedars
+ *   AI and Languages: pictures the owner chose (see TRACK_IMAGES below)
  *   Frameworks: bamboo                             Databases: a river through layered hills
  *   DevOps: geometric mountains and terraces       System design: a red arched bridge
  *   Cloud (coming soon): scrolling clouds
@@ -36,114 +36,7 @@ function Print({ children, label, bg = PAPER }: { children: (id: string) => Reac
   );
 }
 
-function AiPrint() {
-  // A red sun laid down with a loaded brush, and one sweep of sumi ink beneath it, like a wave (owner, 25 November:
-  // "more cool classy"). Rough edges come from a displacement filter, so the marks read as brush, not geometry.
-  return (
-    <Print bg="#f3eee3">{(id) => (
-      <>
-        <defs>
-          <filter id={`${id}-brush`} x="-10%" y="-20%" width="120%" height="140%">
-            <feTurbulence type="fractalNoise" baseFrequency=".012 .22" numOctaves="3" seed="7" />
-            <feDisplacementMap in="SourceGraphic" scale="8" />
-          </filter>
-          <filter id={`${id}-rough`} x="-10%" y="-10%" width="120%" height="120%">
-            <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="2" />
-            <feDisplacementMap in="SourceGraphic" scale="7" />
-          </filter>
-        </defs>
-        {/* faint mottled paper at the edges */}
-        {[[-20, -10, 70], [60, -30, 46], [350, -20, 64], [420, 70, 50], [-30, 200, 60], [90, 262, 54], [330, 258, 66]].map(([x, y, r], i) => (
-          <circle key={i} cx={x} cy={y} r={r} fill="#ddd5c8" opacity=".7" filter={`url(#${id}-rough)`} />
-        ))}
-        {/* the sun: a solid disc and two dry rings around it */}
-        <g filter={`url(#${id}-rough)`}>
-          <circle cx="250" cy="96" r="52" fill="#d7261c" />
-          <circle cx="248" cy="95" r="58" fill="none" stroke="#d7261c" strokeWidth="3" strokeDasharray="60 9 30 14" opacity=".85" />
-          <circle cx="253" cy="98" r="62" fill="none" stroke="#d7261c" strokeWidth="1.6" strokeDasharray="22 16 50 30" opacity=".6" />
-        </g>
-        {/* the ink wave: one tapering sweep, its bristle gaps left in paper */}
-        <g filter={`url(#${id}-brush)`}>
-          <path d="M52 172 C 100 162, 140 176, 190 170 C 236 164, 270 150, 294 124 C 304 112, 316 104, 330 104
-                   L 340 114 C 330 142, 304 166, 264 178 C 220 190, 160 190, 116 188 C 88 187, 66 184, 52 172 Z" fill="#141210" />
-          {[0, 1, 2, 3, 4].map((k) => (
-            <path key={k} d={`M${66 + k * 6} ${176 + k * 2.4} C 112 ${168 + k * 3}, 150 ${180 + k * 2}, 196 ${175 + k * 2}
-                     C 240 ${170 + k * 2}, 276 ${156 + k * 2}, 306 ${126 + k * 3}`}
-              fill="none" stroke="#f3eee3" strokeWidth={k % 2 ? 1.1 : 1.8} opacity=".9" />
-          ))}
-        </g>
-      </>
-    )}</Print>
-  );
-}
 
-function LanguagesPrint() {
-  // A vermilion pagoda among snow-laden cedars, after the shin-hanga prints of temple towers (owner, 25 November:
-  // "the red one ... is pretty awesome"). Dark roofs with lifted eaves, white bracket rows, a stone wall below.
-  const tier = (y: number, w: number, h: number, k: number) => (
-    <g key={k}>
-      {/* the body: vermilion posts with pale panels */}
-      <rect x={200 - w * 0.62} y={y} width={w * 1.24} height={h} fill="#d0442a" />
-      {[-0.42, -0.14, 0.14].map((f) => (
-        <rect key={f} x={200 + w * f} y={y + 6} width={w * 0.26} height={h - 12} fill="#f1e6d6" opacity=".9" />
-      ))}
-      {[-0.44, -0.16, 0.12, 0.4].map((f) => <rect key={f} x={200 + w * f} y={y} width="3" height={h} fill="#8f2716" />)}
-      {/* the bracket row under the roof */}
-      <rect x={200 - w * 0.7} y={y - 7} width={w * 1.4} height="7" fill="#e45a3c" />
-      {Array.from({ length: 12 }, (_, i) => (
-        <rect key={i} x={200 - w * 0.68 + i * (w * 1.36 / 12)} y={y - 7} width="3" height="7" fill="#f3e9da" />
-      ))}
-      {/* the roof: dark, wide, its eaves lifting at the ends */}
-      <path d={`M${200 - w - 14} ${y - 12} C ${200 - w} ${y - 9}, ${200 - w * 0.5} ${y - 20}, ${200 - w * 0.45} ${y - 22}
-               L ${200 + w * 0.45} ${y - 22} C ${200 + w * 0.5} ${y - 20}, ${200 + w} ${y - 9}, ${200 + w + 14} ${y - 12}
-               L ${200 + w + 6} ${y - 6} L ${200 - w - 6} ${y - 6} Z`} fill="#3a2b25" />
-      <path d={`M${200 - w * 0.45} ${y - 22} L ${200 + w * 0.45} ${y - 22}`} stroke="#f4f1ea" strokeWidth="2.4" />
-    </g>
-  );
-  // A snow clump: a dark green underside and a white top whose edge rises and falls in uneven bumps.
-  const clump = (x: number, y: number, w: number, k: number) => {
-    const bumps = 4 + (k % 3);
-    let top = `M${x - w / 2} ${y + 10}`;
-    for (let b = 0; b < bumps; b++) {
-      const x1 = x - w / 2 + ((b + 1) * w) / bumps;
-      top += ` Q ${x1 - w / bumps / 2} ${y - 6 - ((b * 7 + k * 3) % 9)}, ${x1} ${y + ((b * 5 + k) % 4)}`;
-    }
-    return (
-      <g key={k}>
-        <path d={`M${x - w / 2 - 4} ${y + 12} Q ${x} ${y + 30 + (k % 3) * 3}, ${x + w / 2 + 4} ${y + 12} Z`} fill="#3d5a53" />
-        <path d={`${top} Q ${x} ${y + 18}, ${x - w / 2} ${y + 10} Z`} fill="#f4f1ea" />
-      </g>
-    );
-  };
-  const cedar = (x: number, s: number, k: number) => (
-    <g key={k} opacity={s < 1 ? 0.7 : 1}>
-      <path d={`M${x - 3 * s} 0 L ${x + 3 * s} 0 L ${x + 5 * s} 240 L ${x - 5 * s} 240 Z`} fill="#4f453d" />
-      {[[10, 0, 70], [52, -10, 54], [92, 12, 76], [136, -6, 60], [172, 8, 72]].map(([y, dx, w], i) =>
-        clump(x + dx * s, y, w * s, k * 5 + i))}
-    </g>
-  );
-  return (
-    <Print bg="#c9d3c9">{() => (
-      <>
-        <rect width="400" height="240" fill="#c7d2c8" />
-        <rect y="120" width="400" height="120" fill="#b4c2b7" />
-        {[[30, 0.8], [96, 1], [312, 1], [374, 0.8]].map(([x, s], i) => cedar(x, s, i))}
-        {/* snow on the ground */}
-        <path d="M0 196 C 80 188, 160 192, 200 190 C 260 188, 330 192, 400 186 L 400 240 L 0 240 Z" fill="#eef0ea" />
-        {/* the pagoda, its top running off the print */}
-        <rect x="196" y="0" width="8" height="30" fill="#3a2b25" />
-        {tier(32, 46, 34, 1)}{tier(88, 52, 36, 2)}{tier(146, 58, 40, 3)}
-        {/* the stone wall in front */}
-        <rect x="110" y="186" width="180" height="10" fill="#d9d6cf" />
-        {[[112, 196, 26, 15], [140, 197, 18, 14], [160, 196, 30, 15], [192, 197, 22, 14], [216, 196, 28, 15], [246, 197, 20, 14],
-          [268, 196, 22, 15], [112, 212, 20, 16], [134, 213, 30, 15], [166, 212, 24, 16], [192, 213, 32, 15], [226, 212, 22, 16],
-          [250, 213, 40, 15]].map(([x, y, w, h], i) => (
-          <rect key={i} x={x} y={y} width={w} height={h} rx="6" fill={["#8f8b84", "#7f7b75", "#9a968f"][i % 3]} stroke="#3d3a36" strokeWidth="1.2" />
-        ))}
-      </>
-    )}</Print>
-  );
-}
 
 function FrameworksPrint() {
   const stalks = [
@@ -287,13 +180,20 @@ function CloudPrint() {
   );
 }
 
+/**
+ * Two categories use pictures the owner chose (25 November): AI the brushed red sun over an ink wave, Languages the
+ * vermilion pagoda among snowy cedars. Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
+ */
+const TRACK_IMAGES: Record<string, string> = { ai: "/ukiyo/tracks/ai.webp", languages: "/ukiyo/tracks/languages.webp" };
+
 const PRINTS: Record<string, () => JSX.Element> = {
-  ai: AiPrint, languages: LanguagesPrint, frameworks: FrameworksPrint, databases: DatabasesPrint,
+  frameworks: FrameworksPrint, databases: DatabasesPrint,
   devops: DevopsPrint, "system-design": SystemDesignPrint, cloud: CloudPrint, aws: CloudPrint,
 };
 
 /** The print for a category (track). Unknown tracks get the cloud print. */
 export function TrackArt({ track }: { track: string }) {
+  if (TRACK_IMAGES[track]) return <img className="u-print u-labprint" src={TRACK_IMAGES[track]} alt="" />;
   const Art = PRINTS[track] ?? CloudPrint;
   return <Art />;
 }

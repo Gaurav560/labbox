@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the owner's pictures for AI and Languages
+
+- Owner: "use this image for ai" and the pagoda saved as `~/Pictures/kathmandu.jpeg`. The AI tile shows the brushed
+  red sun over an ink wave; Languages shows the vermilion pagoda among snowy cedars. Cropped to the print shape and
+  stored in `public/ukiyo/tracks/`. Licences to confirm before launch (see DESIGN_UKIYO.md).
+
 ## 25 November (Ukiyo): new AI and Languages prints
 
 - Owner: "this ai and language should get a more cool classy logo ... the red one ... is pretty awesome", with
