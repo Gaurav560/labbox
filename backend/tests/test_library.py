@@ -89,6 +89,12 @@ def test_anyone_reads_the_library_in_order(api):
     assert (rag["lab"], rag["free"]) == ("rag-vector-databases", True)
     papers = [i for i in items if i["kind"] == "paper"]
     assert papers[0]["title"] == "Attention Is All You Need" and papers[0]["featured"]  # the first paper (owner)
+    # then the history of language models (owner, 25 November)
+    assert [p["title"].split(":")[0] for p in papers[1:8]] == [
+        "Efficient Estimation of Word Representations in Vector Space",
+        "Improving Language Understanding by Generative Pre-Training", "BERT", "Scaling Laws for Neural Language Models",
+        "Language Models are Few-Shot Learners", "Training language models to follow instructions with human feedback",
+        "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"]
 
 
 def test_only_admins_change_it(api):
