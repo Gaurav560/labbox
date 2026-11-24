@@ -7,10 +7,12 @@ from sqlalchemy import create_engine, inspect, text
 from sqlmodel import SQLModel
 
 from app import models  # noqa: F401
-from app.db import init_db
+from alembic import command
+
+from app.db import alembic_config, init_db
 
 NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer", "user_profile", "xp_event", "drill_answer", "llm_request", "design_answer", "analytics_event", "library_item"}
-HEAD = "0011"
+HEAD = "0012"
 
 # The schema exactly as the POC's SQLModel.metadata.create_all() made it.
 POC_SCHEMA = """
@@ -81,3 +83,33 @@ def test_models_match_migrations(tmp_path: Path):
     with engine.connect() as c:
         diff = compare_metadata(MigrationContext.configure(c), SQLModel.metadata)
     assert diff == []
+
+
+def test_library_papers_reach_an_existing_database(tmp_path: Path):
+    """Migration 0012 (owner, 25 November): a database seeded before the three history papers gets them, and the
+    papers come in the seed's order (Attention, word2vec, GPT-1, BERT, Scaling Laws, GPT-3, InstructGPT, CoT)."""
+    engine = _engine(tmp_path / "old.db")
+    cfg = alembic_config()
+    with engine.begin() as connection:
+        cfg.attributes["connection"] = connection
+        command.upgrade(cfg, "0011")
+        # an older seed: no GPT-1, Scaling Laws or InstructGPT, and Attention not first
+        connection.execute(text("DELETE FROM library_item WHERE title IN ('Improving Language Understanding by Generative"
+                                " Pre-Training', 'Scaling Laws for Neural Language Models', 'Training language models"
+                                " to follow instructions with human feedback')"))
+        connection.execute(text("UPDATE library_item SET position = 99 WHERE title = 'Attention Is All You Need'"))
+        connection.execute(text("INSERT INTO library_item (kind, title, authors, url, note, topic, lab, practice, level,"
+                                " free, featured, image, position, created_at, updated_at) VALUES ('paper', 'Added by"
+                                " an admin', '', 'https://example.com/x', '', '', '', '', '', 0, 0, '', 3,"
+                                " '2026-11-01', '2026-11-01')"))
+    init_db(engine)
+    assert _version(engine) == HEAD
+    with engine.connect() as c:
+        titles = [r[0] for r in c.execute(text("SELECT title FROM library_item WHERE kind = 'paper' ORDER BY position, id"))]
+    assert titles[:8] == ["Attention Is All You Need", "Efficient Estimation of Word Representations in Vector Space",
+                          "Improving Language Understanding by Generative Pre-Training",
+                          "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+                          "Scaling Laws for Neural Language Models", "Language Models are Few-Shot Learners",
+                          "Training language models to follow instructions with human feedback",
+                          "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"]
+    assert titles[-1] == "Added by an admin" and titles.count("Scaling Laws for Neural Language Models") == 1

@@ -16,6 +16,17 @@
 
 - Owner: "for ai use kathmandu image". The two category pictures swap: AI is the vermilion pagoda, Languages the
   brushed red sun over an ink wave.
+## 25 November: Premium Reads papers tell the history of language models
+
+- Owner: "add word2vec, GPT-1 + BERT, scaling laws + GPT-3, InstructGPT, chain of thought ... check if these exist,
+  and if not add them on top after Attention Is All You Need". word2vec, BERT, GPT-3 and Chain-of-Thought were
+  already there; GPT-1 ("Improving Language Understanding by Generative Pre-Training", OpenAI 2018), Scaling Laws
+  for Neural Language Models (2020) and InstructGPT ("Training language models to follow instructions with human
+  feedback", 2022) are new, each with its first page as the picture and a link to the LangChain chapter that
+  practises it. The papers now start: Attention, word2vec, GPT-1, BERT, Scaling Laws, GPT-3, InstructGPT,
+  Chain-of-Thought, then the rest (20 papers).
+- `library/seed.yaml` for fresh databases; migration 0012 (additive) adds the three to existing databases and sets
+  that order, keeping any admin-added papers after the seeded ones. New test in `test_migrations.py`.
 
 ## 25 November: Premium Reads featured card without "Start here"
 

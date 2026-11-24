@@ -143,12 +143,13 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - **Dashboard by category** (23 November): `/labs` groups labs as AI, Languages, Frameworks, System design,
   Databases, DevOps, then Cloud and AWS (coming soon), with jump chips; full courses first in each.
 - **Premium Reads** (the Library; 24 November, owner): `/library`, public, "Premium reads.": Books, Research papers and Tech
-  blogs with real pictures stored in LabBox (covers, first pages, blog views), a "Start here" pick per section, topic
+  blogs with real pictures stored in LabBox (covers, first pages, blog views), a featured pick per section, topic
   filters, levels, "Last updated" dates, and a lab chip linking to the lab for every item; whole cards open the item.
-  Linked as "Premium Reads" from the home page, every footer and the dashboard. Admins edit everything, including
-  pictures, in Admin > Premium Reads. The
-  starting list (21 books, 17 papers, 39 blogs) is `library/seed.yaml` with `library/images/`, loaded once by
-  migrations 0009 to 0011.
+  Linked as "Premium Reads" from the home page menu and the dashboard. Admins edit everything, including
+  pictures, in Admin > Premium Reads. The papers open with the history of language models (Attention, word2vec,
+  GPT-1, BERT, Scaling Laws, GPT-3, InstructGPT, Chain-of-Thought). The
+  starting list (21 books, 20 papers, 39 blogs) is `library/seed.yaml` with `library/images/`, loaded by
+  migrations 0009 to 0012.
 
 ### Repository
 

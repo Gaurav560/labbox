@@ -251,39 +251,6 @@ papers:
   level: advanced
   free: true
   image: paper-attention-is-all-you-need.webp
-- title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
-  authors: Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova
-  year: 2018
-  url: https://arxiv.org/abs/1810.04805
-  topic: AI
-  note: A transformer that reads text in both directions; the base of most embedding and reranking models.
-  lab: rag-vector-databases
-  practice: chapter 10, reranking
-  level: advanced
-  free: true
-  image: paper-bert-pre-training-of-deep-bidirectional.webp
-- title: Language Models are Few-Shot Learners
-  authors: Tom B. Brown and others
-  year: 2020
-  url: https://arxiv.org/abs/2005.14165
-  topic: AI
-  note: The GPT-3 paper, which showed that a large enough model can do new tasks from a few examples in the prompt.
-  lab: langchain
-  practice: chapter 1, AI and generative AI
-  level: intermediate
-  free: true
-  image: paper-language-models-are-few-shot-learners.webp
-- title: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
-  authors: Patrick Lewis and others
-  year: 2020
-  url: https://arxiv.org/abs/2005.11401
-  topic: RAG and search
-  note: The paper that named RAG. Read it after chapter 1 of RAG and vector databases.
-  lab: rag-vector-databases
-  practice: chapter 1, why RAG
-  level: intermediate
-  free: true
-  image: paper-retrieval-augmented-generation-for-knowl.webp
 - title: Efficient Estimation of Word Representations in Vector Space
   authors: Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean
   year: 2013
@@ -295,6 +262,81 @@ papers:
   level: intermediate
   free: true
   image: paper-efficient-estimation-of-word-representat.webp
+- title: Improving Language Understanding by Generative Pre-Training
+  authors: Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever
+  year: 2018
+  url: https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf
+  topic: AI
+  note: The first GPT. Pre-train a transformer to predict the next word on a lot of text, then fine-tune it for each task; the recipe every chat model still follows.
+  lab: langchain
+  practice: chapter 4, transformers and the next token
+  level: intermediate
+  free: true
+  image: paper-improving-language-understanding-by-gene.webp
+- title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+  authors: Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova
+  year: 2018
+  url: https://arxiv.org/abs/1810.04805
+  topic: AI
+  note: A transformer that reads text in both directions; the base of most embedding and reranking models.
+  lab: rag-vector-databases
+  practice: chapter 10, reranking
+  level: advanced
+  free: true
+  image: paper-bert-pre-training-of-deep-bidirectional.webp
+- title: Scaling Laws for Neural Language Models
+  authors: Jared Kaplan and others
+  year: 2020
+  url: https://arxiv.org/abs/2001.08361
+  topic: AI
+  note: Bigger models, more data and more compute lower the error along smooth, predictable curves; the reason labs kept building larger models.
+  lab: langchain
+  practice: chapter 4, transformers and the next token
+  level: advanced
+  free: true
+  image: paper-scaling-laws-for-neural-language-models.webp
+- title: Language Models are Few-Shot Learners
+  authors: Tom B. Brown and others
+  year: 2020
+  url: https://arxiv.org/abs/2005.14165
+  topic: AI
+  note: The GPT-3 paper, which showed that a large enough model can do new tasks from a few examples in the prompt.
+  lab: langchain
+  practice: chapter 1, AI and generative AI
+  level: intermediate
+  free: true
+  image: paper-language-models-are-few-shot-learners.webp
+- title: Training language models to follow instructions with human feedback
+  authors: Long Ouyang and others
+  year: 2022
+  url: https://arxiv.org/abs/2203.02155
+  topic: AI
+  note: InstructGPT. GPT-3 fine-tuned with human feedback (RLHF) so it follows instructions and makes fewer things up; the step that led to ChatGPT.
+  lab: langchain
+  practice: chapter 9, hallucinations, usage and cost
+  level: intermediate
+  free: true
+  image: paper-training-language-models-to-follow-instr.webp
+- title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+  authors: Jason Wei and others
+  year: 2022
+  url: https://arxiv.org/abs/2201.11903
+  topic: AI
+  note: Showing a model worked steps makes it reason better; a short paper with a big influence.
+  level: intermediate
+  free: true
+  image: paper-chain-of-thought-prompting-elicits-reaso.webp
+- title: Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+  authors: Patrick Lewis and others
+  year: 2020
+  url: https://arxiv.org/abs/2005.11401
+  topic: RAG and search
+  note: The paper that named RAG. Read it after chapter 1 of RAG and vector databases.
+  lab: rag-vector-databases
+  practice: chapter 1, why RAG
+  level: intermediate
+  free: true
+  image: paper-retrieval-augmented-generation-for-knowl.webp
 - title: 'Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks'
   authors: Nils Reimers, Iryna Gurevych
   year: 2019
@@ -373,15 +415,6 @@ papers:
   level: intermediate
   free: true
   image: paper-react-synergizing-reasoning-and-acting-i.webp
-- title: Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
-  authors: Jason Wei and others
-  year: 2022
-  url: https://arxiv.org/abs/2201.11903
-  topic: AI
-  note: Showing a model worked steps makes it reason better; a short paper with a big influence.
-  level: intermediate
-  free: true
-  image: paper-chain-of-thought-prompting-elicits-reaso.webp
 - title: A Relational Model of Data for Large Shared Data Banks
   authors: E. F. Codd
   year: 1970
