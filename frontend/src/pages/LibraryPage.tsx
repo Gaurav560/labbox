@@ -264,7 +264,7 @@ export default function LibraryPage() {
       <main className="lib-main">
         <section className="lib-hero" aria-labelledby="lib-title">
           <div className="lib-hero-text">
-          <span className="lib-kicker">Hand-picked by the Telusko team</span>
+          <span className="lib-kicker">Hand-picked by the LabBox team</span>
           <h1 id="lib-title">Premium reads.</h1>
           <p className="lib-sub">
             The books, research papers and engineering blogs behind every LabBox course, hand-picked, with the lab

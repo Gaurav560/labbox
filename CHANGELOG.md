@@ -36,7 +36,7 @@
   the Start here card keeps its button); blogs now open with OpenAI News, Hacker News, Anthropic Engineering, Claude blog
   (owner's order; seed.yaml and the development database).
 - Then (owner): the Library is called Premium Reads in the app (dashboard button, home page, footer, Admin tab; the
-  address stays /library); the kicker reads "Hand-picked by the Telusko team"; a plain "Last updated 24 Nov 2026" sits
+  address stays /library); the kicker reads "Hand-picked by the LabBox team"; a plain "Last updated 24 Nov 2026" sits
   beside the heading and a "Last updated" pill on each section tile (the newest change in that section); picking a
   section puts the other two tiles out of focus; the Start here card lost its read button and opens the item as a
   whole (its lab chip replaces the long "Practise it hands-on" line); Attention Is All You Need is the papers' Start
