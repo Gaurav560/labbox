@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): eight hero options to compare at /ukiyo/heroes
+
+- Owner: "this image and this text look off ... how many ways, new design, new images, new text, I want to see it".
+  A review page (not linked from the app) shows eight complete heroes, each with its own layout, picture and words:
+  1 type only, 2 tall print (Moon Pine), 3 full-bleed Great Wave, 4 triptych (three Hiroshige prints), 5 the seal,
+  6 terminal over rain (Sudden Shower), 7 magazine cover (Kinryuzan), 8 mosaic of the category prints. Three new
+  public-domain prints in `public/ukiyo/heroes/`. The owner picks one; the rest and the page then go.
+
 ## 25 November (Ukiyo): folding screen panels without numbers
 
 - Owner: "remove 01 02 03 and so on". The red number tags are gone from the panels.

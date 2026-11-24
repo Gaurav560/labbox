@@ -482,3 +482,93 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .profile-exit { justify-content: flex-start; height: 40px; padding: 0; margin-top: -4px; border: 0; border-top: 1px solid var(--rule);
   border-radius: 0; background: none; color: var(--muted); font: 600 13px var(--font-text); }
 .profile-exit:hover { border-color: var(--rule); background: none; color: var(--vermilion); }
+
+/* ---------- 15. eight hero options to compare (/ukiyo/heroes, owner 25 November) ---------- */
+.ul-page { min-height: 100vh; }
+.ul-top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 20px; padding: 10px 24px;
+  background: var(--panel); border-bottom: 1px solid var(--rule); }
+.ul-top nav { display: flex; flex-wrap: wrap; gap: 4px 16px; flex: 1; }
+.ul-top nav a { font: 600 12px var(--font-code); letter-spacing: .04em; color: var(--muted); }
+.ul-top nav a:hover { color: var(--vermilion); text-decoration: none; }
+.hx-section { scroll-margin-top: 56px; border-bottom: 8px solid var(--text); }
+.hx-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 14px 24px; background: var(--card);
+  border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+.hx-label strong { font: 600 20px var(--font-serif); color: var(--text); }
+.hx { position: relative; min-height: min(86vh, 760px); padding: clamp(40px, 6vw, 80px) max(24px, calc((100vw - 1200px) / 2));
+  display: grid; align-items: center; gap: clamp(28px, 5vw, 72px); overflow: hidden; isolation: isolate; }
+.hx h1 { font: 600 clamp(42px, 5.6vw, 80px)/1.02 var(--font-serif); letter-spacing: -0.025em; margin: 14px 0 20px; }
+.hx h1 em { font-weight: 400; color: var(--vermilion); }
+.hx-lead { font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 32em; margin: 0 0 28px; }
+.hx > .u-print-credit { position: absolute; right: 24px; bottom: 12px; margin: 0; }
+.hx img { display: block; }
+
+/* 1 type only */
+.hx-1 { justify-items: center; text-align: center; align-content: center; }
+.hx-1 h1 { font-size: clamp(56px, 8.5vw, 132px); line-height: .98; margin: 8px 0 22px; }
+.hx-1 .hx-lead { margin-inline: auto; }
+.hx1-seal { width: 64px; height: 64px; display: grid; place-items: center; background: var(--vermilion); color: #fff;
+  font: 600 34px var(--font-serif); box-shadow: inset 0 0 0 3px var(--vermilion), inset 0 0 0 5px #fff8; }
+.hx1-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; width: 100%; margin-top: 48px; }
+.hx1-strip img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--rule); filter: saturate(.9); }
+
+/* 2 tall print */
+.hx-2 { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }
+.hx-2 figure { margin: 0; justify-self: end; width: min(420px, 100%); }
+.hx-2 .uh-frame img { aspect-ratio: 2 / 3; object-fit: cover; width: 100%; }
+.hx-2 .u-print-credit { text-align: right; }
+
+/* 3 full-bleed wave */
+.hx-3 { align-items: end; color: #fffdf8; }
+.hx3-bg { position: absolute; inset: 0; z-index: -1; background: url(/ukiyo/great-wave.webp) center 35% / cover no-repeat; }
+.hx3-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #0d0c0bf2 0%, #0d0c0b99 40%, #0d0c0b22 75%); }
+.hx-3 h1 { color: #fffdf8; } .hx-3 h1 em { color: #ffb4a3; }
+.hx-3 .hx-lead { color: #e9e2d4; } .hx-3 .u-kicker { color: #e9e2d4; }
+.hx-3 > .u-print-credit { color: #e9e2d4; }
+
+/* 4 triptych */
+.hx-4 { align-content: center; justify-items: center; text-align: center; }
+.hx4-tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: min(860px, 100%); padding: 10px;
+  background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }
+.hx4-tri img { width: 100%; aspect-ratio: 2 / 2.4; object-fit: cover; }
+.hx-4 h1 { font-size: clamp(36px, 4.6vw, 64px); margin-top: 8px; }
+.hx-4 .hx-lead { margin-inline: auto; }
+
+/* 5 the seal */
+.hx-5 { grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); }
+.hx5-seal { justify-self: center; width: min(320px, 70vw); aspect-ratio: 1; display: grid; place-content: center; gap: 0;
+  background: var(--vermilion); color: #fff; font: 600 clamp(56px, 7vw, 96px)/1 var(--font-serif); text-align: center;
+  box-shadow: inset 0 0 0 10px var(--vermilion), inset 0 0 0 14px #fff9; }
+.hx5-seal span:last-child { margin-top: -6px; }
+
+/* 6 terminal over rain */
+.hx-6 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.hx6-art { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--rule); }
+.hx6-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.hx6-term { position: absolute; left: 7%; right: 7%; bottom: 7%; margin: 0; padding: 18px 20px; background: #14120fe8; color: #e9e2d4;
+  font: 14px/1.75 var(--font-code); border: 1px solid #ffffff22; box-shadow: 0 20px 40px -20px #000; white-space: pre-wrap; }
+
+/* 7 magazine cover */
+.hx-7 { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.hx7-cover { position: relative; aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 30px 60px -30px #0008; }
+.hx7-cover img { width: 100%; height: 100%; object-fit: cover; }
+.hx7-mast { position: absolute; top: 4%; left: 0; right: 0; text-align: center; font: 700 clamp(48px, 6vw, 84px)/1 var(--font-serif);
+  color: #fffdf8; text-shadow: 0 2px 12px #0009; letter-spacing: -.02em; }
+.hx7-issue { position: absolute; bottom: 3%; right: 4%; font: 600 11px var(--font-code); letter-spacing: .12em; color: #fff;
+  background: var(--vermilion); padding: 3px 7px; }
+.hx-7 ul { list-style: none; margin: 0 0 28px; padding: 0; border-top: 2px solid var(--text); }
+.hx-7 li { padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 17px; color: var(--muted); }
+.hx-7 li b { display: inline-block; min-width: 90px; font: 600 20px var(--font-serif); color: var(--text); }
+
+/* 8 mosaic */
+.hx-8 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.hx8-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.hx8-grid span { aspect-ratio: 1; overflow: hidden; border: 1px solid var(--rule); }
+.hx8-grid span:nth-child(1) { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+.hx8-grid .u-print { width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 860px) {
+  .ul-top nav { display: none; }
+  .hx-2, .hx-5, .hx-6, .hx-7, .hx-8 { grid-template-columns: 1fr; }
+  .hx1-strip { grid-template-columns: repeat(3, 1fr); }
+  .hx-2 figure { justify-self: start; }
+}
