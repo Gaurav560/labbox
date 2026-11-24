@@ -2007,7 +2007,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-tile-icon { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; color: #0c0e12; background: var(--t);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--t) 22%, transparent); }
 .lib-tile-icon svg { width: 18px; height: 18px; }
-.lib-tile-kicker { font: 700 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: var(--t); }
 .lib-tile-text { display: flex; flex-direction: column; gap: 4px; max-width: 62%; }
 .lib-tile-name { font-size: 24px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; color: #fff; }
 .lib-tile-line { font-size: 13.5px; line-height: 1.4; color: rgba(255, 255, 255, .72); }
