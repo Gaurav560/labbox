@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November (Ukiyo): five ways to show "start a lab" at /ukiyo/machine
+
+- Owner: show on the home page that starting a lab spins up a container with Linux, the language, the framework and
+  the databases, so there is no manual setup and you go straight to the challenges; "show me all, then I decide".
+  A review page (not linked from the app): 1 the machine builds itself (layers stack, a timer, the first
+  challenge), 2 the setup you skip (manual steps crossed out beside one Start), 3 the chest of drawers (a tansu,
+  one drawer per layer), 4 the boot log (a terminal, then the challenge card), 5 three moves. Options 1 to 4 switch
+  between FastAPI, Spring Boot, Redis, Postgres and LangChain, with each lab's real layers and first task.
+
 ## 25 November (Ukiyo): "AI labs" opens the AI labs (after logging in); Mount Hira; FAQs without numbers
 
 - Owner: "when I click on AI labs in the navbar, it should open the AI labs if logged in; if not, log in and redirect
