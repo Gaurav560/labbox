@@ -348,3 +348,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .course-hero { padding: 8px 0 32px; border: 0; border-bottom: 2px solid var(--text); border-radius: 0; background: none; }
 .course-hero::before { display: none; }
 .course-cover.u-course-print { box-shadow: none; }
+
+/* ---------- 12. the lab page frame (the editor and terminal stay plain, for reading code) ---------- */
+.btn.btn-check { background: var(--vermilion); border-color: var(--vermilion); color: #fff; border-radius: 4px; }
+.btn.btn-check:hover:not(:disabled) { background: color-mix(in srgb, var(--vermilion) 85%, #000); border-color: transparent; }
+/* step marks: small ink squares, the current one vermilion */
+.dot::before { border-radius: 1px; width: 10px; height: 10px; border-width: 1.5px; }
+.dot-seen::before { background: var(--text); border-color: var(--text); }
+.dot-current::before { background: var(--vermilion); border-color: var(--vermilion); transform: rotate(45deg) scale(1.1); }
+/* no logo watermark behind lesson text: reading comes first */
+.lesson-watermark { display: none; }
+.step-kind { border-radius: 2px; background: transparent; border: 1px solid var(--rule); font: 600 10.5px var(--font-code);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--vermilion); }
+.lesson h2, .lesson h3 { font-family: var(--font-serif); font-weight: 600; }
+.drawer-list li, .recap-stats > div, .step-history, .history-box, .lesson-photo, .task-card, .phone-note { border-radius: 4px; }
+.lesson-photo { border-color: var(--rule); }
+.task-card { border-color: var(--rule); background: var(--card); }
