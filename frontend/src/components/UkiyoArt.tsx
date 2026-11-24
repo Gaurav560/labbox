@@ -184,7 +184,16 @@ function CloudPrint() {
  * Two categories use pictures the owner chose (25 November): AI the vermilion pagoda among snowy cedars (owner: "for
  * ai use kathmandu image"), Languages the brushed red sun over an ink wave. Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
  */
-const TRACK_IMAGES: Record<string, string> = { ai: "/ukiyo/tracks/ai-pagoda.webp", languages: "/ukiyo/tracks/languages-sun.webp" };
+const TRACK_IMAGES: Record<string, string> = {
+  ai: "/ukiyo/tracks/ai-pagoda.webp",
+  // Calm prints from Hiroshige's One Hundred Famous Views of Edo (1856 to 1858) and The Monkey Bridge (about 1842),
+  // public domain (owner, 25 November: "cool images that soothe the eyes for the rest").
+  languages: "/ukiyo/tracks/languages-tama-blossoms.webp",
+  frameworks: "/ukiyo/tracks/frameworks-bamboo-yards.webp",
+  "system-design": "/ukiyo/tracks/system-design-wisteria-bridge.webp",
+  databases: "/ukiyo/tracks/databases-azuma-river.webp",
+  devops: "/ukiyo/tracks/devops-monkey-bridge.webp",
+};
 
 const PRINTS: Record<string, () => JSX.Element> = {
   frameworks: FrameworksPrint, databases: DatabasesPrint,

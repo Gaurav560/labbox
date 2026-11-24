@@ -61,13 +61,13 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 ## Artwork
 
-- Category prints are original SVG, flat colour blocks with a paper grain (`components/UkiyoArt.tsx`): Frameworks
-  bamboo, Databases river, DevOps mountains, System design a red arched bridge, Cloud clouds.
-- AI and Languages use two pictures the owner chose on 25 November (`public/ukiyo/tracks/`, `TRACK_IMAGES`): AI is
-  a vermilion pagoda among snowy cedars (a shin-hanga print dated Showa 26, 1951; the owner's `kathmandu.jpeg`),
-  Languages a brushed red sun over an ink wave. **Before launch, confirm the licence of both**: the sun looks like a stock graphic, and a 1951 print is
-  probably still in copyright. If either cannot be licensed, the drawn SVG versions are in git history
-  (commit 49cba89).
+- Category pictures (`TRACK_IMAGES` in `components/UkiyoArt.tsx`, files in `public/ukiyo/tracks/`): AI the owner's
+  pagoda (a 1951 shin-hanga print, licence to confirm before launch); the rest calm Hiroshige prints, public domain
+  (owner, 25 November: "cool images that soothe the eyes"): Languages, cherry blossoms on the Tama River
+  embankment; Frameworks, the bamboo yards at Kyobashi under a full moon; System design, the drum bridge under
+  wisteria at Kameido Tenjin; Databases, a boat on the Sumida with Azuma Bridge and Fuji (One Hundred Famous Views of
+  Edo, 1856 to 1858); DevOps, the Monkey Bridge in Kai Province by moonlight (about 1842). The original SVG prints
+  stay in the file as the fallback for categories without a picture (Cloud).
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
   home page's All labs tile) and Red Fuji (no longer used on a page).
 - Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),

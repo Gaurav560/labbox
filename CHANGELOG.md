@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): calm Hiroshige prints for five categories
+
+- Owner: "now I need cool images that soothe the eyes for the rest 5". Languages, Frameworks, System design,
+  Databases and DevOps now show real public-domain Hiroshige prints instead of drawn ones, each keeping its motif:
+  cherry blossoms on the Tama River, the bamboo yards at Kyobashi by moonlight, the drum bridge under wisteria at
+  Kameido, a boat on the Sumida with Azuma Bridge and Fuji, the Monkey Bridge by moonlight. They fill the home
+  page's folding screen and the dashboard's category tiles. The brush-sun picture is no longer used.
+
 ## 25 November (Ukiyo): "Learn to build AI apps, or get left behind."
 
 - Owner: change "Learn to build on it." to something like "Learn to build AI applications or get left behind", keeping
