@@ -373,12 +373,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-all a:hover { text-decoration: none; color: var(--vermilion); border-color: var(--vermilion); }
 
 /* the closing panel: a print and one line */
-.uh-final { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center;
-  margin-top: clamp(64px, 9vw, 112px); padding: clamp(28px, 4vw, 48px); background: var(--card); border: 1px solid var(--rule);
+.uh-final { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center;
+  margin-top: clamp(64px, 9vw, 112px); padding: clamp(20px, 2.6vw, 32px); background: var(--card); border: 1px solid var(--rule);
   border-top: 3px solid var(--vermilion); }
 .uh-final-print { margin: 0; }
-.uh-final-text h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.05; margin: 12px 0 14px; }
-.uh-final-text p:not(.u-kicker) { margin: 0 0 26px; font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 28em; }
+.uh-final-text h2 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.05; margin: 10px 0 12px; }
+.uh-final-text p:not(.u-kicker) { margin: 0 0 22px; font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 28em; }
 
 /* FAQs: fine rules, a thin plus that turns into a minus */
 .u-home .h-faq-intro h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.05; margin: 12px 0 14px; }

@@ -114,8 +114,8 @@ learner:~$ python agent.py
 
         <section className="uh-final" aria-labelledby="final-title">
           <figure className="uh-final-print">
-            <div className="uh-frame"><img src="/ukiyo/yabase-sails.webp" width={1200} height={784} alt="Woodblock print: Utagawa Hiroshige, Returning Sails at Yabase, about 1834" /></div>
-            <figcaption className="u-print-credit">Utagawa Hiroshige, Returning Sails at Yabase, Eight Views of Omi, about 1834</figcaption>
+            <div className="uh-frame"><img src="/ukiyo/ishiyama-moon.webp" width={1200} height={558} alt="Woodblock print: Utagawa Hiroshige, Autumn Moon at Ishiyama, about 1834" /></div>
+            <figcaption className="u-print-credit">Utagawa Hiroshige, Autumn Moon at Ishiyama, Eight Views of Omi, about 1834</figcaption>
           </figure>
           <div className="uh-final-text">
             <p className="u-kicker">Begin</p>

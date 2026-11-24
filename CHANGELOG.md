@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): Autumn Moon at Ishiyama, and a shorter closing panel
+
+- Owner: "na, some other image, and keep the height a little less". The closing panel shows Hiroshige's Autumn
+  Moon at Ishiyama (a full moon over Lake Biwa in blues and greys, public domain), cropped to a wide strip; the
+  panel's padding and heading are smaller, so it is about 370 px tall instead of about 520 on a laptop screen.
+
 ## 25 November (Ukiyo): a calmer print in the closing panel
 
 - Owner: "change this image to something eye soothing". The "Your machine is ready when you are." panel now shows
