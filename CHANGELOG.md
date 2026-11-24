@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: home page menu: AI labs, Premium Reads, FAQs
+
+- Owner: "remove Inside a lab and Labs from the navbar. AI labs is good enough". The sections stay on the page
+  ("See inside a lab" in the hero still jumps to the demo). Done on master and `design/ukiyo`.
+
 ## 25 November: course page heading "Skill map"; no "Start free" next to "Log in"
 
 - Owner: "remove what you will learn and write title as Skill map". The course page's map section is now headed
