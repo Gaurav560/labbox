@@ -99,10 +99,7 @@ export default function HomePage() {
         {user ? (
           <Link className="h-btn h-btn-primary h-btn-sm" to="/labs">Continue learning →</Link>
         ) : (
-          <>
-            <Link className="h-btn h-btn-ghost h-btn-sm" to="/login">Log in</Link>
-            <Link className="h-btn h-btn-primary h-btn-sm" to="/login?signup=1">Start free</Link>
-          </>
+          <Link className="h-btn h-btn-ghost h-btn-sm" to="/login">Log in</Link>
         )}
       </header>
 

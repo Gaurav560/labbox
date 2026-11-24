@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: course page heading "Skill map"; no "Start free" next to "Log in"
+
+- Owner: "remove what you will learn and write title as Skill map". The course page's map section is now headed
+  "Skill map" (the old small "Skill map" label under it is gone).
+- Owner: "remove start free button as it also takes me to login/signup page". The header of the home page and Premium
+  Reads shows only "Log in"; the FAQ, privacy and terms pages show "Log in" instead of "Start free". The big
+  "Start free" button in the home page hero and at the end of Premium Reads stays. Done on master and `design/ukiyo`.
+
 ## 25 November: Premium Reads tiles without the item count
 
 - Owner: remove "21 hand-picked", "17 hand-picked" and "39 hand-picked" from the section tiles. Each tile now shows
