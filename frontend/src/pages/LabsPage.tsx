@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
 import { labBrand } from "../brand";
 import { chapterNumber } from "../components/StatusBar";
-import { BrushLevel, InkProgress, Seal, TRACK_INK, TRACK_MOTIF, TrackArt } from "../components/UkiyoArt";
+import { BrushLevel, InkProgress, LabPrint, Seal, TRACK_INK, TRACK_MOTIF, TrackArt } from "../components/UkiyoArt";
 import { useAuth } from "../auth";
 import DrillCard from "../components/DrillCard";
 import ProfileMenu from "../components/ProfileMenu";
@@ -135,6 +135,7 @@ function Categories({ groups, shown, onShow }: { groups: { id: string; labs: Lab
   return (
     <nav className="u-cats" aria-label="Categories" style={{ "--n": groups.length + 1 } as CSSProperties}>
       <button type="button" className="u-cat is-all" aria-pressed={shown === "all"} onClick={() => onShow("all")}>
+        <span className="u-cat-art" aria-hidden="true"><img className="u-print u-labprint" src="/ukiyo/great-wave.webp" alt="" /></span>
         <span className="u-cat-name">All labs</span>
         <span className="u-cat-count">{groups.reduce((n, g) => n + g.labs.length, 0)}</span>
       </button>
@@ -180,7 +181,7 @@ function LabRow({ lab }: { lab: LabSummary }) {
 }
 
 /**
- * The first thing on the dashboard: one clear next step, as an editorial feature. The category's print on one side;
+ * The first thing on the dashboard: one clear next step, as an editorial feature. The lab's own print on one side;
  * the lab, the chapter, the step, an ink progress line and the chapter ladder on the other. The red button continues.
  */
 function Feature({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
@@ -192,7 +193,7 @@ function Feature({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
     <section className={`u-feature ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}
       style={{ "--ink": TRACK_INK[track] ?? "var(--text)" } as CSSProperties}>
       <div className="u-feature-art">
-        <TrackArt track={track} />
+        <LabPrint lab={next.lab_id} track={track} />
         <span className="u-feature-seal"><Seal lines={cont ? ["NEXT"] : ["START"]} size={58} /></span>
       </div>
       <div className="u-feature-text">

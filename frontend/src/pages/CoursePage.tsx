@@ -1,4 +1,4 @@
-import { TRACK_HEX, TrackArt } from "../components/UkiyoArt";
+import { LabPrint, TRACK_HEX, printCredit } from "../components/UkiyoArt";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type LabDetail, type NextStep } from "../api";
@@ -55,13 +55,16 @@ export default function CoursePage() {
       <Topbar title={lab.title} username={user?.username ?? ""} />
       <main className="course-main" aria-label={lab.title}>
         <section className="course-hero">
-          <div className="course-cover u-course-print">
-            {/* Ukiyo: the category's print, with the lab's own logo stamped on it like a seal */}
-            <TrackArt track={lab.track} />
-            {labBrand(lab.cover_credit) && (
-              <span className="u-course-logo"><img src={labBrand(lab.cover_credit)!.logo} alt="" /></span>
-            )}
-          </div>
+          <figure className="u-course-figure">
+            <div className="course-cover u-course-print">
+              {/* Ukiyo: the lab's own woodblock print, with its logo stamped on it like a seal */}
+              <LabPrint lab={lab.id} track={lab.track} />
+              {labBrand(lab.cover_credit) && (
+                <span className="u-course-logo"><img src={labBrand(lab.cover_credit)!.logo} alt="" /></span>
+              )}
+            </div>
+            {printCredit(lab.id) && <figcaption className="u-print-credit">{printCredit(lab.id)}</figcaption>}
+          </figure>
           <div className="course-hero-text">
             <div className="course-kicker">{[TRACK_LABEL[lab.track] ?? lab.track, level].filter(Boolean).join(" · ")}</div>
             <h1>{lab.title}</h1>
@@ -117,8 +120,7 @@ export default function CoursePage() {
         )}
 
         <section className="course-syllabus" aria-label="Chapters">
-          <h2>What you will learn</h2>
-          <h3 className="course-map-title">Skill map</h3>
+          <h2>Skill map</h2>
           <p className="muted">Every chapter on its line; each subtopic opens its lesson.</p>
           <MetroMap lines={lines} />
         </section>

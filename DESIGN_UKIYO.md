@@ -66,11 +66,45 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
   Cloud clouds.
 - Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
   home hero) and Red Fuji (the login page).
+- Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),
+  shown on its course page with a credit line and on the dashboard's Continue feature. The category tiles keep
+  the shared category print; "All labs" shows the Great Wave. Files: `public/ukiyo/labs/<lab>.webp` (1280 px,
+  about 200 KB each), from Wikimedia Commons, public domain (most are CC0 scans by the Metropolitan Museum of Art).
+  The list lives in `LAB_PRINTS` (`components/UkiyoArt.tsx`); a new lab without a print falls back to its
+  category print. Each print echoes the lab's project (wind for Windwatch, a bridge for Setu, water for the
+  water board, a merchant's shop for payments).
+
+| Lab | Artist | Print | Year |
+|---|---|---|---|
+| `rust-basics` | Katsushika Hokusai | Ejiri in Suruga Province | about 1831 |
+| `langchain4j` | Katsushika Hokusai | The Suspension Bridge between Hida and Etchū | about 1834 |
+| `langchain` | Katsushika Hokusai | Fujimigahara in Owari Province | about 1831 |
+| `langgraph` | Katsushika Hokusai | The Waterwheel at Onden | about 1831 |
+| `rag-vector-databases` | Katsushika Hokusai | Ushibori in Hitachi Province | about 1831 |
+| `spring-ai` | Katsushika Hokusai | Sazai Hall at the Temple of the Five Hundred Arhats | about 1831 |
+| `java-collections` | Katsushika Hokusai | Mitsui Shop at Surugachō in Edo | about 1831 |
+| `go-basics` | Katsushika Hokusai | Hodogaya on the Tōkaidō | about 1831 |
+| `python-collections` | Utagawa Hiroshige | Driving Rain at Shōno | about 1833 |
+| `javascript-basics` | Katsushika Hokusai | Honganji at Asakusa in Edo | about 1831 |
+| `python-basics` | Utagawa Hiroshige | Nihonbashi: Morning View | about 1833 |
+| `spring-boot-first-api` | Katsushika Hokusai | Fuji from Gotenyama at Shinagawa | about 1831 |
+| `redis-in-practice` | Katsushika Hokusai | Shower Below the Summit | about 1831 |
+| `postgres-indexing-incident` | Utagawa Hiroshige | Night Snow at Kanbara | about 1833 |
+| `linux-on-call` | Utagawa Hiroshige | Autumn Moon on the Tama River | about 1838 |
+| `rate-limiter` | Katsushika Hokusai | Fuji Seen from Kanaya on the Tōkaidō | about 1831 |
+| `javascript-inside-out` | Katsushika Hokusai | Kajikazawa in Kai Province | about 1831 |
+| `java-basics` | Katsushika Hokusai | The Tama River in Musashi Province | about 1831 |
+| `express-api` | Utagawa Hiroshige | The Mie River at Yokkaichi | about 1833 |
+| `fastapi-first-api` | Utagawa Hiroshige | The Lake at Hakone | about 1833 |
+| `sql-from-zero` | Katsushika Hokusai | Lake Suwa in Shinano Province | about 1831 |
+| `postgres-transactions-and-locks` | Katsushika Hokusai | Under the Mannen Bridge at Fukagawa | about 1831 |
+| `git-without-fear` | Katsushika Hokusai | Kintai Bridge in Suō Province | about 1834 |
+
 - No AI-generated art (that needs the owner's approval for the OpenAI key).
 
 ## What changed per page
 
 - Dashboard: rewritten (`pages/LabsPage.tsx`).
-- Course page: the print with the lab's logo stamped on it; flat hero; ink metro map.
+- Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
 - Premium Reads, home, login: restyled through tokens and section 9 to 11 of `ukiyo.css`.
 - Lab page: the frame only (Check button, step marks, labels, headings); the lesson watermark is off.

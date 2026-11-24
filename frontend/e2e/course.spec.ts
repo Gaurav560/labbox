@@ -36,6 +36,10 @@ test("a lab card opens the lab's page; the feature wears the category's print", 
 
   await page.goto("/courses/go-basics");
   await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What you will learn" })).toHaveCount(0);
+  // Every lab has its own woodblock print, credited under it (Ukiyo).
+  await expect(page.locator(".u-course-figure img.u-labprint")).toHaveAttribute("src", "/ukiyo/labs/go-basics.webp");
+  await expect(page.locator(".u-print-credit")).toHaveText("Katsushika Hokusai, Hodogaya on the Tōkaidō, about 1831");
   await page.getByRole("link", { name: "01 Your first Go program" }).click();
   await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=hello-go$/);
 

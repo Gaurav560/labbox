@@ -275,6 +275,53 @@ export function TrackArt({ track }: { track: string }) {
   return <Art />;
 }
 
+/**
+ * One real woodblock print per lab (owner, 24 November: "classy unique images for each one of the lab").
+ * Public domain (most are CC0 from the Metropolitan Museum of Art), stored in public/ukiyo/labs/.
+ * Each is picked to echo the lab's running project: wind for Windwatch, a bridge for Setu, water for the water board.
+ */
+type LabPrintInfo = { artist: "Hokusai" | "Hiroshige"; title: string; year: string };
+const HK = "Hokusai" as const, HG = "Hiroshige" as const;
+export const LAB_PRINTS: Record<string, LabPrintInfo> = {
+  "rust-basics": { artist: HK, title: "Ejiri in Suruga Province", year: "about 1831" },
+  langchain4j: { artist: HK, title: "The Suspension Bridge between Hida and Etchū", year: "about 1834" },
+  langchain: { artist: HK, title: "Fujimigahara in Owari Province", year: "about 1831" },
+  langgraph: { artist: HK, title: "The Waterwheel at Onden", year: "about 1831" },
+  "rag-vector-databases": { artist: HK, title: "Ushibori in Hitachi Province", year: "about 1831" },
+  "spring-ai": { artist: HK, title: "Sazai Hall at the Temple of the Five Hundred Arhats", year: "about 1831" },
+  "java-collections": { artist: HK, title: "Mitsui Shop at Surugachō in Edo", year: "about 1831" },
+  "go-basics": { artist: HK, title: "Hodogaya on the Tōkaidō", year: "about 1831" },
+  "python-collections": { artist: HG, title: "Driving Rain at Shōno", year: "about 1833" },
+  "javascript-basics": { artist: HK, title: "Honganji at Asakusa in Edo", year: "about 1831" },
+  "python-basics": { artist: HG, title: "Nihonbashi: Morning View", year: "about 1833" },
+  "spring-boot-first-api": { artist: HK, title: "Fuji from Gotenyama at Shinagawa", year: "about 1831" },
+  "redis-in-practice": { artist: HK, title: "Shower Below the Summit", year: "about 1831" },
+  "postgres-indexing-incident": { artist: HG, title: "Night Snow at Kanbara", year: "about 1833" },
+  "linux-on-call": { artist: HG, title: "Autumn Moon on the Tama River", year: "about 1838" },
+  "rate-limiter": { artist: HK, title: "Fuji Seen from Kanaya on the Tōkaidō", year: "about 1831" },
+  "javascript-inside-out": { artist: HK, title: "Kajikazawa in Kai Province", year: "about 1831" },
+  "java-basics": { artist: HK, title: "The Tama River in Musashi Province", year: "about 1831" },
+  "express-api": { artist: HG, title: "The Mie River at Yokkaichi", year: "about 1833" },
+  "fastapi-first-api": { artist: HG, title: "The Lake at Hakone", year: "about 1833" },
+  "sql-from-zero": { artist: HK, title: "Lake Suwa in Shinano Province", year: "about 1831" },
+  "postgres-transactions-and-locks": { artist: HK, title: "Under the Mannen Bridge at Fukagawa", year: "about 1831" },
+  "git-without-fear": { artist: HK, title: "Kintai Bridge in Suō Province", year: "about 1834" },
+};
+
+/** "Katsushika Hokusai, Ejiri in Suruga Province, about 1831" (for captions and alt text). */
+export function printCredit(lab: string): string | null {
+  const p = LAB_PRINTS[lab];
+  if (!p) return null;
+  return `${p.artist === "Hokusai" ? "Katsushika Hokusai" : "Utagawa Hiroshige"}, ${p.title}, ${p.year}`;
+}
+
+/** The lab's own print; a lab without one falls back to its category's print. */
+export function LabPrint({ lab, track }: { lab: string; track: string }) {
+  const credit = printCredit(lab);
+  if (!credit) return <TrackArt track={track} />;
+  return <img className="u-print u-labprint" src={`/ukiyo/labs/${lab}.webp`} alt={`Woodblock print: ${credit}`} loading="lazy" />;
+}
+
 /** Each category's ink as a plain colour (for code that mixes colours, like the metro map). */
 export const TRACK_HEX: Record<string, string> = {
   ai: "#1f3a64", languages: "#c63f28", frameworks: "#5c7a4c", databases: "#2a5a86", devops: "#50606e",

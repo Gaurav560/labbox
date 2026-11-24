@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November (Ukiyo): a real woodblock print for every lab
+
+- Owner: "for every language, there is this same image, pick some classy unique images for each one of the lab. and
+  one common image for the dashboard". Each of the 23 labs now has its own print by Hokusai or Hiroshige (public
+  domain, mostly CC0 from the Metropolitan Museum of Art), chosen to echo its project, on the course page (with a
+  credit line) and on the dashboard's Continue feature. The category tiles keep one shared print per category;
+  "All labs" shows the Great Wave. Credits in DESIGN_UKIYO.md.
+
+## 25 November: course page heading "Skill map"; no "Start free" next to "Log in"
+
+- Owner: "remove what you will learn and write title as Skill map", and "remove start free button as it also takes
+  me to login/signup page". Same change as on master.
+
 ## 24 November: the rule book after the owner's review, and Before you start on every lab
 
 - Owner, after reading the RAG and Rust courses: "cutting corners"; lessons "more elaborative, easy to understand,
