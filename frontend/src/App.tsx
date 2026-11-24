@@ -4,6 +4,7 @@ import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
 import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
 import LabsPage from "./pages/LabsPage";
+import UkiyoArtPage from "./pages/UkiyoArtPage";
 import LibraryPage from "./pages/LibraryPage";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -60,6 +61,7 @@ export default function App() {
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/labs" element={<RequireAuth><LabsPage /></RequireAuth>} />
       <Route path="/library" element={<LibraryPage />} />
+      <Route path="/ukiyo/art" element={<UkiyoArtPage />} />
       <Route
         path="/courses/:labId"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><CoursePage /></Suspense></RequireAuth>}

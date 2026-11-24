@@ -129,3 +129,21 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---------- 5. toasts and panels ---------- */
 .toast { border-radius: 4px; border: 1px solid var(--rule); }
 .drill-card { border-radius: var(--radius); border-color: var(--rule); }
+
+/* ---------- 6. artwork and signature pieces (UkiyoArt.tsx) ---------- */
+.u-print { display: block; width: 100%; height: 100%; }
+.u-seal { display: block; flex: none; filter: drop-shadow(0 1px 0 #0000001f); }
+.u-level { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.u-level svg { color: var(--vermilion); }
+.u-ink { position: relative; height: 12px; display: flex; align-items: center; }
+.u-ink-line { position: relative; flex: 1; height: 2px; background: var(--rule); }
+.u-ink-line > span { position: absolute; inset: 0 auto 0 0; background: var(--text); }
+.u-ink-mark { position: absolute; top: 50%; width: 10px; height: 10px; margin-left: -5px; transform: translateY(-50%) rotate(45deg);
+  background: var(--vermilion); box-shadow: 0 0 0 3px var(--bg); }
+
+/* the art gallery (/ukiyo/art), for reviewing the prints */
+.u-gallery { max-width: 1180px; margin: 0 auto; padding: 40px 20px 80px; }
+.u-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; margin-top: 24px; }
+.u-gallery figure { margin: 0; }
+.u-gallery figure > div { aspect-ratio: 5 / 3; border: 1px solid var(--rule); overflow: hidden; }
+.u-gallery figcaption { margin-top: 10px; display: flex; justify-content: space-between; font-size: 14px; }
