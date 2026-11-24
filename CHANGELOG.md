@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): home page without the AI section, for now
+
+- Owner: "remove this for now, but keep in memory, might use later". The AI section (the pagoda picture, "AI labs ·
+  Launching", "24 labs, from your first model call to your own GPT.") is off the home page; to bring it back,
+  restore it from commit 3b89404 (`HomePage.tsx`, the `uh-ai` styles stay in `ukiyo.css`). The menu's "AI labs"
+  link now jumps to the labs, whose folding screen starts with AI.
+
 ## 25 November (Ukiyo): the folding screen on the home page
 
 - Owner picked layout 2 of the eight ("done this"). The home page's categories are now a folding screen: six tall

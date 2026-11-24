@@ -47,7 +47,7 @@ export default function HomePage() {
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <a href="#ai">AI labs</a>
+          <a href="#labs">AI labs</a>
           <Link to="/library">Premium Reads</Link>
           <a href="#faq">FAQs</a>
         </nav>
@@ -80,18 +80,6 @@ export default function HomePage() {
         </section>
 
 
-        <section id="ai" className="uh-section uh-ai" aria-labelledby="ai-title">
-          <div className="uh-ai-head">
-            <figure className="uh-ai-print">
-              <div className="uh-frame"><img src="/ukiyo/tracks/ai-pagoda.webp" alt="" /></div>
-            </figure>
-            <header className="uh-head">
-              <p className="u-kicker">AI labs <span className="h-launch">Launching</span></p>
-              <h2 id="ai-title">24 labs, from your first model call to <em>your own GPT.</em></h2>
-              <p className="uh-section-lead">Each lab is a real build on your own machine with real models: model calls, RAG search, agents, evals. The AI track is being crafted now.</p>
-            </header>
-          </div>
-        </section>
 
         {live.length > 0 && (
           <section id="labs" className="uh-section uh-labs" aria-labelledby="labs-title">
