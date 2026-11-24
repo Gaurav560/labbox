@@ -275,6 +275,12 @@ export function TrackArt({ track }: { track: string }) {
   return <Art />;
 }
 
+/** Each category's ink as a plain colour (for code that mixes colours, like the metro map). */
+export const TRACK_HEX: Record<string, string> = {
+  ai: "#1f3a64", languages: "#c63f28", frameworks: "#5c7a4c", databases: "#2a5a86", devops: "#50606e",
+  "system-design": "#84563a", cloud: "#8c8476", aws: "#8c8476",
+};
+
 /** Each category's ink colour and its motif, for small accents. */
 export const TRACK_INK: Record<string, string> = {
   ai: "var(--indigo)", languages: "var(--vermilion)", frameworks: "var(--sage)", databases: "var(--river)",

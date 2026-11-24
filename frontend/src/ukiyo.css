@@ -253,3 +253,98 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   .u-cats { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 1100px) { .u-cats { grid-template-columns: repeat(var(--n, 8), minmax(0, 1fr)); } .u-cat-name { font-size: 13px; } }
+
+/* ---------- 8. the course page ---------- */
+.course-page { background: transparent; }
+.course-hero { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 40px; padding-bottom: 32px; border-bottom: 2px solid var(--text); }
+.course-cover.u-course-print { position: relative; border-radius: 0; aspect-ratio: 5 / 3; border: 1px solid var(--rule); background: none; }
+.u-course-logo { position: absolute; right: 14px; bottom: 14px; width: 52px; height: 52px; display: grid; place-items: center;
+  background: #fffdf8; border: 2px solid var(--vermilion); transform: rotate(-4deg); box-shadow: 0 4px 12px -6px #0006; }
+.u-course-logo img { width: 30px; height: 30px; object-fit: contain; }
+.course-kicker { font: 600 11px var(--font-code); letter-spacing: .16em; color: var(--tone); }
+.course-hero h1 { font-size: clamp(38px, 4.4vw, 60px); line-height: 1.02; margin: 10px 0 12px; }
+.course-sub { font-size: 17px; }
+.course-bar { height: 2px; border-radius: 0; background: var(--rule); }
+.course-bar > div { background: var(--text); border-radius: 0; }
+.course-go { border-radius: 4px; background: var(--vermilion); color: #fff; box-shadow: none; }
+.course-go:hover { background: color-mix(in srgb, var(--vermilion) 85%, #000); text-decoration: none; }
+.course-facts li { border-radius: 0; border: 0; border-left: 2px solid var(--tone); background: transparent; padding: 4px 0 4px 14px; }
+.course-facts strong { font-family: var(--font-serif); font-size: 24px; }
+.course-before { border-radius: 0; border: 1px solid var(--rule); background: var(--card); position: relative; }
+.course-before::before { content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 4px; background: var(--vermilion); }
+.course-need-check { border-radius: 2px; background: var(--vermilion); color: #fff; }
+.course-syllabus h2 { font-size: 36px; }
+.course-map-title { font-family: var(--font-code); font-size: 11px; letter-spacing: .16em; }
+/* the metro map, drawn in ink: thinner lines, no gloss, square-cornered cards */
+.metro-shadow, .metro-track-shine { display: none; }
+.metro-track-body { stroke-width: 6; stroke-linecap: square; }
+.metro-dot { border-radius: 50%; box-shadow: none; }
+.metro-card { border-radius: 0; background: var(--card); border: 1px solid var(--rule); box-shadow: none; }
+.metro-card strong, .metro-card h4 { font-family: var(--font-serif); }
+
+/* ---------- 9. Premium Reads ---------- */
+.lib-hero h1 { font-weight: 600; letter-spacing: -0.03em; }
+.lib-kicker { color: var(--vermilion); }
+.lib-tile, .lib-featured, .lib-book, .lib-paper, .lib-blog { border-radius: 0; }
+.lib-tile { border-radius: 2px; }
+.lib-featured { background: var(--card); border-color: var(--rule); }
+.lib-featured h2 { font-weight: 600; }
+.lib-paper h3, .lib-blog h3 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em; }
+.lib-paper, .lib-blog { background: var(--card); border-color: var(--rule); }
+.lib-chip { border-radius: 2px; }
+.lib-btn-primary { border-radius: 4px; background: var(--text); color: var(--bg); }
+.lib-btn-primary:hover { background: var(--vermilion); color: #fff; }
+
+/* ---------- 10. the home page ---------- */
+.home, :root[data-theme="light"] .home {
+  --red: var(--vermilion); --red-deep: color-mix(in srgb, var(--vermilion) 80%, #000); --yellow: var(--gold); --ink: var(--text);
+  --bg: transparent; --panel: var(--card); --card: var(--card); --text: inherit; --border: var(--rule); --chip: var(--chip);
+  --accent: var(--vermilion); --success: var(--gold); --on-accent: #fff;
+  background: none; color: var(--text);
+}
+.home { --text: var(--text); }
+.home-header { background: color-mix(in srgb, var(--panel) 88%, transparent); border-bottom: 1px solid var(--rule); }
+.home-nav a { font-weight: 500; }
+.h-btn { border-radius: 4px; }
+.h-btn-primary, :root[data-theme="light"] .h-btn-primary { background: var(--vermilion); color: #fff; }
+.h-btn-primary:hover, :root[data-theme="light"] .h-btn-primary:hover { background: color-mix(in srgb, var(--vermilion) 85%, #000); }
+.h-btn-ghost { border-color: var(--text); }
+.hero h1, .h-section h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.03em; }
+.h-pill { border-radius: 2px; border-color: var(--rule); background: var(--card); }
+.h-strike { color: var(--muted); }
+/* the Great Wave, faint behind the hero (Hokusai, about 1831, public domain) */
+.h-hero-bg::after { width: 760px; height: 510px; left: auto; right: 6vw; top: 20px; transform: none; border-radius: 0;
+  background: url(/ukiyo/great-wave.webp) center / cover no-repeat; opacity: .14; filter: sepia(.2);
+  mask-image: radial-gradient(closest-side, #000 55%, transparent); }
+:root:not([data-theme="light"]) .h-hero-bg::after { opacity: .1; }
+.h-stats > div { border-left-color: var(--vermilion); }
+.h-stats strong { font-family: var(--font-serif); color: var(--text); font-weight: 600; }
+.home .h-lab, .home .h-lab-img { border-radius: 0; }
+.home .h-lab { border-color: var(--rule); background: var(--card); }
+
+/* ---------- 11. login and sign-up: Red Fuji on the left, a paper card on the right ---------- */
+.auth, :root[data-theme="light"] .auth { background: var(--bg); }
+.auth-show { background: #1b2533 url(/ukiyo/red-fuji.webp) center / cover no-repeat; align-items: flex-end; }
+.auth-show::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #14120fe6 0%, #14120f66 45%, transparent 75%); }
+.auth-glow, .auth-grid { display: none; }
+.auth-pitch { z-index: 1; }
+.auth-pitch h2, .auth-pitch .auth-title { font-family: var(--font-serif); }
+.auth-eyebrow { color: #f0c46a; }
+.auth-term { background: #14120fd9; border-color: #ffffff22; border-radius: 4px; box-shadow: 0 24px 60px #000a; }
+.auth-prompt { color: #f0c46a; }
+.auth-main { background: transparent; }
+.auth-legal, .auth-card { --bg: unset; --panel: unset; --text: unset; --muted: unset; --border: unset; --chip: unset; --accent: unset; --tint-accent: unset; --danger: unset; }
+.auth-card { background: var(--card); border: 1px solid var(--rule); border-radius: 6px; box-shadow: var(--shadow); }
+.auth-card h1 { font-size: 34px; }
+.auth-card .link, .auth-link { color: var(--vermilion); }
+.auth-go { background: var(--text); color: var(--bg); border-radius: 4px; box-shadow: none; }
+.auth-go:not(:disabled):hover { background: var(--vermilion); color: #fff; box-shadow: none; }
+.auth-rules { border-top-color: var(--rule); }
+:root[data-theme="light"] .auth { --bg: #f3eee3; --panel: #faf7f0; --text: #1c1a17; --muted: #6a6358; --border: #dcd3c2; --chip: #ebe4d5; }
+:root:not([data-theme="light"]) .auth { --bg: #14120f; --panel: #1b1915; --text: #ede6d8; --muted: #a49b8c; --border: #36302a; --chip: #2a2620; }
+.auth-pitch h1 { font-family: var(--font-serif); font-weight: 600; }
+.auth-pitch h2 { font-family: var(--font-serif); font-weight: 600; background: none; -webkit-text-fill-color: #fff; color: #fff; }
+/* the course hero: flat on the paper, the print carries the colour */
+.course-hero { padding: 8px 0 32px; border: 0; border-bottom: 2px solid var(--text); border-radius: 0; background: none; }
+.course-hero::before { display: none; }
+.course-cover.u-course-print { box-shadow: none; }

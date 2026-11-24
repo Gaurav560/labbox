@@ -1,9 +1,9 @@
+import { TRACK_HEX, TrackArt } from "../components/UkiyoArt";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, type LabDetail, type NextStep } from "../api";
 import { useAuth } from "../auth";
-import { inkOn, labTone, mix } from "../brand";
-import LabCover from "../components/LabCover";
+import { inkOn, labBrand, labTone, mix } from "../brand";
 import MetroMap, { labLines } from "../components/MetroMap";
 import { LogoMark } from "../components/Logo";
 import { chapterNumber } from "../components/StatusBar";
@@ -46,7 +46,7 @@ export default function CoursePage() {
   const started = here || lab.progress.passed_tasks > 0;
   const go = `/labs/${lab.id}?chapter=${encodeURIComponent(now.id)}`;
   const pct = lab.chapters.length ? Math.round((100 * doneCount) / lab.chapters.length) : 0;
-  const tone = labTone(lab.id, lab.cover_credit);
+  const tone = TRACK_HEX[lab.track] ?? labTone(lab.id, lab.cover_credit);  // Ukiyo: the category ink
   const vars = { "--tone": tone, "--tone-ink": inkOn(tone), "--tone-hi": mix(tone, "#ffffff", 0.18), "--tone-lo": mix(tone, "#000000", 0.22) } as CSSProperties;
   const level = lab.level ? `${lab.level[0].toUpperCase()}${lab.level.slice(1)}` : null;
 
@@ -55,9 +55,11 @@ export default function CoursePage() {
       <Topbar title={lab.title} username={user?.username ?? ""} />
       <main className="course-main" aria-label={lab.title}>
         <section className="course-hero">
-          <div className="course-cover">
-            {lab.cover_url ? <img src={lab.cover_url} alt="" /> : (
-              <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
+          <div className="course-cover u-course-print">
+            {/* Ukiyo: the category's print, with the lab's own logo stamped on it like a seal */}
+            <TrackArt track={lab.track} />
+            {labBrand(lab.cover_credit) && (
+              <span className="u-course-logo"><img src={labBrand(lab.cover_credit)!.logo} alt="" /></span>
             )}
           </div>
           <div className="course-hero-text">
