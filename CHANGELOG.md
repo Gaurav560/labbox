@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: sharp book covers in Premium Reads
+
+- Owner: the book covers "feel very low quality". They were 240 to 500 pixels tall thumbnails shown about 370 px
+  wide. All 21 are now 800 px wide (full-size publisher covers; Fluent Python's English 2nd edition from its own
+  site; A Philosophy of Software Design's 2nd edition cover, the only clean one; Speech and Language Processing
+  redrawn from the official draft PDF with its whole title block). The cover frame is 3:4 instead of 2:3, the shape
+  of most real covers, so their edges are no longer cut. Same file names, so no migration.
+
 ## 25 November: Premium Reads papers tell the history of language models
 
 - Owner: "add word2vec, GPT-1 + BERT, scaling laws + GPT-3, InstructGPT, chain of thought ... check if these exist,
