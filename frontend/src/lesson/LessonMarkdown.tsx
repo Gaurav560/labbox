@@ -8,7 +8,7 @@
  */
 import type { Element, ElementContent } from "hast";
 import type { Root } from "mdast";
-import { useMemo, useRef, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import Markdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { PluggableList } from "unified";
@@ -254,10 +254,23 @@ function renderBlock(kind: string | undefined, p: Record<string, string | undefi
 function Photo({ src, alt, credit, license, source, ai, caption }: {
   src?: string; alt?: string; credit?: string; license?: string; source?: string; ai: boolean; caption: ReactNode;
 }) {
+  // Photos are files inside LabBox. They load at once (not "lazily", which waited until scrolled into view), and a
+  // load that fails (a slow or dropped connection) is tried again twice by itself, then offered as a button.
+  const [attempt, setAttempt] = useState(0);
+  const [failed, setFailed] = useState(false);
   if (!src) return null;
+  const url = attempt ? `${src}${src.includes("?") ? "&" : "?"}retry=${attempt}` : src;
   return (
     <figure className={`lesson-photo ${ai ? "is-notes" : ""}`}>
-      <img src={src} alt={alt ?? ""} loading="lazy" />
+      {failed ? (
+        <div className="lesson-photo-failed" role="status">
+          <span>The picture did not load. The connection may have dropped for a moment.</span>
+          <button className="btn btn-small" type="button" onClick={() => { setFailed(false); setAttempt((n) => n + 1); }}>Try again</button>
+        </div>
+      ) : (
+        <img key={url} src={url} alt={alt ?? ""} loading="eager" decoding="async"
+          onError={() => { if (attempt < 2) setTimeout(() => setAttempt((n) => n + 1), 800 * (attempt + 1)); else setFailed(true); }} />
+      )}
       <figcaption>
         <span className="lesson-photo-caption">{caption}</span>
         <span className="lesson-photo-credit">

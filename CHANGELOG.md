@@ -1,5 +1,16 @@
 # Changelog
 
+## 24 November: lesson photos that always load
+
+- Owner: images sometimes did not show ("why don't you download images instead of embedding url ... sometimes it fetches
+  on my machine sometimes it does not"). Every lesson photo already was a file inside LabBox
+  (`frontend/public/lesson-images/`; the Wikimedia link under a photo is only its credit), so the fix is in loading:
+  - photos load at once (`loading="eager"`) instead of only when scrolled into view;
+  - a chapter fetches all of its photos in the background as soon as it opens (`LabPage.tsx`);
+  - a photo whose load fails is tried again by itself twice, then shows "Try again" (`LessonMarkdown.tsx`).
+- Test: `e2e/photos.spec.ts` makes the first two requests for a lesson photo fail and checks that it still appears, and
+  that the chapter's last photo (the recap's notes page) is requested as soon as the chapter opens.
+
 ## 24 November: the Library (books, research papers, tech blogs), a public page
 
 - Owner: "add an entire new section like Books Recommended to Read, and admin can change with time, Research Papers to

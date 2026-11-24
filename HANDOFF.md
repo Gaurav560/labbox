@@ -168,7 +168,7 @@ A folder per chapter (`NN-id/`, Maven), checks are JUnit with a fake model serve
 ## Flaky tests (pass on rerun)
 
 `phase-d.spec.ts` under full load, `engagement.spec.ts` (drill), `javascript-pictures.spec.ts`,
-`diagram-themes.spec.ts` (arrowhead check). A blank lab page with `net::ERR_NETWORK_CHANGED` is this laptop.
+`diagram-themes.spec.ts` (arrowhead check), `course.spec.ts` (the `/skills` to `/courses` redirect, 24 November), `home.spec.ts` (expired login). A blank lab page with `net::ERR_NETWORK_CHANGED` is this laptop.
 
 ## Editing CHANGELOG.md safely
 

@@ -211,6 +211,16 @@ export default function LabPage() {
 
   // Chapter setup: seed data or an injected incident, once per learner. Also starts the incident timer.
   const chapterMeta = lab?.chapters.find((c) => c.id === chapterId);
+  // Fetch every photo of this chapter in the background as soon as it opens, so each one is already there when its
+  // step comes up (owner, 24 November: "sometimes it fetches, sometimes it does not").
+  useEffect(() => {
+    if (!steps) return;
+    const srcs = new Set<string>();
+    for (const st of steps) for (const m of st.markdown.matchAll(/:::photo\{src="([^"]+)"/g)) srcs.add(m[1]);
+    const held = [...srcs].map((src) => { const img = new Image(); img.decoding = "async"; img.src = src; return img; });
+    return () => { held.length = 0; };
+  }, [steps]);
+
   const needsSetup = !!chapterMeta && (chapterMeta.has_setup || !!steps?.some((s) => s.type === "incident"));
   useEffect(() => {
     if (!needsSetup || status !== "running") return;

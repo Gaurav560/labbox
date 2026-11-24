@@ -1972,3 +1972,5 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lib-form-picture { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .lib-form-picture img { width: 96px; max-height: 128px; object-fit: contain; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
 .lib-form-picture label { flex: 1; min-width: 240px; }
+.lesson-photo-failed { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 18px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 14px; }
