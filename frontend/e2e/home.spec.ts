@@ -77,6 +77,11 @@ test("FAQ, privacy policy and terms are public and linked from the home page", a
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Privacy policy");
   await expect(page).toHaveTitle("Privacy policy · LabBox by Telusko");
   await page.goto("/login");
+  // The login page has the light and dark switch too (owner, 25 November); it must not submit the form.
+  const before = await page.evaluate(() => document.documentElement.dataset.theme);
+  await page.locator(".auth-top").getByRole("button", { name: /^Switch to (light|dark) theme$/ }).click();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", before ?? "");
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
   await page.locator(".auth-legal").getByRole("link", { name: "Terms of Service" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Terms of Service");
 });
