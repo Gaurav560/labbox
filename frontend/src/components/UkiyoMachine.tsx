@@ -1,12 +1,10 @@
 /*
- * Four ways to tell visitors what happens when they start a lab (owner, 25 November: "we spin a container, Linux,
- * language, framework, database and whatever inside; you don't do the setup, you start learning by taking the
- * challenges"; the first five options did not land, "show me all"). Not linked from the app.
+ * "Start a lab" on the home page (owner, 25 November: "one click and we spin up a container for you with everything
+ * the lab needs"; picked from nine options). The lab's real stack (its lab.yaml and Dockerfile) packs itself into
+ * one container, piece by piece with a line in the log each, then a green tick and Start, which opens that course.
  */
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
-import Logo from "../components/Logo";
-import ThemeButton from "../components/ThemeButton";
 
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
@@ -71,11 +69,11 @@ function useOnScreen() {
 }
 
 /**
- * A. The lab's stack packs itself into one container, one piece at a time: an empty slot waits and pulses, the logo
+ * The lab's stack packs itself into one container, one piece at a time: an empty slot waits and pulses, the logo
  * flies in and settles, its line appears in the log, the progress bar and the clock move on. When the last piece is
  * in, the box seals and Start lights up.
  */
-function LogosInABox() {
+export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   const [lab, setLab] = useState(LABS[1]);
   const [run, setRun] = useState(0);
   const [step, setStep] = useState(0);
@@ -98,7 +96,7 @@ function LogosInABox() {
     <div className="ua" ref={ref}>
       <div className="ua-text">
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun((r) => r + 1); }} />
-        <h3>One click, and we spin up a container for you <em>with everything the lab needs.</em></h3>
+        <h2 id="machine-title">One click, and we spin up a container for you <em>with everything the lab needs.</em></h2>
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
         <button type="button" className="uh-replay" onClick={() => setRun((r) => r + 1)}>↺ Pack it again</button>
       </div>
@@ -130,108 +128,9 @@ function LogosInABox() {
         </span>
         <div className="ua-ready">
           <span><b>Ready</b> · first challenge: {lab.challenge}</span>
-          <Link className="h-btn h-btn-primary" to="/login?signup=1">Start →</Link>
+          <Link className="h-btn h-btn-primary" to={signedIn ? `/courses/${lab.id}` : `/login?next=${encodeURIComponent(`/courses/${lab.id}`)}`}>Start →</Link>
         </div>
       </div>
-    </div>
-  );
-}
-
-/** B. A real screen recording: the FastAPI course, Start, the machine opens with the editor, terminal and task. */
-function Recording() {
-  return (
-    <div className="ub">
-      <div className="ub-frame">
-        <div className="ub-bar" aria-hidden="true"><span /><span /><span /><em>LabBox · FastAPI: your first API</em></div>
-        <video src="/ukiyo/demo/start-a-lab.mp4" poster="/ukiyo/demo/start-a-lab-poster.webp" autoPlay muted loop playsInline
-          aria-label="Screen recording: pressing Start on the FastAPI course opens the lab with the editor, a terminal and the first task" />
-      </div>
-      <div className="ub-text">
-        <h3>Press Start. <em>That's the whole setup.</em></h3>
-        <p>Recorded on LabBox, not a mock-up: the FastAPI course, one click, and your own Linux machine opens with Python, FastAPI, an editor, a terminal and the first task.</p>
-        <ol className="ub-steps"><li>Pick a lab</li><li>Press Start</li><li>Write code, press Check</li></ol>
-      </div>
-    </div>
-  );
-}
-
-/** C. One big sentence and the real logos underneath. */
-function BigSentence() {
-  const logos = ["linux", "docker", "python", "java", "go", "rust", "javascript", "spring", "fastapi", "postgresql", "redis", "nginx", "langchain", "git"];
-  return (
-    <div className="uc">
-      <h3 className="uc-line">No installs. No setup.<br /><em>Your machine is ready in about a minute.</em></h3>
-      <p>Every lab comes with its own Linux machine, the language, the framework and the databases already running. You just take the challenge.</p>
-      <ul className="uc-logos">{logos.map((l) => <li key={l}><img src={`/logos/${l}.svg`} alt={l} /></li>)}</ul>
-    </div>
-  );
-}
-
-/** D. Before and after: drag between a laptop full of install errors and the real LabBox lab. */
-function BeforeAfter() {
-  const [x, setX] = useState(50);
-  return (
-    <div className="ud">
-      <div className="ud-head">
-        <h3>Your laptop, <em>or your lab.</em></h3>
-        <p>Drag the line.</p>
-      </div>
-      <div className="ud-stage" style={{ "--x": `${x}%` } as CSSProperties}>
-        <img className="ud-after" src="/ukiyo/demo/fastapi-lab-ready.webp" alt="The FastAPI lab on LabBox: lesson, editor and terminal, ready" />
-        <div className="ud-before" aria-label="A laptop terminal full of install errors">
-          <pre>{`$ python3 -m pip install fastapi
-error: externally-managed-environment
-$ sudo pip install fastapi uvicorn
-ERROR: Cannot install fastapi==0.115.6 and
-  starlette==0.27.0: conflicting dependencies
-$ python3 --version
-Python 3.8.10      # the course needs 3.12
-$ brew install postgresql@16
-Error: No such keg: /usr/local/Cellar/postgresql@16
-$ psql
-psql: error: connection to server on socket
-  "/tmp/.s.PGSQL.5432" failed: No such file
-$ uvicorn main:app
-ERROR: [Errno 98] Address already in use
-$ # 2 hours later, still no code written`}</pre>
-        </div>
-        <span className="ud-label ud-label-l">Your laptop</span>
-        <span className="ud-label ud-label-r">LabBox</span>
-        <span className="ud-handle" aria-hidden="true"><i>⟷</i></span>
-        <input type="range" min={0} max={100} value={x} onChange={(e) => setX(Number(e.target.value))} aria-label="Compare your laptop and LabBox" />
-      </div>
-    </div>
-  );
-}
-
-const OPTIONS = [
-  { title: "Real logos in a box", note: "The lab's real stack packs itself into one container, piece by piece, each with its line in the log; then it seals and Start lights up. Switch labs to see each stack.", View: LogosInABox },
-  { title: "A real screen recording", note: "Recorded on this laptop just now: the FastAPI course, Start, and the lab opens with the editor, the terminal and the task.", View: Recording },
-  { title: "One big sentence", note: "No diagram: one confident line and the real logos underneath.", View: BigSentence },
-  { title: "Before and after", note: "A slider between a laptop full of install errors and the real LabBox lab, ready to go.", View: BeforeAfter },
-];
-
-export default function UkiyoMachinePage() {
-  useEffect(() => { document.title = "Start a lab: four directions | LabBox by Telusko"; }, []);
-  return (
-    <div className="ul-page u-home home">
-      <header className="ul-top">
-        <Logo to="/" />
-        <nav aria-label="Options">{OPTIONS.map((o, i) => <a key={o.title} href={`#machine-${i + 1}`}>{"ABCD"[i]}. {o.title}</a>)}</nav>
-        <ThemeButton />
-      </header>
-      <main className="ul-main">
-        <h1>What happens when you start a lab</h1>
-        <p className="uh-section-lead">Four new directions. The stacks, the recording and the screenshot are real.</p>
-        {OPTIONS.map(({ title, note, View }, i) => (
-          <section key={title} id={`machine-${i + 1}`} className="ul-section" aria-labelledby={`machine-${i + 1}-t`}>
-            <p className="u-kicker">Direction {"ABCD"[i]}</p>
-            <h2 id={`machine-${i + 1}-t`}>{"ABCD"[i]}. {title}</h2>
-            <p className="ul-note">{note}</p>
-            <View />
-          </section>
-        ))}
-      </main>
     </div>
   );
 }

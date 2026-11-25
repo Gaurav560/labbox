@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): "start a lab" on the home page
+
+- Owner: "it is ready, now you can integrate this on the main home page". The packing box is a component
+  (`components/UkiyoMachine.tsx`) and a home page section between the hero and "Pick a lab". Start opens the chosen
+  lab's course page (logged out: through login, `next=`). The review page `/ukiyo/machine`, the three directions not
+  picked and the screen recording are removed. `home.spec.ts` watches it pack Spring Boot and Redis.
+
 ## 25 November (Ukiyo): Start with the hanko's white line; a vibrant green tick
 
 - Owner: the Start button should keep the inner white line the READY seal had; "this green colour of the tick

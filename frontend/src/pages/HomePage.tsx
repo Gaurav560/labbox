@@ -5,6 +5,7 @@ import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { HomeFaq } from "../components/HomeSections";
+import UkiyoMachine from "../components/UkiyoMachine";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
 import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
@@ -79,6 +80,10 @@ learner:~$ python agent.py
         </section>
 
 
+
+        <section id="machine" className="uh-section uh-machine" aria-labelledby="machine-title">
+          <UkiyoMachine signedIn={!!user} />
+        </section>
 
         {live.length > 0 && (
           <section id="labs" className="uh-section uh-labs" aria-labelledby="labs-title">

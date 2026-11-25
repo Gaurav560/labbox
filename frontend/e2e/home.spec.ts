@@ -16,6 +16,20 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".uh-hero-pic img")).toBeVisible();
   await expect(page.locator(".uh-term")).toContainText("labbox start");
   await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
+  // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
+  const machine = page.locator("#machine");
+  await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click, and we spin up a container for you with everything the lab needs.");
+  await machine.scrollIntoViewIfNeeded();
+  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
+  await expect(machine.locator(".ua-slots li.is-in")).toHaveCount(5); // Spring Boot: Linux, Java, Spring Boot, editor, AI
+  await expect(machine.locator(".ua-log li").nth(1)).toContainText("Java 21");
+  await expect(machine.locator(".ua-stamp")).toHaveAttribute("aria-label", "Ready");
+  await expect(machine.locator(".ua-ready").getByRole("link", { name: "Start →" })).toHaveAttribute("href", "/login?next=%2Fcourses%2Fspring-boot-first-api");
+  await machine.getByRole("tab", { name: "Redis" }).click();
+  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
+  await expect(machine.locator(".ua-slots li.is-in")).toHaveCount(7);
+  await expect(machine.locator(".ua-log")).toContainText("Redis replica");
+  await expect(machine).not.toContainText("VS Code");
   // The catalog comes from the server: a folding screen, one panel per category, not every lab (owner, 25 November).
   const languages = page.locator("#labs .uh-panel", { hasText: "Languages" });
   await expect(languages).toContainText(/\d+ labs/);

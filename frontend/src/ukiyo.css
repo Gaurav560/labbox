@@ -478,30 +478,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   border-radius: 0; background: none; color: var(--muted); font: 600 13px var(--font-text); }
 .profile-exit:hover { border-color: var(--rule); background: none; color: var(--vermilion); }
 
-/* ---------- 15. ways to show "start a lab" (/ukiyo/machine, owner 25 November) ---------- */
-.ul-page { min-height: 100vh; }
-.ul-top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 20px; padding: 10px 24px;
-  background: var(--panel); border-bottom: 1px solid var(--rule); }
-.ul-top nav { display: flex; flex-wrap: wrap; gap: 4px 16px; flex: 1; }
-.ul-top nav a { font: 600 12px var(--font-code); letter-spacing: .04em; color: var(--muted); }
-.ul-top nav a:hover { color: var(--vermilion); text-decoration: none; }
-.ul-main { width: min(1200px, 100% - 48px); margin: 0 auto; padding: 48px 0 120px; }
-.ul-main h1 { font: 600 clamp(36px, 4.6vw, 60px)/1.05 var(--font-serif); margin: 0 0 12px; }
-.ul-section { padding-top: 88px; scroll-margin-top: 60px; }
-.ul-section h2 { font: 600 clamp(30px, 3.6vw, 44px)/1.1 var(--font-serif); margin: 10px 0 8px; }
-.ul-note { margin: 0 0 28px; color: var(--muted); font-size: 16px; max-width: 46em; }
-.ul-main h3 { font: 600 clamp(28px, 3vw, 40px)/1.1 var(--font-serif); margin: 16px 0 12px; }
-.ul-main h3 em { font-weight: 400; color: var(--vermilion); }
-.ul-main h3 + p { color: var(--muted); font-size: 17px; line-height: 1.6; margin: 0 0 22px; max-width: 30em; }
-@keyframes um-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-@keyframes um-strike { to { background-size: 100% 2px; color: var(--muted); } }
-
+/* ---------- 15. start a lab: the machine packs itself (home page, owner 25 November) ---------- */
+.uh-machine .ua-text h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; margin: 16px 0 14px; }
+.uh-machine .ua-text h2 em { font-style: italic; font-weight: 400; color: var(--vermilion); }
+.uh-machine .ua-text h2 + p { color: var(--muted); font-size: 17px; line-height: 1.6; margin: 0 0 22px; max-width: 30em; }
 .um-picker { display: flex; flex-wrap: wrap; gap: 6px; }
 .um-picker button { padding: 6px 12px; border: 1px solid var(--rule); background: var(--card); color: var(--muted); cursor: pointer;
   font: 600 12px var(--font-code); letter-spacing: .04em; }
 .um-picker button[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-@keyframes blink { 50% { opacity: 0; } }
 .uh-replay { margin-top: 4px; border: 0; background: none; color: var(--text); font: 600 14px var(--font-text); cursor: pointer; padding: 0; border-bottom: 1px solid var(--rule); }
 
 /* A logos in a box: empty slots, each piece flies in and settles, a log line per piece, then the box seals */
@@ -558,45 +542,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-ready b { font-family: var(--font-code); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--vermilion); }
 @media (prefers-reduced-motion: reduce) { .ua-slots li.is-in .ua-tile { animation: none; opacity: 1; } }
 
-/* B recording */
-.ub { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 44px; align-items: center; }
-.ub-frame { border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: #0d1117; box-shadow: 0 30px 60px -30px #000a; }
-.ub-bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; background: #1b1915; }
-.ub-bar span { width: 10px; height: 10px; border-radius: 50%; background: #3a3530; }
-.ub-bar em { margin-left: 12px; padding: 3px 10px; border-radius: 4px; background: #ffffff10; color: #a49b8c; font: 12px var(--font-code); font-style: normal; }
-.ub-frame video { display: block; width: 100%; height: auto; }
-.ub-steps { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
-.ub-steps li { counter-increment: s; display: flex; gap: 12px; align-items: center; font: 600 17px var(--font-serif); }
-.ub-steps li::before { content: counter(s); display: grid; place-items: center; width: 26px; height: 26px; background: var(--vermilion); color: #fff; font: 600 13px var(--font-code); }
-
-/* C big sentence */
-.uc { text-align: center; padding: 24px 0 8px; }
-.ul-main .uc h3.uc-line { font-size: clamp(36px, 4.6vw, 66px); line-height: 1.06; margin: 0 auto 20px; max-width: 18em; }
-.ul-main .uc h3.uc-line em { font-size: .82em; }
-.ul-main .uc h3 + p { margin: 0 auto 36px; }
-.uc-logos { list-style: none; margin: 0; padding: 22px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; border-top: 1px solid var(--rule); }
-.uc-logos li { width: 60px; height: 60px; padding: 12px; background: #fffdf8; border: 1px solid var(--rule); }
-.uc-logos img { width: 100%; height: 100%; object-fit: contain; }
-
-/* D before and after */
-.ud-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; }
-.ud-head p { color: var(--muted); margin: 0; }
-.ud-stage { position: relative; aspect-ratio: 1280 / 760; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; user-select: none; }
-.ud-after { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ud-before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--x)) 0 0); background: #0b0a09; }
-.ud-before pre { margin: 0; padding: 28px 32px; color: #e9e2d4; font: 15px/1.7 var(--font-code); white-space: pre-wrap; }
-.ud-before pre::first-line { color: #e9e2d4; }
-.ud-label { position: absolute; top: 14px; padding: 4px 10px; font: 600 11px var(--font-code); letter-spacing: .12em; text-transform: uppercase; color: #fff; }
-.ud-label-l { left: 14px; background: #b3261e; }
-.ud-label-r { right: 14px; background: #1f7a3a; }
-.ud-handle { position: absolute; top: 0; bottom: 0; left: var(--x); width: 3px; margin-left: -1.5px; background: #fffdf8; box-shadow: 0 0 12px #000a; pointer-events: none; }
-.ud-handle i { position: absolute; top: 50%; left: 50%; width: 42px; height: 42px; margin: -21px 0 0 -21px; display: grid; place-items: center;
-  border-radius: 50%; background: #fffdf8; color: #1c1a17; font-style: normal; font-size: 20px; box-shadow: 0 4px 12px #0008; }
-.ud-stage input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
-
 @media (max-width: 860px) {
-  .ul-top nav { display: none; }
-  .ua, .ub { grid-template-columns: 1fr; }
-  .ua-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .ud-before pre { font-size: 11px; padding: 14px; }
+  .ua { grid-template-columns: 1fr; }
+  .ua-slots { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .ua-log li { white-space: normal; }
 }
