@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangGraph chapter 6 rewritten: the storm night pictured, Send and Command mistakes tried
+
+- Re-ran the solution: the same output. A new still picture shows the five Sends in one step and the Command for each
+  repair, with the urgent brown water scheduled for tomorrow (the lesson's point).
+- Tried: the quiz (no reducer on `tickets`: `InvalidUpdateError`); node names instead of `Send` (`KeyError: 'text'`,
+  the first task's slip); `Command(goto="schedule")` without the update (`KeyError: 'status'`, the second task's
+  slip); `plan` without its `Command[Literal[...]]` annotation (it still runs, but the diagram draws `plan -->
+  __end__`), which backs the lesson's claim about the return type.
+- Both tasks list their steps. A new sketchnote.
+
 ## 26 November: LangGraph chapter 5 rewritten: a wrong weekday fixed, the grader's miss measured
 
 - Fixed in the lab: the notice facts said "Thursday 28 November", which is a Saturday in 2026; starter and solution

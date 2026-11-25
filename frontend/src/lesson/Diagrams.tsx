@@ -3359,20 +3359,32 @@ function LgJoin() {
 }
 
 function LgSend() {
+  // Still (owner, 26 November): chapter 6's real storm night, five Sends and four Commands.
+  const repairs: [string, string, BoxTone][] = [
+    ["leak, Rs 18,000", "tomorrow", "plain"],
+    ["no_water, Rs 65,000", "engineer_approval", "accent"],
+    ["urgent dirty_water, Rs 40,000", "tomorrow!", "highlight"],
+    ["leak, Rs 18,000", "tomorrow", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="A storm night: map, then reduce"
-      intro="Press Play to follow five complaints through Send."
-      label="Send"
-      steps={[
-        { label: "fan_out", says: "Reads complaints (5 texts) and returns five Send('triage_one', {'text': ...})." },
-        { label: "Map", says: "Five triage_one runs start in the same step, each with only its own text." },
-        { label: "Reduce", says: "Each returns {'tickets': [ticket]}; operator.add collects all five into one list." },
-        { label: "summarise", says: "Runs once, after all five: '5 complaints, 1 urgent'." },
-        { label: "plan", says: "For each repair, returns a Command: goto engineer_approval over Rs 50,000, otherwise schedule." },
-        { label: "The gap", says: "plan looks only at cost, so urgent dirty water was scheduled for tomorrow." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 368" label="Five complaints become five Sends to triage_one, all in one step; operator.add collects five tickets and summarise reports 5 complaints, 1 urgent. Then a Command per repair: the Rs 65,000 no_water repair goes to the engineer, the others to tomorrow's schedule, including the urgent brown water, because plan only reads the cost">
+      <text className="dg-label" x={8} y={18}>one step: a Send per complaint to triage_one</text>
+      {[0, 1, 2, 3, 4].map((i) => <Box key={i} x={8 + i * 86} y={28} w={78} h={36} label="triage" tone="accent" />)}
+      <Arrow x1={220} y1={64} x2={220} y2={80} />
+      <Box x={8} y={80} w={424} h={40} label="5 tickets joined: 5 complaints, 1 urgent" tone="copy" />
+      <text className="dg-label" x={8} y={152}>then plan returns a Command per repair: engineer or schedule</text>
+      {repairs.map(([what, where, tone], i) => {
+        const y = 162 + i * 46;
+        return (
+          <g key={i}>
+            <Box x={8} y={y} w={236} h={36} label={what} tone="plain" />
+            <Arrow x1={244} y1={y + 18} x2={258} y2={y + 18} />
+            <Box x={258} y={y} w={174} h={36} label={where} tone={tone} />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={360}>plan reads only the cost: the urgent repair waits a day.</text>
+    </Svg>
   );
 }
 
