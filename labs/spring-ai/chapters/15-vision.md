@@ -67,7 +67,7 @@ as a data URL (the bytes in base64):
 ```
 
 :::diagram{name="ai-vision"}
-The photo is shrunk, encoded, and sent with the question in one message; the model answers in words.
+The real pendulum photo from this chapter (26 November), with the token counts from the gateway's log.
 :::
 :::
 
@@ -86,8 +86,10 @@ gpt-4o-mini's price that is about 0.4 US cents a photo: 1,000 visitor photos a d
 day, before Atlas says a word.
 
 The reason is in OpenAI's rule for pictures: a detailed picture is cut into **tiles of 512 by 512 pixels**, and each
-tile costs a fixed number of tokens. 800 by 600 pixels needs 4 tiles. Shrink the photo so it fits in one tile, and it
-costs about a third:
+tile costs a fixed number of tokens. For gpt-4o-mini a picture costs 2,833 tokens, plus 5,667 for each tile. 800 by 600
+pixels needs 2 tiles across and 2 down, 4 tiles: 2,833 + 4 x 5,667 = 25,501, plus the question's own tokens, gives the
+25,596 measured. Shrink the photo so it fits in one tile, and it
+costs about a third (2,833 + 5,667 = 8,500, plus the question):
 
 ```text
 $ lab requests
@@ -102,7 +104,12 @@ at that size. (Your lab account's daily budget is 50,000 tokens: about five phot
 
 :::step{type=task task=image_question title="Your turn: a question about a photo" file="15-vision/src/main/java/com/atlas/LookController.java" line="47"}
 In `15-vision`, finish `POST /look`: send the question `q` and the picture together in one user message. The picture
-is ready, already shrunk, in `picture`, and its type in `type`.
+is ready, already shrunk, in `picture`, and its type in `type`:
+
+1. `.user(u -> u.text(q).media(type, picture))`
+2. `.call().content()` and return it.
+
+The usual slip: sending the original upload instead of `picture`. It works, and costs three times as many tokens.
 
 ```bash run
 cd 15-vision && mvn -q -o spring-boot:run
@@ -118,7 +125,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Atlas sees"}
-Two real answers, each from a photo and a question:
+Two real answers, each from a photo and a question (our re-run on 26 November gave the same two, in other words, at
+8,595 tokens each):
 
 ```text
 $ curl -s -F image=@photos/pendulum.jpg -F q="What is this exhibit?" localhost:8080/look; echo
@@ -153,7 +161,13 @@ Sighting s = chat.prompt()
 
 :::step{type=task task=exhibit_from_photo title="Your turn: which exhibit is it?" file="15-vision/src/main/java/com/atlas/LookController.java" line="59"}
 Finish `POST /identify`: ask which of `EXHIBITS` the photo shows (or none), with the picture, and return the answer as
-a `Sighting`.
+a `Sighting`:
+
+1. Join the names: `String.join(", ", EXHIBITS)`.
+2. The question with the names and "If it shows none of them, answer none.", plus `.media(type, picture)`.
+3. `.call().entity(Sighting.class)`.
+
+The usual slip: leaving out "answer none". Then a photo of something else is still matched to one of the exhibits.
 
 ```bash run
 cd 15-vision && curl -s -F image=@photos/skull.jpg localhost:8080/identify | jq .
@@ -181,7 +195,8 @@ $ curl -s -F image=@photos/engine.jpg localhost:8080/identify | jq .
 The second photo is a steam engine outside another museum, Bengaluru's Visvesvaraya Industrial and Technological
 Museum. It is not one of Atlas's exhibits, and Atlas said so, because the question allowed it.
 
-The skull's `clue` is weak: it repeats the name. The field's name was all the model had to go on, and "clue" was not
+The skull's `clue` is weak: it repeats the name. (Our re-run on 26 November gave "Fossil of a dinosaur": a vague
+field gets a different answer each run.) The field's name was all the model had to go on, and "clue" was not
 clear enough. A clearer name (`whatGaveItAway`) or one sentence in the question ("and say what in the photo gave it
 away") fixes it. In structured output, your field names are part of the prompt.
 
@@ -252,7 +267,7 @@ You can now:
 
 Next, chapter 16: how do you know Atlas is right? Evaluation.
 
-:::photo{src="/lesson-images/spring-ai/springai-15-notes.webp" alt="Handwritten notes about pictures: one message: text + media; .media(IMAGE_JPEG, picture); a closed list, and 'none'; shrink to 512 px: one tile" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-15-notes.webp" alt="Sketchnote, Atlas sees (a photo and a question in one message): Modern models read pictures as well as words. Send the photo with the question; the answer comes back in words. The flow: Photo, Shrink to 512 px, Text + image, Model, Answer. What we measured: 800 x 600: 4 tiles, 25,596 tokens; 512 px: 1 tile, 8,595 tokens; the steam engine: none, an honest answer; name every field clearly: it is part of the prompt." ai="true"}
 One page of notes for this chapter.
 :::
 :::

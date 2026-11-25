@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: Spring AI chapter 15 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (sending the unshrunk upload; no "answer none").
+- The vision animation is now a still picture of the real pendulum photo with its token counts.
+- Checked in a lab machine with the four real photos: the same answers, and exactly 8,595 tokens per `/look` and 8,815
+  per `/identify`. The tile cost is now explained with OpenAI's numbers for gpt-4o-mini (2,833 + 5,667 per tile:
+  25,501 for 4 tiles, 8,500 for one, plus the question), which match the measured 25,596 and 8,595. The skull's clue
+  came out as "Fossil of a dinosaur" this time; the lesson now says a vague field gets a different answer each run.
+  A new sketchnote.
+
 ## 26 November: Spring AI chapter 14 rewritten (easy, a little detailed, checked); the pendulum card corrected
 
 - Both tasks list their steps and the usual slips (no threshold; no `distinct()`).
