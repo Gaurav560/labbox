@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 14 rewritten (easy, a little detailed, checked)
+
+- Content block, MIME type and tile are explained where they first appear; both tasks list their steps and the usual
+  slips (the leaf report's slip now matches what the check tests).
+- Checked through the lab gateway: with the rules, the same report word for word; without the rules, twice the same
+  wrong "powdery mildew" and "Consider applying a fungicide" (the chapter's warning is real); 8,697 tokens in and 46 out
+  again; the photo is 500 by 375; the credit file is right; $0.0013 is about 31 text answers. Corrected: "until 2023
+  the big language models read only text" now mentions research models like Flamingo (2022); the notes say the 8,697
+  tokens are the photo and its question. A new notes page.
+
 ## 25 November: LangChain chapter 13 rewritten (easy, a little detailed, checked)
 
 - Pydantic is explained where it first appears; both tasks list their steps and the usual slips.
