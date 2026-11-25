@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 3 rewritten (easy, a little detailed, checked)
+
+- Nearest-neighbour search, brute force, normalizing, `axis=-1` and `keepdims` (read line by line), the matrix product
+  `@`, BLAS, `argpartition` and the processor's cache are each explained where they first appear.
+- A new still picture, `rag-matrix`: five section rows times the "big cat" question give five real cosines, and the top
+  3 (FM-4.2 0.595, FM-7.3 0.565, FM-4.1 0.551). The `top_k` trace now uses those real scores (it used made-up ones).
+- Checked and corrected: `bench.py` averages 20 questions with k = 10 (the lesson said one question); all timings are
+  labelled as measured on this lesson's lab machine; "15 MB fit in the cache" is given as the likely reason, not a
+  fact; "points become almost equally far apart" is said to hold for random data, not for real embeddings; verified in
+  the lab image that bge-small already returns vectors of length 1 (the quick check now says so plainly). The tiger
+  photo's lead says why it is there. A new notes page, with "rows x dimension x 4 bytes" (not "x 384").
+
 ## 25 November: RAG chapter 1 rewritten (easy, a little detailed, checked)
 
 - Part of rewriting the whole RAG course to the owner's rules (memory: lesson-rewrite-rules). Titles, story, tasks and

@@ -3376,6 +3376,36 @@ function RagEmbed() {
   );
 }
 
+/** Brute-force search: the section matrix times the question's vector gives one score per section; the top 3 win.
+ *  Real cosines for "What should I do if a big cat is right in front of me?" (bge-small, chapter 3). */
+function RagMatrix() {
+  const rows = [["FM-1.1", "0.411"], ["FM-2.2", "0.436"], ["FM-4.1", "0.551"], ["FM-4.2", "0.595"], ["FM-7.3", "0.565"]];
+  const best = new Set(["FM-4.2", "FM-7.3", "FM-4.1"]);
+  return (
+    <Svg viewBox="0 0 440 420" label="The matrix of 31 section vectors times the question vector gives 31 scores; the three highest are FM-4.2, FM-7.3 and FM-4.1">
+      <text className="dg-note" x={0} y={14}>the matrix: one row per section</text>
+      <text className="dg-note" x={0} y={30}>(31 rows; 5 shown)</text>
+      {rows.map(([id], i) => <Box key={id} x={0} y={42 + i * 40} w={150} h={34} label={`${id}  [ ... ]`} tone={best.has(id) ? "accent" : "plain"} code />)}
+      <text className="dg-note" x={0} y={256}>... 26 more rows</text>
+      <text x={172} y={150} className="dg-note" style={{ fontSize: 22 }}>@</text>
+      <text className="dg-note" x={200} y={14}>the question</text>
+      <text className="dg-note" x={200} y={30}>(384 numbers)</text>
+      <g className="dg-box dg-highlight"><rect x={200} y={42} width={58} height={194} rx={8} />
+        <text x={229} y={132} textAnchor="middle" className="dg-code" style={{ fontSize: 12 }}>big</text>
+        <text x={229} y={148} textAnchor="middle" className="dg-code" style={{ fontSize: 12 }}>cat</text></g>
+      <text x={272} y={150} className="dg-note" style={{ fontSize: 22 }}>=</text>
+      <text className="dg-note" x={300} y={14}>one score per row</text>
+      <text className="dg-note" x={300} y={30}>(31 cosines)</text>
+      {rows.map(([id, sc], i) => <Box key={id} x={300} y={42 + i * 40} w={100} h={34} label={sc} tone={best.has(id) ? "accent" : "plain"} code />)}
+      <Arrow x1={30} y1={268} x2={30} y2={296} />
+      <text className="dg-note" x={42} y={287}>keep the 3 highest scores (top_k)</text>
+      <Box x={0} y={302} w={440} h={34} label="1.  FM-4.2 Meeting a tiger   0.595" tone="highlight" />
+      <Box x={0} y={342} w={440} h={34} label="2.  FM-7.3 Finding a dead animal   0.565" />
+      <Box x={0} y={382} w={440} h={34} label="3.  FM-4.1 General rules for animal encounters   0.551" />
+    </Svg>
+  );
+}
+
 function RagIvf() {
   return (
     <SketchSteps
@@ -3447,6 +3477,7 @@ function RagTwoStage() {
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
   "rag-embed": RagEmbed,
+  "rag-matrix": RagMatrix,
   "rag-ivf": RagIvf,
   "rag-hnsw": RagHnsw,
   "rag-binary": RagBinary,
