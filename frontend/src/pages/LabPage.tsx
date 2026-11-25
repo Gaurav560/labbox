@@ -99,7 +99,7 @@ export default function LabPage() {
   const [mode, setMode] = usePersistentState<"read" | "action">("mode", "read");
   const reading = phone || mode === "read";
   // Read mode's list of steps on the left; the panel button closes it and brings it back (remembered).
-  const [outlineOpen, setOutlineOpen] = usePersistentState("outline", true);
+  const [outlineOpen, setOutlineOpen] = usePersistentState("steps-list", false);  // closed until opened (owner)
   const showOutline = reading && !phone;
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
   const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
