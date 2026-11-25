@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: LangChain chapter 24 rewritten (easy, a little detailed, checked)
+
+- PII, the regular expression (piece by piece), state and the Verhoeff check digit are explained where they first
+  appear; both tasks list their steps and the usual slips (`search` finds only the first number; `len()` of a message
+  object; leaving out `jump_to`, tried: the model was called anyway and the member got two answers).
+- A new still picture: the chapter's two real messages through both guards, with the gateway's token counts.
+- Checked in the lab: all four strategies give the table's outputs; the gateway's request held only `****1176`; no
+  request at all for the 717-character message. Corrected: the length guard runs first because `before_agent` hooks
+  run before `before_model` hooks (`PIIMiddleware` is one), not because of its place in the list. The history now
+  says the Aadhaar Act "set rules" (and the 2018 Supreme Court limit), adds UIDAI's masked Aadhaar, and drops "land
+  records". The example number fails the Verhoeff check, so it cannot be anyone's. A new notes page.
+
 ## 25 November: LangChain chapter 23 rewritten (easy, a little detailed, checked)
 
 - Decorator, `ModelRequest` and `ToolCallRequest` are explained where they first appear; both tasks list their steps and

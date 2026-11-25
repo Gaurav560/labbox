@@ -7,8 +7,9 @@ Other messages should not reach the model at all. A member pastes a whole season
 long message a thousand times: each one costs tokens and gives nothing.
 
 Both are **guardrails**: checks that run before the model sees anything. In LangChain they are middleware: the
-built-in `PIIMiddleware` with your own detector for Aadhaar numbers, and a `before_agent` hook that refuses a message
-before the agent even starts.
+built-in `PIIMiddleware` (PII is **personally identifiable information**: anything that points to one person, like an
+identity number or an email address) with your own detector for Aadhaar numbers, and a `before_agent` hook that refuses
+a message before the agent even starts.
 
 :::mission
 Detect Aadhaar numbers so they are masked before the model sees them, and refuse over-long messages without a single
@@ -23,9 +24,11 @@ were common.
 :::
 
 India began issuing **Aadhaar** numbers in **2010**: a 12-digit identity number for every resident, now held by more
-than a billion people and used for bank accounts, subsidies and land records. The **Aadhaar Act** of **2016** limited who
-may collect and store the number, and the **Digital Personal Data Protection Act** of **2023** set rules for all personal
-data: collect only what you need, and protect what you hold. For an AI help desk the practical rule is simple: personal
+than a billion people and used to open bank accounts and to receive government subsidies. The **Aadhaar Act** of
+**2016** set rules for collecting, storing and sharing the number (in **2018** the Supreme Court limited its use by
+private companies), and the **Digital Personal Data Protection Act** of **2023** set rules for all personal data:
+collect only what you need, and protect what you hold. UIDAI, the authority that issues Aadhaar, offers a "masked
+Aadhaar" card that shows only the last four digits, the same idea as this chapter's mask. For an AI help desk the practical rule is simple: personal
 identifiers do not go to a third-party model unless they must.
 
 :::solved
@@ -40,16 +43,18 @@ identifiers do not go to a third-party model unless they must.
 :::
 
 :::step{type=concept title="PII middleware with your own detector" file="24-guardrails/agent.py" line="13-21"}
-`PIIMiddleware` finds personal data in messages and handles it with a strategy:
+`PIIMiddleware` finds personal data in messages and handles it with a **strategy**. We ran all four on the same
+message in the lab:
 
 | Strategy | `4821 3390 1176` becomes |
 |---|---|
 | `"redact"` | `[REDACTED_AADHAAR]` |
 | `"mask"` | `****1176` (only the last digits stay) |
-| `"hash"` | `<aadhaar_hash:81c288af>`: the same number always gives the same code |
-| `"block"` | nothing: the run stops with a `PIIDetectionError` your code must catch |
+| `"hash"` | `<aadhaar_hash:81c288af>`: the same number always gives the same code, so you can still tell two mentions of one number apart from two numbers |
+| `"block"` | nothing: the run stops with `PIIDetectionError: Detected 1 instance(s) of aadhaar in text content`, which your code must catch |
 
-It knows emails, card numbers, IP addresses and URLs by itself. For anything else you give it a **detector**: a function
+It knows emails, card numbers, IP addresses, MAC addresses and URLs by itself (`"email"`, `"credit_card"`, `"ip"`,
+`"mac_address"`, `"url"`). For anything else you give it a **detector**: a function
 that returns the matches, each as `{"type", "value", "start", "end"}`. An Aadhaar number is 12 digits, the first from 2
 to 9, often written in groups of four:
 
@@ -58,18 +63,32 @@ AADHAAR = re.compile(r"\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b")
 PIIMiddleware("aadhaar", detector=find_aadhaar, strategy="mask", apply_to_input=True)
 ```
 
-With `apply_to_input=True` the member's message is masked before it is saved in the thread and before the model call.
+The pattern, piece by piece: `\b` is a word boundary (the number does not start or end inside a longer word or run of digits),
+`[2-9]` one digit from 2 to 9, `\d{3}` three more digits, and `\s?` an optional space between groups. So
+`4821 3390 1176` and `482133901176` both match (we checked); `4821-3390-1176` does not.
+
+With `apply_to_input=True` the member's message is masked before the model call, and the masked text replaces the
+original in the thread. (`PIIMiddleware` is a `before_model` hook, chapter 22's word for that point of the run.)
 :::
 
 :::step{type=task task=aadhaar_detector title="Your turn: find Aadhaar numbers" file="24-guardrails/agent.py" line="18-22"}
-Finish `find_aadhaar(text)`: for every match `m` in `AADHAAR.finditer(text)`, return
-`{"type": "aadhaar", "value": m.group(), "start": m.start(), "end": m.end()}`.
+Finish `find_aadhaar(text)`:
+
+1. Loop over `AADHAAR.finditer(text)`, which gives every match `m`, in order.
+2. For each one, make `{"type": "aadhaar", "value": m.group(), "start": m.start(), "end": m.end()}`.
+3. Return the list of them (an empty list when there is none).
+
+The usual slips:
+
+- `AADHAAR.search(text)`: it finds only the first number, so a message with two keeps the second one.
+- Returning the matched strings: the middleware needs `start` and `end` to know which characters to replace.
 
 Press **Check**.
 :::
 
 :::step{type=concept title="Refusing before the agent starts" file="24-guardrails/agent.py" line="25-31"}
-`@before_agent` runs once, when a run starts, before any model call. Returning `None` lets the run continue. Returning a
+`@before_agent` runs once, when a run starts, before any model call. It gets the agent's **state** (`state["messages"]`
+is the thread so far, so `[-1]` is the member's new message). Returning `None` lets the run continue. Returning a
 state update with `"jump_to": "end"` adds your message and ends the run at once:
 
 ```python
@@ -80,13 +99,29 @@ def length_guard(state, runtime):
     return None
 ```
 
-`can_jump_to=["end"]` declares the jump in advance, so the agent's graph knows this path exists. Order matters too: the
-guard comes first in the middleware list, so a refused message never reaches the PII check, the logs or the model.
+`can_jump_to=["end"]` declares the jump in advance, so the agent's graph knows this path exists.
+
+:::diagram{name="lc-guards"}
+This chapter's two real messages, through both guards. The token counts are from the lab gateway's log.
+:::
+
+The guard runs first because of its hook, not its place in the list: every `before_agent` hook runs before every
+`before_model` hook. So a refused message never reaches the PII check or the model. Within one kind of hook, list order
+decides (chapter 23).
 :::
 
 :::step{type=task task=length_guard title="Your turn: the length guard" file="24-guardrails/agent.py" line="25-31"}
-Finish `length_guard(state, runtime)`: if the last message's content is longer than `MAX_CHARS`, return
-`{"messages": [AIMessage(TOO_LONG)], "jump_to": "end"}`; otherwise return `None`.
+Finish `length_guard(state, runtime)`:
+
+1. Take the last message's text: `state["messages"][-1].content`.
+2. If its length is over `MAX_CHARS` (500), return `{"messages": [AIMessage(TOO_LONG)], "jump_to": "end"}`.
+3. Otherwise return `None`.
+
+The usual slips:
+
+- `len(state["messages"][-1])`, without `.content`: a message object has no length, so Python raises `TypeError`.
+- Leaving out `"jump_to": "end"`. We tried it: the refusal was added, then the model was called anyway, and the
+  member got two answers (and the co-op paid for the second).
 
 ```bash run
 cd /workspace/24-guardrails && python main.py
@@ -96,6 +131,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="A masked number, and a refusal that cost nothing"}
+A real run (again on 25 November: the same saved texts and the same refusal; the answer to the first question came in
+other words, "I cannot verify personal information like Aadhaar numbers"):
+
 ```text
 $ python main.py
 > My Aadhaar is 4821 3390 1176. Is my membership active?
@@ -107,11 +145,12 @@ $ python main.py
   That message is too long for me. Please ask in a few sentences, or call the co-op office.
 ```
 
-The Aadhaar number was masked to `****1176` **in the saved conversation**, so neither the model nor the thread ever held
-it. Navin then answered honestly: it has no tool to check membership, and said so.
+The Aadhaar number was masked to `****1176` **in the saved conversation**, and the request in the gateway's log has
+`"My Aadhaar is ****1176. Is my membership active?"`: the full number never left the machine. Navin then answered honestly: it has no tool to check membership, and said so.
 
-The 717-character message got the refusal straight from the guard. The model was never called: no tokens, no cost, and
-nothing from that message went anywhere.
+The 717-character message ("Please read my whole story. ", 28 characters, 25 times, then "What should I do?") got the
+refusal straight from the guard. The model was never called: the gateway's log has no request for it, so no tokens and
+no cost.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -135,7 +174,8 @@ Why does the length guard run before the PII middleware?
 - [ ] PII middleware cannot read long messages
 - [ ] The order does not matter
 :::explain
-Middleware runs in list order. Cheap refusals go first.
+`before_agent` hooks run before every `before_model` hook, and `PIIMiddleware` is a `before_model` hook. Cheap
+refusals go first.
 :::
 :::
 
@@ -152,8 +192,10 @@ The member gets your message; the model is never called.
 :::
 
 :::step{type=deep-dive title="Go deeper: guardrails in production"}
-**Checksums.** Real Aadhaar numbers end with a Verhoeff check digit. A detector that verifies it catches fewer false
-matches, like a 12-digit phone number written in groups.
+**Checksums.** Real Aadhaar numbers end with a **Verhoeff check digit**, a last digit computed from the other eleven.
+A detector that verifies it catches fewer false matches, like a 12-digit order number. Our example `4821 3390 1176`
+fails the check (we computed it: a valid number would end in 7), so it cannot belong to anyone, which is why it is
+safe for a lesson; a checksum detector would also let it through.
 
 **Output too.** `apply_to_output=True` checks what the model writes, and `apply_to_tool_results=True` what tools return
 (a database row with someone's number in it).
@@ -172,7 +214,7 @@ You can now:
 
 Next, chapter 25: a person in the loop. The manager approves every booking before Navin makes it.
 
-:::photo{src="/lesson-images/langchain/lc-24-notes.webp" alt="Handwritten notes about guardrails: Mask at the door; Aadhaar: ****1176; Your detector, your pattern; before_agent: refuse early; 717 characters: no model call" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-24-notes.webp" alt="Handwritten notes about guardrails: Guardrails are checks before the model sees a message. PIIMiddleware masked the Aadhaar number to ****1176. Your detector catches only what its pattern describes. before_agent runs before every before_model hook. jump_to end refuses without calling the model. The 717-character message cost 0 tokens." ai="true"}
 One page of notes for this chapter.
 :::
 :::
