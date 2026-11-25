@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: RAG chapter 9 rewritten (easy, a little detailed, checked)
+
+- Dense search, BM25 (term, df, tf, idf, k1, b), tokens, reciprocal rank fusion and sparse vectors are explained where
+  they first appear; the BM25 gain is read part by part; tasks list their steps and the usual slips.
+- A new still picture, `rag-rrf`: the real CT-112 rankings (dense 11th, BM25 1st) and the fused scores, worked out.
+- Checked by recomputing in the lab image (idf table, ranks, fused scores, score ranges, the P-7 question). Corrected:
+  R-0301 is not "below ten other camera trap reports" (only the first five mention camera traps); FM-6.2 shares only
+  "the" and "to" with the jeep question (it never says "photograph"), BM25 rank 41; R-0305 has no title "Vehicle off the
+  road"; stemming would not rescue FM-6.2 (it joins forms of one word, not "tourists" and "visitors"); BM25 was "among
+  the best" at TREC-3, not simply "best"; the claim about the 26 questions is now measured: first place dense 20,
+  hybrid 15, BM25 12; top 5 dense 24, hybrid 24; hybrid lifts CT-112 (14th to 2nd) and CT-104 (7th to 2nd) but reaches
+  first on neither. A new notes page ("embeddings often miss exact codes", not "miss").
+
 ## 25 November: RAG chapter 8 rewritten (easy, a little detailed, checked)
 
 - Clients, local mode, collections, points, ids, UUIDs, payloads and JSON, distance, upsert and filters are explained
