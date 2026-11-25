@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 27 rewritten; the LangChain lab is done (27 of 27)
+
+- Store, namespace, key and FastAPI are explained where they first appear; both tasks list their steps and the usual
+  slips, tried on the store and the agent: a string namespace is read letter by letter, a plain-text value raises
+  `ValueError`, one fixed key overwrites, and a missing `context=` fails with `AttributeError` before any model call.
+- A new still picture: one member, two threads, one store, from the real run.
+- Checked through the lab gateway: `try.sh` gave the same six results, the Monday and Friday threads the same
+  Rs 1,50,000 from the saved fact (`remember` on Monday, only `search_rules` on Friday), and the Aadhaar message was
+  saved masked and kept out of the store. Corrected: the history table no longer says chapter 24 covers prompt
+  injection (no chapter does). A new notes page.
 ## 25 November: Ukiyo logo, "by" in lowercase
 
 - The logo's byline reads "by TELUSKO": the company name stays in capitals, "by" is lowercase (owner's request).
