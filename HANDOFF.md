@@ -1,4 +1,4 @@
-# Handoff: where the work stands (23 November 2026)
+# Handoff: where the work stands (25 November 2026)
 
 Read this first when a session starts. `AGENTS.md` has the rules and how to run and test, `ROADMAP.md`
 the status of every lab and phase, `CHANGELOG.md` the history (newest first), `CONTENT_STANDARD.md` what a
@@ -7,19 +7,32 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
-- **Design comparison (owner, 24 November): two copies of the site, same backend.** The current design on `master`
-  at http://localhost:5173; the "Ukiyo" design (Japanese woodblock prints and Swiss editorial layout) on branch
-  `design/ukiyo` in the worktree `../labs_poc_ukiyo`, at http://localhost:5174 (start it with
-  `cd ../labs_poc_ukiyo/frontend && npx vite --port 5174 --strictPort`). Six phases committed there: tokens and fonts,
-  SVG woodblock prints, the dashboard, course page / Premium Reads / home / login, the lab page frame, polish and
-  tests (29 browser tests pass against it; home and engagement are flaky under load as on master).
-  `DESIGN_UKIYO.md` on that branch is the design system. **Waiting for the owner to pick one.** Keep: merge
-  `design/ukiyo` into `master` (only the frontend differs). Drop: `git worktree remove ../labs_poc_ukiyo` and delete
-  the branch. Until then, frontend changes on `master` need the same change on the branch, or a merge.
+- **Design comparison (owner, 24 and 25 November): two copies of the site, same backend.** The current design on
+  `master` at http://localhost:5173; the "Ukiyo" design (Japanese woodblock prints and Swiss editorial layout) on
+  branch `design/ukiyo` in the worktree `../labs_poc_ukiyo`, at http://localhost:5174 (start it with
+  `cd ../labs_poc_ukiyo/frontend && npx vite --port 5174 --strictPort`; restart it when a page goes blank with
+  "export not found", which happened several times). About 75 commits there; `DESIGN_UKIYO.md` on that branch is
+  the full record. On 25 November the owner reworked Ukiyo screen by screen: every lab has its own woodblock print;
+  calm public-domain Hiroshige prints for the six categories; a new home page (hero "The AI wave is here. Learn to
+  build AI apps, or get left behind." with "No fluff. No tutorial hell. Only action."; a "start a lab" section where
+  a Docker-style container loads a lab's real stack and starts, picked from nine options and refined at length; a
+  folding screen of categories; Mount Hira closing panel); Plum Garden on login; a classy profile panel; real logos.
+  The branch is not pushed yet (owner pushes: `git push -u origin design/ukiyo`). **Waiting for the owner to keep
+  one.** Keep: merge `design/ukiyo` into `master` (frontend only). Before merging, check: the Docker whale's brand
+  use; the "58 s / about a minute" claim measured on the AWS server (5 s on this laptop, images cached); whether
+  "AI code assistant" should say "AI tutor" (editor completion is still off). Drop: `git worktree remove
+  ../labs_poc_ukiyo` and delete the branch. Until then, frontend changes on `master` need the same change on the
+  branch (they were copied by hand all through 25 November).
+- **Also on 25 November, on both copies:** pages open at their top; the AI labs link logs in first and lands on the
+  AI labs (`/login?next=`); a light and dark switch on the login page; the sign-up "first win" line and the footer's
+  Premium Reads link are gone; the course page map is headed "Skill map"; the lesson's faint logo stands straight.
+  Premium Reads: the papers open with the history of language models (migration 0012), sharp 800 px book covers,
+  no "Start here" label. Master is pushed (last: bb06176).
 - **State:** the working tree is clean after each commit; local commits wait for the owner to push.
   Last full run green (24 November, after RAG and vector databases): 284 backend tests on Postgres and Redis
-  (30 minutes), 27 browser tests, 23 labs valid,
-  `scripts/labbox admin list` empty.
+  (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
+  tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
+  copies (a few failed only while Vite reloaded mid-test and passed on rerun).
 - **Just finished:** RAG and vector databases (`rag-vector-databases`, owner 24 November night, built without waiting
   for an OK as asked): 13 chapters in 3 parts, 26 tasks, Fieldbook. Syllabus and design below. Generator drafts in the
   session scratchpad (`rag/gen.py`, `blocks.py`, `scripts.py`); the committed folders are the record. Before it: Rust
