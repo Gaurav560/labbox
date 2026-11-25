@@ -3556,6 +3556,39 @@ function RagBinary() {
   );
 }
 
+function RagFilter() {
+  // Real results from store.py: "a leopard near people", wanted: reports from the buffer zone, k = 3.
+  const after: [string, string, boolean][] = [
+    ["FM-4.3  manual  0.739", "dropped: not a report", false],
+    ["R-0410  buffer  0.686", "kept", true],
+    ["R-0407  tourism  0.664", "dropped: tourism zone", false],
+  ];
+  const inside: [string, string][] = [
+    ["R-0410  buffer  0.686", "leopard in Rajur"],
+    ["R-0302  buffer  0.650", "leopard took a goat"],
+    ["R-0307  buffer  0.554", "gaur herd: weaker"],
+  ];
+  const row = (y: number, label: string, kept: boolean, note: string, k: string) => (
+    <g key={k} style={{ opacity: kept ? 1 : 0.5 }}>
+      <Box x={0} y={y} w={250} h={28} label={label} tone={kept ? "copy" : "plain"} code />
+      {!kept && <line x1={12} y1={y + 14} x2={238} y2={y + 14} className="dg-arrow" style={{ markerEnd: "none" }} />}
+      <text className="dg-note" x={262} y={y + 19}>{note}</text>
+    </g>
+  );
+  return (
+    <Svg viewBox="0 0 440 400" label="Filtering after the search leaves one result; filtering inside the search returns three">
+      <text className="dg-note" x={0} y={16}>Question: a leopard near people. Wanted: reports from the</text>
+      <text className="dg-note" x={0} y={34}>buffer zone, k = 3. Real scores from store.py.</text>
+      <text className="dg-label" x={0} y={68}>Filter after: take the top 3, then drop</text>
+      <g className="dg-cells-small">{after.map(([l, n, k], i) => row(80 + i * 34, l, k, n, `a${i}`))}</g>
+      <Box x={0} y={186} w={250} h={28} label="1 result" tone="highlight" />
+      <text className="dg-label" x={0} y={250}>Filter inside the search</text>
+      <g className="dg-cells-small">{inside.map(([l, n], i) => row(262 + i * 34, l, true, n, `i${i}`))}</g>
+      <Box x={0} y={368} w={250} h={28} label="3 results" tone="highlight" />
+    </Svg>
+  );
+}
+
 function RagTwoStage() {
   return (
     <SketchSteps
@@ -3581,6 +3614,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-ivf": RagIvf,
   "rag-hnsw": RagHnsw,
   "rag-binary": RagBinary,
+  "rag-filter": RagFilter,
   "rag-two-stage": RagTwoStage,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
