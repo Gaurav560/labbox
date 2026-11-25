@@ -1,5 +1,21 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 23 rewritten: a still picture of one real RAG run, both slips tried
+
+- Re-ran the solution in a lab machine: the same three answers, word for word; the guitar request was 107 tokens
+  again. New measured facts in the lesson: the five rule files (1,772 characters) became 12 pieces, some only a
+  heading; indexing took one embedding call of 412 tokens; the landslide question had four pieces over 0.7 and sent
+  three (253 tokens); the wifi question's "Monsoon travel" heading scored 0.702, just over the line.
+- The splitter chain was checked in the 1.24 jar: paragraphs, then lines, then sentences, then words (the lesson
+  left out lines).
+- Both tasks list their steps and a tried slip: no splitter (whole files; the guitar question found nothing and lost
+  the 1.5-metre rule) and no content retriever (the landslide question got "I don't have information on refund
+  policies").
+- History: "when chat models arrived in 2023" became "after ChatGPT arrived (November 2022)".
+- `file_name` and `absolute_directory_path`, the static `EmbeddingStoreIngestor.ingest(...)` and `Result.sources()`
+  were checked in the jars.
+- The animation is now a still picture with the run's real numbers; a new sketchnote.
+
 ## 26 November: LangChain4j chapter 22 rewritten: a still chart of every card's real score, both slips tried
 
 - Re-ran the solution in a lab machine: the same four answers and every score the same to three decimals. The

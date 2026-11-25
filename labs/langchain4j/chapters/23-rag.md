@@ -24,13 +24,18 @@ RAG has two halves, run at different times:
 | **Retrieval** | On every question | Embed the question, find the closest pieces, add them to the prompt | `EmbeddingStoreContentRetriever`, `.contentRetriever(...)` on an AI Service |
 
 :::diagram{name="l4j-rag"}
-Documents are split, embedded and stored once; each question is embedded, the closest pieces are found, and they travel to the model with the question.
+This chapter's real run (26 November): the numbers come from the gateway's log and the store.
 :::
 
 **Why split?** A whole document is one vector that blurs all its topics together, and sending a whole document
 wastes tokens. Small pieces (here at most 300 characters, overlapping by 30 so no sentence is cut without context)
 each mean one thing, so the right one can be found and sent alone. `DocumentSplitters.recursive(300, 30)` splits by
-paragraphs first, then sentences, then words, only as far as needed.
+paragraphs first, then lines, then sentences, then words, only as far as needed (we checked the chain in the 1.24
+jar).
+
+Here the five rule files (1,772 characters) became **12 pieces**. Some are only a heading, such as "Luggage" or
+"Monsoon travel", and one starts mid-sentence ("Delays are / announced on platforms..."), because the splitter cuts at
+300 characters. That is normal, and it matters later in this chapter.
 
 **Check yourself:** which half runs when a passenger asks a question? (Retrieval. Indexing already happened when Setu
 started.)
@@ -44,8 +49,8 @@ again, which was slow and expensive, and it still hallucinated when unsure (chap
 
 In **2020** Patrick Lewis and colleagues at Facebook AI Research published **"Retrieval-Augmented Generation for
 Knowledge-Intensive NLP Tasks"**. Their model looked up passages from Wikipedia with a retriever, then generated the
-answer from them, and beat larger models that had to remember everything. The paper gave the pattern its name. When
-chat models arrived in 2023, RAG with an embedding store became the standard way to make them answer from a
+answer from them, and beat larger models that had to remember everything. The paper gave the pattern its name. After
+ChatGPT arrived (November 2022), RAG with an embedding store became the standard way to make them answer from a
 company's own documents.
 
 :::solved
@@ -87,10 +92,18 @@ parsers read PDF, Word and more (Apache Tika handles dozens of formats).
 :::
 
 :::step{type=task task=ingest_rules title="Your turn: index the rules" file="23-rag/src/main/java/com/setu/Rag.java" line="26-32"}
-Finish `Rag.ingest(model, folder)`: load the documents with
-`FileSystemDocumentLoader.loadDocuments(folder, new TextDocumentParser())`, make an `InMemoryEmbeddingStore`, and
-ingest them with an `EmbeddingStoreIngestor` that uses `DocumentSplitters.recursive(300, 30)`, the model and the
-store. Return the store.
+Finish `Rag.ingest(model, folder)`:
+
+1. load the documents with `FileSystemDocumentLoader.loadDocuments(folder, new TextDocumentParser())`;
+2. make an `InMemoryEmbeddingStore<TextSegment>`;
+3. build an `EmbeddingStoreIngestor` with `.documentSplitter(DocumentSplitters.recursive(300, 30))`, the model and the
+   store, and call `.ingest(docs)`;
+4. return the store.
+
+The usual slip: leaving out `.documentSplitter(...)`. Nothing fails: each whole file becomes one piece. We tried it on
+26 November. The whole `luggage.txt` scored under 0.7 for "Can I bring my guitar?", so nothing was retrieved and
+Setu answered "please ensure it fits within the luggage guidelines", without the 1.5-metre rule. One vector for a
+whole file blurred the one sentence that mattered.
 
 Press **Check**.
 :::
@@ -108,7 +121,8 @@ EmbeddingStoreContentRetriever.builder()
 ```
 
 Give it to an AI Service with `.contentRetriever(...)`, and every call does chapter 22's search with the question and
-adds what it finds to the user message. Here is the real request Setu sent for "Can I bring my guitar?", from the
+adds what it finds to the user message. (Retrieval has a cost of its own: the question is embedded first, 6 tokens
+here.) Here is the real request Setu sent for "Can I bring my guitar?", from the
 gateway's log:
 
 ```text
@@ -123,14 +137,18 @@ Musical instruments up to 1.5 metres travel free with their owner.
 ```
 
 Of five documents, one sentence travelled with the question: the piece of `luggage.txt` that matters, found by
-meaning (the question says "guitar", the rule says "musical instruments"). The whole request was **107 tokens**.
+meaning (the question says "guitar", the rule says "musical instruments"). The whole request was **107 tokens** (107 again when we ran it on 26 November).
 Notice the system message too: it tells Setu to answer **only** from that information. Retrieval brings the facts;
 the instruction stops the model filling gaps with guesses.
 :::
 
 :::step{type=task task=rag_answer title="Your turn: answer from the rules" file="23-rag/src/main/java/com/setu/Rag.java" line="34-38"}
 Finish `Rag.assistant(chatModel, store, embeddingModel)`: build the `Assistant` with `AiServices.builder(Assistant.class)`,
-`.chatModel(chatModel)` and `.contentRetriever(retriever(store, embeddingModel))`.
+`.chatModel(chatModel)` and `.contentRetriever(retriever(store, embeddingModel))`, then `.build()`.
+
+The usual slip: forgetting `.contentRetriever(...)`. It compiles and runs, but Setu has no rules to read. We tried it
+on 26 November: the landslide question got "I don't have information on refund policies", and the guitar question
+the same vague answer as with no splitter.
 
 ```bash run
 cd /workspace/23-rag && mvn -q compile exec:java
@@ -152,10 +170,14 @@ Yes, you can bring your guitar if it is up to 1.5 metres in length, as it will t
 I don't know if there is wifi on the Monsoon Mail. Please check with the station office for more information.
 ```
 
+(The same three answers, word for word, on 26 November.)
+
 Three questions, three behaviours you want. The landslide question got the rule from `refunds.txt` (full refund when
-the railway cancels, or the next train on the same ticket). The guitar question got the 1.5-metre rule, from a
+the railway cancels, or the next train on the same ticket). Four pieces scored over 0.7 for it, the best 0.818, but
+`maxResults(3)` sent only three: 253 tokens in. The guitar question got the 1.5-metre rule, from a
 sentence that never mentions guitars. And wifi is in no document. The gateway's log shows what was retrieved for it:
-one piece, the bare heading "Monsoon travel", which scored above 0.7 only because the question says "Monsoon Mail".
+one piece, the bare heading "Monsoon travel", which scored **0.702**, just over 0.7, only because the question says
+"Monsoon Mail".
 It says nothing about wifi, so Setu followed its instruction and said it does not know, instead of inventing "free
 wifi on board". Compare that with chapter 18's "comfortable seating": same model, now grounded.
 
@@ -228,7 +250,7 @@ You can now:
 
 Next, chapter 24: models on your own machine with Ollama, and routing each question to the right model.
 
-:::photo{src="/lesson-images/langchain4j/l4j-23-notes.webp" alt="Handwritten notes about RAG: retrieve, then generate; indexing: load, split, embed, store; retrieval: closest pieces plus the question; answer only from what you are given; change a file, re-index, done" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-23-notes.webp" alt="Handwritten notes titled RAG, retrieve the right pieces, then generate: split documents into small pieces and store their vectors once, then send only the closest pieces with each question; 5 files, 12 pieces, the question, best piece 0.711, 107 tokens in; one sentence was enough for the guitar question; with no splitter the 1.5 metre rule was lost; for wifi only a heading matched and Setu said it does not know; change a file, index it again" ai="true"}
 One page of notes for this chapter.
 :::
 :::
