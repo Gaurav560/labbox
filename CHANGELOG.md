@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): direction A's words
+
+- Owner: "write like: one click and we will spin a container for you with all the required ...". The heading is now
+  "One click, and we spin up a container for you with everything the lab needs." and the line under it: "Linux, the
+  language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in
+  about a minute. Nothing to install. You go straight to the first challenge."
+
 ## 25 November (Ukiyo): direction A in the theme's colours
 
 - Owner: "the design and colour of the animated box feel off the theme". Same animation, new dress: a paper card

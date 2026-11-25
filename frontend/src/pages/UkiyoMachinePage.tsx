@@ -99,8 +99,8 @@ function LogosInABox() {
     <div className="ua" ref={ref}>
       <div className="ua-text">
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun((r) => r + 1); }} />
-        <h3>One click. <em>One machine with everything in it.</em></h3>
-        <p>We pack the lab's whole stack into a container for you: the OS, the language, the framework, the databases, an editor and terminal, and an AI code assistant. You open it and start the challenge.</p>
+        <h3>One click, and we spin up a container for you <em>with everything the lab needs.</em></h3>
+        <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
         <button type="button" className="uh-replay" onClick={() => setRun((r) => r + 1)}>↺ Pack it again</button>
       </div>
       <div className={`ua-box ${done ? "is-sealed" : ""}`} key={`${lab.id}-${run}`}>
