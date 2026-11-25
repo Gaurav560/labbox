@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: Spring AI chapter 3 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (only one of the two options; keeping `.content()`).
+- The temperature animation is now a still picture with real numbers: the model's own probabilities for the first
+  piece of a robot's name (Muse 77%, Art 22.1%, Museum 0.3%, from the gateway with `logprobs`) and the real runs.
+  The invented "blue 70%, clear 10%" example is gone.
+- Checked through the gateway: temperature 0 gave MuseBot three times, though one sentence was worded differently
+  (so 0 is not perfectly repeatable); 1.5 gave three names; the 12-token cap gave the same cut and `length`; the
+  costed answer was 96 tokens in again (79 the system prompt's text, 6 the question, the rest message format, now
+  said exactly instead of "about 85"). Cross-references fixed: caching and the cost meter are chapter 18 (not 13),
+  retrieved documents chapter 14 (not 10). Price ratios now "often ten times or more". A new sketchnote.
+
 ## 25 November: Spring AI chapter 2 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (rules in `.user(...)`; `defaultSystem` on the built client; a

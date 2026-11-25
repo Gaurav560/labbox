@@ -20,14 +20,15 @@ Make Atlas's answers steady and capped in length, and report the tokens every an
 :::
 
 :::step{type=concept title="Temperature: how adventurous the model is"}
-For every next token, a model has a list of candidates with probabilities: after "The sky is", maybe "blue" 70%,
-"clear" 10%, "full" 5%, and so on. **Temperature** decides how it picks:
+For every next token, a model has a list of candidates with probabilities. We asked the gateway for the real list
+(OpenAI's `logprobs` option) when the model starts a name for a museum robot: "Muse" 77%, "Art" 22.1%, "Museum"
+0.3%, and many more below that. **Temperature** decides how it picks from that list:
 
 | Temperature | Behaviour | Good for |
 |---|---|---|
 | 0 | almost always the most likely token | facts, data extraction, the same answer each time |
 | 0.2 to 0.5 | mostly the likely tokens, a little variety | help desks like Atlas |
-| 0.7 to 1 | balanced (usually the default) | general chat |
+| 0.7 to 1 | balanced (OpenAI's default is 1) | general chat |
 | above 1 | surprising, sometimes odd | brainstorming names and ideas |
 
 Here is the same request, "Invent a name for a robot that guides museum visitors", three times at temperature 0 and
@@ -38,11 +39,13 @@ MuseBot|MuseBot|MuseBot| (temperature 0)
 MuseBotsky.|ArtiGuide|ArtisanBot| (temperature 1.5)
 ```
 
-At 0, the same name three times; at 1.5, three different ones (and a stray full stop). For a museum guide that should
-say the same true thing every day, low is right.
+At 0, the same name three times; at 1.5, three different ones (and a stray full stop). We ran it again on 25 November
+(the model wrote a sentence around each name; the names were): at 0, MuseBot three times, though one of the three
+sentences was worded differently, so even 0 is not perfectly repeatable; at 1.5, MuseoMate, Museum Navigator and
+MuseoGuide. For a museum guide that should say the same true thing every day, low is right.
 
 :::diagram{name="ai-temperature"}
-At a low temperature the model nearly always takes the most likely next word; at a high one it often takes a less likely one.
+The real probabilities and the real runs: at 0 the model always took "Muse"; at 1.5 it wandered.
 :::
 
 **Check yourself:** you want Atlas to suggest five fun names for a new gallery. Low or high temperature? (Higher, about
@@ -58,7 +61,7 @@ it. If the answer reaches the ceiling, it simply stops, mid-sentence if need be.
 {"content":"A black hole is a region in space where the gravitational pull","finish_reason":"length","usage":{"prompt_tokens":13,"completion_tokens":12}}
 ```
 
-Cut off after "pull", and the answer says why: `finish_reason` is `length`, where a complete answer says `stop`. So the
+Cut off after "pull" (the same 12 tokens again when we re-ran it on 25 November), and the answer says why: `finish_reason` is `length`, where a complete answer says `stop`. So the
 system prompt asks for short answers ("three short sentences"), and maxTokens is the safety net: generous enough never
 to cut a normal answer, low enough that no single answer can run away with the budget or the visitor's patience.
 
@@ -80,7 +83,13 @@ prompt override those for that one request.
 :::
 
 :::step{type=task task=chat_options title="Your turn: steady and short" file="03-options/src/main/java/com/atlas/AskController.java" line="34"}
-In `03-options`, make `GET /ask` send its requests with a **temperature of 0.2** and **at most 300 tokens**.
+In `03-options`, make `GET /ask` send its requests with a **temperature of 0.2** and **at most 300 tokens**:
+
+1. Between `.user(q)` and `.call()`, add `.options(OpenAiChatOptions.builder()`.
+2. On the builder: `.temperature(0.2)` and `.maxTokens(300)`, then close the bracket.
+
+The usual slip: `.maxTokens(300)` on its own, without `.temperature(0.2)`. The answers then vary more, and the Check
+looks for both.
 
 Run it, and ask the same question three times:
 
@@ -96,7 +105,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Three times the same question"}
-With temperature 0.2 and the system prompt from chapter 2, the three answers were nearly identical:
+With temperature 0.2 and the system prompt from chapter 2, the three answers were nearly identical (our re-run: the
+same sentence three times, once without "which are"):
 
 ```text
 $ for i in 1 2 3; do curl -s "localhost:8080/ask?q=Give%20a%20one-line%20fun%20fact%20about%20Saturn."; echo; done
@@ -106,7 +116,7 @@ Saturn is famous for its beautiful rings, which are made mostly of ice and rock 
 ```
 
 One word ("mostly") came and went. Low temperature makes answers steady, not identical: if you need exactly the same
-answer every time, you cache it (chapter 13).
+answer every time, you cache it (chapter 18).
 :::
 
 :::step{type=example title="Worked example: reading the receipt" file="03-options/src/main/java/com/atlas/AskController.java" line="41"}
@@ -134,7 +144,15 @@ every request.
 
 :::step{type=task task=token_usage title="Your turn: what did that answer cost?" file="03-options/src/main/java/com/atlas/AskController.java" line="44"}
 Finish `GET /ask/costed?q=...`. It returns a `CostedAnswer`: the answer's text, and its prompt, completion and total
-tokens, read from the `ChatResponse`.
+tokens, read from the `ChatResponse`:
+
+1. End the chain with `.call().chatResponse()` instead of `.content()`.
+2. `Usage usage = response.getMetadata().getUsage();`
+3. Return `new CostedAnswer(response.getResult().getOutput().getText(), usage.getPromptTokens(),
+   usage.getCompletionTokens(), usage.getTotalTokens())`.
+
+The usual slip: keeping `.content()`. It returns only the text, a `String`, and the token counts are not in it;
+the receipt comes with `.chatResponse()`.
 
 ```bash run
 curl -s "localhost:8080/ask/costed?q=What%20is%20a%20black%20hole%3F" | jq .
@@ -154,23 +172,25 @@ $ curl -s "localhost:8080/ask/costed?q=What%20is%20a%20black%20hole%3F" | jq .
 }
 ```
 
-96 tokens in, although the question is only six words: about 85 of them are the system prompt. 53 out: three short
+96 tokens in, although the question is only six words. We counted with the model's tokenizer: the system prompt's
+text is 79 tokens, the question 6, and the rest is the format that marks where each message starts and ends. (Our
+re-run on 25 November: 96 in again, 48 out.) 53 out: three short
 sentences. At the course model's prices ($0.15 per million in, $0.60 per million out) this answer cost
-$0.0000144 + $0.0000318 = **$0.000046**, about four thousandths of a rupee. Chapter 1's unlimited answer used about 400
+$0.0000144 + $0.0000318 = **$0.000046**, about four thousandths of a rupee. Chapter 1's answer, with no system prompt, used 449
 output tokens: eight times more for the same question.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
-The system prompt grows from 85 tokens to 850 tokens (you added long rules and examples). Visitors ask 100,000 short
+The system prompt grows from 80 tokens to 850 tokens (you added long rules and examples). Visitors ask 100,000 short
 questions a month. Roughly what happens to the monthly input tokens?
 :::
 - [ ] Nothing changes: the system prompt is only sent once
-- [x] They grow by about 76 million, because the system prompt is sent with every request
-- [ ] They grow by 765 tokens in total
+- [x] They grow by about 77 million, because the system prompt is sent with every request
+- [ ] They grow by 770 tokens in total
 :::explain
-Every request carries the whole system prompt: 765 extra tokens times 100,000 requests is 76.5 million tokens, about
-$11 more a month on this model, and ten to a hundred times that on a big model. Short prompts are not just tidy; they
+Every request carries the whole system prompt: 770 extra tokens times 100,000 requests is 77 million tokens, about
+$11.55 more a month on this model (77 x $0.15), and often ten times that or more on a bigger model. Short prompts are not just tidy; they
 are cheaper.
 :::
 :::
@@ -197,14 +217,14 @@ Which tokens does `getPromptTokens()` count?
 - [ ] The tokens of the answer
 :::explain
 The model reads the whole request every time, so all of it is counted and paid for. That is why conversation
-history (chapter 6) and retrieved documents (chapter 10) make requests more expensive, and why they are trimmed.
+history (chapter 6) and retrieved documents (chapter 14) make requests more expensive, and why they are trimmed.
 :::
 :::
 
 :::step{type=deep-dive title="Go deeper: choosing a model"}
 **Bigger is not always better.** Providers sell several sizes. Small models (like `gpt-4o-mini`) are fast and cheap
-and handle help-desk questions well. Large models reason better on hard problems and cost ten to fifty times more per
-token. Many teams start with the smallest model that passes their test questions, and route only the hard requests to
+and handle help-desk questions well. Large models reason better on hard problems and often cost ten times as much per
+token, or more. Many teams start with the smallest model that passes their test questions, and route only the hard requests to
 a big one.
 
 **Speed has three parts.** Time to the **first token** (how soon anything appears), tokens per second (how fast the
@@ -216,7 +236,7 @@ own options class (`OpenAiChatOptions`, `AnthropicChatOptions`, ...); the common
 `ChatOptions`.
 
 **Budgets in production.** Limit tokens per user per day (LabBox's gateway does exactly this to your requests), alert
-on unusual spending, and log the usage of every call. Chapter 13 builds a small cost meter into Atlas.
+on unusual spending, and log the usage of every call. Chapter 18 builds a small cost meter into Atlas.
 :::
 
 :::step{type=recap}
@@ -229,7 +249,7 @@ You can now:
 
 Next, chapter 4: streaming, so visitors see the answer as it is written instead of waiting for all of it.
 
-:::photo{src="/lesson-images/spring-ai/springai-03-notes.webp" alt="Handwritten notes about options and cost: temperature 0.2 = steady; maxTokens = a ceiling; finish_reason: length = cut off; getUsage(): tokens in, out; the system prompt is paid every time" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-03-notes.webp" alt="Sketchnote, Options and the receipt (temperature, maxTokens, usage): Options shape each answer: temperature sets how adventurous it is, maxTokens how long it may be. Every answer comes back with a token count. The flow: Question, Options: 0.2, 300 tokens, Model, Answer + usage. What we measured: temperature 0: MuseBot, three times; 12-token cap: cut off, finish_reason length; 96 tokens in: 79 of them the system prompt; short answers: 48 tokens, not 449." ai="true"}
 One page of notes for this chapter.
 :::
 :::

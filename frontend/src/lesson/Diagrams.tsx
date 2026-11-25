@@ -1643,18 +1643,28 @@ function AiRoles() {
 }
 
 function AiTemperature() {
+  // Still (owner, 25 November): real probabilities from the gateway (logprobs) and chapter 3's real runs.
+  const bars: [string, number][] = [["Muse", 77], ["Art", 22.1], ["Museum", 0.3]];
   return (
-    <SketchSteps
-      title="picking the next word"
-      intro="Press Play to see temperature at work."
-      label="after the sky is, the candidates are blue with a high probability and clear and full with lower ones; at a low temperature the model almost always picks blue; at a high temperature it often picks a less likely word"
-      steps={[
-        { label: "1. The sky is ...", says: "Candidates: blue 70%, clear 10%, full 5%, and many more." },
-        { label: "2. Temperature 0", says: "Almost always the top choice: blue, blue, blue." },
-        { label: "3. Temperature 0.2", says: "Mostly the top choice, now and then another." },
-        { label: "4. Temperature 1.5", says: "Less likely words often win: surprising, sometimes odd." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 352" label="The model's probabilities for the first piece of a robot name: Muse 77 percent, Art 22 percent, Museum 0.3 percent. At temperature 0 it answered MuseBot three times; at 1.5 MuseoMate, Museum Navigator and MuseoGuide">
+      <text className="dg-label" x={8} y={20}>The first piece of the name, as the model rates it</text>
+      {bars.map(([token, pct], i) => {
+        const y = 36 + i * 40;
+        return (
+          <g key={token}>
+            <text className="dg-note" x={8} y={y + 20}>{token}</text>
+            <Box x={84} y={y} w={Math.max(4, pct * 3.1)} h={28} label="" tone={i === 0 ? "accent" : "plain"} />
+            <text className="dg-note" x={92 + Math.max(4, pct * 3.1)} y={y + 20}>{pct}%</text>
+          </g>
+        );
+      })}
+      <Box x={8} y={168} w={426} h={74} label="" />
+      <text className="dg-label" x={20} y={192}>temperature 0, three runs</text>
+      <text className="dg-note" x={20} y={218}>MuseBot, MuseBot, MuseBot</text>
+      <Box x={8} y={258} w={426} h={74} label="" tone="copy" />
+      <text className="dg-label" x={20} y={282}>temperature 1.5, three runs</text>
+      <text className="dg-note" x={20} y={308}>MuseoMate, Museum Navigator, MuseoGuide</text>
+    </Svg>
   );
 }
 
