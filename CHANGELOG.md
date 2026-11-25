@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 10 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`.temperature(0)` with an `int` does not compile; returning only the
+  text loses the finish reason).
+- Checked in a lab machine: at temperature 0 the slogan was word for word the one in the lesson, days later; three new
+  slogans at 1.5; the 20-token answer was cut with `LENGTH`. The gateway's log shows what LangChain4j sent
+  (`"temperature": 0.0`, `"max_tokens": 20`). A new sketchnote.
+
 ## 26 November: LangChain4j chapter 9 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (the real model name instead of the alias; returning the message

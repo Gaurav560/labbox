@@ -60,7 +60,10 @@ with its own settings.
 :::
 
 :::step{type=task task=steady_model title="Your turn: a steady model" file="10-parameters/src/main/java/com/setu/Tuned.java" line="18-26"}
-Finish `Tuned.steadyModel(baseUrl, apiKey)`: keep the base URL, key and model name, and add `.temperature(0.0)`.
+Finish `Tuned.steadyModel(baseUrl, apiKey)`: keep the base URL, key and model name, and add `.temperature(0.0)`
+before `.build()`.
+
+The usual slip: `.temperature(0)` with an `int`. The builder takes a `Double`, so it does not compile; write `0.0`.
 
 Press **Check**.
 :::
@@ -68,6 +71,13 @@ Press **Check**.
 :::step{type=task task=short_answer title="Your turn: a limit for one answer" file="10-parameters/src/main/java/com/setu/Tuned.java" line="28-32"}
 Finish `Tuned.ask(model, question, maxTokens)`: build a `ChatRequest` with `.messages(...)` (the system message and the
 question) and `.maxOutputTokens(maxTokens)`, send it with `model.chat(request)`, and return the `ChatResponse`.
+
+1. `ChatRequest.builder().messages(SystemMessage.from(SYSTEM), UserMessage.from(question))`
+2. `.maxOutputTokens(maxTokens).build()`
+3. `return model.chat(request);`
+
+The usual slip: returning `model.chat(request).aiMessage().text()`. The text alone loses the finish reason, which is
+how you tell a cut answer from a complete one.
 
 ```bash run
 cd /workspace/10-parameters && mvn -q compile exec:java
@@ -89,6 +99,10 @@ temperature 0.0, try 3: "Ride the Rain: Sahyadri's Monsoon Magic Awaits!"
 max 20 tokens: The journey from Pune to Ratnagiri on Sahyadri Rail offers stunning views of the Western
 finish reason: LENGTH
 ```
+
+(We ran it again on 26 November. At 1.5, three new slogans. At 0.0, "Ride the Rain: Sahyadri's Monsoon Magic Awaits!"
+three times again: the very slogan the lesson shows, days later. The gateway's log shows what LangChain4j sent:
+`"temperature": 0.0` and, for the short answer, `"max_tokens": 20`.)
 
 At temperature 1.5, three slogans, three styles: what the announcement team wants. At 0.0, the same slogan three
 times: what the ticket office wants. Then the answer limited to 20 tokens stops mid-sentence, and the finish reason
@@ -158,7 +172,7 @@ You can now:
 
 Next, chapter 11: open and closed models, and the problem every AI application must design around: hallucinations.
 
-:::photo{src="/lesson-images/langchain4j/l4j-10-notes.webp" alt="Handwritten notes about parameters: temperature 0 gives the same answer; temperature 1.5 gives new ideas; maxOutputTokens is a hard stop; LENGTH means cut off; the builder sets defaults, a request overrides them" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-10-notes.webp" alt="Sketchnote, The knobs (temperature, max tokens, per request): Set defaults on the model builder, and override them for one call with a ChatRequest. Ask for short answers; use a limit as a safety net. The flow: Model builder: defaults, ChatRequest: one call, Gateway log, Finish reason. What we measured: temperature 1.5: three different slogans; temperature 0: the same slogan, days later; 20-token limit: cut off, LENGTH; LENGTH means the limit stopped it." ai="true"}
 One page of notes for this chapter.
 :::
 :::
