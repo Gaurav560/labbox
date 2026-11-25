@@ -1829,19 +1829,21 @@ function AiToolContext() {
 }
 
 function AiAdvisorChain() {
+  // Still (owner, 26 November): chapter 9's real Marathi call (154 tokens), the advisors as nested boxes.
   return (
-    <SketchSteps
-      title="the advisor chain"
-      intro="Press Play to follow a call through two advisors."
-      label="the request passes the usage advisor, then the language advisor, then reaches the model; the response comes back through the language advisor, then the usage advisor, which counts its tokens"
-      steps={[
-        { label: "1. call()", says: "The request enters the chain." },
-        { label: "2. Usage advisor, on the way in", says: "Notes the time; passes the request on." },
-        { label: "3. Language advisor", says: "Adds Answer in Marathi. to the system message." },
-        { label: "4. The model", says: "Answers in Marathi." },
-        { label: "5. On the way back", says: "The usage advisor counts the call and its tokens, then returns the answer." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="UsageAdvisor wraps LanguageAdvisor, which wraps the model call: on the way in LanguageAdvisor adds Answer in Marathi to the system message; on the way back UsageAdvisor counts 154 tokens">
+      <g className="dg-box dg-plain"><rect x={8} y={8} width={424} height={290} rx={12} /></g>
+      <text className="dg-label" x={22} y={32}>UsageAdvisor</text>
+      <text className="dg-note" x={22} y={52}>on the way back: calls + 1, tokens + 154</text>
+      <g className="dg-box dg-accent"><rect x={34} y={66} width={372} height={176} rx={10} /></g>
+      <text className="dg-label" x={48} y={90}>LanguageAdvisor</text>
+      <text className="dg-note" x={48} y={110}>on the way in: adds "Answer in Marathi."</text>
+      <text className="dg-note" x={48} y={128}>to the end of the system message</text>
+      <Box x={120} y={150} w={200} h={64} label="the model: 104 in, 50 out" tone="copy" />
+      <text className="dg-note" x={22} y={272}>chain.nextCall(request) passes the request inward;</text>
+      <text className="dg-note" x={22} y={290}>the response comes back out through the same boxes.</text>
+      <text className="dg-note" x={8} y={322}>Here both have order 0: give them different orders when it matters.</text>
+    </Svg>
   );
 }
 

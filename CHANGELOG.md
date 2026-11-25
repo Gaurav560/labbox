@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: Spring AI chapter 9 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (counting before `chain.nextCall`; replacing the system message).
+- The advisor-chain animation is now a still picture of the real Marathi call as boxes inside boxes (104 in, 50 out,
+  154 counted).
+- Checked in a lab machine: three languages again, the meter `{"calls":3,"tokens":463}` (matching the gateway's
+  log), and "Answer in Marathi." as the system message's last line. The quiz's claim was tried: an advisor that
+  returns `null` fails `/ask` with a `NullPointerException`, and no model call happens. `ChatClientMessageAggregator`
+  exists in the lab's Spring AI. Corrected: `SimpleLoggerAdvisor` is not used in chapter 19 (now explained in place);
+  the picture no longer claims which of two equal-order advisors is outside. A new sketchnote.
+
 ## 26 November: Spring AI chapter 8 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`requiresConfirmation` on `@ToolParam`; a different context key).

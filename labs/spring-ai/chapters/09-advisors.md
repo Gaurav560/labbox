@@ -30,7 +30,8 @@ When you call `chat.prompt()...call()`, the request does not go straight to the 
 advisors**, in order, and the answer comes back through the same chain, in reverse:
 
 :::diagram{name="ai-advisor-chain"}
-The request passes through each advisor on the way to the model; the response passes back through them in reverse order.
+This chapter's two advisors around one real Marathi call (26 November), as boxes inside boxes: the request goes in,
+the response comes back out the same way.
 :::
 
 Each advisor can:
@@ -42,7 +43,7 @@ Each advisor can:
 The order is decided by `getOrder()`: lower numbers run first on the way in (and last on the way out). Spring AI's own
 tool-calling loop and session memory are advisors in the same chain, at fixed orders.
 
-The name comes from Spring itself: since 2004, Spring's aspect-oriented programming has used "advice" for code that runs
+The name comes from Spring itself: since Spring 1.0 (2004), Spring's aspect-oriented programming has used "advice" for code that runs
 around a method call, the same idea used for transactions and security in every Spring app. Spring AI applies it to
 model calls.
 
@@ -77,7 +78,14 @@ with `defaultAdvisors(...)`, and every call has it: the controller in `09-adviso
 
 :::step{type=task task=usage_advisor title="Your turn: a token meter" file="09-advisors/src/main/java/com/atlas/UsageAdvisor.java" line="31"}
 In `09-advisors`, finish `UsageAdvisor.adviseCall`: pass the request down the chain, then count the call and add the
-response's **total tokens** to the meter.
+response's **total tokens** to the meter:
+
+1. `ChatClientResponse response = chain.nextCall(request);`
+2. `calls.incrementAndGet();`
+3. Read `response.chatResponse().getMetadata().getUsage()` and add its `getTotalTokens()` to `tokens`.
+4. `return response;`
+
+The usual slip: counting before `chain.nextCall`. There is no response yet, so there are no tokens to read.
 
 ```bash run
 cd 09-advisors && mvn -q -o spring-boot:run
@@ -129,6 +137,9 @@ reasoning on some tasks.) Two things to know:
 Finish `LanguageAdvisor.before`: when the request's context has a `language`, add the line `Answer in LANGUAGE.` to the
 **end** of the system message (keep Atlas's own rules); without a language, change nothing.
 
+The usual slip: replacing the system message with `Answer in Marathi.` alone. Atlas then forgets its own rules (who
+it is, three short sentences, never invent prices).
+
 `prompt.augmentSystemMessage(system -> ...)` takes a function from the current system message to a new one; a message's
 `mutate().text(...).build()` makes the changed copy.
 
@@ -140,7 +151,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="One question, three languages"}
-With both advisors in place, the same question three times:
+With both advisors in place, the same question three times (our re-run on 26 November gave the same three languages,
+in other words, and `{"calls":3,"tokens":463}`; the gateway's log showed "Answer in Marathi." as the system
+message's last line):
 
 ```text
 $ curl -s -G localhost:8080/ask --data-urlencode "q=Why does the Foucault pendulum turn?"; echo
@@ -167,7 +180,8 @@ Your `UsageAdvisor` forgets to call `chain.nextCall(request)` and returns `null`
 - [ ] Only the meter stops working
 :::explain
 An advisor is part of the path to the model. Each one must pass the request on, unless it means to stop the chain and
-answer itself (then it must return a real response).
+answer itself (then it must return a real response). We tried it: `/ask` failed with `NullPointerException: Cannot
+invoke "ChatClientResponse.chatResponse()" because "chatClientResponse" is null`, and the gateway saw no model call.
 :::
 :::
 
@@ -206,8 +220,8 @@ this (model, tool, model again), and so does the structured-output validation ad
 ask again with the error). Spring AI calls these **recursive advisors**; they need care, because every round costs a
 model call.
 
-**Built-in advisors you have met or will meet:** the session advisors (chapter 6), `SimpleLoggerAdvisor` (chapter
-19), `QuestionAnswerAdvisor` and `RetrievalAugmentationAdvisor` (chapter 14), `SafeGuardAdvisor` (chapter 17), and
+**Built-in advisors you have met or will meet:** the session advisors (chapter 6), `SimpleLoggerAdvisor` (logs
+every request and response; chapter 18 explains why to keep personal data out of logs), `QuestionAnswerAdvisor` and `RetrievalAugmentationAdvisor` (chapter 14), `SafeGuardAdvisor` (chapter 17), and
 the tool-calling advisor that runs every chapter 7 tool.
 :::
 
@@ -221,7 +235,7 @@ You can now:
 
 Next, chapter 10: the Model Context Protocol, so other AI applications can use Atlas's tools.
 
-:::photo{src="/lesson-images/spring-ai/springai-09-notes.webp" alt="Handwritten notes about advisors: a chain around every call; chain.nextCall(request); BaseAdvisor: before + after; request.mutate(); lower order = outer" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-09-notes.webp" alt="Sketchnote, Advisors (code around every model call): An advisor wraps every call a ChatClient makes. It can change the request on the way in and read the response on the way back. The flow: Request, UsageAdvisor, LanguageAdvisor, Model, Response back out. What we found: one advisor made Atlas answer in Marathi and Hindi; the meter counted 3 calls, 463 tokens; no chain.nextCall: the call fails; add to the system message, never replace it." ai="true"}
 One page of notes for this chapter.
 :::
 :::
