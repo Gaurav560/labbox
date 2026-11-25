@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: LangChain chapter 18 rewritten (easy, a little detailed, checked)
+
+- Vector store is explained where it first appears; both tasks list their steps and the usual slips.
+- Checked through the lab gateway: every score word for word, 1,536-number vectors, and 9 embedding calls for one run
+  (one batch for the chunks, eight for the questions). Corrected: "real matches score about 0.4 to 0.7" became the
+  measured range (0.298 to 0.609, labelled as this model and rule book); "a store always returns k results" now says
+  "its k nearest (if it holds that many)". A new notes page.
+
 ## 25 November: LangChain chapter 17 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (the whole path as the source; split_text losing the metadata).

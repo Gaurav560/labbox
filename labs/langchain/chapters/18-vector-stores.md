@@ -3,7 +3,8 @@ Chapter 3 compared a question with five FAQ vectors, made in advance. The rule b
 hundreds next year. Each chunk must be embedded once (that is a model call, and costs a little), stored with its text
 and metadata, and then searched in milliseconds for every question a member asks.
 
-That is what a **vector store** does. LangChain has one interface for dozens of them, from `InMemoryVectorStore` (in
+That is what a **vector store** does: it keeps each chunk's vector next to its text and metadata, and finds the
+vectors closest to a question's. LangChain has one interface for dozens of them, from `InMemoryVectorStore` (in
 your Python process, perfect for learning) to PostgreSQL with pgvector, Elasticsearch, Redis or Pinecone in production.
 
 :::mission
@@ -30,6 +31,9 @@ same model and compares it with every stored vector; that is why the same embedd
 
 :::step{type=task task=store_chunks title="Your turn: embed and store the chunks" file="18-vector-stores/store.py" line="9-12"}
 Finish `build_store(chunks)`: return `InMemoryVectorStore.from_documents(chunks, OpenAIEmbeddings(model="ai-embed"))`.
+
+The usual slip: `InMemoryVectorStore(chunks)`. The constructor takes the embeddings, not the documents;
+`from_documents` builds the store and adds the chunks in one go.
 
 Press **Check**.
 :::
@@ -62,21 +66,26 @@ exhaustive search would find.
 `InMemoryVectorStore` the score is the plain **cosine similarity** of chapter 3. (Other stores use other scales: some
 rescale to 0 to 1, some return distances where smaller is better. Always check.)
 
-The store always returns k results, however unrelated. Here are real scores for this rule book, with no threshold:
+The store returns its k nearest chunks (if it holds that many), however unrelated. Here are real scores for this rule book, with no threshold:
 
 | Question | Best three |
 |---|---|
 | Can I store 80 crates of onions? | 0.609, 0.531, 0.346 (all storage.txt) |
 | What is the capital of France? | 0.089, 0.064, 0.063 |
 
-Real matches score about 0.4 to 0.7 here; the France question, which no rule answers, scores under 0.1. A
+With this embedding model and this rule book, the right chunks scored from 0.298 (the vines question below) to
+0.609, and the France question, which no rule answers, scored under 0.1. A
 **minimum score** turns "the least bad match" into "no match". This chapter uses 0.3, chosen from those numbers, and
 the next step shows what that choice costs.
 :::
 
 :::step{type=task task=search_threshold title="Your turn: search with a threshold" file="18-vector-stores/store.py" line="15-19"}
-Finish `search(store, question, k, min_score)`: call `store.similarity_search_with_score(question, k=k)` and return only
-the `(document, score)` pairs whose score is at least `min_score`.
+Finish `search(store, question, k, min_score)`:
+
+1. `results = store.similarity_search_with_score(question, k=k)`: a list of `(document, score)` pairs, best first.
+2. Return only the pairs whose score is at least `min_score` (`>=`).
+
+The usual slip: `>` instead of `>=`, which drops a chunk scoring exactly the threshold.
 
 ```bash run
 cd /workspace/18-vector-stores && python main.py
@@ -86,6 +95,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="The threshold keeps France out, and one good answer too"}
+A real run (embeddings have no randomness at this level: we got exactly these scores again on 25 November):
+
 ```text
 $ python main.py
 Can I store 80 crates of onions?
@@ -170,7 +181,7 @@ You can now:
 
 Next, chapter 19: retrieval-augmented generation. Navin searches the rule book, then answers from what it found.
 
-:::photo{src="/lesson-images/langchain/lc-18-notes.webp" alt="Handwritten notes about vector stores: Embed once, search many times; Score here = cosine; Matches 0.4 to 0.7, France 0.09; Threshold 0.3 dropped vines; No perfect number" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-18-notes.webp" alt="Handwritten notes about vector stores: A vector store keeps each chunk's vector with its text and metadata. Embed the chunks once, and the question with the same model. A store returns its k nearest chunks, however unrelated. Here the right chunks scored 0.298 to 0.609, France under 0.1. A threshold of 0.3 kept France out, and the vines answer too. A score's meaning depends on the store and the model." ai="true"}
 One page of notes for this chapter.
 :::
 :::
