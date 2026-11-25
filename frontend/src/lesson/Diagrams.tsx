@@ -3321,21 +3321,38 @@ function RagFlow() {
   );
 }
 
+/** Text to vector: three real sentences go through the model, each becomes 384 numbers, and the rows are compared.
+ *  The numbers are the model's real output (bge-small-en-v1.5, first 4 of 384), and so are the two cosines. */
 function RagEmbed() {
+  const rows = [
+    { text: "A tiger crossed the path.", nums: ["-0.019", "-0.013", "0.011", "0.056"], tone: "accent" as BoxTone },
+    { text: "A big cat walked across the trail.", nums: ["-0.021", "-0.058", "-0.003", "0.080"], tone: "accent" as BoxTone },
+    { text: "Change the camera trap batteries every 21 days.", nums: ["-0.068", "-0.003", "0.001", "0.003"], tone: "plain" as BoxTone },
+  ];
+  const t = { fontSize: 13.5 };
   return (
-    <SketchSteps
-      title="A text becomes a point on a map of meaning"
-      intro="Press Play to follow two sentences through the embedding model."
-      label="Embeddings"
-      steps={[
-        { label: "two texts", says: "\"A tiger crossed the path.\" and \"A big cat walked across the trail.\" share almost no words." },
-        { label: "the model reads", says: "The embedding model reads each whole sentence, not word by word, and looks at what it is about." },
-        { label: "384 numbers", says: "Each sentence comes out as a vector: a list of 384 numbers, like -0.019, -0.013, 0.011 and 381 more." },
-        { label: "a point on the map", says: "The vector is the sentence's position. Tiger and big cat land in the same neighbourhood." },
-        { label: "far away", says: "\"Change the camera trap batteries.\" lands far from both: a different topic, a different neighbourhood." },
-        { label: "search", says: "A ranger's question becomes a point too, and the nearest points are the most likely answers." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 470" label="Each sentence goes through the embedding model and comes out as a row of 384 numbers; tiger and big cat score 0.69, tiger and batteries 0.42">
+      {rows.map((r, n) => {
+        const y = n * 124;
+        return (
+          <g key={r.text}>
+            <g className={`dg-box dg-${r.tone}`}>
+              <rect x={0} y={y} width={440} height={36} rx={8} />
+              <text x={220} y={y + 23} textAnchor="middle" style={t}>{r.text}</text>
+            </g>
+            <Arrow x1={40} y1={y + 38} x2={40} y2={y + 70} />
+            <text className="dg-note" x={52} y={y + 59}>the bge-small model</text>
+            <g className="dg-cells-small">
+              {r.nums.map((v, k) => <Box key={k} x={k * 64} y={y + 74} w={60} h={34} label={v} tone={r.tone} code />)}
+            </g>
+            <text className="dg-note" x={262} y={y + 96}>... 380 more numbers</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={392}>compare two vectors with cosine similarity:</text>
+      <Box x={0} y={402} w={440} h={30} label="tiger vs big cat: 0.69, close" tone="highlight" />
+      <Box x={0} y={438} w={440} h={30} label="tiger vs batteries: 0.42, far" />
+    </Svg>
   );
 }
 

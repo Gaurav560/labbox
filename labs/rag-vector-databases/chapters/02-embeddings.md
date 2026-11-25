@@ -30,45 +30,47 @@ comparing meanings works beautifully and where it quietly fails.
 :::
 
 :::step{type=concept title="An embedding: a text as a point in space"}
-Let's build the idea slowly, starting with something you already know: a map.
+An **embedding model** is a program that reads a piece of text and gives back a fixed-length list of numbers. That list
+is called a **vector**, and the vector of a text is its **embedding**.
 
-On a map, every town is a **point**, and every point is just two numbers: how far east it is and how far north it is.
-Towns that are close in the real world have close numbers. You never need to look at the towns themselves to know that
-two of them are neighbours; you only compare their two numbers.
-
-An embedding does the same thing for **meanings**. A program called an **embedding model** reads a text and gives back a
-list of numbers, called a **vector**. Think of that vector as the text's position on a map of meanings. Texts that mean
-similar things are placed close together; texts about unrelated things are placed far apart. So:
-
-- "A tiger crossed the path." and "A big cat walked across the trail." land in the **same neighbourhood**, even though
-  they share almost no words;
-- "Change the camera trap batteries." lands **somewhere else entirely**, near other sentences about equipment.
-
-Searching by meaning then becomes something very simple: take the ranger's question, find its point on the map, and
-look for the **nearest** points. Whatever is closest is most likely to be the answer.
+The model in your lab always gives back **384 numbers**, whatever the length of the text: one word, one sentence or a
+whole paragraph. The picture below shows it with three real sentences from the sanctuary manual. Each sentence goes into
+the model, and a row of 384 numbers comes out (only the first 4 are shown).
 
 :::diagram{name="rag-embed"}
+Text in, 384 numbers out. The numbers are the model's real output, and so are the two scores at the bottom.
 :::
 
-There is one big difference from a paper map. A paper map has **2** numbers per point (east and north). The model in
-your lab uses **384** numbers per point. We cannot picture 384 directions, and we do not need to: everything you just
-read about the 2-number map (close points, neighbourhoods, finding the nearest) works exactly the same way with 384
-numbers. More numbers simply give the model more room to keep different shades of meaning apart, so that "a tiger at
-night" and "a tiger at the water hole" can be near each other without sitting on top of each other.
+What makes these numbers useful is one property the model was trained for: **texts with similar meanings get similar
+vectors.** "A tiger crossed the path." and "A big cat walked across the trail." share almost no words, yet their two
+rows of numbers are close, so they score **0.69**. The sentence about batteries is about something else, so its row is
+further away, and it scores only **0.42** against the tiger. You will compute these scores yourself later in this
+chapter.
 
-**How does the model know where to put things?** Nobody wrote rules like "put tiger near leopard". The model **learned**
-its map. During training it was shown millions of pairs of texts that belong together (a question and its answer, a
-title and its article, two ways of saying the same thing) and millions of pairs that do not. Each time, it adjusted its
-inner settings a tiny bit so that related texts moved closer and unrelated ones moved apart. Those inner settings are
-called **weights**; our model has about 33 million of them. After enough examples, the map it draws is good enough to
-place sentences it has never seen before.
+This is what Fieldbook needed. Comparing meanings is now comparing lists of numbers, which a computer does quickly and
+exactly. To search the manual by meaning, you will:
 
-One thing that surprises everyone: no single number in the 384 means anything on its own. There is no "animal number"
-or "danger number". The meaning is spread across all 384 together, like a town's position needs both of its numbers.
-So never try to read an embedding one number at a time; only **compare** whole embeddings with each other.
+1. turn every section of the manual into a vector, once;
+2. turn the ranger's question into a vector, the same way;
+3. find the sections whose vectors are closest to the question's vector.
 
-Before you write code, check yourself: if two sentences have embeddings that are very close, what does that tell you
-about the sentences? (That they mean something similar, as far as the model can tell.)
+Because each vector is a list of numbers, you can also think of it as a **point** in a space with 384 directions, the
+same way two numbers mark a point on a sheet of graph paper. "Closest vectors" and "nearest points" mean the same thing,
+and later chapters use both.
+
+**How does the model know which texts are similar?** It learned it. During training, the model was shown millions of
+pairs of texts that belong together (a question and its answer, a title and its article, two ways of saying the same
+thing) and millions of pairs that do not. Each time, it adjusted its internal settings slightly, so that related texts
+got closer vectors and unrelated texts got vectors further apart. Those internal settings are called **weights**; this
+model has about 33 million of them. After that training, it places sentences it has never seen before in sensible
+positions.
+
+One thing to know before you use them: **no single number in the 384 means anything on its own.** There is no number for
+"animal" and no number for "danger". The meaning is in all 384 together. So you never read an embedding number by
+number; you only **compare** whole embeddings with each other.
+
+Check yourself: two sentences have very similar embeddings. What does that tell you? (That they mean something similar,
+as far as the model can tell, even if they use different words.)
 :::
 
 :::step{type=concept title="Reading the code: the model and embed()" file="02-embeddings/fieldbook.py" line="60-71"}
@@ -118,8 +120,8 @@ Here is what one row looks like (only its first 8 numbers):
 [-0.019, -0.013, 0.011, 0.056, -0.038, -0.004, 0.043, 0.017]   # and 376 more
 ```
 
-Small numbers, some positive, some negative, none of them meaningful alone. Together, they are the sentence's place on
-the map.
+Small numbers, some positive, some negative, none of them meaningful alone. Together, all 384 are the sentence's
+embedding.
 
 | Piece | In this course |
 |---|---|
@@ -176,11 +178,11 @@ appear together, and work out the relations by itself.
 
 **Latent semantic analysis** (**1990**) turned that idea into mathematics: count which words appear together across
 many documents, then squeeze those counts into a few hundred numbers per word. For the first time, a word had a
-position on a map of meaning that no person had written by hand.
+vector that no person had written by hand.
 
 In **2013** a team at Google led by **Tomas Mikolov** released **word2vec**. It learned a vector for every word from
 billions of words of ordinary text, and it was fast enough for anyone to run. It also produced the most famous result in
-the field: take the vector for *king*, subtract *man*, add *woman*, and the nearest word is *queen*. The map had learned
+the field: take the vector for *king*, subtract *man*, add *woman*, and the nearest word is *queen*. The vectors had learned
 that the step from *man* to *woman* is the same step as from *king* to *queen*, with no one ever telling it. That result
 convinced a generation of engineers that meaning could be computed.
 
@@ -216,7 +218,7 @@ Tomas Mikolov in 2020. His team at Google released word2vec in 2013.
 You can now turn any text into a vector. The next question is the one search depends on: **how close are two vectors?**
 We need a single number that says "these two are very alike" or "these two have nothing in common".
 
-Picture each vector as an **arrow** that starts at the centre of the map and points to the text's position. Two texts
+Picture each vector as an **arrow** that starts at zero and points to the text's position. Two texts
 about the same thing have arrows that point in nearly the **same direction**. Two unrelated texts point in quite
 different directions. So we measure the **angle** between the two arrows, and to turn the angle into a friendly score,
 we take its **cosine**:
@@ -350,7 +352,8 @@ Two different embedding models give vectors for the same text. Can you compare a
 - [x] No: each model places texts in its own space; numbers from different models mean nothing to each other
 - [ ] Only with cosine
 :::explain
-Each model draws its own map. A position on one map means nothing on another, even if both use 384 numbers. That is
+Each model learns its own way of placing texts. A vector from one model means nothing to another, even if both use
+384 numbers. That is
 why changing the embedding model means embedding every document again, and why the model's name belongs next to the
 vectors.
 :::
@@ -378,7 +381,7 @@ and "The road is not safe after dark." score 0.941.)
 :::step{type=recap}
 You can now:
 
-- explain what an embedding is: a text turned into a point on a map of meaning, where nearby means similar;
+- explain what an embedding is: a fixed list of 384 numbers for a text, where similar meanings give similar vectors;
 - make embeddings on your own processor, as a `float32` matrix with one row of 384 numbers per text;
 - compute cosine similarity by hand and in code, and say why it divides by the lengths;
 - read scores the right way: compare them with each other, because unrelated texts do not score 0;
