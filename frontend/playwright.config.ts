@@ -4,6 +4,8 @@ import { defineConfig } from "@playwright/test";
 // Uses the Chrome installed on this machine, so no browser download is needed.
 export default defineConfig({
   testDir: "e2e",
+  globalSetup: "./e2e/global-setup.ts",
+  globalTeardown: "./e2e/global-teardown.ts",
   timeout: 180_000,
   expect: { timeout: 15_000 },
   workers: 1,

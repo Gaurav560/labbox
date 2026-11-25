@@ -995,6 +995,62 @@ def cmd_admin(args: argparse.Namespace) -> int:
     return 0
 
 
+# Browser tests sign up throwaway accounts named a short prefix plus a clock number of 6 or more digits.
+TEST_ACCOUNT_RE = re.compile(r"^[a-z][a-z0-9]*\d{6,}$")  # e2e607010207, next1764061234567, rd5606545
+
+
+def test_account_targets(users, since_id: int = 0) -> list[tuple[int, str]]:
+    """The accounts whose machines and files cleanup may remove: named like a browser-test account, id above
+    since_id, never id 1 (the owner) and never an admin."""
+    return [(u.id, u.username) for u in users
+            if u.id != 1 and not u.is_admin and u.id > since_id and TEST_ACCOUNT_RE.match(u.username)]
+
+
+def cmd_test_accounts(args: argparse.Namespace) -> int:
+    """max-id: the highest account id now (a browser-test run notes it first). cleanup: remove the lab machines,
+    lab networks and workspace folders of test accounts (see test_account_targets); account rows stay."""
+    from sqlmodel import Session, select
+
+    from app.config import get_settings
+    from app.db import engine, init_db
+    from app.models import User
+
+    init_db()
+    with Session(engine) as s:
+        users = s.exec(select(User)).all()
+    if args.action == "max-id":
+        print(max((u.id for u in users), default=0))
+        return 0
+    targets = test_account_targets(users, args.since_id)
+    ids = {str(i) for i, _ in targets}
+    import docker
+
+    client = docker.from_env()
+    machines = [c for c in client.containers.list(all=True, filters={"label": "labbox.user"})
+                if c.labels.get("labbox.user") in ids]
+    networks = [n for n in client.networks.list() if n.name.startswith("labnet-u")
+                and n.name.split("-")[1][1:] in ids]
+    volumes = get_settings().VOLUMES_DIR
+    folders = [volumes / f"u{i}" for i, _ in targets if (volumes / f"u{i}").is_dir()]
+    print(f"{len(targets)} test accounts: {len(machines)} machines, {len(networks)} networks, {len(folders)} folders")
+    if args.dry_run:
+        return 0
+    for c in machines:
+        c.remove(force=True)
+    for n in networks:
+        try:
+            n.remove()
+        except docker.errors.APIError as e:  # a network still in use by a machine of another account
+            print(f"  kept network {n.name}: {e.explanation}")
+    left = 0
+    for f in folders:
+        shutil.rmtree(f, ignore_errors=True)
+        left += f.exists()
+    print(f"✓ removed {len(machines)} machines, {len(networks)} networks, {len(folders) - left} folders"
+          + (f" ({left} folders had files this user cannot delete)" if left else ""))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="labbox", description="Authoring tools for LabBox (by Telusko) labs")
     p.add_argument("--labs-dir", type=Path, default=ROOT / "labs", help="folder with the labs (default: labs/)")
@@ -1012,6 +1068,12 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("action", choices=["list", "grant", "revoke"])
     a.add_argument("username", nargs="?")
     a.set_defaults(fn=cmd_admin)
+
+    ta = sub.add_parser("test-accounts", help="browser-test accounts: max-id, or cleanup [--since-id N] [--dry-run]")
+    ta.add_argument("action", choices=["max-id", "cleanup"])
+    ta.add_argument("--since-id", type=int, default=0, help="only accounts with a higher id (made during one test run)")
+    ta.add_argument("--dry-run", action="store_true", help="count what would be removed, remove nothing")
+    ta.set_defaults(fn=cmd_test_accounts)
 
     j = sub.add_parser("jobs", help="background jobs: when each last ran, or --run images|networks|backup now")
     j.add_argument("--run", choices=["images", "networks", "backup"])
