@@ -59,8 +59,13 @@ works for any store, any splitter and any setting you want to compare.
 :::
 
 :::step{type=task task=hit_rate title="Your turn: the hit rate" file="20-retrieval-quality/quality.py" line="16-20"}
-Finish `hit_rate(sources_for, golden, k)`: count the questions whose expected file is in `sources_for(question)[:k]`,
-and divide by `len(golden)`.
+Finish `hit_rate(sources_for, golden, k)`. `golden` is a list of `(question, expected_file)` pairs.
+
+1. For each pair, `got = sources_for(question)`: the files of the results, best first.
+2. Count the questions where `expected_file in got[:k]`.
+3. Return the count divided by `len(golden)`.
+
+The usual slip: `got[k]` (one result) instead of `got[:k]` (the first k).
 
 Press **Check**.
 :::
@@ -78,9 +83,15 @@ It is one of the cheapest improvements in retrieval, often called **contextual c
 :::
 
 :::step{type=task task=titled_chunks title="Your turn: titled chunks" file="20-retrieval-quality/quality.py" line="23-28"}
-Finish `titled_chunks(chunks, titles)`: for each chunk, look up `titles[chunk.metadata["source"]]` and make a new
-`Document` with `f"{title}: {chunk.page_content}"` (unchanged if it already starts with the title) and a copy of the
-metadata.
+Finish `titled_chunks(chunks, titles)`. `titles` maps each file name to its first line (`"storage.txt": "Cold storage"`).
+
+1. For each chunk, `title = titles[chunk.metadata["source"]]`.
+2. The new text is `f"{title}: {chunk.page_content}"`, or the chunk's text unchanged if it already starts with the
+   title (the first chunk of each file usually does).
+3. Make `Document(page_content=text, metadata=dict(chunk.metadata))`: a copy, so the old chunk is not changed.
+
+The usual slip: changing `chunk.page_content` in place. The plain store, built from the same chunks, would then
+change too, and the comparison would be meaningless.
 
 ```bash run
 cd /workspace/20-retrieval-quality && python main.py
@@ -90,6 +101,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Measured: what helped, and what did not"}
+A real run (we got exactly this again on 25 November, including both query rewrites):
+
 ```text
 $ python main.py
 plain chunks : hit@1 75%, hit@3 88%
@@ -124,7 +137,9 @@ Three experiments, three real results:
    a prompt that says the farmer writes Marathi in English letters and gives two words, it became "How much will it cost
    to store onions?", and all three results came from `storage.txt`.
 
-None of these was obvious in advance. Each one was decided by a number.
+None of these was obvious in advance. Each one was decided by a number. One honest limit: with only eight questions,
+one question moves a hit rate by 12.5 points (88% is 7 of 8, rounded). Real golden sets have dozens or hundreds of
+questions, so a change of one question is not mistaken for a trend.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -185,7 +200,7 @@ You can now:
 
 Next, chapter 21: MCP. The co-op's tools as a server any AI application can use.
 
-:::photo{src="/lesson-images/langchain/lc-20-notes.webp" alt="Handwritten notes about measuring retrieval: Golden set + hit@k; Titled chunks: 75% to 88%; Split at sentences; A rewrite can mistranslate; Decide by the number" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-20-notes.webp" alt="Handwritten notes about retrieval quality: A golden set is questions with the file that should answer each. hit@k: how often the right file is in the first k results. Putting the title in front of chunks raised our hit@1 from 75% to 88%. Splitting at sentences kept the 50-crate rule whole. A query rewrite can be wrong too: measure it. With eight questions, one question moves the rate by 12.5 points." ai="true"}
 One page of notes for this chapter.
 :::
 :::
