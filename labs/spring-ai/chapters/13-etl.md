@@ -41,7 +41,7 @@ almost any office format (with Apache Tika). Transformers include splitters, a k
 that ask a model to label each chunk.
 
 :::diagram{name="ai-etl"}
-Cards are read into documents, split into chunks that keep their metadata, and loaded into the vector store.
+This chapter's real pipeline (26 November): the counts it printed, and the ticket question afterwards.
 :::
 :::
 
@@ -66,7 +66,14 @@ reader makes three documents, each about one thing. That is the first half of th
 
 :::step{type=task task=read_cards title="Your turn: read the cards" file="13-etl/src/main/java/com/atlas/ExhibitEtl.java" line="43"}
 In `13-etl`, finish `read(...)`: read every card with a `MarkdownDocumentReader`, giving each document the metadata
-`file` = the card's file name (`card.getFilename()`), and return all the documents together.
+`file` = the card's file name (`card.getFilename()`), and return all the documents together:
+
+1. For each card: a config with `.withAdditionalMetadata("file", card.getFilename())`.
+2. `new MarkdownDocumentReader(card, config).get()`, and add those documents to one list.
+3. Return the list.
+
+The usual slip: one config made before the loop, with no file. The chunks then have no `file`, and chapter 14 cannot
+say where an answer came from.
 
 Press **Check**.
 :::
@@ -110,7 +117,14 @@ all the way to the answer's list of sources.
 
 :::step{type=task task=split_and_load title="Your turn: split and load" file="13-etl/src/main/java/com/atlas/ExhibitEtl.java" line="49"}
 Finish `splitAndLoad(...)`: split the documents into chunks of at most **100 tokens** with a `TokenTextSplitter`, add
-the chunks to the vector store, and return them.
+the chunks to the vector store, and return them:
+
+1. `List<Document> chunks = TokenTextSplitter.builder().withChunkSize(100).build().apply(documents);`
+2. `store.add(chunks);`
+3. `return chunks;`
+
+The usual slip: adding `documents` instead of `chunks` to the store. The counts look right, but the store holds the
+big documents, and the ticket question misses again.
 
 ```bash run
 cd 13-etl && mvn -q -o spring-boot:run
@@ -127,7 +141,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="The ticket question, again"}
-With headings in the card and chunks of 100 tokens, the real pipeline reported:
+With headings in the card and chunks of 100 tokens, the real pipeline reported (our re-run on 26 November: the same
+12, 14 and 23, and scores within 0.003 of these, 0.407 for the ticket chunk):
 
 ```text
 $ curl -s localhost:8080/etl; echo
@@ -139,7 +154,11 @@ $ curl -s -G localhost:8080/search --data-urlencode "q=How much is a ticket for 
 ```
 
 12 cards, 14 documents (the visitor card's three sections), 23 chunks. The ticket chunk is now **first**, with 0.40.
-Before the headings, the best ticket chunk scored 0.22, mixed in with the opening hours. And the pendulum question
+In chapter 12, the whole visitor card scored 0.219 for the same question, mixed in with the opening hours.
+
+Look closely at the third result's text: "Gallery: Space Gallery (Gallery 1)The planetarium". The reader joined the
+card's gallery line and its first paragraph without a space. The embedding barely minds, but if you show chunks to
+people, check how your reader joins lines. And the pendulum question
 still finds both of its chunks first:
 
 ```text
@@ -205,7 +224,7 @@ You can now:
 
 Next, chapter 14: retrieval-augmented generation, so Atlas answers from these chunks, and says which cards it used.
 
-:::photo{src="/lesson-images/spring-ai/springai-13-notes.webp" alt="Handwritten notes about ETL: extract, transform, load; MarkdownDocumentReader; a new document per heading; TokenTextSplitter, 100 tokens; chunks keep their metadata" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-13-notes.webp" alt="Sketchnote, The ETL pipeline (extract, transform, load): Good answers need good pieces. Read the cards, cut them into small chunks about one thing, and load the chunks. The flow: 12 cards, Reader: 14 documents, Splitter: 23 chunks, Vector store. What we measured: the ticket question: 0.219 before, 0.407 after; headings made the reader split the card; every chunk keeps its file name; change a stage: build the store again." ai="true"}
 One page of notes for this chapter.
 :::
 :::

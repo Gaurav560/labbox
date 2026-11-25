@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: Spring AI chapter 13 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (a config without the file; storing the documents instead of the
+  chunks).
+- The ETL animation is now a still picture of the real pipeline counts and the ticket search.
+- Checked in a lab machine: the same 12 cards, 14 documents and 23 chunks, and scores within 0.003 of the lesson's
+  (the ticket chunk 0.407, first). Corrected: "before the headings, the best ticket chunk scored 0.22" now says what was
+  measured (the whole card, 0.219, in chapter 12). Added what learners will see in the real text: the reader joins the
+  gallery line and the first paragraph without a space. A new sketchnote.
+
 ## 26 November: Spring AI chapter 12 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (adding cards one at a time; no threshold).
