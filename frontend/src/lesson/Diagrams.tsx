@@ -3652,6 +3652,35 @@ function RagTwoStage() {
   );
 }
 
+function RagGate() {
+  // Real best reranker scores from two_stage(): the 26 test questions, and 8 questions the documents do not answer.
+  const answered = [-8.0, -7.6, -6.6, 0.1, 1.2, 1.9, 2.2, 3.0, 3.7, 3.9, 4.0, 4.2, 4.4, 4.4, 4.6, 5.0, 5.1, 5.4, 5.5, 5.7, 6.4, 6.8, 7.0, 7.4, 8.9, 9.9];
+  const missing = [-11.0, -10.7, -9.6, -8.1, -6.9, -2.1, 0.6, 3.3];
+  const x = (v: number) => 20 + ((v + 12) / 22) * 400;
+  const dots = (vals: number[], y: number, fill: string, k: string) =>
+    vals.map((v, i) => <circle key={`${k}${i}`} cx={x(v)} cy={y + (i % 2 ? 7 : -7)} r={5} style={{ fill, stroke: "var(--figure-line)", strokeWidth: 1 }} />);
+  return (
+    <Svg viewBox="0 0 440 300" label="Best reranker scores on a number line: the 26 answered questions from -8.0 to 9.9, the 8 unanswerable ones from -11.0 to 3.3, and the gate at -9.0">
+      <text className="dg-label" x={0} y={18}>Best reranker score of each question</text>
+      <text className="dg-note" x={x(-9) + 6} y={44}>gate: -9.0</text>
+      <line x1={x(-9)} y1={30} x2={x(-9)} y2={214} style={{ stroke: "var(--vermilion, #c63f28)", strokeWidth: 2, strokeDasharray: "5 4" }} />
+      <text className="dg-note" x={x(-1)} y={72}>answered by the documents (26)</text>
+      {dots(answered, 96, "var(--figure-green)", "a")}
+      <text className="dg-note" x={x(-1)} y={146}>not in the documents (8)</text>
+      {dots(missing, 170, "var(--figure-yellow)", "m")}
+      <line x1={20} y1={214} x2={420} y2={214} className="dg-arrow" style={{ markerEnd: "none" }} />
+      {[-12, -8, -4, 0, 4, 8].map((t) => (
+        <g key={t}>
+          <line x1={x(t)} y1={210} x2={x(t)} y2={218} className="dg-arrow" style={{ markerEnd: "none" }} />
+          <text className="dg-note" x={x(t)} y={234} textAnchor="middle">{t}</text>
+        </g>
+      ))}
+      <text className="dg-note" x={0} y={262}>Left of the gate: answered at once, no model call (3 questions).</text>
+      <text className="dg-note" x={0} y={282}>Right of it: the model is asked, and its rules catch the rest.</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
   "rag-embed": RagEmbed,
@@ -3663,6 +3692,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-filter": RagFilter,
   "rag-rrf": RagRrf,
   "rag-two-stage": RagTwoStage,
+  "rag-gate": RagGate,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
   "rs-threads": RsThreads,
