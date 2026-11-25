@@ -20,6 +20,8 @@ interface Props {
   focus: boolean;
   onFocus: () => void;
   canFocus: boolean;  // Focus hides LabBox's own file tree, so only the Lite editor has it (VS Code: Ctrl+B)
+  mode: "read" | "action";
+  onMode?: (m: "read" | "action") => void;  // absent on phones, which always read
   onStart: () => void;
   onStop: () => void;
   onReset: () => void;
@@ -51,6 +53,14 @@ export default function StatusBar(p: Props) {
         </span>
       )}
       <span className="spacer" />
+      {p.onMode && (
+        <div className="mode-switch" role="group" aria-label="Mode">
+          <button aria-pressed={p.mode === "read"} onClick={() => p.onMode!("read")} title="Only the lesson: no editor, no terminal">Read</button>
+          <button aria-pressed={p.mode === "action"} onClick={() => p.onMode!("action")} title="The lesson beside the editor and terminal, for tasks and practice">Action</button>
+        </div>
+      )}
+      {p.mode === "action" && (
+        <>
       <span className="machine">
         <span className={`status-dot status-${p.status}`} aria-hidden="true" />
         <span className="status-label">{LABEL[p.status]}</span>
@@ -70,6 +80,8 @@ export default function StatusBar(p: Props) {
         <button className="btn btn-small" onClick={p.onStart}>Start machine</button>
       )}
       <MachineMenu status={p.status} onStop={p.onStop} onReset={p.onReset} />
+        </>
+      )}
       {p.canFocus && (
         <button className="btn btn-small btn-ghost" onClick={p.onFocus} aria-pressed={p.focus} title="Hide the file tree and widen the lesson and editor">
           {p.focus ? "Exit focus" : "Focus"}

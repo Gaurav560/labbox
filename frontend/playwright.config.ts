@@ -12,6 +12,8 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: process.env.LABBOX_URL ?? "http://localhost:5173",
+    // Tests that drive the editor start in Action mode (a first visit otherwise reads); read-mode.spec clears it.
+    storageState: { cookies: [], origins: [{ origin: new URL(process.env.LABBOX_URL ?? "http://localhost:5173").origin, localStorage: [{ name: "labbox.mode", value: JSON.stringify("action") }] }] },
     channel: "chrome",
     headless: true,
     viewport: { width: 1500, height: 900 },

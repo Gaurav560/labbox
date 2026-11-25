@@ -127,3 +127,20 @@ def test_chapters_carry_their_course_part(client: TestClient):
     assert "What you can do now" not in topics
     steps = client.get(f"/api/labs/{SPRING}/chapters/05-beans", headers=h).json()["steps"]
     assert steps[topics["How a class becomes a bean"]]["title"] == "How a class becomes a bean"  # and open that step
+
+
+def test_read_mode_shows_a_steps_code_without_a_machine(client: TestClient):
+    # Read mode (no machine) shows the lines a step talks about, from the learner's own files.
+    r = client.post("/api/auth/signup", json={"username": f"read{random.randint(0, 10**9)}", "password": "secret123"})
+    h = {"Authorization": f"Bearer {r.json()['token']}"}
+    steps = client.get(f"/api/labs/{SPRING}/chapters/04-app-startup", headers=h).json()["steps"]
+    run = next(i for i, s in enumerate(steps) if s["title"] == "What SpringApplication.run does")
+    c = client.get(f"/api/labs/{SPRING}/chapters/04-app-startup/steps/{run}/code", headers=h).json()
+    assert c["path"] == "04-app-startup/src/main/java/com/shop/ShopApiApplication.java"
+    assert c["highlight"] == [10, 10] and c["first_line"] <= 10 < c["first_line"] + len(c["lines"])
+    assert "SpringApplication.run" in c["lines"][10 - c["first_line"]]
+    task = next(i for i, s in enumerate(steps) if s["task"] == "greeting_property")
+    t = client.get(f"/api/labs/{SPRING}/chapters/04-app-startup/steps/{task}/code", headers=h).json()
+    assert t["path"] == "04-app-startup/src/main/resources/application.properties" and t["lines"]
+    assert client.get(f"/api/labs/{SPRING}/chapters/04-app-startup/steps/0/code", headers=h).json()["path"] is None
+    assert client.get(f"/api/labs/{SPRING}/chapters/04-app-startup/steps/999/code", headers=h).status_code == 404
