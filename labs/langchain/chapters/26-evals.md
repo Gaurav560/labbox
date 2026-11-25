@@ -7,8 +7,17 @@ Two kinds of tests answer two different questions:
 
 - **Unit tests** check your **code** with a fake model, the way every **Check** in this course has: free, instant, the
   same result every time.
-- **Evals** check the **answers**, with the real model: a golden set of questions with known right answers, scored
-  automatically. When a phrase check is too crude, a second model reads each answer and judges it against the rule.
+- **Evals** (short for evaluations) check the **answers**, with the real model: a **golden set** of questions with
+  known right answers, scored automatically. When a phrase check is too crude, a second model reads each answer and
+  judges it against the rule.
+
+| | Unit tests | Evals |
+|---|---|---|
+| What they check | your code | the model's answers |
+| The model | a fake one, with scripted replies | the real one |
+| Cost | nothing | model calls (this chapter: 22 per run) |
+| Same result every time | yes | no: answers vary from run to run |
+| When to run | on every change | before changing a prompt, chunks or model, and on a schedule |
 
 :::mission
 Score Navin's real answers against a golden set, then build a judge: a model that grades an answer against the co-op's
@@ -19,15 +28,15 @@ rule and says why.
 :::step{type=history title="From test suites to evals"}
 :::before{title="Tests for code that always answers the same"}
 Software testing grew up around code with one right output: `storage_cost(40, 10)` must be 800, every time. Unit testing
-frameworks (SUnit for Smalltalk in 1994, JUnit in 1997, Python's unittest in 2001, pytest since 2004) made those tests
-routine.
+frameworks (SUnit for Smalltalk, published in 1994; JUnit in 1997; Python's unittest in 2001; pytest since 2004) made
+those tests routine.
 :::
 
 Language models broke the assumption: the same question can get differently worded answers, all right, or one subtly
 wrong. In **March 2023**, with GPT-4, OpenAI open-sourced **Evals**, a framework for scoring models on sets of questions.
 In **2023** researchers studied **LLM-as-a-judge** (Lianmin Zheng and colleagues, "Judging LLM-as-a-Judge"), and found
-that a strong model's grades agree with human graders most of the time, with known biases (it favours longer answers
-and its own style). Evals became part of building any AI application.
+that GPT-4's grades agreed with human graders over 80% of the time, about as often as two humans agree with each other,
+with known biases: it favoured the answer shown first, longer answers, and its own style. Evals became part of building any AI application.
 
 :::solved
 **A number for answer quality.** Change the prompt, the chunks or the model, run the set, and compare.
@@ -57,20 +66,29 @@ it:
 | How much loan can I get for 4 acres? | 2,00,000 | Rs 50,000 per acre |
 | Do you buy garlic? | don't know | not in any rule: the honest answer |
 
-The pass rate is the share of answers containing their phrase. It is cheap (no model call) and strict in the wrong ways:
+The **pass rate** is the share of answers containing their phrase (4 of 6 is 0.67, shown as 67%). It is cheap (no model call) and strict in the wrong ways:
 "Rs 200,000" is right and fails the phrase "2,00,000"; "approval is not needed" contains "approval" and passes.
 :::
 
 :::step{type=task task=golden_eval title="Your turn: the pass rate" file="26-evals/evals.py" line="15-19"}
-Finish `pass_rate(answers, golden)`: count the answers that contain their golden phrase (the second item of each
-entry), lower-casing both, and return `passed / len(golden)`.
+Finish `pass_rate(answers, golden)`:
+
+1. Walk the answers and the golden entries side by side: `zip(answers, golden)`. Each entry is (question, phrase,
+   rule file); the phrase is the second item.
+2. Count an answer as passed when `phrase.lower() in answer.lower()`.
+3. Return `passed / len(golden)`, a number from 0 to 1 (not a percentage).
+
+The usual slips:
+
+- Lower-casing only the answer: the phrase "Approval" then never matches.
+- Returning `passed` (a count) or `passed * 100`: the check expects 0.75 for 3 of 4.
 
 Press **Check**.
 :::
 
 :::step{type=concept title="A model as judge" file="26-evals/evals.py" line="22-36"}
-A judge is chapter 13's structured output, used to grade: the rule, the question and the answer go in; a `Grade` comes
-out.
+A **judge** is a second model call that grades the first one's answer. It is chapter 13's structured output, used to
+grade: the rule, the question and the answer go in; a `Grade` comes out.
 
 ```python
 class Grade(BaseModel):
@@ -84,8 +102,14 @@ confident answers. Check a sample of their grades yourself before trusting them.
 :::
 
 :::step{type=task task=judge_answer title="Your turn: the judge" file="26-evals/evals.py" line="32-36"}
-Finish `judge(question, answer, rule)`: return `model.with_structured_output(Grade).invoke(JUDGE.format(rule=rule,
-question=question, answer=answer))`.
+Finish `judge(question, answer, rule)`:
+
+1. Fill the prompt: `JUDGE.format(rule=rule, question=question, answer=answer)`.
+2. Ask for a `Grade`: `model.with_structured_output(Grade)`.
+3. Invoke it with the prompt and return the `Grade`.
+
+The usual slip: `model.invoke(...)` without `with_structured_output`. That returns an `AIMessage` of free text,
+and `grade.correct` in `main.py` fails with `AttributeError`.
 
 ```bash run
 cd /workspace/26-evals && python main.py
@@ -95,6 +119,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="Navin, graded"}
+A real run (we ran it three more times on 25 November: 67% every time, the same two failures and the same verdicts,
+in other words):
+
 ```text
 $ python main.py 2>&1 | grep -v Warning
 > Can I store 80 crates of onions? How long until I know?
@@ -186,8 +213,13 @@ question? Chapter 11's `tools_used` is a trajectory check.
 **Tools for evals.** LangChain's docs describe agent evals with the open-source `agentevals` package and with
 LangSmith (a hosted service that needs its own API key, which this course does not use).
 
-**Cost.** This chapter's run is 6 agent runs plus 5 judge calls. A golden set of 200 questions, run before each release,
-is still only a few cents with a small model.
+**Cost.** One run of this chapter, from the backend's log: 16 chat calls (the 6 agent runs, most with a search, plus
+5 judge calls) and 6 embedding calls, at about $0.00006 each with gpt-4o-mini's prices. A golden set of 200 questions
+is about 600 chat calls, about $0.04 (prices of November 2026).
+
+**The lab's limit.** The lab's gateway allows 20 model calls a minute. We ran `main.py` twice in a row and the second
+run stopped with `429 - Too many requests: the limit is 20 a minute`. Wait a minute between runs. Real eval runs
+hit the provider's limits the same way, which is why eval tools let you limit how many questions run at once.
 :::
 
 :::step{type=recap}
@@ -200,7 +232,7 @@ You can now:
 
 Next, chapter 27: Navin goes live, everything in one web service.
 
-:::photo{src="/lesson-images/langchain/lc-26-notes.webp" alt="Handwritten notes about tests and evals: Unit tests: your code, fake model; Evals: the answers, real model; Golden set: 67%; Judge: reads against the rule; Two real bugs found" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-26-notes.webp" alt="Handwritten notes about tests and evals: Unit tests check your code with a fake model, for free. Evals check the real model's answers against a golden set. Our golden set scored 67% in all four runs. A phrase check reads letters; a judge reads meaning. Give the judge the rule, and check a sample of its grades. One run made 16 chat calls and 6 embedding calls." ai="true"}
 One page of notes for this chapter.
 :::
 :::
