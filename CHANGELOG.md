@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 13 rewritten (easy, a little detailed, checked)
+
+- Pydantic is explained where it first appears; both tasks list their steps and the usual slips.
+- Checked through the lab gateway: the three bookings and the agent's messages word for word; the "other" schema really
+  gives `crop='other'` for garlic; the quiz's "keep my onions for a while" really gave `crates=10, days=30` (both
+  invented), now in the explanation. Corrected: "with_structured_output picks the best method" became what the lab's
+  langchain-openai does (OpenAI Structured Outputs, `method="json_schema"`, by default), so extract_booking and the
+  agent take two different routes (provider strategy and tool strategy), now said. A new notes page.
+
 ## 25 November: LangChain chapter 12 rewritten (easy, a little detailed, checked)
 
 - Runtime, context and lakh are explained where they first appear; both tasks list their steps and the usual slips

@@ -4,8 +4,9 @@ kreats, till next monday". The co-op's booking system cannot read sentences. It 
 crates, a number of days.
 
 Asking the model to "answer in JSON" and hoping is fragile: a missing quote, a word instead of a number, and the
-booking code crashes. **Structured output** asks for a schema instead: you describe the result as a Pydantic class,
-the model is constrained to fill it, and LangChain hands you a checked Python object.
+booking code crashes. **Structured output** asks for a schema instead: you describe the result as a **Pydantic** class (Pydantic is a Python
+library that checks data against a class's fields and types), the model is constrained to fill it, and LangChain hands
+you a checked Python object.
 
 :::mission
 Turn free text into a `Booking` object with `with_structured_output`, then build an agent whose run ends with a
@@ -22,7 +23,7 @@ class Booking(BaseModel):
     days: int = Field(description="how many days to store them")
 ```
 
-Everything here reaches the model: the class docstring, the field names, the types (an `int` must be a number; a
+Everything here reaches the model: the class docstring, the field names, the types (an `int` must be a whole number; a
 `Literal` must be one of the listed words) and each `Field` description. Pydantic then **validates** the reply: a
 `Booking` you receive always has a crop from the list and whole numbers.
 :::
@@ -36,8 +37,8 @@ missing brackets, numbers as words.
 In **June 2023** function calling (chapter 10) gave a first reliable way: describe the output as a tool's parameters.
 In **November 2023** OpenAI added **JSON mode**, which guaranteed valid JSON but not the right fields. In **August 2024**
 **Structured Outputs** went further: given a JSON Schema with `strict` set, the model's sampling is constrained so the
-output always matches it. LangChain's `with_structured_output` picks the best method each model supports, and turns the
-result into your Pydantic class.
+output always matches it. LangChain's `with_structured_output` turns the result into your Pydantic class; for OpenAI models it uses Structured
+Outputs by default (`method="json_schema"`, in the lab's langchain-openai 1.8.5).
 
 :::solved
 **A contract, not a request.** The reply has the fields and types you asked for, every time. Whether the **values** are
@@ -53,6 +54,9 @@ right is another matter, as this chapter shows.
 :::step{type=task task=extract_booking title="Your turn: free text to a Booking" file="13-structured/booking.py" line="16-20"}
 Finish `extract_booking(message)`: return `model.with_structured_output(Booking).invoke(message)`.
 
+`with_structured_output(Booking)` makes a new runnable from the model whose `invoke` returns a `Booking` instead of an
+`AIMessage`. The usual slip: `with_structured_output(Booking())` with brackets. Pass the class, not an object.
+
 Press **Check**.
 :::
 
@@ -65,13 +69,17 @@ Press **Check**.
 | `ProviderStrategy` | the provider's own structured outputs (`response_format` with a JSON schema) | models it knows support it |
 | `ToolStrategy` | a tool named `Booking` whose parameters are the schema; the model "answers" by calling it | every other model |
 
-Our gateway calls the model `ai-chat`, a name LangChain cannot look up, so it uses `ToolStrategy`: the run ends with an
+Our gateway calls the model `ai-chat`, a name LangChain cannot look up, so the agent uses `ToolStrategy` (while
+`extract_booking` above used OpenAI's Structured Outputs: two different routes to the same kind of object): the run ends with an
 `AIMessage` calling the `Booking` tool, and a `ToolMessage` confirming it. You can choose explicitly with
 `response_format=ProviderStrategy(Booking)`.
 :::
 
 :::step{type=task task=booking_agent title="Your turn: an agent that answers with a Booking" file="13-structured/booking.py" line="23-26"}
 Finish `booking_agent()`: return `create_agent("openai:ai-chat", tools=[], response_format=Booking)`.
+
+The usual slip: reading the answer from `result["messages"][-1]`. With `response_format`, the `Booking` is in
+`result["structured_response"]`.
 
 ```bash run
 cd /workspace/13-structured && python main.py
@@ -81,6 +89,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Valid, and wrong"}
+A real run (we ran it again on 25 November and got the same three bookings and the same agent messages):
+
 ```text
 $ python main.py
 'Please keep 60 crates of kanda for two weeks'          -> Booking(crop='onion', crates=60, days=14)
@@ -119,7 +129,8 @@ A member writes "keep my onions for a while". The schema requires `days: int`. W
 - [x] The model invents a number of days, and the booking looks valid
 - [ ] Pydantic asks the member
 :::explain
-A required field must be filled. Make it optional (`int | None`) when the text may not say, and ask the member.
+A required field must be filled. We tried it: `Booking(crop='onion', crates=10, days=30)`. The member gave neither
+number; both were invented. Make such fields optional (`int | None`) when the text may not say, and ask the member.
 :::
 :::
 
@@ -169,7 +180,7 @@ You can now:
 
 Next, chapter 14: a member sends a photo.
 
-:::photo{src="/lesson-images/langchain/lc-13-notes.webp" alt="Handwritten notes about structured output: A schema as a Pydantic class; with_structured_output; Agent: response_format; Garlic became onion; Give the schema a way out" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-13-notes.webp" alt="Handwritten notes about structured output: Describe the answer as a Pydantic class: fields, types, descriptions. with_structured_output returns a checked object, not text. An agent ends with response_format, in structured_response. A valid object can still be wrong: garlic became onion. Give the schema an honest way out, like other. Missing numbers can be invented: make such fields optional." ai="true"}
 One page of notes for this chapter.
 :::
 :::
