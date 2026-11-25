@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): "No fluff. No video hell. Only action." in the hero
+
+- Owner: "add No fluff No video hell only call to action". A serif line between the hero's lead and Start free:
+  "No fluff. No video hell. Only action." (the last in vermilion italic). The lead now says "a code editor" instead
+  of "VS Code" (owner: the editor may change).
+
 ## 25 November (Ukiyo): the container run slower still
 
 - Owner: "still fast". 1.6 s per piece (was 1.15), and the flight, slide, doors, locks, sealing and starting stretched

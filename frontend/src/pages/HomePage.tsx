@@ -62,7 +62,8 @@ export default function HomePage() {
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
             <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to build AI apps,</em> <span className="uh-line uh-sting">or get left behind.</span></h1>
-            <p className="uh-lead">Open a lab and a Linux machine starts for you in about a minute, with VS Code, a terminal and a model gateway.</p>
+            <p className="uh-lead">Open a lab and a Linux machine starts for you in about a minute, with a code editor, a terminal and a model gateway.</p>
+            <p className="uh-promise"><span>No fluff.</span> <span>No video hell.</span> <em>Only action.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
           <figure className="uh-hero-art">

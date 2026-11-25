@@ -328,6 +328,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-sting { color: var(--muted); }
 .uh-hero h1 em { font-style: italic; font-weight: 400; color: var(--vermilion); margin-top: .08em; }
 .uh-lead { font-size: 19px; line-height: 1.6; color: var(--muted); max-width: 30em; margin: 0 0 32px; }
+.uh-promise { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: -10px 0 30px; font: 600 clamp(18px, 1.6vw, 22px) var(--font-serif); color: var(--text); }
+.uh-promise em { font-style: italic; font-weight: 600; color: var(--vermilion); }
 .uh-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
 .uh-hero-art { margin: 0; justify-self: end; width: min(420px, 100%); }
 .uh-hero-pic { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0008; }
