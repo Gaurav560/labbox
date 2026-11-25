@@ -61,9 +61,15 @@ answer it.
 :::
 
 :::step{type=task task=grade_documents title="Your turn: check what the search found" file="15-agentic-rag/rag.py" line="62-68"}
-Finish `grade_documents(state)`: ask `model().with_structured_output(Grade)` with `[SystemMessage(GRADE),
-HumanMessage(f"Question: {question(state)}\n\nText:\n{found}")]`; return `"answer"` if it is relevant or
-`state.get("rewrites", 0) >= 1`, else `"rewrite_question"`.
+Finish `grade_documents(state)`:
+
+1. `grade = model().with_structured_output(Grade).invoke([SystemMessage(GRADE), HumanMessage(f"Question:
+   {question(state)}\n\nText:\n{found}")])`;
+2. return `"answer"` if `grade.relevant` **or** `state.get("rewrites", 0) >= 1`;
+3. otherwise return `"rewrite_question"`.
+
+The usual slip: leaving out the `rewrites` test in step 2. Then a question the rulebook cannot answer (the bottled
+water) is rewritten and searched for ever; the guess-first question below shows what that costs.
 
 Press **Check**.
 :::
@@ -81,13 +87,19 @@ The `answer` node always answers the citizen's **original** question (the first 
 text as its only source.
 
 :::diagram{name="lg-agentic-rag"}
-Search, grade, and either answer or rewrite once; a greeting skips the search entirely.
+The four questions of this chapter's run (26 November) and the path each took.
 :::
 :::
 
 :::step{type=task task=rewrite_question title="Your turn: a better search" file="15-agentic-rag/rag.py" line="71-74"}
-Finish `rewrite_question(state)`: ask `model()` with `[SystemMessage(REWRITE), HumanMessage(question(state))]`, and return
-`{"messages": [HumanMessage(<its content>)], "rewrites": state.get("rewrites", 0) + 1}`.
+Finish `rewrite_question(state)`:
+
+1. `better = model().invoke([SystemMessage(REWRITE), HumanMessage(question(state))]).content`;
+2. `return {"messages": [HumanMessage(better)], "rewrites": state.get("rewrites", 0) + 1}`.
+
+The usual slip: returning only the message, without `"rewrites"`. The counter stays at 0, so the grader's limit never
+applies. We tried it with a stand-in model that always grades "not relevant": the loop ran until a recursion limit of
+40 stopped it, after 27 model calls. (The solution makes 6 calls on the same question.)
 
 ```bash run
 cd /workspace/15-agentic-rag && python main.py "I bought bottled water for three days during the cut. Will the board give that money back?"
@@ -106,20 +118,21 @@ $ python main.py "Our water has been off since Monday because of the burst main.
 $ python main.py "The thing on my roof overflows every night. Is that your problem or mine?"
 > The thing on my roof overflows every night. Is that your problem or mine?
   [search_or_answer] search: overflow responsibility
-  [retrieve] found: Roof tanks: the tank on a building's roof, its float valve and its overflow pipe belong to the owner. The board is responsible only up to and includin...
-  [answer] The overflow issue is your responsibility, as the tank and its components belong to the owner. It usually indicates a stuck float valve. If you need further assistance, I will ask a person at the desk.
+  [retrieve] found: Roof tanks: the tank on a building's roof, its float valve and its overflow pipe belong to the owner. The board is responsible only up to and includin...  [answer] The overflow issue is your problem, as the tank and its components belong to the owner. You may want to check if the float valve is stuck. If you need further assistance, I will ask a person at the desk.
 $ python main.py "I bought bottled water for three days during the cut. Will the board give that money back?"
 > I bought bottled water for three days during the cut. Will the board give that money back?
   [search_or_answer] search: refund bottled water during cut
   [retrieve] found: Tankers: when piped water has been off for more than 24 hours because of a board fault, the board sends a tanker free of charge. Ask the desk before 2...
-  [rewrite_question] Water board rulebook refund policy for bottled water purchases during service interruptions.
-  [search_or_answer] search: refund policy service interruptions
-  [retrieve] found: Reconnection after a cut for unpaid bills: Rs 500, done within 2 working days of payment. || Meters: a meter that leaks, stops or is cracked is replac...
-  [answer] The rulebook does not mention reimbursement for bottled water during a cut. I will ask a person at the desk for clarification.
+  [rewrite_question] Water board rulebook refund policy for bottled water purchases during service interruptions.  [search_or_answer] search: refund policy bottled water
+  [retrieve] found: Tankers: when piped water has been off for more than 24 hours because of a board fault, the board sends a tanker free of charge. Ask the desk before 2...
+  [answer] I will ask a person at the desk about reimbursement for bottled water purchases.
 $ python main.py "Hello, thank you for the help yesterday!"
 > Hello, thank you for the help yesterday!
   [search_or_answer] You're welcome! If you have any more questions or need assistance today, feel free to ask.
 ```
+
+(This is the run of 26 November. The first version of this chapter had the same four paths; only the bottled-water
+question's second search differed, "refund policy service interruptions", which found the reconnection and meter rules.)
 
 - **The tanker:** one search found both tanker rules, the grade passed, and the answer quotes the rule, including "ask
   before 2 pm". One assumption slipped in: the answer treats a burst main as a "board fault", which the rulebook does not
@@ -127,7 +140,7 @@ $ python main.py "Hello, thank you for the help yesterday!"
 - **The roof:** "the thing on my roof" became the search "overflow responsibility", and the embeddings found the roof
   tank rule anyway. No rewrite was needed: a good search on the first try is the common case.
 - **Bottled water:** the first search found tanker rules, the grader said they do not answer the question, the question
-  was rewritten and searched again, and the second search found nothing either. With one rewrite used, `answer` ran,
+  was rewritten and searched again, and the second search found the tanker rule again. With one rewrite used, `answer` ran,
   and said honestly that the rulebook does not cover it. A plain RAG chain would have answered from the tanker rule.
 - **Thank you:** no search at all; the model decided this needed none.
 :::
@@ -140,7 +153,8 @@ Without the `rewrites` limit, the bottled-water question would…
 - [x] rewrite and search again and again, because no rule ever matches, until the recursion limit stops it
 - [ ] skip the grader
 :::explain
-When the answer is not in the documents, no rewrite will find it. One retry, then an honest answer.
+When the answer is not in the documents, no rewrite will find it. We measured the same kind of loop in chapter 3: the
+default limit is 10,007 steps, and here every round is three model calls. One retry, then an honest answer.
 :::
 :::
 
@@ -189,7 +203,7 @@ You can now:
 
 Next, chapter 16: subgraphs, so each office can own its own graph.
 
-:::photo{src="/lesson-images/langgraph/lg-15-notes.webp" alt="Handwritten notes about agentic RAG: search is a tool; grade what came back; rewrite once, search again; answer the original question; not found? Ask a person" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-15-notes.webp" alt="Handwritten notes titled Agentic RAG, search, check, and search again: the model decides whether to search the rulebook, a grader checks what came back, and a vague question is rewritten in the rulebook words and searched once more; the citizen question, search_rules as a tool, grade whether it answers, if not rewrite and search once more, then answer or ask a person; the thing on my roof found the roof tank rule; bottled water had no rule, so an honest answer; thank you needed no search; with no rewrite counter it took 27 calls until stopped" ai="true"}
 One page of notes for this chapter.
 :::
 :::

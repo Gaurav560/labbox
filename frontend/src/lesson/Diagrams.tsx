@@ -3622,20 +3622,32 @@ function LgReflection() {
 }
 
 function LgAgenticRag() {
+  // Still (owner, 26 November): chapter 15's four real questions and the path each took.
+  const rows: [string, string[], BoxTone][] = [
+    ["tanker", ["search", "grade: yes", "from the rule"], "copy"],
+    ["roof", ["search", "grade: yes", "owner's tank"], "copy"],
+    ["bottled water", ["grade: no", "rewrite, search", "ask a person"], "accent"],
+    ["thank you", ["no search", "", "reply"], "plain"],
+  ];
   return (
-    <SketchSteps
-      title="Search, grade, rewrite once"
-      intro="Press Play to follow the bottled-water question."
-      label="Agentic RAG"
-      steps={[
-        { label: "search_or_answer", says: "The model decides the question needs the rulebook and searches 'refund bottled water'." },
-        { label: "retrieve", says: "The two closest sections come back: both about tankers." },
-        { label: "grade", says: "Do they answer the question? No, and no rewrite was tried yet: rewrite_question." },
-        { label: "rewrite", says: "The model rewrites the question in rulebook words; rewrites becomes 1." },
-        { label: "search again", says: "A second search finds reconnection and meter rules: still no answer." },
-        { label: "answer", says: "One rewrite was used, so answer runs: the rulebook does not cover it, a person will be asked." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 292" label="Four real questions: the tanker and roof questions were searched once, graded relevant and answered from the rule; the bottled-water question was graded not relevant, rewritten and searched again, then answered that a person will be asked; the thank-you needed no search">
+      {rows.map(([q, steps, tone], r) => {
+        const y = 8 + r * 66;
+        return (
+          <g key={q}>
+            <text className="dg-label" x={8} y={y + 12}>{q}</text>
+            {steps.map((t, c) => t ? (
+              <g key={c}>
+                <Box x={8 + c * 144} y={y + 20} w={132} h={36} label={t} tone={c === 2 ? tone : "plain"} />
+                {c < 2 && steps[c + 1] && <Arrow x1={140 + c * 144} y1={y + 38} x2={152 + c * 144} y2={y + 38} />}
+              </g>
+            ) : null)}
+            {q === "thank you" && <Arrow x1={140} y1={y + 38} x2={296} y2={y + 38} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={284}>One rewrite at most: the bottled-water answer took 6 model calls.</text>
+    </Svg>
   );
 }
 
