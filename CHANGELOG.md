@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: Ukiyo logo, "by" in lowercase
+
+- The logo's byline reads "by TELUSKO": the company name stays in capitals, "by" is lowercase (owner's request).
+  Ukiyo only; master already writes "by Telusko".
+
 ## 25 November: LangChain chapter 26 rewritten (easy, a little detailed, checked)
 
 - Evals, golden set, pass rate and judge are explained where they first appear, with a table of unit tests against

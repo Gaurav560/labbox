@@ -31,7 +31,7 @@ export default function Logo({ to, size = 28 }: { to?: string; size?: number }) 
       <LogoMark size={size} />
       <span className="logo-text">
         <span className="logo-word">{SITE.product}</span>
-        <span className="logo-by">by {SITE.company}</span>
+        <span className="logo-by"><span className="logo-by-word">by</span> {SITE.company}</span>
       </span>
     </>
   );

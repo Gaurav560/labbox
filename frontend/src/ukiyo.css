@@ -123,6 +123,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---------- 4. the LabBox mark and the top bar ---------- */
 .logo-word { font-family: var(--font-serif); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; }
 .logo-by { font: 500 10px var(--font-code); letter-spacing: .14em; text-transform: uppercase; }
+.logo-by-word { text-transform: none; } /* owner, 25 November: "by" in lowercase */
 /* a solid bar: a blur here would trap its menus (Text size, Profile) under the editor */
 .topbar { background: var(--panel); border-bottom: 1px solid var(--rule); }
 .topbar .btn-ghost { font-weight: 500; }
