@@ -2171,6 +2171,31 @@ function L4jAiCircles() {
   );
 }
 
+function L4jBigramChain() {
+  // Still (owner, 26 November): chapter 3's real generated sentence, each step with the count that chose it.
+  const steps: [string, string][] = [
+    ["the", "ghat: 3 of 7"], ["ghat", "express: 3 of 3"], ["express", "to: 2 of 3"], ["to", "lonavala: 3 of 6"],
+    ["lonavala", "will: 2 of 3"], ["will", "leave: 2 of 3"], ["leave", "from: 2 of 2"], ["from", "platform: 2 of 2"],
+    ["platform", "one: 2 of 3"], ["one", "stop: no follower"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 420" label="The bigram model generates: the, ghat, express, to, lonavala, will, leave, from, platform, one; each next word is the most frequent follower in the eight announcements, and nothing ever followed one">
+      {steps.map(([word, next], i) => {
+        const col = i < 5 ? 0 : 1, row = i % 5;
+        const x = 8 + col * 220, y = 8 + row * 80;
+        return (
+          <g key={word}>
+            <Box x={x} y={y} w={96} h={40} label={word} tone={i === 9 ? "highlight" : "copy"} code />
+            <text className="dg-note" x={x + 104} y={y + 25}>{next}</text>
+            {row < 4 && <Arrow x1={x + 48} y1={y + 42} x2={x + 48} y2={y + 78} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={412}>Read down the left column, then the right.</text>
+    </Svg>
+  );
+}
+
 function L4jNeuron() {
   // Still (owner, 26 November): chapter 2's trained neuron (weights 0.1, 0.2, 0.3, bias -0.2) on one morning.
   const inputs: [string, string, string, number][] = [["rain", "0", "x 0.1", 0], ["holiday", "1", "x 0.2", 0.2], ["track work", "1", "x 0.3", 0.3]];
@@ -4312,6 +4337,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-ai-service": L4jAiService,
   "l4j-http-call": L4jHttpCall,
   "l4j-ai-circles": L4jAiCircles,
+  "l4j-bigram-chain": L4jBigramChain,
   "l4j-neuron": L4jNeuron,
   "l4j-context-window": L4jContextWindow,
   "l4j-embedding-space": L4jEmbeddingSpace,

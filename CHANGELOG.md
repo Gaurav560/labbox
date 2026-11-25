@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 3 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (a `HashMap`; `>=` on a tie, which makes "running" predict
+  "twenty").
+- A new still picture: the generated sentence step by step, with the count that chose each word (counted from the
+  eight real announcements: "ghat" 3 of 7 after "the", "lonavala" 3 of 6 after "to", and so on).
+- Checked in a lab machine: the solution's output is exactly the lesson's; the bigram table was recounted from the
+  announcements. The history (Markov 1913, Shannon 1948, the 1954 IBM demonstration) was checked. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 2 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`>= 0`; forgetting the bias update, which makes some mornings
