@@ -2475,20 +2475,28 @@ function LcMemoryThreads() {
 }
 
 function LcRag() {
+  // Still (owner, 25 November): chapter 19's storage question, with the real query and scores (chapters 17 and 18).
+  const rows: [string, string, BoxTone][] = [
+    ["once, at start", "5 rule files -> 12 chunks -> 12 vectors in the store", "plain"],
+    ["the model calls search_rules", "query: \"Can I store 80 crates of onions?\"", "accent"],
+    ["the store: chunks scoring 0.3 or more", "storage.txt 0.609, 0.531, 0.346, each sent with [storage.txt]", "copy"],
+    ["the model answers from them", "...and names the file it used: [storage.txt]", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="agentic RAG, one question"
-      intro="Press Play to follow the storage question."
-      label="the rule book was loaded, split and embedded once; for a question the model calls search_rules, the closest chunks above the threshold come back with their sources, and the model answers from them"
-      steps={[
-        { label: "1. Once, at start", says: "Five rule files loaded, split into 12 chunks, each embedded and stored." },
-        { label: "2. The question", says: "Can I store 80 crates of onions? reaches the agent." },
-        { label: "3. The model searches", says: "It calls search_rules with the whole question as the query." },
-        { label: "4. The store", says: "The question is embedded; chunks scoring at least 0.3 come back, best first." },
-        { label: "5. With sources", says: "Each piece starts with its file, like [storage.txt]." },
-        { label: "6. The answer", says: "The model answers only from those pieces, and names the file." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 360" label="Agentic RAG for the storage question: the rule book is embedded once; the model calls search_rules with the question; the store returns the closest chunks with their sources; the model answers from them">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 86;
+        return (
+          <g key={title}>
+            <Box x={0} y={y} w={440} h={62} label="" tone={tone} />
+            <text className="dg-label" x={14} y={y + 24}>{title}</text>
+            <text className="dg-note" x={14} y={y + 46}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={220} y1={y + 64} x2={220} y2={y + 84} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={354}>Only what comes back can be in the answer.</text>
+    </Svg>
   );
 }
 

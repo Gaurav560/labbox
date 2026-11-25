@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 19 rewritten (easy, a little detailed, checked)
+
+- RAG is explained where it first appears; both tasks list their steps and the usual slips.
+- The RAG animation is now a still picture of the storage question with the real query and scores.
+- Checked through the lab gateway: the storage answer is wrong the same way again ("50 need to be booked at the
+  counter"), so the half-rule cause is steady; the run showed the real query and chunks. A new real mistake found and
+  added: the spraying answer said "wait until the following Monday", but ten days after a Monday is the Thursday of the
+  week after next (date arithmetic). "The most widely used pattern" became "one of". A new notes page.
+
 ## 25 November: LangChain chapter 18 rewritten (easy, a little detailed, checked)
 
 - Vector store is explained where it first appears; both tasks list their steps and the usual slips.

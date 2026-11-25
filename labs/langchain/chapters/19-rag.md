@@ -3,7 +3,8 @@ Everything is ready: the rule book is loaded, cut into pieces, embedded and sear
 question about the co-op's rules, find the right pieces and answer **from them**, saying which file the answer came
 from, and admit it when nothing was found.
 
-This is **retrieval-augmented generation** (RAG), the most widely used pattern in AI applications. With an agent, it
+This is **retrieval-augmented generation** (RAG): find relevant pieces of text first, then let the model write its
+answer from them. It is one of the most widely used patterns in AI applications. With an agent, it
 takes one new tool, `search_rules`, and a system message that says when to use it. It also takes care, because this
 chapter's first three attempts all went wrong, each in a different way, and each is a lesson you will meet again in
 real projects.
@@ -50,14 +51,19 @@ Agentic RAG gives the model more freedom, and therefore more ways to be wrong. B
 while this chapter was being written.
 
 :::diagram{name="lc-rag"}
-The rule book is embedded once; for each question the model searches, and answers only from the pieces that come back, with their sources.
+Chapter 19's storage question, step by step, with the real query and the real scores.
 :::
 :::
 
 :::step{type=task task=rules_tool title="Your turn: the search_rules tool" file="19-rag/rag.py" line="21-28"}
-Finish `search_rules(query)`: `search(rule_store(), query)` gives `(document, score)` pairs. If there are none, return
-`"No rule found for that question."`; otherwise return the pieces joined by a blank line, each as
-`f"[{doc.metadata['source']}] {doc.page_content}"`, so the model sees where each one came from.
+Finish `search_rules(query)`:
+
+1. `found = search(rule_store(), query)`: `(document, score)` pairs above chapter 18's threshold.
+2. If `found` is empty, return `"No rule found for that question."`.
+3. Otherwise return the pieces joined by a blank line (`"\n\n".join(...)`), each written as
+   `f"[{doc.metadata['source']}] {doc.page_content}"`, so the model sees where each one came from.
+
+The usual slip: returning the list of pairs itself. A tool's result reaches the model as text, so build the text.
 
 (`rule_store()` builds the store once, on first use, and remembers it: `@cache`.)
 
@@ -66,7 +72,7 @@ Press **Check**.
 
 :::step{type=task task=rag_agent title="Your turn: Navin as a RAG agent" file="19-rag/rag.py" line="31-34"}
 Finish `rag_agent()`: return `create_agent("openai:ai-chat", tools=[search_rules, mandi_price, storage_cost],
-system_prompt=SYSTEM)`. Read `SYSTEM` at the top of the file: every sentence in it is there because of the next step.
+system_prompt=SYSTEM)`. The usual slip: leaving out `search_rules`; the model cannot call a tool it was not given. Read `SYSTEM` at the top of the file: every sentence in it is there because of the next step.
 
 ```bash run
 cd /workspace/19-rag && python main.py
@@ -99,7 +105,8 @@ The query "storage" found the heading chunk (chapter 17's two-word chunk) and th
 rule. The tool's description now says what a good query is: "query: the member's whole question, in full, not a single
 keyword". The model reads that like any instruction.
 
-**Attempt 3: it looked well, and the chunk lied by omission.** With the full question as the query:
+**Attempt 3: it looked well, and the chunk lied by omission.** With the full question as the query (a real run; the
+wording changes from run to run):
 
 ```text
 $ python main.py
@@ -117,6 +124,11 @@ The spraying and loan answers are right, and come from the rules (the tractor an
 from `loans.txt`). The storage answer is **wrong**: more than 50 crates needs the **manager's approval**, about one
 working day, not the counter. The retrieved chunk ended with "Bookings of more than 50", the rule cut in half in chapter
 17, and the model filled the gap with the sentence before it.
+
+We ran it again on 25 November. The storage answer was wrong in the same way ("50 need to be booked at the counter"),
+so the cause is steady: the missing half of the rule. And the spraying answer had a new mistake: "Please wait until
+the following Monday to harvest." Ten days after a Monday is the Thursday of the week after next, not the next
+Monday: the model did the date arithmetic itself, and got it wrong (chapter 13's warning about dates).
 
 Three fixes so far: a firmer system message, a better tool description, and the third is in the documents themselves.
 Chapter 20 measures retrieval and fixes the chunking.
@@ -178,7 +190,7 @@ You can now:
 
 Next, chapter 20: measuring retrieval, and fixing what this chapter found.
 
-:::photo{src="/lesson-images/langchain/lc-19-notes.webp" alt="Handwritten notes about retrieval-augmented generation: RAG: retrieve, then answer; search_rules cites its source; 1: it never looked; 2: it searched one word; 3: half a rule, wrong answer" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-19-notes.webp" alt="Handwritten notes about RAG: RAG means: find the relevant pieces, then answer from them. In agentic RAG the model decides when and what to search. Tell it to always search first, and to send the whole question. Each piece carries its source, so the answer can name the file. An answer from half a rule was still wrong. Models can get dates wrong: compute them in code." ai="true"}
 One page of notes for this chapter.
 :::
 :::
