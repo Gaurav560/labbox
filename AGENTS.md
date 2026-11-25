@@ -1,6 +1,6 @@
 # Notes for coding agents working on LabBox by Telusko
 
-Read this first, then `HANDOFF.md` (where the last session stopped, file by file), then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
+Read this first, then `REWRITE_LIST.md` (which labs are rewritten, which are next), then `HANDOFF.md` (where the last session stopped, file by file), then `ROADMAP.md` (status: what is done and what is left), `CHANGELOG.md` (what is done, newest first) and
 `labbox-v2-upgrade-spec.md` (the full spec). **Every course follows `CONTENT_STANDARD.md`** (the full-standard
 list is at its top) **and is built the way `COURSE_PRODUCTION.md` describes** (helpers in `tools/authoring/`). `README.md` explains how to run, test and author labs.
 
