@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode; // the current step card
 }
 
-export const DOT_LABEL: Record<Step["type"], string> = {
+const DOT_LABEL: Record<Step["type"], string> = {
   story: "Story",
   concept: "Concept",
   example: "Example",
@@ -58,11 +58,12 @@ export default function LessonPanel({ steps, current, visited, onGo, children }:
       </div>
       {count > 1 && (
         <div className="step-buttons">
-          <button className="btn" onClick={() => onGo(current - 1)} disabled={current === 0} title="Previous step (← key)">
+          <button className="btn" onClick={() => onGo(current - 1)} disabled={current === 0}>
             ← Back
           </button>
           <span className="spacer" />
-          <button className="btn btn-primary" onClick={() => onGo(current + 1)} disabled={current >= count - 1} title="Next step (→ key)">
+          <span className="muted kbd-hint" aria-hidden="true">← → keys</span>
+          <button className="btn btn-primary" onClick={() => onGo(current + 1)} disabled={current >= count - 1}>
             Continue →
           </button>
         </div>
