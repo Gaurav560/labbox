@@ -41,7 +41,7 @@ Two things happen behind that call:
    body.
 
 :::diagram{name="ai-structured"}
-Spring AI adds the record's JSON schema to the prompt; the model answers in JSON; Jackson turns it into a TourPlan.
+This chapter's real tour request, from the gateway's log, and the real answer (25 November).
 :::
 
 A **record** is perfect for this: a short, read-only data class whose fields are its components (Spring's own
@@ -53,7 +53,8 @@ instructions and the JSON schema of `TourPlan`, in the user message.)
 
 :::step{type=example title="Worked example: the instructions Spring AI adds"}
 This is the user message Spring AI really sent for `.entity(TourPlan.class)` with the question "Plan a short tour",
-recorded by a pretend model while this course was being built:
+recorded by a pretend model while this course was being built. (On 25 November we read the same message, with
+this chapter's real question, in the LabBox gateway's log: `lab requests --last`. It was identical.)
 
 ````text
 Plan a short tour
@@ -103,7 +104,14 @@ than `m`.
 
 :::step{type=task task=tour_plan title="Your turn: plan a tour" file="05-structured/src/main/java/com/atlas/TourController.java" line="40"}
 In `05-structured`, make `GET /tour?minutes=...` ask the model for a museum tour that takes that many minutes, and
-return the answer as a `TourPlan`. Use a prompt template for the minutes.
+return the answer as a `TourPlan`. Use a prompt template for the minutes:
+
+1. `.user(u -> u.text("Plan a museum tour that takes {minutes} minutes in total.").param("minutes", minutes))`
+2. `.call()`, then `.entity(TourPlan.class)` instead of `.content()`.
+3. Return the `TourPlan`; Spring writes it as JSON.
+
+The usual slip: keeping the method's return type as `String` and calling `.content()`. The JSON then arrives as one
+string, and the website has to read it again.
 
 ```bash run
 cd 05-structured && mvn -q -o spring-boot:run
@@ -142,12 +150,13 @@ $ curl -s "localhost:8080/tour?minutes=60" | jq .
 }
 ```
 
-Real JSON, in the record's exact shape, adding up to 60 minutes. Your controller returned a `TourPlan`, and Spring wrote
+Real JSON, in the record's exact shape, adding up to 60 minutes. (Our re-run on 25 November: five stops, 10 + 15 + 15 +
+10 + 10 = 60, with galleries such as "Introduction to Science" and "Eco Systems".) Your controller returned a `TourPlan`, and Spring wrote
 it as JSON, as it would any object.
 
 Look closely at the gallery names, though: "Robotics Zone", "Physics Experiments Area". **The model invented them.** It
 does not know the Deccan Science Museum's real galleries, so it made up plausible ones, despite the system prompt's
-"never invent exhibits". Structured output controls the **shape** of an answer, not its **truth**. Chapters 8 to 10 give
+"never invent exhibits". Structured output controls the **shape** of an answer, not its **truth**. Chapters 11 to 14 give
 Atlas the museum's real exhibit cards to answer from.
 :::
 
@@ -175,7 +184,9 @@ tools.jackson.databind.exc.MismatchedInputException: Cannot deserialize value of
 ```
 
 `START_OBJECT`: the model answered with a JSON **object** (something like `{"exhibits": [...]}`), not a bare list.
-Models are trained mostly on JSON objects, and wrap lists in one surprisingly often. The robust fix is to ask for an
+Models are trained mostly on JSON objects, and wrap lists in one surprisingly often. We rebuilt that first version
+on 25 November and called it three times: two calls worked, one failed with the same error. That is worse than
+failing every time, because a quick test can pass. The robust fix is to ask for an
 object yourself: wrap the list in a record.
 
 ```java
@@ -194,7 +205,14 @@ a plain list.
 
 :::step{type=task task=exhibit_list title="Your turn: suggest three exhibits" file="05-structured/src/main/java/com/atlas/TourController.java" line="47"}
 Finish `GET /suggest?interest=...`: ask for three exhibit names for that interest, read the answer as `Suggestions`,
-and return its list.
+and return its list:
+
+1. A template with `{interest}` and `.param("interest", interest)`.
+2. `.call().entity(Suggestions.class)`.
+3. `.exhibits()` on the result, and return it.
+
+The usual slip: `.entity(List.class)`. Java cannot say "a list of strings" with `List.class`, and the bare list is
+the shape that failed above.
 
 ```bash run
 curl -s "localhost:8080/suggest?interest=dinosaurs" | jq -c .
@@ -204,6 +222,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="Suggestions, as a list"}
+A real run (again on 25 November: ["Dinosaur Skeletons","Fossil Dig","Dino Discovery Zone"] and ["Spectrum of
+Light","Color Wheel Exploration","Prisms and Rainbows"]):
+
 ```text
 $ curl -s "localhost:8080/suggest?interest=dinosaurs" | jq -c .
 ["Dinosaur Hall","Jurassic Journey","Fossil Discovery Zone"]
@@ -224,8 +245,10 @@ What happens?
 - [x] Reading the JSON fails with an exception, because the answer is not pure JSON
 - [ ] The sentence becomes the title
 :::explain
-The converter expects JSON and nothing else. That is why the instructions insist on "no explanations", and why
-production code catches the exception (or uses the provider's native JSON mode, below) instead of trusting every answer.
+The converter expects JSON and nothing else. We tried it on Spring AI's converter directly: it removes ```json fences,
+but "Here is your tour: {...}" fails with `StreamReadException: Unrecognized token 'Here'`. That is why the
+instructions insist on "no explanations", and why production code catches the exception (or uses the provider's
+native JSON mode, below) instead of trusting every answer.
 :::
 :::
 
@@ -247,7 +270,7 @@ the answer with Jackson.
 Atlas's tour lists a "Robotics Zone" the museum does not have. Which statement is true?
 :::
 - [ ] Structured output should have prevented it
-- [x] Structured output fixes the shape; the facts need the museum's real data (retrieval, chapter 10)
+- [x] Structured output fixes the shape; the facts need the museum's real data (retrieval, chapter 14)
 - [ ] A lower temperature would make it know the real galleries
 :::explain
 No setting gives a model knowledge it does not have. Shape comes from the schema; truth comes from data you provide.
@@ -256,19 +279,21 @@ No setting gives a model knowledge it does not have. Shape comes from the schema
 
 :::step{type=deep-dive title="Go deeper: native JSON mode, validation and retries"}
 **Provider-native structured output.** OpenAI, Anthropic, Google and Mistral can enforce a JSON schema on their own
-side, so an answer that breaks the shape cannot even be produced. In Spring AI 2.1 it is one switch:
+side, so an answer that breaks the shape cannot even be produced. In Spring AI 2.1 it is one switch (we checked the lab's Spring AI: `EntityParamSpec` has
+`useProviderStructuredOutput()` and `validateSchema()`):
 
 ```java
 .entity(TourPlan.class, spec -> spec.useProviderStructuredOutput())
 ```
 
-The schema then travels as an API field instead of prompt text: stricter, and fewer tokens. It is off by default,
-because older models reject it; when a model does not support it, Spring AI quietly falls back to prompt instructions.
+The schema then travels as an API field instead of prompt text: stricter, and fewer tokens. It is off by default:
+not every model supports it, so try it with yours before relying on it.
 
 **Self-correction.** `spec -> spec.validateSchema()` checks every answer against the schema and, when it does not match,
-asks again with the exact error added ("missing required field title"), up to three attempts. Both switches combine:
-`spec.useProviderStructuredOutput().validateSchema()`. Retries cost tokens, and the response reports the usage of all
-attempts together.
+asks again with the exact error added ("missing required field title"); the limit is a setting,
+`maxRepeatAttempts`, which is 3 in the lab's Spring AI. Both switches combine:
+`spec.useProviderStructuredOutput().validateSchema()`. Retries cost tokens: each attempt is a whole new
+model call.
 
 **Validate anyway.** A valid shape can still hold nonsense: a tour of 60 minutes whose stops add up to 90, or a gallery
 that does not exist. Check the values in Java (Bean Validation annotations on the record, or plain `if`s) before
@@ -289,7 +314,7 @@ You can now:
 
 That ends Part 1. Next, chapter 6: conversations, so Atlas remembers what a visitor said a minute ago.
 
-:::photo{src="/lesson-images/spring-ai/springai-05-notes.webp" alt="Handwritten notes about structured output: .entity(TourPlan.class); the schema goes in the prompt; wrap lists in a record; shape is not truth; validate the values" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-05-notes.webp" alt="Sketchnote, Answers as data (structured output with .entity()): Spring AI puts a JSON schema of your record into the prompt, and reads the model's JSON back into that record. The flow: record TourPlan, JSON schema in the prompt, Model writes JSON, Jackson, TourPlan object. What we found: a bare list failed 1 time out of 3: wrap it in a record; a sentence before the JSON breaks reading; shape is not truth: the galleries were invented; check the values in Java too." ai="true"}
 One page of notes for this chapter.
 :::
 :::

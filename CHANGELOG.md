@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: Spring AI chapter 5 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`.content()` with a `String` return; `.entity(List.class)`).
+- The structured-output animation is now a still picture of the real tour request and answer.
+- Checked in a lab machine: the instructions Spring AI adds were read in the gateway's log and match the lesson word
+  for word; a new tour (5 stops adding up to 60, all invented). Found and taught: the bare `List<String>` version
+  failed 1 time of 3 on the re-run (worse than always failing); Spring AI's converter strips ```json fences, but a
+  sentence before the JSON fails (`StreamReadException`), tested on the converter directly. Checked that
+  `useProviderStructuredOutput()` and `validateSchema()` exist in the lab's Spring AI, and that the retry limit
+  (`maxRepeatAttempts`) is 3; two unverified details (usage of all attempts, a quiet fallback) were removed.
+  Cross-references fixed: real data in chapters 11 to 14 (not 8 to 10), retrieval chapter 14 (not 10). A new
+  sketchnote.
+
 ## 25 November: Spring AI chapter 4 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`.call()` wrapped in `Flux.just`; events with no name; a `done`
