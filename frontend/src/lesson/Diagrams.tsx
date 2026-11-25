@@ -2577,6 +2577,43 @@ function LcWrapTool() {
   );
 }
 
+function LcGuards() {
+  // Still (owner, 25 November): chapter 24's two real messages through the guards (counts from the lab gateway's log).
+  const lanes: [number, [string, string, BoxTone][]][] = [
+    [8, [
+      ["the Aadhaar question", "54 characters", "plain"],
+      ["length_guard", "54 <= 500: go on", "accent"],
+      ["PIIMiddleware", "4821 3390 1176 -> ****1176", "copy"],
+      ["the model", "165 tokens in, 27 out", "plain"],
+      ["the answer", "the full number never left", "plain"],
+    ]],
+    [228, [
+      ["the long message", "717 characters", "plain"],
+      ["length_guard", "717 > 500: refuse, end", "highlight"],
+      ["PIIMiddleware", "not reached", "plain"],
+      ["the model", "not reached: 0 tokens", "plain"],
+      ["the answer", "TOO_LONG, from the guard", "plain"],
+    ]],
+  ];
+  return (
+    <Svg viewBox="0 0 440 448" label="Two messages through the guards: the Aadhaar question passes the length guard, is masked, and reaches the model; the 717-character message is refused by the length guard and nothing else runs">
+      {lanes.map(([x, rows]) => rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 84;
+        return (
+          <g key={`${x}-${i}`} opacity={detail.startsWith("not reached") ? 0.5 : 1}>
+            <Box x={x} y={y} w={204} h={58} label="" tone={tone} />
+            <text className="dg-label" x={x + 12} y={y + 23}>{title}</text>
+            <text className="dg-note" x={x + 12} y={y + 44}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={x + 102} y1={y + 60} x2={x + 102} y2={y + 82} />}
+          </g>
+        );
+      }))}
+      <text className="dg-note" x={8} y={422}>before_agent hooks (length_guard) run before every</text>
+      <text className="dg-note" x={8} y={440}>before_model hook (PIIMiddleware), whatever the list order.</text>
+    </Svg>
+  );
+}
+
 function LcHumanLoop() {
   return (
     <SketchSteps
@@ -3992,6 +4029,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "lg-send": LgSend,
   "lc-middleware": LcMiddleware,
   "lc-wrap-tool": LcWrapTool,
+  "lc-guards": LcGuards,
   "lc-human-loop": LcHumanLoop,
   "lc-rag": LcRag,
   "lc-mcp": LcMcp,
