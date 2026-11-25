@@ -3304,25 +3304,45 @@ function RsCapstone() {
   );
 }
 
+/** RAG in one picture, with the chapter's real question, the sections keyword search really found and the real answer. */
 function RagFlow() {
+  const t = { fontSize: 13.5 };
   return (
-    <SketchSteps
-      title="One question through Fieldbook"
-      intro="Press Play to follow a ranger's question."
-      label="RAG"
-      steps={[
-        { label: "the question", says: "A guard asks: how often do we change the batteries in the camera traps?" },
-        { label: "retrieve", says: "Search finds the sections most likely to answer it: FM-3.2 Batteries and memory cards first." },
-        { label: "augment", says: "Those sections and the question are written into one prompt, with the rule: answer only from them." },
-        { label: "generate", says: "The model reads the sections and answers: every 21 days, swapping the memory card at the same visit [FM-3.2]." },
-        { label: "check", says: "The answer names its section, so the guard, or anyone, can open FM-3.2 and check it." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 446" label="A question goes to the search, the sections found go into the prompt with the question, and the model answers from them, naming the section">
+      <text className="dg-note" x={0} y={14}>1. the ranger's question</text>
+      <g className="dg-box dg-accent">
+        <rect x={0} y={22} width={440} height={54} rx={8} />
+        <text x={220} y={44} textAnchor="middle" style={t}>How often should we change the batteries</text>
+        <text x={220} y={64} textAnchor="middle" style={t}>in the camera traps?</text>
+      </g>
+      <Arrow x1={30} y1={78} x2={30} y2={110} />
+      <text className="dg-note" x={42} y={99}>2. retrieve: search the manual</text>
+      <Box x={0} y={114} w={120} h={34} label="FM-3.2" tone="highlight" code />
+      <Box x={128} y={114} w={120} h={34} label="FM-3.1" code />
+      <Box x={256} y={114} w={120} h={34} label="FM-7.1" code />
+      <Arrow x1={30} y1={150} x2={30} y2={182} />
+      <text className="dg-note" x={42} y={171}>3. augment: sections + question in one prompt</text>
+      <g className="dg-box dg-plain">
+        <rect x={0} y={186} width={440} height={118} rx={8} />
+        <text className="dg-code" x={12} y={208} style={{ fontSize: 12, fontWeight: 400 }}>Manual sections:</text>
+        <text className="dg-code" x={12} y={230} style={{ fontSize: 12, fontWeight: 400 }}>[FM-3.2] Batteries and memory cards</text>
+        <text className="dg-code" x={12} y={248} style={{ fontSize: 12, fontWeight: 400 }}>Change the batteries ... every 21 days ...</text>
+        <text className="dg-code" x={12} y={270} style={{ fontSize: 12, fontWeight: 400 }}>[FM-3.1] Camera traps ...</text>
+        <text className="dg-code" x={12} y={292} style={{ fontSize: 12, fontWeight: 400 }}>Question: How often should we change ...</text>
+      </g>
+      <Arrow x1={30} y1={306} x2={30} y2={338} />
+      <text className="dg-note" x={42} y={327}>4. generate: the model reads the prompt</text>
+      <g className="dg-box dg-highlight">
+        <rect x={0} y={342} width={440} height={56} rx={8} />
+        <text x={220} y={365} textAnchor="middle" style={t}>You should change the batteries of every camera</text>
+        <text x={220} y={385} textAnchor="middle" style={t}>trap every 21 days. [FM-3.2]</text>
+      </g>
+      <text className="dg-note" x={0} y={420}>The answer names its section, so anyone can open FM-3.2</text>
+      <text className="dg-note" x={0} y={438}>and check it.</text>
+    </Svg>
   );
 }
 
-/** Text to vector: three real sentences go through the model, each becomes 384 numbers, and the rows are compared.
- *  The numbers are the model's real output (bge-small-en-v1.5, first 4 of 384), and so are the two cosines. */
 function RagEmbed() {
   const rows = [
     { text: "A tiger crossed the path.", nums: ["-0.019", "-0.013", "0.011", "0.056"], tone: "accent" as BoxTone },
