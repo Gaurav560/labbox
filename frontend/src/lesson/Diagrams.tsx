@@ -2410,19 +2410,28 @@ function LcCosineMatrix() {
 }
 
 function LcAgentLoop() {
+  // Still (owner, 25 November): chapter 10's real run, as the growing list of messages, with who adds each one.
+  const rows: [string, string, string, BoxTone][] = [
+    ["you", "System + Human", "What is today's onion rate, and what does it|cost to store 60 crates for 10 days?", "plain"],
+    ["model call 1", "AIMessage, no text, two tool calls", "mandi_price(crop=onion)|storage_cost(crates=60, days=10)", "accent"],
+    ["your code", "ToolMessage x 2", "1850 (from the rate table)|1200 (60 x 10 x 2)", "copy"],
+    ["model call 2", "AIMessage with text: the answer", "Today's onion rate is ₹1850 per quintal. The cost|to store 60 crates for 10 days is ₹1200.", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="one agent run, step by step"
-      intro="Press Play to follow chapter 10's question."
-      label="the model receives the question and the tool descriptions, asks for two tools, Python runs them, the results go back, and the model answers"
-      steps={[
-        { label: "1. Question and tools", says: "The onion rate, and 60 crates for 10 days? Plus the descriptions of mandi_price and storage_cost." },
-        { label: "2. The model asks", says: "No text: two tool calls, mandi_price(onion) and storage_cost(60, 10)." },
-        { label: "3. Python runs them", says: "1850 from the rate table, 1200 from 60 x 10 x 2." },
-        { label: "4. Results go back", says: "Two ToolMessages, each with the id of the call it answers." },
-        { label: "5. The answer", says: "One more model call turns two numbers into a sentence. No tool calls: stop." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 420" label="Chapter 10's agent run: the question, a model reply asking for two tools, the two tool results added by your code, and a second model reply with the answer">
+      {rows.map(([who, kind, text, tone], i) => {
+        const y = 4 + i * 98;
+        return (
+          <g key={who}>
+            <Box x={0} y={y} w={440} h={78} label="" tone={tone} />
+            <text className="dg-label" x={14} y={y + 22}>{who}: {kind}</text>
+            {text.split("|").map((line, k) => <text key={k} className="dg-note" x={14} y={y + 44 + k * 20}>{line}</text>)}
+            {i < rows.length - 1 && <Arrow x1={220} y1={y + 80} x2={220} y2={y + 96} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={414}>No tool calls in the last reply, so the loop stops: two model calls in all.</text>
+    </Svg>
   );
 }
 
