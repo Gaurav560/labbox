@@ -2035,18 +2035,27 @@ function AiEvaluation() {
 }
 
 function AiGuardrails() {
+  // Still (owner, 26 November): chapter 17's three real questions, with the tokens the gateway counted.
+  const rows: [string, string, string, BoxTone][] = [
+    ["my phone number is 98220 12345", "SafeGuardAdvisor refuses", "0 tokens", "highlight"],
+    ["a 336-character attack", "QuestionLimitAdvisor refuses", "0 tokens", "highlight"],
+    ["my number is 98220 12345, call me", "passes both guards: the model", "132 tokens", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="guards before the model"
-      intro="Press Play to follow three questions."
-      label="a question passes the length limit and the privacy guard before it reaches the model; a long attack is refused by the limit; a phone number is refused by the privacy guard; neither reaches the model"
-      steps={[
-        { label: "1. A long attack", says: "336 characters of ignore all your instructions: the length limit refuses it." },
-        { label: "2. A phone number", says: "my phone number is ...: the privacy guard answers with a kind reminder." },
-        { label: "3. A normal question", says: "When do the shows start? passes both guards." },
-        { label: "4. The model", says: "Only the third question reaches it, and costs tokens." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 290" label="Three real questions: the phone number and the long attack were refused by guards with zero tokens; my number is passed the word list and reached the model, 132 tokens">
+      {rows.map(([q, what, cost, tone], i) => {
+        const y = 4 + i * 86;
+        return (
+          <g key={i}>
+            <Box x={8} y={y} w={426} h={72} label="" tone={tone} />
+            <text className="dg-label" x={20} y={y + 24}>{q}</text>
+            <text className="dg-note" x={20} y={y + 50}>{what}</text>
+            <text className="dg-label" x={420} y={y + 50} textAnchor="end">{cost}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={282}>The third shows the limit of a word list: the number left the museum.</text>
+    </Svg>
   );
 }
 
