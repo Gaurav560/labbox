@@ -96,12 +96,21 @@ Finish `Honest.honestSystem()`: return `SYSTEM` plus an instruction that, when t
 given, Setu says "I don't know" and suggests the station office, and never invents times, fares or rules. The text must
 contain the words `I don't know`.
 
+The usual slip: "Do not guess" with nothing else. With nowhere to send the passenger, models tend to give a vague
+non-answer, like the fare answer below.
+
 Press **Check**.
 :::
 
 :::step{type=task task=grounded_answer title="Your turn: ground the answer in facts" file="11-hallucinations/src/main/java/com/setu/Honest.java" line="31-35"}
 Finish `Honest.ask(model, question)`: build the system message from `honestSystem()`, a blank line, `"Facts:"` and
 `facts()` (the timetable in `timetable.txt`); send it with the question as the user message; return the answer's text.
+
+1. `String system = honestSystem() + "\n\nFacts:\n" + facts();`
+2. `model.chat(SystemMessage.from(system), UserMessage.from(question)).aiMessage().text()`
+
+The usual slip: putting the facts in the **user** message with the question. It often works, but the passenger's
+text and your facts then share one message, and a passenger could add "facts" of their own.
 
 ```bash run
 cd /workspace/11-hallucinations && mvn -q compile exec:java
@@ -111,6 +120,10 @@ Press **Check**.
 :::
 
 :::step{type=try title="Invented, then grounded"}
+:::diagram{name="l4j-grounding"}
+The real answers, without and with the timetable, against `timetable.txt`.
+:::
+
 ```text
 $ mvn -q compile exec:java
 Q: What time does the Ghat Express leave Pune?
@@ -130,7 +143,9 @@ Read the "no facts" answers carefully, because this is real output from gpt-4o-m
 6:00 AM": the timetable says 07:15, so a passenger who trusted Setu would wait more than an hour on the platform. The
 Konkan Breeze "operates on Tuesdays": it does not run on Tuesdays at all, and a family would arrive at the station for
 a train that is not coming. Only the fare question got a vague non-answer instead of a made-up number. Temperature 0
-did not help: it makes the model consistent, and a consistent guess is still a guess.
+did not help: it makes the model consistent, and a consistent guess is still a guess. (We ran it again on 26 November:
+the same "6:00 AM" and the same "Yes, the Konkan Breeze operates on Tuesdays", word for word. A hallucination at
+temperature 0 is repeatable, which also means a test can catch it every time.)
 
 With the timetable in the system message, every answer is right and checkable against `timetable.txt`. And the last
 question, about wifi, is not in the facts: instead of inventing "yes, free wifi on board", Setu says it does not know
@@ -199,7 +214,7 @@ You can now:
 
 Next, chapter 12: what every answer costs. Token usage, finish reasons, and the help desk's real bill.
 
-:::photo{src="/lesson-images/langchain4j/l4j-11-notes.webp" alt="Handwritten notes about hallucinations: open weights or a closed API; models predict likely text; likely is not true; allow I don't know; ground answers in facts" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-11-notes.webp" alt="Sketchnote, Hallucinations (confident, fluent and wrong): A model predicts likely text, not true text. Give it the facts in the prompt, and permission to say I don't know. The flow: Question, Facts + honest rule, Model, Checkable answer. What we measured: no facts: 6:00 AM, the timetable says 07:15; no facts: Tuesdays yes, the truth is no; with facts: every answer right; wifi, not in the facts: I don't know." ai="true"}
 One page of notes for this chapter.
 :::
 :::

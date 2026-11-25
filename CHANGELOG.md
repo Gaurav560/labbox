@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 11 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips ("do not guess" with nowhere to send the passenger; facts in the
+  user message).
+- A new still picture: each question's real answer without and with the timetable, against `timetable.txt`.
+- Checked in a lab machine at temperature 0: word for word the same wrong "6:00 AM" and "Yes ... on Tuesdays" as
+  when the lesson was written; the lesson now says a hallucination at temperature 0 is repeatable (so a test can catch
+  it). The two court cases (New York 2023, Air Canada 2024) were checked. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 10 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`.temperature(0)` with an `int` does not compile; returning only the

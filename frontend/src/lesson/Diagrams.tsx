@@ -2196,6 +2196,31 @@ function L4jBigramChain() {
   );
 }
 
+function L4jGrounding() {
+  // Still (owner, 26 November): chapter 11's real answers at temperature 0, against timetable.txt.
+  const rows: [string, string, BoxTone][] = [
+    ["Ghat Express leaves Pune?", "no facts: 6:00 AM (wrong); with facts: 07:15; true: 07:15", "highlight"],
+    ["Pune to Karjat fare?", "no facts: check the website; with facts: Rs 140; true: Rs 140", "plain"],
+    ["Konkan Breeze on Tuesdays?", "no facts: yes (wrong); with facts: no; true: no", "highlight"],
+    ["wifi on the Monsoon Mail?", "with facts: I don't know (it is not in the facts)", "copy"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 300" label="Without facts the model said 6:00 AM and yes for Tuesdays, both wrong; with the timetable in the prompt it said 07:15, Rs 140, no, and I don't know for wifi">
+      {rows.map(([q, detail, tone], i) => {
+        const y = 4 + i * 66;
+        return (
+          <g key={q}>
+            <Box x={4} y={y} w={432} h={56} label="" tone={tone} />
+            <text className="dg-label" x={16} y={y + 22}>{q}</text>
+            <text className="dg-note" x={16} y={y + 43}>{detail}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={290}>Temperature 0: the same wrong answers on every run, days apart.</text>
+    </Svg>
+  );
+}
+
 function L4jNeuron() {
   // Still (owner, 26 November): chapter 2's trained neuron (weights 0.1, 0.2, 0.3, bias -0.2) on one morning.
   const inputs: [string, string, string, number][] = [["rain", "0", "x 0.1", 0], ["holiday", "1", "x 0.2", 0.2], ["track work", "1", "x 0.3", 0.3]];
@@ -4381,6 +4406,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-http-call": L4jHttpCall,
   "l4j-ai-circles": L4jAiCircles,
   "l4j-bigram-chain": L4jBigramChain,
+  "l4j-grounding": L4jGrounding,
   "l4j-neuron": L4jNeuron,
   "l4j-context-window": L4jContextWindow,
   "l4j-embedding-space": L4jEmbeddingSpace,
