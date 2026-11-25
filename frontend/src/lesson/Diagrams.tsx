@@ -3477,20 +3477,39 @@ function RagIvf() {
   );
 }
 
+/** HNSW as a still picture: three layers of the same graph, a search entering at the top and walking down to the
+ *  question's nearest neighbour. Below, the real result from chapter 6's benchmark (100,000 synthetic vectors). */
 function RagHnsw() {
+  const L = [
+    { y: 40, name: "layer 2: few nodes, long links", xs: [40, 230, 400] },
+    { y: 140, name: "layer 1: more nodes, shorter links", xs: [40, 100, 170, 230, 300, 360, 400] },
+    { y: 240, name: "layer 0: every vector, short links", xs: [20, 50, 80, 110, 140, 170, 200, 230, 260, 290, 320, 350, 380, 410] },
+  ];
+  const path = [[40, 40], [230, 40], [230, 140], [300, 140], [300, 240], [320, 240]];
+  const node = (x: number, y: number, on: boolean, k: string) => (
+    <circle key={k} cx={x} cy={y} r={on ? 7 : 5} style={{ fill: on ? "var(--vermilion, #c63f28)" : "var(--figure-text)", opacity: on ? 1 : 0.55 }} />
+  );
+  const onPath = (x: number, y: number) => path.some(([px, py]) => px === x && py === y);
   return (
-    <SketchSteps
-      title="A walk through the layers"
-      intro="Press Play to follow a search down an HNSW graph."
-      label="HNSW"
-      steps={[
-        { label: "top layer", says: "The search starts at the entry point, on the top layer, where a few nodes have long links." },
-        { label: "long hops", says: "It moves to whichever linked node is closest to the query, crossing large parts of the space in a few hops." },
-        { label: "down a layer", says: "When no neighbour is closer, it drops to the layer below, which has more nodes and shorter links." },
-        { label: "bottom layer", says: "On the bottom layer, which holds every vector, it keeps a list of efSearch candidates and explores around them." },
-        { label: "the answer", says: "The best 10 of the candidates are returned: a few hundred vectors visited instead of 100,000." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 372" label="Three layers of an HNSW graph; the search enters at the top, hops along long links, drops down a layer at a time, and ends next to the question on the bottom layer">
+      {L.map((l) => (
+        <g key={l.y}>
+          <text className="dg-note" x={0} y={l.y - 18}>{l.name}</text>
+          {l.xs.slice(0, -1).map((x, k) => <line key={k} x1={x} y1={l.y} x2={l.xs[k + 1]} y2={l.y} className="dg-arrow" style={{ markerEnd: "none", opacity: 0.35 }} />)}
+          {l.xs.map((x) => node(x, l.y, onPath(x, l.y), `${l.y}-${x}`))}
+        </g>
+      ))}
+      {path.slice(0, -1).map(([x1, y1], k) => {
+        const [x2, y2] = path[k + 1];
+        return <Arrow key={k} x1={x1 + (x2 > x1 ? 8 : 0)} y1={y1 + (y2 > y1 ? 8 : 0)} x2={x2 - (x2 > x1 ? 9 : 0)} y2={y2 - (y2 > y1 ? 9 : 0)} />;
+      })}
+      <text className="dg-note" x={40} y={64} textAnchor="middle">entry</text>
+      <circle cx={334} cy={262} r={6} style={{ fill: "none", stroke: "var(--vermilion, #c63f28)", strokeWidth: 2.5 }} />
+      <text className="dg-note" x={334} y={284} textAnchor="middle">question</text>
+      <text className="dg-note" x={0} y={312}>Each hop moves to the linked node closest to the question.</text>
+      <text className="dg-note" x={0} y={332}>Real result, 100,000 synthetic vectors, efSearch 64:</text>
+      <Box x={0} y={340} w={440} h={30} label="recall 98.9%, 0.19 ms a question (brute force: 6.57 ms)" tone="highlight" />
+    </Svg>
   );
 }
 

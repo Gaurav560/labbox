@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 6 rewritten (easy, a little detailed, checked)
+
+- Graphs, nodes and links, greedy walks, layers, M, efConstruction and efSearch are explained where they first appear;
+  the search loop is read line by line; tasks list their steps and the usual slips.
+- The HNSW animation is now a still picture: three layers, the walk from the entry point down to the question, and the
+  real result (recall 98.9%, 0.19 ms a question at efSearch 64, brute force 6.57 ms).
+- Checked by re-running the benchmark in the lab image: recall 87.7 / 94.9 / 98.9 / 99.8 / 100.0% and 181 MB.
+  Corrected: HNSW is not "the default in pgvector" (it is one of pgvector's two index types; the main index of
+  Qdrant, Weaviate and Elasticsearch; one of Milvus's options); the data is 100,000 synthetic vectors; the IVF and
+  HNSW timings are not comparable (Python versus C++), now said so; upper layers keep M links, the bottom 2M. A claim
+  about the check that could not be verified was removed. A new notes page.
+
 ## 25 November: RAG chapter 5 rewritten (easy, a little detailed, checked)
 
 - ANN, centroids and clusters, k-means step by step, Voronoi cells, inverted lists, the transpose and `argmax(axis=1)`
