@@ -2285,19 +2285,28 @@ function LcNextToken() {
 }
 
 function LcChatRequest() {
+  // Still (owner, 25 November): one real request of chapter 5, there and back, with the real numbers from the
+  // gateway's log (lab requests --last).
+  const stops: [string, string, string, BoxTone][] = [
+    ["your program (lab machine)", "POST .../chat/completions", "model ai-chat, system + user message, lab token", "plain"],
+    ["LabBox gateway", "checks the token and budget", "adds max_tokens 1024, swaps in the real key", "accent"],
+    ["OpenAI: gpt-4o-mini", "writes the answer", "one token at a time (chapter 4)", "plain"],
+    ["back to your program", "JSON reply", "choices[0].message.content, usage: 61 in, 38 out", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="one chat request, there and back"
-      intro="Press Play to follow Navin's first question."
-      label="Python posts the model name and messages with a lab token; the gateway checks it and calls OpenAI with the real key; the answer and the token usage come back as JSON"
-      steps={[
-        { label: "1. Python builds JSON", says: "model ai-chat, a system message, and the member's question." },
-        { label: "2. POST with a token", says: "To OPENAI_BASE_URL/chat/completions, with Authorization: Bearer and the lab token." },
-        { label: "3. The gateway", says: "Checks the token and the budget, adds max_tokens 1024, and calls OpenAI with the real key." },
-        { label: "4. The model", says: "gpt-4o-mini writes the answer, one token at a time." },
-        { label: "5. JSON comes back", says: "choices[0].message.content holds the answer; usage says 61 in, 38 out." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 346" label="Chapter 5's request goes from the lab machine to the LabBox gateway, which calls OpenAI; the JSON answer and its usage come back">
+      {stops.map(([who, what, detail, tone], i) => {
+        const y = 4 + i * 86;
+        return (
+          <g key={who}>
+            <Box x={0} y={y} w={440} h={60} label="" tone={tone} />
+            <text className="dg-label" x={14} y={y + 22}>{who}: {what}</text>
+            <text className="dg-note" x={14} y={y + 44}>{detail}</text>
+            {i < stops.length - 1 && <Arrow x1={220} y1={y + 62} x2={220} y2={y + 84} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
