@@ -5,7 +5,7 @@ export interface TextSizes { lesson: number; tasks: number; editor: number; term
 export type TextArea = keyof TextSizes;
 
 export const DEFAULT_SIZES: TextSizes = { lesson: 100, tasks: 100, editor: 100, terminal: 100 };
-export const PRESETS = { S: 90, M: 100, L: 115, XL: 130 } as const;
+export const PRESETS = { S: 95, M: 100, L: 115, XL: 130 } as const;
 export const MIN_SIZE = 80;
 export const MAX_SIZE = 150;
 
