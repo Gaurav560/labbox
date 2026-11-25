@@ -537,7 +537,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-logo { width: 44px; height: 44px; display: grid; place-items: center; }
 .ua-logo img, .ua-logo svg { width: 100%; height: 100%; object-fit: contain; }
 .ua-name { font: 600 13px/1.25 var(--font-text); }
-.ua-log { list-style: none; margin: 14px 18px 0; padding: 12px 14px; border-top: 2px solid var(--text); border-bottom: 1px solid var(--rule);
+.ua-log { list-style: none; margin: 14px 18px 0; padding: 12px 14px; border-top: 2px solid var(--text); border-bottom: 1px solid var(--rule); transition: min-height .3s;
   font: 13px/1.85 var(--font-code); color: var(--muted); }
 .ua-log li { animation: ua-line .4s ease-out both; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ua-log b { color: var(--vermilion); font-weight: 700; }
@@ -552,9 +552,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-box.is-sealed .ua-clock { visibility: hidden; }
 .ua-box.is-sealed .ua-stamp { animation: ua-stamp .45s .1s cubic-bezier(.3, 1.6, .5, 1) forwards; }
 .ua-ready { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 14px 18px 0; padding: 0;
-  color: var(--text); font-size: 15px; visibility: hidden; }
+  color: var(--text); font-size: 15px; display: none; }
 .ua-ready span { font: 500 16px var(--font-serif); }
-.ua-box.is-sealed .ua-ready { visibility: visible; animation: ua-up .5s .35s ease-out both; }
+.ua-box.is-sealed .ua-ready { display: flex; animation: ua-up .5s .35s ease-out both; }
 .ua-box.is-sealed .ua-ready .h-btn { animation: ua-pulse .8s 1s ease-in-out 2; }
 /* Start wears the hanko's inner white line (owner, 25 November) */
 .ua-ready .h-btn { border-radius: 4px; box-shadow: inset 0 0 0 4px var(--vermilion), inset 0 0 0 5.5px #fffdf8cc; }

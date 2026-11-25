@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): no empty space under the prompt
+
+- Owner: "why is this space left below learner". The log no longer reserves room for every line and the Start row is
+  not laid out until the machine runs, so before the click the box ends under the `learner:~$` prompt; it grows as
+  the lines arrive.
+
 ## 25 November (Ukiyo): Spin up moves out of the box
 
 - Owner: the Spin up button "could be placed somewhere else, it is ruining the entire show". It now sits in the left

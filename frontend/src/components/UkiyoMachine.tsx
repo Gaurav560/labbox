@@ -271,7 +271,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <div ref={svgWrap}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
         </div>
         <div className="ua-logwrap">
-          <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${n + 2} * 1.85em + 24px)` }}>
+          <ol className="ua-log" aria-live="polite">
             {waiting && <li className="ua-log-wait">learner:~$ <span className="ua-caret" aria-hidden="true" /></li>}
             {lab.pieces.slice(0, loadedNow).map((p, i) => (
               <li key={p.name + i} className="is-piece"><b>✓</b> <strong>{p.name}</strong> <span>{p.step}</span></li>
