@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: Read mode lists the chapter's steps on the left
+
+- On screens 1,000 px and wider, Read mode shows every step of the chapter by name in a column on the left (the current
+  step highlighted, tasks and quick checks labelled, any step one click away). Its × closes it entirely; "☰ Steps"
+  brings it back; the choice is remembered. The rest of Read mode is unchanged. Browser test extended.
+
 ## 25 November: Read mode and Action mode in every lab
 
 - A Read / Action switch in the lab's top bar (owner, 25 November). Read mode shows the lesson alone in a calm centred

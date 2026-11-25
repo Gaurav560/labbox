@@ -2068,3 +2068,28 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .read-code-line code { white-space: pre; background: none; padding: 0; }
 
 .btn.read-practice { flex: 1; justify-content: center; min-height: 44px; font-size: 15px; }
+
+/* Read mode's list of steps on the left (owner, 25 November): closable with ×, back with "Steps". */
+.step-outline, .step-outline-open { display: none; }
+@media (min-width: 1000px) {
+  .lab-page.is-reading.has-outline .left-panel { display: grid; grid-template-columns: 270px minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .lab-page.is-reading.has-outline .left-panel > :not(.step-outline):not(.lesson-watermark) { grid-column: 2; }
+  .lab-page.is-reading.has-outline .left-panel > .lesson,
+  .lab-page.is-reading.has-outline .left-panel > .chapter { grid-row: 3; min-height: 0; }
+  .lab-page.is-reading.has-outline .left-panel > .left-footer { grid-row: 4; }
+  .step-outline { display: block; grid-column: 1; grid-row: 1 / -1; overflow-y: auto; padding: var(--space-4) var(--space-3) var(--space-6) var(--space-4); border-right: 1px solid var(--border); background: var(--panel); }
+  .step-outline-top { display: flex; align-items: center; justify-content: space-between; margin: 0 0 var(--space-2) var(--space-2); }
+  .step-outline-head { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .step-outline-close { width: 28px; height: 28px; border: 0; border-radius: 6px; background: none; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; }
+  .step-outline-close:hover { background: var(--hover); color: var(--text); }
+  .step-outline ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .step-outline-item { display: flex; gap: 10px; align-items: baseline; width: 100%; text-align: left; padding: 7px 8px; border: 0; border-radius: 7px; background: none; font: inherit; font-size: 13.5px; line-height: 1.35; color: var(--muted); cursor: pointer; }
+  .step-outline-item:hover { background: var(--hover); color: var(--text); }
+  .step-outline-item.is-seen { color: var(--text); }
+  .step-outline-item.is-current { background: var(--chip); color: var(--text); font-weight: 600; }
+  .step-outline-mark { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--muted); transform: translateY(-1px); }
+  .step-outline-item.is-seen .step-outline-mark { background: var(--muted); }
+  .step-outline-item.is-current .step-outline-mark { background: var(--text); border-color: var(--text); }
+  .step-outline-kind { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); }
+  .lab-page.is-reading .step-outline-open { display: inline-flex; position: absolute; top: 12px; left: 16px; z-index: 2; }
+}
