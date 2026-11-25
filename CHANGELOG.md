@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: LangChain chapter 4 rewritten (easy, a little detailed, checked)
+
+- Logit, softmax, exp, temperature, query, key, value, heads and parameters are explained where they first appear;
+  tasks list their steps and the usual slips.
+- The next-token animation is now a still picture of the real 13 tokens of Navin's answer, one pass per token.
+- Checked by running the solution and the tokenizer in a lab machine. Corrected: "Today's" is one token, not "Today" and
+  "'s"; "the model did not plan that sentence" is not established (planning inside models is still researched);
+  the four next-word scores are said to be made up; "spray never" is 0.03%; temperature 0 is steady, not perfectly
+  repeatable on a hosted API; "every model behind Navin is a transformer" became what OpenAI says (GPT-4 is
+  "Transformer-style"; gpt-4o-mini's design is unpublished); the "it rained" example no longer claims what a good model
+  would attend to (that "it" refers to nothing); the transformer's eight authors were most, not all, at Google. A new
+  notes page.
+
 ## 25 November: LangChain chapter 3 rewritten (easy, a little detailed, checked)
 
 - Embedding model, vector, dimensions, cosine similarity and dot product are explained where they first appear, with a
