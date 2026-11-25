@@ -36,6 +36,14 @@ Status: **1 of 23 labs done** (13 of 319 chapters).
 
 The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs); the owner picks the next lab.
 
+## Checks in every rewrite
+
+- No drinks in any example (owner: never chai, tea or any drink): scan the lab's chapters, starter, solution, tests and
+  data with `grep -rliwE "coffee|juice|tea|chai|latte|soda|espresso|cappuccino|lemonade|smoothie|milkshake" labs/<lab>`.
+  On 25 November all 23 labs scanned clean. Note: a learner's workspace keeps the starter files it was created with
+  (the owner's own JavaScript workspace still has the old "juice" and "Coffee" examples from before the 22 November
+  rewrite); only "Reset lab" or a new account shows the current starter.
+
 ## Small tasks after each lab
 
 - After RAG (25 Nov): the Ukiyo "LOADING" plate fixed; browser tests now clean up their machines; old test machines
