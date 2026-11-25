@@ -111,6 +111,13 @@ A `TreeMap` keeps its keys sorted A to Z, which makes counts easy to read and to
 Finish `Words.count(text)`: split the text with `split`, and count how often each word appears, in a map sorted A to Z.
 An empty text has no words.
 
+1. `Map<String, Integer> counts = new TreeMap<>();`
+2. For each word of `split(text)`: `counts.merge(word, 1, Integer::sum);`
+3. `return counts;`
+
+The usual slip: a `HashMap`. The counts are right, but the words come out in no particular order, and the Check
+expects them A to Z.
+
 This is called a **bag of words**: you keep the counts and throw away the order, as if the words were shaken in a
 bag. For years, search engines and spam filters saw text exactly like this.
 
@@ -149,6 +156,10 @@ Finish `Bigram.next(word)`:
 1. get the followers of the word from `follows`; if there are none, return `null`;
 2. return the follower with the biggest count; on a tie, the one that comes first A to Z.
 
+The followers are in a `TreeMap`, so a loop already visits them A to Z: keep a follower only when its count is
+**greater than** the best so far. The usual slip: `>=`, which keeps the last of a tie, so "running" would predict
+"twenty" instead of "on".
+
 ```bash run
 cd /workspace/03-language-models && mvn -q compile exec:java
 ```
@@ -173,6 +184,12 @@ after 'lonavala' comes 'will'
 
 the ghat express to lonavala will leave from platform one
 ```
+
+(We ran the solution again on 26 November: exactly this output.)
+
+:::diagram{name="l4j-bigram-chain"}
+The generated sentence, step by step, with the count that chose each next word in the eight announcements.
+:::
 
 Read the last line: "the ghat express to lonavala will leave from platform one". Your model wrote a correct station
 announcement. It does not know what a train is; it has only counted which word follows which. And it could not get
@@ -247,7 +264,7 @@ You can now:
 Next, chapter 4: models do not read words, they read tokens. What tokens are, why they decide your bill, and how much
 text a model can read at once.
 
-:::photo{src="/lesson-images/langchain4j/l4j-03-notes.webp" alt="Handwritten notes about language models: NLP went from rules to statistics, neural networks and LLMs; bag of words: counts, no order; bigram: which word comes next; generate: predict, add, repeat; likely is not the same as true" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-03-notes.webp" alt="Sketchnote, A tiny language model (count which word comes next): A language model predicts the next word from the words before. Ours counts word pairs in eight announcements. The flow: Announcements, Count word pairs, Pick the likeliest, Repeat. What we found: after the came ghat 3 times in 7; it wrote a correct announcement; it stopped at one: nothing ever followed; likely is not the same as true." ai="true"}
 One page of notes for this chapter.
 :::
 :::
