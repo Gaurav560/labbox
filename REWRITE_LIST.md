@@ -14,7 +14,7 @@ Status: **2 of 23 labs done** (40 of 319 chapters).
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
 | 3 | langchain4j | LangChain4j | 30 | not started | |
 | 4 | langgraph | LangGraph | 24 | not started | |
-| 5 | spring-ai | Spring AI | 20 | in progress (8 of 20) | |
+| 5 | spring-ai | Spring AI | 20 | in progress (9 of 20) | |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |
