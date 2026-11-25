@@ -1978,19 +1978,28 @@ function AiRag() {
 }
 
 function AiVision() {
+  // Still (owner, 26 November): chapter 15's real pendulum photo, with the gateway's token counts.
+  const rows: [string, string, BoxTone][] = [
+    ["the visitor's photo", "800 x 600 pixels: 4 tiles, 25,596 tokens", "plain"],
+    ["Photos.shrink(bytes, 512)", "512 x 384 pixels, JPEG: 1 tile", "accent"],
+    ["one user message, two parts", "text: What is this exhibit?  +  the image as a data URL", "accent"],
+    ["the model reads both", "8,595 tokens in: 2,833 + 5,667 for the tile + the question", "copy"],
+    ["the answer, in words", "This exhibit is likely a Foucault pendulum.", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="a picture in a message"
-      intro="Press Play to follow a visitor's photo."
-      label="the visitor's photo is shrunk to fit 512 pixels; it is encoded as a data url; the question and the picture go in one user message; the model reads both and answers in text"
-      steps={[
-        { label: "1. The photo arrives", says: "pendulum.jpg, 800 by 600 pixels, from the visitor's phone." },
-        { label: "2. Shrink it", says: "Photos.shrink: 512 by 384, one tile instead of four." },
-        { label: "3. One message, two parts", says: "text: What is this exhibit? plus image: data:image/jpeg;base64,..." },
-        { label: "4. The model looks", says: "It reads the picture as tokens, together with the words." },
-        { label: "5. Words come back", says: "This exhibit looks like a Foucault pendulum." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="The photo is shrunk from 800 by 600 to 512 pixels, one tile instead of four, sent with the question in one message, and costs 8,595 tokens instead of 25,596">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
