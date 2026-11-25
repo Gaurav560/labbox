@@ -64,6 +64,10 @@ long run stays under the gateway's 20 calls a minute instead of failing halfway.
 :::step{type=task task=deep_agent title="Your turn: a planner with files and a helper" file="22-deep-agents/planner.py" line="31-34"}
 In `build_agent`, also pass `subagents=[ANALYST]` and `backend=FilesystemBackend(root_dir=root, virtual_mode=True)`.
 
+The usual slip: leaving out `virtual_mode=True`. We tried the backend both ways on 26 November. With it, `/pipes.csv`
+is `data/pipes.csv`, and `/etc/hostname` is "not found". Without it, `/pipes.csv` is "not found" (it means the real
+`/pipes.csv`), and `/etc/hostname` could be read: the agent's files are no longer kept inside its folder.
+
 Press **Check**.
 :::
 
@@ -82,12 +86,15 @@ The analyst then runs as its own agent, with a fresh context, its own prompt and
 answer. `count_complaints` (in `analysis.py`) reads the CSV with Python's `csv` module, so its numbers are exact.
 
 :::diagram{name="lg-deep-agent"}
-The planner reads two small files, hands the counting to the analyst, and writes the plan to disk.
+The real run of 26 November, and a check of four of its numbers.
 :::
 :::
 
 :::step{type=task task=analyst_subagent title="Your turn: the analyst's tool" file="22-deep-agents/planner.py" line="15-20"}
 Give `ANALYST` its tool: `"tools": [count_complaints]`.
+
+Without it, the analyst has no way to count exactly: its only source would be its own guesses. Keep the exact tool
+with the agent whose job is the numbers.
 
 ```bash run
 cd /workspace/22-deep-agents && python main.py
@@ -102,8 +109,10 @@ $ python main.py
 > Prepare the monsoon readiness plan for 2026.
   [planner] read_file({'file_path': '/pipes.csv'})
   [planner] read_file({'file_path': '/crews.md'})
-  [planner] task({'description': 'Provide the number of complaints by street for the year 2025, inclu...', 'subagent_type': 'data-analyst'})
-  [analyst] count_complaints({'months': '2025-01,2025-02,2025-03,2025-04,2025-05,2025-06,2025-07,2025-08,202...'})
+  [planner] task({'description': 'Analyze the complaints data for 2025 to identify the number of comp...', 'subagent_type': 'data-analyst'})
+  [analyst] count_complaints({'street': 'Station Road'})
+  [analyst] count_complaints({'street': 'Gandhi Chowk'})
+  ... (one count for each of the eight streets)
   [planner] write_file({'file_path': '/plan.md', 'content': '# Ujjwal Nagar Water Board Monsoon Readiness Plan 2026\n\n## Streets ...'})
 
 # Ujjwal Nagar Water Board Monsoon Readiness Plan 2026
@@ -111,45 +120,49 @@ $ python main.py
 ## Streets Needing Work Before June
 
 1. **Station Road**  
-   - **Complaints**: 49 (41 leak, 8 no_water)  
-   - **Pipe Age**: 48 years (laid in 1978)  
-   - **Crew**: South crew 1  
-   - **Work Required**: Replacement (20 crew days for 1.2 km)
+   - **Total Complaints:** 49 (41 leaks, 8 no water)  
+   - **Pipe Age:** 48 years (laid in 1978)  
+   - **Crew:** South crew 1  
+   - **Action:** Main replacement (20 crew days for 1.2 km)
 
 2. **Tilak Nagar**  
-   - **Complaints**: 26 (22 no_water, 4 dirty_water)  
-   - **Pipe Age**: 12 years (laid in 2011)  
-   - **Crew**: East crew 2  
-   - **Work Required**: Cleaning (4 crew days)
+   - **Total Complaints:** 26 (22 no water, 4 dirty water)  
+   - **Pipe Age:** 12 years (laid in 2011)  
+   - **Crew:** East crew 2  
+   - **Action:** Cleaning and maintenance (4 crew days)
 
 3. **Gandhi Chowk**  
-   - **Complaints**: 26 (22 dirty_water, 4 leak)  
-   - **Pipe Age**: 38 years (laid in 1985)  
-   - **Crew**: North crew  
-   - **Work Required**: Cleaning (4 crew days)
+   - **Total Complaints:** 26 (22 dirty water, 4 leaks)  
+   - **Pipe Age:** 38 years (laid in 1985)  
+   - **Crew:** North crew  
+   - **Action:** Cleaning tank and inlet (4 crew days)
 
 4. **Old Market**  
-   - **Complaints**: 21 (15 dirty_water, 6 billing)  
-   - **Pipe Age**: 51 years (laid in 1972)  
-   - **Crew**: North crew  
-   - **Work Required**: Cleaning (4 crew days)
-
-## Summary
-Prioritize work on Station Road due to the highest number of complaints and oldest pipe age, followed by Tilak Nagar, Gandhi Chowk, and Old Market.
+   - **Total Complaints:** 21 (15 dirty water, 6 billing)  
+   - **Pipe Age:** 51 years (laid in 1972)  
+   - **Crew:** North crew  
+   - **Action:** Main replacement (20 crew days for 0.8 km)
+...
+This plan prioritizes streets with the highest complaints and oldest pipes to ensure readiness for the monsoon.
 ```
 
-The structure worked: the planner read the two small files, sent one task to the analyst, the analyst made one exact
-count, and the plan landed in `data/plan.md`. Five tool calls in all.
+(This is the run of 26 November, shortened with "...". The first run, when we wrote the chapter, sent the analyst one
+count for the whole year instead of eight; the complaint numbers and the same three wrong pipe ages were in it too.)
+
+The structure worked: the planner read the two small files, sent one task to the analyst, the analyst counted street
+by street, and the plan landed in `data/plan.md`. The gateway's log shows what that costs: each of the planner's calls
+carried between 1,835 and 3,258 tokens in, most of it the tool descriptions and the files read so far.
 
 Now check the numbers, because the engineer will. **Every complaint count is right**: 41 leaks and 8 no-water on Station
 Road, 22 dirty-water at Gandhi Chowk; they came from Python. **Every number the planner worked out itself is wrong**:
 
 - Pipe ages: Station Road (1978) is 48 in 2026, correct; but 1985 is 41, not 38; 1972 is 54, not 51; 2011 is 15, not 12.
-- Crew days: the crew list says 20 days per kilometre, so 1.2 km takes 24, not 20.
-- "Cleaning (4 crew days)" is the crew list's figure for **a tank and its inlet**. Only Gandhi Chowk has a tank. Tilak
-  Nagar's dry taps in April and May and Old Market's 54-year-old cast iron are not fixed by cleaning.
+  The same three mistakes appeared in both runs.
+- Crew days: the crew list says 20 days per kilometre, so 1.2 km takes 24, not 20, and 0.8 km takes 16, not 20.
+- "Cleaning and maintenance (4 crew days)" for Tilak Nagar: 4 days is the crew list's figure for **a tank and its
+  inlet**, and Tilak Nagar has no tank. (Gandhi Chowk's tank cleaning is right.)
 
-It also says Station Road has the "oldest pipe age"; Old Market's is older. The lesson of this chapter is the
+It also says it put the "oldest pipes" first; Old Market's 1972 cast iron is older than Station Road's and comes last. The lesson of this chapter is the
 analyst's: give the agent tools for everything that must be exact (dates, sums, rates), not only for counting, and have
 a person read the plan before it is used. Delegation made the counts right; it did nothing for the arithmetic it kept.
 :::
@@ -158,11 +171,13 @@ a person read the plan before it is used. Delegation made the counts right; it d
 :::question
 You remove the permission, so the planner may read `/complaints_2025.csv`. What is the most likely change?
 :::
-- [ ] Nothing
-- [x] It reads all 149 rows into its context and counts them itself, at more cost and with likely mistakes
-- [ ] The analyst counts faster
+- [x] Maybe nothing you can see: its prompt also says to ask the analyst; but that is now a request, not a rule
+- [ ] It must read all 149 rows
+- [ ] The analyst stops working
 :::explain
-Agents take the shortest path they see. Permissions and tools shape which path that is.
+We tried it on 26 November: without the permission, the planner still asked the analyst, because the system prompt
+says "You may not read /complaints_2025.csv". A prompt is a request the model follows when it does; a permission is
+enforced by the code every time. Keep both.
 :::
 :::
 
@@ -186,7 +201,8 @@ Why does `virtual_mode=True` matter with `FilesystemBackend`?
 - [ ] It keeps files in memory
 - [ ] It makes reading faster
 :::explain
-An agent that writes files must not be able to reach `/etc` or your home folder.
+We tried it: without `virtual_mode`, the backend read `/etc/hostname`. An agent that writes files must not be able
+to reach `/etc` or your home folder.
 :::
 :::
 
@@ -214,7 +230,7 @@ You can now:
 
 Next, chapter 23: a research team, built from the parts of this course.
 
-:::photo{src="/lesson-images/langgraph/lg-22-notes.webp" alt="Handwritten notes about Deep Agents: Deep agent = files + helpers; subagent: fresh small context; permissions shape the path; exact numbers need tools; check the arithmetic!" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-22-notes.webp" alt="Handwritten notes titled Deep Agents, files, helpers and permissions for long tasks: create_deep_agent gives an agent file tools, subagents it can hand work to, and permissions on what it may touch, and returns an ordinary LangGraph graph; read pipes and crews, task to the data-analyst, the analyst counts with Python, write /plan.md, a person checks it; complaint counts from Python were all right; pipe ages and crew days were wrong, twice; without virtual_mode it could read /etc; a prompt is a request, a permission is a rule" ai="true"}
 One page of notes for this chapter.
 :::
 :::
