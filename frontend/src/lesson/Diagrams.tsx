@@ -3594,20 +3594,30 @@ function LgAgentLoop() {
 }
 
 function LgReflection() {
+  // Still (owner, 26 November): chapter 14's real run of "When will my water come back?", three drafts.
+  const rows: [string, string, BoxTone][] = [
+    ["draft 1", "\"visit between 8:00 to 11:00 tomorrow\"", "plain"],
+    ["check", "new_claim: tomorrow (tool said Wednesday)", "highlight"],
+    ["draft 2", "\"...between 8:00 to 11:00 tomorrow\"", "plain"],
+    ["check", "new_claim again: round 2 of 2", "highlight"],
+    ["draft 3", "\"...between 8:00 to 11:00 tomorrow\"", "plain"],
+    ["check", "rounds over MAX_ROUNDS: hand_over", "accent"],
+    ["sent", "\"I have passed your question to a person\"", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="Draft, check, and three exits"
-      intro="Press Play to follow 'Can my children drink the tap water now?'."
-      label="Reflection"
-      steps={[
-        { label: "agent", says: "Looks up the tickets and drafts an answer that says 'tomorrow morning' and gives advice." },
-        { label: "check", says: "The model labels each sentence; Python keeps the new_claim ones: two problems." },
-        { label: "Round 1", says: "Command(goto='agent') with the checker's feedback; rounds becomes 1." },
-        { label: "Rewrite", says: "The advice is gone, but 'tomorrow' is still there. Checked again: round 2." },
-        { label: "Round 3", says: "Still 'tomorrow'. Rounds is now over MAX_ROUNDS." },
-        { label: "hand_over", says: "A fixed message: a person will reply. No wrong day reaches the citizen." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 384" label="A real run: draft 1 said the crew visits tomorrow, the checker labelled it a new claim because the tool said Wednesday; draft 2 and draft 3 said tomorrow again; after two rounds the graph handed the citizen to a person instead of sending a wrong day">
+      {rows.map(([who, what, tone], i) => {
+        const y = 4 + i * 52;
+        return (
+          <g key={i}>
+            <text className="dg-label" x={8} y={y + 25}>{who}</text>
+            <Box x={76} y={y} w={356} h={40} label={what} tone={tone} />
+            {i < rows.length - 1 && <Arrow x1={254} y1={y + 40} x2={254} y2={y + 52} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={376}>The ceiling ended it; a clearer instruction fixed the cause.</text>
+    </Svg>
   );
 }
 
