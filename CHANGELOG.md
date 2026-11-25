@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 13 rewritten (easy, a little detailed, checked); the RAG lab rewrite is complete
+
+- Web services, HTTP, endpoints, GET and POST, query strings, JSON and the 422 code are explained where they first
+  appear; tasks list their steps and the usual slips.
+- A new still picture, `rag-service`: one POST /ask through the service, with the times measured on 2 CPUs.
+- Checked by running the real service in the lab image: both searches return exactly the lesson's results and scores,
+  the 422 matches, and the entry-fee question came back NOT_FOUND with the model gateway unreachable (proof that the
+  gate makes no model call). Corrected: the first request took 6.2 s in one run and 8.5 s in another (now both), repeats
+  0.5 to 0.9 s; `find` only filters hybrid search's at most 40 candidates (now said, with the fix); the course table's
+  "full recall after rescoring" is 99.8% on synthetic vectors, and each measured number names its data. A new notes
+  page ("a real service usually keeps its vectors in a database").
+
 ## 25 November: RAG chapter 12 rewritten (easy, a little detailed, checked)
 
 - Golden sets, hit rate, reciprocals and MRR are explained where they first appear, with a real worked example (dense:
