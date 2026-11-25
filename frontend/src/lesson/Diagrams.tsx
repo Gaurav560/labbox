@@ -2521,19 +2521,24 @@ function L4jStreaming() {
 }
 
 function L4jMemoryWindow() {
+  // Still (owner, 26 November): a real MessageWindowChatMemory(10) after a system message and 6 questions and answers.
+  const msgs: [string, boolean][] = [
+    ["SYS", true], ["q1", false], ["a1", false], ["q2", false], ["a2", true], ["q3", true], ["a3", true],
+    ["q4", true], ["a4", true], ["q5", true], ["a5", true], ["q6", true], ["a6", true],
+  ];
   return (
-    <SketchSteps
-      title="a sliding window of messages"
-      intro="Press Play to follow one conversation."
-      label="each question and answer is added to the memory; every call sends the whole memory; when the window is full the oldest messages are evicted, but the system message stays"
-      steps={[
-        { label: "1. First question", says: "The memory holds the system message and Meera's question; both go to the model." },
-        { label: "2. First answer", says: "Setu's answer is added: the next call sends all three." },
-        { label: "3. More questions", says: "Every call sends the whole memory again, so every remembered token is paid for again." },
-        { label: "4. The window is full", says: "With maxMessages(10), the next message pushes out the oldest one." },
-        { label: "5. Always kept", says: "The system message is never evicted: Setu never forgets who it is." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 200" label="Thirteen messages were added to a window of ten: the system message stays, q1, a1 and q2 are evicted, and the window starts with a2, an answer whose question is gone">
+      <text className="dg-label" x={8} y={18}>added: 1 system message + 6 questions and answers = 13</text>
+      {msgs.map(([m, kept], i) => (
+        <g key={m} opacity={kept ? 1 : 0.4}>
+          <Box x={8 + i * 33} y={34} w={30} h={40} label={m === "SYS" ? "S" : m} tone={m === "SYS" ? "accent" : kept ? "copy" : "plain"} code />
+        </g>
+      ))}
+      <text className="dg-note" x={8} y={102}>kept: 10 (the system message counts as one of them)</text>
+      <text className="dg-note" x={8} y={124}>evicted: q1, a1, q2 (faded)</text>
+      <text className="dg-note" x={8} y={152}>The kept history starts with a2: an answer whose question</text>
+      <text className="dg-note" x={8} y={172}>is gone. S = the system message, never evicted.</text>
+    </Svg>
   );
 }
 
