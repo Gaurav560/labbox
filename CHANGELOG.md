@@ -1,5 +1,22 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 21 rewritten: the real wire traffic, a quiz answer corrected, every slip tried
+
+- The "Guess first" quiz said a stray `System.out.println` in the server breaks the connection. We tried it: LangChain4j
+  1.24's client skipped the line and the run worked. The quiz now says so, and that the MCP specification ("MUST NOT
+  write anything to its stdout that is not a valid MCP message") and LangChain4j's server guide still forbid it.
+- New step "What travels between them": the real JSON-RPC lines of one run, captured with `tee` on both streams,
+  and a new still picture of them. It explains the failed `server/discover` request (the client tries protocol
+  2026-07-28 first, then falls back to `initialize` with 2025-11-25), ids and the tool list.
+- stdin, stdout, stdio and JSON-RPC are explained at first use.
+- The classpath timeout reproduced word for word; running the server command by hand shows `ClassNotFoundException`
+  (inside `exec:java`, `java.class.path` is Maven's `plexus-classworlds` jar). A missing `join()` and a typo in the
+  class name give the same timeout; both are now the tasks' usual slips.
+- Compiling without `-parameters` was tried: the client sees `arg0` and the tool gets `null`. Spring Boot's parent
+  does turn it on (checked in the class file).
+- The deep dive's list of Java server projects now matches LangChain4j's server guide (Tachyon added).
+- A new sketchnote.
+
 ## 26 November: LangChain4j chapter 20 rewritten: a still fourteen-against-two picture, both slips tried
 
 - Re-ran both versions in a lab machine: all fourteen tools gave the wrong answer again ("There are no notices
