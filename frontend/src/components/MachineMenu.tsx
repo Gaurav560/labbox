@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
 /*
- * The machine's rarely used actions in one small menu (the owner's UX review): stopping the machine,
- * and resetting the lab, which throws away the learner's files. A red Reset button next to Stop in the
+ * The machine's actions in one small menu (the owner's UX review): starting it when it is stopped (owner,
+ * 25 November: no separate Start button beside the menu), stopping it, and resetting the lab, which throws away
+ * the learner's files. A red Reset button next to Stop in the
  * header was one slip away from losing work; here it sits behind a click, and still asks to confirm.
  */
-export default function MachineMenu({ status, onStop, onReset }: { status: string; onStop: () => void; onReset: () => void }) {
+export default function MachineMenu({ status, onStart, onStop, onReset }: { status: string; onStart: () => void; onStop: () => void; onReset: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -24,6 +25,10 @@ export default function MachineMenu({ status, onStop, onReset }: { status: strin
       </button>
       {open && (
         <div className="ts-pop mm-pop" role="menu" aria-label="Machine">
+          <button role="menuitem" className="mm-item" onClick={act(onStart)} disabled={status !== "stopped" && status !== "error"}>
+            <strong>Start machine</strong>
+            <span>Turn it on again, with your files as you left them.</span>
+          </button>
           <button role="menuitem" className="mm-item" onClick={act(onStop)} disabled={status !== "running"}>
             <strong>Stop machine</strong>
             <span>Pause it; your files stay. It starts again when you come back.</span>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: Start machine lives in the Machine menu
+
+- No separate "Start machine" button beside the Machine menu (owner): the menu now has Start, Stop and Reset, each
+  enabled only when it makes sense; the status dot still shows Running or Stopped. The banner that says why a
+  machine stopped keeps its own Start button. Check results say "coming up in scene N".
+
 ## 25 November: lesson steps are called scenes
 
 - The owner's choice: "Scene 7 of 14" above each lesson, in the dot labels, the Read-mode list ("Scenes in this

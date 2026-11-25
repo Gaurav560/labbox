@@ -76,10 +76,7 @@ export default function StatusBar(p: Props) {
           </span>
         )}
       </span>
-      {(p.status === "stopped" || p.status === "error") && (
-        <button className="btn btn-small" onClick={p.onStart}>Start machine</button>
-      )}
-      <MachineMenu status={p.status} onStop={p.onStop} onReset={p.onReset} />
+      <MachineMenu status={p.status} onStart={p.onStart} onStop={p.onStop} onReset={p.onReset} />
         </>
       )}
       {p.canFocus && (

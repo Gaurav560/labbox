@@ -173,10 +173,13 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await expect(page.locator(".predict-option.is-wrong")).toContainText("An error");
 
   // Double prompt bug: after Stop and Start the terminal shows exactly one prompt.
-  await page.getByRole("button", { name: /^Machine/ }).click(); // Stop and Reset live in the Machine menu
+  await page.getByRole("button", { name: /^Machine/ }).click(); // Start, Stop and Reset live in the Machine menu
+  await expect(page.getByRole("menuitem", { name: /Start machine/ })).toBeDisabled(); // it is running
   await page.getByRole("menuitem", { name: /Stop machine/ }).click();
   await expect(page.locator(".status-label")).toHaveText("Stopped", { timeout: 30_000 });
-  await page.getByRole("button", { name: "Start machine" }).click();
+  await expect(page.locator(".topbar").getByRole("button", { name: "Start machine" })).toHaveCount(0); // no extra button
+  await page.getByRole("button", { name: /^Machine/ }).click();
+  await page.getByRole("menuitem", { name: /Start machine/ }).click();
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 30_000 });
   await expect.poll(() => termText(page)).toMatch(/learner@python-basics/);
   await page.waitForTimeout(1000);
