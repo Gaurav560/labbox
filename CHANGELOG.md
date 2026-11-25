@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): a public-domain print for AI
+
+- Owner: since the 1951 pagoda print may still be in copyright, "use an entirely cool, soothing image for AI". AI now
+  shows Hiroshige's Fukagawa Susaki and Jumantsubo (One Hundred Famous Views of Edo, 1857; public domain, Rijksmuseum):
+  an eagle gliding over a calm snowy bay under a deep blue sky. Every category picture is now public domain.
+
 ## 25 November (Ukiyo): "No tutorial hell."
 
 - Owner chose "tutorial hell" over "video hell". The hero line is "No fluff. No tutorial hell. Only action."

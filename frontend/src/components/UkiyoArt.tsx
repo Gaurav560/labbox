@@ -181,11 +181,11 @@ function CloudPrint() {
 }
 
 /**
- * Two categories use pictures the owner chose (25 November): AI the vermilion pagoda among snowy cedars (owner: "for
- * ai use kathmandu image"), Languages the brushed red sun over an ink wave. Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
+ * Category pictures, all public domain (owner, 25 November). AI: Hiroshige's eagle over the snowy bay at Fukagawa
+ * (it replaced a 1951 pagoda print that may still be in copyright). Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
  */
 const TRACK_IMAGES: Record<string, string> = {
-  ai: "/ukiyo/tracks/ai-pagoda.webp",
+  ai: "/ukiyo/tracks/ai-eagle.webp", // Hiroshige, Fukagawa Susaki and Jumantsubo, 1857 (public domain)
   // Calm prints from Hiroshige's One Hundred Famous Views of Edo (1856 to 1858) and The Monkey Bridge (about 1842),
   // public domain (owner, 25 November: "cool images that soothe the eyes for the rest").
   languages: "/ukiyo/tracks/languages-tama-blossoms.webp",

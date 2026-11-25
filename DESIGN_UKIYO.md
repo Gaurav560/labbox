@@ -61,8 +61,8 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 ## Artwork
 
-- Category pictures (`TRACK_IMAGES` in `components/UkiyoArt.tsx`, files in `public/ukiyo/tracks/`): AI the owner's
-  pagoda (a 1951 shin-hanga print, licence to confirm before launch); the rest calm Hiroshige prints, public domain
+- Category pictures (`TRACK_IMAGES` in `components/UkiyoArt.tsx`, files in `public/ukiyo/tracks/`), all calm
+  Hiroshige prints, public domain: AI, an eagle gliding over the snowy bay at Fukagawa (1857, Rijksmuseum);
   (owner, 25 November: "cool images that soothe the eyes"): Languages, cherry blossoms on the Tama River
   embankment; Frameworks, the bamboo yards at Kyobashi under a full moon; System design, the drum bridge under
   wisteria at Kameido Tenjin; Databases, a boat on the Sumida with Azuma Bridge and Fuji (One Hundred Famous Views of
@@ -118,7 +118,7 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
   framework, databases, an editor and terminal, an AI code assistant) packs itself piece by piece, a line in the log
   for each, then a green tick and Start (to that course, through login);
   (vermilion brush underline, no highlighter), the four numbers between fine rules (no logo strip), the lab
-  AI section (the pagoda picture and one line), a folding screen of six tall panels, one per category (the panel
+  a folding screen of six tall panels, one per category (the panel
   under the pointer opens wider and lists its labs; stacked rows on phones; picked by the owner from eight layouts),
   then "See all labs" (the full directory stays on `/labs`, `components/UkiyoDirectory.tsx`), a closing paper
   panel with Hiroshige's Evening Snow on Mount Hira (Eight Views of Omi, about 1834, public domain), a wide strip, and the FAQs with a thin plus and minus.
