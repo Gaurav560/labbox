@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): Spin up moves out of the box
+
+- Owner: the Spin up button "could be placed somewhere else, it is ruining the entire show". It now sits in the left
+  column under the words, as the section's call to action (after a run, "Spin it up again" takes its place), so the
+  box shows only the dock, the container and the log. On phones it wraps to fit.
+
 ## 25 November (Ukiyo): a proper container; the items go in, then it starts
 
 - Owner: "this Docker container could be way more cool looking ... show the items which are going in the container,

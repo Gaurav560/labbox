@@ -239,7 +239,13 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
         <h2 id="machine-title">One click, and we spin up a container for you <em>with everything the lab needs.</em></h2>
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
-        {!waiting && <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
+        {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
+        {waiting ? (
+          <button type="button" className="ua-go" onClick={spin} style={{ "--go": go.bg, "--go-ink": go.ink } as CSSProperties}>
+            <span className="ua-go-play" aria-hidden="true">▶</span>
+            <span>Spin up the {lab.label} machine</span>
+          </button>
+        ) : <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
       <div className={`ua-box ${running ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
         <div className="ua-lid">
@@ -265,13 +271,6 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <div ref={svgWrap}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
         </div>
         <div className="ua-logwrap">
-          {waiting && (
-            <button type="button" className="ua-go" onClick={spin}
-              style={{ "--go": go.bg, "--go-ink": go.ink } as CSSProperties}>
-              <span className="ua-go-play" aria-hidden="true">▶</span>
-              <span>Spin up the {lab.label} machine</span>
-            </button>
-          )}
           <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${n + 2} * 1.85em + 24px)` }}>
             {waiting && <li className="ua-log-wait">learner:~$ <span className="ua-caret" aria-hidden="true" /></li>}
             {lab.pieces.slice(0, loadedNow).map((p, i) => (
