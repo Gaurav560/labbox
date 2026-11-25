@@ -148,7 +148,7 @@ embedding.
 | Piece | In this course |
 |---|---|
 | the model | BAAI/bge-small-en-v1.5, run by the `fastembed` library on your processor |
-| one text in | anything from one word to about 400 words (longer text is cut off at the end) |
+| one text in | anything from one word to 512 tokens, about 380 words (longer text is cut off at the end; chapter 4 explains tokens) |
 | one vector out | 384 numbers of type `float32`: 1,536 bytes per text |
 :::
 

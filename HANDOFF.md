@@ -33,7 +33,13 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
-- **Just finished:** RAG and vector databases (`rag-vector-databases`, owner 24 November night, built without waiting
+- **Just finished (25 November):** the RAG lab rewritten chapter by chapter to `memory: lesson-rewrite-rules` (easy, a
+  little detailed, every number recomputed in the lab image, model-specific facts labelled, still pictures with real
+  numbers, new notes pages). Errors found and fixed are listed per chapter in CHANGELOG. Checks: lab valid, test-lab
+  green, 232 fast backend tests, 31 browser tests (one flaky, passed on rerun). The owner's rule now: stop after each
+  lab and wait for small tasks. Next lab: the owner chooses (estimate: about 50 hours for all, or 12 to 15 for a
+  correctness-only pass).
+- **Before that:** RAG and vector databases (`rag-vector-databases`, owner 24 November night, built without waiting
   for an OK as asked): 13 chapters in 3 parts, 26 tasks, Fieldbook. Syllabus and design below. Generator drafts in the
   session scratchpad (`rag/gen.py`, `blocks.py`, `scripts.py`); the committed folders are the record. Before it: Rust
   from zero, complete (28 chapters). Photos still to add: Spärck Jones (RAG ch 9), Peyton Jones and Stroustrup (Rust);
