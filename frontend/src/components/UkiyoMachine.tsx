@@ -175,7 +175,7 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
             </g>
             {/* the whale stays the hero: printed on the glass, in front of the crates (owner, 25 November) */}
             <image className="ua-c-whale" href="/logos/docker.svg" x="146" y="104" width="214" height="186" />
-            <g className="ua-c-plate"><rect x="66" y="259" width="122" height="17" rx="3" /><text x="75" y="271">{plate}</text></g>
+            <g className="ua-c-plate"><rect x="66" y="247" width="122" height="17" rx="3" /><text x="75" y="259">{plate}</text></g>
           </g>
           {/* the end: open doors and what is inside, or closed and locked */}
           {open ? (

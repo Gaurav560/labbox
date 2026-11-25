@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November: Ukiyo home, the container's name plate no longer cut
+
+- The plate ("LOADING 3/5", "RUNNING") sat on the container's bottom edge, which hid the lower half of its letters. It
+  now sits 10 units higher, fully on the wall (checked at 390 and 1280 px wide).
+
 ## 25 November: RAG chapter 13 rewritten (easy, a little detailed, checked); the RAG lab rewrite is complete
 
 - Web services, HTTP, endpoints, GET and POST, query strings, JSON and the 422 code are explained where they first
