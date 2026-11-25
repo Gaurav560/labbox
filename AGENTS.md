@@ -53,7 +53,7 @@ Backend venv: `backend/.venv`. Frontend: `frontend/`. Playwright uses the system
   quick-start mode); run it only when a change touches the database, migrations or the no-Redis fallbacks;
   `.venv/bin/pytest -m "not docker"` for the fast set; `cd frontend && npm run test:e2e` (29 tests,
   needs backend, Vite and Docker running); `scripts/labbox validate --strict` (all labs must pass).
-- Last known state: green (26 November, after the Spring AI lab rewrite: lab valid, test-lab green; after LangChain: lab valid, test-lab green; after the RAG rewrite: 232 fast backend tests, 31 browser tests; the last full Postgres run was 24 November) (284 backend tests on Postgres and
+- Last known state: green (26 November, after the LangChain4j lab rewrite: lab valid, test-lab green; after the Spring AI lab rewrite: lab valid, test-lab green; after LangChain: lab valid, test-lab green; after the RAG rewrite: 232 fast backend tests, 31 browser tests; the last full Postgres run was 24 November) (284 backend tests on Postgres and
   Redis, about 30 minutes with every lab's test-lab, 27 browser tests on 4 workers, 23 labs valid). Metrics: `curl -s localhost:8000/metrics`.
 
 ## How a lab is made
