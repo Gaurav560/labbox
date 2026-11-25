@@ -1,5 +1,21 @@
 # Changelog
 
+## 25 November: RAG chapter 1 rewritten (easy, a little detailed, checked)
+
+- Part of rewriting the whole RAG course to the owner's rules (memory: lesson-rewrite-rules). Titles, story, tasks and
+  ids unchanged; 2,823 words became about 4,100.
+- Every term is explained where it first appears: language model, cut-off date, prompt, hallucination, fine-tuning,
+  the AI gateway and the `lab-chat` name (gpt-4o-mini in this course), `temperature=0`, messages and roles, `words()`
+  read step by step (lower case, the hyphen-keeping pattern, short and common words, a set), set intersection.
+- The RAG flow is a still picture now (it was a step animation): the real question, the three sections keyword search
+  really found (FM-3.2, FM-3.1, FM-7.1), the prompt, and the real answer naming FM-3.2.
+- Checked against the real code and manual, and corrected: the reworded big-cat question finds FM-4.7 and FM-5.3 through
+  "ahead" and FM-8.2 through "about" (the chapter said "ahead, right and about"; "right" matches nothing). The trace now
+  shows FM-7.1 "Snares and traps" scoring 2 on "often" and "traps", the noise of word matching. Salton built SMART at
+  Harvard and then Cornell. "Rarely says I don't know" became "often does not say". The tiger photo's lead says why it
+  belongs (FM-4.2, a dangerous procedure), the catalogue photo's lead ties it to the big-cat failure; the made-up
+  sanctuary is said to be made up. A new notes page in six plain sentences, checked letter by letter.
+
 ## 25 November: RAG chapter 2, 384 is the model's size, not every embedding's
 
 - Owner: "is 384 model specific or model agnostic?" Model specific, but the recap ("a fixed list of 384 numbers") and the
