@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangGraph chapter 16 rewritten: two tickets pictured, every subgraph mistake tried
+
+- Re-ran the solution: the same output, line for line. A new still picture shows T-4490 through the billing graph
+  (shared keys) and T-4492 through the translating repairs function.
+- Tried: `build_billing` without brackets (`TypeError: build_billing() takes 0 positional arguments but 1 was given`,
+  the first task's slip); the repair graph added directly (`KeyError: 'job'`, the second task's slip); the quiz's
+  renamed key (the desk's `verdict` came back `None`, with no error).
+- Corrected: "four times normal" became 3.9 times (2,410 against 611), over the rule's limit of three.
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 15 rewritten: four real paths pictured, the rewrite counter's cost measured
 
 - Re-ran the four questions with the real model: the same four paths (tanker and roof searched once and answered,
