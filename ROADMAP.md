@@ -216,6 +216,16 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - [ ] Rebuild all images once the Ubuntu mirror works again (`scripts/build_lab_images.sh`), so every
       lab image gets the `lab requests` helper from the new base image.
 
+### 1b. Feature to build: at most three labs at a time (owner, 25 November)
+
+So learners are not overwhelmed by the number of labs and study nothing:
+- A learner has at most **3 labs unlocked** at a time.
+- **Finishing a lab frees its slot** at once.
+- **Every Monday at 00:00 IST** a learner may also drop an unfinished lab to free a slot (and unlock another).
+- A lab that is not unlocked opens in **Read mode only**: lessons readable; no Action mode, no machine, no checks.
+- To plan (files, routes, migration, tests) and get the owner's OK before building; decide what counts as
+  "finished" (every task passed) and what existing learners with more than 3 started labs get.
+
 ### 2. Next: the AI track (24 labs), waiting for your OK on the plan
 
 This is the product's headline. **Its first course is done: Spring AI** (23 November, OpenAI through the
