@@ -4,7 +4,7 @@
 
 - On screens 1,000 px and wider, Read mode shows every step of the chapter by name in a column on the left (the current
   step highlighted, tasks and quick checks labelled, any step one click away). A sidebar button (a panel icon in a
-  rounded square, as in the Telusko admin) closes it entirely and brings it back; the choice is remembered. The rest of Read mode is unchanged. Browser test extended.
+  rounded square, as in the Telusko admin) opens it and closes it entirely; it starts closed (owner) and the choice is remembered. The rest of Read mode is unchanged. Browser test extended.
 
 ## 25 November: Read mode and Action mode in every lab
 
