@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November: LangChain chapter 20 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (changing a chunk in place spoils the comparison).
+- Checked through the lab gateway: every line of the output again, both query rewrites included (the confident
+  "costs of joining the cooperative" and the right "cost to store onions"). Added the honest limit of eight questions:
+  one question moves a hit rate by 12.5 points, and 88% is 7 of 8. A new notes page.
+
 ## 25 November: LangChain chapter 19 rewritten (easy, a little detailed, checked)
 
 - RAG is explained where it first appears; both tasks list their steps and the usual slips.
