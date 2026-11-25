@@ -26,14 +26,19 @@ Document(page_content="Cold storage\n\nThe co-op's cold store ...", metadata={"s
 a date, who may see it. Metadata travels with the text through splitting, embedding and search, so an answer can say
 **where** it came from ("[storage.txt]").
 
-A **loader** is anything that turns files (PDFs, web pages, databases) into Documents. Many ready-made loaders used to
-live in `langchain-community`, which is now being retired in favour of separate integration packages; for plain text
-files, a few lines of Python are the clearest loader of all.
+A **loader** is anything that turns files (PDFs, web pages, databases) into Documents. Many ready-made loaders live in `langchain-community` (the lab has 0.4.2) or in separate integration packages; for
+plain text files, a few lines of Python are the clearest loader of all.
 :::
 
 :::step{type=task task=load_rules title="Your turn: load the rule book" file="17-documents/loader.py" line="8-12"}
-Finish `load_rules(folder)`: for every `.txt` file in `sorted(folder.glob("*.txt"))`, make a `Document` with the file's
-text and `{"source": path.name}`. Return the list.
+Finish `load_rules(folder)`:
+
+1. Go through `sorted(folder.glob("*.txt"))`: every `.txt` file, in name order.
+2. For each `path`, make `Document(page_content=path.read_text(), metadata={"source": path.name})`.
+3. Return the list.
+
+The usual slip: `metadata={"source": str(path)}`, the whole path. Use `path.name`, the file name alone, so answers
+cite "storage.txt", not a folder on your machine.
 
 Press **Check**.
 :::
@@ -46,7 +51,8 @@ might be found, but the sentence was still buried in it.
 
 Research on **passage retrieval** in the 1990s found that searching smaller passages often works better than whole
 documents. In **2020** Facebook's **Dense Passage Retrieval** (Vladimir Karpukhin and colleagues) split Wikipedia into
-about 21 million passages of 100 words each, embedded every passage, and found answers far better than keyword search.
+about 21 million passages of 100 words each, embedded every passage, and found a passage containing the answer far more often than a strong keyword search
+(BM25): 9 to 19 percentage points more often among the top 20 results, depending on the dataset.
 Retrieval-augmented generation (chapter 19) was built on top of it. Splitting documents into **chunks** has been the
 first step of retrieval ever since.
 
@@ -80,8 +86,12 @@ chunks = splitter.split_documents(docs)     # each keeps its document's metadata
 :::
 
 :::step{type=task task=split_rules title="Your turn: split the rules" file="17-documents/loader.py" line="15-19"}
-Finish `split(docs, size, overlap)`: make a `RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=overlap,
-add_start_index=True)` and return `splitter.split_documents(docs)`.
+Finish `split(docs, size, overlap)`:
+
+1. `splitter = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=overlap, add_start_index=True)`.
+2. Return `splitter.split_documents(docs)`.
+
+The usual slip: `splitter.split_text(...)`, which returns plain strings and loses the `source` metadata.
 
 ```bash run
 cd /workspace/17-documents && python main.py
@@ -91,6 +101,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Five documents, twelve pieces, and a rule cut in half"}
+A real run (the splitter has no randomness: we got exactly this again on 25 November):
+
 ```text
 $ python main.py
 5 documents: loans.txt (488 chars), market.txt (436 chars), membership.txt (407 chars), spraying.txt (490 chars), storage.txt (565 chars)
@@ -120,7 +132,7 @@ what they do to a real answer, and chapter 20 measures and fixes them.
 :::question
 You raise `chunk_size` to 2,000 characters. What happens to the rule book?
 :::
-- [x] Each file becomes one chunk: no rule is cut, but every search returns a whole file
+- [x] Each file becomes one chunk (we tried it: 5 chunks): no rule is cut, but every search returns a whole file
 - [ ] The chunks overlap more
 - [ ] Embedding fails
 :::explain
@@ -176,7 +188,7 @@ You can now:
 
 Next, chapter 18: embedding the chunks and searching them by meaning.
 
-:::photo{src="/lesson-images/langchain/lc-17-notes.webp" alt="Handwritten notes about documents and chunking: Document = text + metadata; Load, then split into chunks; 300 characters, 30 overlap; A heading alone, a rule cut; Read your chunks" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-17-notes.webp" alt="Handwritten notes about documents and chunks: A Document is text plus metadata, like its source file. Retrieval sends only the pieces a question needs. The recursive splitter cuts at paragraphs, then lines, then words. Overlap repeats a little text across each border. In our rule book, a heading became a chunk of its own. A key rule was cut in half at a line break." ai="true"}
 One page of notes for this chapter.
 :::
 :::
