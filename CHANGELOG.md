@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 14 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (returning the `Prompt` object; a `@V` name that does not match its blank).
+- Checked in a lab machine: the template run again (English and Marathi, new wording for both stations; the distances
+  changed between runs, which the lesson now points out). Tried on the real `PromptTemplate`: a missing value fails with
+  "Value for the variable 'question' is missing", a typed blank stays literal, and a missing `@V` gives the error now
+  quoted in full. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 13 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (`new Assistant()`; importing the message class instead of the annotation).

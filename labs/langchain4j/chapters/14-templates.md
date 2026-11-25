@@ -29,7 +29,8 @@ static final PromptTemplate DELAY = PromptTemplate.from(
 Three rules keep templates safe:
 
 1. **Every variable needs a value.** A blank with no value in the map is an error, not an empty string, so a typo in
-   a key fails loudly instead of sending "the {{trian}} to Karjat".
+   a key fails loudly instead of sending "the {{trian}} to Karjat". (We tried it: `IllegalArgumentException: Value
+   for the variable 'question' is missing`.)
 2. **Values are inserted as text.** Whatever a passenger typed goes in as words in the prompt. It cannot change the
    template, but the model still reads it, so it can still try to give the model instructions (prompt injection,
    chapter 25).
@@ -63,6 +64,9 @@ facts of each case).
 Finish `Announcements.delayPrompt(train, destination, minutes)`: fill `DELAY` with
 `apply(Map.of("train", train, "destination", destination, "minutes", minutes))` and return the prompt's `text()`.
 
+The usual slip: returning the `Prompt` itself as text (`toString()`): you get the object's description, not the
+finished sentence.
+
 Press **Check**.
 :::
 
@@ -81,13 +85,18 @@ Why does Setu need the station at all? Because the same question means different
 I get to the town centre?" has one answer at Lonavala and another at Ratnagiri. Putting the station in the prompt is
 **context**, the same idea as grounding in chapter 11, on a small scale.
 
-If you forget a `@V`, LangChain4j stops at once with a clear error naming the parameter ("The parameter 'station' in
-the method 'ask' ... must be annotated with ... V"): with two or more parameters, each one must say which blank it fills.
+If you forget a `@V`, LangChain4j stops at once with a clear error naming the parameter. We tried it: "The parameter
+'station' in the method 'ask' of the class com.setu.StationDesk must be annotated with either
+dev.langchain4j.service.UserMessage, dev.langchain4j.service.V, ...". With two or more parameters, each one must say
+which blank it fills.
 :::
 
 :::step{type=task task=template_service title="Your turn: a template on the station desk" file="14-templates/src/main/java/com/setu/StationDesk.java" line="8-12"}
 In `StationDesk.java`, annotate `ask` with `@UserMessage("A passenger at {{station}} station asks: {{question}}")` and
 its parameters with `@V("station")` and `@V("question")` (imports from `dev.langchain4j.service`).
+
+The usual slip: a name that does not match, such as `@V("stationName")` for the `{{station}}` blank. The template
+then has a blank nobody fills, and the call fails with the "is missing" error above.
 
 ```bash run
 cd /workspace/14-templates && mvn -q compile exec:java
@@ -115,10 +124,13 @@ At Lonavala: You can take a local taxi or an auto-rickshaw from Lonavala station
 At Ratnagiri: You can take a local taxi or auto-rickshaw from Ratnagiri station to the town centre, which is about 2-3 kilometers away. Alternatively, there may be local buses available. Please check the latest schedules at the station.
 ```
 
+(We ran it again on 26 November: the same prompt, English and Marathi again, and new wording for both stations.)
+
 The announcement prompt is exactly the template with the three values in place, and the model followed every part
 of it: English, Marathi, one apology. The station desk answered the same question differently for Lonavala and
 Ratnagiri, because the station travelled in the prompt. (Are the distances right? The model knows Indian towns in
-general, not Sahyadri Rail's stations; "about 2-3 kilometers" is plausible, not checked. Facts from the railway's own
+general, not Sahyadri Rail's stations; "about 2-3 kilometers" is plausible, not checked. Our re-run said "around
+10-15 minutes" for both towns instead: when the model is guessing, the details change from run to run. Facts from the railway's own
 documents come in chapter 23.)
 :::
 
@@ -130,7 +142,8 @@ A passenger types `{{station}}` into the question box. What reaches the model?
 - [x] The literal text {{station}}: values are inserted once, they are not templates themselves
 - [ ] An error
 :::explain
-Filling happens once, on the template. What the passenger typed is just a value. (It is still text the model reads,
+Filling happens once, on the template. What the passenger typed is just a value. (We tried it: "Is {{station}}
+near?" came out as "At Pune: Is {{station}} near?".) (It is still text the model reads,
 which is why chapter 25 guards the input.)
 :::
 :::
@@ -182,7 +195,7 @@ You can now:
 
 Next, chapter 15: answers your code can use directly. Records, enums and JSON schemas instead of free text.
 
-:::photo{src="/lesson-images/langchain4j/l4j-14-notes.webp" alt="Handwritten notes about prompt templates: fixed words plus named blanks in double braces; apply(Map.of(...)).text(); @UserMessage with a station blank; @V names each blank; one tested prompt, many uses" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-14-notes.webp" alt="Sketchnote, Prompt templates (fixed words, named blanks): Write a good prompt once, with blanks like station in double braces. Fill the blanks for each case; never copy and edit the prompt. The flow: Template, Values, apply(), Finished prompt. What we found: a missing value fails: is missing; @V station fills the station blank; a typed blank stays plain text; same question, two stations, two answers." ai="true"}
 One page of notes for this chapter.
 :::
 :::
