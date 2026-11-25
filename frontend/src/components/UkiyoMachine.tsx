@@ -71,7 +71,7 @@ const GO_COLORS: { name: string; bg: string; ink: string }[] = [
 
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   const trying = useSearchParams()[0].has("colors");
-  const [color, setColor] = useState(0);
+  const [color, setColor] = useState(2); // wisteria violet (the owner turned down Hiroshige blue and sea teal)
   const go = GO_COLORS[color];
   const [lab, setLab] = useState(LABS[1]);
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
