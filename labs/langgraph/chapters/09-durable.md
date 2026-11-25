@@ -56,7 +56,12 @@ graph.add_node("notify_citizen", notify_citizen,
 | `max_attempts` | 3 | three attempts in all (the first one and two retries) |
 | `initial_interval` | 0.5 | wait half a second before the first retry |
 | `backoff_factor` | 2 (default) | then wait twice as long before each later one: 0.5 s, 1 s |
+| `jitter` | `True` (default) | add a random 0 to 1 second to each wait, so many clients do not retry at the same moment |
 | `retry_on` | `SmsTimeout` | retry only this error; a bug in your code fails at once |
+
+We timed it on 26 November: the gaps between the three attempts were 1.08 s and 1.70 s, the planned 0.5 s and 1 s
+plus the random jitter. (In 1.2.24, `max_attempts=3` and `initial_interval=0.5` are also the defaults; writing them
+keeps the policy readable. A `ValueError` from the same node was not retried: one attempt, then the error.)
 
 Only the failing node is retried, not the graph: the crew booked in the step before stays booked.
 :::
@@ -64,6 +69,9 @@ Only the failing node is retried, not the graph: the crew booked in the step bef
 :::step{type=task task=retry_sms title="Your turn: try the SMS again" file="09-durable/job.py" line="35-37"}
 Give `notify_citizen` `retry_policy=RetryPolicy(max_attempts=3, initial_interval=0.5, retry_on=SmsTimeout)` in
 `add_node`, and remove the TODO.
+
+The usual slip: the policy on the wrong node, for example on `order_parts`, the line above. We tried it with two
+timeouts: "SMS attempt 1", then `crashed: SmsTimeout`. A retry policy protects only the node it is given to.
 
 Press **Check**.
 :::
@@ -82,16 +90,20 @@ input is applied to it), which is exactly how the second crew gets booked. Passi
 
 How often the checkpoint is written is your choice too: `invoke(..., durability="sync")` saves before each next step
 starts (safest), `"async"` saves while the next step runs (the default, faster), and `"exit"` only when the run ends
-(fastest, but a crash loses the run).
+(fastest, but a crash loses the run). (We read the default in the 1.2.24 source: `"async"`.)
 
 :::diagram{name="lg-durable"}
-A crash keeps everything up to the last finished step; `invoke(None, config)` runs only what is left.
+The real jobs J-102 and J-103 (26 November): the same crash, two ways to run again.
 :::
 :::
 
 :::step{type=task task=resume_job title="Your turn: continue, do not start over" file="09-durable/job.py" line="45-50"}
-Finish `run_job(app, job)`: if `app.get_state(config).next` is not empty, return `app.invoke(None, config)`; otherwise
-start the job with `app.invoke({"job": job}, config)`.
+Finish `run_job(app, job)`:
+
+1. `if app.get_state(config).next:` (the thread stopped part-way), `return app.invoke(None, config)`;
+2. otherwise start the job: `return app.invoke({"job": job}, config)`.
+
+The usual slip is the one in the try step below: always passing the input. It books everything twice.
 
 ```bash run
 cd /workspace/09-durable && SMS_FAILS=9 python main.py J-102
@@ -133,6 +145,9 @@ done:
   J-102: SMS sent to the citizen
 ```
 
+(We ran all four commands again on 26 November, on a new `jobs.db`: the same output, word for word, and the record
+file had one crew and one order for each of J-101 and J-102.)
+
 J-101 met two timeouts and never noticed: the third attempt worked. J-102 met a gateway that stayed down: three attempts,
 then the run crashed, with the crew and the parts saved and `notify_citizen` as the next step. The second run sent only
 the SMS. The record file has one crew and one parts order for each job.
@@ -169,6 +184,7 @@ supplier's answer). The job is resumed. What happens?
 - [x] `order_parts` runs again, and may order twice: a step is saved only when it finishes
 - [ ] The job skips to the SMS
 :::explain
+We tried it with a node that ordered and then lost the connection: after the resume, two orders had been placed.
 Checkpoints are saved between steps. Inside a step, protect money with an idempotency key (the supplier ignores a
 second order with the same job id), or split the step.
 :::
@@ -219,7 +235,7 @@ You can now:
 
 Next, chapter 10: interrupts, so a run can wait for a person's decision.
 
-:::photo{src="/lesson-images/langgraph/lg-09-notes.webp" alt="Handwritten notes about durable execution: finished steps are saved; retry only what may pass; 3 attempts: 0.5 s, then 1 s; invoke(None, config) = continue; never book the crew twice" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-09-notes.webp" alt="Handwritten notes titled Durable execution, crash then continue: a checkpointer saves every finished step, a retry policy tries a flaky node again, and after a crash invoke None with the config continues from the step that failed; book_crew saved, order_parts saved, SMS 3 tries and crash, invoke None, only the SMS runs; waits of 1.08 and 1.70 seconds because jitter adds up to 1 second; a new input instead of None gave 2 crews and Rs 36,000; a policy on the wrong node crashed on attempt 1; a step that fails after ordering orders twice" ai="true"}
 One page of notes for this chapter.
 :::
 :::
