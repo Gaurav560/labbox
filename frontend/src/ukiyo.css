@@ -479,6 +479,23 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .profile-exit:hover { border-color: var(--rule); background: none; color: var(--vermilion); }
 
 /* ---------- 15. start a lab: the machine packs itself (home page, owner 25 November) ---------- */
+/* waiting for a click: one clear button over the empty slots */
+.ua-box { isolation: isolate; }
+.ua-go { position: absolute; z-index: 3; left: 50%; top: 52%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 8px;
+  padding: 22px 30px 18px; border: 0; cursor: pointer; background: var(--vermilion); color: #fff; border-radius: 4px; font: 600 18px var(--font-text);
+  box-shadow: inset 0 0 0 4px var(--vermilion), inset 0 0 0 5.5px #fffdf8cc, 0 20px 40px -16px #000a; }
+.ua-go::after { content: ""; position: absolute; inset: -6px; border: 2px solid var(--vermilion); border-radius: 8px; animation: ua-ring 2s ease-out infinite; pointer-events: none; }
+.ua-go:hover { background: color-mix(in srgb, var(--vermilion) 88%, #000); }
+.ua-go:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; }
+.ua-go small { font: 500 12px var(--font-code); letter-spacing: .04em; opacity: .85; }
+.ua-go > span:not(.ua-go-play), .ua-go small { white-space: nowrap; }
+.ua-go-play { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #fffdf8; color: var(--vermilion); font-size: 18px; padding-left: 3px; }
+@keyframes ua-ring { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.18); } }
+.ua-box.is-waiting .ua-slots, .ua-box.is-waiting .ua-log { opacity: .55; }
+.ua-log-wait { color: var(--muted); }
+.ua-caret { display: inline-block; width: 8px; height: 15px; vertical-align: -2px; background: var(--muted); animation: ua-blink 1s steps(1) infinite; }
+@keyframes ua-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ua-go::after { animation: none; opacity: 0; } }
 .uh-machine .ua-text h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; margin: 16px 0 14px; }
 .uh-machine .ua-text h2 em { font-style: italic; font-weight: 400; color: var(--vermilion); }
 .uh-machine .ua-text h2 + p { color: var(--muted); font-size: 17px; line-height: 1.6; margin: 0 0 22px; max-width: 30em; }

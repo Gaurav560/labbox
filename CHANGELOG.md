@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the container spins up when you click
+
+- Owner: "better if the user clicks and sees the animation". The box now waits with its slots empty, a dim
+  `learner:~$` prompt and one red button, "▶ Spin up the Spring Boot machine" (with a soft pulsing ring). Clicking
+  it plays the packing; switching labs resets the box and waits for a new click; "↺ Spin it up again" replays.
+
 ## 25 November (Ukiyo): "start a lab" on the home page
 
 - Owner: "it is ready, now you can integrate this on the main home page". The packing box is a component

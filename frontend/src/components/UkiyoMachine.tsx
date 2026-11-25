@@ -55,61 +55,51 @@ function Mark({ p }: { p: Piece }) {
   );
 }
 
-/** True once the element has been on screen (so the animation plays when the visitor reaches it). */
-function useOnScreen() {
-  const [el, setEl] = useState<HTMLElement | null>(null);
-  const [seen, setSeen] = useState(false);
-  useEffect(() => {
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.35 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [el]);
-  return [setEl, seen] as const;
-}
-
 /**
  * The lab's stack packs itself into one container, one piece at a time: an empty slot waits and pulses, the logo
  * flies in and settles, its line appears in the log, the progress bar and the clock move on. When the last piece is
- * in, the box seals and Start lights up.
+ * in, the box seals and Start lights up. It waits for a click on Spin up.
  */
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   const [lab, setLab] = useState(LABS[1]);
+  // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
+  // run 0 is the waiting box with the Spin up button; each click starts a new run.
   const [run, setRun] = useState(0);
   const [step, setStep] = useState(0);
-  const [ref, seen] = useOnScreen();
   const n = lab.pieces.length;
   const still = typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
-    if (!seen) return;
-    if (still) { setStep(n); return; }
     setStep(0);
+    if (run === 0) return;
+    if (still) { setStep(n); return; }
     let k = 0;
     const t = setInterval(() => { k += 1; setStep(k); if (k >= n) clearInterval(t); }, 720);
     return () => clearInterval(t);
-  }, [seen, run, lab, n, still]);
+  }, [run, lab, n, still]);
 
+  const waiting = run === 0;
+  const spin = () => setRun((r) => r + 1);
   const done = step >= n;
   const secs = Math.round((Math.min(step, n) / n) * 58);
   return (
-    <div className="ua" ref={ref}>
+    <div className="ua">
       <div className="ua-text">
-        <Picker lab={lab} onPick={(l) => { setLab(l); setRun((r) => r + 1); }} />
+        <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
         <h2 id="machine-title">One click, and we spin up a container for you <em>with everything the lab needs.</em></h2>
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
-        <button type="button" className="uh-replay" onClick={() => setRun((r) => r + 1)}>↺ Pack it again</button>
+        {!waiting && <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
-      <div className={`ua-box ${done ? "is-sealed" : ""}`} key={`${lab.id}-${run}`}>
+      <div className={`ua-box ${done ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
         <div className="ua-lid">
           <img src="/logos/docker.svg" alt="" />
           <span>your machine · {lab.label}</span>
-          <span className="ua-clock" aria-hidden="true">{done ? "ready" : `${secs} s`}</span>
+          <span className="ua-clock" aria-hidden="true">{waiting ? "" : done ? "ready" : `${secs} s`}</span>
           <span className="ua-bar" aria-hidden="true"><i style={{ width: `${(Math.min(step, n) / n) * 100}%` }} /></span>
         </div>
         <ul className="ua-slots" style={{ "--cols": n > 6 ? 4 : 3 } as CSSProperties}>
           {lab.pieces.map((p, i) => (
-            <li key={p.name + i} className={i < step ? "is-in" : i === step ? "is-next" : ""}
+            <li key={p.name + i} className={i < step ? "is-in" : i === step && !waiting ? "is-next" : ""}
               style={{ "--fx": `${(i % 2 ? 1 : -1) * (60 + (i * 37) % 80)}px`, "--fy": `${-110 - (i * 23) % 60}px` } as CSSProperties}>
               <span className="ua-tile">
                 <span className="ua-logo"><Mark p={p} /></span>
@@ -118,7 +108,15 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
             </li>
           ))}
         </ul>
+        {waiting && (
+          <button type="button" className="ua-go" onClick={spin}>
+            <span className="ua-go-play" aria-hidden="true">▶</span>
+            <span>Spin up the {lab.label} machine</span>
+            <small>{n} pieces · about a minute on a real lab</small>
+          </button>
+        )}
         <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${n} * 1.85em + 24px)` }}>
+          {waiting && <li className="ua-log-wait">learner:~$ <span className="ua-caret" aria-hidden="true" /></li>}
           {lab.pieces.slice(0, step).map((p, i) => (
             <li key={p.name + i}><b>✓</b> <strong>{p.name}</strong> <span>{p.step}</span></li>
           ))}
