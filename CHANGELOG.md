@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): four new directions for "start a lab" at /ukiyo/machine
+
+- Owner did not like the first five ("tbh I didn't like any of it", then "show me all"). The review page now has
+  four different directions: A real logos flying into one Docker container that seals and lights up Start (six
+  labs' real stacks); B a real screen recording, made on this laptop, of pressing Start on the FastAPI course until
+  VS Code opens with the task (12 s, 185 KB, `public/ukiyo/demo/`); C one big sentence with the real logos; D a
+  before and after slider between a laptop full of install errors and the real lab.
+
 ## 25 November (Ukiyo): five ways to show "start a lab" at /ukiyo/machine
 
 - Owner: show on the home page that starting a lab spins up a container with Linux, the language, the framework and
