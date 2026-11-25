@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the container run a little slower
+
+- Owner: "the animation is happening too fast, slow it just a little". Everything is about a quarter slower and moves
+  together: 1.15 s per piece instead of 0.9 s (one `PIECE_MS`), the flight, the crate's slide, the doors, the locks,
+  sealing and starting. A LangChain run takes about 10 s from first view to running, instead of about 8.
+
 ## 25 November (Ukiyo): the first run plays by itself
 
 - Owner: "whenever someone visits the page, new or old user, the first animation should auto start". On every visit

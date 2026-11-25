@@ -222,6 +222,9 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
  * doors and stays stacked inside, with its line in the log; then the doors close and lock, docker start runs, the
  * container lights up and hums, and Start appears.
  */
+/** How long each piece takes to come in (the CSS flight and slide follow the same pace). */
+const PIECE_MS = 1150;
+
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   const [lab, setLab] = useState(LABS[0]); // LangChain: AI first
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
@@ -237,11 +240,11 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     if (run === 0) return;
     if (still) { setStep(n + 3); return; }
     const timers: number[] = [];
-    let at = 150;
-    for (let k = 1; k <= n; k++) { timers.push(window.setTimeout(() => setStep(k), at)); at += 900; }
-    timers.push(window.setTimeout(() => setStep(n + 1), at + 100));
-    timers.push(window.setTimeout(() => setStep(n + 2), at + 1000));
-    timers.push(window.setTimeout(() => setStep(n + 3), at + 2300));
+    let at = 200;
+    for (let k = 1; k <= n; k++) { timers.push(window.setTimeout(() => setStep(k), at)); at += PIECE_MS; }
+    timers.push(window.setTimeout(() => setStep(n + 1), at + 150));
+    timers.push(window.setTimeout(() => setStep(n + 2), at + 1250));
+    timers.push(window.setTimeout(() => setStep(n + 3), at + 2850));
     return () => timers.forEach(clearTimeout);
   }, [run, lab, n, still]);
 
@@ -250,7 +253,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   useEffect(() => {
     setSecs(0);
     if (run === 0 || still) { if (still && run) setSecs(58); return; }
-    const total = 150 + n * 900 + 2300, t0 = performance.now();
+    const total = 200 + n * PIECE_MS + 2850, t0 = performance.now();
     const t = window.setInterval(() => {
       const s = Math.min(58, Math.round(((performance.now() - t0) / total) * 58));
       setSecs(s);
