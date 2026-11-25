@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 22 rewritten: a still chart of every card's real score, both slips tried
+
+- Re-ran the solution in a lab machine: the same four answers and every score the same to three decimals. The
+  animation is now a still bar chart of all six cards' scores for the bicycle and France questions, with the 0.7
+  line.
+- Checked `RelevanceScore.fromCosineSimilarity` in the 1.24 jar: cosine 0 gives 0.5, cosine 0.424 gives 0.712, as
+  the lesson says. `metadataKey(...)` and `add(...)` returning an id exist.
+- Both tasks list their steps and a tried slip: no metadata (search still works, every title is `null`), and
+  `minScore(0.5)` (two cards for every question, two for France).
+- "30+ implementations" (not checked) became "many"; the deep dive no longer says LangChain4j's pgvector store uses
+  HNSW (pgvector offers HNSW and IVFFlat). The 1,536 numbers and the price are labelled as this model's.
+- A new sketchnote.
+
 ## 26 November: LangChain4j chapter 21 rewritten: the real wire traffic, a quiz answer corrected, every slip tried
 
 - The "Guess first" quiz said a stray `System.out.println` in the server breaks the connection. We tried it: LangChain4j

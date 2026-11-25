@@ -2604,19 +2604,37 @@ function L4jMcp() {
 }
 
 function L4jVectorSearch() {
+  // Still (owner, 26 November): chapter 22's real scores for every card, text-embedding-3-small, no threshold.
+  const groups: [string, [string, number][]][] = [
+    ["Can I take my bicycle?", [["Luggage", 0.712], ["Lost property", 0.645], ["Pets", 0.612], ["Accessibility", 0.608], ["Refunds", 0.578], ["Monsoon", 0.573]]],
+    ["What is the capital of France?", [["Accessibility", 0.543], ["Lost property", 0.538], ["Luggage", 0.526], ["Monsoon", 0.523], ["Refunds", 0.523], ["Pets", 0.515]]],
+  ];
+  const x0 = 110, scale = 280, cut = x0 + 0.7 * scale;
   return (
-    <SketchSteps
-      title="one search in the embedding store"
-      intro="Press Play to follow the bicycle question."
-      label="the question is embedded, compared with every stored card, scored as cosine plus one over two, and only scores of at least 0.7 are kept"
-      steps={[
-        { label: "1. Embed the question", says: "Can I take my bicycle? becomes 1,536 numbers." },
-        { label: "2. Compare", says: "The store measures how close it is to every card's vector." },
-        { label: "3. Score", says: "LangChain4j's score is (cosine + 1) / 2: Luggage 0.712, Lost property 0.645, Pets 0.612." },
-        { label: "4. Threshold", says: "minScore(0.7) keeps only Luggage: the right card." },
-        { label: "5. No answer here", says: "What is the capital of France? Best score 0.543: nothing is returned." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 410" label="Scores of all six cards: for the bicycle question Luggage 0.712 is the only one at or above 0.7; for the France question the best is Accessibility at 0.543, so nothing passes the 0.7 threshold">
+      {groups.map(([q, rows], g) => {
+        const top = 4 + g * 178;
+        return (
+          <g key={q}>
+            <text className="dg-label" x={8} y={top + 14}>{q}</text>
+            {rows.map(([card, score], i) => {
+              const y = top + 24 + i * 24;
+              return (
+                <g key={card}>
+                  <text className="dg-note" x={8} y={y + 14}>{card}</text>
+                  <Box x={x0} y={y} w={score * scale} h={18} label="" tone={score >= 0.7 ? "copy" : "plain"} />
+                  <text className="dg-note" x={384} y={y + 14}>{score.toFixed(3)}</text>
+                </g>
+              );
+            })}
+            <line className="dg-arrow" x1={cut} y1={top + 20} x2={cut} y2={top + 172} strokeDasharray="3 4" />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={cut - 8} y={372}>0.7</text>
+      <text className="dg-note" x={8} y={390}>Score = (cosine + 1) / 2, so 0.5 means unrelated.</text>
+      <text className="dg-note" x={8} y={406}>Only Luggage reaches 0.7; France gets nothing.</text>
+    </Svg>
   );
 }
 
