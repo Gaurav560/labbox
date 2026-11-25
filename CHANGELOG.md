@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): nine labs in the container section, AI first
+
+- Owner: "keep three AI labs, one Spring Boot, one Python, one DB, one Linux, FastAPI, Redis". The tabs are now
+  LangChain, Spring AI, RAG, Spring Boot, Python, Postgres, Linux, FastAPI and Redis (System design is out), and the
+  section opens on LangChain. The new stacks come from each lab's setup: Spring AI (Java 21, Spring Boot 4.2,
+  Spring AI 2.1, the model gateway), RAG (Python, two local embedding models, FAISS and Qdrant, the gateway), Python,
+  and Linux (a whole server with Bash and the classic tools), each with its real first challenge.
+
 ## 25 November (Ukiyo): "One click, and a container spins up for you"
 
 - Owner: "remove we". The heading is now "One click, and a container spins up for you with everything the lab needs."

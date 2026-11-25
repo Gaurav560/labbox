@@ -14,24 +14,33 @@ const LINUX = P("linux", "Ubuntu 24.04", "your own Linux machine, in a container
 const EDITOR: Piece = { logo: null, icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
 const AI: Piece = { logo: null, icon: "ai", name: "AI code assistant", step: "explains, hints and reviews, never the answer" };
 
-// Each lab's real machine (labs/<id>/lab.yaml and Dockerfile).
+const GATEWAY: Piece = { logo: null, icon: "ai", name: "Model gateway", step: "real models, no API key, every token counted" };
+
+// Each lab's real machine (labs/<id>/lab.yaml and Dockerfile). Owner, 25 November: three AI labs, then Spring Boot,
+// Python, a database, Linux, FastAPI and Redis.
 const LABS: Lab[] = [
-  { id: "fastapi-first-api", label: "FastAPI", challenge: "GET /menu: list every item",
-    pieces: [LINUX, P("python", "Python 3.12", "the language, with pip"), P("fastapi", "FastAPI", "the framework, answering in the Preview tab"), EDITOR, AI] },
+  { id: "langchain", label: "LangChain", challenge: "A rule-based help desk",
+    pieces: [LINUX, P("python", "Python 3.12", "the language"), P("langchain", "LangChain 1.5", "and every package the course uses"), GATEWAY, EDITOR, AI] },
+  { id: "spring-ai", label: "Spring AI", challenge: "Connect /ask to the model",
+    pieces: [LINUX, P("java", "Java 21", "the JDK the course uses"), P("spring", "Spring Boot 4.2", "with Maven and every dependency, offline"),
+      P("spring-ai", "Spring AI 2.1", "chat, prompts, tools and RAG for Java"), GATEWAY, EDITOR, AI] },
+  { id: "rag-vector-databases", label: "RAG", challenge: "Find sections by their words",
+    pieces: [LINUX, P("python", "Python 3.12", "the language"), { logo: null, icon: "ai", name: "Embedding models", step: "two local models, already downloaded" },
+      P("sql", "FAISS and Qdrant", "vector search, running locally"), GATEWAY, EDITOR, AI] },
   { id: "spring-boot-first-api", label: "Spring Boot", challenge: "Name the application",
     pieces: [LINUX, P("java", "Java 21", "the JDK the course uses"), P("spring", "Spring Boot 3.4", "with Maven and every dependency, offline"), EDITOR, AI] },
-  { id: "redis-in-practice", label: "Redis", challenge: "Measure one round trip to Redis",
-    pieces: [LINUX, P("python", "Python 3.12", "with the redis client and redis-cli"), P("fastapi", "FastAPI", "a basket API to make fast"),
-      P("redis", "Redis 7.4", "the primary server"), P("redis", "Redis replica", "a second server, copying the first"), EDITOR, AI] },
+  { id: "python-basics", label: "Python", challenge: "hello.py: Pocket says hello",
+    pieces: [LINUX, P("python", "Python 3.12", "the language, ready to run"), EDITOR, AI] },
   { id: "postgres-indexing-incident", label: "Postgres", challenge: "Find the slow query",
     pieces: [LINUX, P("python", "Python 3.12", "with psql"), P("postgresql", "PostgreSQL 16", "a real database server"),
       P("sql", "1 million orders", "loaded and waiting to be slow"), EDITOR, AI] },
-  { id: "rate-limiter", label: "System design", challenge: "10 requests a second per key, across both servers",
-    pieces: [LINUX, P("python", "Python 3.12", "the language"), P("fastapi", "2 API servers", "the same app, twice"),
-      P("nginx", "nginx", "a load balancer in front of them"), P("redis", "Redis 7.4", "the shared counter"), EDITOR, AI] },
-  { id: "langchain", label: "LangChain", challenge: "A rule-based help desk",
-    pieces: [LINUX, P("python", "Python 3.12", "the language"), P("langchain", "LangChain 1.5", "and every package the course uses"),
-      { logo: null, icon: "ai", name: "Model gateway", step: "real models, no API key, every token counted" }, EDITOR, AI] },
+  { id: "linux-on-call", label: "Linux", challenge: "Find the hidden welcome note",
+    pieces: [P("linux", "Ubuntu 24.04", "a whole Linux server to explore"), { logo: null, icon: "term", name: "Bash and the classic tools", step: "grep, sed, lsof, htop, tar and the rest" }, EDITOR, AI] },
+  { id: "fastapi-first-api", label: "FastAPI", challenge: "GET /menu: list every item",
+    pieces: [LINUX, P("python", "Python 3.12", "the language, with pip"), P("fastapi", "FastAPI", "the framework, answering in the Preview tab"), EDITOR, AI] },
+  { id: "redis-in-practice", label: "Redis", challenge: "Measure one round trip to Redis",
+    pieces: [LINUX, P("python", "Python 3.12", "with the redis client and redis-cli"), P("fastapi", "FastAPI", "a basket API to make fast"),
+      P("redis", "Redis 7.4", "the primary server"), P("redis", "Redis replica", "a second server, copying the first"), EDITOR, AI] },
 ];
 
 function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
@@ -214,7 +223,7 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
  * container lights up and hums, and Start appears.
  */
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
-  const [lab, setLab] = useState(LABS[1]);
+  const [lab, setLab] = useState(LABS[0]); // LangChain: AI first
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
   // run 0 is the waiting box with the Spin up button; each click starts a new run.
   const [run, setRun] = useState(0);

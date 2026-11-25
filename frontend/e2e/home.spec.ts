@@ -28,16 +28,17 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(machine.getByRole("button", { name: "▶ Tap to spin it up" })).toBeVisible(); // the container can be tapped too
   await expect(machine.locator(".ua-c-plate")).toContainText("EMPTY");
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0);
-  await machine.getByRole("button", { name: /Spin up the Spring Boot machine/ }).click();
+  await machine.getByRole("button", { name: /Spin up the LangChain machine/ }).click();
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
-  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(5); // Spring Boot: Linux, Java, Spring Boot, editor, AI
+  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(6); // LangChain: Linux, Python, LangChain, gateway, editor, AI
   await expect(machine.locator(".ua-dock li")).toHaveCount(0); // all of them went in
-  await expect(machine.locator(".ua-c-box")).toHaveCount(5); // each one stays inside as a crate, seen through the wall
+  await expect(machine.locator(".ua-c-box")).toHaveCount(6); // each one stays inside as a crate, seen through the wall
   await expect(machine.locator(".ua-log li.is-cmd")).toContainText("docker start");
   await expect(machine.locator(".ua-c-plate")).toContainText("RUNNING");
-  await expect(machine.locator(".ua-log li").nth(1)).toContainText("Java 21");
+  await expect(machine.getByRole("tab")).toHaveText(["LangChain", "Spring AI", "RAG", "Spring Boot", "Python", "Postgres", "Linux", "FastAPI", "Redis"]);
+  await expect(machine.locator(".ua-log li").nth(2)).toContainText("LangChain 1.5");
   await expect(machine.locator(".ua-stamp")).toHaveAttribute("aria-label", "Ready");
-  await expect(machine.locator(".ua-ready").getByRole("link", { name: "Start →" })).toHaveAttribute("href", "/login?next=%2Fcourses%2Fspring-boot-first-api");
+  await expect(machine.locator(".ua-ready").getByRole("link", { name: "Start →" })).toHaveAttribute("href", "/login?next=%2Fcourses%2Flangchain");
   await machine.getByRole("tab", { name: "Redis" }).click();
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0); // a new lab waits for its own click
   await machine.getByRole("button", { name: /Spin up the Redis machine/ }).click();
