@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: LangChain chapter 26 rewritten (easy, a little detailed, checked)
+
+- Evals, golden set, pass rate and judge are explained where they first appear, with a table of unit tests against
+  evals; both tasks list their steps and the usual slips (lower-casing only the answer; a count instead of a share;
+  `invoke` without `with_structured_output`).
+- Checked through the lab gateway, three times: 67% every run, the same two failures (80 crates, the joining fee) and
+  the same verdicts from the judge. One run is 16 chat calls and 6 embedding calls (from the backend's log), about
+  $0.001; the cost of 200 questions is now worked out (about $0.04). Found and taught: the lab allows 20 model calls a
+  minute, so a second run straight after the first stops with a 429; wait a minute. The LLM-as-a-judge study is now
+  stated with its numbers (over 80% agreement, as often as two humans) and its three biases; SUnit is "published in
+  1994". A new notes page.
+
 ## 25 November: LangChain chapter 25 rewritten (easy, a little detailed, checked)
 
 - Human in the loop, the checkpointer, `interrupt_on` and `__interrupt__` are explained where they first appear; both
