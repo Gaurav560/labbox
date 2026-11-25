@@ -2527,20 +2527,31 @@ function LcMcp() {
 }
 
 function LcMiddleware() {
+  // Still (owner, 25 November): the hooks of one agent run, with what chapter 22's middleware does at each.
+  const rows: [string, string, BoxTone][] = [
+    ["before_agent", "once per run: guards (chapter 24)", "plain"],
+    ["before_model", "SummarizationMiddleware, ModelCallLimitMiddleware", "accent"],
+    ["the model call (wrap_model_call)", "here: asks for mandi_price(onion) and (garlic)", "plain"],
+    ["each tool call (wrap_tool_call)", "ToolErrorMiddleware: 1850, and garlic's error as a message", "copy"],
+    ["after_agent", "once, when the model answers without tool calls", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="middleware around one agent run"
-      intro="Press Play to follow one run through chapter 22's middleware."
-      label="before the agent starts, guards run; before each model call, the summarizer and the call limit; the model is called; around each tool call, the tool-error handler; then the loop continues until the answer"
-      steps={[
-        { label: "1. before_agent", says: "Guards run once, before anything else (chapter 24's length guard)." },
-        { label: "2. before_model", says: "SummarizationMiddleware shortens a long thread; ModelCallLimitMiddleware counts calls." },
-        { label: "3. The model", says: "Called with the prepared messages; it asks for mandi_price twice." },
-        { label: "4. wrap_tool_call", says: "ToolErrorMiddleware runs each tool: 1850, and garlic's ValueError becomes a message." },
-        { label: "5. Again", says: "before_model, then the model writes the answer from both results." },
-        { label: "6. after_agent", says: "The run ends; hooks here could check what was written." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 456" label="One agent run with middleware: before the agent, before each model call, around the model call, around each tool call, back to the model, and after the agent">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 86;
+        return (
+          <g key={title}>
+            <Box x={28} y={y} w={406} h={62} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 24}>{title}</text>
+            <text className="dg-note" x={42} y={y + 46}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 64} x2={231} y2={y + 84} />}
+          </g>
+        );
+      })}
+      <path d="M28 297 C 4 297, 4 125, 26 125" className="dg-arrow" markerEnd="var(--figure-arrowhead)" />
+      <text className="dg-note" x={28} y={434}>The arrow on the left: after the tools, back to</text>
+      <text className="dg-note" x={28} y={452}>before_model, until the model answers.</text>
+    </Svg>
   );
 }
 

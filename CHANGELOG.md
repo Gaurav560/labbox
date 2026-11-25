@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: LangChain chapter 22 rewritten (easy, a little detailed, checked)
+
+- Middleware and hooks are explained where they first appear; both tasks list their steps and the usual slips
+  (sending every exception's text to the model; passing `on_tool_error()` with brackets).
+- The middleware animation is now a still picture of one run's hooks, with what this chapter's middleware does at each.
+- Checked through the lab gateway: the six-turn conversation kept 2, 4, 8, 8, 8 and 6 messages, and the thread starts
+  with a summary message. Corrected: "grows to 8 and then stays there" became "stays at 8 or below" (older messages
+  are replaced by one summary plus the newest 4). The tool-error trace now names the real question and was reproduced
+  (1850, then garlic's error as a message). "The docs put it plainly" became the lab's checked behaviour (without the
+  middleware, a tool exception stops the run, as chapter 11 showed). A new notes page.
+
 ## 25 November: LangChain chapter 21 rewritten (easy, a little detailed, checked)
 
 - Protocol and JSON-RPC are explained where they first appear; both tasks list their steps and the usual slips
