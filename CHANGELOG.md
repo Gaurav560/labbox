@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: Spring AI chapter 6 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (no session id, tried: "No session ID found in advisor context";
+  the id in quotes; the compaction numbers swapped).
+- The memory animation is now a still picture of the real tenth request, read in the gateway's log: the system
+  message, turns 6 to 9 and question 10, exactly as the quiz says.
+- Checked in a lab machine: Ria, Sam and the delete gave the same results. Checked in the lab's Spring AI: the
+  60-day default expiry, `asyncCompaction`, `lastTurns`, `tokenBudget`, `TokenCountTrigger`, and that
+  `MessageChatMemoryAdvisor` is deprecated. Corrected: the JDBC repository's databases now follow the Spring AI 2.1
+  reference (PostgreSQL, MySQL, MariaDB, H2; SQL Server removed); an unverified docs quote ("for tests and demos")
+  became plain words; cross-references: logging is chapter 18 (not 19), retrieval chapter 14 (not 10). A new
+  sketchnote.
+
 ## 25 November: Spring AI chapter 5 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`.content()` with a `String` return; `.entity(List.class)`).

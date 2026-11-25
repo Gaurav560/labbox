@@ -1717,19 +1717,34 @@ function AiStructured() {
 }
 
 function AiMemory() {
+  // Still (owner, 25 November): the real tenth request of chapter 6's run (trigger 8 turns, window 4), from the gateway's log.
+  const turns = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const sent: [string, string, BoxTone][] = [
+    ["system", "Atlas's rules", "accent"],
+    ["turns 6 to 9", "4 questions + 4 answers: Dwarf Planet ... Gas Giant.", "plain"],
+    ["question 10", "Question 10: name one planet, in two words.", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="a session, turn by turn"
-      intro="Press Play to follow Ria's conversation."
-      label="ria asks a first question; the session advisor stores it and the answer; her second question arrives; the advisor loads her session and sends the earlier turn with the new question; after many turns the session is compacted to its last turns"
-      steps={[
-        { label: "1. First question", says: "My name is Ria and I am 9. It goes to the model with the system prompt." },
-        { label: "2. Stored", says: "The session keeps the question and the answer, under Ria's id." },
-        { label: "3. Second question", says: "The advisor loads Ria's session and sends it before the new question." },
-        { label: "4. Sam asks", says: "Sam's session is empty: nothing of Ria's travels with his question." },
-        { label: "5. Compaction", says: "After more than 8 turns, only the last 4 stay in the view the model sees." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="The session's log holds nine turns; after compaction only turns 6 to 9 are in the view, so the tenth request sends the system prompt, turns 6 to 9 and the new question">
+      <text className="dg-label" x={8} y={18}>The session's log: 9 turns, all kept</text>
+      {turns.map((n, i) => (
+        <g key={n} opacity={n <= 5 ? 0.45 : 1}>
+          <Box x={8 + i * 47} y={30} w={42} h={38} label={String(n)} tone={n <= 5 ? "plain" : "copy"} code />
+        </g>
+      ))}
+      <text className="dg-note" x={8} y={88}>Turns 1 to 5 stay in the log but leave the view.</text>
+      <text className="dg-label" x={8} y={124}>What the 10th request sends</text>
+      {sent.map(([title, detail, tone], i) => {
+        const y = 136 + i * 62;
+        return (
+          <g key={title}>
+            <Box x={8} y={y} w={426} h={52} label="" tone={tone} />
+            <text className="dg-label" x={20} y={y + 21}>{title}</text>
+            <text className="dg-note" x={20} y={y + 41}>{detail.length > 58 ? detail.slice(0, 56) + "..." : detail}</text>
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
