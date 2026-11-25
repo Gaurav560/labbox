@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): the machine box as a shipping container
+
+- Owner: "isn't it cool if the container looks like this instead of the plain one" (a Docker-style shipping container).
+  Drawn in the theme, not copied: a rust-red container shell (#9b4a34) framing the open front where the pieces load,
+  a roof edge in perspective, a ribbed side with two doors, four door bars and handles, dark corner castings, an ink
+  outline and a soft shadow underneath. CSS only (`ukiyo.css` section 15); the animation inside is unchanged.
+
 ## 25 November (Ukiyo): try colours for the Spin up button (?colors)
 
 - Owner: "try another colour, see how many vibrant colours are in this image ... keep on trying one by one". Eight

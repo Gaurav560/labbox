@@ -103,6 +103,11 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         {!waiting && <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
       <div className={`ua-box ${done ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
+        {/* the shipping container around the open front: roof, ribbed side with door bars, corner castings, shadow */}
+        <span className="ua-crate-top" aria-hidden="true" />
+        <span className="ua-crate-side" aria-hidden="true"><i /><i /><i /><i /></span>
+        <span className="ua-crate-corners" aria-hidden="true"><i /><i /><i /><i /></span>
+        <span className="ua-crate-shadow" aria-hidden="true" />
         <div className="ua-lid">
           <img src="/logos/docker.svg" alt="" />
           <span>your machine · {lab.label}</span>

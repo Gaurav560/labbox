@@ -574,3 +574,36 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   color: var(--muted); cursor: pointer; font: 600 12px var(--font-code); }
 .ua-swatches button[aria-checked="true"] { color: var(--text); border-color: var(--text); }
 .ua-swatches i { width: 22px; height: 22px; display: block; box-shadow: inset 0 0 0 1px #0002; }
+
+/* the box as a shipping container (owner, 25 November: "cool if the container looks like this"), drawn in the
+   theme's ink: a rust shell frames the open front; the roof and the ribbed side are skewed panels, so the stack
+   inside keeps working as before. */
+.ua-box { --crate: #9b4a34; --crate-dark: #6f3324; --crate-ink: #1c1a17;
+  margin: 40px 88px 40px 12px; border: 12px solid var(--crate); outline: 2.5px solid var(--crate-ink); }
+:root[data-theme="dark"] .ua-box { --crate: #8a432f; --crate-dark: #5e2b1e; --crate-ink: #0b0a09; }
+.ua-crate-top { position: absolute; z-index: -1; left: -14.5px; right: -14.5px; bottom: calc(100% + 12px); height: 26px;
+  background: linear-gradient(var(--crate), color-mix(in srgb, var(--crate) 80%, #fff 20%)); border: 2.5px solid var(--crate-ink);
+  transform-origin: left bottom; transform: skewX(-70.6deg); }
+.ua-crate-side { position: absolute; z-index: -1; top: -14.5px; bottom: -14.5px; left: calc(100% + 12px); width: 74px; display: flex;
+  justify-content: space-evenly; align-items: stretch; padding: 14px 6px;
+  background: linear-gradient(90deg, #0000 0 49%, var(--crate-ink) 49% 51%, #0000 51%),
+    repeating-linear-gradient(90deg, var(--crate-dark) 0 6px, color-mix(in srgb, var(--crate-dark) 72%, #000) 6px 9px);
+  border: 2.5px solid var(--crate-ink); transform-origin: left top; transform: skewY(-20deg); }
+/* the door bars, each with a handle halfway down */
+.ua-crate-side i { position: relative; width: 4px; background: color-mix(in srgb, var(--crate) 55%, #fff 45%); border: 1px solid var(--crate-ink); border-radius: 2px; }
+.ua-crate-side i::after { content: ""; position: absolute; top: 52%; left: -5px; width: 12px; height: 4px; background: var(--crate-ink); border-radius: 2px; }
+.ua-crate-corners i { position: absolute; z-index: 1; width: 16px; height: 14px; background: color-mix(in srgb, var(--crate-dark) 80%, #000);
+  border: 2px solid var(--crate-ink); }
+.ua-crate-corners i:nth-child(1) { top: -14px; left: -14px; }
+.ua-crate-corners i:nth-child(2) { top: -14px; right: -14px; }
+.ua-crate-corners i:nth-child(3) { bottom: -14px; left: -14px; }
+.ua-crate-corners i:nth-child(4) { bottom: -14px; right: -14px; }
+.ua-crate-shadow { position: absolute; z-index: -2; left: 4%; right: -40px; bottom: -48px; height: 34px; border-radius: 50%;
+  background: radial-gradient(closest-side, #0006, transparent); filter: blur(4px); }
+.ua-box.is-sealed .ua-crate-side i { opacity: 1; }
+@media (max-width: 860px) {
+  .ua-box { margin: 26px 40px 30px 8px; border-width: 8px; }
+  .ua-crate-side { width: 40px; left: calc(100% + 8px); padding: 10px 3px; }
+  .ua-crate-side i:nth-child(n+3) { display: none; }
+  .ua-crate-top { height: 15px; bottom: calc(100% + 8px); transform: skewX(-69.4deg); }
+}
