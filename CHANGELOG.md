@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): a calmer Spin up button
+
+- Owner: remove "5 pieces, 6 pieces" and "this red colour is too hard on the eyes". The button is now a cream pill
+  with ink text and a small vermilion play circle, a faint ink ring pulsing around it; the pieces line is gone.
+
 ## 25 November (Ukiyo): the container spins up when you click
 
 - Owner: "better if the user clicks and sees the animation". The box now waits with its slots empty, a dim

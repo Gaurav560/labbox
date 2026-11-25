@@ -112,7 +112,6 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <button type="button" className="ua-go" onClick={spin}>
             <span className="ua-go-play" aria-hidden="true">▶</span>
             <span>Spin up the {lab.label} machine</span>
-            <small>{n} pieces · about a minute on a real lab</small>
           </button>
         )}
         <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${n} * 1.85em + 24px)` }}>
