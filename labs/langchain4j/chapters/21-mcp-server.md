@@ -13,7 +13,13 @@ server.
 :::
 
 :::step{type=concept title="Your @Tool methods, served over MCP" file="21-mcp-server/src/main/java/com/setu/RailMcpServer.java" line="12-18"}
-The module `langchain4j-community-mcp-server` turns `@Tool` methods into an MCP server. Its stdio form has four steps:
+Two words first. Every program has a **standard input** (stdin), where it reads, and a **standard output** (stdout),
+where `System.out.println` writes. A **stdio** server talks to its client through exactly these two streams: the
+client writes requests into the server's stdin and reads answers from its stdout. The messages are **JSON-RPC**: one
+JSON object per line, a request with an `id`, a `method` and `params`, and an answer with the same `id` and a
+`result` or an `error`.
+
+The module `langchain4j-community-mcp-server` turns `@Tool` methods into such a server. Its stdio form has four steps:
 
 ```java
 McpImplementation info = new McpImplementation();   // who this server is
@@ -27,19 +33,29 @@ Thread.currentThread().join();                                        // keep ru
 The tools are exactly chapter 19's: the `@Tool` descriptions become the MCP tool descriptions, the `@P` descriptions
 the parameter descriptions. One class now serves Setu's own AI Service **and** any outside client.
 
-Two rules from the documentation matter:
+Two rules from LangChain4j's server guide matter:
 
-1. **Nothing else may write to `System.out`.** Standard output **is** the protocol: one stray log line breaks the
-   JSON-RPC stream and the client disconnects. This project's logger is silent (`slf4j-nop`); a real server logs to
-   `System.err`.
+1. **Nothing else may write to `System.out`.** Standard output **is** the protocol. The MCP specification says the
+   server "MUST NOT write anything to its stdout that is not a valid MCP message", and the guide warns that the client
+   will disconnect. Logs go to standard error (`System.err`), which the specification allows. This project's logger is
+   silent (`slf4j-nop`).
 2. **Parameter names come from the compiled code**, so compile with `-parameters` (Spring Boot's parent already
-   does), or clients see `arg0` instead of `destination`.
+   does). We compiled `RailTools` without it on 26 November: the client saw the parameter as `arg0`, sent
+   `{"destination": "Ratnagiri"}` anyway, and the server's `fare` got `null`:
+   `Cannot invoke "String.trim()" because "<parameter1>" is null`.
 :::
 
 :::step{type=task task=mcp_server title="Your turn: the server" file="21-mcp-server/src/main/java/com/setu/RailMcpServer.java" line="12-18"}
-Finish `RailMcpServer.main`: create the `McpImplementation` (name `sahyadri-rail`, version `1.0.0`), an `McpServer` with
-`List.of(new RailTools())`, a `StdioMcpServerTransport` on `System.in` and `System.out`, and keep the process alive
-with `Thread.currentThread().join()`.
+Finish `RailMcpServer.main`, in this order:
+
+1. create the `McpImplementation` and set its name `sahyadri-rail` and version `1.0.0`;
+2. create an `McpServer` with `List.of(new RailTools())` and that info;
+3. create a `StdioMcpServerTransport` on `System.in` and `System.out` with the server;
+4. keep the process alive with `Thread.currentThread().join()`.
+
+The usual slip: leaving out step 4. The transport reads on a background thread, so `main` returns, the process ends,
+and the client never gets an answer. We tried it on 26 November: the client reported the same timeout you will meet
+in a moment ("The server answered neither ... request nor the ... initialization").
 
 Press **Check**.
 :::
@@ -68,6 +84,9 @@ Finish `RailClient.connect(classpath)`: a `StdioMcpTransport` with the command
 `List.of("java", "-cp", classpath, "com.setu.RailMcpServer")`, and a `DefaultMcpClient` with key `"sahyadri-rail"`
 and that transport.
 
+The usual slip: a typo in the class name, such as `com.setu.RailMcpServr`. Java cannot find the class, the server
+process dies at once, and the client again reports a timeout (we tried it on 26 November).
+
 ```bash run
 cd /workspace/21-mcp-server && mvn -q compile exec:java
 ```
@@ -89,8 +108,50 @@ your project's. The server process was started, could not find `com.setu.RailMcp
 waited for an answer that never came. `Setu.classpath()` now takes the classpath from the class loader that really
 loaded your classes.
 
+We reproduced it on 26 November, word for word. Inside `mvn exec:java`, `java.class.path` was
+`/opt/maven/boot/plexus-classworlds-2.8.0.jar`, Maven's own launcher. Running the server's command by hand with that
+classpath showed the real problem in one second:
+
+```text
+$ java -cp /opt/maven/boot/plexus-classworlds-2.8.0.jar com.setu.RailMcpServer
+Error: Could not find or load main class com.setu.RailMcpServer
+Caused by: java.lang.ClassNotFoundException: com.setu.RailMcpServer
+```
+
 The lesson for every stdio server: when a client times out, **run the server's command yourself** first. A server
-that cannot start always looks like a server that does not answer.
+that cannot start always looks like a server that does not answer. In this chapter three different mistakes (a
+wrong classpath, a typo in the class name, a missing `join()`) all gave the same timeout message.
+:::
+
+:::step{type=concept title="What travels between them"}
+To see the real messages, we put `tee` (a command that copies a stream into a file as it passes) on both of the
+server's streams while `Setu.java` ran (26 November). Each line is one JSON-RPC message; shortened here:
+
+```text
+client -> server  {"id":0,"method":"server/discover","params":{... "protocolVersion":"2026-07-28" ...}}
+server -> client  {"id":0,"error":{"code":-32601,"message":"Method not found: server/discover"}}
+client -> server  {"id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25", ...}}
+server -> client  {"id":1,"result":{"protocolVersion":"2025-11-25","serverInfo":{"name":"sahyadri-rail","version":"1.0.0"}, ...}}
+client -> server  {"method":"notifications/initialized"}
+client -> server  {"id":3,"method":"tools/list"}
+server -> client  {"id":3,"result":{"tools":[{"name":"fare", ...},{"name":"nextDate", ...}]}}
+client -> server  {"id":4,"method":"tools/call","params":{"name":"fare","arguments":{"destination":"Ratnagiri"}}}
+server -> client  {"id":4,"result":{"content":[{"type":"text","text":"420"}]}}
+```
+
+:::diagram{name="l4j-mcp-wire"}
+The real messages of one run.
+:::
+
+Three things to notice:
+
+- **The first request fails, on purpose.** LangChain4j 1.24's client first asks with the newest protocol version it
+  knows (2026-07-28). This server does not know that method and says "Method not found" (error code -32601 is
+  JSON-RPC's code for that). The client then falls back to `initialize` with version 2025-11-25, which the server
+  accepts. That is why the timeout message names both versions.
+- **Answers are matched by `id`**, not by order. The notification has no `id` because it needs no answer.
+- **The tool list carries your annotations.** The `@Tool` text became `description`, and the `@P` text became the
+  description of the `destination` parameter. That is all an outside client knows about your tool.
 :::
 
 :::step{type=try title="Your tools, over MCP"}
@@ -104,6 +165,8 @@ fare(Ratnagiri) over MCP = 420
 The fare for one adult ticket from Pune to Lonavala is ₹90. Therefore, two adults will pay ₹180 in total.
 ```
 
+(We ran it again on 26 November: the same output, word for word.)
+
 The client listed both tools with the descriptions from your annotations, called `fare("Ratnagiri")` directly over
 MCP (no model involved: MCP tools are just remote functions), and then Setu, given the server's tools through
 `McpToolProvider`, priced two tickets to Lonavala correctly. The model asked; a separate Java process answered.
@@ -111,14 +174,16 @@ MCP (no model involved: MCP tools are just remote functions), and then Setu, giv
 
 :::step{type=predict title="Guess first"}
 :::question
-You add `log.info("server started")` with a logger that writes to standard output, in `RailMcpServer.main`. What
-happens?
+We added `System.out.println("server started")` at the top of `RailMcpServer.main` and ran `Setu.java` (26
+November). What happened?
 :::
-- [ ] Nothing: logs are separate from the protocol
-- [x] The client receives a line that is not JSON-RPC and the connection breaks
-- [ ] The log appears in the client's console
+- [ ] The connection broke at once
+- [x] It still worked: LangChain4j's client skipped the stray line, but the specification forbids it
+- [ ] "server started" appeared in Setu's console
 :::explain
-For a stdio server, standard output is the wire. Log to standard error, or to a file.
+The client listed both tools and got 420 for Ratnagiri; the line was dropped, not shown. That is luck, not a rule:
+the MCP specification says a server must not write anything else to stdout, and LangChain4j's own guide warns that
+the client will disconnect. Another client, or another version, may stop at that line. Log to standard error.
 :::
 :::
 
@@ -149,8 +214,9 @@ A fare change is made in one place, and every client, Java or not, gets it.
 
 :::step{type=deep-dive title="Go deeper: servers for real"}
 **HTTP servers.** A stdio server serves one client per process. For a shared service, use Streamable HTTP; the
-documentation lists Java options: Quarkus MCP Server, Micronaut MCP, Helidon MCP, and the official MCP Java SDK
-(Spring AI's MCP support is built on it).
+community module does not offer it, and LangChain4j's server guide lists other Java projects that do: Helidon MCP,
+the official MCP Java SDK (Spring AI's MCP support is built on it), Micronaut MCP, Quarkus MCP Server and Tachyon.
+The guide notes they are not maintained by the LangChain4j team.
 
 **Security.** A tool served over HTTP is an API on the network: authenticate clients, rate-limit, and never expose a
 tool that changes data without checks inside it.
@@ -167,12 +233,13 @@ You can now:
 
 - serve `@Tool` methods as a stdio MCP server with `McpServer` and `StdioMcpServerTransport`;
 - connect to your own server with a `java` command, from Java or from any MCP client's configuration;
+- read the JSON-RPC messages a client and a server exchange;
 - keep standard output clean on a stdio server, and debug a server that will not start;
 - explain when to choose stdio and when Streamable HTTP.
 
 Next, chapter 22: knowledge. Embedding models and embedding stores, the database half of retrieval.
 
-:::photo{src="/lesson-images/langchain4j/l4j-21-notes.webp" alt="Handwritten notes about an MCP server: your @Tool methods as a server; McpServer plus a stdio transport; stdout is the wire, so no logs there; a client starts it with a command; on a timeout, run the command yourself" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-21-notes.webp" alt="Handwritten notes titled Your own MCP server: McpServer serves your @Tool methods over standard input and output, one JSON message per line; the client starts the server, then initialize, tools/list, tools/call fare, answer 420; a wrong classpath, a typo or no join all give the same timeout; run the server command yourself to see the real error; without -parameters the client sees arg0; logs go to stderr, never stdout" ai="true"}
 One page of notes for this chapter.
 :::
 :::

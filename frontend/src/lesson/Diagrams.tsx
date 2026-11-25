@@ -2551,6 +2551,32 @@ function L4jMemoryWindow() {
   );
 }
 
+function L4jMcpWire() {
+  // Still (owner, 26 November): chapter 21's real stdio traffic, copied from tee logs of both streams.
+  const rows: [string, string, BoxTone][] = [
+    ["discover (2026-07-28)", "Method not found", "highlight"],
+    ["initialize (2025-11-25)", "sahyadri-rail 1.0.0", "plain"],
+    ["tools/list", "fare, nextDate", "plain"],
+    ["tools/call fare Ratnagiri", "\"420\"", "copy"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 360" label="The real messages between Setu and the rail server: a protocol detection request the server does not know, then initialize, tools/list and a tools/call of fare for Ratnagiri answered with 420">
+      <text className="dg-label" x={8} y={20}>client writes to stdin</text>
+      <text className="dg-label" x={256} y={20}>server writes to stdout</text>
+      {rows.map(([ask, answer, tone], i) => (
+        <g key={i}>
+          <Box x={8} y={34 + i * 74} w={196} h={48} label={ask} tone="accent" />
+          <Arrow x1={204} y1={52 + i * 74} x2={252} y2={52 + i * 74} />
+          <Arrow x1={252} y1={66 + i * 74} x2={204} y2={66 + i * 74} />
+          <Box x={252} y={34 + i * 74} w={180} h={48} label={answer} tone={tone} />
+        </g>
+      ))}
+      <text className="dg-note" x={8} y={334}>One JSON object per line; an answer repeats its request id.</text>
+      <text className="dg-note" x={8} y={352}>The client tries the newest version first, then falls back.</text>
+    </Svg>
+  );
+}
+
 function L4jMcp() {
   // Still (owner, 26 November): chapter 20's real runs, 14 tools against 2, from the gateway's log.
   const left: [string, BoxTone][] = [
@@ -4457,6 +4483,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-streaming": L4jStreaming,
   "l4j-memory-window": L4jMemoryWindow,
   "l4j-mcp": L4jMcp,
+  "l4j-mcp-wire": L4jMcpWire,
   "l4j-vector-search": L4jVectorSearch,
   "l4j-guardrails": L4jGuardrails,
   "l4j-supervisor": L4jSupervisor,
