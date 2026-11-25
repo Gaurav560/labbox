@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 2 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`>= 0`; forgetting the bias update, which makes some mornings
+  impossible to get right).
+- The neuron animation is now a still picture with the trained weights on one real morning.
+- Checked in a lab machine: the solution's output is exactly the lesson's; the XOR experiment was run with the
+  chapter's real `train` and gave the same four lines. Added: the weights after 10 epochs equal those after 1,000
+  ([0.0, -0.1], bias 0.1), which shows why more training cannot help. A new sketchnote (one draft redrawn for a
+  half-true line, one for a wrong bracket).
+
 ## 26 November: LangChain4j chapter 1 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (checking before lower-casing; the constant's name in quotes; `<=` on a tie).

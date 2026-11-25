@@ -27,7 +27,7 @@ late  = total > 0 ? 1 : 0
 ```
 
 :::diagram{name="l4j-neuron"}
-Three inputs flow into the neuron, each multiplied by its weight; the neuron adds them and the bias, and fires if the total is above zero.
+The neuron this chapter trains, on one morning: holiday and track work, no rain.
 :::
 
 The inputs come from the world. The **weights and the bias are what the neuron learns**: they are its knowledge. Those
@@ -107,6 +107,13 @@ that starts at the bias, then compare with zero.
 Finish `Neuron.fire(inputs, weights, bias)`: multiply each input by its weight, add them all and the bias, and return
 `1` if the total is **greater than** zero, otherwise `0` (exactly zero does not fire).
 
+1. `double total = bias;`
+2. For every `i`: `total += inputs[i] * weights[i];`
+3. `return total > 0 ? 1 : 0;`
+
+The usual slip: `total >= 0`. Then a neuron with all weights at 0 fires for everything, and training starts from the
+wrong guess (see the trace below: the first guess must be 0).
+
 Press **Check**.
 :::
 
@@ -142,6 +149,14 @@ error, nudge every weight a little in the direction that would have been less wr
 Finish `Neuron.train(xs, ys, epochs, rate)` with the perceptron rule: start at zero; for each epoch, for each example,
 compute the error and nudge every weight and the bias. Return `new Weights(w, bias)`.
 
+1. `double[] w = new double[xs[0].length]; double bias = 0;`
+2. Two loops: epochs outside, examples inside.
+3. `int error = ys[k] - fire(xs[k], w, bias);`
+4. For every `i`: `w[i] += rate * error * xs[k][i];` then `bias += rate * error;`
+
+The usual slip: forgetting the bias update. The weights alone cannot say "on time unless the inputs add up to
+enough", and some mornings stay wrong however many epochs you run.
+
 ```bash run
 cd /workspace/02-neurons && mvn -q compile exec:java
 ```
@@ -150,6 +165,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="The neuron learned the station master's rule"}
+(We ran the solution again on 26 November: exactly this output.)
+
 ```text
 $ mvn -q compile exec:java
 weights [0.1, 0.2, 0.30000000000000004], bias -0.2
@@ -183,7 +200,9 @@ or there is track work, but not both" (XOR), trained for 1000 epochs:
 [1.0, 1.0] -> predicted 0, actual 0
 ```
 
-After a thousand epochs it still gets two of the four cases wrong, and training longer never fixes it. It can only draw a single straight line
+After a thousand epochs it still gets two of the four cases wrong, and training longer never fixes it. (We ran it on
+26 November with this chapter's real `train`: the same four lines. The weights after 10 epochs were exactly the
+weights after 1,000, [0.0, -0.1] with a bias of 0.1: each pass ends where it began, so more passes cannot help.) It can only draw a single straight line
 between "late" and "on time", and no straight line separates these four points. Two layers of neurons can, which is
 exactly why networks are built in layers, and why the deep in deep learning means "many layers".
 :::
@@ -253,7 +272,7 @@ You can now:
 Next, chapter 3: from numbers to words. How computers learned to handle language, ending with a tiny language model
 that predicts the next word.
 
-:::photo{src="/lesson-images/langchain4j/l4j-02-notes.webp" alt="Handwritten notes about neurons: inputs times weights plus bias; fire if the total is above 0; weights and bias are parameters; training: guess, error, nudge; one neuron cannot learn XOR" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-02-notes.webp" alt="Sketchnote, One neuron (weigh, add, decide, learn): A neuron multiplies each input by a weight, adds them and a bias, and fires if the total is above zero. Training nudges the weights. The flow: Inputs, Times weights, Add the bias, Above zero? Fire. What we found: learned weights: rain 0.1, holiday 0.2, track work 0.3; track work alone, or any two signs: late; XOR stayed 2 of 4 wrong after 1,000 epochs; weights and biases are the parameters." ai="true"}
 One page of notes for this chapter.
 :::
 :::
