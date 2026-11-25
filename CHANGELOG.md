@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 29 rewritten: all seven calls pictured, both answers reproduced
+
+- Re-ran both versions: without `supervisorContext`, "420 rupees" for two adults again, word for word; with it, "840
+  rupees" again. The gateway's log shows exactly seven calls, as the lesson counted; the three planner calls are the
+  biggest (434, 552, 667 tokens in). The animation is now a still picture of the seven calls with their tokens.
+- The quiz's `LAST` claim was tried: the whole answer was `420`.
+- Tried the fare agent without `.tools(...)`: it apologised that it has no fare tool, the text could not be parsed as
+  an `int`, and the run stopped with `OutputParsingException`; this is the task's usual slip now. The supervisor
+  task's slip is the missing context (the try step shows it).
+- The planner's instruction sentence was found in the 1.24 jar (`PlannerAgent`); `SupervisorResponseStrategy`
+  (`LAST`, `SUMMARY`, `SCORED`), `maxAgentsInvocations`, `contextGenerationStrategy`, `supervisorBuilder(Class)`,
+  `@SupervisorAgent` and `a2aBuilder` checked. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 28 rewritten: a still picture of real paths, a quiz answer corrected
 
 - Re-ran the solution: the refund path was the same word for word; this time the Monsoon Mail reply passed review at
