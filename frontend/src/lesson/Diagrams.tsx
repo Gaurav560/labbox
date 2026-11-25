@@ -3813,20 +3813,37 @@ function LgServer() {
 }
 
 function LgDeepAgent() {
+  // Still (owner, 26 November): chapter 22's real run and a check of the plan's numbers.
+  const steps: [string, BoxTone][] = [
+    ["planner: read pipes.csv, crews.md", "plain"], ["planner: task to data-analyst", "accent"],
+    ["analyst: count_complaints x 8", "copy"], ["planner: write /plan.md", "plain"],
+  ];
+  const checks: [string, string, BoxTone][] = [
+    ["Station Road complaints", "49: right", "copy"],
+    ["Gandhi Chowk pipe (1985)", "38: wrong, 41", "highlight"],
+    ["Old Market pipe (1972)", "51: wrong, 54", "highlight"],
+    ["1.2 km at 20 days per km", "20: wrong, 24", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="The planner, its files and its helper"
-      intro="Press Play to follow the monsoon plan."
-      label="Deep agent"
-      steps={[
-        { label: "read_file", says: "The planner reads /pipes.csv and /crews.md: small files, real data/ on disk." },
-        { label: "permission", says: "It may not read /complaints_2025.csv: 149 rows stay out of its context." },
-        { label: "task", says: "It hands the counting to the data-analyst, with a description of what it needs." },
-        { label: "count_complaints", says: "The analyst counts with Python, in its own fresh context, and returns one answer." },
-        { label: "write_file", says: "The planner writes /plan.md, which is data/plan.md on disk." },
-        { label: "check", says: "Counts from Python are exact; the ages and crew days it worked out itself are not." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 380" label="The planner read two files, handed the counting to the analyst, who called count_complaints eight times, and wrote the plan. Checking the plan: the complaint counts from Python are right; the pipe ages and crew days the planner worked out itself are wrong">
+      <text className="dg-label" x={8} y={18}>the run</text>
+      {steps.map(([t, tone], i) => (
+        <g key={t}>
+          <Box x={8} y={28 + i * 46} w={424} h={36} label={t} tone={tone} />
+          {i < steps.length - 1 && <Arrow x1={220} y1={64 + i * 46} x2={220} y2={74 + i * 46} />}
+        </g>
+      ))}
+      <text className="dg-label" x={8} y={232}>checking the plan</text>
+      {checks.map(([what, got, tone], i) => {
+        const y = 242 + i * 34;
+        return (
+          <g key={what}>
+            <text className="dg-note" x={8} y={y + 20}>{what}</text>
+            <Box x={262} y={y} w={170} h={28} label={got} tone={tone} />
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangGraph chapter 22 rewritten: the plan checked again, the quiz corrected, virtual_mode tried
+
+- Re-ran the deep agent: the analyst counted street by street this time (8 calls); every complaint count was right
+  again, and the planner made the same three pipe-age mistakes (38, 51, 12) plus crew-day errors (20 for 1.2 km and for
+  0.8 km). The lesson shows this run and the corrected error list; planner calls carried 1,835 to 3,258 tokens in.
+- Corrected: the quiz said that without the permission the planner would read the 149 rows itself. We tried it: it
+  still asked the analyst, because the prompt says so. The answer now teaches that a prompt is a request and a
+  permission a rule.
+- Tried `FilesystemBackend` both ways: with `virtual_mode=True`, `/etc/hostname` is "not found"; without it, the backend
+  read `/etc/hostname` and could not find `/pipes.csv`. That is the first task's slip and the second quick check's
+  evidence. An untested sentence about giving the tool to the planner was reworded.
+- The animation is now a still picture of the run and four checked numbers; a new sketchnote.
+
 ## 26 November: LangGraph chapter 21 rewritten: a quiz answer corrected, the server's refusal reproduced
 
 - Ran `langgraph dev` and the client in a lab machine: the server answered on one thread; this time the agent listed
