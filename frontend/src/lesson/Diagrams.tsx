@@ -3321,6 +3321,24 @@ function RagFlow() {
   );
 }
 
+function RagEmbed() {
+  return (
+    <SketchSteps
+      title="A text becomes a point on a map of meaning"
+      intro="Press Play to follow two sentences through the embedding model."
+      label="Embeddings"
+      steps={[
+        { label: "two texts", says: "\"A tiger crossed the path.\" and \"A big cat walked across the trail.\" share almost no words." },
+        { label: "the model reads", says: "The embedding model reads each whole sentence, not word by word, and looks at what it is about." },
+        { label: "384 numbers", says: "Each sentence comes out as a vector: a list of 384 numbers, like -0.019, -0.013, 0.011 and 381 more." },
+        { label: "a point on the map", says: "The vector is the sentence's position. Tiger and big cat land in the same neighbourhood." },
+        { label: "far away", says: "\"Change the camera trap batteries.\" lands far from both: a different topic, a different neighbourhood." },
+        { label: "search", says: "A ranger's question becomes a point too, and the nearest points are the most likely answers." },
+      ]}
+    />
+  );
+}
+
 function RagIvf() {
   return (
     <SketchSteps
@@ -3391,6 +3409,7 @@ function RagTwoStage() {
 
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
+  "rag-embed": RagEmbed,
   "rag-ivf": RagIvf,
   "rag-hnsw": RagHnsw,
   "rag-binary": RagBinary,
