@@ -76,6 +76,9 @@ standard, eight short; see the table in `ROADMAP.md`).
   lab's skill map as a metro map, every subtopic a link to its lesson step); that opens `/labs/<lab>` (lesson,
   editor, terminal). Level, streak and XP sit in the profile panel (top right) with Exit. The separate Skill maps
   section is gone (`/skills...` and `/tracks/...` redirect). Lab colours: `frontend/src/brand.ts` (`LAB_TONES`).
+- Two designs side by side (owner, 24 and 25 November): the current one on `master` (:5173) and "Ukiyo" on branch
+  `design/ukiyo` in the worktree `../labs_poc_ukiyo` (:5174, `DESIGN_UKIYO.md`). Until the owner picks one, a
+  frontend change on master needs the same change on the branch. Pictures must be public domain (or licensed).
 - Phase F (Docker/Kubernetes in labs via Sysbox) is skipped on this laptop and moves to the AWS server.
 - Examples (owner, 22 November): never chai, tea or any drink, never Dabba Express, and nothing that resembles the Chai aur Code
   platform (its themes or its usual tutorial projects). Pick distinctive running projects.
