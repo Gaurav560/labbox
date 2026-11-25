@@ -1953,19 +1953,27 @@ function AiEtl() {
 }
 
 function AiRag() {
+  // Still (owner, 26 November): chapter 14's real ticket question, from the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["the visitor", "How much is a ticket for a child?", "plain"],
+    ["retrieve: topK 3, threshold 0.35", "1 chunk passed: visitor-information.md (0.407)", "accent"],
+    ["augment: the user message becomes", "question + the chunk between dashes + the rules", "accent"],
+    ["generate: the model reads it", "A ticket for a child aged 5 to 15 costs 60 rupees.", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="retrieve, augment, generate"
-      intro="Press Play to follow one question through RAG."
-      label="the question is embedded and searched in the vector store; the three closest chunks above the threshold come back; the advisor adds them to the user message with instructions; the model answers from them; the app returns the answer with the files of the chunks"
-      steps={[
-        { label: "1. The question", says: "How much is a ticket for a child?" },
-        { label: "2. Retrieve", says: "QuestionAnswerAdvisor searches the store: the ticket chunk, 0.40." },
-        { label: "3. Augment", says: "The chunk is added to the user message, with: answer from the context." },
-        { label: "4. Generate", says: "The model answers: 60 rupees for children aged 5 to 15." },
-        { label: "5. Sources", says: "The retrieved chunks name their file: visitor-information.md." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Retrieve, augment, generate: the ticket question finds one chunk above the threshold, the chunk is added to the user message with instructions, and the model answers 60 rupees">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
