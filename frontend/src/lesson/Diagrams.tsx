@@ -2498,19 +2498,25 @@ function L4jWorkflow() {
 }
 
 function L4jStreaming() {
+  // Still (owner, 26 November): chapter 16's measured run (56 pieces; first after 905 ms, all after 2103 ms).
+  const x0 = 96, px = 130; // 130 px a second
+  const t = (sec: number) => x0 + sec * px;
   return (
-    <SketchSteps
-      title="one streamed answer"
-      intro="Press Play to follow the real run from this chapter."
-      label="the request goes out; the first piece arrives after 905 milliseconds and onPartialResponse prints it; 56 pieces follow; onCompleteResponse runs after 2103 milliseconds"
-      steps={[
-        { label: "1. 0 ms: request", says: "Setu sends the question with stream: true; the HTTP response stays open." },
-        { label: "2. 905 ms: first piece", says: "data: [Tr] arrives; onPartialResponse prints it. The passenger starts reading." },
-        { label: "3. Piece after piece", says: "[ains] [ slow] [ down]... each one printed as it comes, 56 in all." },
-        { label: "4. 2103 ms: [DONE]", says: "onCompleteResponse gets the whole ChatResponse, with its token usage." },
-        { label: "5. Without streaming", says: "The same answer, but an empty box until 2103 ms." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 250" label="Without streaming the screen stays empty until 2.1 seconds; with streaming the first piece arrives at 0.9 seconds and the rest follow until 2.1 seconds">
+      {[0, 1, 2].map((sec) => (
+        <g key={sec}>
+          <line className="dg-arrow" x1={t(sec)} y1={30} x2={t(sec)} y2={186} strokeDasharray="3 4" />
+          <text className="dg-note" x={t(sec) - 8} y={206}>{sec} s</text>
+        </g>
+      ))}
+      <text className="dg-label" x={8} y={66}>no stream</text>
+      <Box x={t(0)} y={44} w={2.103 * px} h={34} label="empty box" />
+      <Box x={t(2.103)} y={44} w={40} h={34} label="all" tone="copy" />
+      <text className="dg-label" x={8} y={136}>stream</text>
+      <Box x={t(0)} y={114} w={0.905 * px} h={34} label="empty" />
+      <Box x={t(0.905)} y={114} w={1.198 * px} h={34} label="56 pieces arrive" tone="copy" />
+      <text className="dg-note" x={8} y={236}>Same total time; the passenger starts reading after 0.9 s.</text>
+    </Svg>
   );
 }
 
