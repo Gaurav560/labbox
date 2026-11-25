@@ -1,5 +1,17 @@
 # Changelog
 
+## 26 November: LangGraph chapter 9 rewritten: retry waits measured, both jobs pictured, the quiz tried
+
+- Re-ran all four commands on a new `jobs.db`: the same output, word for word, including J-103's double booking. A new
+  still picture compares J-102 (resumed with `invoke(None, config)`) and J-103 (started over).
+- Measured: the waits between SMS attempts were 1.08 s and 1.70 s, not 0.5 s and 1 s; `RetryPolicy` adds a random 0 to
+  1 second by default (`jitter=True`, read in the source). The table now has the jitter row and the measurement; it
+  also says `max_attempts=3` and `initial_interval=0.5` are the defaults in 1.2.24.
+- Tried: a `ValueError` with `retry_on=SmsTimeout` fails after one attempt; the policy on the wrong node crashes on the
+  first timeout (the retry task's slip); the quiz's step that fails after ordering placed two orders on resume.
+  `durability` defaults to "async" (read in the source).
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 8 rewritten: a still token chart from a new run, slips tried with a fake model
 
 - Re-ran both graphs with the real model: the same pattern (trimmed asked for the address again, summarised read it

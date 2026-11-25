@@ -3448,20 +3448,29 @@ function LgSummary() {
 }
 
 function LgDurable() {
+  // Still (owner, 26 November): chapter 9's real runs J-102 (resumed) and J-103 (started over).
+  const left: [string, BoxTone][] = [
+    ["run 1: book_crew, saved", "plain"], ["order_parts, saved", "plain"], ["SMS: 3 attempts, crash", "highlight"],
+    ["run 2: invoke(None, config)", "accent"], ["only notify_citizen", "copy"], ["1 crew, 1 order", "copy"],
+  ];
+  const right: [string, BoxTone][] = [
+    ["run 1: book_crew, saved", "plain"], ["order_parts, saved", "plain"], ["SMS: 3 attempts, crash", "highlight"],
+    ["run 2: invoke({job}, config)", "accent"], ["from START again", "highlight"], ["2 crews, 2 orders (Rs 36,000)", "highlight"],
+  ];
+  const col = (items: [string, BoxTone][], x: number) => items.map(([t, tone], i) => (
+    <g key={x + "-" + i}>
+      <Box x={x} y={30 + i * 54} w={206} h={40} label={t} tone={tone} />
+      {i < items.length - 1 && <Arrow x1={x + 103} y1={70 + i * 54} x2={x + 103} y2={84 + i * 54} />}
+    </g>
+  ));
   return (
-    <SketchSteps
-      title="A crash, and a resume that does only what is left"
-      intro="Press Play to follow job J-102."
-      label="Durable run"
-      steps={[
-        { label: "book_crew", says: "Runs, writes 'crew booked', and the checkpoint is saved." },
-        { label: "order_parts", says: "Runs, writes 'parts ordered, Rs 18,000', and the checkpoint is saved." },
-        { label: "notify_citizen", says: "The SMS gateway times out. The retry policy waits 0.5 s, then 1 s: three attempts in all." },
-        { label: "Crash", says: "All three failed: invoke raises the error. The thread is saved with next = notify_citizen." },
-        { label: "Resume", says: "Later, invoke(None, config) loads the thread and runs only notify_citizen." },
-        { label: "Record", says: "One crew, one parts order, one SMS. Starting over would have booked both again." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 370" label="Two real jobs that crashed at the SMS after three attempts. J-102 was resumed with invoke None: only notify_citizen ran, one crew and one order. J-103 was run again with a new input: it started from START, and booked a second crew and a second Rs 18,000 order">
+      <text className="dg-label" x={8} y={18}>J-102: resumed</text>
+      <text className="dg-label" x={226} y={18}>J-103: started over</text>
+      {col(left, 8)}
+      {col(right, 226)}
+      <text className="dg-note" x={8} y={362}>Both had the same checkpoint; only the resume code differed.</text>
+    </Svg>
   );
 }
 
