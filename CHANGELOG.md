@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: Spring AI chapter 18 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (integer division before the price; `management.endpoint`
+  singular, which leaves `/actuator/metrics` at 404).
+- The cost-meter animation is now a still picture of the real meter and metrics, with the arithmetic shown.
+- Checked in a lab machine: 95, 96 and 105 tokens in again; the metric gave input 296, output 131, total 427, and 854
+  untagged, which confirms the lesson's "counted twice"; the same four metric names. The black-hole answer this time
+  refused the detail but gave one sentence anyway. The tool-description cost now comes from chapter 7's real request
+  (4 tools, about 170 tokens). An unverified detail about `getUsage()` and cached tokens became "the provider's
+  usage data". A new sketchnote.
+
 ## 26 November: Spring AI chapter 17 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (calling the chain after building the refusal; a word list that is
