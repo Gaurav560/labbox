@@ -3,8 +3,9 @@ Chapters 5 and 6 talked to one provider's API. The co-op's IT volunteer asks a f
 cheaper model comes out from another company, or we want to run one on our own computer?" With the OpenAI SDK, every
 call would have to be rewritten.
 
-**LangChain** answers that. Every chat model, from OpenAI, Anthropic, Google, Mistral, or one running locally, sits
-behind the same interface: `model.invoke(messages)` in, an `AIMessage` out. Messages are objects, not dictionaries.
+**LangChain** answers that. Chat models from OpenAI, Anthropic, Google, Mistral, or one running locally, all sit behind
+the same **interface** (the same method names and the same kinds of objects in and out): `model.invoke(messages)` in,
+an `AIMessage` out. Messages are objects, not dictionaries.
 And everything the rest of this course builds, agents, tools, memory, retrieval, works with any of those models.
 
 :::mission
@@ -20,11 +21,9 @@ remembering the conversation, calling tools. Each team's version was a little di
 :::
 
 In **October 2022**, a month before ChatGPT, Harrison Chase released **LangChain** as an open-source Python project: a
-toolbox of building blocks for applications on language models. It grew faster than almost any open-source project of
-its time, and LangChain became a company in **2023**. The library was split into a small core (`langchain-core`),
+toolbox of building blocks for applications on language models. It was one of the fastest-growing open-source projects of 2023, and LangChain became a company that year. The library was split into a small core (`langchain-core`),
 one package per provider (`langchain-openai`, ...), and the main package. **LangChain 1.0**, released in **October
-2025**, focused it on agents built on LangGraph, with `init_chat_model` and `create_agent` at the centre. This course
-uses **1.5**.
+2025**, focused it on agents built on LangGraph, with `init_chat_model` and `create_agent` at the centre. This course uses **1.5** (the lab has langchain 1.5.2).
 
 :::solved
 **Swap the model, keep the program.** One interface for dozens of providers, and the same building blocks on top.
@@ -47,19 +46,21 @@ model = init_chat_model("openai:ai-chat", temperature=0)   # a ChatOpenAI
 # init_chat_model("anthropic:claude-...")  would give a ChatAnthropic, with the same methods
 ```
 
-The part before the colon picks the integration package (`langchain-openai` here), the part after is the model name the
-API expects (our gateway's `ai-chat`). Like the SDK, it reads `OPENAI_BASE_URL` and `OPENAI_API_KEY` from the
+The part before the colon picks the **integration package**, the small package that connects LangChain to one
+provider (`langchain-openai` here); the part after is the model name the API expects (our gateway's `ai-chat`). Like the SDK, it reads `OPENAI_BASE_URL` and `OPENAI_API_KEY` from the
 environment.
 
 | Part 2 so far | Chapter 5 (HTTP) | Chapter 6 (SDK) | Chapter 7 (LangChain) |
 |---|---|---|---|
 | Who builds the JSON | you | the SDK | LangChain, then the SDK |
 | Messages | dictionaries | dictionaries | objects |
-| Switch provider | rewrite | rewrite | change one string |
+| Switch provider | rewrite | rewrite | change one string, install that provider's package |
 :::
 
 :::step{type=task task=chat_model title="Your turn: Navin's chat model" file="07-first-app/app.py" line="8-11"}
 Finish `chat_model()`: return `init_chat_model("openai:ai-chat", temperature=0)`.
+
+The usual slip: `"openai/ai-chat"` with a slash. The separator is a colon.
 
 Press **Check**.
 :::
@@ -80,8 +81,13 @@ it also carries `.usage_metadata` (tokens) and `.response_metadata` (the raw det
 :::
 
 :::step{type=task task=system_message title="Your turn: ask with a system message" file="07-first-app/app.py" line="14-17"}
-Finish `ask(model, question)`: call `model.invoke([...])` with a `SystemMessage(SYSTEM)` and a `HumanMessage(question)`,
-and return the reply's `.content`.
+Finish `ask(model, question)`:
+
+1. `reply = model.invoke([SystemMessage(SYSTEM), HumanMessage(question)])`: a list, system message first.
+2. Return `reply.content`, the text.
+
+The usual slip: returning `reply` itself. It is an `AIMessage`, so printing it shows the whole object, not just the
+answer.
 
 ```bash run
 cd /workspace/07-first-app && python main.py
@@ -91,6 +97,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Navin introduces itself"}
+A real run (we ran it again on 25 November and got the same words; temperature 0 keeps them steady):
+
 ```text
 $ python main.py
 ChatOpenAI
@@ -161,7 +169,7 @@ You can now:
 
 Next, chapter 8: model parameters, and answers that stream in piece by piece.
 
-:::photo{src="/lesson-images/langchain/lc-07-notes.webp" alt="Handwritten notes about a first LangChain app: init_chat_model(provider:model); SystemMessage, HumanMessage; invoke returns an AIMessage; Swap a model: one string; It promised farming tips" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-07-notes.webp" alt="Handwritten notes about LangChain: LangChain puts many chat models behind one interface. init_chat_model takes provider:model, like openai:ai-chat. Messages are objects: SystemMessage, HumanMessage, AIMessage. invoke returns an AIMessage; its content is the text. Switching provider: one string, plus that provider's package. A system message says who Navin is, not what it must not do." ai="true"}
 One page of notes for this chapter.
 :::
 :::

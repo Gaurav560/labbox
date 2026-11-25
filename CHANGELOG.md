@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 7 rewritten (easy, a little detailed, checked)
+
+- Interface and integration package are explained where they first appear; both tasks list their steps and the usual
+  slips.
+- Checked by running the solution through the lab gateway: the same words as the lesson (temperature 0), a
+  `ChatOpenAI`, an `AIMessage` with usage, and the lab's versions (langchain 1.5.2, langchain-core 1.8.4,
+  langchain-openai 1.8.5). Corrected: "grew faster than almost any open-source project of its time" became "one of the
+  fastest-growing open-source projects of 2023"; "switch provider: change one string" now adds installing that
+  provider's package (as the quiz already said). A new notes page.
+
 ## 25 November: LangChain chapter 6 rewritten (easy, a little detailed, checked)
 
 - SDK, client, retries and async are explained where they first appear; both tasks list their steps and the usual slips.
