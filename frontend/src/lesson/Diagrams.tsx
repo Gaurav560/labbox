@@ -2004,19 +2004,33 @@ function AiVision() {
 }
 
 function AiEvaluation() {
+  // Still (owner, 26 November): chapter 16's two measurements, with the real numbers.
   return (
-    <SketchSteps
-      title="two ways to measure"
-      intro="Press Play to see retrieval and answers measured."
-      label="golden questions are searched and each hit is counted, with no model call; for an answer, a judge model reads the question, the retrieved cards and the answer, and says yes or no"
-      steps={[
-        { label: "1. Golden questions", says: "15 real questions, each with the card that must be found." },
-        { label: "2. Measure retrieval", says: "Search each one: is its card in the top 3? Count the hits. No model, no cost." },
-        { label: "3. A real answer", says: "Atlas answers a question from the cards." },
-        { label: "4. The judge reads", says: "The question, the cards and the answer go to a second call." },
-        { label: "5. The verdict", says: "YES or NO: relevant to the question and the cards?" },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="Retrieval: 15 golden questions searched, 10 hits and 5 misses, the same every run. Answers: a judge model says YES or NO for each answer; the ticket answer passed, the broad question failed, and the T-rex answer passed once and failed once">
+      <Box x={8} y={4} w={204} h={300} label="" tone="accent" />
+      <text className="dg-label" x={20} y={28}>retrieval</text>
+      <text className="dg-note" x={20} y={56}>15 golden questions</text>
+      <text className="dg-note" x={20} y={78}>search: top 3, at least 0.35</text>
+      <text className="dg-note" x={20} y={100}>is the golden card found?</text>
+      <Box x={20} y={118} w={180} h={44} label="10 hits, 5 misses" tone="copy" />
+      <text className="dg-note" x={20} y={190}>the same on every run:</text>
+      <text className="dg-note" x={20} y={210}>embeddings have no</text>
+      <text className="dg-note" x={20} y={230}>randomness</text>
+      <text className="dg-note" x={20} y={262}>cost: 15 tiny embedding</text>
+      <text className="dg-note" x={20} y={282}>requests</text>
+      <Box x={228} y={4} w={206} h={300} label="" />
+      <text className="dg-label" x={240} y={28}>answers, with a judge</text>
+      <text className="dg-note" x={240} y={56}>RelevancyEvaluator,</text>
+      <text className="dg-note" x={240} y={78}>its own ChatClient: YES or NO</text>
+      <text className="dg-note" x={240} y={112}>ticket for a child: YES</text>
+      <text className="dg-note" x={240} y={134}>which exhibits?: NO</text>
+      <text className="dg-note" x={240} y={156}>T-rex: YES, then NO on</text>
+      <text className="dg-note" x={240} y={178}>a re-run (a vaguer answer)</text>
+      <text className="dg-note" x={240} y={230}>answers and verdicts vary:</text>
+      <text className="dg-note" x={240} y={252}>read the rate over many</text>
+      <text className="dg-note" x={240} y={274}>questions</text>
+      <text className="dg-note" x={8} y={324}>Measured on 26 November with the real models.</text>
+    </Svg>
   );
 }
 

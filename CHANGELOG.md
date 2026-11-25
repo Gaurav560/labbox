@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: Spring AI chapter 16 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (comparing with the first result only; the judge on Atlas's own
+  builder).
+- The evaluation animation is now a still picture of both measurements with the real numbers.
+- Checked in a lab machine (with the corrected pendulum card): retrieval gave exactly 10 of 15 and the same five
+  misses; the judge's prompt in the gateway's log is word for word the lesson's; `RelevancyEvaluator.Builder` has
+  `promptTemplate`. Found and taught: on the re-run the T-rex answer came out vaguer and the judge said false, where
+  the lesson's run said true; the lesson now shows both, which is its own point about reading rates, not single
+  verdicts. A new sketchnote.
+
 ## 26 November: Spring AI chapter 15 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (sending the unshrunk upload; no "answer none").

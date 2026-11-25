@@ -37,14 +37,21 @@ The `16-evaluation` project has fifteen, in `Golden.java`, "collected from the l
 golden set is simple: every time Atlas gets a question wrong, it joins the set, so the same mistake is caught forever.
 
 :::diagram{name="ai-evaluation"}
-Retrieval is measured by searching golden questions; answers are graded by a judge model.
+The two measurements of this chapter, with the real numbers (26 November).
 :::
 :::
 
 :::step{type=task task=retrieval_eval title="Your turn: measure retrieval" file="16-evaluation/src/main/java/com/atlas/EvalController.java" line="55"}
 In `16-evaluation`, finish `GET /eval/retrieval`: search each golden question in the store (top 3, similarity at least
 0.35, as Atlas does); count a **hit** when the golden file is among the files found, and list the other questions as
-**misses**.
+**misses**:
+
+1. For each golden entry: `store.similaritySearch(...)` with its question, `topK(3)`, `similarityThreshold(0.35)`.
+2. Collect the found files from each document's `getMetadata().get("file")`.
+3. If they contain the golden file, add one to `hits`; otherwise add the question to `misses`.
+
+The usual slip: comparing with the first result only. That measures "found first", a stricter test than "in the top
+3", and gives a lower number than the lesson's.
 
 ```bash run
 cd 16-evaluation && mvn -q -o spring-boot:run
@@ -60,7 +67,7 @@ Press **Check**.
 :::
 
 :::step{type=try title="The real number"}
-With the real embedding model:
+With the real embedding model (our re-run on 26 November gave exactly the same 10 hits and the same five misses):
 
 ```text
 $ curl -s localhost:8080/eval/retrieval | jq .
@@ -136,13 +143,19 @@ boolean relevant = judge.evaluate(request).isPass();
    advisor would retrieve cards about its own grading prompt).
 2. `used` is the list of documents the `QuestionAnswerAdvisor` retrieved, read from the response context as in
    chapter 14.
-3. `isPass()` is the verdict. The prompt Spring AI sends the judge says: "Your task is to evaluate if the response for
+3. `isPass()` is the verdict. The prompt Spring AI sends the judge (we read it in the gateway's log) says: "Your task is to evaluate if the response for
    the query is in line with the context information provided. You have two options to answer. Either YES or NO."
 :::
 
 :::step{type=task task=judge_answer title="Your turn: a judge for every answer" file="16-evaluation/src/main/java/com/atlas/EvalController.java" line="69"}
 Finish `GET /ask/judged?q=...`: Atlas's answer is ready in `answer`, the retrieved documents in `used`. Ask a
-`RelevancyEvaluator`, built on `ChatClient.builder(model)`, whether the answer is relevant, and return its verdict.
+`RelevancyEvaluator`, built on `ChatClient.builder(model)`, whether the answer is relevant, and return its verdict:
+
+1. `new RelevancyEvaluator(ChatClient.builder(model))`
+2. `judge.evaluate(new EvaluationRequest(q, used, answer)).isPass()`
+
+The usual slip: building the judge on Atlas's own builder. The judge then carries Atlas's system prompt and RAG
+advisor (see the quick check below).
 
 ```bash run
 curl -s -G localhost:8080/ask/judged --data-urlencode "q=How much is a ticket for a child?" | jq .
@@ -170,7 +183,10 @@ $ curl -s -G localhost:8080/ask/judged --data-urlencode "q=Which exhibits do you
 }
 ```
 
-The ticket answer and the T-rex answer passed: both fit the question and the cards. The third did not, and the judge
+The ticket answer and the T-rex answer passed: both fit the question and the cards. (Our re-run on 26 November: the
+ticket answer passed and the broad question failed again. The T-rex answer came out vaguer, "I can't answer that
+question, as I don't know if we have a T-rex at the museum. However, we do have a cast of the skull of Rajasaurus",
+and the judge said **false**. Same question, different answer, different verdict.) The third did not, and the judge
 was right: "Which exhibits do you have?" got the useless refusal you met in chapter 14, and the judge flagged it. That
 is the point of a judge: it reads every answer, so a pattern of bad answers shows up in a count, not in a complaint
 from the director.
@@ -244,7 +260,7 @@ You can now:
 
 Next, chapter 17: guardrails, for the questions Atlas should never answer, and the ones that try to trick it.
 
-:::photo{src="/lesson-images/spring-ai/springai-16-notes.webp" alt="Handwritten notes about evaluation: golden questions; retrieval: hits in the top 3; a judge: YES or NO; a fresh ChatClient for the judge; every failure joins the set" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-16-notes.webp" alt="Sketchnote, Is Atlas right? (golden questions and a judge model): Measure two things: does the search find the right card, and is the answer right? Run both after every change. The flow: 15 golden questions, Search: top 3, 10 hits, 5 misses, Judge: YES or NO. What we measured: retrieval gave 10 of 15, the same every run; the judge passed the ticket answer; the T-rex answer passed once, failed once; every real mistake joins the golden set." ai="true"}
 One page of notes for this chapter.
 :::
 :::
