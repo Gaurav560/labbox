@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: Spring AI chapter 2 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (rules in `.user(...)`; `defaultSystem` on the built client; a
+  placeholder name that does not match).
+- The roles animation is now a still picture of one real request's three messages.
+- Checked in a lab machine through the gateway, with the improved prompt and with the first draft rebuilt: the
+  improved prompt gave the same three kinds of answer. Corrected: the first draft refused Saturn "every time" when the
+  course was written, but 2 times of 3 on the re-run (and the answer it gave invented "our space exhibit"); the adult
+  refusal also came 2 times of 3. The lesson now says an unclear rule fails some of the time. The missing-placeholder
+  error is now quoted from a real run. Cross-references fixed: safety is chapter 17 (not 12), automated tests chapter
+  16 (not 11). The cost note now uses the real prompt: 79 tokens, about $1.19 per 100,000 requests. A new sketchnote.
+
 ## 25 November: Spring AI chapter 1 rewritten (easy, a little detailed, checked); notes pages become sketchnotes
 
 - Notes pages are now tall sketchnotes (owner, 25 November night): title, a definition box, a flow of boxes and a
