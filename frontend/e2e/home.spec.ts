@@ -32,7 +32,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(5); // Spring Boot: Linux, Java, Spring Boot, editor, AI
   await expect(machine.locator(".ua-dock li")).toHaveCount(0); // all of them went in
-  await expect(machine.locator(".ua-c-crate")).toHaveCount(0); // doors closed over them
+  await expect(machine.locator(".ua-c-box")).toHaveCount(5); // each one stays inside as a crate, seen through the wall
   await expect(machine.locator(".ua-log li.is-cmd")).toContainText("docker start");
   await expect(machine.locator(".ua-c-plate")).toContainText("RUNNING");
   await expect(machine.locator(".ua-log li").nth(1)).toContainText("Java 21");

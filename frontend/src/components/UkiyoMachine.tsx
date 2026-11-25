@@ -65,6 +65,35 @@ const E: Pt = [520, 104], F: Pt = [518, 262], H: Pt = [160, 90];
 const END = (u: number, v: number): Pt => L(L(B, E, u), L(C, F, u), v);
 /** The door opening's centre, where loaded pieces fly to (in viewBox units). */
 export const DOOR: Pt = END(0.5, 0.55);
+/** The inside: the far wall's bottom corner, and a point on the floor (t along the length, u from the front wall back). */
+const Dd: Pt = [D[0] + (E[0] - B[0]), D[1] + (E[1] - B[1])];
+const FLOOR = (t: number, u: number): Pt => L(L(D, C, t), L(Dd, F, t), u);
+/** Where piece i of n stands inside: in stacks two high along the floor, the first stack at the far end. */
+function slot(i: number, n: number): { at: Pt; row: number } {
+  const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
+  const t = 0.13 + (cols > 1 ? col * (0.55 / (cols - 1)) : 0.3); // clear of the door folded back at the end
+  const [x, y] = FLOOR(t, 0.72);
+  return { at: [x, y - level * 52], row: level };
+}
+
+/** A cardboard crate with the piece's logo on its front, standing on the floor at `at` (its front bottom centre). */
+function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
+  const [x, y] = at, w = 54, h = 50, kx = 18, ky = -6;
+  const sx = DOOR[0] - x, sy = DOOR[1] - y;
+  return (
+    <g className={`ua-c-box ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
+      <polygon className="ua-c-box-top" points={pts([x - w / 2, y - h], [x + w / 2, y - h], [x + w / 2 + kx, y - h + ky], [x - w / 2 + kx, y - h + ky])} />
+      <polygon className="ua-c-box-side" points={pts([x + w / 2, y - h], [x + w / 2 + kx, y - h + ky], [x + w / 2 + kx, y + ky], [x + w / 2, y])} />
+      <rect className="ua-c-box-front" x={x - w / 2} y={y - h} width={w} height={h} rx="2" />
+      <line className="ua-c-box-tape" x1={x + kx / 2 - 2} y1={y - h + ky / 2} x2={x + kx / 2 + 2} y2={y - h + ky / 2} />
+      <rect className="ua-c-box-label" x={x - 19} y={y - h + 8} width="38" height="34" rx="3" />
+      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - 14} y={y - h + 11} width="28" height="28" />
+        : <text className="ua-c-box-glyph" x={x} y={y - h + 32} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
+      <circle className="ua-c-box-led" cx={x - w / 2 + 6} cy={y - 6} r="2.6" />
+    </g>
+  );
+}
+
 /** The part of the drawing that is shown: tight around the container, so it fills the width (owner: "a little big"). */
 const VB = [36, 76, 556, 258] as const;
 
@@ -75,7 +104,7 @@ function Casting({ at }: { at: Pt }) {
 /**
  * A steel shipping container in the hand-drawn style of the Docker docs (owner, 25 November: "way more cool"):
  * corrugated walls, frame rails, corner posts and castings, stencilled numbers, the Docker whale, and doors at the
- * end with locking bars. phase "load": doors open and the loaded pieces stack up inside; "close": the doors swing
+ * end with locking bars. phase "load": doors open, the wall turns to glass and each piece rides in as a crate; "close": the doors swing
  * shut and the bars lock; "start": the roof lamp blinks; "run": lamp and light strip glow green and it hums.
  */
 function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "close" | "start" | "run"; loaded: number; pieces: Piece[]; bump: number }) {
@@ -102,12 +131,26 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
           {/* roof, with its shallow corrugation */}
           <polygon className="ua-c-top" points={pts(A, H, E, B)} />
           {[0.25, 0.5, 0.75].map((t) => { const [x1, y1] = L(A, H, t), [x2, y2] = L(B, E, t); return <line key={t} className="ua-c-roofline" x1={x1} y1={y1} x2={x2} y2={y2} />; })}
-          {/* front wall: corrugated strips, light and shade */}
+          {/* the inside, seen through the wall while it loads: far wall, end wall, plank floor, a ceiling light */}
+          <g className="ua-c-room">
+            <polygon className="ua-c-far" points={pts(H, E, F, Dd)} />
+            <polygon className="ua-c-endwall" points={pts(A, H, Dd, D)} />
+            <polygon className="ua-c-deck" points={pts(D, C, F, Dd)} />
+            {[0.25, 0.5, 0.75].map((u) => { const [x1, y1] = L(D, Dd, u), [x2, y2] = L(C, F, u); return <line key={u} className="ua-c-plank" x1={x1} y1={y1} x2={x2} y2={y2} />; })}
+            <line className="ua-c-lightbar" x1={L(H, E, 0.08)[0]} y1={L(H, E, 0.08)[1] + 10} x2={L(H, E, 0.92)[0]} y2={L(H, E, 0.92)[1] + 10} />
+            {pieces.slice(0, loaded).map((p, i) => ({ p, i, ...slot(i, pieces.length) }))
+              .sort((a, b) => a.i - b.i)
+              .map(({ p, i, at }) => <Crate key={p.name + i} p={p} at={at} fresh={i === loaded - 1 && phase === "load"} />)}
+          </g>
+          {/* front wall: corrugated strips, light and shade; it turns to glass while loading so the crates show */}
+          <g className="ua-c-wall">
           {Array.from({ length: strips }, (_, i) => (
             <polygon key={i} className={i % 2 ? "ua-c-strip-b" : "ua-c-strip-a"}
               points={pts(L(A, B, i / strips), L(A, B, (i + 1) / strips), L(D, C, (i + 1) / strips), L(D, C, i / strips))} />
           ))}
           {Array.from({ length: strips }, (_, i) => { const [x1, y1] = L(A, B, i / strips), [x2, y2] = L(D, C, i / strips); return <line key={i} className="ua-c-ridge" x1={x1} y1={y1 + 12} x2={x2} y2={y2 - 12} />; })}
+          </g>
+          <polygon className="ua-c-glass" points={pts(A, B, C, D)} />
           {/* frame: top and bottom rails, corner posts */}
           <polygon className="ua-c-rail" points={pts(A, B, [B[0], B[1] + 12], [A[0], A[1] + 12])} />
           <polygon className="ua-c-rail is-low" points={pts([D[0], D[1] - 12], [C[0], C[1] - 12], C, D)} />
@@ -115,12 +158,14 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
           <polygon className="ua-c-post" points={pts([B[0] - 13, B[1] - 0.5], B, C, [C[0] - 13, C[1] - 0.5])} />
           {/* stencils and the whale, following the wall's slope */}
           <g transform="skewY(2.2)">
+            <g className="ua-c-print">
             <text className="ua-c-stencil" x="76" y="146">LABBOX</text>
             <text className="ua-c-stencil is-small" x="76" y="160">LBXU 240 017 3 · 22G1</text>
             <image href="/logos/docker.svg" x="146" y="104" width="214" height="186" />
-            <g className="ua-c-plate"><rect x="70" y="236" width="126" height="20" rx="3" /><text x="80" y="250">{plate}</text></g>
             <rect className="ua-c-spec" x="340" y="146" width="52" height="22" rx="2" />
             {[152, 157, 162].map((y) => <line key={y} className="ua-c-specline" x1="345" y1={y} x2="387" y2={y} />)}
+            </g>
+            <g className="ua-c-plate"><rect x="66" y="259" width="122" height="17" rx="3" /><text x="75" y="271">{plate}</text></g>
           </g>
           {/* the end: open doors and what is inside, or closed and locked */}
           {open ? (
@@ -128,16 +173,6 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
               <polygon className="ua-c-inside" points={pts(END(0.06, 0.05), END(0.94, 0.05), END(0.94, 0.95), END(0.06, 0.95))} />
               <polygon className="ua-c-floor" points={pts(END(0.06, 0.8), END(0.94, 0.8), END(0.94, 0.95), END(0.06, 0.95))} />
               <polygon className="ua-c-frame" points={pts(B, E, F, C)} />
-              {pieces.slice(0, loaded).map((p, i) => {
-                const [x, y] = END(i % 2 ? 0.7 : 0.3, 0.78 - Math.floor(i / 2) * 0.2);
-                return (
-                  <g key={p.name + i} className={`ua-c-crate ${i === loaded - 1 ? "is-new" : ""}`}>
-                    <rect x={x - 19} y={y - 17} width="38" height="30" rx="3" />
-                    {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - 11} y={y - 13} width="22" height="22" />
-                      : <text x={x} y={y + 3} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
-                  </g>
-                );
-              })}
             </>
           ) : (
             <g className="ua-c-doors">

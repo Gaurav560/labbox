@@ -615,16 +615,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-c-stencil { font: 800 17px var(--font-code); letter-spacing: .18em; fill: #fffdf8; opacity: .92; }
 .ua-c-stencil.is-small { font-size: 9.5px; letter-spacing: .12em; font-weight: 700; opacity: .85; }
 .ua-c-plate rect { fill: #0e2433; stroke: #0a1620; stroke-width: 2; }
-.ua-c-plate text { font: 700 10.5px var(--font-code); letter-spacing: .12em; fill: #9fb3c2; }
+.ua-c-plate text { font: 700 9.5px var(--font-code); letter-spacing: .12em; fill: #9fb3c2; }
 .ua-container.is-load .ua-c-plate text { fill: #f6c453; }
 .ua-container.is-start .ua-c-plate text { fill: #f6c453; animation: ua-blink2 .5s steps(1) infinite; }
 .ua-container.is-run .ua-c-plate text { fill: #4ade80; }
 .ua-c-spec { fill: #e7eef2; stroke: #14171a; stroke-width: 1.5; } .ua-c-specline { stroke: #7a8a94; stroke-width: 1.4; }
 .ua-c-inside { fill: #081d2c; } .ua-c-floor { fill: #0f3046; }
 .ua-c-frame { fill: none; stroke: #1f8acb; stroke-width: 9; }
-.ua-c-crate rect { fill: #fffdf8; stroke: #14171a; stroke-width: 1.6; }
-.ua-c-crate text { font: 700 13px var(--font-code); fill: #c63f28; }
-.ua-c-crate.is-new { animation: ua-land .45s .55s cubic-bezier(.3, 1.6, .5, 1) both; transform-box: fill-box; transform-origin: center bottom; }
 @keyframes ua-land { from { opacity: 0; transform: translateY(-14px) scale(.6); } to { opacity: 1; transform: none; } }
 .ua-c-leaf { fill: #1f8acb; } .ua-c-leafrib { stroke: #13679f; stroke-width: 4; stroke-linecap: round; }
 .ua-c-leaf-l, .ua-c-leaf-r { transform-box: fill-box; transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .2s .5s; }
@@ -660,3 +657,28 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-box .ua-stamp { top: 64px; right: 22px; }
 @media (prefers-reduced-motion: reduce) { .ua-dock li.is-flying, .ua-c-hum, .ua-c-bump { animation: none !important; } }
 .ua-clock b { font-weight: 700; min-width: 2.6em; display: inline-block; text-align: right; }
+
+/* inside the container: the wall turns to glass and the pieces ride in as cardboard crates (owner, 25 November) */
+.ua-c-room { opacity: 0; transition: opacity .5s; }
+.ua-c-wall, .ua-c-print { transition: opacity .6s; }
+.ua-c-glass { fill: #bfe9ff; opacity: 0; transition: opacity .6s; pointer-events: none; }
+.ua-container:not(.is-wait) .ua-c-room { opacity: 1; }
+.ua-container:not(.is-wait) .ua-c-wall { opacity: .12; }
+.ua-container:not(.is-wait) .ua-c-print { opacity: .18; }
+.ua-container:not(.is-wait) .ua-c-glass { opacity: .1; }
+.ua-c-far { fill: #0c2a3e; } .ua-c-endwall { fill: #0a2233; } .ua-c-deck { fill: #1d4a68; }
+.ua-c-plank { stroke: #2a5d80; stroke-width: 1.5; }
+.ua-c-lightbar { stroke: #ffd98a; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px #ffd98a); transition: stroke .6s, filter .6s; }
+.ua-container.is-run .ua-c-lightbar { stroke: #4ade80; filter: drop-shadow(0 0 8px #22c55e); }
+.ua-c-box-front { fill: #d8a466; stroke: #14171a; stroke-width: 2; }
+.ua-c-box-top { fill: #ecc48c; stroke: #14171a; stroke-width: 2; stroke-linejoin: round; }
+.ua-c-box-side { fill: #b27c43; stroke: #14171a; stroke-width: 2; stroke-linejoin: round; }
+.ua-c-box-tape { stroke: #f6e3c0; stroke-width: 7; }
+.ua-c-box-label { fill: #fffdf8; stroke: #14171a; stroke-width: 1.4; }
+.ua-c-box-glyph { font: 800 17px var(--font-code); fill: #c63f28; }
+.ua-c-box-led { fill: #5b4632; stroke: #14171a; stroke-width: 1; transition: fill .4s; }
+.ua-container.is-run .ua-c-box-led { fill: #4ade80; filter: drop-shadow(0 0 4px #22c55e); }
+.ua-c-box.is-new { animation: ua-slide .7s .62s cubic-bezier(.25, .8, .25, 1) both; }
+@keyframes ua-slide { 0% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(.55); } 18% { opacity: 1; }
+  80% { transform: translate(0, -4px); } 100% { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ua-c-box.is-new { animation: none; } }

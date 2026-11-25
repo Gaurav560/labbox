@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November (Ukiyo): the pieces ride in as crates you can see
+
+- Owner: "these small item logos going inside the container don't do justice; show a more expressive, cool way of
+  items going inside the container and staying there". When loading starts the front wall turns to glass (the
+  corrugation, stencils and whale fade; the frame stays solid) and the inside shows: far wall, end wall, a plank
+  floor and a warm ceiling light. Each piece flies to the doors, then rides in as a cardboard crate (top, side, tape,
+  a label with its logo) and slides along the floor to its place, in stacks two high from the far end. The crates
+  stay there; when the container runs, the ceiling light turns green and a small LED lights on every crate. The
+  status plate moved to the bottom rail.
+
 ## 25 November (Ukiyo): the run command, and how people know to press it
 
 - Owner picked the terminal design, then: "how will users know they have to click here? They mostly open it on a phone
