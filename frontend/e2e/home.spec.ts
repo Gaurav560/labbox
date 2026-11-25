@@ -23,18 +23,24 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // It waits for a click (owner, 25 November): empty slots and one button.
   await page.waitForTimeout(1500);
   await expect(machine.locator(".ua-container")).toBeVisible(); // the Docker-style shipping container
-  await expect(machine.locator(".ua-log li:not(.ua-log-wait)")).toHaveCount(0);
+  await expect(machine.locator(".ua-dock li")).toHaveCount(5); // every piece waits on the dock
+  await expect(machine.locator(".ua-c-plate")).toContainText("EMPTY");
+  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0);
   await machine.getByRole("button", { name: /Spin up the Spring Boot machine/ }).click();
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
-  await expect(machine.locator(".ua-log li")).toHaveCount(5); // Spring Boot: Linux, Java, Spring Boot, editor, AI
+  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(5); // Spring Boot: Linux, Java, Spring Boot, editor, AI
+  await expect(machine.locator(".ua-dock li.is-in")).toHaveCount(5); // all of them went in
+  await expect(machine.locator(".ua-c-crate")).toHaveCount(0); // doors closed over them
+  await expect(machine.locator(".ua-log li.is-cmd")).toContainText("docker start");
+  await expect(machine.locator(".ua-c-plate")).toContainText("RUNNING");
   await expect(machine.locator(".ua-log li").nth(1)).toContainText("Java 21");
   await expect(machine.locator(".ua-stamp")).toHaveAttribute("aria-label", "Ready");
   await expect(machine.locator(".ua-ready").getByRole("link", { name: "Start →" })).toHaveAttribute("href", "/login?next=%2Fcourses%2Fspring-boot-first-api");
   await machine.getByRole("tab", { name: "Redis" }).click();
-  await expect(machine.locator(".ua-log li:not(.ua-log-wait)")).toHaveCount(0); // a new lab waits for its own click
+  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0); // a new lab waits for its own click
   await machine.getByRole("button", { name: /Spin up the Redis machine/ }).click();
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
-  await expect(machine.locator(".ua-log li")).toHaveCount(7);
+  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(7);
   await expect(machine.locator(".ua-log")).toContainText("Redis replica");
   await expect(machine).not.toContainText("VS Code");
   // The catalog comes from the server: a folding screen, one panel per category, not every lab (owner, 25 November).

@@ -482,7 +482,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* waiting for a click: one clear button over the empty slots */
 .ua-box { isolation: isolate; }
 /* the earlier hanko-style button, in a softer, muted brick red (owner, 25 November: the bright red was hard on the eyes) */
-.ua-go { --go: #6e5591; --go-ink: #fbf3e8; position: absolute; z-index: 3; left: 50%; top: 71%; transform: translate(-50%, -50%); display: grid; justify-items: center;
+.ua-go { --go: #6e5591; --go-ink: #fbf3e8; position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center;
   gap: 10px; padding: 20px 34px 18px; border: 0; cursor: pointer; background: var(--go); color: var(--go-ink); border-radius: 4px;
   font: 600 18px var(--font-text); white-space: nowrap;
   box-shadow: inset 0 0 0 4px var(--go), inset 0 0 0 5.5px color-mix(in srgb, var(--go-ink) 65%, transparent), 0 20px 40px -18px #0009;
@@ -575,31 +575,76 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-swatches button[aria-checked="true"] { color: var(--text); border-color: var(--text); }
 .ua-swatches i { width: 22px; height: 22px; display: block; box-shadow: inset 0 0 0 1px #0002; }
 
-/* the shipping container (owner, 25 November: "an original Docker container"), drawn in the Docker docs' style */
-.ua-ship { position: relative; padding: 14px 10px 0; }
-.ua-container { display: block; width: 100%; height: auto; overflow: visible; }
-.ua-c-shadow { fill: #0000002e; filter: blur(6px); }
-.ua-c-front { fill: #4cc0f2; }
-.ua-c-top { fill: #8fdcfb; }
-.ua-c-end { fill: #1c8fd3; transition: fill .5s; }
-.ua-c-end.is-open { fill: #0b2f4a; }
-.ua-c-groove { stroke: #2aa6e0; stroke-width: 3; stroke-linecap: round; opacity: .55; }
-.ua-c-rib { stroke: #126aa3; stroke-width: 9; stroke-linecap: round; animation: ua-rib .5s ease-out both; }
-.ua-c-seam { stroke: #0e2233; stroke-width: 3; }
-.ua-c-line { fill: none; stroke: #14171a; stroke-width: 4.5; stroke-linejoin: round; stroke-linecap: round; }
-.ua-c-body { transform-origin: 280px 260px; animation: ua-bump .35s ease-out; }
-@keyframes ua-bump { 0% { transform: translateY(0); } 40% { transform: translateY(5px) scaleY(.985); } 100% { transform: none; } }
-@keyframes ua-rib { from { opacity: 0; } to { opacity: 1; } }
-:root[data-theme="dark"] .ua-c-line { stroke: #050607; }
-:root[data-theme="dark"] .ua-c-shadow { fill: #00000066; }
-/* the piece being loaded: appears above the doors and drops in */
-.ua-drop { position: absolute; left: 78.5%; top: 2%; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px;
-  background: #fffdf8; border: 1px solid var(--rule); border-radius: 6px; color: #1c1a17; box-shadow: 0 12px 24px -12px #0008;
-  white-space: nowrap; animation: ua-drop .7s cubic-bezier(.3, .7, .3, 1) forwards; }
-.ua-drop .ua-logo { width: 34px; height: 34px; }
-.ua-drop .ua-name { font: 600 14px var(--font-text); }
-.ua-drop.is-last { animation: ua-drop .7s cubic-bezier(.3, .7, .3, 1) forwards; }
-@keyframes ua-drop { 0% { opacity: 0; transform: translate(-50%, -24px); } 25% { opacity: 1; transform: translate(-50%, 0); }
-  70% { opacity: 1; transform: translate(-50%, 120px) scale(.6); } 100% { opacity: 0; transform: translate(-50%, 150px) scale(.3); } }
-.ua-box .ua-stamp { top: 64px; right: 40px; }
-@media (prefers-reduced-motion: reduce) { .ua-drop { display: none; } .ua-c-body { animation: none; } }
+/* ---- the container (owner, 25 November: "way more cool"; items visibly go in, then the container starts) ---- */
+.ua-logwrap { position: relative; }
+.ua-ship { position: relative; padding: 12px 10px 0; }
+.ua-dock-label { margin: 0 0 8px; font: 600 10px var(--font-code); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.ua-dock { list-style: none; margin: 0; padding: 0 0 4px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; position: relative; z-index: 4; }
+.ua-dock li { display: flex; align-items: center; gap: 8px; padding: 6px 11px 6px 6px; background: #fffdf8; color: #1c1a17; border: 1px solid var(--rule);
+  border-radius: 6px; box-shadow: 0 6px 14px -10px #0008; font: 600 12.5px var(--font-text); white-space: nowrap; transition: opacity .3s; }
+.ua-dock .ua-logo { width: 24px; height: 24px; }
+.ua-dock li.is-in { opacity: 1; background: transparent; color: var(--muted); border-style: dashed; box-shadow: none; }
+.ua-dock li.is-in .ua-logo { opacity: .35; filter: grayscale(1); }
+.ua-dock li.is-flying { animation: ua-fly-in .8s cubic-bezier(.45, .05, .35, 1) forwards; z-index: 5; }
+@keyframes ua-fly-in {
+  0% { transform: translate(0, 0) scale(1); }
+  15% { transform: translate(0, -10px) scale(1.08) rotate(-2deg); box-shadow: 0 16px 24px -10px #0009; }
+  80% { opacity: 1; transform: translate(var(--dx), var(--dy)) scale(.55); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.35); } }
+.ua-container { display: block; width: 100%; height: auto; overflow: visible; margin: 14px 0 4px; }
+.ua-c-shadow { fill: #00000030; filter: blur(7px); }
+.ua-c-glow { fill: #22c55e; opacity: 0; filter: blur(10px); transition: opacity .8s; }
+.ua-c-top { fill: #a6e6fd; }
+.ua-c-roofline { stroke: #7fd3f8; stroke-width: 2; }
+.ua-c-strip-a { fill: #4dc2f4; }
+.ua-c-strip-b { fill: #39b0e8; }
+.ua-c-ridge { stroke: #9be1fc; stroke-width: 1.6; opacity: .7; }
+.ua-c-rail { fill: #2a9fdc; } .ua-c-rail.is-low { fill: #1f8acb; }
+.ua-c-post { fill: #2496d6; }
+.ua-c-stencil { font: 800 17px var(--font-code); letter-spacing: .18em; fill: #fffdf8; opacity: .92; }
+.ua-c-stencil.is-small { font-size: 9.5px; letter-spacing: .12em; font-weight: 700; opacity: .85; }
+.ua-c-plate rect { fill: #0e2433; stroke: #0a1620; stroke-width: 2; }
+.ua-c-plate text { font: 700 10.5px var(--font-code); letter-spacing: .12em; fill: #9fb3c2; }
+.ua-container.is-load .ua-c-plate text { fill: #f6c453; }
+.ua-container.is-start .ua-c-plate text { fill: #f6c453; animation: ua-blink2 .5s steps(1) infinite; }
+.ua-container.is-run .ua-c-plate text { fill: #4ade80; }
+.ua-c-spec { fill: #e7eef2; stroke: #14171a; stroke-width: 1.5; } .ua-c-specline { stroke: #7a8a94; stroke-width: 1.4; }
+.ua-c-inside { fill: #081d2c; } .ua-c-floor { fill: #0f3046; }
+.ua-c-frame { fill: none; stroke: #1f8acb; stroke-width: 9; }
+.ua-c-crate rect { fill: #fffdf8; stroke: #14171a; stroke-width: 1.6; }
+.ua-c-crate text { font: 700 13px var(--font-code); fill: #c63f28; }
+.ua-c-crate.is-new { animation: ua-land .45s .55s cubic-bezier(.3, 1.6, .5, 1) both; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes ua-land { from { opacity: 0; transform: translateY(-14px) scale(.6); } to { opacity: 1; transform: none; } }
+.ua-c-leaf { fill: #1f8acb; } .ua-c-leafrib { stroke: #13679f; stroke-width: 4; stroke-linecap: round; }
+.ua-c-leaf-l, .ua-c-leaf-r { transform-box: fill-box; transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .2s .5s; }
+.ua-c-leaf-l { transform-origin: right center; } .ua-c-leaf-r { transform-origin: left center; }
+.ua-c-leaf-l.is-shut, .ua-c-leaf-r.is-shut { transform: scaleX(0); opacity: 0; }
+.ua-c-end { fill: #1c8fd3; }
+.ua-c-doors { animation: ua-doors .35s .35s ease-out both; }
+@keyframes ua-doors { from { opacity: 0; } to { opacity: 1; } }
+.ua-c-endrib { stroke: #136ea8; stroke-width: 5; stroke-linecap: round; }
+.ua-c-seam { stroke: #0b1a24; stroke-width: 2.5; }
+.ua-c-bar { stroke: #d5dde2; stroke-width: 3.5; stroke-linecap: round; }
+.ua-c-handle { stroke: #14171a; stroke-width: 4; stroke-linecap: round; animation: ua-lock .4s .75s ease-out both; }
+@keyframes ua-lock { from { transform: rotate(-70deg); } to { transform: rotate(0); } }
+.ua-c-cast rect { fill: #2c3a44; stroke: #14171a; stroke-width: 1.5; } .ua-c-cast ellipse { fill: #6f8290; }
+.ua-c-line { fill: none; stroke: #14171a; stroke-width: 3.5; stroke-linejoin: round; stroke-linecap: round; }
+.ua-c-line.is-thick { stroke-width: 5; }
+.ua-c-lamp rect { fill: #2c3a44; } .ua-c-lamp circle { fill: #6f8290; stroke: #14171a; stroke-width: 2; transition: fill .3s; }
+.ua-container.is-start .ua-c-lamp circle { animation: ua-lamp .5s steps(1) infinite; }
+.ua-container.is-run .ua-c-lamp circle { fill: #22c55e; filter: drop-shadow(0 0 6px #22c55e); }
+.ua-c-strip-light { fill: #0b2232; transition: fill .6s; }
+.ua-container.is-run .ua-c-strip-light { fill: #4ade80; filter: drop-shadow(0 0 5px #22c55e); }
+.ua-container.is-run .ua-c-glow { opacity: .35; }
+.ua-container.is-run .ua-c-hum { animation: ua-hum .12s linear infinite; }
+.ua-c-bump { transform-box: fill-box; transform-origin: center bottom; animation: ua-bump .35s .7s ease-out; }
+@keyframes ua-bump { 0%, 100% { transform: none; } 40% { transform: translateY(3px) scaleY(.99); } }
+@keyframes ua-hum { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(0, .6px); } }
+@keyframes ua-lamp { 50% { fill: #f6c453; } }
+@keyframes ua-blink2 { 50% { opacity: .35; } }
+:root[data-theme="dark"] .ua-c-shadow { fill: #00000070; }
+.ua-log li.is-cmd b { color: var(--text); }
+.ua-log li.is-run b, .ua-log li.is-run strong { color: #16a34a; }
+.ua-clock.is-on { color: #16a34a; }
+.ua-box .ua-stamp { top: 64px; right: 22px; }
+@media (prefers-reduced-motion: reduce) { .ua-dock li.is-flying, .ua-c-hum, .ua-c-bump { animation: none !important; } }

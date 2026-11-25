@@ -1,5 +1,20 @@
 # Changelog
 
+## 25 November (Ukiyo): a proper container; the items go in, then it starts
+
+- Owner: "this Docker container could be way more cool looking ... show the items which are going in the container,
+  and after all the items go inside, start the container"; then "make the container a little big".
+- The container is redrawn: corrugated walls in two blues with ridge highlights, a corrugated roof, top and bottom
+  frame rails, corner posts and seven corner castings, stencilled "LABBOX / LBXU 240 017 3 · 22G1", a spec plate, the
+  Docker whale, a status plate on the wall, and end doors that stand open (one leaf folded back on the wall, one swung
+  out) showing the dark inside. It is drawn tight to its frame, so it fills the box's width.
+- The sequence: every piece waits on a loading dock above the container; after Spin up each one lifts off, travels
+  into the open doors and stays stacked inside (its dock place turns dashed, its log line appears, the container
+  bumps); then the doors swing shut and the bars' handles lock; `docker start labbox-<lab>` runs while the roof lamp
+  blinks amber ("STARTING"); then the lamp, a light strip along the bottom rail and the shadow glow green, the plate
+  reads "RUNNING", the container hums, the log says "running", and the tick and Start appear. Reduced motion skips
+  straight to running.
+
 ## 25 November (Ukiyo): a real Docker-style shipping container
 
 - Owner: the rust box was "the most rubbish image"; "I need an original Docker container". The CSS box is gone. In
