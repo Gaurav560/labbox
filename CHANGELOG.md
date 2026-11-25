@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangGraph chapter 17 rewritten: runs compared, the suggested fix tried and found to bend a fact
+
+- Re-ran the team twice: once clean (one hold, one visit), once with the case sent to billing twice. Neither run
+  repeated the lesson's double booking; the lesson now reports all three runs.
+- Tried the lesson's suggested fix (the supervisor writes a one-sentence task; each specialist sees only its task):
+  nobody did another's work, but the supervisor invented a helpline number, "1800-123-4567", and repairs booked the
+  visit for that number. The lesson now says so, and that facts the code knows should be passed in code.
+- Slips tried with stand-in nodes: `Command(goto="FINISH")` only prints a warning ("wrote to unknown channel
+  branch:to:FINISH, ignoring it") and the run ends silently; a specialist returning a plain update ends the run after
+  itself.
+- A new still picture of the clean run with the other runs noted; a new sketchnote. Note: the idle reaper stopped one
+  test machine mid-run; the runs were redone on a fresh machine.
+
 ## 26 November: LangGraph chapter 16 rewritten: two tickets pictured, every subgraph mistake tried
 
 - Re-ran the solution: the same output, line for line. A new still picture shows T-4490 through the billing graph

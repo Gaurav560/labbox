@@ -61,8 +61,14 @@ LangGraph, and its diagram, where each node can go.
 :::
 
 :::step{type=task task=supervisor_route title="Your turn: the supervisor decides" file="17-multi-agent/team.py" line="37-42"}
-Finish `supervisor`: return `Command(goto=END)` when `route.next == "FINISH"` or `state.get("turns", 0) >= MAX_TURNS`;
-otherwise `Command(goto=route.next, update={"turns": state.get("turns", 0) + 1})`.
+Finish `supervisor`:
+
+1. if `route.next == "FINISH"` or `state.get("turns", 0) >= MAX_TURNS`, return `Command(goto=END)`;
+2. otherwise return `Command(goto=route.next, update={"turns": state.get("turns", 0) + 1})`.
+
+The usual slip: forgetting the FINISH test and returning `Command(goto=route.next)` every time. "FINISH" is not a
+node, and LangGraph does not stop with an error: we tried it, and it only printed a warning, "wrote to unknown channel
+branch:to:FINISH, ignoring it", and the run ended. A silent end is harder to notice than a crash.
 
 Press **Check**.
 :::
@@ -81,12 +87,16 @@ The specialist's tool calls stay inside its own run; the shared conversation get
 supervisor's context short, and the `name` tells it who said what.
 
 :::diagram{name="lg-supervisor"}
-The supervisor hands the case out and reads each report; the run ends when it says FINISH.
+A real run (26 November), and what the other runs did.
 :::
 :::
 
 :::step{type=task task=specialist_report title="Your turn: report back" file="17-multi-agent/team.py" line="48-53"}
 In `node`, return `Command(goto="supervisor", update={"messages": [report]})`.
+
+The usual slip: returning just the update, `{"messages": [report]}`. The graph has no edge out of a specialist (every
+move is a `Command`), so the run ends there. We tried it: the supervisor ran once, billing reported, and repairs never
+heard about the dripping meter.
 
 ```bash run
 cd /workspace/17-multi-agent && python main.py
@@ -106,7 +116,12 @@ $ python main.py
   [repairs] I have booked two visits for you: one for the dripping meter and another for the meter inspection due to the high bill. Both visits are scheduled for Thursday between 9:00 and 12:00.
 ```
 
-The supervisor did its job: billing first, then repairs, then FINISH with a correct summary. Billing checked the bills
+That was the run when we wrote this chapter. We ran it twice more on 26 November. Once it was clean: billing held the
+bill, repairs booked one visit for the dripping meter, FINISH. Once the supervisor sent the case to billing **twice**, and
+billing reported the same hold two times. A model choosing who acts next varies from run to run; so does how much work
+is repeated.
+
+In the run above, the supervisor did its job: billing first, then repairs, then FINISH with a correct summary. Billing checked the bills
 and readings with its tools and held the bill.
 
 Now read the repairs report. It booked **two** visits: one for the dripping meter, and "another for the meter
@@ -115,8 +130,14 @@ inspector. Repairs read the **whole conversation**, including billing's report, 
 prompt even says "handle only repairs".
 
 The fix is in what each specialist sees. Instead of the full conversation, the supervisor can send each specialist a
-**task**: "Book a visit for the dripping meter at 98220's address." Shared context is convenient, and it is also how
-one agent ends up doing another's work.
+**task**. We tried exactly that on 26 November: `Route` got a `task` field ("the one job for the chosen specialist, in
+one sentence, including the phone number"), and each specialist saw only its task. In both runs no one did another's
+work. But the supervisor wrote "account number 98220 ... Call 1800-123-4567 for scheduling", a helpline number it made
+up, and repairs booked the visit "at the phone number 1800-123-4567": the wrong citizen.
+
+Shared context is how one agent ends up doing another's work; a model-written task is how a fact gets bent on the way.
+Pass facts the code already knows (the citizen's phone, the ticket id) from the state, in code, and let the model
+write only the instruction.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -151,7 +172,8 @@ Why did repairs book a meter inspection?
 - [x] It saw the whole conversation, including billing's problem, and acted on it
 - [ ] The supervisor told it to
 :::explain
-Give a specialist the task it should do, not everything the team knows.
+Give a specialist the task it should do, not everything the team knows, and give it the facts from code, not from
+another model's sentence.
 :::
 :::
 
@@ -173,11 +195,11 @@ You can now:
 - route between agents with a supervisor and `Command`;
 - wrap an agent as a node that reports back under its own name;
 - end a model-driven loop with a turn limit;
-- keep specialists to their own task by choosing what they see.
+- keep specialists to their own task by choosing what they see, with facts passed in code.
 
 Next, chapter 18: streaming progress and tokens to the citizen's screen.
 
-:::photo{src="/lesson-images/langgraph/lg-17-notes.webp" alt="Handwritten notes about multi-agent systems: supervisor picks who acts; Command(goto=specialist); report back, signed; MAX_TURNS ends it; send a task, not everything" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-17-notes.webp" alt="Handwritten notes titled Multi-agent systems, a supervisor and its specialists: a supervisor model picks who acts next, and each specialist is a small agent with its own prompt and tools that reports back under its own name; supervisor to billing, billing holds the bill, supervisor to repairs, repairs books a visit, supervisor says FINISH; the same message ran clean once and sent billing twice once; tasks only gave a made-up number and the wrong citizen; goto FINISH gave a warning and then a silent end; pass known facts in code, not in model text" ai="true"}
 One page of notes for this chapter.
 :::
 :::
