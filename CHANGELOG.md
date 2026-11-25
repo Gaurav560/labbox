@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): "Tap to spin it up" above the container
+
+- Owner: "place this tap to spin it up somewhere else". It sits centred in the space above the container (where the
+  pieces appear once it starts), clear of the whale and the status plate; ink on light pages, cream on dark ones.
+
 ## 25 November (Ukiyo): nine labs in the container section, AI first
 
 - Owner: "keep three AI labs, one Spring Boot, one Python, one DB, one Linux, FastAPI, Redis". The tabs are now
