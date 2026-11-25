@@ -23,7 +23,8 @@ instead of saying "I don't know".
 
 :::step{type=concept title="How tool calling works"}
 The model never runs your code, and never sees it. What it sees is a short **description** of each tool: its name,
-what it does, and its parameters. Here is the real description Spring AI sent for Atlas's opening-hours tool:
+what it does, and its parameters. Here is the real description Spring AI sent for Atlas's opening-hours tool (shortened: in the gateway's log the full
+one also has a `$schema` line, `"additionalProperties": false` and `"strict": false`):
 
 ```json
 {
@@ -51,7 +52,8 @@ Then a conversation in several steps happens, all inside one call to your endpoi
 4. The model reads the result and either asks for another tool, or writes the final answer.
 
 :::diagram{name="ai-tool-calling"}
-The model asks for a tool; Spring AI runs your method; the result goes back; the model answers with the real fact.
+The real "this Saturday" conversation from this chapter's app, read in the gateway's log (26 November): three model
+calls, two tool runs.
 :::
 
 Your code decides **what is possible** (only the tools you offer, only what they return); the model decides **when** to
@@ -97,7 +99,13 @@ In `07-tools`:
 
 1. In `MuseumTools.java`, write a tool **`openingHours(String date)`**: the museum is **closed on Mondays**, and open
    from **10:00 to 18:00** on every other day. Describe the tool, and its `date` parameter (as `YYYY-MM-DD`).
-2. In `AskController.java`, offer the model the museum's tools.
+2. In `AskController.java`, offer the model the museum's tools: `.tools(tools)` before `.call()`.
+
+The usual slips:
+
+- Comparing the text, `date.equals("Monday")`: the model sends a date such as `2026-11-30`, never a day's name.
+  Parse it, then ask for its day of the week.
+- Forgetting step 2: the tool exists, but the model is never told about it, and Atlas still says "I don't know".
 
 ```bash run
 cd 07-tools && mvn -q -o spring-boot:run
@@ -113,7 +121,13 @@ curl -s -G localhost:8080/ask --data-urlencode "q=Is the museum open next Monday
 
 :::step{type=task task=show_times_tool title="Your turn: planetarium shows" file="07-tools/src/main/java/com/atlas/MuseumTools.java" line="40"}
 Add a second tool, **`planetariumShows(String date)`**, that returns `schedule.showsOn(...)` for that date: a list of
-`Show` records, each with a time, a title and the number of free seats. The `ShowSchedule` service already exists.
+`Show` records, each with a time, a title and the number of free seats. The `ShowSchedule` service already exists:
+
+1. `@Tool(description = "...")` on a method `public List<Show> planetariumShows(...)`.
+2. `@ToolParam(description = "the date, as YYYY-MM-DD") String date`.
+3. `return schedule.showsOn(LocalDate.parse(date));`
+
+The usual slip: `schedule.showsOn(date)` with the `String`: `showsOn` takes a `LocalDate`, so it does not compile.
 
 ```bash run
 curl -s -G localhost:8080/ask --data-urlencode "q=Are there free seats for the planetarium shows this Saturday?"; echo
@@ -175,7 +189,9 @@ $ curl -s -G localhost:8080/ask --data-urlencode "q=Are there free seats for the
 Yes, there are free seats for the planetarium shows this Saturday. "Journey to the Moon" at 11:00 has 4 free seats, and "Black Holes" at 16:00 has 11 free seats. However, "The Life of Stars" at 14:00 is fully booked.
 ```
 
-Two tool calls, the right date, the right seats, and the sold-out show named. Note that one question cost three
+Two tool calls, the right date, the right seats, and the sold-out show named. (We asked again on 26 November, a
+Thursday: the same two tool calls, the same date, 4, 0 and 11 seats, and "Next Monday" went through `nextDay` and
+`openingHours` to "closed".) Note that one question cost three
 model calls here; tools make answers right, and a little slower and dearer.
 :::
 
@@ -222,7 +238,7 @@ model only has to pick the right tool and copy the answer.
 :::step{type=deep-dive title="Go deeper: what else tools can do"}
 **Tools that change things.** A tool could book seats, not just read them. Then the stakes change: the model might call
 it by mistake, or a visitor might trick it into doing so. Chapter 8 covers tools you can trust: confirmation before a
-tool runs, limits, and handling errors.
+tool acts, and facts the model cannot change.
 
 **Returning directly.** `@Tool(returnDirect = true)` sends the tool's result straight to the caller, without a second
 model call. Useful when the result is already the answer (a booking reference, say), and it saves a call.
@@ -230,8 +246,9 @@ model call. Useful when the result is already the answer (a booking reference, s
 **Tool context.** `ToolContext` passes information from your app to a tool without the model seeing it (the visitor's
 id, for example), so a tool can act for the right person without the model being able to change who that is.
 
-**Many tools.** Every tool description is sent with every request, as input tokens. With dozens of tools, Spring AI 2.1's
-Tool Search Tool lets the model search for the tools it needs instead of receiving all of them every time.
+**Many tools.** Every tool description is sent with every request, as input tokens. With dozens of tools, Spring AI's Tool
+Search Tool (in the Spring AI 2 reference; not in this lab's image) lets the model search for the tools it needs
+instead of receiving all of them every time.
 
 **Who supports it.** Most current models from OpenAI, Anthropic, Google, Mistral and many open models (through Ollama)
 support tool calling; Spring AI uses each provider's own format behind the same `@Tool` annotation.
@@ -247,7 +264,7 @@ You can now:
 
 Next, chapter 8: tools you can trust, when a tool can change things.
 
-:::photo{src="/lesson-images/spring-ai/springai-07-notes.webp" alt="Handwritten notes about tools: @Tool + a clear description; the model asks, Java runs it; .tools(museumTools); don't let the model calculate; give it a tool that does" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-07-notes.webp" alt="Sketchnote, Tools: ask your code (@Tool methods the model can call): The model never runs your code. It asks for a tool by name, Spring AI runs your Java method, and the result goes back to the model. The flow: Question, Model asks: nextDay, Java: 2026-11-28, Model asks: planetariumShows, Answer with real seats. What we found: the model got a date wrong by itself; a nextDay tool fixed it: let code calculate; one question took 3 model calls; write each description for the model." ai="true"}
 One page of notes for this chapter.
 :::
 :::

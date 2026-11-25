@@ -1749,19 +1749,29 @@ function AiMemory() {
 }
 
 function AiToolCalling() {
+  // Still (owner, 26 November): chapter 7's real "this Saturday" request, from the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["the visitor", "Are there free seats ... this Saturday?", "plain"],
+    ["model call 1: asks for a tool", "nextDay {\"dayOfWeek\":\"SATURDAY\"}", "accent"],
+    ["your Java runs it", "\"2026-11-28 (SATURDAY)\"", "copy"],
+    ["model call 2: asks for a tool", "planetariumShows {\"date\":\"2026-11-28\"}", "accent"],
+    ["your Java runs it", "11:00: 4 seats, 14:00: 0, 16:00: 11", "copy"],
+    ["model call 3: the answer", "4 seats at 11:00, 11 at 16:00; 14:00 is fully booked", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="a tool call"
-      intro="Press Play to follow one question that needs a tool."
-      label="the app sends the question and the tool descriptions; the model replies with a tool call instead of an answer; spring ai runs the java method; the result goes back to the model; the model answers with the real fact"
-      steps={[
-        { label: "1. Question and tools", says: "Is it open next Monday? plus the descriptions of today, nextDay, openingHours ..." },
-        { label: "2. The model asks", says: "Not an answer: please run nextDay(MONDAY)." },
-        { label: "3. Spring AI runs your method", says: "nextDay returns 2026-11-23 (MONDAY)." },
-        { label: "4. Another round", says: "The model asks for openingHours(2026-11-23); it returns Closed." },
-        { label: "5. The answer", says: "The museum is closed next Monday. Real facts, from your code." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="The real tool-calling conversation: the model asks for nextDay, Java returns 2026-11-28, the model asks for planetariumShows, Java returns the seats, and the model answers. Three model calls">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

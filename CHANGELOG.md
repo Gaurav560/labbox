@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: Spring AI chapter 7 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (comparing a date with "Monday"; tools never offered with
+  `.tools(...)`; passing the `String` to `showsOn`).
+- The tool-calling animation is now a still picture of the real "this Saturday" conversation from the gateway's log.
+- Checked in a lab machine on 26 November: "next Monday" went through `nextDay` and `openingHours` to "closed";
+  "this Saturday" through `nextDay` (2026-11-28) and `planetariumShows` to 4, 0 and 11 seats; three model calls per
+  question. The tool description is now marked as shortened (the real one also has `$schema`,
+  `additionalProperties` and `strict`). Corrected: chapter 8 covers confirmation and the tool context (not "limits and
+  errors"); the Tool Search Tool is in the Spring AI 2 reference, not in this lab's image. A new sketchnote.
+
 ## 26 November: Spring AI chapter 6 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (no session id, tried: "No session ID found in advisor context";
