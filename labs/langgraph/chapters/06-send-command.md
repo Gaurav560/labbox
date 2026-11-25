@@ -55,12 +55,20 @@ Each run returns `{"tickets": [ticket]}`, and `tickets` has the `operator.add` r
 one list, whatever the order they finish in. Then `summarise` runs once, with all of them.
 
 :::diagram{name="lg-send"}
-One Send per complaint out, one list of tickets back in, then a Command per repair.
+The real storm night (26 November): five Sends in one step, then a Command per repair.
 :::
 :::
 
 :::step{type=task task=fan_out title="Your turn: one triage per complaint" file="06-send-command/graph.py" line="24-27"}
-Finish `fan_out(state)`: return one `Send("triage_one", {"text": text})` for every text in `state["complaints"]`.
+Finish `fan_out(state)`:
+
+1. loop over `state["complaints"]`;
+2. for each text, make `Send("triage_one", {"text": text})`;
+3. return the list (a list comprehension does it in one line).
+
+The usual slip: returning node names, `["triage_one"]`, as in chapter 3. Then `triage_one` runs once with the whole
+night's state, which has no `text`. We tried it: `KeyError: 'text'`. Each run needs its own small input, and only
+`Send` carries one.
 
 Press **Check**.
 :::
@@ -76,13 +84,20 @@ def plan(state: Repair) -> Command[Literal["engineer_approval", "schedule"]]:
 ```
 
 The return type lists where it may go, so the graph's diagram and `compile()` know the possible paths, and the graph
-needs no edge out of `plan`. Use `Command` when the decision and the update come from the same work (here, reading the
+needs no edge out of `plan`. We tried `plan` without the `Command[Literal[...]]` annotation: it still ran correctly,
+but the diagram drew `plan --> __end__` instead of the two dotted arrows to `engineer_approval` and `schedule`. Use `Command` when the decision and the update come from the same work (here, reading the
 estimate); use a conditional edge when the decision is a separate question.
 :::
 
 :::step{type=task task=command_goto title="Your turn: route the repair" file="06-send-command/graph.py" line="56-60"}
-Finish `plan(state)`: over `APPROVAL_OVER`, return `Command(goto="engineer_approval", update={"status": "waiting for the
-engineer"})`; otherwise `Command(goto="schedule", update={"status": "scheduled"})`.
+Finish `plan(state)`:
+
+1. if `state["estimate"] > APPROVAL_OVER`, return `Command(goto="engineer_approval", update={"status": "waiting for
+   the engineer"})`;
+2. otherwise return `Command(goto="schedule", update={"status": "scheduled"})`.
+
+The usual slip: `Command(goto="schedule")` without the `update`. The run reaches `schedule`, which adds " for
+tomorrow" to a status nobody wrote. We tried it: `KeyError: 'status'`.
 
 ```bash run
 cd /workspace/06-send-command && python main.py
@@ -110,7 +125,8 @@ dirty_water, Rs 40,000: scheduled for tomorrow
 leak, Rs 18,000: scheduled for tomorrow
 ```
 
-Five `Send`s, five triages in one step, one list of tickets, one summary. The `Command` sent the Rs 65,000 repair to the
+(We ran it again on 26 November: the same output.) Five `Send`s, five triages in one step, one list of tickets, one
+summary. The `Command` sent the Rs 65,000 repair to the
 engineer and scheduled the others.
 
 Now read the third repair. The brown water in Old Market is **urgent**: chapter 1 promised a response within four
@@ -128,7 +144,8 @@ in one small function, but only if someone reads the results.
 - [x] LangGraph refuses: five updates to one key in one step need a reducer
 - [ ] They are joined anyway
 :::explain
-Parallel updates to the same key always need a reducer (chapter 5).
+We tried it: `InvalidUpdateError: At key 'tickets': Can receive only one value per step`. Parallel updates to the
+same key always need a reducer (chapter 5).
 :::
 :::
 
@@ -177,7 +194,7 @@ You can now:
 
 That ends Part 1. Next, chapter 7: checkpointers and threads, so a graph remembers and can pause.
 
-:::photo{src="/lesson-images/langgraph/lg-06-notes.webp" alt="Handwritten notes about Send and Command: Send = one task per item; results joined by a reducer; Command = goto + update; urgent before cost!; read the results" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-06-notes.webp" alt="Handwritten notes titled Send and Command, one task per item and nodes that steer: Send starts a node once per item, each with its own small input, all in one step, and a reducer collects the results; a Command returns where to go next and what to update, together; 5 complaints, 5 Sends to triage_one, operator.add makes 5 tickets, plan returns a Command, engineer or schedule; node names instead of Send gave KeyError text; no reducer gave InvalidUpdateError; no Literal on plan gave a wrong diagram; urgent brown water was scheduled for tomorrow" ai="true"}
 One page of notes for this chapter.
 :::
 :::
