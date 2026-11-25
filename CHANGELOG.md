@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 30 rewritten: the live app re-run word for word, the guardrail bug pictured
+
+- Ran the capstone app in a lab machine and sent the lesson's five requests: every answer the same, word for word,
+  and `/usage` again 4 calls, 1,968 tokens in, 145 out.
+- Reproduced the guardrail bug with chapter 25's `QuestionLimit` put back: the 59-character bicycle question was
+  refused, 24- and 22-character questions were answered. The gateway's log shows the refused question's embedding
+  (17 tokens) was paid for and no chat call followed: retrieval runs before input guardrails. A new still picture
+  compares the old and new guard on two 59-character questions.
+- Both tasks list their steps and a slip: no splitter (chapter 23's slip) and no `.distinct()`, tried: the landslide
+  question's sources came back as `["refunds.txt","monsoon.txt","refunds.txt"]`.
+- `Result` methods (`content`, `sources`, `tokenUsage`, `toolExecutions`) checked in the jar; the price is labelled
+  as gpt-4o-mini's. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 29 rewritten: all seven calls pictured, both answers reproduced
 
 - Re-ran both versions: without `supervisorContext`, "420 rupees" for two adults again, word for word; with it, "840

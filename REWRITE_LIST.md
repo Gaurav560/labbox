@@ -12,7 +12,7 @@ Status: **3 of 23 labs done** (60 of 319 chapters).
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
-| 3 | langchain4j | LangChain4j | 30 | in progress (29 of 30) | |
+| 3 | langchain4j | LangChain4j | 30 | in progress (30 of 30) | |
 | 4 | langgraph | LangGraph | 24 | not started | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangChain4j ch 30 done: live app reproduced word for word (usage identical); guardrail bug reproduced; distinct slip tried.
 - 26 Nov: LangChain4j ch 29 done: 420 and 840 reproduced, 7 calls confirmed; LAST and a missing tool tried (OutputParsingException).
 - 26 Nov: LangChain4j ch 28 done: overlap quiz corrected (either reply may win, 5 runs); null answer with no desk and the 6-call ceiling tried; default ceiling is Integer.MAX_VALUE.
 - 26 Nov: LangChain4j ch 27 done: run reproduced (the REFUND capitals leak again); quiz and both slips tried (Missing argument: topic); module is beta, now said.
