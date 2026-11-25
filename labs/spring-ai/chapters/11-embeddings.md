@@ -39,11 +39,11 @@ and the model was trained so that **texts with similar meanings land close toget
 near "the Foucault pendulum hangs in Gallery 2", and far from "pedal a bicycle to make electricity".
 
 :::diagram{name="ai-embeddings"}
-Texts become points; similar meanings land close together; a question finds its nearest neighbours.
+Real scores from this course's embedding model (26 November): one question against the six exhibits.
 :::
 
-Embeddings are cheap: this model costs $0.02 per million tokens, so embedding all twelve exhibit cards (about 1,500
-tokens) costs a few thousandths of a cent. And they are fast, because nothing is generated: the model reads, and returns its numbers.
+Embeddings are cheap: this model costs $0.02 per million tokens, so embedding all twelve exhibit cards of chapter 13
+(1,152 words, about 1,500 tokens) costs about $0.00003, a few thousandths of a cent. And they are fast, because nothing is generated: the model reads, and returns its numbers.
 
 **Check yourself:** do "the dish listens to space" and "the radio telescope hears stars" share many words? Would their
 embeddings be close? (Few shared words, but very similar meaning: yes, close.)
@@ -71,13 +71,22 @@ A small example by hand: a = (1, 2) and b = (2, 4) point the same way. The dot p
 are √5 and √20; √5 × √20 = √100 = 10; so the cosine is 10 / 10 = **1**. And a = (1, 0), b = (0, 1): the dot product is 0,
 so the cosine is **0**, unrelated.
 
-In real embedding spaces, scores are rarely near 1: two unrelated texts often score 0.1 to 0.3, and a good match 0.5 to
-0.7. What matters is the **ranking**.
+In real embedding spaces, scores are rarely near 1. We measured this chapter's four questions against the six
+exhibits with `text-embedding-3-small`: the right exhibit scored 0.37 to 0.55, the others 0.02 to 0.37. The dinosaur
+question gave Rajasaurus 0.367 and the planetarium 0.323, a narrow win. What matters is the **ranking**, and the gap
+between first and second tells you how sure the search is. (Other models give other ranges.)
 :::
 
 :::step{type=task task=cosine_similarity title="Your turn: cosine similarity in Java" file="11-embeddings/src/main/java/com/atlas/Similarity.java" line="14"}
 In `11-embeddings`, finish `Similarity.cosine(float[] a, float[] b)`: one loop that adds up the dot product and the two
-sums of squares, then the division (`Math.sqrt` for the square roots).
+sums of squares, then the division (`Math.sqrt` for the square roots):
+
+1. Three `double` sums, all 0: `dot`, `na`, `nb`.
+2. For every `i`: `dot += a[i] * b[i]`, `na += a[i] * a[i]`, `nb += b[i] * b[i]`.
+3. `return dot / (Math.sqrt(na) * Math.sqrt(nb));`
+
+The usual slip: returning `dot` alone. It ranks texts by length as well as meaning, and the Check's ordinary case
+fails.
 
 Press **Check**: it tests vectors in the same direction, at right angles, in opposite directions, and one ordinary
 case.
@@ -102,7 +111,13 @@ the model more to work with than the description alone.
 
 :::step{type=task task=nearest_exhibit title="Your turn: the nearest exhibit" file="11-embeddings/src/main/java/com/atlas/EmbeddingController.java" line="46"}
 Finish `GET /nearest?q=...`: embed the question and all six exhibits (name and description, in one request), and return
-the **name** of the exhibit with the highest cosine similarity to the question.
+the **name** of the exhibit with the highest cosine similarity to the question:
+
+1. `float[] question = embeddings.embed(q);`
+2. One request for the exhibits: `embeddings.embed(...)` with the list of `name + ": " + description`.
+3. Walk the names and vectors in the same order, keep the name with the highest `Similarity.cosine`, return it.
+
+The usual slip: embedding each exhibit in its own request. It works, but makes seven requests instead of two.
 
 ```bash run
 cd 11-embeddings && mvn -q -o spring-boot:run
@@ -116,7 +131,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Meaning, not words"}
-With the real embedding model:
+With the real embedding model (our re-run on 26 November gave the same four names; the winning scores were 0.367,
+0.468, 0.546 and 0.536):
 
 ```text
 $ curl -s -G localhost:8080/nearest --data-urlencode "q=Where can I see a dinosaur?"; echo
@@ -143,7 +159,8 @@ You embed the same sentence twice with the same model. What is the cosine simila
 - [ ] It changes every time, like chat answers
 :::explain
 Embedding models do not sample tokens, so there is no temperature and no randomness: the same text gives the same
-vector (up to tiny rounding). That makes embeddings safe to store and reuse.
+vector (up to tiny rounding). We embedded the same question twice in one request: cosine 1.0. That makes embeddings
+safe to store and reuse.
 :::
 :::
 
@@ -199,7 +216,7 @@ You can now:
 
 Next, chapter 12: storing many embeddings in a vector store, and searching them in one call.
 
-:::photo{src="/lesson-images/spring-ai/springai-11-notes.webp" alt="Handwritten notes about embeddings: text -> 1,536 numbers; close meaning = close points; cosine = dot / (|a| * |b|); embed(List) = one request; ranking matters, not the score" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-11-notes.webp" alt="Sketchnote, Embeddings (meaning as a list of numbers): An embedding model turns a text into 1,536 numbers. Texts with similar meanings get numbers that point the same way. The flow: Question, embed(), 1,536 numbers, Cosine with each exhibit, Highest score wins. What we measured: the Earth spins found the pendulum: 0.468; right exhibits scored 0.37 to 0.55; the same text twice: cosine 1.0; 12 exhibit cards cost about $0.00003." ai="true"}
 One page of notes for this chapter.
 :::
 :::

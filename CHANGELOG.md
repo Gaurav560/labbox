@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: Spring AI chapter 11 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (returning the dot product alone; one request per exhibit).
+- The embeddings animation is now a still picture of real scores: one question against the six exhibits.
+- Checked through the gateway: the `/embed` example's numbers and 1,536 dimensions; the four questions found the same
+  four exhibits. Corrected: "a good match 0.5 to 0.7, unrelated 0.1 to 0.3" was too high for this model; measured,
+  the right exhibit scored 0.37 to 0.55 and the others 0.02 to 0.37 (the dinosaur question was a narrow win, 0.367
+  against 0.323). The same text embedded twice gave cosine 1.0. The cost of embedding the cards is now worked out
+  from their real size (1,152 words). A new sketchnote.
+
 ## 26 November: Spring AI chapter 10 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips, both tried: a misspelled protocol value (`STREAMING`) starts the

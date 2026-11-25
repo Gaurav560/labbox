@@ -1876,19 +1876,27 @@ function AiMcp() {
 }
 
 function AiEmbeddings() {
+  // Still (owner, 26 November): real cosine scores from text-embedding-3-small, computed for chapter 11's exhibits.
+  const bars: [string, number][] = [
+    ["Foucault pendulum", 0.468], ["Planetarium dome", 0.374], ["Whispering dishes", 0.257],
+    ["Prism room", 0.205], ["Bicycle generator", 0.158], ["Rajasaurus", 0.087],
+  ];
   return (
-    <SketchSteps
-      title="texts become points"
-      intro="Press Play to see meaning turn into numbers."
-      label="each exhibit description goes into the embedding model and comes out as a list of 1536 numbers; similar descriptions land close together; a question is embedded the same way; the nearest point is the answer"
-      steps={[
-        { label: "1. A description goes in", says: "The Foucault pendulum: as the Earth rotates, its swing turns." },
-        { label: "2. Numbers come out", says: "1,536 numbers: 0.003, 0.060, 0.051, ..." },
-        { label: "3. Every exhibit gets a point", says: "Pendulum, prism, bicycle, Rajasaurus ... each at its own place." },
-        { label: "4. The question too", says: "Which exhibit shows that the Earth spins? becomes a point." },
-        { label: "5. The nearest wins", says: "Cosine similarity is highest for the pendulum: Foucault pendulum." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Cosine similarity of the question Which exhibit shows that the Earth spins with each exhibit: Foucault pendulum 0.468, Planetarium dome 0.374, Whispering dishes 0.257, Prism room 0.205, Bicycle generator 0.158, Rajasaurus 0.087">
+      <text className="dg-label" x={8} y={18}>"Which exhibit shows that the Earth spins?"</text>
+      {bars.map(([name, score], i) => {
+        const y = 34 + i * 40;
+        const w = score * 460;
+        return (
+          <g key={name}>
+            <text className="dg-note" x={8} y={y + 20}>{name}</text>
+            <Box x={150} y={y} w={w} h={28} label="" tone={i === 0 ? "copy" : "plain"} />
+            <text className="dg-note" x={158 + w} y={y + 20}>{score.toFixed(3)}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={292}>The pendulum never says "spins", yet it ranks first.</text>
+    </Svg>
   );
 }
 
