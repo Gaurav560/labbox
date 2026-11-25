@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): try colours for the Spin up button (?colors)
+
+- Owner: "try another colour, see how many vibrant colours are in this image ... keep on trying one by one". Eight
+  colours from the home page prints, to try live: open `/?colors` and click a swatch under the box (1 Hiroshige
+  blue, now the default, 2 sea teal, 3 wisteria violet, 4 pine green, 5 ochre gold, 6 blossom pink, 7 dawn coral,
+  8 brick). The swatches are temporary and go once a colour is picked.
+
 ## 25 November (Ukiyo): the earlier Spin up button, in a softer red
 
 - Owner: "that design was good, you just have to change the colour, shade, aesthetic". Back to the hanko-style

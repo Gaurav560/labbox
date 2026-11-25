@@ -4,7 +4,7 @@
  * one container, piece by piece with a line in the log each, then a green tick and Start, which opens that course.
  */
 import { useEffect, useState, type CSSProperties } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
@@ -60,7 +60,19 @@ function Mark({ p }: { p: Piece }) {
  * flies in and settles, its line appears in the log, the progress bar and the clock move on. When the last piece is
  * in, the box seals and Start lights up. It waits for a click on Spin up.
  */
+// Colours from the home page prints, to try on the Spin up button (owner, 25 November: "keep on trying one by one").
+// The swatches show only with ?colors in the address; remove them once a colour is picked.
+const GO_COLORS: { name: string; bg: string; ink: string }[] = [
+  { name: "Hiroshige blue", bg: "#1f4f7a", ink: "#fbf3e8" }, { name: "Sea teal", bg: "#2a6f6b", ink: "#fbf3e8" },
+  { name: "Wisteria violet", bg: "#6e5591", ink: "#fbf3e8" }, { name: "Pine green", bg: "#3d6a43", ink: "#fbf3e8" },
+  { name: "Ochre gold", bg: "#d6a53c", ink: "#1c1a17" }, { name: "Blossom pink", bg: "#d98fa1", ink: "#1c1a17" },
+  { name: "Dawn coral", bg: "#e07a5f", ink: "#fbf3e8" }, { name: "Brick", bg: "#a9533e", ink: "#fbf3e8" },
+];
+
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
+  const trying = useSearchParams()[0].has("colors");
+  const [color, setColor] = useState(0);
+  const go = GO_COLORS[color];
   const [lab, setLab] = useState(LABS[1]);
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
   // run 0 is the waiting box with the Spin up button; each click starts a new run.
@@ -109,7 +121,8 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           ))}
         </ul>
         {waiting && (
-          <button type="button" className="ua-go" onClick={spin}>
+          <button type="button" className="ua-go" onClick={spin}
+            style={{ "--go": go.bg, "--go-ink": go.ink } as CSSProperties}>
             <span className="ua-go-play" aria-hidden="true">▶</span>
             <span>Spin up the {lab.label} machine</span>
           </button>
@@ -128,6 +141,15 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <Link className="h-btn h-btn-primary" to={signedIn ? `/courses/${lab.id}` : `/login?next=${encodeURIComponent(`/courses/${lab.id}`)}`}>Start →</Link>
         </div>
       </div>
+      {trying && (
+        <div className="ua-swatches" role="radiogroup" aria-label="Try a colour for the Spin up button">
+          {GO_COLORS.map((c, i) => (
+            <button key={c.name} type="button" role="radio" aria-checked={i === color} onClick={() => { setColor(i); setRun(0); }}>
+              <i style={{ background: c.bg }} />{i + 1}. {c.name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
