@@ -55,7 +55,7 @@ its own LangChain4j module; your code sees only `ChatModel`, so AI Services, mem
 
 Choosing a local model is a trade-off you measure, not guess:
 
-| Model size | Memory needed (4-bit) | Typical use |
+| Model size | Memory needed (4-bit, roughly) | Typical use |
 |---|---|---|
 | 0.5 to 3 billion parameters | 0.5 to 2.5 GB | Classification, routing, short extraction; weak at explanations |
 | 7 to 14 billion | 5 to 10 GB | Decent chat and RAG on one good machine |
@@ -63,18 +63,22 @@ Choosing a local model is a trade-off you measure, not guess:
 
 Your lab machine has no Ollama server (models need gigabytes of memory per learner), so `Setu.java` skips the local
 part unless `OLLAMA_URL` is set; the check uses a stand-in for Ollama's API. The output below was captured on a machine
-running Ollama with Qwen 2.5 0.5B.
+running Ollama with Qwen 2.5 0.5B (a 397 MB download), and again on 26 November with Ollama 0.12.6.
 :::
 
 :::step{type=task task=ollama_model title="Your turn: a local model" file="24-local-models/src/main/java/com/setu/Local.java" line="14-18"}
 Finish `Local.ollama(baseUrl, modelName)`: build an `OllamaChatModel` with `baseUrl(baseUrl)`, `modelName(modelName)`
-and `temperature(0.0)`.
+and `temperature(0.0)`, then `.build()`.
+
+The usual slip, if you run Ollama yourself: an OpenAI-style address such as `http://localhost:11434/v1`. That path
+is Ollama's OpenAI-compatible endpoint, but `OllamaChatModel` speaks Ollama's own API from the server's root. We tried
+it on 26 November: `404 page not found`. Give the root, `http://localhost:11434`.
 
 Press **Check**.
 :::
 
 :::step{type=concept title="Routing: the right model for each request" file="24-local-models/src/main/java/com/setu/Local.java" line="20-27"}
-A `RoutingChatModel` (experimental in 1.24) is a `ChatModel` that forwards each request to one of several **routes**,
+A `RoutingChatModel` (marked `@Experimental` in 1.24, so its API may still change) is a `ChatModel` that forwards each request to one of several **routes**,
 as decided by a **router**:
 
 ```java
@@ -89,7 +93,9 @@ RoutingChatModel.builder()
 1. Each route has a name, a description and a model.
 2. The router looks at the request and returns a route. This one is a plain rule on the length of the passenger's last
    message (`lastLength` is already written).
-3. The default route is used whenever the router cannot decide: choose the safe one, the capable model.
+3. The default route is used when the router returns `ChatModelRoutingResult.defaultRoute()`, its way of saying "I
+   cannot decide". Make it the safe one, the capable model. A route name the router invents is **not** sent to the
+   default: it is an error (see the slip in the next task).
 
 A rule is free and predictable. LangChain4j also has `DecisionModelChatModelRouter`, which asks a small, cheap
 **decision model** to choose the route from the descriptions, useful when "hard" cannot be judged by length. Because a
@@ -98,8 +104,16 @@ exists.
 :::
 
 :::step{type=task task=routing_model title="Your turn: route by length" file="24-local-models/src/main/java/com/setu/Local.java" line="20-27"}
-Finish `Local.routing(small, large)`: build the `RoutingChatModel` above, with the routes `simple` and `complex`, the
-length rule (over 120 characters is `complex`) and `complex` as the default route.
+Finish `Local.routing(small, large)`: build the `RoutingChatModel` above:
+
+1. `.route("simple", "greetings and short questions", small)`;
+2. `.route("complex", "long questions and complaints", large)`;
+3. a `.router(...)` that returns `"complex"` when `lastLength(...)` is over 120, else `"simple"`;
+4. `.defaultRoute("complex")`, then `.build()`.
+
+The usual slip: a route name in the router that differs from the registered one, such as `"Complex"`. Route names
+are compared exactly. We tried it on 26 November: "Hi!" still worked, and the complaint stopped the program with
+`The router selected the unknown route 'Complex'. Available routes: [simple, complex]`.
 
 ```bash run
 cd /workspace/24-local-models && mvn -q compile exec:java
@@ -139,6 +153,16 @@ Local model: A hill railway is a type of railway that runs along hills or mounta
 
 Be sure to act promptly and keep records of all communications. Good luck!
 ```
+
+:::diagram{name="l4j-routing"}
+The second run, 26 November: the limits each route really sent, from the gateway's log.
+:::
+
+We ran it again on 26 November. The local model's sentence and the "Hi!" answer were the same, word for word. The
+long answer was worded differently (this call sets no temperature, so it varies), and this time it told the passenger
+to contact "Indian Railways", a railway Setu never mentioned: with no rules to read, the model guessed. It used 274 of
+its 400 tokens. Note also that `Setu.java` prints the route name from its own length test; the gateway's log is the
+proof that the router agreed: `max_tokens` 60 for "Hi!", 400 for the complaint.
 
 The local model answered on a laptop's CPU, sending nothing to anyone. Read its answer, though: "a
 type of railway that runs along hills or mountains, connecting different parts of the country" is vague, and the last
@@ -196,8 +220,9 @@ with a different base URL works too; the dedicated `OllamaChatModel` exposes Oll
 **Serving many users.** Ollama suits one machine. For many concurrent users, servers like vLLM batch requests on GPUs
 far more efficiently.
 
-**Decision models.** `TypeSafeDecisionModel` and the decision router choose among options with probabilities, and a
-`minProbability` sends unsure cases to the default route.
+**Decision models.** `DecisionModelChatModelRouter` asks a small decision model to pick the route. Its
+`minProbability(...)` sets how sure it must be, and `fallbackStrategy(FallbackStrategy.DEFAULT_ROUTE)` sends unsure
+cases to the default route (`FAIL` throws instead). Both are in the 1.24 jar; we checked.
 
 **Measure before you route.** Log which route each request took and compare quality and cost per route with a golden
 set of questions (chapter 26); a router that sends hard questions to a weak model saves money and loses passengers.
@@ -213,7 +238,7 @@ You can now:
 
 That is the end of Part 4. Next, chapter 25: guardrails. Checks before and after the model that keep Setu safe.
 
-:::photo{src="/lesson-images/langchain4j/l4j-24-notes.webp" alt="Handwritten notes about local models: open weights run on your machine; Ollama gives the same ChatModel; small models are fast but weak; route simple or complex; the default route is the safe model" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-24-notes.webp" alt="Handwritten notes titled Local models and routing: Ollama runs an open model on your own machine behind the same ChatModel, and a RoutingChatModel sends each message to one of several models chosen by a router; message, router counts its characters, picks simple or complex, that route model answers, the caller sees one ChatModel; Qwen 2.5 0.5B is 397 MB and gives vague answers; Hi used 9 tokens in and 9 out; the complaint used 274 tokens out and guessed a railway; an unknown route name is an error, not the default" ai="true"}
 One page of notes for this chapter.
 :::
 :::
