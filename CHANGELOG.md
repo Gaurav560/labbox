@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 9 rewritten (easy, a little detailed, checked)
+
+- Hallucination, grounding, mandi and quintal are explained where they first appear; both tasks list their steps and
+  the usual slips.
+- Checked by running the three questions through the lab gateway: the same three behaviours, the same token counts
+  (224 in, 13 to 20 out) and costs ($0.0000414 recomputed; about $0.43 a day for 10,000 answers). Corrected: Air Canada's
+  chatbot wrongly promised a refund under the real bereavement-fare policy (it did not invent a policy); "output costs
+  more because each token is a pass" became "a large part of the reason", with dated prices; OpenAI's automatic prompt
+  caching starts at 1,024 tokens, so it does not yet help Navin's 224-token card. A new notes page.
+
 ## 25 November: LangChain chapter 8 rewritten (easy, a little detailed, checked)
 
 - Parameters and chunks are explained where they first appear; both tasks list their steps and the usual slips.

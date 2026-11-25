@@ -4,9 +4,10 @@ In chapter 6 Navin told a member, with complete confidence, that the co-op does 
 rules is worse than no help desk: a farmer who believes it may sell a harvest in a hurry, or pick grapes too early
 after spraying.
 
-This is called **hallucination**, and it is the most important thing to design around in any AI application. The
-model is not lying; it produces likely text, and a likely-sounding answer is not the same as a true one. Two defences
-work together: **give the model the facts**, and **give it permission to say "I don't know"**.
+This is called **hallucination**: the model states something false as if it were fact. It is one of the most important
+things to design around in any AI application. The model is not lying; it produces likely text (chapter 4), and a
+likely-sounding answer is not the same as a true one. Two defences work together: **give the model the facts** (this is called **grounding** an answer), and **give it
+permission to say "I don't know"**.
 
 And since every answer has a price, this chapter also reads the bill: tokens in, tokens out, dollars.
 
@@ -28,9 +29,9 @@ Fluent writing used to be a sign that someone knew what they were talking about.
 :::
 
 In **2023**, in the case **Mata v. Avianca** in New York, two lawyers filed a brief citing court decisions that did not
-exist: ChatGPT had invented them, with names, dates and quotes. The judge fined them in June 2023. In **February 2024** a
-Canadian tribunal ordered Air Canada to honour a bereavement refund policy its website chatbot had invented
-(**Moffatt v. Air Canada**): the airline argued the chatbot was responsible for its own words, and lost. The lesson for
+exist: ChatGPT had invented them, with names, dates and quotes. The judge fined them in June 2023. In **February 2024** a Canadian tribunal ordered Air Canada to pay a passenger the refund its website chatbot had
+wrongly promised under the airline's bereavement-fare policy (**Moffatt v. Air Canada**): the airline argued that
+the chatbot was responsible for its own words, and lost. The lesson for
 every company: **your assistant's words are your words**.
 
 :::solved
@@ -45,8 +46,8 @@ but it turns most invented answers into honest ones.
 :::
 
 :::step{type=concept title="Facts in the prompt, and permission not to know" file="09-hallucinations/honest.py" line="5-22"}
-The co-op's facts (`FACTS`) are a short card: office hours, today's mandi rates, cold storage prices, loans, and the
-spraying rule. The honest prompt is three parts:
+The co-op's facts (`FACTS`) are a short card: office hours, today's **mandi** rates (the mandi is the wholesale market;
+rates are per **quintal**, 100 kg), cold storage prices, loans, and the spraying rule. The honest prompt is three parts:
 
 ```text
 <who Navin is: SYSTEM>
@@ -66,8 +67,14 @@ question; Part 4 (retrieval) sends only the parts that matter.
 :::
 
 :::step{type=task task=honest_prompt title="Your turn: the honest prompt" file="09-hallucinations/honest.py" line="19-23"}
-Finish `honest_prompt()`: return `SYSTEM`, then the "I don't know" instruction (exactly those words), then a blank line,
-`Facts:` and `FACTS`.
+Finish `honest_prompt()`: return one string made of, in order:
+
+1. `SYSTEM`;
+2. the "I don't know" instruction, exactly as shown above (both sentences);
+3. a blank line, then `Facts:` on its own line, then `FACTS`.
+
+The usual slip: forgetting the space between `SYSTEM` and the instruction, so two sentences run together
+("...simple words.If the answer...").
 
 Press **Check**.
 :::
@@ -79,8 +86,8 @@ Every `AIMessage` has `usage_metadata`:
 reply.usage_metadata   # {'input_tokens': 224, 'output_tokens': 13, 'total_tokens': 237, ...}
 ```
 
-gpt-4o-mini costs **$0.15 per million input tokens** and **$0.60 per million output tokens**: output is four times
-dearer, because each output token is one full pass through the model (chapter 4).
+gpt-4o-mini costs **$0.15 per million input tokens** and **$0.60 per million output tokens**: output is four times dearer (OpenAI's list prices, November 2026). A large part of the reason: the question is read
+in one pass, but each output token needs its own pass through the model (chapter 4).
 
 | | Tokens | Price per million | Cost |
 |---|---|---|---|
@@ -93,8 +100,12 @@ made Navin honest, and they are also most of its bill.
 :::
 
 :::step{type=task task=answer_cost title="Your turn: the cost of an answer" file="09-hallucinations/honest.py" line="31-35"}
-Finish `answer_cost(reply)`: input tokens times `INPUT_PER_MILLION`, plus output tokens times `OUTPUT_PER_MILLION`,
-divided by one million.
+Finish `answer_cost(reply)`:
+
+1. `usage = reply.usage_metadata`.
+2. Return `(usage["input_tokens"] * INPUT_PER_MILLION + usage["output_tokens"] * OUTPUT_PER_MILLION) / 1_000_000`.
+
+The usual slip: dividing only the output part by a million (brackets matter).
 
 ```bash run
 cd /workspace/09-hallucinations && python main.py
@@ -104,6 +115,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="Right, honest, and careful"}
+A real run (we ran it again on 25 November: the same answers, except the grapes one said "You must wait 10 days.",
+one token shorter):
+
 ```text
 $ python main.py
 > What is today's onion rate?
@@ -123,8 +137,8 @@ Three questions, three behaviours you want. The onion rate came from the facts. 
 said "I don't know" and pointed to the office instead of inventing a rate. And the spraying question got the co-op's
 rule, applied to the member's situation: 4 days is not 10.
 
-The cost: about **$0.00004** an answer. If every member asked ten questions a day, 1,000 members would cost about
-$0.43 a day. Cheap, but notice that it scales with the facts card: double the card, nearly double the bill. That is
+The cost: about **$0.00004** an answer. If every member asked ten questions a day, 1,000 members would cost about $0.43
+a day (10,000 answers at about $0.000043 each, the average of these three). Cheap, but notice that it scales with the facts card: double the card, nearly double the bill. That is
 the cost argument for retrieval in Part 4.
 :::
 
@@ -173,7 +187,8 @@ how often Navin gets a set of known questions right.
 with each answer.
 
 **Prompt caching.** Providers discount input tokens that repeat at the start of every request (like a long facts card),
-which lowers exactly the cost this chapter found.
+which lowers exactly the cost this chapter found. OpenAI does it automatically, but only for prompts of at least
+1,024 tokens, so Navin's 224-token card is not discounted yet.
 :::
 
 :::step{type=recap}
@@ -186,7 +201,7 @@ You can now:
 
 That ends Part 2. Next, chapter 10: an agent built by hand, a model that can ask your Python code for help.
 
-:::photo{src="/lesson-images/langchain/lc-09-notes.webp" alt="Handwritten notes about hallucinations and cost: Hallucination: likely, not true; Give facts, allow I don't know; Garlic: I don't know; 224 in, 13 out; About $0.00004 an answer" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-09-notes.webp" alt="Handwritten notes about hallucinations and cost: A hallucination is a false answer stated as fact. Give the model the facts, and allow it to say I don't know. Asked about garlic, which was not on the card, Navin said I don't know. Our answers took about 224 tokens in and 13 to 20 out. With gpt-4o-mini that is about /bin/bash.00004 an answer. Here the facts card is most of the bill." ai="true"}
 One page of notes for this chapter.
 :::
 :::
