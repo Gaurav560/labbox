@@ -6,15 +6,15 @@ real code and data, still pictures with real numbers, new notes pages. The rules
 After each lab: stop, tell the owner, do the owner's small tasks, then the next lab. What was wrong and fixed in each
 chapter is in `CHANGELOG.md`.
 
-Status: **2 of 23 labs done** (40 of 319 chapters).
+Status: **3 of 23 labs done** (60 of 319 chapters).
 
 | # | Lab | Title | Chapters | Status | Done on |
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
-| 3 | langchain4j | LangChain4j | 30 | not started | |
+| 3 | langchain4j | LangChain4j | 30 | next (owner, 26 Nov) | |
 | 4 | langgraph | LangGraph | 24 | not started | |
-| 5 | spring-ai | Spring AI | 20 | in progress (19 of 20) | |
+| 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |

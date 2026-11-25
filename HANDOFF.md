@@ -33,6 +33,11 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
+- **Latest (26 November, early morning):** the Spring AI lab rewritten, all 20 chapters, with the new tall
+  sketchnote notes pages (owner's style; `tools/authoring/notes.py` "sketch" jobs) and still pictures from real runs.
+  A real bug was found and fixed in chapter 20 (the privacy guard ran after session memory). Helper scripts for
+  authoring now live in `.authoring-scratch/` (git-ignored). Next: LangChain4j (owner's order), then the owner picks.
+  RAG and LangChain still have the older one-page notes (40 pages to redraw when the owner says).
 - **Latest (25 November, night):** the LangChain lab rewritten, all 27 chapters, the same way as RAG (one commit per
   chapter, each on `design/ukiyo` too). Lab valid, test-lab green, test machines cleaned, no admins. Real findings are
   in CHANGELOG (for example: a misspelled tool name in `interrupt_on` books without the manager; the gateway's 20 calls

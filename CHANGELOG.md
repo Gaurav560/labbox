@@ -1,5 +1,21 @@
 # Changelog
 
+## 26 November: Spring AI chapter 20 rewritten; a real guard bug fixed; the Spring AI lab is done (20 of 20)
+
+- Found and fixed a real bug in the assembled Atlas: the privacy guard had order 0, but the session advisors run at
+  about minus two billion, so they saved "my phone number is ..." in the visitor's session before the guard refused
+  it, and since `SafeGuardAdvisor` searches the whole prompt, every later question from that visitor was refused
+  too (another visitor was fine). The guard now has `Ordered.HIGHEST_PRECEDENCE` in the solution (and the starter
+  imports `Ordered`); re-tested: the number is refused, never stored (checked in the gateway's log), and the next
+  question is answered. The lesson teaches it ("Test guards with a second message"); chapter 17's sentence that
+  order 0 runs "before the session" was corrected.
+- Both tasks list their steps and the usual slips (the session list inside the same `defaultAdvisors`).
+- The animation is now a still picture of one real message through every piece.
+- Checked in a lab machine: the same Moon, Saturday and shows answers with the same sources and seats. The follow-up
+  "And when did it land there?" was answered this time (the lesson's run refused it); the lesson now says the pull
+  between memory and retrieval goes either way. `CompressionQueryTransformer` and `RetrievalAugmentationAdvisor` exist
+  in the lab's Spring AI; an unverified class name became the JDBC starter of chapter 6. A new sketchnote.
+
 ## 26 November: Spring AI chapter 19 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (asking for the desk and the answer in one call; a review loop with

@@ -124,7 +124,9 @@ SafeGuardAdvisor.builder()
 
 1. `sensitiveWords` is a list of phrases; a request containing any of them is refused.
 2. `failureResponse` is what the visitor reads instead of an answer.
-3. `order(0)` runs it early, before the session, retrieval and the model.
+3. `order(0)` runs it before advisors with higher numbers, such as retrieval. Session memory's advisors use far
+   lower numbers (about minus two billion), so they would run first: when a guard must come before memory, give it
+   `Ordered.HIGHEST_PRECEDENCE`. Chapter 20 shows what goes wrong otherwise.
 
 It searches the whole prompt, ignoring case, the system message included: never put one of the phrases in your own
 system prompt, or every request will be refused.
