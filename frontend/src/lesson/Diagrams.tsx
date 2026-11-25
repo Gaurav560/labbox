@@ -2436,18 +2436,41 @@ function LcAgentLoop() {
 }
 
 function LcMemoryThreads() {
+  // Still (owner, 25 November): chapter 15's real run as two saved threads, side by side.
+  const ravi: [string, string][] = [
+    ["Ravi", "I am Ravi ... 40 crates."],
+    ["Navin", "How many days?"],
+    ["Ravi", "Cost of them for 15 days?"],
+    ["Navin", "storage_cost(40, 15): 1200"],
+    ["Ravi", "What is my name?"],
+    ["Navin", "Your name is Ravi."],
+  ];
+  const asha: [string, string][] = [
+    ["Asha", "Cost of them for 15 days?"],
+    ["Navin", "Please tell me the number..."],
+  ];
+  const col = (title: string, rows: [string, string][], x: number) => (
+    <g>
+      <text className="dg-label" x={x} y={16}>{title}</text>
+      <g className="dg-cells-small">
+        {rows.map(([who, text], i) => (
+          <g key={i}>
+            <Box x={x} y={28 + i * 46} w={210} h={38} label="" tone={who === "Navin" ? "copy" : "plain"} />
+            <text className="dg-note" x={x + 10} y={28 + i * 46 + 16} style={{ fontWeight: 600 }}>{who}</text>
+            <text className="dg-note" x={x + 10} y={28 + i * 46 + 32}>{text}</text>
+          </g>
+        ))}
+      </g>
+    </g>
+  );
   return (
-    <SketchSteps
-      title="a checkpointer and two threads"
-      intro="Press Play to follow Ravi and Asha."
-      label="each message is added to its thread's saved state; the model receives that thread's whole conversation; another thread starts empty"
-      steps={[
-        { label: "1. Ravi, thread M-104", says: "I am Ravi, 40 crates of onions. Saved under M-104." },
-        { label: "2. Ravi again", says: "How much for 15 days? The model receives Ravi's whole thread, so them means 40 crates." },
-        { label: "3. Asha, thread M-221", says: "The same words, but her thread is empty: the model asks how many crates." },
-        { label: "4. Ravi a third time", says: "What is my name? His thread still holds it." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 340" label="Ravi's thread M-104 holds his whole conversation, so them means his 40 crates; Asha's thread M-221 starts empty, so Navin asks her">
+      {col("thread M-104 (Ravi)", ravi, 0)}
+      {col("thread M-221 (Asha)", asha, 230)}
+      <text className="dg-note" x={230} y={150}>Asha's thread has no</text>
+      <text className="dg-note" x={230} y={168}>Ravi in it: the same</text>
+      <text className="dg-note" x={230} y={186}>words, a different answer.</text>
+    </Svg>
   );
 }
 

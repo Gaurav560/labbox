@@ -23,8 +23,8 @@ forgets you as soon as it has answered. Fine for documents; useless for a shoppi
 In **1994** Lou Montulli at Netscape invented the **cookie**: a small id the server gives the browser, which sends it
 back with every request, so the server can find "this visitor's" data again. A chat model has the same problem and the
 same solution: the model is stateless, the application keeps the conversation, and an id (a session, a **thread**)
-says whose conversation it is. When ChatGPT added a memory feature in **2024**, it was built the same way: memory lives
-in the application, not in the model.
+says whose conversation it is. When ChatGPT added a memory feature in **2024**, OpenAI described it as saved memories that the app brings into later
+chats: kept by the application, not learned by the model.
 
 :::solved
 **State outside the model.** The model stays simple and stateless; the app decides what to remember, for whom, and
@@ -62,8 +62,12 @@ summarising, so long conversations stay affordable.
 :::
 
 :::step{type=task task=memory_agent title="Your turn: an agent that remembers" file="15-memory/memory.py" line="10-13"}
-Finish `memory_agent()`: chapter 11's agent (model, both tools, `system_prompt=SYSTEM`) with
-`checkpointer=InMemorySaver()`.
+Finish `memory_agent()`: return chapter 11's agent with one more argument:
+
+`create_agent("openai:ai-chat", tools=[mandi_price, storage_cost], system_prompt=SYSTEM, checkpointer=InMemorySaver())`
+
+The usual slip: making a new `InMemorySaver()` inside `ask` for every message. Each saver starts empty, so nothing
+would be remembered; make one, with the agent.
 
 Press **Check**.
 :::
@@ -85,13 +89,18 @@ A real app might use one thread per conversation instead (a member can start a n
 the context (chapter 12). Either way: a thread must never be shared by two people.
 
 :::diagram{name="lc-memory-threads"}
-Each message joins its own thread's saved conversation; a new thread starts empty.
+The real run as two saved threads: Ravi's holds his whole conversation; Asha's starts empty.
 :::
 :::
 
 :::step{type=task task=thread_per_member title="Your turn: one thread per member" file="15-memory/memory.py" line="16-20"}
-Finish `ask(agent, member_id, text)`: invoke the agent with the message and
-`{"configurable": {"thread_id": member_id}}`, and return the last message's content.
+Finish `ask(agent, member_id, text)`:
+
+1. `result = agent.invoke({"messages": [{"role": "user", "content": text}]}, {"configurable": {"thread_id": member_id}})`.
+   The second argument is the run's **config**: settings for this one run, here which thread to continue.
+2. Return `result["messages"][-1].content`.
+
+The usual slip: using the same thread id for everyone (`"navin"`): then Asha would see Ravi's crates.
 
 ```bash run
 cd /workspace/15-memory && python main.py
@@ -101,6 +110,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="Ravi is remembered; Asha starts fresh"}
+A real run (we ran it again on 25 November: the same behaviour, in slightly different words, for example "Please tell
+me the number of crates you want to store" for Asha):
+
 ```text
 $ python main.py
 [M-104] > Hello, I am Ravi. I grow onions and have 40 crates to store.
@@ -180,7 +192,7 @@ You can now:
 
 Next, chapter 16: streaming an agent, its steps and its answer, as they happen.
 
-:::photo{src="/lesson-images/langchain/lc-15-notes.webp" alt="Handwritten notes about short-term memory: The model has no memory; Checkpointer saves each step; One thread per member; Same question, two answers; Every message is paid again" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-15-notes.webp" alt="Handwritten notes about memory: A model is stateless: it remembers nothing between calls. The app keeps the conversation and sends it again each time. A checkpointer saves the state after every step. A thread id says whose conversation continues. Give every member their own thread. Every saved message is paid for again on every call." ai="true"}
 One page of notes for this chapter.
 :::
 :::
