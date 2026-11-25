@@ -1848,18 +1848,30 @@ function AiAdvisorChain() {
 }
 
 function AiMcp() {
+  // Still (owner, 26 November): chapter 10's real MCP session with curl, four messages and their answers.
+  const rows: [string[], string[]][] = [
+    [["initialize"], ["atlas-museum 1.0.0,", "and an Mcp-Session-Id"]],
+    [["notifications/", "initialized"], ["202, no body"]],
+    [["tools/list"], ["today, openingHours,", "planetariumShows, nextDay"]],
+    [["tools/call", "planetariumShows 2026-11-28"], ["11:00: 4 seats, 14:00: 0,", "16:00: 11"]],
+  ];
   return (
-    <SketchSteps
-      title="MCP in four messages"
-      intro="Press Play to follow a client using Atlas's tools."
-      label="the client sends initialize and learns the server's name; it sends tools list and learns four tools; its model decides to use planetarium shows; the client sends tools call and gets the result back"
-      steps={[
-        { label: "1. initialize", says: "Hello, I am a client. The server: I am atlas-museum, with tools." },
-        { label: "2. tools/list", says: "today, nextDay, openingHours, planetariumShows, with descriptions." },
-        { label: "3. The client's model decides", says: "This question needs planetariumShows for 2026-11-28." },
-        { label: "4. tools/call", says: "Atlas runs its Java method and returns the shows as text." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 356" label="An MCP client sends initialize, notifications/initialized, tools/list and tools/call to Atlas at /mcp; the server answers with its name and a session id, 202, four tools, and Saturday's seats">
+      <text className="dg-label" x={8} y={18}>the client sends (POST /mcp)</text>
+      <text className="dg-label" x={232} y={18}>Atlas answers</text>
+      {rows.map(([msg, answer], i) => {
+        const y = 30 + i * 80;
+        return (
+          <g key={i}>
+            <Box x={8} y={y} w={204} h={60} label="" tone="accent" />
+            {msg.map((line, j) => <text key={j} className="dg-note" x={18} y={y + (msg.length === 1 ? 35 : 26 + j * 20)}>{line}</text>)}
+            <Arrow x1={213} y1={y + 30} x2={226} y2={y + 30} />
+            <Box x={228} y={y} w={206} h={60} label="" tone="copy" />
+            {answer.map((line, j) => <text key={j} className="dg-note" x={238} y={y + (answer.length === 1 ? 35 : 26 + j * 20)}>{line}</text>)}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
