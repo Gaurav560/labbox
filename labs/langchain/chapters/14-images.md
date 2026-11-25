@@ -2,8 +2,8 @@
 "There are white patches under my grape leaves. What is it?" is hard to answer in words, and members are farmers, not
 plant scientists. Most of them carry a phone with a camera. Sending a photo is easier than describing one.
 
-gpt-4o-mini, the model behind Navin, reads images as well as text. In LangChain an image is one more **content
-block** inside a `HumanMessage`, next to the text. And combined with chapter 13's structured output, a photo can come
+gpt-4o-mini, the model behind Navin, reads images as well as text. In LangChain an image is one more **content block** (one typed piece of a message: some text, an image, a file) inside
+a `HumanMessage`, next to the text. And combined with chapter 13's structured output, a photo can come
 back as a checked report.
 
 This chapter is also a lesson in responsibility. A wrong answer about a sick vine can cost a season's harvest, and the
@@ -34,16 +34,23 @@ about a third larger.
 :::
 
 :::step{type=task task=image_message title="Your turn: a message with a photo" file="14-images/leaf.py" line="22-27"}
-Finish `image_message(question, image, mime_type)`: return a `HumanMessage` whose content is a text block with the
-question and an image block with `base64.b64encode(image).decode()` and the `mime_type`.
+Finish `image_message(question, image, mime_type)`. `image` is the photo's raw bytes.
+
+1. Return a `HumanMessage` whose `content` is a list of two blocks.
+2. First `{"type": "text", "text": question}`.
+3. Then `{"type": "image", "base64": base64.b64encode(image).decode(), "mime_type": mime_type}`. `b64encode` gives
+   bytes; `.decode()` turns them into the text JSON needs. The **MIME type** names the file format (`image/jpeg`).
+
+The usual slip: forgetting `.decode()`, which sends `b'...'` instead of plain text.
 
 Press **Check**.
 :::
 
 :::step{type=history title="Models that can see, and a disease from overseas"}
 :::before{title="Text only"}
-Until 2023 the big language models read only text. Image recognition was a separate field, with separate models that
-could label a picture but not talk about it.
+Until 2023 the most widely used language models read only text (research models such as DeepMind's Flamingo, 2022,
+could already talk about images). Image recognition was mostly a separate field, with separate models that could label
+a picture but not talk about it.
 :::
 
 In **January 2021** OpenAI's **CLIP** learned to connect images and text from 400 million captioned pictures. In
@@ -86,8 +93,11 @@ Why such a strict rule? Because of what happened when we first ran this chapter 
 :::
 
 :::step{type=task task=leaf_report title="Your turn: the leaf report" file="14-images/leaf.py" line="30-34"}
-Finish `leaf_report(question, image)`: call `model.with_structured_output(LeafReport).invoke([...])` with
-`SystemMessage(RULES)` and your `image_message(question, image)`.
+Finish `leaf_report(question, image)`: return
+`model.with_structured_output(LeafReport).invoke([SystemMessage(RULES), image_message(question, image)])`.
+
+The usual slip: leaving out `SystemMessage(RULES)`. The check looks for `RULES` as the system message, because
+without it the real model's next step was spraying advice (see below).
 
 ```bash run
 cd /workspace/14-images && python main.py
@@ -98,8 +108,8 @@ Press **Check**.
 
 :::step{type=try title="Careful: a confident wrong diagnosis"}
 `leaf.jpg` is a real photo of grape **downy mildew**: the white, downy growth on the underside of a leaf (photo by Jerzy
-Opioła, CC BY-SA 4.0; credit in `leaf-credit.txt`). When we first wrote this chapter, `leaf_report` sent the photo
-**without** the rules. The real answer:
+Opioła, CC BY-SA 4.0; credit in `leaf-credit.txt`). When we first wrote this chapter, `leaf_report` sent the photo **without** the rules. The real answer (we ran it twice
+more on 25 November and got the same advice both times):
 
 ```text
 $ python main.py
@@ -123,7 +133,7 @@ confidence  medium
 next_step   Please show this leaf to Mrs. Kulkarni for a detailed analysis.
 ```
 
-Vaguer, and much safer: it says what it can see and sends the member to a person who can diagnose. For an assistant
+We ran it again with the rules on 25 November and got exactly this. Vaguer, and much safer: it says what it can see and sends the member to a person who can diagnose. For an assistant
 whose words can cost a harvest, that is the right trade.
 :::
 
@@ -135,8 +145,10 @@ $ lab requests --last
 2026-11-23 13:02:00 UTC  ai-chat -> openai/gpt-4o-mini  8697 in, 46 out
 ```
 
-**8,697 input tokens** for one 500 by 375 photo and two short sentences, against about 200 for a text question. With
-gpt-4o-mini, images are counted at a high token rate, so this one photo cost about $0.0013, as much as 30 text answers.
+**8,697 input tokens** for one 500 by 375 photo and two short sentences, against about 220 for a text question in
+chapter 9 (we got 8,697 again on 25 November). OpenAI counts images for gpt-4o-mini at a high token rate: a fixed
+part plus a part for each **tile** (a square piece of the image); this small photo fits in one tile. So this one photo
+cost about $0.0013 (8,697 x $0.15 per million), as much as about 30 text answers from chapter 9.
 Photos are worth it when they replace a long, uncertain description; resize them before sending (this one is 500
 pixels wide), and never send them by default.
 :::
@@ -198,7 +210,7 @@ You can now:
 
 Next, chapter 15: memory. Navin remembers what each member said earlier.
 
-:::photo{src="/lesson-images/langchain/lc-14-notes.webp" alt="Handwritten notes about images in the conversation: Text and image blocks; Base64 inside JSON; First answer: wrong disease; Rules: send to the agronomist; One photo: 8,697 tokens" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-14-notes.webp" alt="Handwritten notes about images: A photo is one more content block in a HumanMessage. Base64 turns its bytes into text, about a third larger. Without rules, Navin named the wrong disease and advised a spray. With rules, it sent the member to the agronomist. Our 500 by 375 photo and its question took 8,697 input tokens. Resize photos, and send them only when they help." ai="true"}
 One page of notes for this chapter.
 :::
 :::
