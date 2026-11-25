@@ -137,7 +137,8 @@ Press **Check**.
 
 :::step{type=try title="Four questions, four behaviours"}
 The best sources and their scores below are what the search returns every time. The answers come from the language model,
-so your wording may differ a little; this is one real run from when the lab was written.
+so your wording may differ a little. This is a real run; we ran it again on 25 November, in a lab machine through the
+lab's model gateway, and got the same answers word for word.
 
 ```text
 $ python ask.py

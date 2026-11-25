@@ -146,7 +146,7 @@ real	0m0.612s
 
 0.6 seconds (0.5 to 0.9 seconds in our runs), almost all of it reranking. The phones' question, then one the documents
 cannot answer, then a mistake in the request. The first answer comes from the language model, so its wording may differ
-a little in your run:
+a little in your run (a re-run on 25 November gave the same words):
 
 ```text
 $ curl -s -X POST localhost:8000/ask -H "content-type: application/json" -d "{\"question\": \"Which animal injures the most people?\"}"; echo
