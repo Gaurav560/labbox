@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 1 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (checking before lower-casing; the constant's name in quotes; `<=` on a tie).
+- The circles animation is now a still picture, with Setu's own example of each field.
+- Checked in a lab machine: the solution's output is exactly the lesson's. Added what the numbers hide: 18 minutes also
+  makes just 1 mistake, so 12 wins only by the tie rule, a choice a person made. The history (Turing 1950, Dartmouth
+  1956, Samuel 1959, AlexNet 2012, the transformer 2017) was checked. A new sketchnote.
+
 ## 26 November: Spring AI chapter 20 rewritten; a real guard bug fixed; the Spring AI lab is done (20 of 20)
 
 - Found and fixed a real bug in the assembled Atlas: the privacy guard had order 0, but the session advisors run at
