@@ -682,3 +682,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 @keyframes ua-slide { 0% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(.55); } 18% { opacity: 1; }
   80% { transform: translate(0, -4px); } 100% { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ua-c-box.is-new { animation: none; } }
+.ua-c-whale { transition: opacity .6s; filter: drop-shadow(0 2px 0 #0b1a2499); }
+.ua-container:not(.is-wait) .ua-c-whale { opacity: .5; }
+.ua-c-box { opacity: .92; filter: saturate(.85); }
+.ua-c-box-glyph { font-size: 14px; }

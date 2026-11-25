@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the whale leads, the crates step back
+
+- Owner: "the whale logo should be a little bit more dominant and the item boxes a little less". The whale stays on the
+  glass wall at half strength (it faded to almost nothing before) and is drawn in front of the crates; the crates are
+  about a fifth smaller and slightly softer in colour.
+
 ## 25 November (Ukiyo): the pieces ride in as crates you can see
 
 - Owner: "these small item logos going inside the container don't do justice; show a more expressive, cool way of

@@ -73,12 +73,12 @@ function slot(i: number, n: number): { at: Pt; row: number } {
   const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
   const t = 0.13 + (cols > 1 ? col * (0.55 / (cols - 1)) : 0.3); // clear of the door folded back at the end
   const [x, y] = FLOOR(t, 0.72);
-  return { at: [x, y - level * 52], row: level };
+  return { at: [x, y - level * 42], row: level };
 }
 
 /** A cardboard crate with the piece's logo on its front, standing on the floor at `at` (its front bottom centre). */
 function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
-  const [x, y] = at, w = 54, h = 50, kx = 18, ky = -6;
+  const [x, y] = at, w = 44, h = 40, kx = 14, ky = -5;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
     <g className={`ua-c-box ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
@@ -86,9 +86,9 @@ function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
       <polygon className="ua-c-box-side" points={pts([x + w / 2, y - h], [x + w / 2 + kx, y - h + ky], [x + w / 2 + kx, y + ky], [x + w / 2, y])} />
       <rect className="ua-c-box-front" x={x - w / 2} y={y - h} width={w} height={h} rx="2" />
       <line className="ua-c-box-tape" x1={x + kx / 2 - 2} y1={y - h + ky / 2} x2={x + kx / 2 + 2} y2={y - h + ky / 2} />
-      <rect className="ua-c-box-label" x={x - 19} y={y - h + 8} width="38" height="34" rx="3" />
-      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - 14} y={y - h + 11} width="28" height="28" />
-        : <text className="ua-c-box-glyph" x={x} y={y - h + 32} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
+      <rect className="ua-c-box-label" x={x - 15} y={y - h + 6} width="30" height="28" rx="3" />
+      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - 11} y={y - h + 9} width="22" height="22" />
+        : <text className="ua-c-box-glyph" x={x} y={y - h + 26} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
       <circle className="ua-c-box-led" cx={x - w / 2 + 6} cy={y - 6} r="2.6" />
     </g>
   );
@@ -161,10 +161,11 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
             <g className="ua-c-print">
             <text className="ua-c-stencil" x="76" y="146">LABBOX</text>
             <text className="ua-c-stencil is-small" x="76" y="160">LBXU 240 017 3 · 22G1</text>
-            <image href="/logos/docker.svg" x="146" y="104" width="214" height="186" />
             <rect className="ua-c-spec" x="340" y="146" width="52" height="22" rx="2" />
             {[152, 157, 162].map((y) => <line key={y} className="ua-c-specline" x1="345" y1={y} x2="387" y2={y} />)}
             </g>
+            {/* the whale stays the hero: printed on the glass, in front of the crates (owner, 25 November) */}
+            <image className="ua-c-whale" href="/logos/docker.svg" x="146" y="104" width="214" height="186" />
             <g className="ua-c-plate"><rect x="66" y="259" width="122" height="17" rx="3" /><text x="75" y="271">{plate}</text></g>
           </g>
           {/* the end: open doors and what is inside, or closed and locked */}
