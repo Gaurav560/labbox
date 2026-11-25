@@ -3389,20 +3389,28 @@ function LgSend() {
 }
 
 function LgThreads() {
+  // Still (owner, 26 November): chapter 7's real run, three processes sharing harsh.db.
+  const runs: [string, string, string, BoxTone][] = [
+    ["process 1, phone 98220", "loads: empty", "saves: 2 messages", "plain"],
+    ["process 2, phone 98220", "loads: 2 messages", "saves: 4 messages", "copy"],
+    ["process 3, phone 70300", "loads: empty", "saves: 2 messages", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="Two phones, two threads"
-      intro="Press Play to follow three WhatsApp messages."
-      label="Threads"
-      steps={[
-        { label: "98220 writes", says: "invoke with thread_id 98220. The checkpointer has nothing for it yet: the state starts empty." },
-        { label: "Run and save", says: "The message and Harsh's answer are added, and the thread is saved: 2 messages." },
-        { label: "Process ends", says: "Everything in memory is gone. harsh.db still holds thread 98220." },
-        { label: "98220 again", says: "A new process loads thread 98220 from the file, adds the new message: the model sees all 3." },
-        { label: "Saved again", says: "The thread now holds 4 messages." },
-        { label: "70300 writes", says: "Another thread_id: nothing saved for it, so it starts empty, and sees nothing of 98220." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 270" label="Three separate processes share the file harsh.db: the first message from 98220 loads an empty thread and saves 2 messages; the second process for 98220 loads those 2 and saves 4; phone 70300 loads an empty thread of its own and saves 2">
+      <text className="dg-label" x={8} y={18}>each run: load the thread, run, save</text>
+      {runs.map(([who, load, save, tone], i) => {
+        const y = 30 + i * 62;
+        return (
+          <g key={who}>
+            <text className="dg-note" x={8} y={y + 14}>{who}</text>
+            <Box x={8} y={y + 20} w={200} h={34} label={load} tone="plain" />
+            <Arrow x1={208} y1={y + 37} x2={224} y2={y + 37} />
+            <Box x={224} y={y + 20} w={208} h={34} label={save} tone={tone} />
+          </g>
+        );
+      })}
+      <Box x={8} y={222} w={424} h={36} label="harsh.db: every checkpoint of every thread" tone="accent" />
+    </Svg>
   );
 }
 
