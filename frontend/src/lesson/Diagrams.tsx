@@ -2512,20 +2512,31 @@ function L4jSequence() {
 }
 
 function L4jWorkflow() {
+  // Still (owner, 26 November): chapter 28's real run, one row per model call, from the trace.
+  const runs: [string, [string, BoxTone][]][] = [
+    ["refund question: 3 calls", [["classify", "plain"], ["refund desk", "accent"], ["score 0.8+", "copy"]]],
+    ["timetable question: 3 calls", [["classify", "plain"], ["timetable desk", "accent"], ["score 0.8+", "copy"]]],
+    ["bad reply, loop only: 3 calls", [["score: low", "highlight"], ["edit", "accent"], ["score 0.8", "copy"]]],
+    ["strict scorer, ceiling 3: 6 calls", [["score, edit", "highlight"], ["score, edit", "highlight"], ["score, edit: stop", "highlight"]]],
+  ];
   return (
-    <SketchSteps
-      title="classify, route, review"
-      intro="Press Play to follow a timetable question."
-      label="the classifier writes topic; a condition sends the message to the timetable desk; the scorer rates the reply; below 0.8 the editor rewrites it and the scorer rates it again"
-      steps={[
-        { label: "1. Classify", says: "When does the Monsoon Mail reach Karjat? becomes topic TIMETABLE." },
-        { label: "2. Route", says: "Only the condition topic == TIMETABLE is true, so only the timetable desk runs." },
-        { label: "3. Answer", says: "The desk writes reply from the facts: 18:40." },
-        { label: "4. Score", says: "The scorer rates the reply below 0.8." },
-        { label: "5. Edit", says: "The editor rewrites reply: shorter, no promises." },
-        { label: "6. Score again", says: "0.8 or more: the loop exits. Never more than 3 rounds." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 352" label="Real runs: the refund and timetable questions each took three calls, classify, desk and one passing score; the bad reply took score, edit and a passing score; a scorer that could never pass stopped after three rounds of score and edit, six calls">
+      {runs.map(([title, cells], r) => {
+        const y = 6 + r * 82;
+        return (
+          <g key={title}>
+            <text className="dg-label" x={8} y={y + 14}>{title}</text>
+            {cells.map(([t, tone], c) => (
+              <g key={c}>
+                <Box x={8 + c * 146} y={y + 24} w={132} h={40} label={t} tone={tone} />
+                {c < 2 && <Arrow x1={140 + c * 146} y1={y + 44} x2={154 + c * 146} y2={y + 44} />}
+              </g>
+            ))}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={344}>Code picked every path; maxIterations(3) capped the last one.</text>
+    </Svg>
   );
 }
 

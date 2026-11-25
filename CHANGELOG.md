@@ -1,5 +1,21 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 28 rewritten: a still picture of real paths, a quiz answer corrected
+
+- Re-ran the solution: the refund path was the same word for word; this time the Monsoon Mail reply passed review at
+  once (9 calls, not 11), as the lesson's second lesson says can happen. The bad reply again scored 0.8 after one
+  edit. A rate-limit stop (20 calls a minute) happened again during the probes.
+- Corrected: the quick check said that with two true conditions "the second's reply replaces the first's". In five
+  runs both desks ran every time, and the kept reply was sometimes the first's, sometimes the second's, in either
+  order. The answer now says you pay for both and cannot count on which is kept.
+- Tried: a scorer that can never pass stops after exactly 6 calls; a topic with no desk gives a `null` answer with no
+  error (now the conditional task's usual slip). Read in the jar: without `.maxIterations(...)` the ceiling is
+  `Integer.MAX_VALUE` (now the loop task's slip).
+- The workflow builders and methods in the lesson (`parallelBuilder`, `executor`, `output`, `errorHandler`,
+  `testExitAtLoopEnd`, `parallelMapperBuilder`, `humanInTheLoopBuilder`) were checked in the jar. The parallel
+  example's timing ("about one second") became "about the time of the slower one".
+- The animation is now a still picture of four real runs; a new sketchnote.
+
 ## 26 November: LangChain4j chapter 27 rewritten: a still picture of the scope, both slips and the quiz tried
 
 - Re-ran the solution: the classifier said `REFUND` again; the replies were worded a little differently and the

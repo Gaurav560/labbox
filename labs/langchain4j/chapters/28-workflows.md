@@ -59,7 +59,7 @@ Every one of them is itself an agent, so they nest: this chapter's help desk is 
 condition and whose third step is a loop.
 
 :::diagram{name="l4j-workflow"}
-A message is classified, routed to one desk by its topic, then scored and edited in a loop until it is good enough.
+Real runs on 26 November, with the number of model calls each took.
 :::
 
 Conditions and exit tests are plain Java lambdas that read the scope, so **code** makes every decision about which
@@ -78,8 +78,8 @@ AgenticServices.parallelBuilder()
         .build();
 ```
 
-Two calls of about a second each finish in about one second instead of two. The cost is the same: two calls are two
-calls. `output(...)` combines what the sub-agents wrote into the workflow's result.
+Two calls that overlap finish in about the time of the slower one, instead of the two added together. The cost is
+the same: two calls are two calls. `output(...)` combines what the sub-agents wrote into the workflow's result.
 :::
 
 :::step{type=concept title="Routing with conditions" file="28-workflows/src/main/java/com/setu/Flows.java" line="17-25"}
@@ -90,16 +90,23 @@ calls. `output(...)` combines what the sub-agents wrote into the workflow's resu
 ```
 
 `readState("topic", Topic.OTHER)` reads the classifier's answer, with a default if it is missing. Every agent whose
-condition is true runs, in order. So the conditions must not overlap, and together they must cover every topic:
+condition is true runs. So the conditions must not overlap (the second quick check shows what happens if they do), and together they must cover every topic:
 REFUND, TIMETABLE, and "neither" for everything else. A message that matched no condition would get no reply.
 
 The three desks are in `Experts.java`: each is an agent with its own instructions and the output key `reply`.
 :::
 
 :::step{type=task task=conditional_route title="Your turn: route to a desk" file="28-workflows/src/main/java/com/setu/Flows.java" line="17-25"}
-Finish `Flows.desks(model)`: a `conditionalBuilder()` with three `subAgents(condition, agent)` pairs: REFUND to
-`Experts.RefundDesk`, TIMETABLE to `Experts.TimetableDesk`, and any other topic to `Experts.GeneralDesk`. Build each
-desk with the helper `agent(Experts.RefundDesk.class, model, "reply")`.
+Finish `Flows.desks(model)`:
+
+1. start with `AgenticServices.conditionalBuilder()`;
+2. `.subAgents(scope -> scope.readState("topic", Topic.OTHER) == Topic.REFUND, agent(Experts.RefundDesk.class, model,
+   "reply"))`;
+3. the same for `Topic.TIMETABLE` and `Experts.TimetableDesk`;
+4. a third pair for every other topic (neither REFUND nor TIMETABLE) and `Experts.GeneralDesk`, then `.build()`.
+
+The usual slip: leaving out the third pair. There is no error. We tried it on 26 November with the topic OTHER ("Do
+you sell gift cards?"): no desk ran, and the workflow's answer was `null`.
 
 Press **Check**.
 :::
@@ -118,12 +125,20 @@ AgenticServices.loopBuilder()
 
 The exit condition is tested after each sub-agent, so a reply that scores 0.8 at once leaves before the editor runs:
 one call. A reply that never scores 0.8 stops after three rounds: six calls. **`maxIterations` is a cost ceiling**: a
-loop without one, with a strict scorer, would call the model until your budget ran out.
+loop without one, with a strict scorer, would call the model until your budget ran out. (Without the call, the
+ceiling is 2,147,483,647 rounds: we read the default in the 1.24 jar, `Integer.MAX_VALUE`.)
 :::
 
 :::step{type=task task=review_loop title="Your turn: the review loop" file="28-workflows/src/main/java/com/setu/Flows.java" line="27-33"}
-Finish `Flows.reviewLoop(model)`: a `loopBuilder()` with the scorer (output key `score`) and the editor (output key
-`reply`), at most 3 iterations, exiting when the score is at least 0.8.
+Finish `Flows.reviewLoop(model)`:
+
+1. `AgenticServices.loopBuilder()`;
+2. `.subAgents(agent(Review.ReplyScorer.class, model, "score"), agent(Review.ReplyEditor.class, model, "reply"))`;
+3. `.maxIterations(3)`;
+4. `.exitCondition(scope -> scope.readState("score", 0.0) >= 0.8)`, then `.build()`.
+
+The usual slip: forgetting `.maxIterations(3)`. On a good reply nothing seems wrong; on a reply the scorer never
+likes, the loop has no ceiling at all (see above).
 
 `Flows.desk(model)` joins everything: classifier, desks, review loop. `Trace` prints the start of every prompt, so
 you can see each agent work:
@@ -160,6 +175,10 @@ The Monsoon Mail arrives in Karjat at 18:40 and departs from Pune at 16:05. Plea
 score 0.8: Dear passenger, we sincerely apologize for the inconvenience you've experienced. While we cannot guarantee specific outcomes, we are working to resolve the issue as quickly as possible.
 ```
 
+(We ran it again on 26 November. The refund path was the same, word for word. This time the Monsoon Mail reply,
+"The Monsoon Mail arrives at Karjat at 18:40. It operates daily from Pune.", passed review at once, so the run took
+9 calls, not 11. The bad reply again scored 0.8 after one edit, worded differently.)
+
 Follow the trace. The refund message went to the refund desk, which applied the 24-hour rule correctly, and the
 reply passed review at once. The timetable question went to the timetable desk; its reply scored below 0.8, was
 rewritten and passed. The bad reply ("SO sorry!!!", a free ticket, a personal call from the manager) lost its
@@ -183,6 +202,7 @@ A scorer that never gives more than 0.5 meets this loop. How many model calls do
 - [ ] It never stops
 - [x] Six: three rounds of score and edit, then `maxIterations` stops it
 :::explain
+We tried it on 26 November with an exit score of 1.1, which nothing can reach: exactly six calls, then it stopped.
 The ceiling is the point. Without it, a strict scorer would loop until the budget or the rate limit stopped it.
 :::
 :::
@@ -192,10 +212,12 @@ The ceiling is the point. Without it, a strict scorer would loop until the budge
 Two desks' conditions are both true for one message. What happens?
 :::
 - [ ] Only the first runs
-- [x] Both run, in order, and the second's `reply` replaces the first's
+- [x] Both run, you pay for both, and you cannot count on which `reply` is kept
 - [ ] The workflow fails
 :::explain
-Every agent with a true condition runs. Make the conditions exclusive, and cover every case.
+Every agent with a true condition runs. We tried it five times on 26 November with the refund desk and the general
+desk both true: both ran every time (two calls), and the reply that was kept was sometimes the refund desk's,
+sometimes the general desk's, whichever order we gave them. Make the conditions exclusive, and cover every case.
 :::
 :::
 
@@ -235,7 +257,7 @@ You can now:
 
 Next, chapter 29: supervisor agents. A model plans which agents to call, and in which order.
 
-:::photo{src="/lesson-images/langchain4j/l4j-28-notes.webp" alt="Handwritten notes about workflows: sequence, condition, loop, parallel; conditions must not overlap; the loop scores, edits and scores again; maxIterations is a cost ceiling; 3 jobs took 11 model calls" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-28-notes.webp" alt="Handwritten notes titled Workflows, code decides the path, agents do the steps: a workflow joins agents with code, one after another, by a condition, in a loop or at the same time, and every workflow is itself an agent; classify, a condition picks one desk, score the reply, edit if below 0.8, stop at 0.8 or after 3 rounds; three jobs took 9 to 11 model calls; a scorer that never passes took exactly 6 calls; with no desk for a topic the answer is null; with two true conditions both run and either reply may win" ai="true"}
 One page of notes for this chapter.
 :::
 :::
