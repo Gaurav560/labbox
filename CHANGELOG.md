@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 15 rewritten (easy, a little detailed, checked)
+
+- Stateless, checkpointer, thread and config are explained where they first appear; both tasks list their steps and
+  the usual slips (a new saver per message; one thread id for everyone).
+- The threads animation is now a still picture of the real run: Ravi's thread and Asha's, side by side.
+- Checked through the lab gateway: the same behaviour in slightly different words (Ravi remembered, 1,200 rupees,
+  Asha asked for her crates, Ravi's name kept); chapter 27 does cover the long-term store. Corrected: ChatGPT's memory
+  is described as OpenAI describes it (saved memories the app brings into later chats). A new notes page.
+
 ## 25 November: LangChain chapter 14 rewritten (easy, a little detailed, checked)
 
 - Content block, MIME type and tile are explained where they first appear; both tasks list their steps and the usual
