@@ -4,7 +4,10 @@ words, fuse, rerank, gate and answer with sources. Rangers do not run Python scr
 Fieldbook on the sanctuary's network, where the rangers' phones app, the control room's dashboard and any future tool
 can ask it questions.
 
-That means a **web service** with two endpoints:
+That means a **web service**: a program that waits on the network and answers requests sent with **HTTP**, the
+protocol web browsers use. Each kind of request it accepts is an **endpoint**: a path, like `/search`, plus a method.
+**GET** asks to read something (its inputs go in the address, after `?`); **POST** sends data in the request's body.
+Fieldbook gets two endpoints:
 
 | Endpoint | For | Returns |
 |---|---|---|
@@ -34,10 +37,18 @@ Write the two endpoints on top of the pipeline you built, run Fieldbook as a ser
 | `index()` | builds the `Index` once, on the first request (`@lru_cache`): all 55 chunks embedded and tokenized, a few seconds |
 | `client()` | one OpenAI client for the model, reused |
 | `find(q, kind, zone, k)` | the two-stage search from chapter 10, keeping only chunks that match the filters |
-| `Question` | the shape of a POST body: `{"question": "..."}`; FastAPI checks it and answers 422 if it is wrong |
+| `Question` | the shape of a POST body: `{"question": "..."}`; FastAPI checks it and answers with the error code 422 ("Unprocessable Entity") if it is wrong |
 
 Building the index once matters: embedding every chunk on every request would add seconds to each one. A real service
 pays that cost at start-up (or loads saved vectors from a vector database, chapter 8) and then answers from memory.
+
+One limit of `find`, worth knowing: it filters the candidates of the hybrid search, which holds at most 40 chunks (dense
+top 20 plus BM25 top 20, chapter 10). A chunk that matches the filters but is in neither list is never seen. With 55
+chunks that is harmless; the deep dive shows the fix for large collections.
+
+:::diagram{name="rag-service"}
+One request through the service, with the times we measured on the lab machine's 2 CPUs.
+:::
 :::
 
 :::step{type=concept title="Endpoints from functions" file="13-capstone/app.py" line="37-46"}
@@ -49,9 +60,10 @@ def search(q: str, kind: str | None = None, zone: str | None = None, k: int = 5)
     ...
 ```
 
+Everything after `?` in an address is the **query string**: `name=value` pairs joined by `&`.
 `GET /search?q=leopard&kind=report&k=3` calls `search(q="leopard", kind="report", zone=None, k=3)`. FastAPI converts
 `k` from the text "3" to the integer 3 and answers 422 if `q` is missing. Whatever the function returns (a dict, a list)
-is sent back as JSON.
+is sent back as JSON, the text format for keys and values you met in chapter 8.
 
 The search endpoint's answer should be useful to a dashboard and small: for each chunk its id, its title and its score,
 rounded, not the whole text.
@@ -66,13 +78,22 @@ Write `search(...)`: call `find(q, kind, zone, k)` and return
 
 with one result per chunk, the score being the chunk's `"rerank"` value rounded to 2 places.
 
+1. `chunks = find(q, kind, zone, k)`.
+2. Build the list: `[{"id": c["id"], "title": c["title"], "score": round(c["rerank"], 2)} for c in chunks]`.
+3. Return the dict with `"query"` and `"results"`.
+
+The usual slip: returning the chunks themselves. The dashboard then receives every chunk's full text, which it does not
+show.
+
 Press **Check**.
 :::
 
 :::step{type=task task=ask_endpoint title="Your turn: POST /ask with sources" file="13-capstone/app.py" line="49-53"}
 Write `ask(body: Question)`: find the best chunks for `body.question` with no filters, and return
 `answer(body.question, chunks, client())`, chapter 11's function, which gates, prompts, and returns the answer with its
-sources.
+sources. It is one line: `return answer(body.question, find(body.question), client())`.
+
+The usual slip: passing `body` instead of `body.question`. `body` is the whole request object, not the text.
 
 Press **Check**, then start the service:
 
@@ -114,8 +135,8 @@ cases (-6.28 for the leopard on the safari viewpoint; -8.54 for the snakebite ne
 tourism zone): as chapter 8 showed, a filter makes the pool smaller and the last places go to whatever is left. The
 scores let the dashboard grey out such results.
 
-The first request took **6.2 seconds**: building the index (embedding all 55 chunks) and loading the reranker happened
-then. The same request again:
+The first request took **6.2 seconds** in this run (8.5 seconds in a later one): building the index (embedding all 55
+chunks) and loading the reranker happened then. The same request again:
 
 ```text
 $ time curl -s "localhost:8000/search?q=leopard+in+a+village&kind=report&k=3" > /dev/null
@@ -123,8 +144,9 @@ $ time curl -s "localhost:8000/search?q=leopard+in+a+village&kind=report&k=3" > 
 real	0m0.612s
 ```
 
-0.6 seconds, almost all of it reranking. The phones' question, then one the documents cannot answer, then a mistake in
-the request:
+0.6 seconds (0.5 to 0.9 seconds in our runs), almost all of it reranking. The phones' question, then one the documents
+cannot answer, then a mistake in the request. The first answer comes from the language model, so its wording may differ
+a little in your run:
 
 ```text
 $ curl -s -X POST localhost:8000/ask -H "content-type: application/json" -d "{\"question\": \"Which animal injures the most people?\"}"; echo
@@ -137,7 +159,8 @@ HTTP/1.1 422 Unprocessable Entity
 {"detail":[{"type":"missing","loc":["body","question"],"msg":"Field required","input":{"q":"Which gate sells safari permits?"}}]}
 ```
 
-(Shortened with "...".) An answer with its citation and sources; an honest "not found" that never reached the model;
+(Shortened with "...".) An answer with its citation and sources; an honest "not found" that never reached the model
+(we checked by running the service with the model gateway unreachable: this answer still came back);
 and a request with `q` instead of `question`, refused by FastAPI before your code ran, with an error that names the
 missing field. Fieldbook is a service.
 :::
@@ -175,7 +198,7 @@ Tim Berners-Lee at SXSW London, 2026.
 
 :::step{type=predict title="Guess first"}
 :::question
-The service has just started. The first request took 6.2 seconds, the same request again 0.6 seconds. Why?
+The service has just started. The first request took about 6 to 9 seconds, the same request again under a second. Why?
 :::
 - [ ] The model is slow to wake up
 - [x] index() builds the index on the first request (embedding every chunk) and the reranker loads; later requests reuse both
@@ -216,8 +239,9 @@ pgvector, embed only new or changed documents, and record which embedding model 
 **New documents.** Patrol reports arrive daily. Add an endpoint or a job that chunks, embeds and upserts new reports; with
 stable ids, re-sending one replaces it.
 
-**Filters in the database.** `find` filters after the hybrid search, which works for 55 chunks. At scale, push the
-filters into the vector database's query (chapter 8) so they apply during the search.
+**Filters in the database.** `find` filters the at most 40 candidates of the hybrid search, which works for 55 chunks.
+At scale, push the filters into the vector database's query (chapter 8) so they apply during the search and no
+matching chunk is skipped.
 
 **Cost and safety.** Log every question, the sources found and the answer (for chapter 12's golden set and for audits),
 rate-limit the endpoint, and cache answers to repeated questions. Only `/ask` costs money (one model call), and only
@@ -230,9 +254,9 @@ of a RAG system yourself:
 
 | Part | You built | And measured |
 |---|---|---|
-| Retrieval from scratch | keyword search, embeddings, brute-force search, chunking | "big cat" found by meaning; 91% first-time hits by chunking along sections |
-| Inside a vector database | IVF, HNSW, int8 and binary quantization, Qdrant with filters | 35 times faster than brute force at 98.9% recall; 32 times less memory with full recall after rescoring |
-| RAG that works | BM25, rank fusion, reranking, grounded answers, evaluation, a service | where hybrid helps and hurts; 88% right first time with reranking |
+| Retrieval from scratch | keyword search, embeddings, brute-force search, chunking | "big cat" found by meaning; 91% first-time hits by chunking along sections (22 questions) |
+| Inside a vector database | IVF, HNSW, int8 and binary quantization, Qdrant with filters | on 100,000 synthetic vectors: HNSW 35 times faster than brute force at 98.9% recall; bits 32 times smaller, 99.8% recall after rescoring 200 |
+| RAG that works | BM25, rank fusion, reranking, grounded answers, evaluation, a service | where hybrid helps and hurts; 88% right first time with reranking (26 questions) |
 
 Where to go next: read the documentation of the vector database you will use in production (Qdrant, pgvector, Weaviate
 or Milvus), now that you know what is inside it; build a golden set for your own documents before anything else; and
@@ -250,7 +274,7 @@ You can now:
 
 That is the end of the course. Fieldbook is on the sanctuary's network, and every answer can say where it came from.
 
-:::photo{src="/lesson-images/rag/rag-13-notes.webp" alt="Handwritten notes about the capstone: GET /search: ids, titles, scores; POST /ask: answer with sources; Build the index once; Filters, gate, citations; Measure before you change" ai="true"}
+:::photo{src="/lesson-images/rag/rag-13-notes.webp" alt="Handwritten notes about the capstone: An endpoint is a path plus a method, like GET /search. GET reads with a query string; POST sends a body. FastAPI checks requests and answers 422 when they are wrong. Build the index once, not on every request. Return what the client shows, not everything you have. A real service usually keeps its vectors in a database." ai="true"}
 One page of notes for this chapter.
 :::
 :::

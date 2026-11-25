@@ -3714,6 +3714,33 @@ function RagEval() {
   );
 }
 
+function RagService() {
+  // One POST /ask through app.py; times measured on the lab machine's 2 CPUs.
+  const steps: [string, string, BoxTone][] = [
+    ["POST /ask  {\"question\": ...}", "422 if the body is wrong", "plain"],
+    ["index(): built once", "first request only: 6 to 9 s", "plain"],
+    ["find(): hybrid search", "at most 40, then filters", "plain"],
+    ["rerank the first 20", "70 ms each, about 1.4 s", "accent"],
+    ["gate: best score below -9.0?", "yes: NOT_FOUND, no model call", "highlight"],
+    ["model: lab-chat", "answer with [n] citations", "plain"],
+    ["JSON  {answer, sources}", "back to the phone", "copy"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 408" label="A POST /ask request: FastAPI checks it, the index is built once, hybrid search finds candidates, the reranker orders 20, the gate may answer NOT_FOUND, otherwise the model answers with citations, and JSON goes back">
+      {steps.map(([title, note, tone], i) => {
+        const y = 4 + i * 58;
+        return (
+          <g key={title}>
+            <g className="dg-cells-small"><Box x={0} y={y} w={216} h={34} label={title} tone={tone} code={i === 0 || i === 6} /></g>
+            <text className="dg-note" x={228} y={y + 22}>{note}</text>
+            {i < steps.length - 1 && <Arrow x1={108} y1={y + 36} x2={108} y2={y + 56} />}
+          </g>
+        );
+      })}
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
   "rag-embed": RagEmbed,
@@ -3727,6 +3754,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-two-stage": RagTwoStage,
   "rag-gate": RagGate,
   "rag-eval": RagEval,
+  "rag-service": RagService,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
   "rs-threads": RsThreads,
