@@ -2552,20 +2552,28 @@ function L4jMemoryWindow() {
 }
 
 function L4jMcp() {
+  // Still (owner, 26 November): chapter 20's real runs, 14 tools against 2, from the gateway's log.
+  const left: [string, BoxTone][] = [
+    ["all 14 tools offered", "plain"], ["1,222 tokens in", "plain"], ["search_files by name", "accent"],
+    ["file names only: nothing", "plain"], ["\"no notices\": wrong", "highlight"],
+  ];
+  const right: [string, BoxTone][] = [
+    ["2 tools offered", "plain"], ["305 tokens in", "plain"], ["list_directory", "accent"],
+    ["read_text_file x 3, at once", "accent"], ["40 min late: right", "copy"],
+  ];
+  const col = (items: [string, BoxTone][], x: number) => items.map(([t, tone], i) => (
+    <g key={x + i}>
+      <Box x={x} y={34 + i * 62} w={206} h={44} label={t} tone={tone} />
+      {i < items.length - 1 && <Arrow x1={x + 103} y1={80 + i * 62} x2={x + 103} y2={94 + i * 62} />}
+    </g>
+  ));
   return (
-    <SketchSteps
-      title="an MCP client and a stdio server"
-      intro="Press Play to follow chapter 20's client."
-      label="the Java client starts the server as a child process, they shake hands over standard input and output, the client lists the tools, and calls one when the model asks"
-      steps={[
-        { label: "1. Start", says: "Building DefaultMcpClient starts mcp-server-filesystem as a child process." },
-        { label: "2. Handshake", says: "initialize, as JSON-RPC 2.0 messages over its standard input and output." },
-        { label: "3. tools/list", says: "The server describes its 14 tools; McpToolProvider turns them into LangChain4j tools." },
-        { label: "4. The model asks", says: "It wants read_text_file for a notice: the client sends tools/call." },
-        { label: "5. The answer", says: "The server reads the file, only inside its folder, and returns the text." },
-        { label: "6. Close", says: "Closing the client stops the server process." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 370" label="With all fourteen filesystem tools the model used search_files on file names, found nothing and answered wrongly; with two tools it listed the folder, read the three notices and answered right, with far fewer tokens">
+      <text className="dg-label" x={8} y={20}>the same question, two tool sets</text>
+      {col(left, 8)}
+      {col(right, 226)}
+      <text className="dg-note" x={8} y={362}>Fewer tools: safer, cheaper, and here the only right answer.</text>
+    </Svg>
   );
 }
 

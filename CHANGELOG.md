@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 20 rewritten: a still fourteen-against-two picture, both slips tried
+
+- Re-ran both versions in a lab machine: all fourteen tools gave the wrong answer again ("There are no notices
+  related to any planned work"), 1,222 tokens in, after `search_files` on file names; two tools gave the right answer
+  again (40 minutes late on 29 and 30 November), 305 tokens in, then 382 and 655. The lesson now says so.
+- The animation is now a still picture of the two runs, from the gateway's log.
+- Both tasks list the usual slip, each tried: no folder for the server (it starts and lists its tools, but every read
+  is refused: "I'm unable to access the notices directly"), and a misspelled tool name in `filterToolNames` (no
+  error; Setu lists the three notices but cannot read them).
+- A new sketchnote.
+
 ## 26 November: LangChain4j chapter 19 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (`nextOrSame` instead of `next`; a fresh `new RailTools()` that ignores the check's
