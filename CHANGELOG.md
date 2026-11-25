@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 7 rewritten: three real processes pictured, every slip tried
+
+- Re-ran the three commands on a new `harsh.db`: the same answers (the first now ends "with updates shortly"),
+  including the invented "a crew is still working" and the ignored brown water that the lesson discusses.
+- Tried: the quiz (InMemorySaver in a new process: 2 messages); no config with a checkpointer (`ValueError:
+  Checkpointer requires one or more of the following 'configurable' keys`, the first task's slip); no
+  `check_same_thread=False` (`ProgrammingError: SQLite objects created in a thread...`, the second task's slip).
+- Found: LangGraph 1.2.24 also accepts a top-level `{"thread_id": ...}` and saves to the same thread; the lesson
+  mentions the short form and keeps the full one.
+- The animation is now a still picture of the three processes; a new sketchnote.
+
 ## 26 November: LangGraph chapter 6 rewritten: the storm night pictured, Send and Command mistakes tried
 
 - Re-ran the solution: the same output. A new still picture shows the five Sends in one step and the Command for each

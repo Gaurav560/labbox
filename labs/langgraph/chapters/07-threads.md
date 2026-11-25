@@ -68,14 +68,22 @@ With a checkpointer, `invoke` first **loads** the thread's last saved state, app
 
 `app.get_state(config)` shows a thread's saved state at any time, without running anything.
 
+(LangGraph 1.2.24 also accepts the short form `{"thread_id": "98220"}` without `configurable`: we tried it, and it
+saved to the same thread. This course writes the full form, which every version understands.)
+
 :::diagram{name="lg-threads"}
-Two phones, two threads: each run loads its own thread, adds to it, and saves it again.
+The three real runs of this chapter (26 November): each process loads its thread from the file and saves it back.
 :::
 :::
 
 :::step{type=task task=thread_memory title="Your turn: one thread per phone" file="07-threads/chat.py" line="23-37"}
-In `build_graph`, pass the checkpointer to `compile`. In `ask`, make the config
-`{"configurable": {"thread_id": phone}}` and pass it to `invoke` as the second argument.
+1. In `build_graph`, return `graph.compile(checkpointer=checkpointer)`.
+2. In `ask`, make `config = {"configurable": {"thread_id": phone}}`.
+3. Pass it to `invoke` as the second argument: `app.invoke({"messages": [HumanMessage(text)]}, config)`.
+
+The usual slip: forgetting step 3. We tried it: a graph with a checkpointer refuses to run without a thread,
+`ValueError: Checkpointer requires one or more of the following 'configurable' keys: thread_id, checkpoint_ns,
+checkpoint_id`.
 
 Press **Check**.
 :::
@@ -91,12 +99,15 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 saver = SqliteSaver(sqlite3.connect("harsh.db", check_same_thread=False))
 ```
 
-`check_same_thread=False` lets LangGraph use the connection from its worker threads. The file holds every checkpoint of
+`check_same_thread=False` lets LangGraph use the connection from its worker threads. Without it, Python's `sqlite3`
+refuses: we tried it, and the first run stopped with `ProgrammingError: SQLite objects created in a thread can only be
+used in that same thread`. The file holds every checkpoint of
 every thread; the next process that opens it finds them all.
 :::
 
 :::step{type=task task=sqlite_saver title="Your turn: a chat that survives a restart" file="07-threads/chat.py" line="40-43"}
-Finish `open_saver(path)`: return `SqliteSaver(sqlite3.connect(path, check_same_thread=False))`.
+Finish `open_saver(path)`: return `SqliteSaver(sqlite3.connect(path, check_same_thread=False))`. (The usual slip is
+leaving out `check_same_thread=False`; the step above shows the error.)
 
 ```bash run
 cd /workspace/07-threads && python main.py 98220 "No water in Tilak Nagar, lane 3, since yesterday morning."
@@ -124,6 +135,9 @@ Harsh: A crew will be assigned to address your issue, and you will receive an SM
 (2 messages saved in thread 70300)
 ```
 
+(We ran the three commands again on 26 November, on a new `harsh.db`: the same answers, word for word, except that
+the first one ended "with updates shortly".)
+
 The memory works. The second process had never seen "Tilak Nagar, lane 3", yet the answer used it: the checkpointer
 loaded the thread from `harsh.db`, and the state grew from 2 to 4 messages. The other phone, 70300, got its own empty
 thread.
@@ -145,7 +159,7 @@ How many messages are saved in thread 98220 afterwards?
 - [x] 2: a new process starts with an empty memory, so the thread starts over
 - [ ] 0
 :::explain
-`InMemorySaver` lives as long as the process. Each `python main.py` is a new process.
+We tried it: 2 messages. `InMemorySaver` lives as long as the process. Each `python main.py` is a new process.
 :::
 :::
 
@@ -195,7 +209,7 @@ You can now:
 
 Next, chapter 8: long chats, trimmed and summarised.
 
-:::photo{src="/lesson-images/langgraph/lg-07-notes.webp" alt="Handwritten notes about checkpointers and threads: checkpointer = save after every step; thread_id = which conversation; same id: continue. New id: empty; SQLite file survives a restart; memory is not facts!" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-07-notes.webp" alt="Handwritten notes titled Checkpointers and threads, memory per conversation: a checkpointer saves the state after every step, and a thread_id says which conversation a run belongs to, the same id continues it and a new id starts empty; a message from 98220, load thread 98220, run the graph, save after every step, harsh.db keeps it; the second process saw 2 messages become 4; InMemorySaver in a new process went back to 2; without check_same_thread False, ProgrammingError; the model invented that a crew is still working" ai="true"}
 One page of notes for this chapter.
 :::
 :::
