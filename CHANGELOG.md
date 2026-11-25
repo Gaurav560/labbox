@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): the clock is back
+
+- Owner: "where has the timer gone when adding the labs to the container? add it". The lid counts up smoothly from
+  the click, "20 s · 4/7 loaded", "44 s · sealing", "50 s · starting", and turns green at "58 s · running".
+
 ## 25 November (Ukiyo): pieces appear one by one, only after Spin up
 
 - Owner: the dock of chips "should not be present from the start; when I spin the container it should be present one

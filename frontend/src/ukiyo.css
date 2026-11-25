@@ -549,7 +549,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   stroke-dasharray: 44; stroke-dashoffset: 44; }
 .ua-box.is-sealed .ua-stamp path { animation: ua-tick .45s .4s ease-out forwards; }
 @keyframes ua-tick { to { stroke-dashoffset: 0; } }
-.ua-box.is-sealed .ua-clock { visibility: hidden; }
 .ua-box.is-sealed .ua-stamp { animation: ua-stamp .45s .1s cubic-bezier(.3, 1.6, .5, 1) forwards; }
 .ua-ready { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 14px 18px 0; padding: 0;
   color: var(--text); font-size: 15px; display: none; }
@@ -650,3 +649,4 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-clock.is-on { color: #16a34a; }
 .ua-box .ua-stamp { top: 64px; right: 22px; }
 @media (prefers-reduced-motion: reduce) { .ua-dock li.is-flying, .ua-c-hum, .ua-c-bump { animation: none !important; } }
+.ua-clock b { font-weight: 700; min-width: 2.6em; display: inline-block; text-align: right; }

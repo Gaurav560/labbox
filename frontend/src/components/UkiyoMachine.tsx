@@ -212,6 +212,20 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     return () => timers.forEach(clearTimeout);
   }, [run, lab, n, still]);
 
+  // The clock counts up smoothly from the click and reaches 58 s as the container starts running.
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    setSecs(0);
+    if (run === 0 || still) { if (still && run) setSecs(58); return; }
+    const total = 150 + n * 900 + 2300, t0 = performance.now();
+    const t = window.setInterval(() => {
+      const s = Math.min(58, Math.round(((performance.now() - t0) / total) * 58));
+      setSecs(s);
+      if (s >= 58) clearInterval(t);
+    }, 100);
+    return () => clearInterval(t);
+  }, [run, lab, n, still]);
+
   const waiting = run === 0;
   const phase = waiting ? "wait" : step <= n ? "load" : step === n + 1 ? "close" : step === n + 2 ? "start" : "run";
   const loadedNow = Math.min(step, n);
@@ -232,7 +246,9 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     setFlight({ i: step - 1, dx: tx - (c.left + c.width / 2), dy: ty - (c.top + c.height / 2) });
   }, [step, phase]);
 
-  const clock = phase === "wait" ? "" : phase === "load" ? `${loadedNow}/${n} loaded` : phase === "close" ? "sealing" : phase === "start" ? "starting" : "running · 58 s";
+  const clock = phase === "wait" ? null : (
+    <><b>{phase === "run" ? 58 : secs} s</b> · {phase === "load" ? `${loadedNow}/${n} loaded` : phase === "close" ? "sealing" : phase === "start" ? "starting" : "running"}</>
+  );
   return (
     <div className="ua">
       <div className="ua-text">
