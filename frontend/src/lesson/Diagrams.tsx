@@ -2376,20 +2376,28 @@ function L4jHttpCall() {
 }
 
 function L4jAiService() {
+  // Still (owner, 26 November): chapter 13's real call, from the program and the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["setu.chat(\"Hello!\")", "your code calls the interface", "plain"],
+    ["the proxy: jdk.proxy3.$Proxy28", "made by the JDK at run time; nobody wrote it", "accent"],
+    ["reads @SystemMessage(fromResource=...)", "setu-system.txt, sent with its final newline", "accent"],
+    ["builds the messages, calls the ChatModel", "system: the file's text; user: Hello!", "copy"],
+    ["converts the answer", "a String: Hello! I'm Setu, the help desk assistant ...", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="inside an AI Service"
-      intro="Press Play to follow one call to setu.chat."
-      label="the call goes to a proxy; the proxy reads the annotations, builds the system and user messages, calls the ChatModel, and converts the answer to the method's return type"
-      steps={[
-        { label: "1. Your code", says: 'setu.chat("Hello!") on the Assistant interface.' },
-        { label: "2. The proxy", says: "A class the JDK generated at run time receives the call." },
-        { label: "3. Annotations", says: '@SystemMessage(fromResource = "setu-system.txt") becomes the system message.' },
-        { label: "4. Messages", says: "The argument becomes the user message; memory adds the history." },
-        { label: "5. The model", says: "ChatModel.chat(...) sends the request through the gateway." },
-        { label: "6. Return type", says: "String here; a record, an enum or a TokenStream in later chapters." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="A call to setu.chat goes to a proxy made at run time; it reads the annotation, builds the system and user messages, calls the ChatModel and returns the answer as a String">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
