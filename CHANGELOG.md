@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 12 rewritten (easy, a little detailed, checked)
+
+- Golden sets, hit rate, reciprocals and MRR are explained where they first appear, with a real worked example (dense:
+  24 / 26 = 92% at 5, 20 / 26 = 77% first); tasks list their steps and the usual slips.
+- A new still picture, `rag-eval`: hit@1 and hit@5 of the four pipelines from the real run, with their times.
+- Checked by re-running `evaluate.py` on 2 CPUs: every percentage and MRR matches; the times now show this run (4, 20,
+  23 and 1,696 ms) and are labelled as the lab machine's. Corrected: keyword search misses CT-112 because seven chunks
+  share one word each ("record", "did" or "ct-112") and ties keep the documents' order (R-0301 6th), not only because
+  of "record"; hybrid brings the codes to 2nd place, not first; "the model reads the first source most carefully"
+  replaced by what is known (the gate checks the first source); "75 times slower" is about 80 times in this run; the
+  conclusions are labelled as holding for these questions and documents. A new notes page.
+
 ## 25 November: RAG chapter 11 rewritten (easy, a little detailed, checked)
 
 - Grounded answers, the system message, NOT_FOUND, the model gateway's `lab-chat` name and temperature are explained where

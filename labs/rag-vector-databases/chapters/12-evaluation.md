@@ -23,7 +23,9 @@ the same 26 questions and decide, with numbers, which one Fieldbook should use.
 {"question": "Who is allowed into the core zone?", "answers": ["FM-1.1", "FM-6.4"]},
 ```
 
-This is a **golden set**. A good one:
+A fixed list of test questions with their right answers, chosen once and kept, is called a **golden set**. Here, the
+right answers are chunk ids: the test checks whether retrieval finds the right chunk, not what the model then says. A good
+golden set:
 
 | Rule | Why |
 |---|---|
@@ -45,19 +47,33 @@ hit rate at k = (questions with a right id in their first k results) / (all ques
 
 `hit@1` asks for the right chunk in first place; `hit@5` anywhere in the first five. A question with two right answers
 (the core zone) is a hit if either appears.
+
+A real example from this chapter's run: dense search has a right chunk in its first five results for 24 of the 26
+questions, so its hit@5 is 24 / 26 = 92%. It has a right chunk in first place for 20 of them: hit@1 = 20 / 26 = 77%.
 :::
 
 :::step{type=task task=hit_rate title="Your turn: hit rate at k" file="12-evaluation/fieldbook.py" line="384-389"}
 Write `hit_rate(results, expected, k=5)`. `results` has one list of ids per question (best first), `expected` one list of
-right ids per question. Count the questions where `set(got[:k]) & set(good)` is not empty, and divide by the number of
-questions.
+right ids per question.
+
+1. Walk both lists together: `for got, good in zip(results, expected)`.
+2. Count the questions where `set(got[:k]) & set(good)` is not empty (`&` keeps the ids that are in both sets).
+3. Divide the count by the number of questions, `len(results)`.
+
+The usual slips:
+
+- Using `got[k]` (one id, the (k+1)th) instead of `got[:k]` (the first k).
+- Comparing `got[:k] == good`: the order and length rarely match, so almost nothing counts as a hit.
 
 Press **Check**.
 :::
 
 :::step{type=concept title="Mean reciprocal rank" file="12-evaluation/fieldbook.py" line="392-396"}
-Hit rate at 5 does not care whether the right chunk is first or fifth, but the model does: it reads the first source most
-carefully, and chapter 11's refusal rule looks only at the first. **Mean reciprocal rank** rewards putting it first:
+Hit rate at 5 does not care whether the right chunk is first or fifth. But first place matters: chapter 11's gate looks
+only at the first source's score, and the first source is the one the model is most likely to cite. The **reciprocal**
+of a number is 1 divided by it, so the reciprocal of a rank is 1 for first place, 1/2 for second, 1/3 for third.
+**Mean reciprocal rank** (MRR) is the average of that over all questions, with 0 for a question whose right chunk never
+appears. It rewards putting the right chunk first:
 
 :::trace{title="MRR over four questions"}
 | question | first right id at position | reciprocal rank |
@@ -74,8 +90,17 @@ Only the **first** right id counts: a question with right ids at positions 2 and
 :::
 
 :::step{type=task task=mrr title="Your turn: mean reciprocal rank" file="12-evaluation/fieldbook.py" line="392-396"}
-Write `mrr(results, expected)`: for each question, walk its results with `enumerate(got, start=1)`; at the first id in
-the right answers add `1 / rank` to a total and `break`. Return the total divided by the number of questions.
+Write `mrr(results, expected)`:
+
+1. Start a total at 0.
+2. For each question, walk its results with `for rank, item in enumerate(got, start=1)`. At the first `item` that is in
+   the right answers, add `1 / rank` to the total and `break`.
+3. Return the total divided by the number of questions.
+
+The usual slips:
+
+- Forgetting `break`: a question with right ids at positions 2 and 3 then adds 1/2 + 1/3 instead of 1/2.
+- `enumerate(got)` without `start=1`: first place then divides by 0.
 
 ```bash run
 cd /workspace/12-evaluation && python evaluate.py
@@ -91,14 +116,15 @@ compared, because nobody had tested them on the same questions.
 :::
 
 In the **1960s** Cyril Cleverdon at the College of Aeronautics in Cranfield, England, ran the **Cranfield experiments**:
-1,400 documents, a set of questions, and people's judgements of which documents answered which question. For the first
+about 1,400 documents on aeronautics, a set of questions, and people's judgements of which documents answered which question. For the first
 time, indexing methods were compared on the same test collection with numbers, and some cherished methods lost. In
 **1992** the US National Institute of Standards and Technology started **TREC**, a yearly evaluation that gave
 researchers shared collections and measures; mean reciprocal rank was used there to score question answering (**1999**).
 RAG brought the same practice to new teams, along with tools that use a language model to judge answers (RAGAS, **2023**).
 
 :::solved
-**Decisions by numbers.** A golden set turns "it feels better" into "hit@1 went from 77% to 88%", and catches the change
+**Decisions by numbers.** A golden set turns "it feels better" into "hit@1 went from 77% to 88%" (dense to hybrid +
+rerank, in this chapter), and catches the change
 that quietly made things worse.
 :::
 
@@ -122,54 +148,67 @@ $ python evaluate.py
 26 questions
 
 pipeline                        hit@1  hit@5    MRR   ms/q
-keywords (chapter 1)              50%    77%   0.62      1
+keywords (chapter 1)              50%    77%   0.62      4
     missed: What should I do if a big cat is right in front of me on the trail?
     missed: What did CT-112 record?
     missed: When is the park shut because of the rains?
     missed: Is it all right to cook dinner at the gate in March?
     missed: Can tourists get out of the jeep to take photos?
     missed: What time does the morning safari start?
-dense (chapter 3)                 77%    92%   0.85     23
+dense (chapter 3)                 77%    92%   0.85     20
     missed: What did CT-112 record?
     missed: Which report mentions CT-104?
-hybrid (chapter 9)                58%    92%   0.74     27
+hybrid (chapter 9)                58%    92%   0.74     23
     missed: Is it all right to cook dinner at the gate in March?
     missed: Can tourists get out of the jeep to take photos?
-hybrid + rerank (chapter 10)      88%   100%   0.94   1723
+hybrid + rerank (chapter 10)      88%   100%   0.94   1696
 ```
+
+The percentages and MRR are the same on every run. The times (ms/q, milliseconds a question) are from the lab machine's
+2 CPUs and change a little from run to run.
+
+:::diagram{name="rag-eval"}
+The real results of `evaluate.py`: for each pipeline, how often the right chunk came first (hit@1) and how often it was in
+the top five (hit@5), out of 26 questions.
+:::
 
 The misses (outside the top 5) tell the story of the whole course:
 
-1. **Keywords** miss every paraphrase ("big cat", "shut because of the rains", "cook dinner") and, surprisingly,
-   CT-112: counting words gives "record" the same weight as "CT-112", and manual sections that say "record" come first.
-   BM25's rarity weighting exists for exactly this.
+1. **Keywords** miss the questions asked in other words ("big cat", "shut because of the rains", "cook dinner") and,
+   surprisingly, CT-112. Chapter 1's word counting gives every shared word one point. For "What did CT-112 record?" seven
+   chunks share exactly one word: six say "record" or "did", and only R-0301 says "ct-112". Ties keep the documents'
+   order (manual sections before reports), so five manual sections come first and R-0301 is 6th, just outside the top 5. BM25's rarity weighting
+   exists for exactly this.
 2. **Dense** search misses only the two **code** questions.
-3. **Hybrid** fixes both codes, but loses two paraphrases, the RRF effect from chapter 9, and its hit@1 **drops** from
-   77% to 58%: BM25 pushes chunks that share common words up into first place.
+3. **Hybrid** brings both codes into the top 5 (2nd place each), but loses two questions asked in other words, the RRF
+   effect from chapter 9, and its hit@1 **drops** from 77% to 58%: fusion rewards chunks that are fairly high in both
+   lists, and that pushed six right answers out of first place.
 4. **Hybrid + rerank** misses nothing in the top 5 and is right first time for 88% of the questions, with the best MRR
-   (0.94). It is also **75 times slower** (1.7 seconds against 23 ms).
+   (0.94). It is also **about 80 times slower** (about 1.7 seconds a question against about 20 ms).
 
 So, with numbers:
 
 | If Fieldbook needs | Choose | Because |
 |---|---|---|
 | the best answers, a ranger can wait 2 s | hybrid + rerank | 100% at 5, 88% first time |
-| instant results (search as you type) | dense | 92% at 5 in 23 ms, but codes need a fallback |
+| instant results (search as you type) | dense | 92% at 5 in about 20 ms, but codes need a fallback |
 | never hybrid alone | | on these questions it is worse than dense at first place |
 
 Fieldbook uses hybrid + rerank. Notice the third row: without this table, hybrid search "obviously" looked like an
-improvement.
+improvement. These conclusions hold for these 26 questions and these documents; with your own data, run the same table.
 :::
 
 :::step{type=predict title="Guess first"}
 :::question
 You add 10 more questions, all about camera trap codes. What happens to the gap between dense and hybrid?
 :::
-- [x] Hybrid gains on dense: codes are where BM25 helps
+- [x] Hybrid gains on dense, at least in the top 5: codes are where BM25 helps
 - [ ] Nothing: the measures are averages
 - [ ] Dense gains: codes are about meaning
 :::explain
-Which pipeline wins depends on the questions you test with, which is why the golden set must look like real use.
+On the three code questions already in the set, hybrid moved two right answers from 7th and 14th (dense) to 2nd. More
+such questions would raise hybrid's hit@5 against dense. Which pipeline wins depends on the questions you test with,
+which is why the golden set must look like real use.
 :::
 :::
 
@@ -181,7 +220,8 @@ A pipeline has hit@5 of 100% and MRR of 0.4. What does that tell you?
 - [ ] It is perfect
 - [ ] It misses 60% of the questions
 :::explain
-An MRR of 0.4 means the first right chunk is typically around position 2 or 3.
+An MRR of 0.4 is what you get when the first right chunk is usually second or third (1/2 = 0.5, 1/3 = 0.33). A reranker
+puts more of them first.
 :::
 :::
 
@@ -221,7 +261,7 @@ You can now:
 
 Next, chapter 13: Fieldbook as a web service.
 
-:::photo{src="/lesson-images/rag/rag-12-notes.webp" alt="Handwritten notes about evaluation: A golden set in the users' words; Hit rate: in the top k?; MRR: how near the top?; Read the misses; Choose with numbers" ai="true"}
+:::photo{src="/lesson-images/rag/rag-12-notes.webp" alt="Handwritten notes about evaluation: A golden set: test questions with known right chunks. Write the questions in the users' own words. Hit rate at k: is a right chunk in the first k? MRR: one over the rank of the first right chunk, averaged. Read the misses, not only the averages. Choose with numbers, and weigh the time too." ai="true"}
 One page of notes for this chapter.
 :::
 :::
