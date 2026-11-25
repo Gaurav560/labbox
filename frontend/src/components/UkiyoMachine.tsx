@@ -259,6 +259,20 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     return () => clearInterval(t);
   }, [run, lab, n, still]);
 
+  // The first run plays by itself when the section comes into view, on every visit (owner, 25 November);
+  // after that a lab change waits for Run or a tap.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const autoPlayed = useRef(false);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || autoPlayed.current) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !autoPlayed.current) { autoPlayed.current = true; setRun((r) => (r === 0 ? 1 : r)); io.disconnect(); }
+    }, { threshold: 0.45 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const waiting = run === 0;
   const slug = lab.label.toLowerCase().replace(/\s+/g, "-"); // short enough for a phone: "docker run system-design"
   const phase = waiting ? "wait" : step <= n ? "load" : step === n + 1 ? "close" : step === n + 2 ? "start" : "run";
@@ -284,7 +298,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     <><b>{phase === "run" ? 58 : secs} s</b> · {phase === "load" ? `${loadedNow}/${n} loaded` : phase === "close" ? "sealing" : phase === "start" ? "starting" : "running"}</>
   );
   return (
-    <div className="ua">
+    <div className="ua" ref={rootRef}>
       <div className="ua-text">
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
         <h2 id="machine-title">One click, and a container spins up for you <em>with everything the lab needs.</em></h2>

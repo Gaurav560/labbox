@@ -20,14 +20,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   const machine = page.locator("#machine");
   await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click, and a container spins up for you with everything the lab needs.");
   await machine.scrollIntoViewIfNeeded();
-  // It waits for a click (owner, 25 November): empty slots and one button.
-  await page.waitForTimeout(1500);
+  // The first run starts by itself when the section comes into view (owner, 25 November).
   await expect(machine.locator(".ua-container")).toBeVisible(); // the Docker-style shipping container
-  await expect(machine.locator(".ua-dock li")).toHaveCount(0); // nothing shown until the container spins up
-  await expect(machine.getByText("Try it: tap Run")).toBeVisible(); // plain that the command is the thing to press
-  await expect(machine.locator(".ua-c-plate")).toContainText("TAP TO START"); // the container says it can be tapped
-  await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0);
-  await machine.getByRole("button", { name: /Spin up the LangChain machine/ }).click();
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(6); // LangChain: Linux, Python, LangChain, gateway, editor, AI
   await expect(machine.locator(".ua-dock li")).toHaveCount(0); // all of them went in
@@ -39,6 +33,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(machine.locator(".ua-stamp")).toHaveAttribute("aria-label", "Ready");
   await expect(machine.locator(".ua-ready").getByRole("link", { name: "Start →" })).toHaveAttribute("href", "/login?next=%2Fcourses%2Flangchain");
   await machine.getByRole("tab", { name: "Redis" }).click();
+  await expect(machine.locator(".ua-c-plate")).toContainText("TAP TO START"); // a lab change waits for Run or a tap
+  await expect(machine.getByText("Try it: tap Run")).toBeVisible();
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0); // a new lab waits for its own click
   await machine.getByRole("button", { name: /Spin up the Redis machine/ }).click();
   await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });

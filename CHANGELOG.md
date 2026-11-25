@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the first run plays by itself
+
+- Owner: "whenever someone visits the page, new or old user, the first animation should auto start". On every visit
+  the LangChain run starts by itself once the section is mostly in view (on desktop when you scroll to it, on phones
+  the same). After that, picking another lab waits for Run or a tap, and "Spin it up again" replays.
+
 ## 25 November (Ukiyo): the run command's border in the theme's grey
 
 - Owner: "this green border is looking off the vibe with the whole page theme". The command's outline is the warm grey
