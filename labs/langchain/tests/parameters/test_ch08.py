@@ -35,5 +35,5 @@ def test_stream_tokens(fake):
             return r.failed("stream_tokens", "Call on_piece(chunk.content) for every chunk, as it arrives.", "several pieces", seen)
         if got != "Rain spoils stored onions, so supply falls.":
             return r.failed("stream_tokens", "Return all the pieces joined together.", "Rain spoils stored onions, so supply falls.", got)
-        r.passed("stream_tokens", "Each piece shown the moment it exists: the passenger reads while the model writes.")
+        r.passed("stream_tokens", "Each piece shown the moment it exists: the member reads while the model writes.")
     r.task("stream_tokens", check)
