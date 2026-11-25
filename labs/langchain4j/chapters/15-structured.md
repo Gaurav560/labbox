@@ -110,12 +110,20 @@ is one of the most useful things a model does in a real system: routing messages
 :::step{type=task task=extract_trip title="Your turn: extract a TripRequest" file="15-structured/src/main/java/com/setu/Reader.java" line="8-11"}
 In `Reader.java`, change the return type of `trip` from `String` to `TripRequest`. Keep the `@UserMessage`.
 
+The usual slip: keeping `String` and parsing the JSON yourself. It works, until the day the model adds a sentence
+before the JSON; with the record as the return type, LangChain4j sends the schema and does the parsing.
+
 Press **Check**.
 :::
 
 :::step{type=task task=classify_topic title="Your turn: classify with an enum" file="15-structured/src/main/java/com/setu/Reader.java" line="13-14"}
 Add a method to `Reader`: `Topic topic(String message)`, annotated with
 `@UserMessage("Which team should handle this passenger message? {{it}}")`.
+
+The usual slip: returning `String` instead of `Topic`. The model then answers in free text ("This message is a
+complaint about a delay"), and your code has nothing to `switch` on. (The template's `{{it}}` could also be
+`{{message}}` here: we tried, and it works, because this project is compiled with parameter names. `{{it}}` works
+either way.)
 
 ```bash run
 cd /workspace/15-structured && mvn -q compile exec:java
@@ -125,6 +133,13 @@ Press **Check**.
 :::
 
 :::step{type=try title="Fields, not paragraphs, and one wrong date"}
+:::diagram{name="l4j-structured"}
+The real extraction: the shape is guaranteed, the date is not.
+:::
+
+(We ran it twice more on 26 November: exactly this output both times, the wrong date included. The gateway's log
+shows the enum schema with its six values, `"strict": true`, and the answer `{"value":"TIMETABLE"}`.)
+
 ```text
 $ mvn -q compile exec:java
 TripRequest[from=Pune, to=Karjat, date=2026-11-26, passengers=3]
@@ -208,7 +223,7 @@ You can now:
 
 Next, chapter 16: streaming. Answers that appear word by word, like ChatGPT's.
 
-:::photo{src="/lesson-images/langchain4j/l4j-15-notes.webp" alt="Handwritten notes about structured output: return a record, get a record; the JSON schema goes with the request; an enum is one of your values; schema means shape, not truth; let Java do the date maths" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-15-notes.webp" alt="Sketchnote, Answers as Java objects (records, enums and a JSON schema): Return a record or an enum, and LangChain4j sends a strict JSON schema. The shape is guaranteed; the values are not. The flow: Message, JSON schema, Model's JSON, TripRequest. What we found: 4 messages, 4 right queues from the enum; this coming Saturday became a Thursday, twice; let Java do the date arithmetic; check important values before acting." ai="true"}
 One page of notes for this chapter.
 :::
 :::

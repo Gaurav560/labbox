@@ -2221,6 +2221,32 @@ function L4jGrounding() {
   );
 }
 
+function L4jStructured() {
+  // Still (owner, 26 November): chapter 15's real extraction, run twice with the same result.
+  const rows: [string, string, BoxTone][] = [
+    ["the passenger's message", "3 tickets from Pune to Karjat this coming Saturday", "plain"],
+    ["the JSON schema, strict", "from, to, date (YYYY-MM-DD), passengers", "accent"],
+    ["the model's JSON", "{\"from\":\"Pune\",\"to\":\"Karjat\",\"date\":\"2026-11-26\",\"passengers\":3}", "plain"],
+    ["a TripRequest record", "trip.passengers() + 1 = 4", "copy"],
+    ["but the date", "2026-11-26 is a Thursday; Saturday is 2026-11-28", "highlight"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 374" label="The message goes to the model with a strict schema; the JSON fits the schema and becomes a TripRequest, but the date it chose is a Thursday, not Saturday">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
+  );
+}
+
 function L4jNeuron() {
   // Still (owner, 26 November): chapter 2's trained neuron (weights 0.1, 0.2, 0.3, bias -0.2) on one morning.
   const inputs: [string, string, string, number][] = [["rain", "0", "x 0.1", 0], ["holiday", "1", "x 0.2", 0.2], ["track work", "1", "x 0.3", 0.3]];
@@ -4415,6 +4441,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-ai-circles": L4jAiCircles,
   "l4j-bigram-chain": L4jBigramChain,
   "l4j-grounding": L4jGrounding,
+  "l4j-structured": L4jStructured,
   "l4j-neuron": L4jNeuron,
   "l4j-context-window": L4jContextWindow,
   "l4j-embedding-space": L4jEmbeddingSpace,
