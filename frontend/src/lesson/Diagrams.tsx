@@ -3227,20 +3227,29 @@ function LcHumanLoop() {
 }
 
 function LgRun() {
+  // Still (owner, 26 November): chapter 1's real run on "Pipe burst near the school"; updates and states as printed.
+  const steps: [string, string, BoxTone][] = [
+    ["START: the input", "text", "plain"],
+    ["classify: {kind: leak}", "text, kind", "accent"],
+    ["write_reply: {reply: ...}", "text, kind, reply", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="One complaint through Harsh's first graph"
-      intro="Press Play to follow the state from START to END."
-      label="Graph run"
-      steps={[
-        { label: "START", says: "The state is {'text': 'Pipe burst near the school'}. Nothing else is known yet." },
-        { label: "classify", says: "The node reads the text and returns an update: {'kind': 'leak'}." },
-        { label: "Merge", says: "LangGraph merges the update into the state: now text and kind." },
-        { label: "write_reply", says: "The next node reads kind, looks up the promised hours, and returns {'reply': ...}." },
-        { label: "Merge", says: "The state now holds text, kind and reply." },
-        { label: "END", says: "invoke returns the final state; stream had shown each update as it happened." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 244" label="Pipe burst near the school: the input holds text; classify returns only kind leak and the state holds text and kind; write_reply returns only reply, promising 24 hours, and the state holds text, kind and reply">
+      <text className="dg-label" x={8} y={18}>node: the update it returns</text>
+      <text className="dg-label" x={262} y={18}>state afterwards</text>
+      {steps.map(([update, state, tone], i) => {
+        const y = 30 + i * 60;
+        return (
+          <g key={update}>
+            <Box x={8} y={y} w={236} h={44} label={update} tone={tone} />
+            <Arrow x1={244} y1={y + 22} x2={258} y2={y + 22} />
+            <Box x={258} y={y} w={174} h={44} label={state} tone="plain" />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={216}>The reply: "...We will respond within 24 hours."</text>
+      <text className="dg-note" x={8} y={236}>Each node returns only its own keys; LangGraph merges them in.</text>
+    </Svg>
   );
 }
 

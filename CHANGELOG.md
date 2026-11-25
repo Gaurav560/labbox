@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangGraph chapter 1 rewritten: a still picture of the state after each node, slips tried
+
+- Re-ran the solution in a lab machine (LangGraph 1.2.24): the same output, word for word.
+- Tried the claims: an edge to a misspelled node stops `compile()` with `ValueError: Found edge ending at unknown
+  node 'clasify'`; without the middle edge the graph compiles and runs but has no `reply` (the first task's usual
+  slip); `stream_mode="values"` gives whole states, not node names (the second task's slip). `create_agent`'s graph
+  was listed: `['__start__', 'model', 'tools', '__end__']`.
+- `TypedDict` and `total=False` are explained at first use. Both tasks list their steps.
+- The animation is now a still picture of the real run; a new sketchnote.
+
 ## 26 November: LangChain4j chapter 30 rewritten: the live app re-run word for word, the guardrail bug pictured
 
 - Ran the capstone app in a lab machine and sent the lesson's five requests: every answer the same, word for word,
