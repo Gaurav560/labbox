@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: Spring AI chapter 17 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (calling the chain after building the refusal; a word list that is
+  too broad).
+- The guardrails animation is now a still picture of three real questions with the tokens the gateway counted.
+- Checked in a lab machine: the three attacks were refused again (this time the pirate attempt still got a proper Moon
+  answer); the gateway's token counter proved the two guards cost nothing (2,286 before and after) and that "my number
+  is" reached the model (132 tokens); `SafeGuardAdvisor` ignores case (tried with capitals); `GuardrailRefusal`,
+  `GuardrailRefusalException` and `OpenAiModerationModel` exist in the lab's Spring AI. A new sketchnote.
+
 ## 26 November: Spring AI chapter 16 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (comparing with the first result only; the judge on Atlas's own
