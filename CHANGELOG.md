@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 17 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips, both checked: a new memory per call; one `.chatMemory(...)` with `@MemoryId` in the
+  interface (tried: it builds and runs with no error, and every passenger shares one history).
+- The memory animation is now a still picture of a real `MessageWindowChatMemory(10)`.
+- Corrected: the system message counts as one of the N. With a system message and 6 questions and answers, 13 messages
+  go into 10 and the oldest three are evicted (not two), so the kept history starts with an answer whose question is
+  gone; the quiz and the concept now say so.
+- Checked in a lab machine: Meera, Ravi and Asha gave the same answers word for word. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 16 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (completing the future in `onPartialResponse`; no `start()`).
