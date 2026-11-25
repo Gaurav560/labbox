@@ -56,19 +56,26 @@ graph.add_edge(["zone_lookup", "history_lookup"], "assign")   # a list: assign w
 
 The list in the last edge is a **join**: `assign` runs once, after both have finished. Here both branches are one node
 long, so two separate edges would happen to work too. When one branch has more steps than the other, separate edges run
-`assign` as soon as the shorter branch is done (and again later); the list always waits for every node in it.
+`assign` as soon as the shorter branch is done (and again later); the list always waits for every node in it. We
+tried it on 26 November with one extra step on the history branch: separate edges ran `assign` twice, the list once.
 
 The two branches write different keys (`zone`, `past`), so there is no conflict. If parallel nodes update the **same**
 key, that key needs a reducer (chapter 2), or LangGraph refuses the update.
 
 :::diagram{name="lg-join"}
-Both lookups share step 1; assign waits for both and runs once in step 2.
+The real Station Road run, and what we measured about joins (26 November).
 :::
 :::
 
 :::step{type=task task=parallel_branches title="Your turn: two lookups at once" file="05-patterns/graph.py" line="37-47"}
-In `build_parallel()`, add the edges START -> zone_lookup, START -> history_lookup, and the join
-`graph.add_edge(["zone_lookup", "history_lookup"], "assign")`.
+In `build_parallel()`:
+
+1. `graph.add_edge(START, "zone_lookup")`;
+2. `graph.add_edge(START, "history_lookup")`;
+3. the join: `graph.add_edge(["zone_lookup", "history_lookup"], "assign")`.
+
+The usual slip: leaving out one of the START edges. There is no error. We tried it without step 2: `history_lookup`
+never ran, `assign` waited for it for ever, and the run ended with a zone but no `plan`.
 
 Press **Check**.
 :::
@@ -85,8 +92,13 @@ out.
 :::
 
 :::step{type=task task=evaluator_loop title="Your turn: when to stop" file="05-patterns/graph.py" line="86-90"}
-Finish `next_step(state)`: return `END` when `state["good"]` is true or `state["drafts"]` has reached `MAX_DRAFTS`;
-otherwise return `"write_notice"`.
+Finish `next_step(state)`:
+
+1. if `state["good"]` is true **or** `state["drafts"] >= MAX_DRAFTS`, return `END`;
+2. otherwise return `"write_notice"`.
+
+The usual slip: `and` instead of `or`. Then a good draft does not stop the loop: it goes on until the third draft,
+paying for a writing call and a grading call it did not need, every time.
 
 ```bash run
 cd /workspace/05-patterns && python main.py
@@ -105,22 +117,27 @@ Tilak Nagar: {'street': 'Tilak Nagar', 'zone': 'East', 'past': 1, 'plan': 'East 
 
 --- draft 1:
 **Public Notice**  
-Residents of Ujjwal Nagar are informed of a planned water shutdown on Thursday, 28 November, from 10:00 to 16:00. This is due to valve replacement at the Tilak Nagar tank. We apologize for any inconvenience and appreciate your understanding. Thank you for your cooperation.
---- grade: good=False The notice does not specify that residents should store water the day before.
+Residents of Ujjwal Nagar are informed of a planned water shutdown on Thursday, 3 December, from 10:00 to 16:00. This is necessary for replacing the valve at the Tilak Nagar tank. We apologize for any inconvenience and appreciate your understanding. Thank you for your cooperation.
+--- grade: good=False The notice does not specify the area affected (Old Market and Tilak Nagar) and does not mention to store water the day before.
 --- draft 2:
 **Public Notice**  
-Residents of Ujjwal Nagar are informed of a planned water shutdown on Thursday, 28 November, from 10:00 to 16:00, due to valve replacement at the Tilak Nagar tank. Please store sufficient water the day before to avoid inconvenience. Thank you for your understanding.
+Residents of Ujjwal Nagar, please be informed that there will be a water shutdown on Thursday, 3 December, from 10:00 to 16:00. This will affect Old Market and Tilak Nagar due to valve replacement at the Tilak Nagar tank. Kindly store sufficient water the day before. Thank you for your understanding.
 --- grade: good=True 
 ```
+
+(This run is from 26 November. The first version of this chapter said "Thursday 28 November"; in 2026 that date is a
+Saturday, so the facts now say Thursday 3 December, a real Thursday.)
 
 The parallel graph: both lookups ran in the first step (the stream reports them one by one, but neither waited for the
 other), and `assign` ran once, with both facts. Station Road's six past complaints added a survey of the old main.
 
-The notice loop: the grader rejected draft 1 for exactly the right reason, the writer added "store sufficient water the
-day before", and draft 2 passed. The pattern works.
+The notice loop: the grader rejected draft 1 for exactly the right reasons (no area, no "store water"), the writer
+added both, and draft 2 passed. The pattern works.
 
-But read draft 2 against the facts: the shutdown is for **Old Market and Tilak Nagar**, and both drafts say only
-"residents of Ujjwal Nagar". The first item on the grader's own list, which area, is missing, and the grader passed it.
+Now the same loop three more times, same facts, same day. Each time it ended after two drafts with `good=True`, and
+each time the final notice **never named Old Market**: the first item on the grader's own list was missing, and the
+grader passed it. (When we first wrote this chapter, the same thing happened: "residents of Ujjwal Nagar" and no area
+at all.) So the grader caught the gap once in four runs, and missed it three times.
 A model grader is a second model with the same kind of blind spots, and it is lenient with fluent text. Two fixes are
 worth knowing: check what can be checked in Python (does the notice contain each area's name?), and give the grader one
 question per item instead of one question for all five.
@@ -134,7 +151,8 @@ Both parallel lookups return `{"note": ...}` for the same key, which has no redu
 - [x] LangGraph raises an error: two updates to one key in the same step need a reducer to combine them
 - [ ] Both are kept in a list
 :::explain
-In a sequence the last update wins; in the same step there is no "last". A reducer says how to combine them.
+We tried it: `InvalidUpdateError: At key 'note': Can receive only one value per step`. In a sequence the last update
+wins; in the same step there is no "last". A reducer says how to combine them.
 :::
 :::
 
@@ -163,8 +181,8 @@ Graders help, as draft 1 showed. They are evidence, not proof.
 :::
 
 :::step{type=deep-dive title="Go deeper: patterns in practice"}
-**Parallel model calls.** Two model nodes in the same step run at the same time: the step takes as long as the slower one,
-not the sum.
+**Parallel model calls.** Two nodes in the same step run at the same time: the step takes as long as the slower one,
+not the sum. (Measured with two nodes that each wait one second: the step took 1.00 seconds.)
 
 **Python checks first.** In an evaluator loop, put cheap exact checks (required words, length, dates) before the model
 grader; only text that passes them costs a grading call.
@@ -178,11 +196,11 @@ You can now:
 - name the five workflow patterns and recognise them in a graph;
 - run nodes in parallel and join them with a list edge;
 - build an evaluator-optimizer loop with a ceiling;
-- treat a model grader's verdict as evidence, after watching one miss the area.
+- treat a model grader's verdict as evidence, after watching one miss the area three times in four.
 
 Next, chapter 6: `Send` for one task per item, and `Command` for nodes that choose where to go.
 
-:::photo{src="/lesson-images/langgraph/lg-05-notes.webp" alt="Handwritten notes about workflow patterns: five workflow patterns; parallel: same step, then join; add_edge([a, b], c) waits for both; write, grade, write again; max 3 drafts. Graders can miss" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-05-notes.webp" alt="Handwritten notes titled Workflow patterns, parallel branches and a grader loop: nodes that start from the same step run at the same time, a list edge is a join where the next node waits for all of them, and a grader loop writes, grades and writes again with a ceiling; two lookups at once, the join where assign runs once, write a notice, grade it, stop when good or after 3 drafts; two 1-second nodes in one step took 1.00 seconds; separate edges with uneven branches ran assign twice; the grader missed the area in 3 of 4 runs; 28 November 2026 is a Saturday, fixed" ai="true"}
 One page of notes for this chapter.
 :::
 :::
