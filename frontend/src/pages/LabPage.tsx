@@ -22,7 +22,7 @@ import { labBrand } from "../brand";
 import { MODEL_PREFIX, modelUri, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import ReadCode from "../lesson/ReadCode";
-import StepOutline from "../lesson/StepOutline";
+import StepOutline, { PanelIcon } from "../lesson/StepOutline";
 import { useStats } from "../stats";
 import { useTextSizes } from "../textSize";
 
@@ -98,7 +98,7 @@ export default function LabPage() {
   // terminal, for tasks and practice. The last one used is remembered; a first visit reads (owner, 25 November).
   const [mode, setMode] = usePersistentState<"read" | "action">("mode", "read");
   const reading = phone || mode === "read";
-  // Read mode's list of steps on the left; the × closes it, "Steps" brings it back (remembered).
+  // Read mode's list of steps on the left; the panel button closes it and brings it back (remembered).
   const [outlineOpen, setOutlineOpen] = usePersistentState("outline", true);
   const showOutline = reading && !phone;
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
@@ -709,7 +709,7 @@ export default function LabPage() {
           )}
           {showOutline && steps && steps.length > 1 && (outlineOpen
             ? <StepOutline steps={steps} current={step} visited={visited} onGo={goStep} onClose={() => setOutlineOpen(false)} />
-            : <button className="btn btn-small step-outline-open" onClick={() => setOutlineOpen(true)} title="Show the list of steps">☰ Steps</button>)}
+            : <button className="panel-toggle step-outline-open" onClick={() => setOutlineOpen(true)} aria-label="Show the list of steps" title="Show the list of steps"><PanelIcon /></button>)}
           {stopReason && status !== "running" && status !== "starting" && (
             <div className="limit-banner" role="alert">
               <p>{stopReason}</p>
