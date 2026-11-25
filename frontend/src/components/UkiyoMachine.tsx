@@ -177,19 +177,13 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
  * doors and stays stacked inside, with its line in the log; then the doors close and lock, docker start runs, the
  * container lights up and hums, and Start appears.
  */
-// Colours from the home page prints, to try on the Spin up button (owner, 25 November: "keep on trying one by one").
-// The swatches show only with ?colors in the address; remove them once a colour is picked.
-const GO_COLORS: { name: string; bg: string; ink: string }[] = [
-  { name: "Hiroshige blue", bg: "#1f4f7a", ink: "#fbf3e8" }, { name: "Sea teal", bg: "#2a6f6b", ink: "#fbf3e8" },
-  { name: "Wisteria violet", bg: "#6e5591", ink: "#fbf3e8" }, { name: "Pine green", bg: "#3d6a43", ink: "#fbf3e8" },
-  { name: "Ochre gold", bg: "#d6a53c", ink: "#1c1a17" }, { name: "Blossom pink", bg: "#d98fa1", ink: "#1c1a17" },
-  { name: "Dawn coral", bg: "#e07a5f", ink: "#fbf3e8" }, { name: "Brick", bg: "#a9533e", ink: "#fbf3e8" },
-];
+// Designs to try for the Spin up button (owner, 25 November: none of the colours worked). Shown with ?buttons;
+// remove the switcher once one is picked.
+const GO_DESIGNS = ["Terminal command", "Docker blue", "Site red", "Ink outline", "Power switch", "Underlined link"] as const;
 
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
-  const trying = useSearchParams()[0].has("colors");
-  const [color, setColor] = useState(2); // wisteria violet (the owner turned down Hiroshige blue and sea teal)
-  const go = GO_COLORS[color];
+  const trying = useSearchParams()[0].has("buttons");
+  const [design, setDesign] = useState(0);
   const [lab, setLab] = useState(LABS[1]);
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
   // run 0 is the waiting box with the Spin up button; each click starts a new run.
@@ -257,9 +251,16 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
         {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
         {waiting ? (
-          <button type="button" className="ua-go" onClick={spin} style={{ "--go": go.bg, "--go-ink": go.ink } as CSSProperties}>
-            <span className="ua-go-play" aria-hidden="true">▶</span>
-            <span>Spin up the {lab.label} machine</span>
+          <button type="button" className={`ua-go ua-go-${design}`} onClick={spin} aria-label={`Spin up the ${lab.label} machine`}>
+            {design === 0 ? (
+              <><span className="ua-go-prompt">$</span><span>docker run labbox/{lab.id}</span><span className="ua-go-enter" aria-hidden="true">↵</span></>
+            ) : design === 1 ? (
+              <><img src="/logos/docker.svg" alt="" className="ua-go-whale" /><span>Spin up the {lab.label} machine</span></>
+            ) : design === 4 ? (
+              <><span className="ua-go-power" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v8M6.3 6.6a8 8 0 1 0 11.4 0" /></svg></span><span>Spin up the {lab.label} machine</span></>
+            ) : (
+              <><span>Spin up the {lab.label} machine</span><span aria-hidden="true">→</span></>
+            )}
           </button>
         ) : <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
@@ -306,11 +307,9 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         </div>
       </div>
       {trying && (
-        <div className="ua-swatches" role="radiogroup" aria-label="Try a colour for the Spin up button">
-          {GO_COLORS.map((c, i) => (
-            <button key={c.name} type="button" role="radio" aria-checked={i === color} onClick={() => { setColor(i); setRun(0); }}>
-              <i style={{ background: c.bg }} />{i + 1}. {c.name}
-            </button>
+        <div className="ua-swatches" role="radiogroup" aria-label="Try a design for the Spin up button">
+          {GO_DESIGNS.map((d, i) => (
+            <button key={d} type="button" role="radio" aria-checked={i === design} onClick={() => { setDesign(i); setRun(0); }}>{i + 1}. {d}</button>
           ))}
         </div>
       )}

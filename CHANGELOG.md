@@ -1,5 +1,12 @@
 # Changelog
 
+## 25 November (Ukiyo): six designs to try for Spin up (?buttons)
+
+- Owner: "I still don't like any colour and design for this". Instead of colours, six designs to try live at
+  `/?buttons`: 1 a terminal command (`$ docker run labbox/<lab> ↵`, the default), 2 Docker blue with the whale,
+  3 the site's red like Start free, 4 an ink outline, 5 a round power switch, 6 an underlined link. The colour
+  swatches are gone; the switcher goes once a design is picked.
+
 ## 25 November (Ukiyo): the clock is back
 
 - Owner: "where has the timer gone when adding the labs to the container? add it". The lid counts up smoothly from

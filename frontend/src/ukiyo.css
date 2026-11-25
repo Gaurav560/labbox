@@ -481,19 +481,36 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---------- 15. start a lab: the machine packs itself (home page, owner 25 November) ---------- */
 /* waiting for a click: one clear button over the empty slots */
 .ua-box { isolation: isolate; }
-/* the earlier hanko-style button, in a softer, muted brick red (owner, 25 November: the bright red was hard on the eyes) */
-.ua-go { --go: #6e5591; --go-ink: #fbf3e8; position: relative; display: inline-flex; align-items: center;
-  gap: 12px; padding: 12px 22px 12px 12px; border: 0; cursor: pointer; background: var(--go); color: var(--go-ink); border-radius: 4px;
-  font: 600 18px var(--font-text); white-space: nowrap;
-  box-shadow: inset 0 0 0 4px var(--go), inset 0 0 0 5.5px color-mix(in srgb, var(--go-ink) 65%, transparent), 0 20px 40px -18px #0009;
-  transition: background .25s, filter .25s; }
-.ua-go:hover { filter: brightness(1.08); }
-.ua-go:focus-visible { outline: 3px solid var(--text); outline-offset: 4px; }
-.ua-go::after { content: ""; position: absolute; inset: -6px; border: 1.5px solid color-mix(in srgb, var(--go) 70%, transparent); border-radius: 8px;
-  animation: ua-ring 2.4s ease-out infinite; pointer-events: none; }
-.ua-go-play { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--go-ink); color: var(--go);
-  font-size: 16px; padding-left: 3px; }
-@keyframes ua-ring { 0% { opacity: .6; transform: scale(1); } 100% { opacity: 0; transform: scale(1.14); } }
+/* the Spin up button: designs to try (?buttons) */
+.ua-go { position: relative; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font: 600 17px var(--font-text);
+  white-space: nowrap; transition: background .2s, border-color .2s, color .2s, box-shadow .2s, transform .15s; }
+.ua-go:active { transform: translateY(1px); }
+.ua-go:focus-visible { outline: 3px solid var(--vermilion); outline-offset: 4px; }
+/* 1 terminal command */
+.ua-go-0 { padding: 14px 18px; background: #14120f; color: #e9e2d4; border: 1px solid #4a443d; border-radius: 6px; font: 500 15px var(--font-code);
+  box-shadow: 0 14px 30px -18px #000c; }
+.ua-go-0 .ua-go-prompt { color: #4ade80; font-weight: 700; }
+.ua-go-0 .ua-go-enter { margin-left: 6px; padding: 2px 8px; border: 1px solid #4a443d; border-radius: 4px; color: #a49b8c; font-size: 13px; }
+.ua-go-0:hover { border-color: #4ade80; } .ua-go-0:hover .ua-go-enter { color: #4ade80; border-color: #4ade80; }
+/* 2 docker blue */
+.ua-go-1 { padding: 12px 22px 12px 14px; background: #1d63ed; color: #fff; border: 0; border-radius: 8px; box-shadow: 0 14px 28px -16px #1d63edaa; }
+.ua-go-1 .ua-go-whale { width: 30px; height: 30px; filter: brightness(0) invert(1); }
+.ua-go-1:hover { background: #1550c9; }
+/* 3 site red, like Start free */
+.ua-go-2 { padding: 14px 24px; background: var(--vermilion); color: #fff; border: 0; border-radius: 4px; }
+.ua-go-2:hover { background: color-mix(in srgb, var(--vermilion) 85%, #000); }
+/* 4 ink outline */
+.ua-go-3 { padding: 13px 22px; background: transparent; color: var(--text); border: 1.5px solid var(--text); border-radius: 4px; }
+.ua-go-3:hover { background: var(--text); color: var(--bg); }
+/* 5 power switch */
+.ua-go-4 { padding: 0; background: none; border: 0; color: var(--text); gap: 14px; }
+.ua-go-power { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: var(--card); border: 2px solid var(--rule);
+  box-shadow: inset 0 -3px 0 #0002, 0 8px 18px -10px #0008; transition: border-color .2s, box-shadow .2s; }
+.ua-go-power svg { width: 24px; height: 24px; fill: none; stroke: #16a34a; stroke-width: 2.6; stroke-linecap: round; }
+.ua-go-4:hover .ua-go-power { border-color: #16a34a; box-shadow: 0 0 0 5px #16a34a22, 0 8px 18px -10px #0008; }
+/* 6 underlined link */
+.ua-go-5 { padding: 0 0 3px; background: none; border: 0; border-bottom: 2px solid var(--vermilion); border-radius: 0; color: var(--text); }
+.ua-go-5:hover { color: var(--vermilion); }
 .ua-box.is-waiting .ua-log { opacity: .7; }
 .ua-log-wait { color: var(--muted); }
 .ua-caret { display: inline-block; width: 8px; height: 15px; vertical-align: -2px; background: var(--muted); animation: ua-blink 1s steps(1) infinite; }
@@ -568,12 +585,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   .ua-go { max-width: 100%; white-space: normal; text-align: left; font-size: 16px; }
 }
 
-/* temporary: colour swatches for the Spin up button, only with ?colors (owner picks one, then this goes) */
+/* temporary: designs to try for the Spin up button, only with ?buttons (owner picks one, then this goes) */
 .ua-swatches { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-.ua-swatches button { display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border: 1px solid var(--rule); background: var(--card);
+.ua-swatches button { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--rule); background: var(--card);
   color: var(--muted); cursor: pointer; font: 600 12px var(--font-code); }
 .ua-swatches button[aria-checked="true"] { color: var(--text); border-color: var(--text); }
-.ua-swatches i { width: 22px; height: 22px; display: block; box-shadow: inset 0 0 0 1px #0002; }
 
 /* ---- the container (owner, 25 November: "way more cool"; items visibly go in, then the container starts) ---- */
 .ua-logwrap { position: relative; }
