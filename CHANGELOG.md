@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 19 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (`nextOrSame` instead of `next`; a fresh `new RailTools()` that ignores the check's
+  fixed clock).
+- The tool-call animation is now a still picture of the real exchange (194 tokens, two tool requests, Java's results,
+  263 tokens, the answer).
+- Checked in a lab machine: the same answers and the same token counts as the lesson; the Mumbai question took one call
+  and no tool. Checked in the lab's 1.24: `ReturnBehavior`, `@ToolMemoryId`, `toolExecutionErrorHandler(...)`. A new
+  sketchnote.
+
 ## 26 November: LangChain4j chapter 18 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips, both tried: `@AiService` missing (the startup error is now quoted)
