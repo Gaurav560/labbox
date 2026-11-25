@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 6 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (multiplying by the temperature; `sqrt` of the number of keys instead of the vector
+  length).
+- Both animations are now still pictures: the real attention weights of "it" (0.46, 0.36, 0.18), and the six steps of
+  an answer with the course's real numbers (9 tokens, about 200,000 scores, 0.73 at temperature 1); the picture says a
+  generating model looks at the tokens before each token (causal masking), not "every other token".
+- Checked: the softmax worked examples by hand (0.665, 0.245, 0.090; 0.867, 0.117, 0.016) and the solution's output in
+  a lab machine (exactly the lesson's). A new sketchnote.
+
 ## 26 November: LangChain4j chapter 5 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (the dot product alone; comparing with the answers instead of the
