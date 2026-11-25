@@ -1,5 +1,17 @@
 # Changelog
 
+## 26 November: LangGraph chapter 4 rewritten: two real model calls pictured, a slip I expected disproved
+
+- Re-ran the solution with the real model: the same four triages; the replies the same except the first, which now
+  names Tilak Nagar too (the lesson quotes it). Triage calls were about 180 tokens in, replies about 90.
+- Tried and found: returning the `Triage` object without `.model_dump()` works in LangGraph 1.2.24 (a node may return
+  a Pydantic object), so it is not taught as a slip. Real slips, tried: no `with_structured_output` (the message's
+  fields are ignored and the next node stops with `KeyError: 'kind'`), and no `.content` (the state holds a whole
+  `AIMessage`).
+- The quiz's claim was tried: "critical" raises a Pydantic `ValidationError` on `severity`. `retry_policy` and the
+  other `add_node` options were checked in 1.2.24. Pydantic models and `Literal` are explained at first use.
+- The animation is now a still picture of the Hindi complaint through both model calls; a new sketchnote.
+
 ## 26 November: LangGraph chapter 3 rewritten: the four real paths pictured, the recursion limit measured
 
 - Re-ran the solution: the same four lines. A still picture now shows each street's tries and where it ended.

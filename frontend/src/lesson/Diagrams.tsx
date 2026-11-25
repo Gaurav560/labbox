@@ -3313,20 +3313,28 @@ function LgRoute() {
 }
 
 function LgModelNode() {
+  // Still (owner, 26 November): chapter 4's real run on the Hindi complaint; tokens from the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["pani nahi aaya aaj gandhi chowk mein", "the text", "plain"],
+    ["triage: the model, as Triage", "178 in, 18 out", "accent"],
+    ["no_water, high, Gandhi Chowk", "checked by Literal", "plain"],
+    ["Python: HOURS[\"high\"] = 24", "no model", "copy"],
+    ["draft_reply: the model writes", "88 in, 29 out", "accent"],
+    ["\"...within the next 24 hours.\"", "as Python set", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="Inside the triage node"
-      intro="Press Play to see a model call become a state update."
-      label="Model node"
-      steps={[
-        { label: "State in", says: "The node gets the state: text 'pani nahi aaya aaj gandhi chowk mein'." },
-        { label: "Messages", says: "It builds a system message (the TRIAGE rules) and a human message (the complaint)." },
-        { label: "Model", says: "with_structured_output(Triage) asks the model for exactly the Triage fields." },
-        { label: "Validation", says: "kind and severity must be one of the Literal values, or the call fails here." },
-        { label: "Update out", says: "model_dump() turns Triage into {'kind': 'no_water', 'severity': 'high', 'street': 'Gandhi Chowk'}." },
-        { label: "Graph", says: "The graph merges it and routes on kind, as with any other node." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 372" label="The Hindi complaint: triage asks the model for a Triage object, 178 tokens in and 18 out, and gets no_water, high, Gandhi Chowk; Python looks up 24 hours; draft_reply asks the model to write the reply, 88 tokens in and 29 out, and it promises within the next 24 hours">
+      {rows.map(([what, note, tone], i) => {
+        const y = 4 + i * 60;
+        return (
+          <g key={what}>
+            <Box x={8} y={y} w={290} h={44} label={what} tone={tone} />
+            <text className="dg-note" x={308} y={y + 27}>{note}</text>
+            {i < rows.length - 1 && <Arrow x1={153} y1={y + 44} x2={153} y2={y + 60} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

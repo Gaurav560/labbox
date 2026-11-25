@@ -52,7 +52,8 @@ def triage(state: Ticket) -> dict:
     return result.model_dump()        # {"kind": ..., "severity": ..., "street": ...}
 ```
 
-`Triage` limits `kind` and `severity` to the board's values with `Literal`, so the router of chapter 3 always gets a name
+`Triage` is a Pydantic model (a class whose fields are checked when an object is made). It limits `kind` and
+`severity` to the board's values with `Literal` (from `typing`: "only these exact values"), so the router of chapter 3 always gets a name
 it knows. The rules for severity ("dirty water is always urgent") are written in the `TRIAGE` system message, where the
 model reads them.
 
@@ -60,13 +61,20 @@ model reads them.
 fake server, and a long-running graph always uses the current settings.
 
 :::diagram{name="lg-model-node"}
-The model call sits in the middle; state goes in and a checked update comes out, like any node.
+One real run (26 November): two model calls, and the promise between them made by Python.
 :::
 :::
 
 :::step{type=task task=triage_node title="Your turn: the triage node" file="04-model-nodes/graph.py" line="35-38"}
-Finish `triage(state)`: call `model().with_structured_output(Triage).invoke([SystemMessage(TRIAGE),
-HumanMessage(state["text"])])` and return it as a dict (`.model_dump()`).
+Finish `triage(state)`:
+
+1. `result = model().with_structured_output(Triage).invoke([SystemMessage(TRIAGE), HumanMessage(state["text"])])`;
+2. `return result.model_dump()`.
+
+The usual slip: forgetting `.with_structured_output(Triage)`. The model then returns an ordinary message, whose
+fields (`content` and so on) are not keys of the state. We tried it on 26 November: LangGraph quietly ignored them,
+and the next node stopped with `KeyError: 'kind'`. (Leaving out `.model_dump()` is fine in LangGraph 1.2.24, we
+found: a node may return a Pydantic object as its update. The dict keeps the update easy to read.)
 
 Press **Check**.
 :::
@@ -80,8 +88,13 @@ would happily promise "a crew within the hour", and the board would have to keep
 :::
 
 :::step{type=task task=reply_node title="Your turn: the reply node" file="04-model-nodes/graph.py" line="41-46"}
-Finish `draft_reply(state)`: call `model().invoke([SystemMessage(REPLY), HumanMessage(facts)])` and return
-`{"reply": <its content>}`.
+Finish `draft_reply(state)`:
+
+1. `answer = model().invoke([SystemMessage(REPLY), HumanMessage(facts)])` (`facts` is already built above);
+2. `return {"reply": answer.content}`.
+
+The usual slip: `{"reply": answer}` without `.content`. Nothing fails, but the state then holds a whole `AIMessage`,
+and we saw it print as `content='Dear Citizen, thank you...'` instead of the text.
 
 ```bash run
 cd /workspace/04-model-nodes && python main.py
@@ -110,6 +123,10 @@ $ python main.py
   Dear Citizen, thank you for bringing this to our attention. We will address the water issue at Gandhi Chowk within the next 24 hours.
 ```
 
+(We ran it again on 26 November: the same four triages, and the same replies except the first, which now also
+named Tilak Nagar: "We will investigate the issue in Tilak Nagar and respond within the next 4 hours." Each triage call
+was about 180 tokens in, each reply about 90.)
+
 All four triaged correctly, including "pani nahi aaya aaj gandhi chowk mein" (Hindi in English letters: "the water did
 not come today in Gandhi Chowk"), with the street written the way the map spells it. The billing complaint has no
 street, and the model returned an empty string instead of inventing one. Each reply promised exactly the hours Python
@@ -130,7 +147,8 @@ The model returns `severity: "critical"`, a word not in the `Literal`. What happ
 - [x] Validation fails before the update reaches the state, so the graph never routes on a value it does not know
 - [ ] It is stored as it is
 :::explain
-The schema is a gate between the model and the graph. Chapter 9 adds retries for such failures.
+We tried it: `Triage(kind="leak", severity="critical", street="")` raises `ValidationError: 1 validation error for
+Triage, severity`. The schema is a gate between the model and the graph. Chapter 9 adds retries for such failures.
 :::
 :::
 
@@ -163,7 +181,7 @@ That is why you can swap a rule for a model (or back) without touching the rest 
 conditional edge) cuts the bill.
 
 **Retries.** Nodes can be given a retry policy (`graph.add_node(..., retry_policy=RetryPolicy(max_attempts=3))`) for
-rate limits and timeouts.
+rate limits and timeouts. (In 1.2.24 `add_node` also takes `timeout`, `cache_policy` and `error_handler`.)
 
 **Fixed wording for safety.** Advice that must be exact (health warnings, legal text) belongs in templates filled by
 Python, as the try step showed.
@@ -179,7 +197,7 @@ You can now:
 
 Next, chapter 5: the five workflow patterns, with parallel branches and an evaluator loop.
 
-:::photo{src="/lesson-images/langgraph/lg-04-notes.webp" alt="Handwritten notes about model nodes: a model node is just a node; structured output -> safe routing; Python decides the promise; the model writes the words; health advice: fixed text" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-04-notes.webp" alt="Handwritten notes titled Model nodes, the model writes words and Python makes promises: a node that calls a model is still a function, state in and update out, and structured output turns free text into a checked object the graph can route on; complaint text, triage where the model returns Triage, Python looks up the hours, draft_reply where the model writes, a reply with the right promise; Hindi in English letters was triaged right; with no structured output, KeyError kind; with no .content, a whole message in the state; critical fails the Literal check" ai="true"}
 One page of notes for this chapter.
 :::
 :::
