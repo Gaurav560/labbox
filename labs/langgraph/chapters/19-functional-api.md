@@ -76,8 +76,13 @@ resume.
 :::
 
 :::step{type=task task=task_steps title="Your turn: steps that are saved" file="19-functional-api/flow.py" line="14-35"}
-Put `@task` above `book_crew`, `order_parts` and `send_sms`, and in `repair_job` call each one with `.result()`:
-`[book_crew(job).result(), order_parts(job).result()]`, then `send_sms(job).result()`. Remove the TODO.
+1. Put `@task` above `book_crew`, `order_parts` and `send_sms`.
+2. In `repair_job`, call each one with `.result()`: `log = [book_crew(job).result(), order_parts(job).result()]`, then
+   `log.append(send_sms(job).result())`.
+3. Remove the TODO.
+
+The usual slip: forgetting `.result()`. The list then holds futures, not text, and the checkpoint cannot save them. We
+tried it: `TypeError: Type is not msgpack serializable: Future`.
 
 ```bash run
 cd /workspace/19-functional-api && rm -f jobs.db board_record.txt && SMS_FAILS=1 python main.py start J-301 18000
@@ -104,13 +109,19 @@ The run pauses at `interrupt` and is saved. `invoke(Command(resume={...}), confi
 again, and this time `interrupt` returns the decision. An early `return` is a refusal; no task runs.
 
 :::diagram{name="lg-functional"}
-Saved task results are replayed on resume; only unfinished tasks run again.
+The real job J-301 (26 November): the crashed run, and the resume that replays saved results.
 :::
 :::
 
 :::step{type=task task=approval_in_flow title="Your turn: approval in plain Python" file="19-functional-api/flow.py" line="28-35"}
-In `repair_job`, before the tasks: if `order["estimate"] > APPROVAL_OVER`, call `interrupt({...})` with the job, the
-estimate and the question; if the answer's `"approve"` is false, return `[f"{job}: refused ({decision.get('note', '')})"]`.
+In `repair_job`, before the tasks:
+
+1. if `order["estimate"] > APPROVAL_OVER`, `decision = interrupt({"job": job, "estimate": order["estimate"],
+   "question": "Approve this repair?"})`;
+2. if `not decision["approve"]`, `return [f"{job}: refused ({decision.get('note', '')})"]`.
+
+The usual slip: asking but never returning early. We tried it: the engineer said no, and the job booked a crew anyway,
+`['J-403: crew booked (South zone, tomorrow 8:00)']`.
 
 ```bash run
 cd /workspace/19-functional-api && python main.py start J-302 65000
@@ -151,6 +162,9 @@ J-302: parts ordered, Rs 18,000 (200 mm valve, 2 couplings)
 J-302: SMS sent to the citizen
 ```
 
+(We ran all the commands again on 26 November, on a new `jobs.db`: the same results; this time J-302's lines arrived in
+task order.)
+
 J-301 crashed at the SMS (one failure, and this version has no retry policy). The resume ran `repair_job` from the top,
 but `book_crew` and `order_parts` returned their saved results: the only new work was one SMS attempt, and the record
 has one crew and one order. The final line is the entrypoint's return value.
@@ -170,7 +184,8 @@ The same behaviour as chapters 9 and 10, in a function you can read top to botto
 - [x] The parts are ordered again: code outside tasks runs again on every resume
 - [ ] The resume fails
 :::explain
-Only task results are saved. Every side effect belongs in a task.
+We tried it: after the resume, the record had two parts orders for the job. Only task results are saved. Every side
+effect belongs in a task.
 :::
 :::
 
@@ -219,7 +234,7 @@ You can now:
 
 That ends Part 3. Next, chapter 20: testing graphs.
 
-:::photo{src="/lesson-images/langgraph/lg-19-notes.webp" alt="Handwritten notes about the Functional API: @entrypoint = the workflow; @task = a saved step; resume replays from line 1; side effects inside tasks; interrupt works here too" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-19-notes.webp" alt="Handwritten notes titled The Functional API, durable workflows as plain functions: entrypoint makes a function a durable workflow, each task call returns a future whose result is saved, and on resume the function runs from line 1 while finished tasks return their saved results; book_crew saved, order_parts saved, send_sms crash, resume from line 1, only the SMS runs; an order outside a task was placed twice; without .result a Future cannot be saved; with no early return a refused job booked a crew anyway; interrupt works inside a function too" ai="true"}
 One page of notes for this chapter.
 :::
 :::

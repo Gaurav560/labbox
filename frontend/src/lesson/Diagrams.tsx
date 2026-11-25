@@ -3732,20 +3732,28 @@ function LgStream() {
 }
 
 function LgFunctional() {
+  // Still (owner, 26 November): chapter 19's real job J-301, the crashed run and the resume.
+  const left: [string, BoxTone][] = [
+    ["book_crew: runs, saved", "plain"], ["order_parts: runs, saved", "plain"], ["send_sms: timeout, crash", "highlight"],
+  ];
+  const right: [string, BoxTone][] = [
+    ["book_crew: saved result", "copy"], ["order_parts: saved result", "copy"], ["send_sms: runs, sent", "accent"],
+  ];
+  const col = (items: [string, BoxTone][], x: number) => items.map(([t, tone], i) => (
+    <g key={x + "-" + i}>
+      <Box x={x} y={30 + i * 60} w={206} h={42} label={t} tone={tone} />
+      {i < items.length - 1 && <Arrow x1={x + 103} y1={72 + i * 60} x2={x + 103} y2={90 + i * 60} />}
+    </g>
+  ));
   return (
-    <SketchSteps
-      title="A crash and a resume, in a function"
-      intro="Press Play to follow job J-301."
-      label="Functional API"
-      steps={[
-        { label: "start", says: "repair_job runs. book_crew(job).result(): the crew is booked, and the result saved." },
-        { label: "order_parts", says: "Ordered, and the result saved." },
-        { label: "send_sms", says: "The SMS gateway times out: the entrypoint fails; the two results stay in the checkpoint." },
-        { label: "resume", says: "invoke(None, config) runs repair_job again from its first line." },
-        { label: "replay", says: "book_crew and order_parts return their saved results at once: nothing is booked twice." },
-        { label: "send_sms", says: "This one runs for real, succeeds, and the function returns the three log lines." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 290" label="Job J-301: the first run books the crew and orders the parts, saving both results, then crashes at the SMS. The resume runs repair_job from its first line, but book_crew and order_parts return their saved results; only send_sms does real work. The record has one crew and one order">
+      <text className="dg-label" x={8} y={18}>run 1: start</text>
+      <text className="dg-label" x={226} y={18}>run 2: resume, from line 1</text>
+      {col(left, 8)}
+      {col(right, 226)}
+      <text className="dg-note" x={8} y={240}>The record: one crew, one order, one SMS.</text>
+      <text className="dg-note" x={8} y={262}>An order made outside a task was placed twice.</text>
+    </Svg>
   );
 }
 
