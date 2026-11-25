@@ -1,5 +1,12 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 18 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips, both tried: `@AiService` missing (the startup error is now quoted)
+  and `@RequestBody` missing (a 500 error, "The value of parameter 'passenger' annotated with @MemoryId ... must not be
+  null"; the first draft of this slip said Setu would get a `null` question, which was wrong).
+- Checked in a lab machine: the three requests gave the same answers word for word. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 17 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips, both checked: a new memory per call; one `.chatMemory(...)` with `@MemoryId` in the
