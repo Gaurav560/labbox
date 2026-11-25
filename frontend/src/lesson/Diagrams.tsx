@@ -3475,20 +3475,30 @@ function LgDurable() {
 }
 
 function LgInterrupt() {
+  // Still (owner, 26 November): chapter 10's real J-201, two processes sharing repairs.db.
+  const rows: [string, string, BoxTone][] = [
+    ["process 1", "write_brief: the model writes it", "plain"],
+    ["", "approval starts (printed)", "plain"],
+    ["", "interrupt: Rs 65,000 + the brief", "highlight"],
+    ["", "saved; process ends", "accent"],
+    ["process 2", "Command(resume={approve: True})", "accent"],
+    ["", "approval starts again (printed)", "plain"],
+    ["", "schedule: Before the festival, please", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="A repair that waits for the engineer"
-      intro="Press Play to follow J-201 through two processes."
-      label="Interrupt"
-      steps={[
-        { label: "write_brief", says: "The model writes a two-sentence brief. Rs 65,000 is over 50,000: go to approval." },
-        { label: "interrupt", says: "approval calls interrupt({...}). The run stops, the thread is saved with next = approval." },
-        { label: "Returned", says: "invoke returns the state with __interrupt__: the job, the estimate and the brief for the engineer." },
-        { label: "Next morning", says: "A new process calls invoke(Command(resume={'approve': True, ...}), same thread_id)." },
-        { label: "approval again", says: "The node runs from its first line; this time interrupt returns her answer." },
-        { label: "schedule", says: "approved is true: the repair is scheduled, with her note." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 384" label="Job J-201: in the first process write_brief runs, the approval node starts and interrupts with the estimate and the brief, the thread is saved and the process ends. In a second process, Command resume with approve true runs the approval node again from its first line, and the job is scheduled before the festival">
+      {rows.map(([proc, step, tone], i) => {
+        const y = 6 + i * 52;
+        return (
+          <g key={i}>
+            {proc && <text className="dg-label" x={8} y={y + 26}>{proc}</text>}
+            <Box x={100} y={y} w={332} h={40} label={step} tone={tone} />
+            {i < rows.length - 1 && i !== 3 && <Arrow x1={266} y1={y + 40} x2={266} y2={y + 52} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={376}>Between the processes, only repairs.db remembers the job.</text>
+    </Svg>
   );
 }
 
