@@ -2317,6 +2317,37 @@ function LcAiCircles() {
   );
 }
 
+function LcTokens() {
+  // The real o200k_base pieces of chapter 2's three questions (main.py); "·" marks a piece that starts with a space.
+  const rows: [string, string[]][] = [
+    ["English: 7 tokens", ["What", "·is", "·the", "·onion", "·rate", "·today", "?"]],
+    ["Marathi, Devanagari: 8 tokens", ["आज", "·कां", "द्य", "ाचा", "·भाव", "·काय", "·आहे", "?"]],
+    ["Marathi in English letters: 11 tokens", ["a", "aj", "·k", "andy", "acha", "·bh", "av", "·kay", "·aa", "he", "?"]],
+  ];
+  return (
+    <Svg viewBox="0 0 440 262" label="The same question cut into tokens: English 7, Marathi in Devanagari 8, Marathi typed in English letters 11">
+      {rows.map(([label, parts], r) => {
+        let x = 0;
+        const y = 8 + r * 78;
+        return (
+          <g key={label}>
+            <text className="dg-label" x={0} y={y + 12}>{label}</text>
+            <g className="dg-cells-small">
+              {parts.map((p, i) => {
+                const w = 12 + 8 * [...p].length;
+                const el = <Box key={i} x={x} y={y + 22} w={w} h={30} label={p} tone={r === 2 ? "highlight" : "plain"} code />;
+                x += w + 3;
+                return el;
+              })}
+            </g>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={252}>One box is one token. · means the piece starts with a space.</text>
+    </Svg>
+  );
+}
+
 function LcAgentLoop() {
   return (
     <SketchSteps
@@ -3824,6 +3855,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "lc-agent-loop": LcAgentLoop,
   "lc-memory-threads": LcMemoryThreads,
   "lc-ai-circles": LcAiCircles,
+  "lc-tokens": LcTokens,
   "lc-next-token": LcNextToken,
   "lc-chat-request": LcChatRequest,
   "l4j-streaming": L4jStreaming,

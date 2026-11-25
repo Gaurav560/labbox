@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: LangChain chapter 2 rewritten (easy, a little detailed, checked)
+
+- Tokenizer, vocabulary, bytes, context window and budget are explained where they first appear; the tiktoken code is
+  read line by line; tasks list their steps and the usual slips.
+- A new still picture, `lc-tokens`: the real o200k_base pieces of the same question in English (7), Devanagari (8)
+  and Marathi in English letters (11).
+- Checked by running the solution in a lab machine: the counts, the trace (10, 9, 8, 10 tokens), the vocabulary
+  (200,019 entries) and 131 tokens per 100 English words on chapter 1's story. Corrected: 11 against 7 is about 57%
+  more, not 40%; the story no longer says people guess English is cheapest (it is); the output limit (16,384 tokens)
+  is added; the price ratio is dated (gpt-4o-mini $0.15 and $0.60 per million, November 2026). A new notes page.
+
 ## 25 November: LangChain chapter 1 rewritten (easy, a little detailed, checked)
 
 - Language model, neural network, layers, threshold and accuracy are explained where they first appear; the worked
