@@ -14,23 +14,20 @@ using real embeddings from OpenAI.
 :::
 
 :::step{type=concept title="Meaning as a point in space" file="03-embeddings/embeddings.py" line="1-7"}
-An embedding model turns a text into a vector: a fixed-length list of numbers. `vectors.json` holds real ones from
-OpenAI's `text-embedding-3-small`, made for this chapter with 256 numbers each (the model can give up to 1,536):
+An **embedding model** is a model that turns a text into a **vector**: a list of numbers whose length is fixed for that
+model. `vectors.json` holds real ones from OpenAI's `text-embedding-3-small`, made for this chapter with 256 numbers
+each (this model gives up to 1,536; other models give other sizes):
 
 ```json
 "What is today's onion rate?": [-0.0303, -0.08319, 0.02585, ...256 numbers]
 ```
 
 Each number on its own means nothing you could name. Together they place the text as a point in a space of 256
-dimensions, where nearby points mean similar things. Picture it in two dimensions:
+**dimensions** (one direction per number), where nearby points mean similar things. With only two numbers, every text
+would be a dot on a sheet of paper, and texts with similar meanings would be dots close together; with 256 numbers it
+is the same idea, in a space we cannot draw.
 
-| Text | x | y |
-|---|---|---|
-| What is today's onion rate? | 0.9 | 0.2 |
-| kanda bhav kay aahe aaj? | 0.8 | 0.3 |
-| When is the co-op office open? | 0.1 | 0.9 |
-
-The first two are close; the office question is far away. Real embeddings do the same with 256 numbers instead of 2.
+The model was trained on huge amounts of text so that this happens: texts used in similar ways end up close.
 :::
 
 :::step{type=history title="You shall know a word by the company it keeps"}
@@ -58,7 +55,8 @@ most of the quality.
 :::
 
 :::step{type=concept title="Cosine similarity" file="03-embeddings/embeddings.py" line="10-13"}
-How close are two vectors? The usual measure is the **cosine** of the angle between them:
+How close are two vectors? The usual measure is the **cosine similarity**: the cosine of the angle between the two
+arrows from the origin to the two points.
 
 ```text
 cosine(a, b) = (a1*b1 + a2*b2 + ...) / (length of a * length of b)
@@ -71,19 +69,35 @@ length of a  = square root of (a1*a1 + a2*a2 + ...)
 | 0 | at right angles | unrelated |
 | -1 | point opposite ways | opposite (rare in practice) |
 
-Only the direction counts, not the length: `[3, 4]` and `[6, 8]` have cosine 1.
+Only the direction counts, not the length: `[3, 4]` and `[6, 8]` have cosine 1. Worked by hand for `[3, 4]` and
+`[4, 3]`: the top is 3 x 4 + 4 x 3 = 24, both lengths are 5, so the cosine is 24 / 25 = 0.96, nearly the same
+direction.
+
+Real embeddings rarely reach 0 or -1. With this model, in this chapter, the best match scores 0.63, and pairs that are
+not matches land between -0.05 and 0.34 (the picture in "Five questions" shows them all). So there is no fixed number
+that means "related": a non-match (tomatoes against grapes, 0.34) can score higher than a real match (kanda bhav, 0.155).
 :::
 
 :::step{type=task task=cosine title="Your turn: cosine similarity" file="03-embeddings/embeddings.py" line="10-13"}
-Finish `cosine(a, b)`: the dot product of `a` and `b` (the sum of `x * y` for each pair), divided by the product of
-their lengths.
+Finish `cosine(a, b)`:
+
+1. The **dot product**: `sum(x * y for x, y in zip(a, b))` (`zip` pairs the first numbers, then the second, and so on).
+2. Each vector's length: `math.sqrt(sum(x * x for x in a))`, and the same for `b`.
+3. Return the dot product divided by the two lengths multiplied together.
+
+The usual slip: dividing by the sum of the lengths instead of their product. `[3, 4]` with itself must give exactly 1.
 
 Press **Check**.
 :::
 
 :::step{type=task task=closest_question title="Your turn: the closest FAQ question" file="03-embeddings/embeddings.py" line="16-18"}
-Finish `closest_question(query, faq)`: return the key of `faq` whose vector has the highest cosine with `query`.
-(`max(faq, key=...)` does it in one line.)
+Finish `closest_question(query, faq)`. `faq` is a dict from each FAQ question to its vector; return the FAQ question
+(the key) whose vector has the highest cosine with `query`.
+
+`max(faq, key=lambda question: cosine(query, faq[question]))` does it in one line: `max` walks the keys, and `key=`
+tells it what number to compare for each one.
+
+The usual slip: returning the highest cosine (a number) instead of the question it belongs to.
 
 ```bash run
 cd /workspace/03-embeddings && python main.py
@@ -102,14 +116,20 @@ $ python main.py
 'My vines were sprayed on Monday, can I pick them on Friday?' -> 'When can I harvest grapes after spraying?' (0.628)
 ```
 
+Here is every score, not just the winners:
+
+:::diagram{name="lc-cosine-matrix"}
+Real cosines between the five new questions and the five FAQ questions; the highest in each row is the match.
+:::
+
 Every question found its FAQ entry, including "I need money to buy seeds", which shares no word with "crop loan", and
 the vines question, which never says "grapes" or "harvest".
 
-Now look at the numbers. "kanda bhav kay aahe aaj?" found the right entry with a cosine of only **0.155**: it was the
-closest of five, but not close. The model understands Marathi in English letters far less well than English, as the
-tokens of chapter 2 already hinted. With a sixth FAQ entry that was a little more similar by accident, it would have
-picked the wrong one. Closest is not the same as close; chapter 18 adds a threshold so a weak match can say "no
-answer" instead.
+Now look at the numbers. "kanda bhav kay aahe aaj?" found the right entry with a cosine of only **0.155**, just 0.043
+above the next one (office hours, 0.112). It was the closest of five, but not close. This model places Marathi typed in
+English letters far from the English question, so the match is weak. With a sixth FAQ entry that happened to score a
+little higher, it would have picked the wrong one. Compare the office and vines questions, which win by more than
+0.37. Closest is not the same as close; chapter 18 adds a threshold so a weak match can say "no answer" instead.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -150,8 +170,8 @@ Why is a closest match with cosine 0.155 risky?
 :::
 
 :::step{type=deep-dive title="Go deeper: embeddings in practice"}
-**Cost.** `text-embedding-3-small` costs $0.02 per million tokens: embedding all ten texts here cost 85 tokens, a tiny
-fraction of a cent.
+**Cost.** `text-embedding-3-small` costs $0.02 per million tokens (OpenAI's list price, November 2026): the ten texts
+here are 85 tokens (counted with `cl100k_base`, the tokenizer of OpenAI's embedding models), a tiny fraction of a cent.
 
 **Dimensions.** More dimensions keep more detail but use more memory and slower search. 256 to 1,536 is usual for
 small models; measure on your own data.
@@ -170,7 +190,7 @@ You can now:
 
 Next, chapter 4: inside a transformer, attention and how a model picks its next word.
 
-:::photo{src="/lesson-images/langchain/lc-03-notes.webp" alt="Handwritten notes about embeddings: Embedding = meaning as numbers; Cosine: 1 same, 0 unrelated; No words in common, same meaning; kanda bhav: closest, 0.155; Closest is not close" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-03-notes.webp" alt="Handwritten notes about embeddings: An embedding is a list of numbers that stands for meaning. Our model gives 256 numbers here; each model has its own size. Cosine similarity compares directions: 1 means the same. Texts with no words in common can still match. Our weakest match won by only 0.043. Closest is not the same as close." ai="true"}
 One page of notes for this chapter.
 :::
 :::

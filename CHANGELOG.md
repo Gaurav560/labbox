@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: LangChain chapter 3 rewritten (easy, a little detailed, checked)
+
+- Embedding model, vector, dimensions, cosine similarity and dot product are explained where they first appear, with a
+  cosine worked by hand; tasks list their steps and the usual slips.
+- A new still picture, `lc-cosine-matrix`: the real cosines of the five new questions against the five FAQ questions.
+  It replaces an invented two-dimensional table.
+- Checked by running the solution in a lab machine: every printed score, the quoted vector values and 85 tokens
+  (cl100k_base). Corrected: "the model understands Marathi in English letters far less well" (a guess) became what we
+  measured (a weak match, 0.043 above the next); the lesson now shows that a non-match (0.34) can score higher than a
+  real match (0.155), so there is no fixed "related" number; the embedding price is dated. A new notes page.
+
 ## 25 November: LangChain chapter 2 rewritten (easy, a little detailed, checked)
 
 - Tokenizer, vocabulary, bytes, context window and budget are explained where they first appear; the tiktoken code is
