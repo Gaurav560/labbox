@@ -76,9 +76,16 @@ ones AI Services make for tools, which your own code never sees directly.
 :::
 
 :::step{type=task task=usage_listener title="Your turn: count calls and tokens" file="26-observability/src/main/java/com/setu/UsageLog.java" line="15-19"}
-Finish `UsageLog.onResponse`: add 1 to `calls`, then add the response's input and output tokens
-(`context.chatResponse().metadata().tokenUsage()`, with `inputTokenCount()` and `outputTokenCount()`) to
-`inputTokens` and `outputTokens`.
+Finish `UsageLog.onResponse`:
+
+1. add 1 to `calls` (`calls.incrementAndGet()`);
+2. read `var usage = context.chatResponse().metadata().tokenUsage()`;
+3. if `usage` is not `null`, add `usage.inputTokenCount()` to `inputTokens` and `usage.outputTokenCount()` to
+   `outputTokens` (`addAndGet`).
+
+The usual slip: writing it in `onRequest`. The request's context has only `chatRequest()` and `attributes()` (we
+checked the 1.24 jar), so `context.chatResponse()` does not compile there: before the call, there is no answer to
+count yet.
 
 Press **Check**.
 :::
@@ -111,9 +118,15 @@ The last row matters most: an honest "I don't know" is a right answer, and inven
 :::
 
 :::step{type=task task=golden_eval title="Your turn: the golden set" file="26-observability/src/main/java/com/setu/Eval.java" line="23-28"}
-Finish `Eval.passRate(assistant, golden)`: ask every golden question, count the answers that contain `mustContain`
-(lower-case both with `toLowerCase(Locale.ROOT)` so capitals do not matter), and return `passed / golden.size()` as a
-`double`.
+Finish `Eval.passRate(assistant, golden)`:
+
+1. for every `Golden g`, ask `assistant.chat(g.question())`;
+2. lower-case the answer and `g.mustContain()` with `toLowerCase(Locale.ROOT)`, so capitals do not matter;
+3. count the answers that `contains(...)` the expected text;
+4. return `(double) passed / golden.size()`.
+
+The usual slip: `passed / golden.size()` without the `(double)`. Both are `int`s, so Java divides whole numbers:
+5 / 6 is 0, and a 5-of-6 result prints as 0%. Only a perfect score survives.
 
 ```bash run
 cd /workspace/26-observability && mvn -q compile exec:java
@@ -129,25 +142,40 @@ golden set: 100% of 6 questions passed
 usage: 6 calls, 1418 tokens in, 98 tokens out, $0.000272
 ```
 
+(We ran it again on 26 November: 100%, and exactly the same counts and cost. Every answer contained its word; the
+children's answer, for example, was "Children under 5 travel free and do not need a ticket.")
+
 Six calls for six questions, and the listener counted them without one line of Setu's code knowing. At
 $0.000045 a question, 10,000 questions a day cost about $0.45. Notice the ratio as well: 1,418 tokens in and 98 out.
 Most of what Setu reads is the system message and the facts, sent again with every question (chapter 12 counted
-the same thing). Output tokens cost four times as much, but here there are few of them.
+the same thing). Output tokens cost four times as much ($0.60 against $0.15 per million for gpt-4o-mini), but here
+there are few of them.
 
-Now the developer's change. We removed one sentence from `setu-system.txt`, the one that says to answer "I don't
-know" when the facts do not say, and ran the same eval:
+Now the developer's change. We removed the two rule sentences from `setu-system.txt`: the one that says to answer
+"I don't know" when the facts do not say, and "Never invent times, fares or rules." Then we ran the same eval four
+times (26 November):
 
 ```text
 $ mvn -q compile exec:java
   MISSED: Is there wifi on the Ghat Express? -> no, the ghat express does not offer wi-fi services.
 golden set: 83% of 6 questions passed
-usage: 6 calls, 1238 tokens in, 85 tokens out, $0.000237
 ```
 
-The shorter prompt saved 180 tokens and made Setu **invent a fact**. Nothing in the facts says the Ghat Express has
+:::diagram{name="l4j-eval"}
+The full system message against the shortened one, four runs, 26 November.
+:::
+
+The shorter prompt saved 174 tokens a run (1,244 in instead of 1,418), and in two of the four runs it made Setu
+**invent a fact**, the line above. Nothing in the facts says the Ghat Express has
 no wifi; the model made it up and said it with confidence. Without the golden set, that change would have shipped,
 and the first person to notice would have been a passenger. With it, the change failed in a minute, for less than a
 tenth of a cent.
+
+The other two runs teach something too. Setu answered honestly, in other words: "i'm sorry, but there is no
+information available about wi-fi services on the ghat express". The check wants the words "don't know", so those
+runs failed as well. A "contains" rule is crude: it catches every change, but a failure can be a real mistake or
+just new wording. Read every MISSED line before you decide. (When we removed only the "I don't know" sentence, the one
+run we tried was honest too, and also failed the check.)
 :::
 
 :::step{type=predict title="Guess first"}
@@ -191,8 +219,9 @@ A golden set is a sample. Add every real question that went wrong in production,
 **Metrics.** The `langchain4j-micrometer-metrics` module records calls, tokens and durations as Micrometer metrics,
 so they appear in Prometheus and Grafana like any other Spring Boot metric.
 
-**AI Service events.** Besides model listeners, LangChain4j can report AI Service events: when a service starts,
-calls a tool, retrieves content or applies a guardrail. Useful to see a whole conversation, not only model calls.
+**AI Service events.** Besides model listeners, LangChain4j can report AI Service events: when a service call
+starts and completes, retrieves content, runs a guardrail or fails (the 1.24 jar has an event class for each, in
+`dev.langchain4j.observability.api.event`). Useful to see a whole conversation, not only model calls.
 
 **LLM as a judge.** "Contains 07:15" works for facts. For tone or completeness, teams ask a second model to grade
 the answer against a rubric. It costs calls and can be wrong itself; check its grades against yours on a sample.
@@ -211,7 +240,7 @@ You can now:
 
 Next, chapter 27: agents. AI Services that work together, each with one job.
 
-:::photo{src="/lesson-images/langchain4j/l4j-26-notes.webp" alt="Handwritten notes about observability: a listener sees every call and every token; a fake model tests your code; a golden set tests the answers; a shorter prompt invented wifi; numbers, not impressions" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-26-notes.webp" alt="Handwritten notes titled Observability and evals, numbers not impressions: a ChatModelListener sees every model call and its tokens, and a golden set is a list of real questions with a word the right answer must contain; ask the six golden questions, the listener counts calls and tokens, check each answer, pass rate and cost, read every MISSED line; full prompt 6 of 6 at 1,418 tokens in; with two rules removed 5 of 6 in all four runs, and two of those runs invented no wi-fi; a fake model tests your code, an eval tests answers" ai="true"}
 One page of notes for this chapter.
 :::
 :::

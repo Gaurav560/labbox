@@ -1,5 +1,19 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 26 rewritten: the regression re-run four times, a false alarm found
+
+- Re-ran the eval: 100%, and exactly the same counts and cost (6 calls, 1,418 in, 98 out, $0.000272).
+- The regression did not reproduce as written. Removing only the "I don't know" sentence gave an honest answer
+  (which still failed the check). The lesson's 1,238 tokens matched removing two rule sentences (we measured 1,244);
+  with both removed, four runs all scored 5 of 6: two invented the lesson's exact "does not offer wi-fi services",
+  two answered honestly in other words and failed the "contains" rule. The lesson now says what was removed, gives the
+  real counts, and teaches that a miss can be a real mistake or new wording: read every MISSED line.
+- A new still picture of the five eval runs.
+- The listener contexts were checked in the 1.24 jar (`chatRequest`, `chatResponse`, `error`, `attributes`); the
+  deep dive's AI Service events now list only the event classes that exist.
+- Both tasks list their steps and a slip (counting in `onRequest`, which has no response; integer division making
+  5 of 6 print as 0%). The price ratio is labelled as gpt-4o-mini's. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 25 rewritten: a still picture of three real messages, every claim tried
 
 - Re-ran the solution: the same three lines; the gateway's log shows two model calls (238 and 255 tokens in), so the
