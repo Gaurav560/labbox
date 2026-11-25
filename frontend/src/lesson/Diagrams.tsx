@@ -2290,19 +2290,30 @@ function LcChatRequest() {
 }
 
 function LcAiCircles() {
+  // Still (owner, 25 November): each field inside the one before, with this course's own example of each.
+  const rings: [number, string, string, string][] = [
+    [0, "Artificial intelligence", "any program doing something we call intelligent", "Navin's hand-written rules (this chapter)"],
+    [1, "Machine learning", "the rule is learned from examples", "the 8 mm rain threshold (this chapter)"],
+    [2, "Deep learning", "learning with neural networks of many layers", "spotting a sick grape leaf in a photo"],
+    [3, "Generative AI", "models that create new text, images or code", "writing a reply to a farmer"],
+  ];
+  const inset = 22, top = 70;
   return (
-    <SketchNested
-      title="circles inside circles"
-      intro="Press Play to go from the biggest circle to the smallest."
-      label="artificial intelligence contains machine learning, which contains deep learning, which contains generative AI; a large language model sits in the smallest circle"
-      steps={[
-        { label: "Artificial intelligence", says: "Any program doing something we would call intelligent: even Navin's hand-written rules." },
-        { label: "Machine learning", says: "The rule is learned from examples, not written: like the 8 mm rain threshold." },
-        { label: "Deep learning", says: "Machine learning with neural networks of many layers: telling a healthy grape leaf from a diseased one." },
-        { label: "Generative AI", says: "Deep learning models that create new text, images or code." },
-        { label: "LLM", says: "A large language model lives in the smallest circle: it is all four at once." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 420" label="Artificial intelligence contains machine learning, which contains deep learning, which contains generative AI; a large language model sits inside generative AI">
+      {rings.map(([i, name, means, eg]) => {
+        const x = i * inset, y = i * top, w = 440 - 2 * x, h = 418 - y - i * 12;
+        return (
+          <g key={name}>
+            <g className={`dg-box dg-${i === 3 ? "accent" : i % 2 ? "copy" : "plain"}`}><rect x={x + 1} y={y + 1} width={w - 2} height={h - 2} rx={18} /></g>
+            <text className="dg-label" x={x + 14} y={y + 22}>{name}</text>
+            <text className="dg-note" x={x + 14} y={y + 40}>{means}</text>
+            <text className="dg-note" x={x + 14} y={y + 58} style={{ opacity: 0.75 }}>e.g. {eg}</text>
+          </g>
+        );
+      })}
+      <Box x={90} y={300} w={260} h={44} label="a large language model (Navin's)" tone="highlight" />
+      <text className="dg-note" x={220} y={364} textAnchor="middle">it sits in all four circles at once</text>
+    </Svg>
   );
 }
 

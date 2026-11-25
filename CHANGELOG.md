@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: LangChain chapter 1 rewritten (easy, a little detailed, checked)
+
+- Language model, neural network, layers, threshold and accuracy are explained where they first appear; the worked
+  rule is read line by line; tasks list their steps and the usual slips.
+- The circles animation is now a still picture: each field inside the one before, with this course's own example.
+- Checked by running the solution in a lab machine (outputs and every threshold's accuracy recomputed; the table now
+  shows five real rows). Corrected: the definition "without being explicitly programmed" is a later paraphrase, not
+  a sentence from Samuel's 1959 paper; ChatGPT's hundred million users is a UBS estimate about two months after launch,
+  not "within weeks"; Hinton's Nobel is now quoted as the citation says, shared with Hopfield; "the most used Python
+  library" became "one of the most widely used"; the name AI comes from McCarthy's 1955 proposal for the 1956
+  workshop. A new notes page.
+
 ## 25 November: Action mode can hide the lesson panel
 
 - The same sidebar button as in Read mode, at the top right of the lesson panel, hides the whole panel: the editor and
