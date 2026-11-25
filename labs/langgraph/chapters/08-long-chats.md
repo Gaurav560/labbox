@@ -57,6 +57,8 @@ trim_messages(messages, strategy="last", token_counter=len, max_tokens=4, start_
 - `token_counter=len` counts **messages** instead of tokens, so `max_tokens=4` means four messages. Pass the chat model
   itself as the counter to count real tokens.
 - `start_on="human"` makes the kept part begin with a citizen's message, never with a reply whose question was cut off.
+  That rule wins over the count: we trimmed seven messages (human, reply, human, reply, human, reply, human), and it kept
+  **three**, because the fourth from the end was a reply. Without `start_on`, it kept four, starting with that reply.
 
 The state still holds every message (the checkpointer saves them all); only what is **sent** to the model is cut.
 :::
@@ -64,6 +66,11 @@ The state still holds every message (the checkpointer saves them all); only what
 :::step{type=task task=trim_history title="Your turn: send only recent messages" file="08-long-chats/chat.py" line="26-30"}
 Finish `recent(messages)`: return `trim_messages(messages, strategy="last", token_counter=len, max_tokens=KEEP,
 start_on="human")`.
+
+The usual slip: `strategy="first"`. It keeps the **start** of the chat, so the citizen's newest message is the one cut
+off. We tried it on seven messages: it kept the first four, and the last question never reached the model. (Leaving
+out `token_counter` is an error at once: `TypeError: trim_messages() missing 1 required keyword-only argument:
+'token_counter'`.)
 
 Press **Check**.
 :::
@@ -85,14 +92,16 @@ return {"summary": summary, "messages": [RemoveMessage(id=m.id) for m in old]}
 The `add_messages` reducer treats a `RemoveMessage` as "delete the message with this id", so the old messages leave the
 state. `respond` puts the summary into its system message on every later turn.
 
-:::diagram{name="lg-summary"}
-The summary carries the old facts forward; the state stays at a handful of messages.
-:::
 :::
 
 :::step{type=task task=summarise_old title="Your turn: fold old messages into a summary" file="08-long-chats/chat.py" line="48-55"}
-Finish `summarise(state)`: call `model().invoke([SystemMessage(prompt), HumanMessage(transcript)])`, and return
-`{"summary": <its content>, "messages": [RemoveMessage(id=m.id) for m in old]}`.
+Finish `summarise(state)`:
+
+1. `summary = model().invoke([SystemMessage(prompt), HumanMessage(transcript)]).content`;
+2. `return {"summary": summary, "messages": [RemoveMessage(id=m.id) for m in old]}`.
+
+The usual slip: removing every message (`state["messages"]`) instead of `old`, all but the last two. We tried it with a
+fake model: after four turns the state held **no** messages, not even the answer just written.
 
 ```bash run
 cd /workspace/08-long-chats && python main.py
@@ -108,39 +117,48 @@ $ python main.py
 > Hello, this is Sunita Pawar, 14 Tilak Nagar, lane 3. No water since Monday.
   Hello Sunita, I apologize for the inconvenience. I will report the issue and ensure that water supply is restored as soon as possible.  [84 tokens in, 2 kept]
 > Is it the whole area or only our lane?
-  I currently don't have that information. I will check and get back to you shortly.  [129 tokens in, 4 kept]
+  I currently don't have that information. I will check and update you shortly.  [129 tokens in, 4 kept]
 > The neighbours say a tanker came yesterday, but not to lane 3.
-  Thank you for the update. I will verify the situation regarding lane 3 and get back to you.  [110 tokens in, 6 kept]
+  Thank you for the update. I will look into why lane 3 was missed and get back to you.  [108 tokens in, 6 kept]
 > Can the tanker come after 6 in the evening? I work during the day.
-  Tanker timings are usually scheduled during the day, but I can check if evening deliveries are possible for you. Would you like me to do that?  [121 tokens in, 8 kept]
+  Tanker timings are usually scheduled during the day, but I can check if evening deliveries are possible for you. Please hold on for a moment.  [122 tokens in, 8 kept]
 > One more thing: the meter outside is also dripping.
-  Thank you for informing us about the dripping meter. I will report this issue for immediate attention.  [126 tokens in, 10 kept]
+  Thank you for informing us about the dripping meter. I will report this issue for immediate attention.  [125 tokens in, 10 kept]
 > Please read back my address and the time I asked for.
-  I currently don't have access to your address or the time you requested. Could you please provide that information again?  [110 tokens in, 12 kept]
+  I currently don't have your address or the requested time. Could you please provide that information again?  [110 tokens in, 12 kept]
 === summarised
 > Hello, this is Sunita Pawar, 14 Tilak Nagar, lane 3. No water since Monday.
   Hello Sunita, I apologize for the inconvenience. I will report the issue and ensure that water supply is restored as soon as possible.  [84 tokens in, 2 kept]
 > Is it the whole area or only our lane?
   I currently don't have that information. I will check and get back to you shortly.  [129 tokens in, 4 kept]
 > The neighbours say a tanker came yesterday, but not to lane 3.
-  Thank you for the update, Sunita. I will investigate why lane 3 was missed and ensure it gets addressed promptly.  [169 tokens in, 6 kept]
+  Thank you for the update, Sunita. I will investigate why lane 3 was missed and ensure it is addressed promptly.  [169 tokens in, 6 kept]
 > Can the tanker come after 6 in the evening? I work during the day.
-  I understand your concern, Sunita. I will check if arrangements can be made for a tanker delivery in the evening.  [219 tokens in, 2 kept]
+  Yes, I will request the tanker to come after 6 PM to accommodate your schedule. Thank you for your patience!  [219 tokens in, 2 kept]
 > One more thing: the meter outside is also dripping.
-  Thank you for informing me about the dripping meter. I will arrange for a technician to inspect it as soon as possible.  [175 tokens in, 4 kept]
+  Thank you for informing me about the dripping meter. I will arrange for a technician to check it as soon as possible.  [190 tokens in, 4 kept]
 > Please read back my address and the time I asked for.
-  Your address is 14 Tilak Nagar, lane 3, and you requested the tanker delivery after 6 in the evening.  [219 tokens in, 6 kept]
-summary: Sunita Pawar from 14 Tilak Nagar, lane 3, reported no water supply since Monday. Neighbors mentioned a tanker came yesterday but did not service lane 3. She requested an investigation into why her lane was missed.
+  Your address is 14 Tilak Nagar, lane 3, and you requested the tanker to come after 6 PM. Is that correct?  [234 tokens in, 6 kept]
+summary: Sunita Pawar, residing at 14 Tilak Nagar, lane 3, has reported no water supply since Monday. She mentioned that a tanker came to the area yesterday but did not service lane 3. Sunita is seeking information on why her lane was missed and requests prompt action to restore water supply.
 ```
 
-**Trimmed:** the tokens sent stay flat, around 110 to 130 a turn, however long the chat gets, while the state keeps all
+(This is the run of 26 November. The first run, when the chapter was written, gave the same pattern: the trimmed
+Harsh asked for the address again, the summarised one read it back.)
+
+:::diagram{name="lg-summary"}
+The tokens of every turn above, and how many messages each state kept.
+:::
+
+**Trimmed:** the tokens sent stay flat, between 108 and 129 a turn after the first, however long the chat gets, while the state keeps all
 12 messages. But the last question fails: the address was in the first message, which the model no longer sees, so it
 asks Sunita to write it again. On turn 4 it also invented a rule, "tanker timings are usually scheduled during the day".
 
 **Summarised:** after turn 4 the chat had 8 messages, more than 6, so `summarise` folded the first six into the summary
 and removed them ("2 kept"). The final answer reads back the address and the 6 pm request correctly: the address came
-from the summary, the time from a message still in the state. The cost is higher per turn here (up to 219 tokens) plus
-one extra model call for each summary, and it stays bounded as the chat grows.
+from the summary, the time from a message still in the state. The cost is higher per turn here (up to 234 tokens) plus
+one extra model call for each summary, and it stays bounded as the chat grows. Read turn 4 too: the summarised Harsh
+promised "I will request the tanker to come after 6 PM", a promise nobody can check yet. Memory made it more helpful,
+not more careful.
 
 Which one is right depends on the chat. For a complaint desk, losing the address is worse than a few tokens.
 :::
@@ -187,7 +205,8 @@ What does `RemoveMessage(id=m.id)` do inside an update?
 model's own tokenizer, which is what you pay for.
 
 **What a summary bends.** Summaries are written by a model, so they can drop or bend facts. The summary above says
-Sunita "requested an investigation into why her lane was missed"; she only reported it. Keep facts the desk depends on
+Sunita "is seeking information on why her lane was missed"; she only reported it. (The first run's summary bent it
+another way: "requested an investigation".) Keep facts the desk depends on
 (address, phone, ticket number) in their own state fields, set by code, not only in a summary.
 
 **Middleware.** In `create_agent` (the LangChain course), `SummarizationMiddleware` does the same job; in your own
@@ -204,7 +223,7 @@ You can now:
 
 Next, chapter 9: durable execution, so a job that crashes continues where it stopped.
 
-:::photo{src="/lesson-images/langgraph/lg-08-notes.webp" alt="Handwritten notes about long chats: every turn pays for every token; trim: model sees the last 4; state still keeps everything; summary keeps old facts; RemoveMessage deletes by id" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-08-notes.webp" alt="Handwritten notes titled Long chats, trim what the model sees or summarise: every turn pays for every message sent, trimming sends only the last few messages, summarising folds old messages into a short summary and removes them; 6 messages from Sunita, trimmed to the last 4, summarised with old ones folded, read back my address, only the summary knew; trimmed used 84 to 129 tokens a turn and kept 12 messages; summarised used up to 234 tokens and kept 6; start_on human can keep 3, not 4; summaries bend facts, so keep the address in its own field" ai="true"}
 One page of notes for this chapter.
 :::
 :::

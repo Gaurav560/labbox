@@ -3415,20 +3415,35 @@ function LgThreads() {
 }
 
 function LgSummary() {
+  // Still (owner, 26 November): chapter 8's real run, input tokens per turn and messages kept in the state.
+  const trimmed = [84, 129, 108, 122, 125, 110];
+  const summed = [84, 129, 169, 219, 190, 234];
+  const keptT = [2, 4, 6, 8, 10, 12];
+  const keptS = [2, 4, 6, 2, 4, 6];
+  const scale = 0.62;
   return (
-    <SketchSteps
-      title="Folding old messages into a summary"
-      intro="Press Play to watch the state stay small."
-      label="Summary"
-      steps={[
-        { label: "Turns 1 to 3", says: "The state grows: 2, 4, 6 messages. Not more than 6 yet, so no summary." },
-        { label: "Turn 4", says: "respond answers with 7 messages in front of it; now there are 8, more than 6." },
-        { label: "summarise", says: "The model turns the first 6 messages into a short summary." },
-        { label: "RemoveMessage", says: "Those 6 messages are removed from the state by id: 2 are kept." },
-        { label: "Turn 5", says: "respond sends the summary in its system message, plus the few messages left." },
-        { label: "Turn 6", says: "Asked for the address, the model finds it in the summary." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 362" label="Tokens sent per turn: trimmed 84, 129, 108, 122, 125, 110, while its state grows to 12 messages; summarised 84, 129, 169, 219, 190, 234, while its state drops back to 2 after the summary and ends at 6. Only the summarised one could read back the address">
+      <text className="dg-label" x={8} y={18}>tokens sent to the model, per turn</text>
+      <Box x={250} y={6} w={14} h={14} label="" tone="plain" /><text className="dg-note" x={270} y={18}>trimmed</text>
+      <Box x={340} y={6} w={14} h={14} label="" tone="accent" /><text className="dg-note" x={360} y={18}>summarised</text>
+      {trimmed.map((t, i) => {
+        const x = 20 + i * 70;
+        const hT = t * scale, hS = summed[i] * scale;
+        return (
+          <g key={i}>
+            <Box x={x} y={214 - hT} w={24} h={hT} label="" tone="plain" />
+            <Box x={x + 28} y={214 - hS} w={24} h={hS} label="" tone="accent" />
+            <text className="dg-note" x={x} y={208 - hT}>{t}</text>
+            <text className="dg-note" x={x + 26} y={208 - hS - 12}>{summed[i]}</text>
+            <text className="dg-note" x={x + 10} y={232}>turn {i + 1}</text>
+            <text className="dg-note" x={x + 6} y={256}>{keptT[i]} / {keptS[i]}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={280}>bottom row: messages kept in the state (trimmed / summarised)</text>
+      <text className="dg-note" x={8} y={314}>Turn 6, "read back my address": trimmed asked for it again;</text>
+      <text className="dg-note" x={8} y={334}>summarised answered "14 Tilak Nagar, lane 3 ... after 6 PM".</text>
+    </Svg>
   );
 }
 
