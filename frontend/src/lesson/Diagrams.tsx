@@ -3681,6 +3681,39 @@ function RagGate() {
   );
 }
 
+function RagEval() {
+  // Real output of evaluate.py on the 26 test questions.
+  const rows: [string, number, number, string][] = [
+    ["keywords (chapter 1)", 50, 77, "4 ms"],
+    ["dense (chapter 3)", 77, 92, "20 ms"],
+    ["hybrid (chapter 9)", 58, 92, "23 ms"],
+    ["hybrid + rerank (chapter 10)", 88, 100, "1,696 ms"],
+  ];
+  const W = 340;
+  return (
+    <Svg viewBox="0 0 440 372" label="Hit at 1 and hit at 5 for four pipelines on 26 questions: keywords 50 and 77, dense 77 and 92, hybrid 58 and 92, hybrid with rerank 88 and 100 percent">
+      <rect x={0} y={4} width={14} height={12} className="dg-box" style={{ fill: "var(--figure-yellow)", stroke: "var(--figure-yellow-edge)" }} />
+      <text className="dg-note" x={20} y={15}>hit@1: right chunk first</text>
+      <rect x={210} y={4} width={14} height={12} style={{ fill: "var(--figure-green)", stroke: "var(--figure-green-edge)" }} />
+      <text className="dg-note" x={230} y={15}>hit@5: in the top five</text>
+      {rows.map(([name, h1, h5, ms], i) => {
+        const y = 44 + i * 80;
+        return (
+          <g key={name}>
+            <text className="dg-label" x={0} y={y}>{name}</text>
+            <text className="dg-note" x={440} y={y} textAnchor="end">{ms} a question</text>
+            <rect x={0} y={y + 8} width={(W * h1) / 100} height={18} rx={4} style={{ fill: "var(--figure-yellow)", stroke: "var(--figure-yellow-edge)", strokeWidth: 1.5 }} />
+            <text className="dg-note" x={(W * h1) / 100 + 8} y={y + 22}>{h1}%</text>
+            <rect x={0} y={y + 32} width={(W * h5) / 100} height={18} rx={4} style={{ fill: "var(--figure-green)", stroke: "var(--figure-green-edge)", strokeWidth: 1.5 }} />
+            <text className="dg-note" x={(W * h5) / 100 + 8} y={y + 46}>{h5}%</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={366}>Times: the lab machine's 2 CPUs, one run.</text>
+    </Svg>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
   "rag-embed": RagEmbed,
@@ -3693,6 +3726,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-rrf": RagRrf,
   "rag-two-stage": RagTwoStage,
   "rag-gate": RagGate,
+  "rag-eval": RagEval,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
   "rs-threads": RsThreads,
