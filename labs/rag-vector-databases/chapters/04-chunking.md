@@ -1,15 +1,25 @@
 :::step{type=story title="How big is a piece?"}
 So far Fieldbook embedded whole sections: one vector for each of the manual's 31 numbered parts. That worked because
-somebody wrote the manual in short, tidy sections of 52 to 95 words. Real documents are rarely that kind: a 40-page
+somebody wrote the manual in short, tidy sections of 52 to 95 words each. Real documents are rarely like that: a 40-page
 research report, a 300-page procedures book, a scanned letter with no headings at all.
 
-You cannot embed a whole book as one vector: the model reads only the first few hundred words, and one point cannot stand
-for a hundred different topics. So documents are cut into pieces, called **chunks**, and each chunk gets its own vector.
-How you cut decides what search can find. Cut too small and a chunk loses the context that makes it mean anything; cut
-too big and its vector becomes a blurry average, and the model has to read pages to find one sentence.
+You cannot embed a whole book as one vector, for two reasons:
 
-This chapter writes the two most common cutters and then does what most tutorials skip: **measures** six ways of
-cutting on real questions.
+1. **The model reads only so much.** An embedding model has a limit on how much text it reads; bge-small, this course's
+   model, reads at most 512 **tokens** (the pieces a model cuts text into, about three quarters of an English word
+   each), so about 380 words. Everything after that is cut off and never seen.
+2. **One vector cannot stand for many topics.** A vector describes what a text is about. A text about a hundred things
+   gets one vector that is a little about everything and clearly about nothing.
+
+So documents are cut into pieces, called **chunks**, and each chunk gets its own vector. How you cut decides what search
+can find:
+
+- **Too small**, and a chunk loses the context that makes it mean anything ("Change them every 21 days": change what?).
+- **Too big**, and its vector becomes a blurry average of several topics, and the model has to read pages to find one
+  sentence.
+
+This chapter writes the two most common cutters and then does what most tutorials skip: it **measures** six ways of
+cutting the manual on real questions.
 
 :::mission
 Write a word-window chunker with overlap and a section chunker that follows the document's headings, then compare six
@@ -18,60 +28,87 @@ ways of cutting the manual by how often search finds the right section and how m
 :::
 
 :::step{type=concept title="Windows of words, with overlap" file="04-chunking/fieldbook.py" line="112-116"}
-The simplest cutter ignores the document's structure: take `size` words, then the next `size` words, and so on. Its
-weakness: a sentence cut in half lands in two chunks and makes sense in neither. The usual fix is **overlap**: each window
-starts a little before the previous one ended, so a sentence near a border appears whole in at least one chunk.
+The simplest cutter ignores the document's structure entirely. It takes the first `size` words, then the next `size`
+words, and so on, like sliding a window along the text. Each position of the window is one chunk.
+
+Its weakness: a window ends wherever the word count says, often in the middle of a sentence. A sentence cut in half lands
+in two chunks and makes full sense in neither.
+
+The usual fix is **overlap**: each window starts a little **before** the previous one ended, so the last few words of
+one chunk are repeated at the start of the next. A sentence that crosses a border then appears whole in at least one of
+the two chunks. The cost is a few extra chunks and some repeated words.
+
+Here is the rule with small numbers, so you can follow every step. Ten words, windows of 4 words (`size=4`), each
+repeating 2 words of the one before (`overlap=2`). Each new window starts `size - overlap = 2` words after the last one:
 
 :::trace{title="word_chunks over ten words, size 4, overlap 2"}
 | window | starts at word | words | note |
 |---|---|---|---|
 | 1 | 0 | 1 2 3 4 | |
-| 2 | 2 | 3 4 5 6 | starts size - overlap = 2 words later |
+| 2 | 2 | 3 4 5 6 | starts size - overlap = 2 words later; repeats 3 and 4 |
 | 3 | 4 | 5 6 7 8 | |
 | 4 | 6 | 7 8 9 10 | reaches the last word: stop here |
 :::
 
-The stopping rule matters. Without it, the loop would make one more window starting at word 8, "9 10", which only
-repeats the end of window 4.
+The stopping rule matters. Without it, the loop would go on to make a window starting at word 8, "9 10", which only
+repeats the end of window 4 and adds nothing.
 :::
 
 :::step{type=task task=word_chunks title="Your turn: windows of words" file="04-chunking/fieldbook.py" line="112-116"}
-Write `word_chunks(text, size=120, overlap=20)`:
+Write `word_chunks(text, size=120, overlap=20)` in `04-chunking/fieldbook.py`:
 
 1. Split the text into words with `text.split()`.
 2. Start a window every `size - overlap` words: `range(0, len(words), size - overlap)`.
-3. Join each window's words with single spaces and add it to the list.
-4. Stop right after the window that reaches the last word (`start + size >= len(words)`).
+3. For each start, join that window's words, `words[start:start + size]`, with single spaces, and add it to the list.
+4. Stop right after the window that reaches the last word: when `start + size >= len(words)`, `break`.
+
+The usual slip is the stopping rule: without the `break`, you get extra windows that only repeat the end. The check
+uses short texts where an extra window is easy to spot.
 
 Press **Check**.
 :::
 
 :::step{type=concept title="Cutting along the document's own lines" file="04-chunking/fieldbook.py" line="119-125"}
-The manual already has structure: every section starts with a line like `## FM-4.2 Meeting a tiger`. Cutting there gives
-chunks that are about **one thing** each, and every chunk carries its number and title, which a word window loses:
+The manual already has structure. It is a **Markdown** file (plain text where a line starting with `##` is a heading),
+and every section starts with a heading line like `## FM-4.2 Meeting a tiger`. Cutting at those lines gives chunks that
+are each about **one thing**, and every chunk keeps its section number and title, which a word window loses:
 
 ```text
 # Vanrai Hills Wildlife Sanctuary: Field Manual        <- the document's title: not a section
 ...
 ## FM-4.2 Meeting a tiger                               <- heading: id "FM-4.2", title "Meeting a tiger"
-If you meet a tiger, stand still, keep facing it       <- text, over several lines
+If you meet a tiger, stand still, keep facing it       <- the section's text, over several lines
 and do not run: running can trigger a chase. ...
 ```
 
-`markdown.split("\n## ")` cuts the text at every heading. The first piece is everything before the first section (the
-title and introduction), so skip it with `[1:]`. In each piece, `partition("\n")` splits the heading line from the body,
-and `" ".join(body.split())` squeezes line breaks and runs of spaces into single spaces.
+Three string methods do all the work:
 
-Most real chunkers combine both ideas: follow headings and paragraphs, and fall back to word or token windows only when a
+1. `markdown.split("\n## ")` cuts the whole file at every heading (a line break followed by `## `). The first piece is
+   everything before the first section (the document's title and introduction), so you skip it with `[1:]`.
+2. In each piece, `piece.partition("\n")` splits at the **first** line break only. It gives three parts: the heading
+   line, the line break itself, and the body. So `heading, _, body = piece.partition("\n")`.
+3. `heading.partition(" ")` splits the heading at its first space: `"FM-4.2"` (the id) and `"Meeting a tiger"` (the
+   title).
+
+Finally, `" ".join(body.split())` cleans the body: `split()` with no argument splits on any run of spaces and line
+breaks, and joining with single spaces puts it back together on one line.
+
+Most real chunkers combine both ideas: follow headings and paragraphs first, and fall back to word windows only when a
 part is too long.
 :::
 
 :::step{type=task task=section_chunks title="Your turn: one chunk per section" file="04-chunking/fieldbook.py" line="119-125"}
-Write `section_chunks(markdown)`. For every piece of `markdown.split("\n## ")[1:]`:
+Write `section_chunks(markdown)` in `04-chunking/fieldbook.py`. For every piece of `markdown.split("\n## ")[1:]`:
 
-1. Split the heading line from the body with `partition("\n")`.
-2. Split the heading into its first word (the id) and the rest (the title), again with `partition(" ")`.
-3. Squeeze the body's whitespace, and add `{"id": ..., "title": ..., "text": ...}` to the list.
+1. split the heading line from the body with `partition("\n")`;
+2. split the heading into the id and the title with `partition(" ")`;
+3. clean the body with `" ".join(body.split())`;
+4. add `{"id": ..., "title": ..., "text": ...}` to the list.
+
+Return the list. With the manual, you get 31 chunks, the first with id `FM-1.1`. A usual slip: forgetting `[1:]`, which
+adds the document's introduction as a fake first section.
+
+Then compare six ways of cutting:
 
 ```bash run
 cd /workspace/04-chunking && python compare_chunks.py
@@ -106,16 +143,18 @@ the model just what it needs to read.
 :::
 
 :::step{type=try title="Six ways to cut the manual, measured" file="04-chunking/compare_chunks.py" line="11-45"}
-`compare_chunks.py` asks the 22 test questions whose answers are in the manual (from `data/questions.json`; each lists the
-section that answers it). For each way of cutting it embeds the chunks, searches, and counts:
+`compare_chunks.py` tests six ways of cutting the manual. It uses the 22 test questions in `data/questions.json` whose
+answers are in the manual; each question lists the section that answers it. For each way of cutting, the script embeds
+the chunks, runs every question through `top_k`, and counts three things:
 
 | Column | Means |
 |---|---|
 | hit@1 | how often the **best** chunk contains the right section |
-| hit@3 | how often one of the **three** best does |
-| words read | how many words the three best chunks hold: what the model would have to read |
+| hit@3 | how often one of the **three** best chunks does |
+| words read | how many words the three best chunks hold on average: what the model would have to read |
 
-A window gets credit for every section it overlaps, so big windows are not punished for crossing borders.
+A word window can cross a section border, so a window gets credit for **every** section it touches. That is fair to
+the big windows: they are not punished just for crossing borders.
 
 ```text
 $ python compare_chunks.py
@@ -130,19 +169,31 @@ $ python compare_chunks.py
    91%   100%        204      31  one chunk per section, title first
 ```
 
-What the numbers say:
+The picture shows what the main methods do to three real sections, FM-4.1 to FM-4.3, drawn to scale, with each
+method's hit@1 from the table:
 
-1. **Tiny windows (15 words)** are cheap to read (45 words) but lose context: only 73% right at the first try.
-2. **Huge windows (300 words)** cover several sections each, so you would expect them to contain the answer; yet hit@1 is
-   only 77%, and the model would read **864 words** per question, 19 times more than the tiny windows. Their vectors are
-   averages of several topics, so they match many questions a little and none well.
-3. **Following the sections wins.** Small windows that never cross a section border and whole sections with their title
-   both reach **91%** at the first try. Adding the title helps a whole section (86% to 91%): "Meeting a tiger" is exactly
-   the kind of words a question uses.
+:::diagram{name="rag-chunks"}
+The same three sections cut four ways (the window rules applied to these three, to scale). Only one chunk per section
+keeps every chunk about one thing.
+:::
 
-From now on Fieldbook uses one chunk per section, title first (`chunk_text` in `fieldbook.py`), plus one chunk per
-patrol report. For long documents without sections, 40 to 60 word windows with some overlap are a sound start, and
-measuring on your own questions is how you decide.
+What the numbers say, for this manual and these 22 questions:
+
+1. **Tiny windows (15 words)** are cheap to read (45 words per question) but lose context: only 73% are right at the
+   first try. A 15-word piece often does not say what it is about.
+2. **Huge windows (300 words)** each cover several sections, so you might expect them to contain every answer. Yet hit@1
+   is only 77%, and the model would read **864 words** per question, 19 times more than with tiny windows. Their vectors
+   are averages of several topics, so they match many questions a little and none of them well.
+3. **Following the sections wins.** Small windows that stay inside one section, and whole sections with their title,
+   both reach **91%** at the first try. Adding the title to a whole section raised it from 86% to 91%: a title like
+   "Meeting a tiger" uses exactly the kind of words a question uses.
+
+With only 22 questions, one question is about 4.5 percentage points, so treat small differences (86% against 91%) as a
+hint, not a proof. The big ones (tiny and huge windows against sections) are clear.
+
+From now on, Fieldbook uses one chunk per section with its title first (the `chunk_text` function in `fieldbook.py`),
+plus one chunk per patrol report. For long documents without sections, windows of 40 to 60 words with some overlap are
+a sound place to start, and measuring on your own questions, as you just did, is how you decide.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -153,8 +204,8 @@ A 300-word window contains the answer to a question. Why might search still not 
 - [ ] Long chunks are cut off before embedding
 - [ ] Search always prefers short chunks
 :::explain
-One vector per chunk means one "average meaning". A chunk about one thing has a sharp meaning; a chunk about five things
-has a blurry one.
+One vector per chunk means one summary of the chunk's meaning. A chunk about one thing has a sharp vector; a chunk about
+five things has a blurry one. (300 words also stay under bge-small's limit of 512 tokens, so nothing was cut off.)
 :::
 :::
 
@@ -166,7 +217,7 @@ What is overlap for?
 - [x] Keeping a sentence that crosses a window border whole in at least one chunk
 - [ ] Removing duplicate words
 :::explain
-Overlap costs a few extra chunks and saves the sentences that would otherwise be cut in half.
+Overlap costs a few extra chunks and repeated words, and saves the sentences that would otherwise be cut in half.
 :::
 :::
 
@@ -178,23 +229,24 @@ Why does every chunk keep its section id (FM-4.2)?
 - [x] So that the answer can cite its source, and so a search result can be traced back to the document
 - [ ] To make the chunk longer
 :::explain
-Metadata travels with the chunk: the id, the title, and later the zone, the date and the kind of document (chapter 8
-filters on them).
+Information stored with a chunk, like its id and title, is called **metadata**. Later chapters add more: the zone, the
+date and the kind of document (chapter 8 filters searches on them).
 :::
 :::
 
 :::step{type=deep-dive title="Go deeper: chunking real documents"}
-**Tokens, not words.** Models count tokens (about three quarters of a word in English). Production chunkers measure in
-tokens and keep chunks safely under the embedding model's limit (512 tokens for bge-small).
+**Tokens, not words.** Models count tokens, not words (in English a token is about three quarters of a word).
+Production chunkers measure chunks in tokens and keep them safely under the embedding model's limit: 512 tokens for
+bge-small; other models allow more.
 
 **Structure first.** Split on headings, then paragraphs, then sentences, and fall back to windows only for long blocks.
 Tables, code and lists need their own rules: half a table is useless.
 
-**Context for small chunks.** A chunk saying "Change them every 21 days" means little alone. Prefix each chunk with its
-document and section title (as `chunk_text` does), or retrieve small chunks and give the model the whole section they
-came from ("small to big" retrieval).
+**Context for small chunks.** A chunk that says "Change them every 21 days" means little alone. Put the document and
+section title in front of each chunk (as `chunk_text` does), or search small chunks and give the model the whole section
+they came from ("small to big" retrieval).
 
-**Re-chunking costs.** Changing how you chunk means re-embedding everything. Store the original documents, not only the
+**Re-chunking costs.** Changing how you chunk means embedding everything again. Keep the original documents, not only the
 chunks.
 :::
 
@@ -203,12 +255,12 @@ You can now:
 
 - cut text into windows of words with overlap, and stop at the right place;
 - cut a document along its own headings, keeping an id and a title with every chunk;
-- measure chunking by hit rate and by how much the model must read;
+- measure a way of cutting by how often search finds the right section and how much the model must read;
 - explain why chunks about one thing beat both tiny and huge ones.
 
 That ends Part 1. Next, chapter 5: the first of the indexes inside every vector database.
 
-:::photo{src="/lesson-images/rag/rag-04-notes.webp" alt="Handwritten notes about chunking: Too small: no context; Too big: a blurry average; Follow the headings; Title first helps; Measure hit rate and words read" ai="true"}
+:::photo{src="/lesson-images/rag/rag-04-notes.webp" alt="Handwritten notes about chunking: Documents are cut into chunks; each chunk gets a vector. Too small: a chunk loses its context. Too big: its vector blurs several topics. Overlap keeps border sentences whole. Cut along headings and put the title first. Measure on your own questions." ai="true"}
 One page of notes for this chapter.
 :::
 :::
