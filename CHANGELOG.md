@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: Spring AI chapter 1 rewritten (easy, a little detailed, checked); notes pages become sketchnotes
+
+- Notes pages are now tall sketchnotes (owner, 25 November night): title, a definition box, a flow of boxes and a
+  highlighted list, from a "sketch" job in `tools/authoring/notes.py`. Read mode keeps notes pages at full height.
+- Both tasks list their steps and the usual slips (`.user("q")` in quotes; the real model name, tried: the gateway
+  refuses `gpt-4o-mini` too).
+- The request animation is now a still picture of one real question with the gateway's numbers.
+- Checked in a lab machine through the gateway: "planetarium" is 2 tokens (planet + arium); the black hole answer
+  was 449 tokens in 6.7 seconds (about 67 a second, $0.000271); the cost table now uses those numbers and shows its
+  arithmetic. Corrected: the error's alias list (no `lab-code` now), embeddings are chapter 11 (not 8), cost is
+  chapter 18 (not 13), the LabBox tutor no longer runs on an open model, and "ten to a hundred times" became "often
+  ten times or more". Added: the gateway caps answers at 1,024 tokens (`max_tokens` in its log).
+
 ## 25 November: LangChain chapter 27 rewritten; the LangChain lab is done (27 of 27)
 
 - Store, namespace, key and FastAPI are explained where they first appear; both tasks list their steps and the usual

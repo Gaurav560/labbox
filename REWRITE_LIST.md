@@ -14,7 +14,7 @@ Status: **2 of 23 labs done** (40 of 319 chapters).
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
 | 3 | langchain4j | LangChain4j | 30 | not started | |
 | 4 | langgraph | LangGraph | 24 | not started | |
-| 5 | spring-ai | Spring AI | 20 | not started | |
+| 5 | spring-ai | Spring AI | 20 | in progress (1 of 20) | |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |
@@ -37,6 +37,10 @@ Status: **2 of 23 labs done** (40 of 319 chapters).
 The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs); the owner picks the next lab.
 
 ## Checks in every rewrite
+
+- Notes pages are tall sketchnotes (owner, 25 November night): title, subtitle, a definition box, a flow of 4 to 5
+  boxes, a highlighted list of 3 to 4 lessons, made with a "sketch" job in `tools/authoring/notes.py`; every word
+  checked. RAG and LangChain still have the older one-page notes (40 pages) to redraw.
 
 - No drinks in any example (owner: never chai, tea or any drink): scan the lab's chapters, starter, solution, tests and
   data with `grep -rliwE "coffee|juice|tea|chai|latte|soda|espresso|cappuccino|lemonade|smoothie|milkshake" labs/<lab>`.
