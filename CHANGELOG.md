@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 7 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips, both tried: the key without `Bearer ` (401, "Invalid lab key");
+  `path(0)` left out (an empty string, no error).
+- The HTTP-call animation is now a still picture of the real call, from the program and the gateway's log.
+- Checked in a lab machine: the real call (62 tokens in, 55 out, an answer just as vague); the HTTP/2 surprise
+  reproduced exactly by putting `HttpClient.newHttpClient()` back; `gpt-99` gives a 400 with the message now quoted.
+  A new sketchnote.
+
 ## 26 November: LangChain4j chapter 6 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (multiplying by the temperature; `sqrt` of the number of keys instead of the vector

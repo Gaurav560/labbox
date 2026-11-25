@@ -2325,19 +2325,28 @@ function L4jLlmPipeline() {
 }
 
 function L4jHttpCall() {
+  // Still (owner, 26 November): chapter 7's real call, from the program and the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["Setu builds the JSON body", "model ai-chat; a system and a user message", "plain"],
+    ["POST $OPENAI_BASE_URL/chat/completions", "Authorization: Bearer (your lab key), HTTP/1.1", "accent"],
+    ["the LabBox gateway", "checks the budget, adds max_tokens 1024 and the real key", "accent"],
+    ["OpenAI: gpt-4o-mini-2024-07-18", "reads 62 tokens, writes 55", "copy"],
+    ["JSON back to Setu", "choices[0].message.content; finish_reason stop", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="one call to a model"
-      intro="Press Play to follow Setu's first question."
-      label="Setu builds a JSON body with the model and the messages, posts it with its key to the LabBox gateway, the gateway checks the budget and forwards it to OpenAI, and the JSON answer comes back the same way"
-      steps={[
-        { label: "1. Build the body", says: "model ai-chat, a system message, the passenger's question." },
-        { label: "2. POST with a key", says: "Authorization: Bearer and the key; Content-Type: application/json." },
-        { label: "3. The gateway", says: "Checks the key and the daily budget, logs the call, adds the real OpenAI key." },
-        { label: "4. The model", says: "gpt-4o-mini reads 62 tokens and writes 45, one at a time." },
-        { label: "5. The answer", says: "choices[0].message.content, plus usage: what it cost." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="Setu builds a JSON body, posts it with its lab key to the gateway, the gateway forwards it to gpt-4o-mini with the real key, and the JSON answer comes back">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

@@ -30,7 +30,7 @@ The three roles you will use all course:
 | `assistant` | The model | Its previous answers, when you send a conversation back (chapter 17) |
 
 :::diagram{name="l4j-http-call"}
-Setu builds a JSON body, POSTs it with a key to the gateway, the gateway forwards it to OpenAI, and the JSON answer comes back.
+This chapter's real call (26 November), from the program and the gateway's log.
 :::
 
 In LabBox, the request goes to the **LabBox gateway** instead of straight to OpenAI. The gateway holds the real
@@ -101,11 +101,19 @@ Finish `Http.send(baseUrl, apiKey, question)`: POST `body(question)` to `baseUrl
 headers `Content-Type: application/json` and `Authorization: Bearer ` followed by the key, and return the response
 body as a `String`.
 
+1. `HttpRequest.newBuilder(URI.create(baseUrl + "/chat/completions"))`
+2. `.header("Content-Type", "application/json")` and `.header("Authorization", "Bearer " + apiKey)`
+3. `.POST(HttpRequest.BodyPublishers.ofString(body(question))).build()`
+4. `return CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body();`
+
+The usual slip: the key without `Bearer `. We tried it: `401`, "Invalid lab key".
+
 Press **Check**.
 :::
 
 :::step{type=try title="Careful: the HTTP/2 surprise" file="07-raw-http/src/main/java/com/setu/Http.java" line="18-20"}
-When we first wrote this chapter, `CLIENT` was simply `HttpClient.newHttpClient()`. The very first run failed:
+When we first wrote this chapter, `CLIENT` was simply `HttpClient.newHttpClient()`. The very first run failed (we
+put it back on 26 November and got exactly the same error):
 
 ```text
 == Response body
@@ -151,7 +159,11 @@ missing field gives a "missing node", which is safer than `get` when a server se
 :::
 
 :::step{type=task task=read_answer title="Your turn: read the answer" file="07-raw-http/src/main/java/com/setu/Http.java" line="41-44"}
-Finish `Http.answer(responseJson)`: return the text at `choices[0].message.content`.
+Finish `Http.answer(responseJson)`: return the text at `choices[0].message.content`: one line,
+`return JSON.readTree(responseJson).path("choices").path(0).path("message").path("content").asString();`.
+
+The usual slip: leaving out `.path(0)`. `choices` is a list, so `path("message")` on it finds nothing, and the answer
+comes back as an empty string, with no error.
 
 ```bash run
 cd /workspace/07-raw-http && mvn -q compile exec:java
@@ -172,6 +184,9 @@ $ mvn -q compile exec:java
 == The answer
 Sahyadri Rail operates between Pune, Lonavala, Karjat, and Ratnagiri. We provide scenic hill train experiences on this picturesque route. For specific train schedules and timings, please check our official website.
 ```
+
+(We ran it again on 26 November: 62 tokens in, 55 out, and an answer just as vague, "please check our official website
+or contact customer service".)
 
 That is a complete conversation with gpt-4o-mini, nothing hidden. Read the response from top to bottom: the answer
 (`content`), why it stopped (`finish_reason: stop`: it finished its answer), and what it cost (`usage`: 62 tokens in,
@@ -205,7 +220,8 @@ You change `"model": "ai-chat"` to `"model": "gpt-99"`. What happens?
 - [x] The server answers with an error (an HTTP status that is not 200) instead of choices
 - [ ] The answer is empty but the call succeeds
 :::explain
-The server cannot guess. Your code must check the status code before reading `choices`: a real client turns a 4xx
+The server cannot guess. We tried it: `400`, "Unknown model 'gpt-99'. Labs use model aliases: ai-chat, ...". Your code
+must check the status code before reading `choices`: a real client turns a 4xx
 into a clear exception. LangChain4j does this for you from chapter 9.
 :::
 :::
@@ -260,7 +276,7 @@ You can now:
 
 Next, chapter 8: the same call with OpenAI's official Java SDK, which gives you typed classes instead of JSON.
 
-:::photo{src="/lesson-images/langchain4j/l4j-07-notes.webp" alt="Handwritten notes about calling a model over HTTP: a model call is one HTTP POST; the key goes in the Authorization header; the body holds the model and messages; the answer is choices[0].message.content; keys never go in code" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-07-notes.webp" alt="Sketchnote, A model call is HTTP (one POST, JSON in, JSON out): Calling a language model is one HTTP POST: a key in a header, the model and messages in the body, the answer in the JSON reply. The flow: JSON body, POST with the key, Gateway, gpt-4o-mini, choices[0] answer. What we found: Java's default client tried HTTP/2 and failed; no Bearer: 401, invalid key; gpt-99: 400, unknown model; check the status before reading the body." ai="true"}
 One page of notes for this chapter.
 :::
 :::
