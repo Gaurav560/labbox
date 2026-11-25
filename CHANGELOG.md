@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 5 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (the dot product alone; comparing with the answers instead of the
+  FAQ questions). The steps follow the real code (`ENTRIES` is a `Map`).
+- The embedding-space animation is now a still bar chart of the real cosine scores (0.862, 0.763, 0.612, 0.564).
+- Checked in a lab machine: the solution's output is exactly the lesson's; "Is there a canteen on board?" returned the
+  pantry-car answer and "What is the capital of France?" the luggage answer, as the quiz says. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 4 rewritten (easy, a little detailed, checked)
 
 - All tasks list their steps or the usual slips (`text.length()`; skipping a message that does not fit; returning

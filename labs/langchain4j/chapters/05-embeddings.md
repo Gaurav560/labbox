@@ -31,7 +31,8 @@ for "refund" and "money back" point almost the same way; "luggage" points somewh
 are these two meanings?" becomes "how small is the angle between these two arrows?".
 
 :::diagram{name="l4j-embedding-space"}
-Texts become arrows: refund and money back point nearly the same way, luggage points elsewhere; the angle between arrows measures how different the meanings are.
+Real cosine scores from this chapter's model (re-run on 26 November): related pairs score higher, unrelated pairs
+are still far from zero.
 :::
 
 Two kinds of models use embeddings. **Embedding models** (like this one, or OpenAI's text-embedding-3-small with 1,536
@@ -103,6 +104,13 @@ product, and the two sums of squares), then one line divides.
 Finish `Vectors.cosine(a, b)`: the dot product of `a` and `b`, divided by the length of `a` times the length of `b`
 (a length is the square root of the sum of the squares, `Math.sqrt`).
 
+1. Three `double` sums: `dot`, `na`, `nb`.
+2. One loop: `dot += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i];`
+3. `return dot / (Math.sqrt(na) * Math.sqrt(nb));`
+
+The usual slip: returning the dot product alone. [3, 4] and [30, 40] then score 24 and 240 against [4, 3], though
+they point the same way.
+
 Press **Check**.
 :::
 
@@ -128,6 +136,14 @@ find the right text first, then give it to the language model to answer from (ch
 Finish `Faq.answer(question)`: embed the question, compare it with the embedding of each question in `ENTRIES` using
 `Vectors.cosine`, and return the answer of the most similar one.
 
+1. `float[] q = embed(question);`
+2. For each `e` in `ENTRIES.entrySet()`: `double score = Vectors.cosine(q, embed(e.getKey()));` (the key is the FAQ
+   question), keeping the best score and `e.getValue()`, its answer.
+3. Return the best answer.
+
+The usual slip: comparing the question with the entries' **answers** (`e.getValue()`) instead of their questions. It often still
+works, which makes it hard to notice; questions match questions best.
+
 ```bash run
 cd /workspace/05-embeddings && mvn -q compile exec:java
 ```
@@ -138,6 +154,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Suitcase finds baggage"}
+(We ran the solution again on 26 November: exactly this output.)
+
 ```text
 $ mvn -q compile exec:java
 'refund' is 384 numbers, starting [-0.0457914, -0.028513711, 0.037330087, -0.004741748, -0.0062468387]
@@ -170,7 +188,8 @@ return?
 - [ ] Nothing, because no keyword matches
 - [ ] A random answer
 :::explain
-Embeddings compare meaning, so the food question wins (we ran it: it returns the pantry car answer). But semantic
+Embeddings compare meaning, so the food question wins (we ran it, again on 26 November: it returns "The Ghat Express
+has a pantry car; the other trains stop at Lonavala for 10 minutes."). But semantic
 search always returns **something**: asked "What is the capital of France?", the same code answers "Each passenger may
 carry 40 kg of luggage free of charge." Real systems also check that the best score is good enough (chapter 22).
 :::
@@ -226,7 +245,7 @@ You can now:
 Next, chapter 6: the transformer. How attention lets a model use every word of the text at once, and how
 temperature turns scores into the next word.
 
-:::photo{src="/lesson-images/langchain4j/l4j-05-notes.webp" alt="Handwritten notes about embeddings: an embedding is a list of numbers; similar meaning, similar direction; cosine: 1 same, 0 unrelated; suitcase finds baggage; rank, do not trust one score" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-05-notes.webp" alt="Sketchnote, Embeddings (meaning as a list of numbers): An embedding model turns a text into 384 numbers. Similar meanings point the same way, so the closest question wins. The flow: Passenger's question, BGE small: 384 numbers, Cosine with each FAQ, Best answer. What we measured: dog ~ puppy 0.862, dog ~ platform 0.612; suitcase found the baggage answer; capital of France still got an answer; compare scores; never trust one alone." ai="true"}
 One page of notes for this chapter.
 :::
 :::

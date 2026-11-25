@@ -2251,19 +2251,27 @@ function L4jContextWindow() {
 }
 
 function L4jEmbeddingSpace() {
+  // Still (owner, 26 November): chapter 5's real cosine scores from BGE small (384 numbers per text).
+  const pairs: [string, number, boolean][] = [
+    ["dog ~ puppy", 0.862, true], ["refund ~ money back", 0.763, true],
+    ["dog ~ platform", 0.612, false], ["refund ~ luggage", 0.564, false],
+  ];
   return (
-    <SketchSteps
-      title="search by meaning"
-      intro="Press Play to follow one passenger's question."
-      label="each text becomes a vector of 384 numbers; vectors with similar meaning point in similar directions; the question is compared with every FAQ question and the closest wins"
-      steps={[
-        { label: "1. Embed the question", says: "How heavy can my suitcase be? becomes 384 numbers." },
-        { label: "2. Embed the FAQ", says: "Every FAQ question becomes 384 numbers too, by the same model." },
-        { label: "3. Compare directions", says: "Cosine similarity of the question with each FAQ question." },
-        { label: "4. Rank", says: "How much baggage can I carry? scores highest." },
-        { label: "5. Answer", says: "Return that entry's answer: 40 kg free." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 250" label="Real cosine scores: dog and puppy 0.862, refund and money back 0.763, dog and platform 0.612, refund and luggage 0.564; related pairs score higher, but unrelated pairs are far from zero">
+      {pairs.map(([name, score, related], i) => {
+        const y = 10 + i * 48;
+        const w = score * 260;
+        return (
+          <g key={name}>
+            <text className="dg-note" x={8} y={y + 22}>{name}</text>
+            <Box x={160} y={y} w={w} h={32} label="" tone={related ? "copy" : "plain"} />
+            <text className="dg-note" x={168 + w} y={y + 22}>{score.toFixed(3)}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={222}>Related pairs score higher, but unrelated ones are not near 0:</text>
+      <text className="dg-note" x={8} y={242}>with this model, compare scores, never trust one alone.</text>
+    </Svg>
   );
 }
 
