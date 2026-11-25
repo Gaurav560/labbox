@@ -13,7 +13,7 @@ Status: **4 of 23 labs done** (90 of 319 chapters).
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
 | 3 | langchain4j | LangChain4j | 30 | done (30 of 30) | 26 Nov |
-| 4 | langgraph | LangGraph | 24 | in progress (12 of 24) | |
+| 4 | langgraph | LangGraph | 24 | in progress (13 of 24) | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
 | 7 | python-basics | Python from zero | 19 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangGraph ch 13 done: agent took 2 different paths in 3 runs (now taught); ToolNode error default corrected; slips tried.
 - 26 Nov: LangGraph ch 12 done: found store search embeds the value's JSON (0.59 vs 0.63); fields option taught; three slips tried.
 - 26 Nov: LangGraph ch 11 done: history reproduced and pictured as branches; two slips tried; as_node optional here, noted.
 - 26 Nov: LangGraph ch 10 done: invented brief reproduced and the fix tried; resume needs the checkpointer, not the pause; plain-dict resume tried.
