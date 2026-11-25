@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: RAG chapter 2 explains 384 where it first appears
+
+- Owner: "have you explained in the lesson with clarity what 384 is?" Not well enough: the explanation came four
+  paragraphs after 384 first appeared and used "layers" without explaining it. Step 2 now explains it right under the
+  picture: "What are the 384 numbers?" (each a measurement the model learned; none means anything alone) and "Why exactly
+  384?" (the size the builders chose; it is called the dimension; other models' sizes; the two rules that follow), then
+  why this helps Fieldbook. The check-yourself line asks what "384-dimensional" means.
+
 ## 25 November: RAG chapter 2 explains 384
 
 - Owner: "what is 384 in that lesson?" The lesson said "384 numbers" everywhere but never why. Step 2 now explains it:
