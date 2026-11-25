@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): Start with the hanko's white line; a vibrant green tick
+
+- Owner: the Start button should keep the inner white line the READY seal had; "this green colour of the tick
+  should be vibrant". Start has an inset cream line like a hanko; the tick's circle is a bright green (#16a34a).
+
 ## 25 November (Ukiyo): a green tick instead of the READY seal
 
 - Owner: "instead of READY, a green tick mark will be much better". When the machine is ready, a jade green circle
