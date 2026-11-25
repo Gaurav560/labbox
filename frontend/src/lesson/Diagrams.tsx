@@ -2255,20 +2255,32 @@ function L4jSupervisor() {
 }
 
 function LcNextToken() {
+  // Still (owner, 25 November): the real o200k_base tokens of Navin's answer, one pass per token.
+  const toks = ["Today's", "·onion", "·rate", "·is", "·Rs", "·", "1", ",", "850", "·per", "·quint", "al", "."];
+  const shown = 5;
   return (
-    <SketchSteps
-      title="how a model writes an answer"
-      intro="Press Play to follow the first words of an answer."
-      label="the model reads the whole text so far, scores every possible next token, softmax turns the scores into probabilities, one token is picked and added, and the loop runs again"
-      steps={[
-        { label: "1. Read everything so far", says: "The system message, the question, and the answer written so far." },
-        { label: "2. Attention", says: "Every token looks at every other token to work out the meaning." },
-        { label: "3. Score every token", says: "About 200,000 scores, one for each piece in the vocabulary." },
-        { label: "4. Softmax", says: "The scores become probabilities; temperature 0 makes the top one win." },
-        { label: "5. Pick and add", says: "Today is added to the answer." },
-        { label: "6. Again", says: "The loop runs once per output token, until the model chooses to stop." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="The model writes the answer one token at a time: each pass reads everything so far, scores every possible next token, and adds the one it picks">
+      <text className="dg-label" x={0} y={16}>Each pass: read all so far, score about 200,000 tokens, pick one</text>
+      {toks.slice(0, shown).map((_, i) => {
+        const y = 32 + i * 44;
+        return (
+          <g key={i}>
+            <text className="dg-note" x={0} y={y + 20}>pass {i + 1}</text>
+            <g className="dg-cells-small">
+              <Box x={52} y={y} w={84} h={30} label="question" tone="plain" />
+              {toks.slice(0, i + 1).map((t, j) => {
+                const w = 14 + 8 * [...t].length;
+                const x = 140 + toks.slice(0, j).reduce((sum, u) => sum + 14 + 8 * [...u].length + 4, 0);
+                return <Box key={j} x={x} y={y} w={w} h={30} label={t} tone={j === i ? "highlight" : "copy"} code />;
+              })}
+            </g>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={262}>... and so on: the whole answer is 13 tokens, so 13 passes.</text>
+      <text className="dg-note" x={0} y={282}>Yellow: the token picked in that pass. "1,850" alone is 4 tokens.</text>
+      <text className="dg-note" x={0} y={310} style={{ opacity: 0.8 }}>Today's onion rate is Rs 1,850 per quintal.</text>
+    </Svg>
   );
 }
 
