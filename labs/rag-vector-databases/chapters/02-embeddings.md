@@ -54,6 +54,22 @@ exactly. To search the manual by meaning, you will:
 2. turn the ranger's question into a vector, the same way;
 3. find the sections whose vectors are closest to the question's vector.
 
+**Why 384?** It is the size the model's makers chose. Inside, the model works on text in layers that are 384 numbers
+wide, and the final vector comes out with the same width. This count is called the vector's **dimension**: bge-small
+makes 384-dimensional embeddings. Other models chose other sizes:
+
+| Model | Numbers per text |
+|---|---|
+| bge-small (the one in your lab) | 384 |
+| bge-base, and many mid-size models | 768 |
+| bge-large | 1,024 |
+| OpenAI's text-embedding-3-small | 1,536 |
+
+More numbers give a model more room to keep fine differences in meaning apart, but every vector then takes more memory
+and is slower to compare. 384 is a small, fast size that is good enough for a manual of a few hundred pages. Two rules
+follow from it: every vector from the same model has the same length, so any two can be compared; and vectors from
+different models can never be compared, even when their lengths match.
+
 Because each vector is a list of numbers, you can also think of it as a **point** in a space with 384 directions, the
 same way two numbers mark a point on a sheet of graph paper. "Closest vectors" and "nearest points" mean the same thing,
 and later chapters use both.
