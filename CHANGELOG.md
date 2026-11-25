@@ -1,10 +1,5 @@
 # Changelog
 
-## 25 November: text size S is 95%
-
-- The S preset in the text-size menu is 95% (it was 90%); M, L and XL stay 100, 115 and 130%. The three-column Read
-  layout was reverted at the owner's request; Read and Action modes stay as first built.
-
 ## 25 November: Read mode and Action mode in every lab
 
 - A Read / Action switch in the lab's top bar (owner, 25 November). Read mode shows the lesson alone in a calm centred
