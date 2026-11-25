@@ -40,7 +40,7 @@ The model reads the whole history each time, so it "remembers". Three things fol
    full log is kept.
 
 :::diagram{name="ai-memory"}
-Each new request carries the visitor's session so far; the answer is added to it; long sessions are compacted to their recent turns.
+The real tenth request of this chapter's app, read in the gateway's log (trigger: more than 8 turns; window: the last 4).
 :::
 
 A **turn** is one question and everything up to the next question: the answer, and any tool calls in between. Turns
@@ -83,7 +83,7 @@ String answer = chat.prompt()
 
 1. `defaultAdvisors(...)` adds the session advisors to every call this `ChatClient` makes.
 2. `SessionAdvisors.session(visitorId)` names the session for this one call. It is **required**: a call without it
-   throws an error, on purpose. A shared default session would silently mix every visitor's conversation together.
+   throws an error, on purpose. We tried: `IllegalStateException: No session ID found in advisor context.` A shared default session would silently mix every visitor's conversation together.
 3. `sessions.delete(visitorId)` forgets a session completely.
 
 Advisors are Spring AI's main extension point: logging, guardrails and retrieval (chapters 9, 14 and 17) are advisors too.
@@ -95,8 +95,16 @@ code and tutorials. Since 2.1 they are deprecated in favour of sessions, which k
 :::step{type=task task=session_memory title="Your turn: one session per visitor" file="06-memory/src/main/java/com/atlas/ChatController.java" line="39"}
 In `06-memory`, give Atlas memory:
 
-1. In the constructor, add the session advisors, built on the session service, as default advisors.
-2. In `chat(...)`, run each call in the visitor's own session.
+1. In the constructor, add the session advisors, built on the session service, as default advisors:
+   `.defaultAdvisors(SessionAdvisors.builder(sessions).build())` before `.build()`.
+2. In `chat(...)`, run each call in the visitor's own session: `.advisors(SessionAdvisors.session(visitor))` before
+   `.call()`.
+
+The usual slips:
+
+- Forgetting step 2: every call then fails with the "No session ID found" error above.
+- `SessionAdvisors.session("visitor")` in quotes: every visitor shares one session called "visitor", and Sam would
+  see Ria's name.
 
 ```bash run
 cd 06-memory && mvn -q -o spring-boot:run
@@ -112,7 +120,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Ria and Sam"}
-With session memory, the same three questions:
+With session memory, the same three questions (our re-run on 25 November: the same results, in other words; Ria was
+forgotten after the delete):
 
 ```text
 $ curl -s -G localhost:8080/chat --data-urlencode visitor=ria --data-urlencode "q=Hi! My name is Ria and I am 9."; echo
@@ -165,32 +174,40 @@ to the model, besides the system prompt?
 - [ ] Only the new question
 :::explain
 After the ninth turn the view held more than 8 turns, so the session was compacted to its last 4. The tenth request
-carries those 4 turns and the new question, and stays that size however long the conversation runs.
+carries those 4 turns and the new question, and stays that size however long the conversation runs. We ran ten
+questions through the real app and read the tenth request in the gateway's log: the system message, questions 6 to 9
+with their answers, and question 10. Nothing else.
 :::
 :::
 
 :::step{type=task task=memory_window title="Your turn: compact long sessions" file="06-memory/src/main/java/com/atlas/ChatController.java" line="32"}
-Give the session advisors a compaction: once a session holds **more than 8 turns**, keep only its **last 4**.
+Give the session advisors a compaction: once a session holds **more than 8 turns**, keep only its **last 4**:
+
+1. On `SessionAdvisors.builder(sessions)`, before `.build()`, add `.compaction(trigger, strategy)`.
+2. The trigger: `new TurnCountTrigger(8)`. The strategy: `WindowCompactionStrategy.builder().lastTurns(4).build()`.
+
+The usual slip: swapping the numbers (a trigger of 4 and a window of 8). The view then stays near 8 turns instead of
+4, twice the tokens, and the Check counts the difference.
 
 Press **Check**: it holds a ten-question conversation and counts what the tenth request carries.
 :::
 
 :::step{type=concept title="Where sessions live"}
-`InMemorySessionRepository` keeps sessions in the application's own memory. The Spring AI docs call it what it is,
-"for tests and demos": a restart forgets every conversation, and two copies of the app behind a load balancer do not
+`InMemorySessionRepository` keeps sessions in the application's own memory, which suits tests and demos: a restart
+forgets every conversation, and two copies of the app behind a load balancer do not
 share them. For production there is a JDBC repository:
 
 | Repository | Keeps sessions | Use when |
 |---|---|---|
 | in memory | in this app's RAM, until restart | one server, demos, tests |
-| JDBC (`spring-ai-starter-model-session-jdbc`) | in PostgreSQL, MySQL, MariaDB, SQL Server or H2 | several servers, history that must survive restarts |
+| JDBC (`spring-ai-starter-model-session-jdbc`) | in PostgreSQL, MySQL, MariaDB or H2 (the databases the Spring AI 2.1 reference lists) | several servers, history that must survive restarts |
 
 With the JDBC starter on the class path, Spring Boot creates the `SessionService` for you on the application's
 database, and your advisor code stays the same.
 
-**Privacy.** Conversations can contain names, ages, worries. Sessions have an expiry time (60 days by default; set
-`timeToLive` when you create one), and should be deleted when they are no longer needed. Never log them carelessly
-(chapter 19).
+**Privacy.** Conversations can contain names, ages, worries. Sessions have an expiry time (60 days by default: we found the 60 in the lab's
+Spring AI; set `timeToLive` when you create one), and should be deleted when they are no longer needed. Never log them
+carelessly (chapter 18).
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -229,7 +246,7 @@ important facts.
 `TokenCountTrigger` and a window with `tokenBudget(4000)` keep the view within a token budget instead.
 
 **Memory across sessions.** Some assistants remember facts about a person for weeks ("you visited the dinosaur gallery
-last month"). That is usually stored as separate facts, retrieved when relevant (the technique of chapter 10), with
+last month"). That is usually stored as separate facts, retrieved when relevant (the technique of chapter 14), with
 the user's clear consent.
 
 **Stateless servers.** Keeping conversations in a shared store means any server can answer any request: the
@@ -246,7 +263,7 @@ You can now:
 
 Next, chapter 7: tools, so Atlas can look up real opening hours and show times instead of saying "I do not know".
 
-:::photo{src="/lesson-images/spring-ai/springai-06-notes.webp" alt="Handwritten notes about session memory: the model remembers nothing; SessionAdvisors on the ChatClient; SessionAdvisors.session(visitor); compaction: trigger + window; delete the session when done" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-06-notes.webp" alt="Sketchnote, Conversations that remember (sessions and compaction): The model remembers nothing. The app keeps each visitor's session and sends the recent part again with every question. The flow: Visitor's question, Session advisor adds the history, Model, Answer saved to the session. What we found: every call needs a session id, or it fails; the 10th request sent only turns 6 to 9; old turns stay in the log, out of the view; delete a session when the visitor leaves." ai="true"}
 One page of notes for this chapter.
 :::
 :::
