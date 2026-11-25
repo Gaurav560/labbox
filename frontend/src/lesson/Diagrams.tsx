@@ -2060,19 +2060,28 @@ function AiGuardrails() {
 }
 
 function AiCostMeter() {
+  // Still (owner, 26 November): chapter 18's real meter and metrics.
+  const rows: [string, string, BoxTone][] = [
+    ["one answer: When are you open?", "usage from the provider: 95 in, 27 out", "plain"],
+    ["your code prices it", "95 x $0.15/M + 27 x $0.60/M = $0.00003045", "accent"],
+    ["Spring AI counts every call", "metric gen_ai.client.token.usage", "copy"],
+    ["/actuator/metrics, after 3 answers", "input 296, output 131, total 427", "copy"],
+    ["no tag chosen?", "854: every token counted twice. Pick a type.", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="where tokens are counted"
-      intro="Press Play to follow one answer's tokens."
-      label="the model replies with its usage; spring ai reads it into the response metadata; the controller turns tokens into dollars; spring ai records the same tokens in a metric that actuator shows"
-      steps={[
-        { label: "1. The reply", says: "The model's answer, with usage: tokens in and tokens out." },
-        { label: "2. Metadata", says: "response.getMetadata().getUsage(): getPromptTokens(), getCompletionTokens()." },
-        { label: "3. Dollars", says: "in times 0.15 per million, plus out times 0.60 per million." },
-        { label: "4. Metrics", says: "Spring AI adds the same tokens to gen_ai.client.token.usage." },
-        { label: "5. Dashboards", says: "/actuator/metrics today; Prometheus and Grafana in production." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="One answer's usage, 95 in and 27 out, priced at 0.00003045 dollars; Spring AI's metric after three answers: input 296, output 131, total 427, and 854 without a tag">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

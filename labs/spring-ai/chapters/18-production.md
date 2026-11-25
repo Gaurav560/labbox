@@ -27,7 +27,7 @@ You have seen the pieces of an answer's cost in chapters 3, 14 and 15. Together:
 | system prompt | about 90 | your instructions |
 | retrieved chunks (RAG) | about 100 per chunk | `topK` and chunk size |
 | conversation history | everything kept by the session | the window (chapter 6) |
-| tool descriptions | about 50 per tool | how many tools you offer |
+| tool descriptions | about 40 to 50 per tool (chapter 7: 4 tools added about 170) | how many tools you offer |
 | a photo | about 8,500 at 512 pixels | its size (chapter 15) |
 | the question | 5 to 30 | the visitor |
 | **the answer** (output) | 30 to 80 | `maxTokens`, and how chatty the prompt allows |
@@ -55,7 +55,14 @@ The counts come from the provider itself, so they are exactly what you are bille
 
 :::step{type=task task=answer_cost title="Your turn: the price of an answer" file="18-production/src/main/java/com/atlas/MeterController.java" line="43"}
 In `18-production`, finish `GET /ask/metered?q=...`: return the answer, its prompt and completion tokens, and its cost
-in US dollars, using `INPUT_PER_MILLION` and `OUTPUT_PER_MILLION`.
+in US dollars, using `INPUT_PER_MILLION` and `OUTPUT_PER_MILLION`:
+
+1. `.call().chatResponse()`, then `getMetadata().getUsage()`.
+2. The cost: `in * INPUT_PER_MILLION / 1_000_000 + out * OUTPUT_PER_MILLION / 1_000_000`.
+3. Return the answer's text, both counts and the cost.
+
+The usual slip: integer division. `in / 1_000_000` with `int`s is 0 for any real answer; multiply by the price
+(a `double`) first.
 
 ```bash run
 cd 18-production && mvn -q -o spring-boot:run
@@ -69,7 +76,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="What Atlas costs"}
-Real answers, with their meter:
+Real answers, with their meter (our re-run on 26 November: 95, 96 and 105 tokens in again, 27, 39 and 65 out, and
+$0.00003045 for the first):
 
 ```text
 $ curl -s -G localhost:8080/ask/metered --data-urlencode "q=When are you open?" | jq .
@@ -103,7 +111,7 @@ photos and loops.
 
 Look at the answers too. "When are you open?" got an honest "I don't know": this chapter's Atlas has no tools and no
 cards. And "Tell me everything about black holes, in as much detail as you can" was refused, although science
-questions are allowed: the visitor asked for detail, the system prompt said three short sentences, and the model
+questions are allowed (our re-run refused the detail, then gave one sentence anyway): the visitor asked for detail, the system prompt said three short sentences, and the model
 resolved the conflict by not answering. A cost rule in the prompt changes behaviour; check it with your golden set.
 :::
 
@@ -140,13 +148,16 @@ the same numbers go to a monitoring system such as Prometheus, with a dashboard 
 hour jump.
 
 :::diagram{name="ai-cost-meter"}
-Usage comes back with the reply; your code prices it, and Spring AI counts it in a metric.
+This chapter's real meter and metrics (26 November).
 :::
 :::
 
 :::step{type=task task=ai_metrics title="Your turn: expose the metrics" file="18-production/src/main/resources/application.properties" line="11"}
 Actuator is already in `18-production`'s `pom.xml`. In `application.properties`, expose its `health` and `metrics`
-web endpoints.
+web endpoints: one line, `management.endpoints.web.exposure.include=health,metrics`.
+
+The usual slip: `management.endpoint.web.exposure.include`, with "endpoint" singular. Spring Boot does not know that
+name, so only `health` stays exposed, and `/actuator/metrics` answers 404.
 
 Restart the app, ask one question, then:
 
@@ -210,7 +221,8 @@ $ curl -s localhost:8080/actuator/metrics/gen_ai.client.token.usage | jq .
 
 The `availableTags` say how the numbers can be split. Careful with the total: `gen_ai.token.type` has three values,
 `input`, `output` and `total`, and without a tag the endpoint adds all three. The three answers above read 296 tokens
-and wrote 128, a total of 424; the untagged count, 848, counts every token twice. Always pick a type:
+and wrote 128, a total of 424; the untagged count, 848, counts every token twice. (Our re-run: input 296, output
+131, total 427, untagged 854: twice again.) Always pick a type:
 
 ```text
 $ curl -s "localhost:8080/actuator/metrics/gen_ai.client.token.usage?tag=gen_ai.token.type:output" | jq -c .measurements
@@ -269,8 +281,8 @@ where its time went: retrieval, the model, or a tool. Spring AI can also record 
 (`spring.ai.chat.observations.log-prompt=true`); leave it off where questions may hold personal data.
 
 **Prompt caching.** OpenAI automatically gives a discount on the repeated beginning of long prompts (a long system
-prompt, a long document); keeping the fixed parts at the start of the prompt helps it work. `getUsage()` reports the
-cached tokens.
+prompt, a long document); keeping the fixed parts at the start of the prompt helps it work. The provider's usage
+data reports how many tokens were cached.
 
 **Choosing the model.** A smaller model for simple steps (routing, classifying, judging) and a stronger one for hard
 answers is the most common big saving. Measure quality with your golden set before you switch.
@@ -286,7 +298,7 @@ You can now:
 
 Next, chapter 19: workflows and agents, where one question becomes several model calls.
 
-:::photo{src="/lesson-images/spring-ai/springai-18-notes.webp" alt="Handwritten notes about cost and metrics: getMetadata().getUsage(); output costs 4x input; short answers: cheaper + faster; gen_ai.client.token.usage; expose health,metrics" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-18-notes.webp" alt="Sketchnote, What Atlas costs (usage, price and metrics): Every answer reports how many tokens it read and wrote. Price each answer, and count them all day with metrics. The flow: Answer, Usage: 95 in, 27 out, Price: $0.00003, Metrics on /actuator. What we measured: about 95 tokens in, mostly the system prompt; output costs 4 times as much as input; 6,000 answers a day: about 25 cents; no tag on the metric: every token counted twice." ai="true"}
 One page of notes for this chapter.
 :::
 :::
