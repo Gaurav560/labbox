@@ -2677,6 +2677,32 @@ function L4jVectorSearch() {
   );
 }
 
+function L4jEval() {
+  // Still (owner, 26 November): chapter 26's real eval runs, full prompt against the prompt without two rules.
+  const rows: [string, string, BoxTone][] = [
+    ["full system message", "6 of 6 passed, 1,418 tokens in", "copy"],    ["two rules removed, run 1", "5 of 6: honest, other words", "plain"],
+    ["two rules removed, run 2", "5 of 6: invented \"no wi-fi\"", "highlight"],
+    ["two rules removed, run 3", "5 of 6: invented \"no wi-fi\"", "highlight"],
+    ["two rules removed, run 4", "5 of 6: honest, other words", "plain"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 340" label="With the full system message the golden set passed 6 of 6 at 1,418 tokens in. Without the two rules it scored 5 of 6 in all four runs: twice the model invented that there is no wi-fi, twice it answered honestly in other words that the simple check did not accept">
+      <text className="dg-label" x={8} y={18}>the golden set, same six questions</text>
+      {rows.map(([run, result, tone], i) => {
+        const y = 30 + i * 54;
+        return (
+          <g key={run}>
+            <text className="dg-note" x={8} y={y + 26}>{run}</text>
+            <Box x={186} y={y} w={246} h={40} label={result} tone={tone} />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={312}>Without the two rules: 1,244 tokens in.</text>
+      <text className="dg-note" x={8} y={332}>The score caught every run; reading each miss tells which kind.</text>
+    </Svg>
+  );
+}
+
 function L4jGuardrails() {
   // Still (owner, 26 November): chapter 25's real run; token counts from the gateway's log.
   const cols: [number, number, string][] = [[8, 130, "input guardrail"], [152, 136, "the model"], [302, 130, "output guardrail"]];
@@ -4557,6 +4583,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-mcp": L4jMcp,
   "l4j-mcp-wire": L4jMcpWire,
   "l4j-routing": L4jRouting,
+  "l4j-eval": L4jEval,
   "l4j-vector-search": L4jVectorSearch,
   "l4j-guardrails": L4jGuardrails,
   "l4j-supervisor": L4jSupervisor,
