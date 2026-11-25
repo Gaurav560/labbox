@@ -2172,19 +2172,27 @@ function L4jAiCircles() {
 }
 
 function L4jNeuron() {
+  // Still (owner, 26 November): chapter 2's trained neuron (weights 0.1, 0.2, 0.3, bias -0.2) on one morning.
+  const inputs: [string, string, string, number][] = [["rain", "0", "x 0.1", 0], ["holiday", "1", "x 0.2", 0.2], ["track work", "1", "x 0.3", 0.3]];
   return (
-    <SketchSteps
-      title="one neuron deciding"
-      intro="Press Play to follow one morning's prediction."
-      label="the inputs rain, holiday and track work are multiplied by their weights, added together with the bias, and the neuron fires if the total is above zero"
-      steps={[
-        { label: "1. Inputs", says: "Rain 0, holiday 1, track work 1." },
-        { label: "2. Times the weights", says: "0 x 0.1, 1 x 0.2, 1 x 0.3: each input counts as much as its weight says." },
-        { label: "3. Add the bias", says: "0 + 0.2 + 0.3 - 0.2 = 0.3." },
-        { label: "4. Fire or not", says: "0.3 is above zero: the neuron says 1, late." },
-        { label: "5. Learning", says: "If it was wrong, training nudges each weight a little and tries again." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Rain 0, holiday 1 and track work 1 are multiplied by the weights 0.1, 0.2 and 0.3; with the bias of minus 0.2 the total is 0.3, above zero, so the neuron fires: late">
+      {inputs.map(([name, v, w, part], i) => {
+        const y = 10 + i * 72;
+        return (
+          <g key={name}>
+            <Box x={8} y={y} w={140} h={56} label="" />
+            <text className="dg-label" x={20} y={y + 23}>{name} = {v}</text>
+            <text className="dg-note" x={20} y={y + 44}>{w} = {part}</text>
+            <line className="dg-arrow" x1={150} y1={y + 28} x2={238} y2={118} markerEnd="var(--figure-arrowhead)" />
+          </g>
+        );
+      })}
+      <Box x={240} y={86} w={192} h={64} label="0 + 0.2 + 0.3 - 0.2 = 0.3" tone="accent" />
+      <text className="dg-note" x={248} y={170}>the bias, -0.2, is added too</text>
+      <Arrow x1={336} y1={176} x2={336} y2={212} />
+      <Box x={240} y={214} w={192} h={50} label="0.3 > 0: fires, late" tone="copy" />
+      <text className="dg-note" x={8} y={292}>The weights and the bias came from training on eight mornings.</text>
+    </Svg>
   );
 }
 
