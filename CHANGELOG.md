@@ -1,5 +1,19 @@
 # Changelog
 
+## 25 November: RAG chapter 11 rewritten (easy, a little detailed, checked)
+
+- Grounded answers, the system message, NOT_FOUND, the model gateway's `lab-chat` name and temperature are explained where
+  they first appear; tasks list their steps and the usual slips.
+- A new still picture, `rag-gate`: all 34 real best reranker scores on one number line (26 answered questions, 8 that
+  the documents do not answer) with the gate at -9.0.
+- Checked by re-running the two-stage search in the lab image (no paid model call: the answers in the lesson are now
+  labelled as one real run whose wording may vary). The 26 answered scores match exactly. Corrected: the original eight
+  unanswerable questions were never saved, so the table is now a measured, named set (-11.0 to 3.3); the deep dive's
+  garbled "first and last-but-not-least" became the "Lost in the Middle" finding (2023) with Fieldbook's real chunk sizes
+  (19 to 95 words); footnotes date from the 1500s and were common by the 1700s; WebGPT collected references while
+  searching; the quiz's arithmetic for a gate at 0 (6 of 8 blocked, 3 of 26 real ones lost); -9.0 is labelled as this
+  reranker's and these documents' value. A new notes page.
+
 ## 25 November: RAG chapter 10 rewritten (easy, a little detailed, checked)
 
 - Bi-encoders and cross-encoders, transformers and layers, MS MARCO, unbounded scores and the two dials are explained
