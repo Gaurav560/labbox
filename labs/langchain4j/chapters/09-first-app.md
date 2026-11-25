@@ -112,6 +112,9 @@ LangChain4j module you add later has a matching version:
 Finish `Models.chatModel(baseUrl, apiKey)`: build an `OpenAiChatModel` with `.baseUrl(baseUrl)`, `.apiKey(apiKey)` and
 `.modelName("ai-chat")`, and return it.
 
+The usual slip: `.modelName("gpt-4o-mini")`, the real model's name. The gateway accepts only its aliases and answers
+400, "Unknown model" (chapter 7 showed the message).
+
 Press **Check**.
 :::
 
@@ -135,7 +138,11 @@ conversation. To continue a conversation, you would pass the earlier messages ag
 
 :::step{type=task task=system_message title="Your turn: give Setu its instructions" file="09-first-app/src/main/java/com/setu/Desk.java" line="16-20"}
 Finish `Desk.ask(model, question)`: call `model.chat(...)` with `SystemMessage.from(SYSTEM)` and
-`UserMessage.from(question)`, and return the text of the answer's `AiMessage`.
+`UserMessage.from(question)`, and return the text of the answer's `AiMessage`:
+`return model.chat(SystemMessage.from(SYSTEM), UserMessage.from(question)).aiMessage().text();`
+
+The usual slip: returning `aiMessage().toString()` (or the message itself as text): you get the object printed
+with its class name and fields, not the passenger's answer.
 
 ```bash run
 cd /workspace/09-first-app && mvn -q compile exec:java
@@ -145,6 +152,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="With and without instructions"}
+(We ran it again on 26 November: the same two introductions, in slightly different words.)
+
 ```text
 $ mvn -q compile exec:java
 Without instructions: Hello! I'm an AI language model created by OpenAI. I'm here to help answer your questions, provide information, and assist with various topics. What can I help you with today?
@@ -202,7 +211,8 @@ production concerns of chapter 7.
 **Logging.** `.logRequests(true).logResponses(true)` prints every request and response, the fastest way to see what
 LangChain4j actually sent (chapter 26 adds proper observability).
 
-**Async.** `model.chatAsync(request)` returns a `CompletableFuture<ChatResponse>` (experimental in 1.24).
+**Async.** `model.chatAsync(request)` returns a `CompletableFuture<ChatResponse>` (we checked: it is in 1.24's
+`ChatModel`).
 
 **Other model types.** `EmbeddingModel` (chapter 22), `ImageModel`, `ModerationModel` and `ScoringModel` follow the
 same pattern: an interface, and a provider module per company.
@@ -218,7 +228,7 @@ You can now:
 
 Next, chapter 10: the knobs. Temperature, answer length, and parameters per request.
 
-:::photo{src="/lesson-images/langchain4j/l4j-09-notes.webp" alt="Handwritten notes about the first LangChain4j app: one API, many models; ChatModel is an interface; SystemMessage first, then UserMessage; the answer is aiMessage().text(); behaviour comes from the messages" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-09-notes.webp" alt="Sketchnote, Setu meets LangChain4j (one interface, many models): Your code depends on the ChatModel interface. A provider module does the rest, so changing models changes one builder. The flow: OpenAiChatModel builder, ChatModel, SystemMessage + UserMessage, aiMessage().text(). What we found: without a system message: a general assistant; with one: Setu, polite and short; the model never changed, only the messages; use the alias ai-chat, not the real name." ai="true"}
 One page of notes for this chapter.
 :::
 :::

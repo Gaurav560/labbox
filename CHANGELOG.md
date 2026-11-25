@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 9 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (the real model name instead of the alias; returning the message
+  object instead of its text).
+- Checked in a lab machine: the same two introductions. Checked in the lab's LangChain4j 1.24: `chat(String)`,
+  `chat(ChatMessage...)`, `chat(ChatRequest)` and `chatAsync` exist; the unverified "experimental" label was removed.
+  A new sketchnote.
+
 ## 26 November: LangChain4j chapter 8 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (a base URL that already ends in `/chat/completions`;
