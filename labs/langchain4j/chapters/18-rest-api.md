@@ -60,11 +60,15 @@ public SetuController(SetuAssistant setu) {
 ```
 
 If the annotation is missing, Spring has no `SetuAssistant` bean to give the controller and the application refuses
-to start. The check tells you exactly that.
+to start. We tried it: "APPLICATION FAILED TO START ... Parameter 0 of constructor in com.setu.SetuController
+required a bean of type 'com.setu.SetuAssistant' that could not be found." The check tells you the same.
 :::
 
 :::step{type=task task=ai_service_bean title="Your turn: make Setu a bean" file="18-rest-api/src/main/java/com/setu/SetuAssistant.java" line="7-13"}
 Annotate the `SetuAssistant` interface with `@AiService` (`dev.langchain4j.service.spring.AiService`).
+
+The usual slip: putting `@AiService` on the controller or on `MemoryConfig`. It belongs on the interface the starter
+should implement.
 
 Press **Check**.
 :::
@@ -98,6 +102,13 @@ itself is ordinary Java: the AI is just a method call on the injected bean.
 In `SetuController`, add `POST /chat`: take a `ChatRequest` from the request body, call
 `setu.chat(request.passenger(), request.message())`, and return a `ChatReply` with the passenger and the answer.
 
+1. `@PostMapping("/chat")` on a method `public ChatReply chat(@RequestBody ChatRequest request)`.
+2. `return new ChatReply(request.passenger(), setu.chat(request.passenger(), request.message()));`
+
+The usual slip: forgetting `@RequestBody`. Spring then fills the record from the address's query parameters and
+finds none, so `passenger` is `null`. We tried it: a 500 error, and in the log "The value of parameter 'passenger'
+annotated with @MemoryId in method 'chat' must not be null".
+
 ```bash run
 cd /workspace/18-rest-api && mvn -q spring-boot:run
 ```
@@ -127,6 +138,8 @@ $ curl -s localhost:8080/chat -H "Content-Type: application/json" -d '{"passenge
   "answer": "You haven't asked me anything yet. How can I assist you today?"
 }
 ```
+
+(We ran the three requests again on 26 November: the same three answers, word for word.)
 
 A web API with a conversation per passenger: Meera's follow-up was answered from her own memory, and Ravi, who had
 asked nothing, got nothing of hers. Any website, app or other service can now use Setu with one HTTP call.
@@ -198,7 +211,7 @@ You can now:
 That is the end of Part 3. Next, chapter 19: tools. Setu stops guessing and starts asking your Java code for real
 timetables, fares and dates.
 
-:::photo{src="/lesson-images/langchain4j/l4j-18-notes.webp" alt="Handwritten notes about the Spring Boot API: starters build the ChatModel; properties, not code; @AiService makes a bean; POST /chat is JSON in, JSON out; keys stay in the environment" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-18-notes.webp" alt="Sketchnote, Setu as a web API (Spring Boot and the LangChain4j starters): The starter builds the model from properties and turns an @AiService interface into a Spring bean you inject anywhere. The flow: POST /chat JSON, SetuController, @AiService bean, JSON reply. What we found: Meera's follow-up came from her own memory; Ravi got nothing of Meera's; no @AiService: the app fails to start; no @RequestBody: a null passenger, error 500." ai="true"}
 One page of notes for this chapter.
 :::
 :::
