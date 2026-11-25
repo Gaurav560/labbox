@@ -2555,6 +2555,28 @@ function LcMiddleware() {
   );
 }
 
+function LcWrapTool() {
+  // Still (owner, 25 November): audit_tools wraps one real tool call from chapter 23's run (Ravi, 25 crates, 8 days).
+  return (
+    <Svg viewBox="0 0 440 400" label="audit_tools wraps the storage_cost call: it writes the audit line, calls handler, which runs the tool and gives 400, and returns that result to the model">
+      <Box x={28} y={4} w={406} h={40} label="the model asks: storage_cost(crates=25, days=8)" />
+      <Arrow x1={231} y1={46} x2={231} y2={70} />
+      <g className="dg-box dg-accent"><rect x={28} y={72} width={406} height={216} rx={10} /></g>
+      <text className="dg-label" x={42} y={96}>audit_tools(request, handler)</text>
+      <text className="dg-note" x={42} y={120}>1. before: AUDIT gets</text>
+      <text className="dg-note" x={56} y={140}>M-104 storage_cost {"{'crates': 25, 'days': 8}"}</text>
+      <Box x={56} y={156} w={350} h={58} label="" tone="copy" />
+      <text className="dg-label" x={70} y={180}>2. handler(request)</text>
+      <text className="dg-note" x={70} y={202}>the tool runs: 25 x 8 x 2 = 400</text>
+      <text className="dg-note" x={42} y={240}>3. after: return handler's result,</text>
+      <text className="dg-note" x={42} y={260}>a ToolMessage with 400</text>
+      <Arrow x1={231} y1={290} x2={231} y2={314} />
+      <Box x={28} y={316} w={406} h={40} label="the model reads 400 and answers Ravi" />
+      <text className="dg-note" x={28} y={380}>Skip step 2: the tool never runs. Skip the return: the run stops.</text>
+    </Svg>
+  );
+}
+
 function LcHumanLoop() {
   return (
     <SketchSteps
@@ -3969,6 +3991,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "lg-join": LgJoin,
   "lg-send": LgSend,
   "lc-middleware": LcMiddleware,
+  "lc-wrap-tool": LcWrapTool,
   "lc-human-loop": LcHumanLoop,
   "lc-rag": LcRag,
   "lc-mcp": LcMcp,
