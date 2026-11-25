@@ -2678,20 +2678,35 @@ function L4jVectorSearch() {
 }
 
 function L4jGuardrails() {
+  // Still (owner, 26 November): chapter 25's real run; token counts from the gateway's log.
+  const cols: [number, number, string][] = [[8, 130, "input guardrail"], [152, 136, "the model"], [302, 130, "output guardrail"]];
+  const rows: [string, [string, BoxTone][]][] = [
+    ["train question, 42 characters", [["success", "plain"], ["238 tokens in", "plain"], ["success", "plain"]]],
+    ["the attack, 379 characters", [["fatal", "highlight"], ["not called: 0", "copy"], ["(skipped)", "plain"]]],
+    ["the note, 111 characters", [["success", "plain"], ["255 tokens in", "plain"], ["number removed", "accent"]]],
+  ];
   return (
-    <SketchSteps
-      title="guardrails around one call"
-      intro="Press Play to follow two questions."
-      label="the input guardrail checks the question before the model; a question over 300 characters is refused and never reaches the model; the output guardrail rewrites the answer before it is returned"
-      steps={[
-        { label: "1. setu.chat(question)", says: "Your method is called." },
-        { label: "2. Input guardrail", says: "QuestionLimit: 111 characters, success(). The question goes on." },
-        { label: "3. The model", says: "It writes: ... passenger Ravi, mobile 98220 12345, ..." },
-        { label: "4. Output guardrail", says: "NoPhoneNumbers: successWith(...), the number becomes [number removed]." },
-        { label: "5. The answer returns", says: "No extra model call; the passenger never sees the number." },
-        { label: "6. A 379-character question", says: "fatal(TOO_LONG): InputGuardrailException, and no token is paid for." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 262" label="Three real messages: the 42-character train question passes both guardrails at 238 tokens; the 379-character attack is refused by the input guardrail and the model is never called; the 111-character note passes, costs 255 tokens, and the output guardrail removes the mobile number">
+      {cols.map(([x, , t]) => <text key={t} className="dg-label" x={x + 2} y={18}>{t}</text>)}
+      {rows.map(([msg, cells], r) => {
+        const y = 30 + r * 70;
+        return (
+          <g key={msg}>
+            <text className="dg-note" x={10} y={y + 12}>{msg}</text>
+            {cells.map(([t, tone], c) => {
+              const [x, w] = cols[c];
+              return (
+                <g key={c}>
+                  <Box x={x} y={y + 20} w={w} h={38} label={t} tone={tone} />
+                  {c < 2 && <Arrow x1={x + w} y1={y + 39} x2={cols[c + 1][0]} y2={y + 39} />}
+                </g>
+              );
+            })}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={254}>A refused message never reaches the model, so it costs nothing.</text>
+    </Svg>
   );
 }
 

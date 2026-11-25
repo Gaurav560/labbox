@@ -1,5 +1,20 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 25 rewritten: a still picture of three real messages, every claim tried
+
+- Re-ran the solution: the same three lines; the gateway's log shows two model calls (238 and 255 tokens in), so the
+  refused message never reached the model. A new still picture shows each message through both guardrails.
+- The guardrail-off claim was re-run four times: three answers copied the number, one said "I don't know"; with the
+  guardrail on, every number was removed. The lesson now says "usually".
+- Corrected: the short injection is 47 characters, not 48. We sent it: it passes the limit (the system message held
+  this time; the lesson says that is not a guarantee).
+- Checked in a probe: after `failure` the next guardrail still runs and the exception lists both messages; `fatal`
+  stops at once; a message rewritten with `successWith` is what the next guardrail sees; `MAX_RETRIES_DEFAULT = 2`.
+- The regex was tried on six strings (a booking number starting with 4 is left alone). Both tasks list their steps
+  and a slip (`>=` instead of `>`; `matches()` instead of `find()`, tried: `false` on a real answer).
+- History: "days later" became "that same week" for Willison naming prompt injection. The 7,500-token estimate and the
+  price are labelled (about 4 characters per token; gpt-4o-mini's price). A new sketchnote.
+
 ## 26 November: LangChain4j chapter 24 rewritten: local model and routes re-run, the default route corrected
 
 - Started the stopped Ollama container for this check only (Qwen 2.5 0.5B, 397 MB), joined it to a test machine's
