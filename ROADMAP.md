@@ -30,6 +30,9 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 
 ### The lab page, editor and AI (after Phase E)
 
+- **Read mode and Action mode** (25 November): a Read / Action switch in the lab's top bar. Read shows the lesson alone
+  (no editor, terminal or machine; a step's code read-only; a card at task steps); Action is the split screen. Last
+  mode remembered, Read on a first visit; the machine starts one step before a task.
 - **Editor: real VS Code by default** ("IDE"): openvscode-server (Gitpod's open-source VS Code, MIT)
   runs inside each learner's machine, as the learner, and shows through the signed-in proxy at
   `/ide/{lab}/`. A "IDE | Lite" switch in the bottom bar; Lite is our Monaco editor (offline completion,
