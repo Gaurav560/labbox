@@ -39,4 +39,4 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 ## Small tasks after each lab
 
 - After RAG (25 Nov): the Ukiyo "LOADING" plate fixed; browser tests now clean up their machines; old test machines
-  and folders removed; the model's answers in RAG chapters 11 and 13 re-run and matched.
+  and folders removed; the model's answers in RAG chapters 11 and 13 re-run and matched; Read mode and Action mode added to every lab.
