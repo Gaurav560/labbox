@@ -3758,19 +3758,31 @@ function LgFunctional() {
 }
 
 function LgMutation() {
+  // Still (owner, 26 November): chapter 20's real pytest runs, on the correct desk and with the planted TEAMS bug.
+  const rows: [string, string, string, BoxTone][] = [
+    ["small repair (example)", "passed", "passed", "plain"],
+    ["dirty water to health", "passed", "FAILED", "copy"],
+    ["big repair waits", "passed", "passed", "plain"],
+    ["weak: kind only", "passed", "passed", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="How the checks judge your tests"
-      intro="Press Play to follow one test through the check."
-      label="Planted bugs"
-      steps={[
-        { label: "Correct desk", says: "Your test runs against the reference desk.py. It must pass." },
-        { label: "Plant a bug", says: "The check changes one line: TEAMS forgets dirty water." },
-        { label: "Run again", says: "Your test runs against the broken desk." },
-        { label: "Fails?", says: "A good test fails here: it noticed the bug. The task passes." },
-        { label: "Passes?", says: "A test that still passes would not notice this mistake: the check says it is too weak." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Four tests on two desks: on the correct desk all pass; with dirty water sent to the repair crew, only the routing test fails; the worked example and the pause test pass because they never send brown water; a weak test that checks only the kind passes on both, so it protects nothing">
+      <text className="dg-label" x={8} y={18}>test</text>
+      <text className="dg-label" x={216} y={18}>correct desk</text>
+      <text className="dg-label" x={330} y={18}>bug planted</text>
+      {rows.map(([name, ok, bug, tone], i) => {
+        const y = 28 + i * 54;
+        return (
+          <g key={name}>
+            <text className="dg-note" x={8} y={y + 26}>{name}</text>
+            <Box x={206} y={y} w={104} h={40} label={ok} tone="plain" />
+            <Box x={322} y={y} w={110} h={40} label={bug} tone={tone} />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={262}>3 tests in 0.19 s, no model. Only one test notices this bug;</text>
+      <text className="dg-note" x={8} y={284}>the weak one passes on both desks, so it protects nothing.</text>
+    </Svg>
   );
 }
 
