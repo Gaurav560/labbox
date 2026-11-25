@@ -38,7 +38,7 @@ whole paragraph. The picture below shows it with three real sentences from the s
 the model, and a row of 384 numbers comes out (only the first 4 are shown).
 
 :::diagram{name="rag-embed"}
-Text in, 384 numbers out. The numbers are the model's real output, and so are the two scores at the bottom.
+The bge-small model: text in, 384 numbers out. The numbers are its real output, and so are the two scores at the bottom.
 :::
 
 **What are the 384 numbers?** Each one is a measurement the model makes of the text. Together, the 384 measurements
@@ -47,7 +47,8 @@ it was trained, and none of them lines up with a word you could name. There is n
 number; the meaning is spread across all 384 together. So you never read an embedding one number at a time. You only
 **compare** whole embeddings with each other.
 
-**Why exactly 384?** Because the people who built this model chose that size when they designed it. Every text it reads
+**Why exactly 384?** Because the people who built **this** model chose that size when they designed it. 384 belongs to
+bge-small, not to embeddings in general: every embedding model has a fixed size, but each model has its own. Every text it reads
 comes out as exactly 384 numbers, never more and never fewer, and that cannot be changed after the model is trained.
 The number of values in a vector is called its **dimension**, so you will often read that bge-small makes
 "384-dimensional embeddings". Other models chose other sizes:
@@ -79,7 +80,7 @@ meaning, you will:
 2. turn the ranger's question into a vector, the same way;
 3. find the sections whose vectors are closest to the question's vector.
 
-Because a vector is a list of 384 numbers, you can also think of it as a **point**: two numbers mark a point on a sheet of
+Because each of our vectors is a list of 384 numbers, you can also think of it as a **point**: two numbers mark a point on a sheet of
 graph paper, and 384 numbers mark a point in a space with 384 directions. "Closest vectors" and "nearest points" mean
 the same thing, and later chapters use both.
 
@@ -402,7 +403,8 @@ and "The road is not safe after dark." score 0.941.)
 :::step{type=recap}
 You can now:
 
-- explain what an embedding is: a fixed list of 384 numbers for a text, where similar meanings give similar vectors;
+- explain what an embedding is: a fixed-length list of numbers for a text (384 with this course's model; other models
+  use other sizes), where similar meanings give similar vectors;
 - make embeddings on your own processor, as a `float32` matrix with one row of 384 numbers per text;
 - compute cosine similarity by hand and in code, and say why it divides by the lengths;
 - read scores the right way: compare them with each other, because unrelated texts do not score 0;
@@ -410,7 +412,7 @@ You can now:
 
 Next, chapter 3: searching a whole collection of vectors for the ones closest to a question.
 
-:::photo{src="/lesson-images/rag/rag-02-notes.webp" alt="Handwritten notes about embeddings: An embedding turns any text into 384 numbers. Similar meanings land close together. Cosine compares directions: 1.0 means the same. Compare scores with each other, not with 0. Unrelated texts still score about 0.4. Embeddings barely notice the word not." ai="true"}
+:::photo{src="/lesson-images/rag/rag-02-notes.webp" alt="Handwritten notes about embeddings: Our model turns any text into 384 numbers. Each model has its own fixed size. Similar meanings land close together. Cosine compares directions: 1.0 means the same. Unrelated texts do not score 0. Embeddings barely notice the word not." ai="true"}
 One page of notes for this chapter.
 :::
 :::

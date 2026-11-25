@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: RAG chapter 2, 384 is the model's size, not every embedding's
+
+- Owner: "is 384 model specific or model agnostic?" Model specific, but the recap ("a fixed list of 384 numbers") and the
+  notes page read like a general rule. The lesson now says 384 belongs to bge-small and every model has its own fixed
+  size; the recap says "a fixed-length list of numbers (384 with this course's model)"; the picture's caption names the
+  model; the notes page is redrawn ("Our model turns any text into 384 numbers. Each model has its own fixed size."
+  and "Unrelated texts do not score 0." instead of the model-specific 0.4), checked letter by letter.
+
 ## 25 November: RAG chapter 2 explains 384 where it first appears
 
 - Owner: "have you explained in the lesson with clarity what 384 is?" Not well enough: the explanation came four
