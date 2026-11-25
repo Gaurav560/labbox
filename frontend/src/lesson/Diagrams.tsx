@@ -3677,19 +3677,31 @@ function LgSubgraph() {
 }
 
 function LgSupervisor() {
+  // Still (owner, 26 November): chapter 17's real runs, the solution and the task-only variant.
+  const rows: [string, string, BoxTone][] = [
+    ["supervisor", "billing: the bill is too high", "accent"],
+    ["billing", "held the bill for a meter inspector", "copy"],
+    ["supervisor", "repairs: the meter is dripping", "accent"],
+    ["repairs", "booked a visit, Thursday 9:00 to 12:00", "copy"],
+    ["supervisor", "FINISH", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="A supervisor and two specialists"
-      intro="Press Play to follow a message with two problems."
-      label="Multi-agent"
-      steps={[
-        { label: "supervisor", says: "Reads the message: a high bill and a dripping meter. Command(goto='billing')." },
-        { label: "billing", says: "Its own agent checks bills and readings, holds the bill, and reports back, signed 'billing'." },
-        { label: "supervisor", says: "Reads the report: the meter is still open. Command(goto='repairs')." },
-        { label: "repairs", says: "Books a visit for the meter, and, having read everything, one for the inspection too." },
-        { label: "supervisor", says: "Every problem has a report: FINISH, and the run ends." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 372" label="A real run: the supervisor sends the case to billing, which holds the bill; then to repairs, which books a Thursday visit; then says FINISH. In another run billing was sent twice. With the task-only variant, the supervisor's tasks invented a helpline number, and repairs booked the visit for that number">
+      {rows.map(([who, what, tone], i) => {
+        const y = 4 + i * 54;
+        return (
+          <g key={i}>
+            <text className="dg-label" x={8} y={y + 25}>{who}</text>
+            <Box x={100} y={y} w={332} h={40} label={what} tone={tone} />
+            {i < rows.length - 1 && <Arrow x1={266} y1={y + 40} x2={266} y2={y + 54} />}
+          </g>
+        );
+      })}
+      <text className="dg-label" x={8} y={296}>other runs</text>
+      <text className="dg-note" x={8} y={318}>Solution: once, billing was sent twice.</text>
+      <text className="dg-note" x={8} y={340}>Tasks only: the supervisor invented 1800-123-4567,</text>
+      <text className="dg-note" x={8} y={362}>and repairs booked the visit for that number.</text>
+    </Svg>
   );
 }
 
