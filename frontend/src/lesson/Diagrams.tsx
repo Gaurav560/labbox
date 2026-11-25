@@ -3339,19 +3339,22 @@ function LgModelNode() {
 }
 
 function LgJoin() {
+  // Still (owner, 26 November): chapter 5's real Station Road run, plus the measured join facts.
   return (
-    <SketchSteps
-      title="Two lookups at once, then a join"
-      intro="Press Play to watch the super-steps."
-      label="Parallel"
-      steps={[
-        { label: "Step 1", says: "START has two edges: zone_lookup and history_lookup both run in this step." },
-        { label: "Updates", says: "zone_lookup writes zone; history_lookup writes past. Different keys, so no conflict." },
-        { label: "Join", says: "assign is behind the list edge [zone_lookup, history_lookup]: it waits for both." },
-        { label: "Step 2", says: "assign runs once, with zone 'South' and 6 past complaints: a crew and a survey of the old main." },
-        { label: "Same key?", says: "If both branches wrote the same key in one step, that key would need a reducer." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Station Road: in step 1 zone_lookup returns South and history_lookup returns 6 past complaints, at the same time; in step 2 assign runs once and plans the South zone crew and a survey of the old main. Measured: two one-second nodes in one step took 1.00 seconds; with uneven branches separate edges ran assign twice, the list join once">
+      <text className="dg-label" x={8} y={18}>step 1: both at once</text>
+      <Box x={8} y={28} w={206} h={44} label="zone_lookup: South" tone="accent" />
+      <Box x={226} y={28} w={206} h={44} label="history_lookup: 6 past" tone="accent" />
+      <Arrow x1={111} y1={72} x2={200} y2={104} />
+      <Arrow x1={329} y1={72} x2={240} y2={104} />
+      <text className="dg-label" x={8} y={98}>step 2: the join</text>
+      <Box x={8} y={106} w={424} h={44} label="assign, once: South crew + survey of the main" tone="copy" />
+      <text className="dg-label" x={8} y={180}>measured</text>
+      <text className="dg-note" x={8} y={202}>Two 1-second nodes in one step: 1.00 s, not 2.</text>
+      <text className="dg-note" x={8} y={224}>Uneven branches, separate edges: assign ran 2 times.</text>
+      <text className="dg-note" x={8} y={246}>Uneven branches, add_edge([a, b], assign): 1 time.</text>
+      <text className="dg-note" x={8} y={268}>Both writing one key, no reducer: InvalidUpdateError.</text>
+    </Svg>
   );
 }
 

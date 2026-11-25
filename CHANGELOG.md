@@ -1,5 +1,17 @@
 # Changelog
 
+## 26 November: LangGraph chapter 5 rewritten: a wrong weekday fixed, the grader's miss measured
+
+- Fixed in the lab: the notice facts said "Thursday 28 November", which is a Saturday in 2026; starter and solution
+  now say "Thursday 3 December" (a Thursday), and the lesson notes the change.
+- Re-ran the notice loop with the real model four times: in the run shown the grader caught the missing area; in the
+  other three it passed a final notice that never named Old Market. The lesson now gives that count instead of one run.
+- Measured the join claims with plain nodes: separate edges with uneven branches ran `assign` twice, the list join
+  once; two one-second nodes in the same step took 1.00 seconds; two parallel writes to one key raise
+  `InvalidUpdateError` (the quiz). The Station Road run was reproduced.
+- Both tasks list their steps and a slip (a missing START edge, tried: no error, no plan; `and` instead of `or`).
+- The animation is now a still picture of the real run and the measured facts; a new sketchnote.
+
 ## 26 November: LangGraph chapter 4 rewritten: two real model calls pictured, a slip I expected disproved
 
 - Re-ran the solution with the real model: the same four triages; the replies the same except the first, which now
