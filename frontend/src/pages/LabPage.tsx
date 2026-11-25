@@ -21,6 +21,7 @@ import TutorBox from "../lesson/TutorBox";
 import { labBrand } from "../brand";
 import { MODEL_PREFIX, modelUri, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
+import ReadCode from "../lesson/ReadCode";
 import { useStats } from "../stats";
 import { useTextSizes } from "../textSize";
 
@@ -92,6 +93,10 @@ export default function LabPage() {
   const [treeW, setTreeW] = usePersistentState("panel.tree", 200);
   const [termH, setTermH] = usePersistentState("panel.terminal", 260);
   const [focus, setFocus] = usePersistentState("focus", false);
+  // Read mode: the lesson alone, no editor, terminal or machine. Action mode: the lesson beside the editor and
+  // terminal, for tasks and practice. The last one used is remembered; a first visit reads (owner, 25 November).
+  const [mode, setMode] = usePersistentState<"read" | "action">("mode", "read");
+  const reading = phone || mode === "read";
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
   const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
   const [ideError, setIdeError] = useState<string | null>(null);
@@ -178,12 +183,18 @@ export default function LabPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadLab, toast]);
 
-  // Phones read; the machine starts on a laptop or tablet. Its own effect, so crossing the phone width
-  // (rotating a tablet, resizing a window) starts the machine without reloading the lab or moving the
-  // learner to another chapter.
+  // The machine starts in Action mode, and in Read mode one step before a task (below), never on a phone. Its own
+  // effect, so switching modes or crossing the phone width starts it without reloading the lab or moving the
+  // learner to another chapter. Once started it keeps running when the learner switches back to Read.
+  const machineAsked = useRef(false);
+  const ensureMachine = useCallback(() => {
+    if (machineAsked.current) return;
+    machineAsked.current = true;
+    startMachine().then(refreshTree);
+  }, [startMachine, refreshTree]);
   useEffect(() => {
-    if (!phone) startMachine().then(refreshTree);
-  }, [phone, startMachine, refreshTree]);
+    if (!reading) ensureMachine();
+  }, [reading, ensureMachine]);
 
   useEffect(() => {
     if (!chapterId) return;
@@ -246,6 +257,13 @@ export default function LabPage() {
       setSetupState("idle");
     };
   }, [needsSetup, status, labId, chapterId, toast]);
+
+  // In Read mode, start the machine quietly when a task is this step or the next one, so the usual wait is
+  // mostly over by the time the learner opens Action mode.
+  useEffect(() => {
+    if (phone || !reading || !steps) return;
+    if ([steps[step], steps[step + 1]].some((st) => st && (st.type === "task" || st.type === "incident"))) ensureMachine();
+  }, [phone, reading, steps, step, ensureMachine]);
 
   // ---------- steps ----------
 
@@ -325,6 +343,27 @@ export default function LabPage() {
       if (!terminalRefs.current.get(activeTerm)?.paste(command)) toast("The terminal is not connected yet");
     }, 0);
   }
+
+  // "Run in terminal" in Read mode opens Action mode and pastes the command once the terminal is connected.
+  const pendingRun = useRef<string | null>(null);
+  function runFromRead(command: string) {
+    pendingRun.current = command;
+    setMode("action");
+  }
+  useEffect(() => {
+    if (reading || status !== "running" || !pendingRun.current) return;
+    let tries = 0;
+    const id = window.setInterval(() => {
+      const cmd = pendingRun.current;
+      if (!cmd) return window.clearInterval(id);
+      setBottomTab("terminal");
+      if (terminalRefs.current.get(activeTerm)?.paste(cmd) || ++tries > 40) {
+        pendingRun.current = null;
+        window.clearInterval(id);
+      }
+    }, 300);
+    return () => window.clearInterval(id);
+  }, [reading, status, activeTerm]);
 
   // Files created in the terminal show up after a poll.
   useEffect(() => {
@@ -624,7 +663,7 @@ export default function LabPage() {
     revealHint(activeTask.id);
   }
 
-  if (status === "starting" && tabs.length === 0 && tree.length === 0) {
+  if (!reading && status === "starting" && tabs.length === 0 && tree.length === 0) {
     return (
       <div className="center-screen">
         <span className="spinner" /> Starting your machine...
@@ -633,7 +672,7 @@ export default function LabPage() {
   }
 
   return (
-    <div className={`lab-page ${focus ? "focus-mode" : ""} ${phone ? "is-phone" : ""}`} data-lab={labId}>
+    <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"}`} data-lab={labId}>
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}
@@ -645,7 +684,9 @@ export default function LabPage() {
         username={user?.username ?? ""}
         focus={focus}
         onFocus={() => setFocus((f) => !f)}
-        canFocus={!useIde}
+        canFocus={!useIde && !reading}
+        mode={reading ? "read" : "action"}
+        onMode={phone ? undefined : setMode}
         onStart={startMachine}
         onStop={stopMachine}
         onReset={resetLab}
@@ -675,8 +716,17 @@ export default function LabPage() {
           )}
           {steps && current ? (
             <LessonPanel steps={steps} current={step} visited={visited} onGo={goStep}>
+              {reading && !phone && (current.type === "task" || current.type === "incident") && (
+                <div className="read-task-card" role="note">
+                  <div>
+                    <strong>Your turn: open the lab</strong>
+                    <span>The editor and terminal are in Action mode{status === "running" ? ", and your machine is ready" : status === "starting" ? ", and your machine is starting" : ""}.</span>
+                  </div>
+                  <button className="btn btn-primary" onClick={() => setMode("action")}>Open Action mode</button>
+                </div>
+              )}
               {steps.length === 1 ? (
-                <ChapterPanel markdown={current.markdown} onRun={phone ? undefined : runInTerminal} />
+                <ChapterPanel markdown={current.markdown} onRun={phone ? undefined : reading ? runFromRead : runInTerminal} />
               ) : (
                 <StepCard
                   labId={labId}
@@ -705,11 +755,12 @@ export default function LabPage() {
                   checkMode={lab?.check_mode ?? "fresh"}
                   onPredict={(o) => pickPredict(step, o)}
                   onHint={revealHint}
-                  onRun={phone ? undefined : runInTerminal}
+                  onRun={phone ? undefined : reading ? runFromRead : runInTerminal}
                   onCheck={runCheck}
                   onNextChapter={() => nextChapter && setChapterId(nextChapter.id)}
                 />
               )}
+              {reading && hasOwnFile(current) && <ReadCode labId={labId} chapterId={chapterId} step={step} />}
             </LessonPanel>
           ) : (
             <ChapterPanel markdown={markdown === null ? null : ""} />
@@ -733,6 +784,12 @@ export default function LabPage() {
               <p className="phone-note" role="note">
                 Reading mode. Writing and checking code works on a laptop or tablet; your place is saved, so you can pick it up there.
               </p>
+            ) : reading ? (
+              activeTask && !activeTask.passed && (
+                <div className="footer-actions">
+                  <button className="btn btn-primary read-practice" onClick={() => setMode("action")}>Practice in Action mode</button>
+                </div>
+              )
             ) : (
             <div className="footer-actions">
               <button className="btn btn-primary btn-check" onClick={runCheck} disabled={checking || !chapterId || setupState === "running"}>
@@ -767,8 +824,8 @@ export default function LabPage() {
             )}
           </div>
         </aside>
-        {/* Phones get a reading mode: no editor, VS Code or terminal (they would start the machine). */}
-        {!phone && (
+        {/* Read mode (and every phone): no editor, VS Code or terminal. */}
+        {!reading && (
         <>
         <Splitter direction="vertical" label="Resize lesson panel" onDrag={(d) => setLeftW((w) => clamp(w + d, 280, 900))} />
         <section className="work-area" aria-label="Workspace">

@@ -281,6 +281,60 @@ async def chapter_focus_route(
     return FocusOut(path=path, line=line, end_line=end)
 
 
+class StepCodeOut(BaseModel):
+    path: str | None = None
+    first_line: int = 1          # the number of the first line in `lines`
+    lines: list[str] = []
+    highlight: list[int] = []    # the step's own line or range (first and last), to mark in Read mode
+
+
+STEP_CODE_MAX = 40  # lines shown for one step in Read mode
+
+
+@router.get("/{lab_id}/chapters/{chapter_id}/steps/{step}/code", response_model=StepCodeOut)
+async def step_code_route(
+    lab_id: str, chapter_id: str, step: int,
+    user: User = Depends(get_current_user), session: Session = Depends(get_session),
+) -> StepCodeOut:
+    """The lines a step talks about (file= and line= in the lesson, or a task's TODO), read from the learner's own
+    files without a running machine: Read mode shows them under the step. Only paths from the lab's content."""
+    lab = get_lab(lab_id)
+    ch = lab.chapter(chapter_id)
+    steps = lab.chapter_steps(ch.id)
+    if not 0 <= step < len(steps):
+        raise HTTPException(404, f"Step {step} not found in chapter {chapter_id!r}")
+    st = steps[step]
+    folder = Path(containers.get_workspace(session, user, lab).volume_path)
+    if st.file and await asyncio.to_thread(step_file, lab, st.file, folder):
+        path, start, end = st.file, st.line or 1, st.end_line or st.line or 1
+    elif st.task and not st.file:
+        hit = await asyncio.to_thread(task_focus, lab, ch, st.task, folder)
+        if not hit:
+            return StepCodeOut()
+        path, start, end = hit[0], hit[1], hit[1]
+    else:
+        return StepCodeOut()
+    text = await asyncio.to_thread(_read_lines, lab, folder, path)
+    if text is None:
+        return StepCodeOut()
+    # Show the step's lines with a little room around them; a single line (a task's TODO) gets what follows it.
+    lo = max(1, start - 2)
+    hi = min(len(text), max(end + 2, start + 12), lo + STEP_CODE_MAX - 1)
+    return StepCodeOut(path=path, first_line=lo, lines=text[lo - 1:hi], highlight=[start, end])
+
+
+def _read_lines(lab: LabConfig, folder: Path, path: str) -> list[str] | None:
+    """The file from the learner's folder, else from the starter; never outside them."""
+    for root in (folder, lab.starter_dir):
+        p = (root / path).resolve()
+        if p.is_relative_to(root.resolve()) and p.is_file():
+            try:
+                return p.read_text(errors="replace").splitlines()
+            except OSError:
+                return None
+    return None
+
+
 def _tell_ide(container: str, path: str, line: int, end_line: int | None = None) -> None:
     request = json.dumps({"path": path, "line": line, "end": end_line, "at": time.time()})
     try:

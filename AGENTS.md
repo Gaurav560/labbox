@@ -114,7 +114,8 @@ standard, eight short; see the table in `ROADMAP.md`).
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
   id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait
-  until port 8000 is free; open terminals make shutdown take a few seconds.
+  until port 8000 is free; open terminals make shutdown take a few seconds, sometimes over 20. Check that the new
+  process really started (a second uvicorn on a busy port exits with "Address already in use").
 - Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
   /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword
@@ -135,6 +136,8 @@ standard, eight short; see the table in `ROADMAP.md`).
   (`SIGNUPS_PER_IP_HOUR`). A busy evening of test runs hits it ("Too many new accounts", tests stuck
   at login or onboarding). For the local dev server only, start uvicorn with `SIGNUPS_PER_IP_HOUR=1000`
   in its environment; never raise the default in code or touch `backend/.env` for this.
+- Labs open in Read mode on a first visit (no editor, no machine). Playwright's default `storageState` sets
+  `labbox.mode` to "action" so tests that drive the editor work; a test about Read mode clears it (`read-mode.spec.ts`).
 - Browser tests clean up after themselves (Playwright global teardown runs `scripts/labbox test-accounts cleanup
   --since-id N`); set `LABBOX_E2E_KEEP=1` to keep a run's machines when looking into a failure.
 - Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that

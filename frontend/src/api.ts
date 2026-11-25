@@ -94,6 +94,14 @@ export interface ChapterProgress {
 export interface TutorReply { reply: string; blocked: boolean; tokens_used_today: number }
 export interface HintResponse { task: string; hints: string[]; hints_left: number; xp: number }
 export type MachineStatus = "running" | "stopped" | "missing";
+
+/** The lines a lesson step talks about, for Read mode (no machine needed). */
+export interface StepCode {
+  path: string | null;
+  first_line: number;
+  lines: string[];
+  highlight: number[];
+}
 export interface ServiceStatus { name: string; status: "running" | "starting" | "stopped" | "missing" }
 export interface WorkspaceStatus { status: MachineStatus; container?: string; services?: ServiceStatus[]; stopped_reason?: string }
 export interface SetupResult { ran: boolean; setup_done: boolean; started_at: string | null }
@@ -177,6 +185,8 @@ export const api = {
   /** The file a chapter is about, or (with step) the file that lesson step talks about. */
   chapterFocus: (labId: string, chapterId: string, ide: boolean, step?: number) =>
     request<{ path: string | null; line: number; end_line: number | null }>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/focus`, step === undefined ? { ide } : { ide, step }),
+  stepCode: (labId: string, chapterId: string, step: number) =>
+    request<StepCode>("GET", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/steps/${step}/code`),
   chapterSetup: (labId: string, chapterId: string) =>
     request<SetupResult>("POST", `/api/labs/${q(labId)}/chapters/${q(chapterId)}/setup`),
   previewTicket: (labId: string) => request<{ ports: PreviewPort[] }>("POST", `/api/labs/${q(labId)}/preview/ticket`),

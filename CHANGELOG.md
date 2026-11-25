@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: Read mode and Action mode in every lab
+
+- A Read / Action switch in the lab's top bar (owner, 25 November). Read mode shows the lesson alone in a calm centred
+  column (68 characters a line, larger pictures), with no editor, terminal or machine controls, and starts no machine.
+  Action mode is the split screen as before. The last mode used is remembered; a first visit reads. Phones always read.
+- In Read mode a step about a file shows those lines read-only under the step, from the learner's own files (new route
+  `GET /api/labs/{lab}/chapters/{chapter}/steps/{n}/code`, no machine needed), with the step's lines marked. A task
+  step shows a card, "Your turn: open the lab", whose button opens Action mode; "Run in terminal" opens Action mode and
+  pastes the command once the terminal is connected. The machine starts quietly one step before a task, so the wait is
+  mostly over by then.
+- Tests: a backend test for the route, a browser test for both modes and the switch; Playwright's default storage
+  starts the other browser tests in Action mode. 237 backend tests on Postgres and Redis, 32 browser tests.
+
 ## 25 November: RAG chapters 11 and 13, the model's answers re-checked
 
 - With the owner's OK, the chapter 11 questions (five) and the chapter 13 `/ask` requests were run again through the
