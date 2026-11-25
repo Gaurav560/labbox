@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: Spring AI chapter 10 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips, both tried: a misspelled protocol value (`STREAMING`) starts the
+  app with no error but no MCP server (`/mcp` gives 404); a provider method without `@Bean` gives `{"tools":[]}`.
+- The MCP animation is now a still picture of the real session: four messages and Atlas's answers.
+- Checked in a lab machine: initialize, the 202 for `notifications/initialized`, the same four tools and Saturday's
+  seats, word for word; added the real "Session ID missing" error for a call without the header. A new sketchnote.
+
 ## 26 November: Spring AI chapter 9 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (counting before `chain.nextCall`; replacing the system message).

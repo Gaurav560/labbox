@@ -69,7 +69,7 @@ client starts the server as a process on the same machine) or **Streamable HTTP*
 address like `/mcp`, which is what Atlas will be).
 
 :::diagram{name="ai-mcp"}
-An MCP client asks the server which tools it has, the model picks one, and the client calls it on the server.
+The four messages of a real MCP session with Atlas, sent with curl (26 November), and what Atlas answered.
 :::
 
 **Check yourself:** in MCP terms, which part decides **when** to call `openingHours`? (The model inside the client's AI
@@ -113,13 +113,26 @@ any MCP client.
 
 :::step{type=task task=mcp_server title="Your turn: switch on the MCP server" file="10-mcp/src/main/resources/application.properties" line="11"}
 In `10-mcp/src/main/resources/application.properties`, turn on the MCP server: the **Streamable HTTP** protocol, and the
-name **`atlas-museum`** (add a version and a one-line description too).
+name **`atlas-museum`** (add a version and a one-line description too):
+
+1. `spring.ai.mcp.server.protocol=STREAMABLE`
+2. `spring.ai.mcp.server.name=atlas-museum`
+3. `spring.ai.mcp.server.version=1.0.0` and `spring.ai.mcp.server.instructions=` with your sentence.
+
+The usual slip, and a quiet one: a misspelled value. We tried `protocol=STREAMING`: the app started with no error,
+but there was no MCP server at all, and `/mcp` answered 404. If `/mcp` is not found, check the spelling first.
 
 Press **Check**: a real MCP client connects to `/mcp` and reads the server's name.
 :::
 
 :::step{type=task task=mcp_tools title="Your turn: offer the museum's tools" file="10-mcp/src/main/java/com/atlas/McpConfig.java" line="12"}
-In `McpConfig.java`, add a `@Bean` method that offers the `@Tool` methods of `MuseumTools` as a `ToolCallbackProvider`.
+In `McpConfig.java`, add a `@Bean` method that offers the `@Tool` methods of `MuseumTools` as a `ToolCallbackProvider`:
+
+1. `@Bean ToolCallbackProvider museumToolProvider(MuseumTools tools)`.
+2. Return `MethodToolCallbackProvider.builder().toolObjects(tools).build()`.
+
+The usual slip: forgetting `@Bean`. The method is never called; we tried it, and the server answered `tools/list`
+with `{"tools":[]}`.
 
 Then talk to your server the way an MCP client does, in the next step. Press **Check**: the check's client lists your
 tools and calls `openingHours`.
@@ -133,6 +146,8 @@ $ curl -s -D /tmp/h -X POST localhost:8080/mcp -H "Content-Type: application/jso
 {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"2025-06-18","capabilities":{"completions":{},"logging":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"atlas-museum","version":"1.0.0"},"instructions":"Facts about the Deccan Science Museum in Pune: dates, opening hours and planetarium shows."}}
 Mcp-Session-Id: 0242b6b2-c1f2-4ae8-807c-e8863520a4e9
 ```
+
+(We sent the same three messages again on 26 November and got the same answers, with a new session id.)
 
 The server answers with its capabilities, its name and instructions, and a **session id** in a header, which the client
 sends with every later message. (A client also sends a short `notifications/initialized` message next; the server
@@ -155,6 +170,8 @@ $ curl -s -X POST localhost:8080/mcp -H "Content-Type: application/json" -H "Acc
 ```
 
 Saturday's shows, from your Java code, through a standard any assistant understands. (Your session id will differ.)
+
+Forget the `Mcp-Session-Id` header and the server refuses: we got `"code":-32601,"message":"Session ID missing"`.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -243,7 +260,7 @@ You can now:
 That ends Part 2. Next, Part 3: knowledge. Chapter 11 starts with embeddings, the idea behind teaching Atlas the museum's
 own exhibits.
 
-:::photo{src="/lesson-images/spring-ai/springai-10-notes.webp" alt="Handwritten notes about MCP: one protocol for tools; server offers, client uses; protocol=STREAMABLE, /mcp; ToolCallbackProvider bean; initialize, tools/list, tools/call" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-10-notes.webp" alt="Sketchnote, MCP: one plug for tools (the Model Context Protocol): MCP lets any AI application find and call another program's tools. Atlas becomes an MCP server at /mcp. The flow: initialize, Session id, tools/list, tools/call, Real seats back. What we found: 4 tools, with the descriptions from chapter 7; a misspelled protocol: no error, but /mcp 404; no @Bean: the tool list is empty; no session id: the server refuses." ai="true"}
 One page of notes for this chapter.
 :::
 :::
