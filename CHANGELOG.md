@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 4 rewritten (easy, a little detailed, checked)
+
+- All tasks list their steps or the usual slips (`text.length()`; skipping a message that does not fit; returning
+  newest first).
+- The context-window animation is now a still picture of the real chat, counted with o200k_base: 9, then 25 (34), and
+  14 would make 48, over the budget of 40.
+- Checked: every token split and id in the lesson, re-run with o200k_base (identical); the solution's output is exactly
+  the lesson's. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 3 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (a `HashMap`; `>=` on a tie, which makes "running" predict
