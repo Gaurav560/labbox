@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 8 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (a base URL that already ends in `/chat/completions`;
+  `.content().get()`).
+- Checked in a lab machine: two more runs named no trains and both sent the passenger to "our website"; the lesson
+  now says the invention comes and goes, which makes it easy to miss in a quick test. A new sketchnote (redrawn twice:
+  the image model kept turning "the same HTTP POST" into a label).
+
 ## 26 November: LangChain4j chapter 7 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips, both tried: the key without `Bearer ` (401, "Invalid lab key");
