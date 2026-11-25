@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: RAG chapters 11 and 13, the model's answers re-checked
+
+- With the owner's OK, the chapter 11 questions (five) and the chapter 13 `/ask` requests were run again through the
+  lab's model gateway, in a test account's lab machine started the normal way. Every answer matched the lessons word for
+  word; the lessons now say so. The test account's machines, network and folder were removed afterwards.
+
 ## 25 November: browser tests clean up after themselves
 
 - New `scripts/labbox test-accounts max-id | cleanup [--since-id N] [--dry-run]`: removes the lab machines, lab networks
