@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: Action mode can hide the lesson panel
+
+- The same sidebar button as in Read mode, at the top right of the lesson panel, hides the whole panel: the editor and
+  terminal take the page. A slim rail on the left keeps "Show the lesson" and Check (so work can still be checked).
+  The choice is remembered. New browser test `lesson-panel.spec.ts`; 33 browser tests pass.
+
 ## 25 November: Start machine lives in the Machine menu
 
 - No separate "Start machine" button beside the Machine menu (owner): the menu now has Start, Stop and Reset, each

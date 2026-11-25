@@ -2094,3 +2094,12 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
   .step-outline-kind { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); }
   .lab-page.is-reading .step-outline-open { display: inline-flex; position: absolute; top: 12px; left: 16px; z-index: 2; }
 }
+
+/* Action mode: the lesson panel can be hidden (owner, 25 November); a slim rail keeps Show lesson and Check. */
+.lab-page .left-panel[hidden] { display: none; }
+.lab-page.is-action .lesson-hide { position: absolute; top: 8px; right: 10px; z-index: 3; width: 28px; height: 28px; }
+.lab-page.is-action .step-nav { padding-right: 48px; }
+.lesson-rail { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 48px; flex: none; padding: 10px 0; border-right: 1px solid var(--border); background: var(--panel); }
+.lesson-rail .panel-toggle { width: 32px; height: 32px; }
+.lesson-rail-check { font-size: 16px; font-weight: 700; }
+.lesson-rail-check:disabled { opacity: .5; cursor: default; }

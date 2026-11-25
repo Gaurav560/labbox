@@ -101,6 +101,9 @@ export default function LabPage() {
   // Read mode's list of steps on the left; the panel button closes it and brings it back (remembered).
   const [outlineOpen, setOutlineOpen] = usePersistentState("steps-list", false);  // closed until opened (owner)
   const showOutline = reading && !phone;
+  // Action mode can hide the whole lesson panel, so the editor and terminal get the page (owner, 25 November).
+  const [lessonOpen, setLessonOpen] = usePersistentState("lesson-panel", true);
+  const lessonHidden = !reading && !lessonOpen;
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
   const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
   const [ideError, setIdeError] = useState<string | null>(null);
@@ -676,7 +679,7 @@ export default function LabPage() {
   }
 
   return (
-    <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"} ${showOutline && outlineOpen ? "has-outline" : ""}`} data-lab={labId}>
+    <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"} ${showOutline && outlineOpen ? "has-outline" : ""} ${lessonHidden ? "lesson-hidden" : ""}`} data-lab={labId}>
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}
@@ -696,7 +699,18 @@ export default function LabPage() {
         onReset={resetLab}
       />
       <main className="lab-body">
+        {lessonHidden && (
+          <div className="lesson-rail" aria-label="Lesson (hidden)">
+            <button className="panel-toggle" onClick={() => setLessonOpen(true)} aria-label="Show the lesson" title="Show the lesson">
+              <PanelIcon />
+            </button>
+            <button className="panel-toggle lesson-rail-check" onClick={runCheck} disabled={checking || !chapterId || setupState === "running"} aria-label="Check" title="Check your work">
+              {checking ? <span className="spinner" /> : "✓"}
+            </button>
+          </div>
+        )}
         <aside
+          hidden={lessonHidden}
           className="left-panel"
           style={{ width: leftW, "--ts-lesson": sizes.lesson / 100, "--ts-tasks": sizes.tasks / 100 } as CSSProperties}
         >
@@ -706,6 +720,11 @@ export default function LabPage() {
               aria-hidden="true"
               style={{ "--wm-logo": `url(${brand.logo})`, "--wm-color": brand.color } as CSSProperties}
             />
+          )}
+          {!reading && (
+            <button className="panel-toggle lesson-hide" onClick={() => setLessonOpen(false)} aria-label="Hide the lesson" title="Hide the lesson: the editor and terminal get the whole page">
+              <PanelIcon />
+            </button>
           )}
           {showOutline && steps && steps.length > 1 && (outlineOpen
             ? <StepOutline steps={steps} current={step} visited={visited} onGo={goStep} onClose={() => setOutlineOpen(false)} />
@@ -834,7 +853,7 @@ export default function LabPage() {
         {/* Read mode (and every phone): no editor, VS Code or terminal. */}
         {!reading && (
         <>
-        <Splitter direction="vertical" label="Resize lesson panel" onDrag={(d) => setLeftW((w) => clamp(w + d, 280, 900))} />
+        {!lessonHidden && <Splitter direction="vertical" label="Resize lesson panel" onDrag={(d) => setLeftW((w) => clamp(w + d, 280, 900))} />}
         <section className="work-area" aria-label="Workspace">
           <div className="files-and-editor">
             {useIde ? (
