@@ -2615,20 +2615,29 @@ function LcGuards() {
 }
 
 function LcHumanLoop() {
+  // Still (owner, 25 November): Ravi's real booking from chapter 25's run, paused, edited by the manager, resumed.
+  const rows: [string, string, BoxTone][] = [
+    ["1. invoke, thread M-104", "Please book 80 crates of onions for 10 days.", "plain"],
+    ["2. the model asks", "book_storage(crates=80, days=10, crop=onion)", "plain"],
+    ["3. pause, before the tool runs", "__interrupt__ returned; the checkpointer keeps M-104", "highlight"],
+    ["4. the manager decides", "edit: crates 50 (the rule book's 50-crate limit)", "accent"],
+    ["5. invoke(Command(resume=...)), M-104", "the tool runs with 50: booking B-101", "copy"],
+    ["6. the model answers", "I have booked 50 crates of onions for 10 days.", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="a booking waits for the manager"
-      intro="Press Play to follow Ravi's booking."
-      label="the model asks for book_storage, the middleware pauses the run and saves it, the manager decides, and the same thread resumes"
-      steps={[
-        { label: "1. The member asks", says: "Please book 80 crates of onions for 10 days." },
-        { label: "2. The model asks", says: "book_storage with crates 80, days 10, crop onion." },
-        { label: "3. Pause", says: "HumanInTheLoopMiddleware stops before the tool runs; the checkpointer saves the thread." },
-        { label: "4. The manager", says: "Sees the request and decides: approve, edit (50 crates) or reject." },
-        { label: "5. Resume", says: "Command(resume=...) on the same thread: the tool runs, or the model hears why not." },
-        { label: "6. The answer", says: "Navin tells the member what was booked." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="Ravi's booking: the model asks for 80 crates, the run pauses before the tool, the manager edits it to 50, the same thread resumes, the tool books 50 and the model says 50">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={title}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
