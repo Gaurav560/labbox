@@ -44,7 +44,7 @@ Underneath, the server keeps the HTTP response open and sends lines of **Server-
 piece...}`, again and again, ending with `data: [DONE]`.
 
 :::diagram{name="l4j-streaming"}
-The first piece arrives after 905 ms and the passenger starts reading; the whole answer is complete after 2103 ms.
+The measured run below: the first piece after 905 ms, all 56 after 2,103 ms.
 :::
 :::
 
@@ -75,7 +75,11 @@ model.chat(question, new StreamingChatResponseHandler() {
 :::step{type=task task=stream_tokens title="Your turn: stream with a handler" file="16-streaming/src/main/java/com/setu/Streams.java" line="26-31"}
 Finish `Streams.stream(model, question, onToken)`: create a `CompletableFuture<ChatResponse>`, call
 `model.chat(question, handler)` with a handler that passes each partial response to `onToken`, completes the future in
-`onCompleteResponse`, and completes it exceptionally in `onError`. Return the future.
+`onCompleteResponse`, and completes it exceptionally in
+`onError`. Return the future.
+
+The usual slip: completing the future in `onPartialResponse`. A future completes only once, so the caller gets the
+first piece instead of the whole answer.
 
 Press **Check**.
 :::
@@ -110,6 +114,9 @@ Finish `Streams.ask(setu, question, onToken)`: call `setu.chat(question)`, pass 
 complete a `CompletableFuture<String>` with the answer's text when complete (or exceptionally on an error), call
 `start()`, and return the future.
 
+The usual slip is the one the concept warned about: no `start()`. Everything compiles, and the future never
+completes.
+
 ```bash run
 cd /workspace/16-streaming && mvn -q compile exec:java
 ```
@@ -125,6 +132,9 @@ $ mvn -q compile exec:java
 Sahyadri Rail operates scenic trains connecting Pune, Lonavala, Karjat, and Ratnagiri. We offer a range of services including express and local trains. For specific schedules and routes, please check our official website.
 (221 characters)
 ```
+
+(We ran it twice more on 26 November: 55 pieces each time, the first after 1,325 and 1,160 ms, all after 2,188 and
+1,964 ms. The numbers move with the network and the provider's load; the gap between first and last stays.)
 
 The brackets show each piece exactly as it arrived: mostly one token each (`[ g][hat]` is the word "ghat" split by the
 tokenizer, as in chapter 4). The numbers are the point of this chapter: the **first piece arrived after 905 ms**, the
@@ -177,7 +187,7 @@ from an AI Service method with the reactive module), and the page appends each p
 slow to your own executor.
 
 **Cancelling.** If the passenger closes the page, stop paying for tokens nobody will read: LangChain4j 1.24 lets a
-handler cancel the stream (`StreamingHandle.cancel()`).
+handler cancel the stream (`StreamingHandle.cancel()`; we checked it is in the lab's 1.24).
 
 **Errors mid-stream.** A connection can drop after half an answer. Decide what the user sees: the half answer with a
 note, or a retry.
@@ -193,7 +203,7 @@ You can now:
 
 Next, chapter 17: memory. Setu remembers what each passenger said earlier in the conversation.
 
-:::photo{src="/lesson-images/langchain4j/l4j-16-notes.webp" alt="Handwritten notes about streaming: answers arrive token by token; first words in under a second; a handler has partial, complete and error; TokenStream needs start(); same total time, less waiting" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-16-notes.webp" alt="Sketchnote, Streaming (show each piece as it arrives): The model writes one token at a time. Streaming hands you each piece at once, so the reader starts before the answer ends. The flow: Question, StreamingChatModel, onPartialResponse, onCompleteResponse. What we measured: first piece after 905 ms, all after 2103 ms; same total time, less waiting; a TokenStream does nothing until start(); token usage arrives in onCompleteResponse." ai="true"}
 One page of notes for this chapter.
 :::
 :::

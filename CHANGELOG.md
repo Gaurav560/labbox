@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 16 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (completing the future in `onPartialResponse`; no `start()`).
+- The streaming animation is now a still timeline from the measured run (first piece 905 ms, all 2,103 ms).
+- Checked in a lab machine, twice: 55 pieces, first after 1,325 and 1,160 ms, all after 2,188 and 1,964 ms (now in the
+  lesson). Checked in the lab's 1.24: `LambdaStreamingResponseHandler` and `StreamingHandle.cancel()` exist. A new
+  sketchnote.
+
 ## 26 November: LangChain4j chapter 15 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (keeping `String` and parsing yourself; returning `String` instead of the enum). A
