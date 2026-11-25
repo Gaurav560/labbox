@@ -34,7 +34,7 @@ With tool call confirmation, the tool-calling loop changes for the tools you mar
    running), and sends the results back to the model, which writes the final answer.
 
 :::diagram{name="ai-tool-confirmation"}
-The model proposes a booking; the loop pauses; the visitor says yes or no; only then does the tool run (or not), and the model answers.
+The real booking from this chapter's app (26 November): proposed, paused, confirmed, run.
 :::
 
 Marking a tool takes one attribute:
@@ -46,7 +46,7 @@ public String bookSeats(...) { ... }
 
 Spring AI keeps nothing while it waits: the pause is an ordinary response, and the resumption is an ordinary request.
 Your application keeps the conversation in the meantime, which also means a pause survives a restart if you store it
-somewhere durable.
+somewhere durable. (This chapter's controller keeps pauses in a map in memory, which is fine for a lesson.)
 
 **Check yourself:** with `requiresConfirmation = true`, what has happened to the seats when `/book` returns the pending
 call? (Nothing. No part of the model's reply has run yet.)
@@ -109,7 +109,12 @@ $ curl -s -X POST "localhost:8080/book/b7c5eaae-0cf5-46e1-b8c1-29f538470a5a/conf
 :::
 
 :::step{type=task task=confirm_booking title="Your turn: no booking without a yes" file="08-tool-safety/src/main/java/com/atlas/BookingTools.java" line="18"}
-In `08-tool-safety`, the `bookSeats` tool runs the moment the model asks. Make it wait for the visitor's decision.
+In `08-tool-safety`, the `bookSeats` tool runs the moment the model asks. Make it wait for the visitor's decision:
+
+1. Open `BookingTools.java`.
+2. On the `@Tool` annotation of `bookSeats`, add `requiresConfirmation = true` after the description.
+
+The usual slip: putting it on `@ToolParam`. That annotation has no such attribute, so the code does not compile.
 
 ```bash run
 cd 08-tool-safety && mvn -q -o spring-boot:run
@@ -119,7 +124,8 @@ cd 08-tool-safety && mvn -q -o spring-boot:run
 curl -s -G localhost:8080/book --data-urlencode visitor=ria --data-urlencode "q=Please book 2 seats for the 16:00 show on 2026-11-28." | jq .
 ```
 
-You should get a `pendingId` and a pending `bookSeats` call instead of a booking; confirm it with
+You should get a `pendingId` and a pending `bookSeats` call instead of a booking (we got exactly that shape again on
+26 November, and the yes booked the 2 seats); confirm it with
 `curl -s -X POST "localhost:8080/book/ID/confirm?yes=true"` (with the real id). Press **Check**: it tests a no and a
 yes.
 :::
@@ -134,8 +140,9 @@ I can't book seats for that date. The show is too far in the future. Please choo
 ```
 
 "Too far in the future" is invented. Nobody said that; the model filled the gap with a plausible story. A deny
-message is an instruction to the model, so it should say what happened **and** what to say. The message became "The
-visitor chose not to book. Nothing was booked. Say only that, kindly, and offer more help.", and the same no now gives:
+message is an instruction to the model, so it should say what happened **and** what to say. The message became "The visitor chose not to book. Nothing was booked. Say only that, kindly, and offer more help.", and the same no now gives
+(our re-run on 26 November: "I couldn't complete the booking for you. If you need help with anything else or would
+like to try again, just let me know!"):
 
 ```text
 I couldn't book the seats for you. If you need help with anything else, feel free to ask!
@@ -177,7 +184,7 @@ A `ToolContext` parameter is not shown to the model at all, so the model cannot 
 fact of identity and permission: the user, the tenant, the account.
 
 :::diagram{name="ai-tool-context"}
-The model fills the tool's arguments; the tool context goes straight from your application to the tool, around the model.
+The real "for my friend Sam" request (26 November): the model filled the arguments, the app filled the visitor.
 :::
 :::
 
@@ -191,20 +198,31 @@ arguments. Whose booking is it?
 - [ ] Nobody's: the call fails
 :::explain
 The tool has no `visitorName` parameter any more, so that argument has nowhere to go, and the visitor comes from the
-context, set by your code.
+context, set by your code. We tried it as Ria: "Book 1 seat for my friend Sam for the 16:00 show". The tool's result
+was "Booked 1 seats for ria". But the model's answer said "I have booked 1 seat for your friend Sam": it repeated the
+visitor's words, not the tool's result. The booking was safe; the sentence was not. A real app shows the booking from
+the tool's result, not from the model's words.
 :::
 :::
 
 :::step{type=task task=tool_context title="Your turn: the right visitor" file="08-tool-safety/src/main/java/com/atlas/BookingTools.java" line="19"}
 Change `bookSeats` so that the visitor comes from the tool context (the controller already puts it there under the key
-`visitor`), and the model is no longer asked for a name.
+`visitor`), and the model is no longer asked for a name:
+
+1. Remove the `visitorName` parameter and its `@ToolParam`.
+2. Add a last parameter `ToolContext context`.
+3. `String visitor = (String) context.getContext().get("visitor");` and pass `visitor` to `bookings.book(...)`.
+
+The usual slip: a different key, such as `get("visitorId")`: it returns `null`, and the booking is made for
+nobody.
 
 Press **Check**: its pretend model asks to book for "Sam" while Ria is the visitor.
 :::
 
 :::step{type=try title="When a request breaks the rules"}
 What if a visitor asks for more seats than allowed? The parameter's description says "how many seats, 1 to 6", and the
-real model respected it before calling anything:
+real model respected it before calling anything (our re-run: "We can only book between 1 to 6 seats", again with no
+tool call):
 
 ```text
 $ curl -s -G localhost:8080/book --data-urlencode visitor=ria --data-urlencode "q=Book 7 seats for the 16:00 show on 2026-11-28." | jq -c .
@@ -213,8 +231,10 @@ $ curl -s -G localhost:8080/book --data-urlencode visitor=ria --data-urlencode "
 
 Descriptions guide the model, but they are not a guarantee. The real limit is in `BookingService.book`, which throws if
 seats are outside 1 to 6 or not free. When a tool throws, Spring AI's default exception processor sends the exception's
-message back to the model as the tool's result ("Only 4 seats are free for the 11:00 show"), so the model can tell the
-visitor instead of the request failing. Always validate in code; let descriptions save a round trip.
+message back to the model as the tool's result, so the model can tell the visitor instead of the request failing. We
+filled the 16:00 show (this chapter's `BookingService` starts every show at 20 free seats) and asked for 6 more: the
+tool's result was "Only 5 seats are free for the 16:00 show on 2026-11-28.", and Atlas answered "I can book 5 seats
+for the 16:00 show on 2026-11-28. Would you like me to do that?" Always validate in code; let descriptions save a round trip.
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -246,17 +266,17 @@ application, which knows who is really asking.
 :::step{type=deep-dive title="Go deeper: policies, many tools, and agents that act"}
 **Policies.** `requiresConfirmation` is the default policy. A `ToolCallConfirmationPolicy` can also look at the arguments
 (confirm only bookings of more than 4 seats), or name tools you cannot annotate, such as tools from an MCP server
-(chapter 10), with `spring.ai.tools.confirmation.tools=bookSeats,cancelBooking`.
+(chapter 10), with `spring.ai.tools.confirmation.tools=bookSeats,cancelBooking`. (Both are in the lab's Spring AI; it
+also has `spring.ai.tools.limits.*` settings that cap how many tool calls one request may make.)
 
 **Every call of a reply needs a decision.** If the model asks for two tools at once and only one needs confirmation,
-the whole reply pauses, and your decisions must cover both calls. Spring AI refuses to resume otherwise, so nothing can
-slip through.
+the whole reply pauses, and you give a decision for every call in it.
 
-**Too many tools.** Each tool's description is sent with every request. Spring AI 2.1's **Tool Search Tool** lets the
-model search a large set of tools and receive only the few it needs, which saves tokens and keeps the model's choice
-sharp.
+**Too many tools.** Each tool's description is sent with every request. Spring AI's **Tool Search Tool** (in the Spring AI 2
+reference; not in this lab's image) lets the model search a large set of tools and receive only the few it needs,
+which saves tokens and keeps the model's choice sharp.
 
-**Agents that act.** Assistants that book, pay and send messages for people are called **agents** (chapter 20). The rule
+**Agents that act.** Assistants that book, pay and send messages for people are called **agents** (chapter 19). The rule
 of this chapter scales up: let the model propose, keep identity in your code, and have a person decide anything that
 cannot be undone.
 :::
@@ -272,7 +292,7 @@ You can now:
 
 Next, chapter 9: writing your own advisor, the extension point behind memory, retrieval and guardrails.
 
-:::photo{src="/lesson-images/spring-ai/springai-08-notes.webp" alt="Handwritten notes about tools you can trust: requiresConfirmation = true; propose, pause, decide; deny messages say what to say; identity in the ToolContext; validate in code" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-08-notes.webp" alt="Sketchnote, Tools you can trust (confirmation and the tool context): The model may propose a booking, but a person decides. Who the booking is for comes from your app, never from the model. The flow: Model proposes bookSeats, Pause: nothing booked, Visitor: yes or no, Tool runs only on yes. What we found: requiresConfirmation = true makes it wait; asked for Sam, the booking was still Ria's; the model's sentence still said Sam; a thrown error became the model's reply: 5 seats." ai="true"}
 One page of notes for this chapter.
 :::
 :::

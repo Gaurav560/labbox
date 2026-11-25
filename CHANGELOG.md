@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: Spring AI chapter 8 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`requiresConfirmation` on `@ToolParam`; a different context key).
+- Both animations are now still pictures from real runs: the booking proposed, paused, confirmed and run; and the
+  "for my friend Sam" request, with the model's arguments, the app's tool context and the tool's real result.
+- Checked in a lab machine: the pending call and the yes, the improved deny message, 7 seats refused without a tool
+  call. Found and taught: asked as Ria to book "for my friend Sam", the booking was Ria's (the tool context worked)
+  but the model's sentence said "for your friend Sam"; a real app shows the booking from the tool's result. The
+  thrown-error path is now a real run ("Only 5 seats are free for the 16:00 show", and Atlas offered 5); the made-up
+  example ("Only 4 seats ... 11:00") is gone, and the lesson says the service starts each show at 20 seats. Checked in
+  the lab's Spring AI: `ToolCallConfirmationPolicy`, `spring.ai.tools.confirmation.tools`, and `spring.ai.tools.limits`.
+  An unverified "refuses to resume" was removed; agents are chapter 19 (not 20). A new sketchnote.
+
 ## 26 November: Spring AI chapter 7 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (comparing a date with "Monday"; tools never offered with

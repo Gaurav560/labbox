@@ -1776,36 +1776,55 @@ function AiToolCalling() {
 }
 
 function AiToolConfirmation() {
+  // Still (owner, 26 November): chapter 8's real booking, paused and confirmed.
+  const rows: [string, string, BoxTone][] = [
+    ["the visitor (ria)", "Please book 2 seats for ... 16:00 on 2026-11-28.", "plain"],
+    ["model call 1: proposes", "bookSeats {date: 2026-11-28, time: 16:00, seats: 2}", "accent"],
+    ["Spring AI pauses: nothing booked", "/book returns a pendingId and the pending call", "highlight"],
+    ["the visitor decides", "yes: allow(key); no: deny(key, message)", "plain"],
+    ["Java runs bookSeats (only on yes)", "Booked 2 seats for ria at the 16:00 show ...", "copy"],
+    ["model call 2: the answer", "I have booked 2 seats for you ... Enjoy the show!", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="propose, then decide"
-      intro="Press Play to follow a booking that waits for a yes."
-      label="the model proposes a booking; the loop pauses before anything runs; the app shows the call to the visitor; the visitor says yes or no; a yes runs the tool, a no answers the model with a message; the model writes the final answer"
-      steps={[
-        { label: "1. The model proposes", says: "bookSeats(2026-11-28, 16:00, 2 seats)." },
-        { label: "2. The loop pauses", says: "requiresConfirmation: nothing runs; the reply returns to the app." },
-        { label: "3. The visitor decides", says: "The app shows the call: book 2 seats at 16:00?" },
-        { label: "4a. Yes", says: "The tool runs: 2 seats booked. The result goes back to the model." },
-        { label: "4b. No", says: "The tool does not run; the model gets the deny message instead." },
-        { label: "5. The answer", says: "The model tells the visitor what really happened." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="The model proposes bookSeats, Spring AI pauses and returns the pending call, the visitor says yes or no, the tool runs only on yes, and the model answers">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
 function AiToolContext() {
+  // Still (owner, 26 November): chapter 8's real "for my friend Sam" booking, from the gateway's log.
   return (
-    <SketchSteps
-      title="arguments and context"
-      intro="Press Play to see what the model can and cannot set."
-      label="the model fills the tool's arguments such as the date and seats; the app puts the visitor in the tool context; spring ai hands both to the tool; the model never sees the context and cannot change it"
-      steps={[
-        { label: "1. The model fills arguments", says: "date 2026-11-28, time 16:00, seats 2." },
-        { label: "2. The app sets the context", says: "visitor = ria, from the login or the screen." },
-        { label: "3. The tool gets both", says: "bookSeats(date, time, seats, context)." },
-        { label: "4. Out of reach", says: "The model never sees the context: whatever it says, the booking is Ria's." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="The model fills date, time and seats; the app puts visitor ria in the tool context, around the model; bookSeats books for ria, although the visitor asked for Sam">
+      <Box x={8} y={4} w={204} h={96} label="" />
+      <text className="dg-label" x={20} y={28}>the model's arguments</text>
+      <text className="dg-note" x={20} y={52}>date: 2026-11-28</text>
+      <text className="dg-note" x={20} y={72}>time: 16:00</text>
+      <text className="dg-note" x={20} y={92}>seats: 1</text>
+      <Box x={228} y={4} w={206} h={96} label="" tone="accent" />
+      <text className="dg-label" x={240} y={28}>the app's tool context</text>
+      <text className="dg-note" x={240} y={52}>visitor: ria</text>
+      <text className="dg-note" x={240} y={72}>(the model never sees it)</text>
+      <Arrow x1={110} y1={102} x2={180} y2={138} />
+      <Arrow x1={330} y1={102} x2={262} y2={138} />
+      <Box x={120} y={140} w={200} h={40} label="bookSeats" tone="copy" code />
+      <Arrow x1={220} y1={182} x2={220} y2={204} />
+      <Box x={8} y={206} w={426} h={56} label="" tone="copy" />
+      <text className="dg-label" x={20} y={228}>the tool's result</text>
+      <text className="dg-note" x={20} y={250}>Booked 1 seats for ria at the 16:00 show on 2026-11-28.</text>
+      <text className="dg-note" x={8} y={290}>The visitor asked "for my friend Sam": the booking is Ria's.</text>
+      <text className="dg-note" x={8} y={310}>(The model's sentence still said "for your friend Sam".)</text>
+    </Svg>
   );
 }
 
