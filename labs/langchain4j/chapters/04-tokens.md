@@ -19,7 +19,8 @@ In chapter 3 you cut text into words. Models cut it into **tokens**: common word
 split into pieces, and anything (an emoji, a typo, a new place name) can always be spelled out from smaller pieces.
 Each token is then a number, an index in the model's vocabulary.
 
-Here is gpt-4o-mini's real tokenizer at work on some Setu text:
+Here is gpt-4o-mini's real tokenizer at work on some Setu text (we ran o200k_base again on 26 November: exactly these
+pieces and ids):
 
 ```text
 3 tokens: [L][onav][ala]  ids [43, 16531, 2528]
@@ -94,7 +95,11 @@ what fits in the context window.
 :::
 
 :::step{type=task task=count_tokens title="Your turn: count like the model" file="04-tokens/src/main/java/com/setu/Tokens.java" line="13-16"}
-Finish `Tokens.count(text)`: return how many tokens gpt-4o-mini sees, by asking `ESTIMATOR`.
+Finish `Tokens.count(text)`: return how many tokens gpt-4o-mini sees, by asking `ESTIMATOR`: one line,
+`return ESTIMATOR.estimateTokenCountInText(text);`.
+
+The usual slip: `text.length()`, which counts Java characters. It happens to give 6 for the three emojis, and 8
+instead of 3 for "Lonavala".
 
 ```bash run
 cd /workspace/04-tokens && mvn -q compile exec:java
@@ -143,7 +148,7 @@ only makes sense next to the messages just before it). The rule has one subtlety
 even if an older, shorter message would fit, because a conversation with a hole in the middle confuses the model.
 
 :::diagram{name="l4j-context-window"}
-A long chat slides past a fixed window: the newest messages stay inside, the oldest fall out.
+This chapter's real five-message chat, counted with o200k_base and fitted into 40 tokens.
 :::
 :::
 
@@ -153,6 +158,12 @@ Finish `Context.fit(messages, budget)`:
 1. walk from the **newest** message (the last) backwards, adding up `Tokens.count` of each;
 2. stop at the first message that would take the total over `budget`;
 3. return the kept messages **oldest first**, in their original order.
+
+The usual slips:
+
+- Skipping a message that does not fit and carrying on with older ones: that makes the hole in the middle the
+  concept warned about.
+- Returning the kept messages newest first, in the order you walked.
 
 Press **Check**.
 :::
@@ -164,7 +175,8 @@ With a budget of 40 tokens, the model sees:
   Passenger: Can she get a lower berth?
 ```
 
-With 40 tokens to spend, only the last two messages fit. The model would know about the 7:15 Ghat Express and the lower
+With 40 tokens to spend, only the last two messages fit: 9 tokens, then 25 (34 in all); the next one, 14 tokens,
+would make 48. (Re-run on 26 November: the same output.) The model would know about the 7:15 Ghat Express and the lower
 berth, but not that the passenger is travelling with her grandmother, or that the trip is next Sunday. If the next
 question is "Which day did I say?", it cannot know. That is the trade-off of every chat memory: what to keep, and what
 it costs to keep it.
@@ -236,7 +248,7 @@ You can now:
 Next, chapter 5: how a model represents meaning, as long lists of numbers called embeddings, computed by a real model
 running inside your program.
 
-:::photo{src="/lesson-images/langchain4j/l4j-04-notes.webp" alt="Handwritten notes about tokens: models read tokens, not words; Lonavala is 3 tokens; Marathi needs more tokens; context window: 128,000 tokens; keep the newest messages that fit" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-04-notes.webp" alt="Sketchnote, Tokens (the pieces a model reads, and pays for): Models read tokens: common words are one piece, rare words are several. Cost and the context window are counted in tokens. The flow: Text, Tokenizer: o200k_base, Token ids, Count against the window. What we measured: Lonavala = 3 tokens: L + onav + ala; the same question: 9 in English, 18 in Marathi; budget 40: only the last 2 messages fit; stop at the first message that does not fit." ai="true"}
 One page of notes for this chapter.
 :::
 :::

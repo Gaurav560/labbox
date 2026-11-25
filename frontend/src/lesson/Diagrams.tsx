@@ -2222,19 +2222,31 @@ function L4jNeuron() {
 }
 
 function L4jContextWindow() {
+  // Still (owner, 26 November): chapter 4's real chat, counted with o200k_base, fitted into a 40-token budget.
+  const rows: [string, number, string, boolean][] = [
+    ["Passenger: Can she get a lower berth?", 9, "9", true],
+    ["Setu: The Ghat Express leaves Pune at 7:15 ...", 25, "34", true],
+    ["Passenger: We want the morning train ...", 14, "48: over 40, stop", false],
+    ["Setu: Hello! How can I help you plan ...", 14, "not looked at", false],
+    ["Passenger: Hello! I am travelling with my ...", 13, "not looked at", false],
+  ];
   return (
-    <SketchSteps
-      title="a window that slides"
-      intro="Press Play to watch a chat grow past the window."
-      label="messages arrive one after another; while they fit in the token budget the model sees them all; when a new message arrives the oldest falls out of the window"
-      steps={[
-        { label: "1. A short chat", says: "Three messages, 45 tokens: all inside the window." },
-        { label: "2. It grows", says: "Every new message is added at the end." },
-        { label: "3. Over the budget", says: "The total passes the budget: something has to go." },
-        { label: "4. The oldest falls out", says: "Travelling with my grandmother next Sunday is no longer sent." },
-        { label: "5. What the model sees", says: "Only the newest messages that fit, oldest first." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="Walking from the newest message back: 9 tokens, then 25 for a total of 34; the next, 14 tokens, would make 48, over the budget of 40, so the walk stops; only the last two messages are sent">
+      <text className="dg-label" x={8} y={16}>newest first</text>
+      <text className="dg-label" x={432} y={16} textAnchor="end">tokens, running total</text>
+      {rows.map(([msg, t, total, kept], i) => {
+        const y = 26 + i * 58;
+        return (
+          <g key={i} opacity={kept ? 1 : 0.55}>
+            <Box x={8} y={y} w={426} h={48} label="" tone={kept ? "copy" : "plain"} />
+            <text className="dg-note" x={18} y={y + 20}>{msg}</text>
+            <text className="dg-note" x={18} y={y + 39}>{t} tokens</text>
+            <text className="dg-label" x={424} y={y + 39} textAnchor="end">{total}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={322}>Sent, oldest first: only the two green messages.</text>
+    </Svg>
   );
 }
 
