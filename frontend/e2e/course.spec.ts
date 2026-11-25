@@ -23,11 +23,11 @@ test("a lab card opens the lab's page; the feature wears the category's print", 
   await expect(page.getByRole("heading", { level: 1, name: "Go from zero" })).toBeVisible();
   await expect(page.locator(".metro-now")).toContainText("Numbers and text"); // the chapters as a metro map
   await expect(page.locator(".metro-now")).toContainText("You are here");
-  await expect(page.locator(".course-where")).toContainText("step 4 of");
+  await expect(page.locator(".course-where")).toContainText("scene 4 of");
 
   await page.getByRole("link", { name: /^Continue: Chapter \d+ →$/ }).click(); // count-free: courses grow
   await expect(page).toHaveURL(/\/labs\/go-basics\?chapter=02-numbers-and-text$/);
-  await expect(page.locator(".step-count")).toHaveText(/^Step 4 of/);
+  await expect(page.locator(".step-count")).toHaveText(/^Scene 4 of/);
 
   await request.put("/api/labs/sql-from-zero/chapters/01-select-and-where/progress", { headers, data: { current_step: 1 } });
   await page.goto("/labs");
@@ -49,7 +49,7 @@ test("a lab card opens the lab's page; the feature wears the category's print", 
   const beans = page.locator(".metro-station", { hasText: "Beans and the application context" });
   await beans.getByRole("link", { name: "How a class becomes a bean" }).click();
   await expect(page).toHaveURL(/chapter=05-beans&step=4$/);
-  await expect(page.locator(".step-count")).toHaveText(/^Step 5 of/);
+  await expect(page.locator(".step-count")).toHaveText(/^Scene 5 of/);
 
   // The old Skill maps section is gone; its links land on the course page or the dashboard.
   await page.goto("/skills/go-basics");

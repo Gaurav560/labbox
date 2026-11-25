@@ -22,7 +22,7 @@ interface Tour {
 
 const TOURS: Tour[] = [
   {
-    lab: "python-basics", step: "Step 2 of 6", title: "Functions give values back",
+    lab: "python-basics", step: "Scene 2 of 6", title: "Functions give values back",
     read: "A function can hand a value back with return. Then you can print it, store it, or pass it on.",
     q: "add(2, 3) returns a + b. What comes back?", options: ["5", "23", "None"], answer: 0,
     file: "math_utils.py", code: "def add(a, b):\n    return a + b",
@@ -30,7 +30,7 @@ const TOURS: Tour[] = [
     result: "3 of 3 checks passed", xp: 60,
   },
   {
-    lab: "java-basics", step: "Step 3 of 7", title: "Strings join with +",
+    lab: "java-basics", step: "Scene 3 of 7", title: "Strings join with +",
     read: "In Java, + glues strings together. Duke uses it to greet every new learner by name.",
     q: 'What is "book" + "shelf"?', options: ['"bookshelf"', '"book shelf"', "A compile error"], answer: 0,
     file: "Greet.java", code: 'public class Greet {\n    public static void main(String[] a) {\n        System.out.println("Hello, " + a[0]);\n    }\n}',
@@ -38,7 +38,7 @@ const TOURS: Tour[] = [
     result: "2 of 2 checks passed", xp: 40,
   },
   {
-    lab: "go-basics", step: "Step 4 of 6", title: "Loop over a slice",
+    lab: "go-basics", step: "Scene 4 of 6", title: "Loop over a slice",
     read: "range walks a slice one item at a time. Add each price to a running total and return it.",
     q: "s := []int{1, 2}; s = append(s, 3). What is len(s)?", options: ["2", "3", "It panics"], answer: 1,
     file: "total.go", code: "func Total(prices []int) int {\n    sum := 0\n    for _, p := range prices {\n        sum += p\n    }\n    return sum\n}",
@@ -46,7 +46,7 @@ const TOURS: Tour[] = [
     result: "4 of 4 checks passed", xp: 80,
   },
   {
-    lab: "javascript-inside-out", step: "Step 2 of 5", title: "map makes a new array",
+    lab: "javascript-inside-out", step: "Scene 2 of 5", title: "map makes a new array",
     read: "map calls your function on every item and collects the answers in a brand new array.",
     q: "What is [1, 2, 3].map(n => n * 2)?", options: ["[2, 4, 6]", "6", "[1, 2, 3]"], answer: 0,
     file: "double.js", code: "export const double = (xs) =>\n  xs.map((n) => n * 2);",
@@ -54,7 +54,7 @@ const TOURS: Tour[] = [
     result: "3 of 3 checks passed", xp: 60,
   },
   {
-    lab: "sql-from-zero", step: "Step 3 of 8", title: "WHERE picks the rows",
+    lab: "sql-from-zero", step: "Scene 3 of 8", title: "WHERE picks the rows",
     read: "WHERE keeps only the rows that match. ORDER BY then sorts what is left.",
     q: "Which rows does WHERE price > 20 keep?", options: ["Prices above 20", "Prices of 20 and up", "Every row"], answer: 0,
     file: "query.sql", code: "SELECT item, price\nFROM menu\nWHERE price > 20\nORDER BY price;",
@@ -70,7 +70,7 @@ const TOURS: Tour[] = [
     result: "p99 4.2 s → 38 ms", xp: 325,
   },
   {
-    lab: "fastapi-first-api", step: "Step 3 of 6", title: "Path parameters",
+    lab: "fastapi-first-api", step: "Scene 3 of 6", title: "Path parameters",
     read: "Put {item} in the path and FastAPI hands that part of the URL to your function.",
     q: "GET /menu/vada%20pav. What is item?", options: ['"vada pav"', '"vada%20pav"', '"/menu"'], answer: 0,
     file: "main.py", code: '@app.get("/menu/{item}")\ndef price(item: str):\n    return {"item": item, "price": MENU[item]}',
@@ -78,7 +78,7 @@ const TOURS: Tour[] = [
     result: "2 of 2 checks passed", xp: 40,
   },
   {
-    lab: "spring-boot-first-api", step: "Step 2 of 6", title: "Map a URL to a method",
+    lab: "spring-boot-first-api", step: "Scene 2 of 6", title: "Map a URL to a method",
     read: "A controller method answers a URL. Spring turns what it returns into JSON for you.",
     q: "Which annotation answers GET /orders?", options: ['@GetMapping("/orders")', '@PostMapping("/orders")', "@Bean"], answer: 0,
     file: "OrderController.java", code: '@GetMapping("/orders")\nList<Order> all() {\n    return repo.findAll();\n}',
@@ -86,7 +86,7 @@ const TOURS: Tour[] = [
     result: "3 of 3 checks passed", xp: 60,
   },
   {
-    lab: "express-api", step: "Step 2 of 5", title: "Send JSON back",
+    lab: "express-api", step: "Scene 2 of 5", title: "Send JSON back",
     read: "res.json() turns an object into JSON and sets the right headers in one call.",
     q: "What does res.json() set for you?", options: ["Content-Type: application/json", "A cookie", "Status 404"], answer: 0,
     file: "server.js", code: 'app.get("/health", (req, res) => {\n  res.json({ ok: true });\n});',
@@ -94,7 +94,7 @@ const TOURS: Tour[] = [
     result: "2 of 2 checks passed", xp: 40,
   },
   {
-    lab: "python-collections", step: "Step 3 of 6", title: "Count with a dict",
+    lab: "python-collections", step: "Scene 3 of 6", title: "Count with a dict",
     read: "A dict maps keys to values. get() with a default makes counting things a one liner.",
     q: 'counts is empty. What is counts.get("ladoo", 0)?', options: ["0", "None", "KeyError"], answer: 0,
     file: "orders.py", code: "counts = {}\nfor item in orders:\n    counts[item] = counts.get(item, 0) + 1\nprint(counts)",
@@ -102,7 +102,7 @@ const TOURS: Tour[] = [
     result: "3 of 3 checks passed", xp: 60,
   },
   {
-    lab: "java-collections", step: "Step 2 of 6", title: "A map holds one value per key",
+    lab: "java-collections", step: "Scene 2 of 6", title: "A map holds one value per key",
     read: "put() on a key that is already there replaces the old value. merge() can add to it instead.",
     q: 'put("pens", 1), then put("pens", 5). What is get("pens")?', options: ["5", "1", "6"], answer: 0,
     file: "Stock.java", code: 'Map<String, Integer> stock = new HashMap<>();\nstock.merge("pens", 1, Integer::sum);\nSystem.out.println(stock);',
@@ -110,7 +110,7 @@ const TOURS: Tour[] = [
     result: "2 of 2 checks passed", xp: 40,
   },
   {
-    lab: "redis-in-practice", step: "Step 3 of 6", title: "Cache-aside",
+    lab: "redis-in-practice", step: "Scene 3 of 6", title: "Cache-aside",
     read: "Look in Redis first. On a miss, do the slow work once and keep the answer for 60 seconds.",
     q: 'Redis holds price:samosa = 20. What does r.get("price:samosa") return?', options: ['"20", a string', "20, a number", "None"], answer: 0,
     file: "app.py", code: 'cached = r.get(f"price:{item}")\nif cached is not None:\n    return {"item": item, "price": int(cached)}',
@@ -118,7 +118,7 @@ const TOURS: Tour[] = [
     result: "2 of 2 checks passed", xp: 80,
   },
   {
-    lab: "linux-on-call", step: "Step 2 of 6", title: "Count and rank",
+    lab: "linux-on-call", step: "Scene 2 of 6", title: "Count and rank",
     read: "awk picks a field, sort and uniq -c count repeats. Pipes chain small tools into answers.",
     q: "A file has the lines b, a, b. What does uniq -c print?", options: ["1 b, 1 a, 1 b", "2 b and 1 a", "1 a and 2 b"], answer: 0,
     file: "top_ips.sh", code: "awk '{print $2}' \"$1\" | sort | uniq -c \\\n  | sort -rn | head -3 | awk '{print $2}'",
@@ -126,7 +126,7 @@ const TOURS: Tour[] = [
     result: "3 of 3 checks passed", xp: 70,
   },
   {
-    lab: "git-without-fear", step: "Step 3 of 7", title: "Undo a pushed mistake",
+    lab: "git-without-fear", step: "Scene 3 of 7", title: "Undo a pushed mistake",
     read: "Never rewrite history other people have. git revert adds a new commit that undoes the bad one.",
     q: "The bad commit is already pushed. What is safe?", options: ["git revert", "git reset --hard", "git commit --amend"], answer: 0,
     file: "terminal", code: "git log --oneline\ngit revert --no-edit 6af4e0e",

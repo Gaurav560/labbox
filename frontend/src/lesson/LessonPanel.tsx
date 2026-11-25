@@ -35,20 +35,20 @@ export default function LessonPanel({ steps, current, visited, onGo, children }:
   return (
     <section className="lesson" aria-label="Lesson">
       {count > 1 && (
-        <nav className="step-nav" aria-label="Steps">
+        <nav className="step-nav" aria-label="Scenes">
           <ol className="step-dots">
             {steps.map((s, i) => (
               <li key={i}>
                 <button
                   className={`dot ${i === current ? "dot-current" : i <= visited ? "dot-seen" : ""} dot-${s.type}`}
                   onClick={() => onGo(i)}
-                  aria-label={`Step ${i + 1}: ${s.title ?? DOT_LABEL[s.type]}`}
+                  aria-label={`Scene ${i + 1}: ${s.title ?? DOT_LABEL[s.type]}`}
                   aria-current={i === current ? "step" : undefined}
                 />
               </li>
             ))}
           </ol>
-          <span className="step-count">Step {current + 1} of {count}</span>
+          <span className="step-count">Scene {current + 1} of {count}</span>
         </nav>
       )}
       <div className="lesson-scroll" ref={scrollRef}>

@@ -18,7 +18,7 @@ test("a lesson photo whose first load fails still appears", async ({ page, reque
   const notes = page.waitForRequest(/\/lesson-images\/rag\/rag-01-notes\.webp/);
 
   await page.goto("/labs/rag-vector-databases?chapter=why-rag");
-  await expect(page.locator(".step-count")).toHaveText(/Step 1 of \d+/);
+  await expect(page.locator(".step-count")).toHaveText(/Scene 1 of \d+/);
   await notes;  // the recap's notes page, 13 steps ahead, is already on its way
 
   const photo = page.locator("figure.lesson-photo img").first();

@@ -57,7 +57,7 @@ test("technical diagrams keep their geometry and readable arrows when the lesson
     await page.goto("/labs/python-basics");
     await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
     await page.getByLabel("Chapter", { exact: true }).selectOption("06-lists");
-    await page.getByRole("button", { name: /Step 8: Sorting, and a list with two names/ }).click();
+    await page.getByRole("button", { name: /Scene 8: Sorting, and a list with two names/ }).click();
     const figure = page.locator("figure.diagram");
     await expect(figure.getByRole("img")).toHaveAccessibleName(/same list/);
     await expect(figure.getByText("its own list")).toHaveCSS("font-family", /Inter/);

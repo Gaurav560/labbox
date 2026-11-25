@@ -28,14 +28,14 @@ test("read first, then action, and remembered", async ({ page, request }) => {
   expect(ws.status).not.toBe("running");
 
   // The list of steps on the left, closed by default: every step by name, the current one marked; the panel button opens and closes it.
-  const outline = page.getByRole("navigation", { name: "Steps in this chapter" });
+  const outline = page.getByRole("navigation", { name: "Scenes in this chapter" });
   await expect(outline).toHaveCount(0); // closed by default
-  await page.getByRole("button", { name: "Show the list of steps" }).click();
+  await page.getByRole("button", { name: "Show the list of scenes" }).click();
   await expect(outline.locator(".step-outline-item")).toHaveCount(steps.length);
   await expect(outline.locator("[aria-current=step]")).toHaveCount(1);
-  await page.getByRole("button", { name: "Close the list of steps" }).click();
+  await page.getByRole("button", { name: "Close the list of scenes" }).click();
   await expect(outline).toHaveCount(0);
-  await page.getByRole("button", { name: "Show the list of steps" }).click();
+  await page.getByRole("button", { name: "Show the list of scenes" }).click();
   await expect(outline).toBeVisible();
 
   // A step about a file shows those lines, read-only, with the step's own lines marked.

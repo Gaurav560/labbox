@@ -47,7 +47,7 @@ test("FastAPI app in the Preview tab", async ({ page }) => {
   await page.goto("/labs/fastapi-first-api");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
   await expect(term(page)).toContainText("learner", { timeout: 20_000 });
-  await runInTerminal(page, /Step 4: Run it and look/, "uvicorn main:app");
+  await runInTerminal(page, /Scene 4: Run it and look/, "uvicorn main:app");
   await expect(term(page)).toContainText("Uvicorn running on http://0.0.0.0:8000", { timeout: 20_000 });
 
   await page.getByRole("tab", { name: "Preview" }).click();
@@ -85,7 +85,7 @@ public class MerchantController {
   });
   expect(r.ok()).toBeTruthy();
   await expect(term(page)).toContainText("learner", { timeout: 20_000 });
-  await runInTerminal(page, /Step 7: Build and run/, "java -jar target/shop-api.jar");
+  await runInTerminal(page, /Scene 7: Build and run/, "java -jar target/shop-api.jar");
   await expect(term(page)).toContainText("Started ShopApiApplication", { timeout: 180_000 });
 
   await page.getByRole("tab", { name: "Preview" }).click();
@@ -102,7 +102,7 @@ test("Postgres incident: setup, timer, fix, live check", async ({ page }) => {
   await expect(page.locator(".service-dot", { hasText: "db" })).toBeVisible({ timeout: 30_000 });
   await expect(page.locator(".setup-banner")).toBeHidden({ timeout: 90_000 });
 
-  await page.getByRole("button", { name: /Step 5: Pager/ }).click();
+  await page.getByRole("button", { name: /Scene 5: Pager/ }).click();
   await expect(page.locator(".incident [role=timer]")).toContainText(/1[0-5]:\d\d/);
 
   // Check before fixing: a live check, with the metric.

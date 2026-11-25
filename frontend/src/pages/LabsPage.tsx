@@ -111,7 +111,7 @@ function Feature({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
         <h2 className="u-feature-title">{next.lab_title}</h2>
         <p className="u-feature-where">
           Chapter {next.chapter_number} of {next.chapters}: <strong>{next.chapter_title}</strong>
-          {cont && <> · step {next.step} of {next.steps}</>}
+          {cont && <> · scene {next.step} of {next.steps}</>}
         </p>
         {!cont && next.reason && <p className="u-feature-reason">{next.reason}</p>}
         {cont && <InkProgress value={pct} label="Progress in this chapter" />}

@@ -57,7 +57,7 @@ test("JavaScript teaches each concept with one distinct picture, where it is tau
         expect(seen.has(name), name).toBeFalsy();
         seen.add(name);
 
-        await page.getByRole("button", { name: `Step ${index + 1}: ${step.title}`, exact: true }).click();
+        await page.getByRole("button", { name: `Scene ${index + 1}: ${step.title}`, exact: true }).click();
         if (step.type === "deep-dive") await page.locator(".deep-dive summary").click();
         const figure = page.locator(".step-card figure.picture");
         await expect(figure.locator("figcaption")).toHaveText(caption);
