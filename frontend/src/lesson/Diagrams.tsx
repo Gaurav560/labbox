@@ -3406,6 +3406,41 @@ function RagMatrix() {
   );
 }
 
+/** Three ways of cutting three real sections (FM-4.1 59 words, FM-4.2 66, FM-4.3 66), drawn to scale, with each
+ *  method's real hit@1 from chapter 4's comparison over the whole manual. */
+function RagChunks() {
+  const W = 440 / 191;                           // pixels per word: the three sections are 191 words
+  const secs = [["FM-4.1", 59], ["FM-4.2", 66], ["FM-4.3", 66]] as const;
+  const starts = [0, 59, 125];
+  const bar = (x: number, w: number, y: number, tone: string, key: string | number, label?: string) => (
+    <g key={key} className={`dg-box dg-${tone}`}>
+      <rect x={x} y={y} width={Math.max(2, w - 2)} height={26} rx={4} />
+      {label ? <text x={x + w / 2} y={y + 18} textAnchor="middle" style={{ fontSize: 12.5 }}>{label}</text> : null}
+    </g>
+  );
+  const borders = starts.slice(1).map((st) => st * W);
+  const row = (y: number, title: string, hit: string) => (
+    <><text className="dg-note" x={0} y={y - 6}>{title}</text><text className="dg-note" x={440} y={y - 6} textAnchor="end">hit@1 {hit}</text></>
+  );
+  return (
+    <Svg viewBox="0 0 440 352" label="Three sections cut four ways: 15-word windows, 60-word windows with overlap, 300-word windows, and one chunk per section; one chunk per section, title first, finds the right section first most often">
+      <text className="dg-note" x={0} y={14}>three sections of the manual, to scale (191 words)</text>
+      {secs.map(([id, n], i) => bar(starts[i] * W, n * W, 22, "accent", id, `${id}  (${n} words)`))}
+      {row(80, "windows of 15 words (cross the section borders)", "73%")}
+      {Array.from({ length: 13 }, (_, i) => bar(i * 15 * W, Math.min(15, 191 - i * 15) * W, 80, "plain", "a" + i))}
+      {row(138, "windows of 60 words, 10 overlapping", "77%")}
+      {[0, 50, 100, 150].map((st, i) => bar(st * W, Math.min(60, 191 - st) * W, 138 + (i % 2) * 14, "plain", "b" + i))}
+      {row(212, "windows of 300 words: one window holds all three and more", "77%")}
+      {bar(0, 440, 212, "plain", "c", "one blurry chunk about many things")}
+      {row(270, "one chunk per section, title first", "91%")}
+      {secs.map(([id, n], i) => bar(starts[i] * W, n * W, 270, "highlight", "d" + id, `${id}. title + text`))}
+      {borders.map((x) => <line key={x} x1={x} y1={20} x2={x} y2={300} className="dg-arrow" style={{ strokeDasharray: "3 4", markerEnd: "none" }} />)}
+      <text className="dg-note" x={0} y={326}>Dashed lines: where one section ends and the next begins.</text>
+      <text className="dg-note" x={0} y={344}>hit@1: how often the best chunk holds the right section (22 questions).</text>
+    </Svg>
+  );
+}
+
 function RagIvf() {
   return (
     <SketchSteps
@@ -3478,6 +3513,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-flow": RagFlow,
   "rag-embed": RagEmbed,
   "rag-matrix": RagMatrix,
+  "rag-chunks": RagChunks,
   "rag-ivf": RagIvf,
   "rag-hnsw": RagHnsw,
   "rag-binary": RagBinary,

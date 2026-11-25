@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 4 rewritten (easy, a little detailed, checked)
+
+- Why documents are cut (the model reads at most 512 tokens, about 380 words, for bge-small; one vector cannot stand
+  for many topics), tokens, overlap, Markdown headings, `partition`, `split()` and metadata are explained where they
+  first appear; the section cutter is read line by line; tasks list their steps and the usual slips.
+- A new still picture, `rag-chunks`: three real sections (FM-4.1 59 words, FM-4.2 66, FM-4.3 66) drawn to scale and cut
+  four ways, with each method's real hit@1 from the comparison (73%, 77%, 77%, 91%).
+- Checked against the code and data: section sizes 52 to 95 words, 2,008 words in all; a window gets credit for every
+  section it touches; 864 / 45 = 19 times. Results are labelled as this manual's and these 22 questions', and the lesson
+  now says that with 22 questions one question is about 4.5 points, so 86% against 91% is a hint, not a proof. A new
+  notes page, checked letter by letter.
+
 ## 25 November: RAG chapter 3 rewritten (easy, a little detailed, checked)
 
 - Nearest-neighbour search, brute force, normalizing, `axis=-1` and `keepdims` (read line by line), the matrix product
