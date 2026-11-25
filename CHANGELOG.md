@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 2 rewritten: a still picture of both reducers, every slip tried
+
+- Re-ran the solution: the same three lines. Tried the quiz and the claims: without the log reducer only
+  check_location's line is left; without the severity reducer urgent became high.
+- Found by logging the reducer's calls: LangGraph's first call is `higher("", "urgent")` (current starts as the empty
+  string), so leaving out the empty check stops the run with `ValueError: '' is not in list`; the lesson now says
+  this, and it is the second task's usual slip. The first task's slip (`operator.add()` with brackets) was tried:
+  `TypeError: add expected 2 arguments, got 0`.
+- `Annotated` is explained at first use; `input_schema` and `output_schema` checked in 1.2.24.
+- The animation is now a still picture of the two real updates with and without reducers; a new sketchnote.
+
 ## 26 November: LangGraph chapter 1 rewritten: a still picture of the state after each node, slips tried
 
 - Re-ran the solution in a lab machine (LangGraph 1.2.24): the same output, word for word.
