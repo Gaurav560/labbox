@@ -2348,6 +2348,46 @@ function LcTokens() {
   );
 }
 
+function LcCosineMatrix() {
+  // Real cosines from chapter 3's vectors.json (text-embedding-3-small, 256 numbers): each new question against
+  // each FAQ question; the highest in each row is the one closest_question picks.
+  const cols = [["office", "hours"], ["onion", "rate"], ["cold", "storage"], ["crop", "loan"], ["grape", "harvest"]];
+  const rows: [string, number[]][] = [
+    ["kanda bhav kay aahe aaj?", [0.112, 0.155, -0.046, 0.071, 0.006]],
+    ["tomatoes cold for a week?", [0.125, 0.177, 0.425, 0.23, 0.339]],
+    ["office open on Sunday?", [0.613, 0.23, 0.066, 0.024, 0.094]],
+    ["money to buy seeds", [0.172, 0.17, 0.079, 0.354, 0.287]],
+    ["vines sprayed, pick Friday?", [0.241, 0.15, 0.109, 0.256, 0.628]],
+  ];
+  const lx = 168, cw = 54, top = 46, rh = 40;
+  return (
+    <Svg viewBox="0 0 440 272" label="Cosine of each new question with each FAQ question; the highest in each row is the match">
+      <text className="dg-note" x={0} y={18}>new question</text>
+      <text className="dg-note" x={0} y={34}>(shortened)</text>
+      {cols.map(([a, b], j) => (
+        <g key={a}>
+          <text className="dg-note" x={lx + j * cw + cw / 2} y={18} textAnchor="middle">{a}</text>
+          <text className="dg-note" x={lx + j * cw + cw / 2} y={34} textAnchor="middle">{b}</text>
+        </g>
+      ))}
+      {rows.map(([q, vals], i) => {
+        const best = vals.indexOf(Math.max(...vals));
+        return (
+          <g key={q}>
+            <text className="dg-note" x={0} y={top + i * rh + 24}>{q}</text>
+            <g className="dg-cells-small">
+              {vals.map((v, j) => (
+                <Box key={j} x={lx + j * cw + 2} y={top + i * rh + 4} w={cw - 4} h={rh - 8} label={v.toFixed(3)} tone={j === best ? (i === 0 ? "highlight" : "copy") : "plain"} code />
+              ))}
+            </g>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={0} y={top + 5 * rh + 18}>Green: the match. Yellow: a match, but only 0.155 against 0.112.</text>
+    </Svg>
+  );
+}
+
 function LcAgentLoop() {
   return (
     <SketchSteps
@@ -3856,6 +3896,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "lc-memory-threads": LcMemoryThreads,
   "lc-ai-circles": LcAiCircles,
   "lc-tokens": LcTokens,
+  "lc-cosine-matrix": LcCosineMatrix,
   "lc-next-token": LcNextToken,
   "lc-chat-request": LcChatRequest,
   "l4j-streaming": L4jStreaming,
