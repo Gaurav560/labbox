@@ -3503,19 +3503,33 @@ function LgInterrupt() {
 }
 
 function LgFork() {
+  // Still (owner, 26 November): chapter 11's real history for thread C-311, both branches.
+  const trunk: [string, BoxTone][] = [
+    ["-1 input: next __start__", "plain"], ["0: next triage", "plain"], ["1: kind other, next route", "highlight"],
+    ["2: next reply", "plain"], ["3: 72 hours, done", "highlight"],
+  ];
+  const branch: [string, BoxTone][] = [
+    ["2 update: dirty_water", "accent"], ["3: next reply", "plain"], ["4: 4 hours, done", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="Correcting a step, and the branch it makes"
-      intro="Press Play to follow complaint C-311."
-      label="Time travel"
-      steps={[
-        { label: "First run", says: "triage says 'other', route picks the repair crew, reply promises 72 hours. Checkpoints at every step." },
-        { label: "History", says: "get_state_history lists them, newest first. The one with next = ('route',) holds triage's answer." },
-        { label: "update_state", says: "Write kind dirty_water and severity urgent there, as triage: a new checkpoint, source 'update'." },
-        { label: "invoke(None)", says: "From the new checkpoint, route runs again: health team. Then reply: 4 hours." },
-        { label: "Two branches", says: "The old steps with 'other' are still in the history; the newest checkpoint is the corrected one." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 366" label="Thread C-311: steps -1 to 3 of the first run, with triage deciding other at step 1 and a 72-hour reply at step 3. update_state as triage, from the step 1 checkpoint, makes a new branch: an update at step 2 with dirty_water, then reply at step 3 and a 4-hour answer at step 4. The old steps stay in the history">
+      <text className="dg-label" x={8} y={18}>first run (kept)</text>
+      <text className="dg-label" x={232} y={18}>the correction, as triage</text>
+      {trunk.map(([t, tone], i) => (
+        <g key={t}>
+          <Box x={8} y={28 + i * 60} w={200} h={42} label={t} tone={tone} />
+          {i < trunk.length - 1 && <Arrow x1={108} y1={70 + i * 60} x2={108} y2={88 + i * 60} />}
+        </g>
+      ))}
+      <Arrow x1={208} y1={169} x2={232} y2={186} />
+      {branch.map(([t, tone], i) => (
+        <g key={t}>
+          <Box x={232} y={176 + i * 56} w={200} h={40} label={t} tone={tone} />
+          {i < branch.length - 1 && <Arrow x1={332} y1={216 + i * 56} x2={332} y2={232 + i * 56} />}
+        </g>
+      ))}
+      <text className="dg-note" x={8} y={358}>Eight checkpoints in all: nothing was overwritten.</text>
+    </Svg>
   );
 }
 

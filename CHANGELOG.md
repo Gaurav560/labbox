@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 11 rewritten: the real history pictured as two branches, slips tried
+
+- Re-ran the solution: the same output, line for line. The animation is now a still picture of thread C-311's eight
+  checkpoints: the first run and the branch made by the correction.
+- Tried: comparing `.next` with the string "route" finds nothing (the first task's slip); `invoke(fields,
+  snapshot.config)` instead of `update_state` starts over and puts "other" back (the second task's slip); the quiz's
+  `as_node="route"` stops with `KeyError: 'team'` (as the lesson already said). Found: here `as_node` may be left out,
+  because LangGraph takes the update as triage's; the lesson notes it and keeps `as_node` for clarity.
+  `delete_thread` exists on the checkpointer.
+- Both tasks list their steps. A new sketchnote.
+
 ## 26 November: LangGraph chapter 10 rewritten: J-201 pictured, the brief fix tried, resume mistakes quoted
 
 - Re-ran the five commands on a new `repairs.db`: the same results, and the first brief again invented "due to frequent
