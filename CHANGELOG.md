@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: LangChain chapter 16 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (calling on_line only at the end; no node filter).
+- Checked through the lab gateway twice: the same steps every time, tools asked for after 2.0 and 1.5 s and answers at
+  3.6 and 3.1 s (the lesson's run: 2.35 and 3.95), now given as a range. Corrected: Myers (1985) found that people
+  prefer progress indicators (the lesson said more); "the docs now recommend stream_events v3" became what the lab's
+  LangGraph has (versions v1, v2 the default, and v3). A new notes page.
+
 ## 25 November: LangChain chapter 15 rewritten (easy, a little detailed, checked)
 
 - Stateless, checkpointer, thread and config are explained where they first appear; both tasks list their steps and
