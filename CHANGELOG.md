@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 3 rewritten: the four real paths pictured, the recursion limit measured
+
+- Re-ran the solution: the same four lines. A still picture now shows each street's tries and where it ended.
+- The quiz's loop without a limit was tried: LangGraph 1.2.24 stopped it with `GraphRecursionError: Recursion limit
+  of 10007 reached` after 1.5 seconds (the default is 10,007 in this version, settable per run; 25 stopped it in
+  0.01 seconds). The explanation now gives the numbers and the cost of a model call in such a loop.
+- Tried: a misspelled target stops the build (`found unknown target 'health_teem'`); with no target list the diagram
+  draws a wrong `route --> __end__`; a router returning "health team" stops with `KeyError`; `<=` gives 3 tries; a
+  router returning two nodes that both write `team` stops with `InvalidUpdateError` (the deep dive now says so).
+- Both tasks list their steps and a tried slip. A new sketchnote.
+
 ## 26 November: LangGraph chapter 2 rewritten: a still picture of both reducers, every slip tried
 
 - Re-ran the solution: the same three lines. Tried the quiz and the claims: without the log reducer only
