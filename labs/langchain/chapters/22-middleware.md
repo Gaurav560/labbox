@@ -7,7 +7,8 @@ Navin works. Before the whole co-op uses it, the volunteer who runs the server l
   window (chapters 2 and 15).
 
 Each worry could be fixed inside the agent loop, if you wrote the loop. With `create_agent` you do not change the loop:
-you add **middleware**, small pieces that run at fixed points around every model call and every tool call. LangChain
+you add **middleware**: small pieces of code that run at fixed points around every model call and every tool call
+(each such point is a **hook**). LangChain
 ships ready-made middleware for exactly these three problems.
 
 :::mission
@@ -29,7 +30,7 @@ those points:
 | `after_model`, `after_agent` | after each call, after the run | checking what the model wrote |
 
 :::diagram{name="lc-middleware"}
-Middleware runs at fixed points of the agent loop: before the agent, before and around each model call, around each tool call.
+The hooks of one run, and what chapter 22's middleware does at each.
 :::
 
 You pass a list, `create_agent(..., middleware=[a, b, c])`, and they run in that order. Nothing else in Navin changes.
@@ -66,13 +67,18 @@ It takes a function, `on_error(error, request)`:
 
 Why choose? Because exceptions can carry details nobody should see: a database address, a password in a connection
 error, a stack of file paths. The co-op's `ValueError` ("no rate for garlic") is meant for people; anything else stays in
-the server's logs. The docs put it plainly: handling is **opt-in**, so internal exceptions are never sent to the model
-or the member unless you choose to.
+the server's logs. Handling is **opt-in**: in the lab's LangChain, without `ToolErrorMiddleware` every tool exception stops the run
+(chapter 11 showed it), and with it only the errors your function turns into text reach the model.
 :::
 
 :::step{type=task task=tool_errors title="Your turn: which errors the model may see" file="22-middleware/agent.py" line="11-16"}
-Finish `on_tool_error(error, request)`: for a `ValueError` return `f"{request.tool_call['name']} failed: {error}"`;
-for anything else return `None`.
+Finish `on_tool_error(error, request)`:
+
+1. `if isinstance(error, ValueError):` return `f"{request.tool_call['name']} failed: {error}"`.
+2. Otherwise return `None`.
+
+The usual slip: returning `str(error)` for every exception, which sends internal details (a database address, a
+file path) to the model and on to the member.
 
 Press **Check**.
 :::
@@ -90,9 +96,13 @@ detail: whatever the summary leaves out is gone.
 :::
 
 :::step{type=task task=limits_and_summaries title="Your turn: add the middleware" file="22-middleware/agent.py" line="19-29"}
-Add `middleware=[...]` to `navin_agent()`: `ToolErrorMiddleware(on_tool_error)`, then
-`ModelCallLimitMiddleware(run_limit=5, exit_behavior="end")`, then
-`SummarizationMiddleware("openai:ai-chat", trigger=("messages", 8), keep=("messages", 4))`.
+Add `middleware=[...]` to `navin_agent()`, in this order:
+
+1. `ToolErrorMiddleware(on_tool_error)`
+2. `ModelCallLimitMiddleware(run_limit=5, exit_behavior="end")`
+3. `SummarizationMiddleware("openai:ai-chat", trigger=("messages", 8), keep=("messages", 4))`
+
+The usual slip: `ToolErrorMiddleware(on_tool_error())` with brackets: pass the function, not its result.
 
 ```bash run
 cd /workspace/22-middleware && python main.py
@@ -102,7 +112,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="An error explained, and a conversation summarised"}
-First, a question that makes the model call a tool with a crop the co-op does not trade:
+First, a question that makes the model call a tool with a crop the co-op does not trade. We asked "Call mandi_price
+for onion and for garlic, both, and tell me both rates." (and got the same four messages again on 25 November):
 
 ```text
 AIMessage [{'name': 'mandi_price', 'args': {'crop': 'onion'}, ...}, {'name': 'mandi_price', 'args': {'crop': 'garlic'}, ...}]
@@ -114,7 +125,8 @@ AIMessage 'The mandi rate for onion is ₹1850 per quintal. We do not have a rat
 The model asked for both rates at once. The garlic call raised `ValueError`; your `on_tool_error` turned it into a
 message; the model explained it in plain words. In chapter 11 the same error stopped the whole run.
 
-Then `main.py`, a six-turn conversation with Ravi:
+Then `main.py`, a six-turn conversation with Ravi (a real run; on 25 November we got the same message counts, 2, 4,
+8, 8, 8 and 6, in different words):
 
 ```text
 $ python main.py
@@ -146,8 +158,9 @@ the thread now starts with: HumanMessage "Here is a summary of the conversation 
 ```
 
 (This time the model declined garlic without calling the tool at all, as in chapter 11: the tool's description was
-enough.) Watch the message count: it grows to 8 and then stays there, because each time the thread passes 8 messages,
-the older ones are replaced by a summary. The last answer proves the summary kept what mattered: Ravi grows onions,
+enough.) Watch the message count: 2, 4, then 8, 8, 8, then 6. Each time the thread would pass 8 messages, the older ones are
+replaced by one summary message, the newest 4 stay, and the new turn's messages are added; so the count stays at 8 or
+below. The last answer proves the summary kept what mattered: Ravi grows onions,
 although his introduction is no longer in the thread. The thread now starts with that summary, written by the model.
 :::
 
@@ -208,7 +221,7 @@ You can now:
 
 Next, chapter 23: writing your own middleware.
 
-:::photo{src="/lesson-images/langchain/lc-22-notes.webp" alt="Handwritten notes about built-in middleware: Middleware: hooks around the loop; Tool errors: you choose; Internal errors stay private; run_limit=5 stops runaways; 8 messages kept: a summary" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-22-notes.webp" alt="Handwritten notes about middleware: Middleware runs at fixed hooks around every model call and tool call. ToolErrorMiddleware turns the errors you choose into messages. Other errors stop the run and stay out of the model's sight. ModelCallLimitMiddleware ends a run after 5 model calls. SummarizationMiddleware replaced older messages with a summary. Our thread stayed at 8 messages or fewer." ai="true"}
 One page of notes for this chapter.
 :::
 :::
