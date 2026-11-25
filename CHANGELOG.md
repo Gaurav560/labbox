@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangGraph chapter 21 rewritten: a quiz answer corrected, the server's refusal reproduced
+
+- Ran `langgraph dev` and the client in a lab machine: the server answered on one thread; this time the agent listed
+  the tickets and asked before fetching statuses (chapter 13's other path, 6 messages instead of 9). The lesson says so.
+- Corrected: the quiz said a restarted `langgraph dev` loses its threads. We restarted it: `threads.search()` found the
+  thread with all 6 messages, loaded from `.langgraph_api/store.pckl`. The quiz and the concept step now say where
+  `langgraph dev` keeps threads.
+- Reproduced: the starter graph with its own checkpointer is refused with the lesson's "Heads up! ... includes a custom
+  checkpointer" message, and the server does not start.
+- Both tasks list their steps and a slip (the leftover `InMemorySaver()` after removing its import; `.content` on a
+  message that arrives as a dictionary). The animation is now a still picture of the run and the restart. A new
+  sketchnote.
+
 ## 26 November: LangGraph chapter 20 rewritten: the real test grid pictured, the quiz's weak test run
 
 - Re-ran pytest: 3 passed in 0.19 s; with the planted `TEAMS` change, only the routing test failed, with the same

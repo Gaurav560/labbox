@@ -68,12 +68,16 @@ Graph 'harsh' failed to load: ValueError: Heads up! Your graph 'graph' from './h
 To simplify your setup and use the built-in persistence, please remove the custom checkpointer ...
 ```
 
-(Shortened with "...".) The server keeps every thread in its own store, in memory for `langgraph dev` and in Postgres in
-production. Your graph only describes the work.
+(Shortened with "..."; we started the starter graph again on 26 November and got the same message, and the server did
+not start.) The server keeps every thread in its own store: for `langgraph dev`, in memory, saved to files in a
+`.langgraph_api` folder next to `langgraph.json`; in production, in Postgres. Your graph only describes the work.
 :::
 
 :::step{type=task task=server_graph title="Your turn: a graph the server accepts" file="21-server/harsh/graph.py" line="17-29"}
 In `build_graph`, compile without a checkpointer: `return graph.compile()`, and remove the `InMemorySaver` import.
+
+The usual slip: removing the import but keeping `checkpointer=InMemorySaver()`. Python then stops at once with
+`NameError: name 'InMemorySaver' is not defined`, before the server's own message.
 
 Start the server in the background and ask it whether it is up:
 
@@ -99,13 +103,19 @@ Messages travel as JSON: `{"role": "user", "content": "..."}` going in, dicts wi
 `runs.wait` returns the thread's state when the run finishes.
 
 :::diagram{name="lg-server"}
-The client only knows a thread id; the server loads the thread, runs the graph, saves it, and answers.
+The real run of 26 November: one thread, one run per message, and a restart.
 :::
 :::
 
 :::step{type=task task=sdk_client title="Your turn: talk to the server" file="21-server/client.py" line="7-11"}
-Finish `ask(client, thread_id, text)`: `state = client.runs.wait(thread_id, "harsh", input={"messages": [{"role": "user",
-"content": text}]})`, then return `state["messages"][-1]["content"]`.
+Finish `ask(client, thread_id, text)`:
+
+1. `state = client.runs.wait(thread_id, "harsh", input={"messages": [{"role": "user", "content": text}]})`;
+2. `return state["messages"][-1]["content"]`.
+
+The usual slip: `state["messages"][-1].content`, as in the earlier chapters. Over HTTP the messages arrive as plain
+dictionaries, not message objects, so it is `["content"]`; `.content` raises `AttributeError: 'dict' object has no
+attribute 'content'`.
 
 ```bash run
 cd /workspace/21-server && python client.py "Any update on my complaints?" "98220"
@@ -129,6 +139,10 @@ $ python client.py "Any update on my complaints?" "98220"
 (thread 01a2098c: 9 messages saved by the server)
 ```
 
+We ran it again on 26 November. The server answered the same way, except that this time the agent listed the two
+tickets and asked "Would you like to know the status of either ticket?" instead of fetching both statuses: chapter
+13's two paths again, and 6 messages saved instead of 9.
+
 The same agent as chapter 13, now behind HTTP. The client never touched a checkpointer, yet the second message knew the
 first: the server loaded thread `01a2098c`, ran the graph, and saved it. Nine messages: two from the citizen, the
 first answer, two tool requests, three tool results and the final answer.
@@ -141,11 +155,13 @@ run with Postgres and Redis behind it; the client code does not change.
 :::question
 You restart `langgraph dev` and send another message on thread `01a2098c`. What happens?
 :::
-- [ ] The answer knows all nine earlier messages
-- [x] The thread is gone: `langgraph dev` keeps threads in memory, for development only
+- [x] The thread is still there: `langgraph dev` saves its threads to the `.langgraph_api` folder
+- [ ] The thread is gone: a development server keeps nothing
 - [ ] The server refuses to start
 :::explain
-`langgraph dev` is for building and debugging. A deployed server keeps threads in Postgres.
+We tried it on 26 November: after a restart, `threads.search()` found thread `01a214d7` with all 6 messages, loaded
+from `.langgraph_api/store.pckl`. Delete that folder for a clean start. It is still a development server: one
+machine, one folder. A deployed server keeps threads in Postgres.
 :::
 :::
 
@@ -197,7 +213,7 @@ You can now:
 
 Next, chapter 22: Deep Agents, for long tasks with files and helpers.
 
-:::photo{src="/lesson-images/langgraph/lg-21-notes.webp" alt="Handwritten notes about a local server: langgraph.json -> the graph; langgraph dev = local server; no checkpointer of your own; thread = talk, run = one go; runs.wait / runs.stream" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-21-notes.webp" alt="Handwritten notes titled A local server, langgraph dev, threads and runs: langgraph.json says where the graph is, and langgraph dev serves it over HTTP and keeps the threads itself, so the graph must not bring its own checkpointer; langgraph.json, langgraph dev, threads.create, runs.wait, the answer as JSON; with its own checkpointer the server refused the graph; after a restart the thread was still there; it is kept in .langgraph_api; messages come back as dicts, so use the content key" ai="true"}
 One page of notes for this chapter.
 :::
 :::
