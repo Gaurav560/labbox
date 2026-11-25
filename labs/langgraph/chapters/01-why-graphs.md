@@ -36,6 +36,9 @@ def classify(state: Ticket) -> dict:
     return {"kind": kind_of(state["text"])}     # an update: LangGraph merges it into the state
 ```
 
+`Ticket` is a `TypedDict`: an ordinary Python dictionary whose keys and value types are written down, so editors and
+LangGraph know its shape. `total=False` means a key may be missing at first (`kind` and `reply` arrive later).
+
 A node never changes the state directly; it returns what should change. That one rule is what lets LangGraph save the
 state after every step, show you each step, pause, and resume: the rest of this course depends on it.
 
@@ -89,13 +92,21 @@ app = graph.compile()                  # checks the graph and makes it runnable
 app.invoke({"text": "No water since morning"})   # {'text': ..., 'kind': 'no_water'}
 ```
 
-`compile()` checks the graph (for example, an edge to a node that does not exist) and returns something you can
-`invoke` and `stream`, like a LangChain model or agent.
+`compile()` checks the graph and returns something you can `invoke` and `stream`, like a LangChain model or agent.
+We tried an edge to a misspelled node, `add_edge(START, "clasify")`: `compile()` stopped with `ValueError: Found edge
+ending at unknown node 'clasify'`.
 :::
 
 :::step{type=task task=first_graph title="Your turn: Harsh's first graph" file="01-why-graphs/graph.py" line="24-28"}
-Finish `build_graph()`: add the nodes `"classify"` and `"write_reply"`, the edges START -> classify -> write_reply ->
-END, and return `graph.compile()`.
+Finish `build_graph()`:
+
+1. `graph.add_node("classify", classify)` and `graph.add_node("write_reply", write_reply)`;
+2. `graph.add_edge(START, "classify")`, `graph.add_edge("classify", "write_reply")` and
+   `graph.add_edge("write_reply", END)`;
+3. `return graph.compile()`.
+
+The usual slip: forgetting the middle edge, `classify -> write_reply`. There is no error. We tried it on 26 November:
+the graph compiled, ran, and stopped after `classify`, so the final state had a `kind` but no `reply`.
 
 Press **Check**.
 :::
@@ -111,12 +122,20 @@ for update in app.stream({"text": "Pipe burst near the school"}, stream_mode="up
 
 You will use streams to show progress, to debug a graph, and (later) to see exactly where a run paused.
 :::diagram{name="lg-run"}
-Watch the state grow: each node returns only its own keys, and LangGraph merges them in.
+The real run on "Pipe burst near the school" (26 November): each update, and the state after it.
 :::
 :::
 
 :::step{type=task task=trace_steps title="Your turn: the steps of a run" file="01-why-graphs/graph.py" line="31-35"}
-Finish `steps(text)`: stream the graph with `stream_mode="updates"` and return the node names, in the order they ran.
+Finish `steps(text)`:
+
+1. loop over `build_graph().stream({"text": text}, stream_mode="updates")`;
+2. each item is a dictionary with one key, the node's name: collect those names in order;
+3. return the list.
+
+The usual slip: `stream_mode="values"`. Then each item is the whole state, not an update, and its keys are the
+state's keys. We tried it: `[['text'], ['text', 'kind'], ['text', 'kind', 'reply']]` instead of
+`['classify', 'write_reply']`.
 
 ```bash run
 cd /workspace/01-why-graphs && python main.py
@@ -153,7 +172,8 @@ graph TD;
 ...
 ```
 
-(The diagram text is shortened with "...".) Each final state holds everything the run learned: the text it started
+(The diagram text is shortened with "...". We ran it again on 26 November with LangGraph 1.2.24: the same output,
+word for word.) Each final state holds everything the run learned: the text it started
 with, the kind `classify` added, the reply `write_reply` added. The promised hours come from the board's rules in
 `rules.py`: 4 for dirty water, which can make people ill; 72 for a bill.
 
@@ -201,7 +221,7 @@ Every later feature (checkpoints, time travel, human approval) rests on steps be
 
 :::step{type=deep-dive title="Go deeper: graphs and agents"}
 **create_agent is a graph.** LangChain's `create_agent` builds a LangGraph graph with two nodes, `model` and `tools`, and a
-loop between them. In Part 3 you build that graph yourself.
+loop between them. (We listed the nodes of one: `['__start__', 'model', 'tools', '__end__']`.) In Part 3 you build that graph yourself.
 
 **Workflows and agents.** In a **workflow** the graph's edges decide what happens next; in an **agent** a model
 decides. LangGraph does both, and most real systems mix them: fixed steps where the rules are known, a model where they
@@ -221,7 +241,7 @@ You can now:
 
 Next, chapter 2: state that grows. Reducers decide how each update joins the state.
 
-:::photo{src="/lesson-images/langgraph/lg-01-notes.webp" alt="Handwritten notes about graphs: a graph = nodes + edges; state flows through every node; node: state in, update out; START -> ... -> END; compile() before invoke()" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-01-notes.webp" alt="Handwritten notes titled Graphs, state, nodes and edges: a graph is a state that travels through nodes, and each node is a Python function that reads the state and returns only the keys it changes; START, classify adds kind, write_reply adds reply, END, final state text, kind, reply; an edge to a misspelled node stops compile; a missing middle edge gives no error and no reply; stream_mode updates gives the node names; draw_mermaid prints the graph picture" ai="true"}
 One page of notes for this chapter.
 :::
 :::
