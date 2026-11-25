@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): a new picture for AI
+
+- Owner: "I don't like this image, change it" (the eagle). AI now shows Hiroshige's Asakusa Ricefields and Torinomachi
+  Festival (One Hundred Famous Views of Edo, 1857; public domain): a white cat on a windowsill gazing out at Fuji and
+  the rice fields under a sunset sky. Fireworks at Ryogoku was tried too but looked dull when the panel opens.
+
 ## 25 November (Ukiyo): a public-domain print for AI
 
 - Owner: since the 1951 pagoda print may still be in copyright, "use an entirely cool, soothing image for AI". AI now

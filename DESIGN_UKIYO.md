@@ -62,7 +62,8 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 ## Artwork
 
 - Category pictures (`TRACK_IMAGES` in `components/UkiyoArt.tsx`, files in `public/ukiyo/tracks/`), all calm
-  Hiroshige prints, public domain: AI, an eagle gliding over the snowy bay at Fukagawa (1857, Rijksmuseum);
+  Hiroshige prints, public domain: AI, a cat on a windowsill gazing out at Fuji and the rice fields (Asakusa Ricefields and
+  Torinomachi Festival, 1857);
   (owner, 25 November: "cool images that soothe the eyes"): Languages, cherry blossoms on the Tama River
   embankment; Frameworks, the bamboo yards at Kyobashi under a full moon; System design, the drum bridge under
   wisteria at Kameido Tenjin; Databases, a boat on the Sumida with Azuma Bridge and Fuji (One Hundred Famous Views of

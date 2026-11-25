@@ -181,11 +181,11 @@ function CloudPrint() {
 }
 
 /**
- * Category pictures, all public domain (owner, 25 November). AI: Hiroshige's eagle over the snowy bay at Fukagawa
+ * Category pictures, all public domain (owner, 25 November). AI: Hiroshige's cat at the window, looking out at Fuji
  * (it replaced a 1951 pagoda print that may still be in copyright). Files in public/ukiyo/tracks/ (cropped to the print shape, 1000 px).
  */
 const TRACK_IMAGES: Record<string, string> = {
-  ai: "/ukiyo/tracks/ai-eagle.webp", // Hiroshige, Fukagawa Susaki and Jumantsubo, 1857 (public domain)
+  ai: "/ukiyo/tracks/ai-cat.webp", // Hiroshige, Asakusa Ricefields and Torinomachi Festival, 1857 (public domain)
   // Calm prints from Hiroshige's One Hundred Famous Views of Edo (1856 to 1858) and The Monkey Bridge (about 1842),
   // public domain (owner, 25 November: "cool images that soothe the eyes for the rest").
   languages: "/ukiyo/tracks/languages-tama-blossoms.webp",
