@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: Read mode uses the whole screen
+
+- On screens 1,200 px and wider, Read mode has three columns: the chapter's steps by name on the left (current step
+  highlighted, tasks and quick checks labelled), the lesson in the middle, the tasks on the right (Practice in Action
+  mode, Ask AI) where they stay in view. Below 1,200 px it is one column, as before.
+- Text keeps a reading width of 68 characters (Baymard: 50 to 75; WCAG: at most 80), while code, tables, diagrams and
+  photos break out to about 900 px, so code lines are no longer cut short.
+- The "← → keys" hint beside Continue is gone; Back and Continue say "Previous step (← key)" and "Next step (→ key)"
+  on hover. The top bar fits narrower laptops (no wrapped "← Labs"; the progress bar hides under 1,150 px).
+
 ## 25 November: Read mode and Action mode in every lab
 
 - A Read / Action switch in the lab's top bar (owner, 25 November). Read mode shows the lesson alone in a calm centred

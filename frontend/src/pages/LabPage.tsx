@@ -22,6 +22,7 @@ import { labBrand } from "../brand";
 import { MODEL_PREFIX, modelUri, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import ReadCode from "../lesson/ReadCode";
+import StepOutline from "../lesson/StepOutline";
 import { useStats } from "../stats";
 import { useTextSizes } from "../textSize";
 
@@ -703,6 +704,7 @@ export default function LabPage() {
               style={{ "--wm-logo": `url(${brand.logo})`, "--wm-color": brand.color } as CSSProperties}
             />
           )}
+          {reading && !phone && steps && steps.length > 1 && <StepOutline steps={steps} current={step} visited={visited} onGo={goStep} />}
           {stopReason && status !== "running" && status !== "starting" && (
             <div className="limit-banner" role="alert">
               <p>{stopReason}</p>
@@ -785,9 +787,13 @@ export default function LabPage() {
                 Reading mode. Writing and checking code works on a laptop or tablet; your place is saved, so you can pick it up there.
               </p>
             ) : reading ? (
-              activeTask && !activeTask.passed && (
+              activeTask && (
                 <div className="footer-actions">
-                  <button className="btn btn-primary read-practice" onClick={() => setMode("action")}>Practice in Action mode</button>
+                  {!activeTask.passed && <button className="btn btn-primary read-practice" onClick={() => setMode("action")}>Practice in Action mode</button>}
+                  <button className="btn btn-ghost btn-icon btn-ask-ai" onClick={() => setTutorOpen((o) => !o)} aria-expanded={tutorOpen}
+                    aria-label={activeTask.passed ? "Review with the tutor" : "Ask AI"} title={activeTask.passed ? "Review with the tutor" : "Ask the AI tutor"}>
+                    <span aria-hidden="true">✦</span>
+                  </button>
                 </div>
               )
             ) : (
