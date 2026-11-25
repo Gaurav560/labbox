@@ -22,6 +22,7 @@ import { labBrand } from "../brand";
 import { MODEL_PREFIX, modelUri, monaco } from "../monaco";
 import { usePersistentState } from "../persist";
 import ReadCode from "../lesson/ReadCode";
+import StepOutline from "../lesson/StepOutline";
 import { useStats } from "../stats";
 import { useTextSizes } from "../textSize";
 
@@ -97,6 +98,9 @@ export default function LabPage() {
   // terminal, for tasks and practice. The last one used is remembered; a first visit reads (owner, 25 November).
   const [mode, setMode] = usePersistentState<"read" | "action">("mode", "read");
   const reading = phone || mode === "read";
+  // Read mode's list of steps on the left; the × closes it, "Steps" brings it back (remembered).
+  const [outlineOpen, setOutlineOpen] = usePersistentState("outline", true);
+  const showOutline = reading && !phone;
   // "vscode": real VS Code in the machine (when the server has it); "classic": our Monaco editor.
   const [editorKind, setEditorKind] = usePersistentState<"vscode" | "classic">("editor", "vscode");
   const [ideError, setIdeError] = useState<string | null>(null);
@@ -672,7 +676,7 @@ export default function LabPage() {
   }
 
   return (
-    <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"}`} data-lab={labId}>
+    <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"} ${showOutline && outlineOpen ? "has-outline" : ""}`} data-lab={labId}>
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}
@@ -703,6 +707,9 @@ export default function LabPage() {
               style={{ "--wm-logo": `url(${brand.logo})`, "--wm-color": brand.color } as CSSProperties}
             />
           )}
+          {showOutline && steps && steps.length > 1 && (outlineOpen
+            ? <StepOutline steps={steps} current={step} visited={visited} onGo={goStep} onClose={() => setOutlineOpen(false)} />
+            : <button className="btn btn-small step-outline-open" onClick={() => setOutlineOpen(true)} title="Show the list of steps">☰ Steps</button>)}
           {stopReason && status !== "running" && status !== "starting" && (
             <div className="limit-banner" role="alert">
               <p>{stopReason}</p>

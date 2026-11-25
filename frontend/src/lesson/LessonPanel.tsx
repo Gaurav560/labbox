@@ -9,7 +9,7 @@ interface Props {
   children: React.ReactNode; // the current step card
 }
 
-const DOT_LABEL: Record<Step["type"], string> = {
+export const DOT_LABEL: Record<Step["type"], string> = {
   story: "Story",
   concept: "Concept",
   example: "Example",
