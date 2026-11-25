@@ -538,7 +538,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-log li { animation: ua-line .4s ease-out both; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ua-log b { color: var(--vermilion); font-weight: 700; }
 .ua-log strong { color: var(--text); font-weight: 600; }
-.ua-stamp { position: absolute; right: 16px; top: 14px; z-index: 2; opacity: 0; pointer-events: none; }
+.ua-stamp { position: absolute; right: 18px; top: 18px; z-index: 2; opacity: 0; pointer-events: none; }
+.ua-stamp svg { display: block; filter: drop-shadow(0 6px 10px #0005); }
+.ua-stamp circle { fill: #2f7d4f; stroke: #fffdf8; stroke-width: 3; }
+.ua-stamp path { fill: none; stroke: #fffdf8; stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 44; stroke-dashoffset: 44; }
+.ua-box.is-sealed .ua-stamp path { animation: ua-tick .45s .4s ease-out forwards; }
+@keyframes ua-tick { to { stroke-dashoffset: 0; } }
 .ua-box.is-sealed .ua-clock { visibility: hidden; }
 .ua-box.is-sealed .ua-stamp { animation: ua-stamp .45s .1s cubic-bezier(.3, 1.6, .5, 1) forwards; }
 .ua-ready { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 14px 18px 0; padding: 0;

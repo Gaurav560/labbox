@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): a green tick instead of the READY seal
+
+- Owner: "instead of READY, a green tick mark will be much better". When the machine is ready, a jade green circle
+  with a white rim stamps onto the lid's corner and its tick draws itself in.
+
 ## 25 November (Ukiyo): direction A's words
 
 - Owner: "write like: one click and we will spin a container for you with all the required ...". The heading is now

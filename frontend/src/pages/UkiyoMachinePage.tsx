@@ -7,7 +7,6 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import ThemeButton from "../components/ThemeButton";
-import { Seal } from "../components/UkiyoArt";
 
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
@@ -126,7 +125,9 @@ function LogosInABox() {
             <li key={p.name + i}><b>✓</b> <strong>{p.name}</strong> <span>{p.step}</span></li>
           ))}
         </ol>
-        <span className="ua-stamp" aria-hidden="true"><Seal lines={["READY"]} size={76} /></span>
+        <span className="ua-stamp" role="img" aria-label="Ready">
+          <svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="29" /><path d="M19 33.5l9 9 17-19" /></svg>
+        </span>
         <div className="ua-ready">
           <span><b>Ready</b> · first challenge: {lab.challenge}</span>
           <Link className="h-btn h-btn-primary" to="/login?signup=1">Start →</Link>
