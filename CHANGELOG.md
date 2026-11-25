@@ -1,5 +1,13 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 13 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (`new Assistant()`; importing the message class instead of the annotation).
+- The AI Service animation is now a still picture of the real call: the proxy (`jdk.proxy3.$Proxy28`), the resource
+  file, the messages, the answer.
+- Checked in a lab machine: the same two lines, the proxy's name included; the gateway's log shows the system message
+  exactly as the resource file holds it, final line break included. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 12 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (`totalTokenCount()` for one side; integer division). The code line
