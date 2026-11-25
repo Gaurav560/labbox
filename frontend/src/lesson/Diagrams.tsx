@@ -2428,19 +2428,28 @@ function L4jAiService() {
 }
 
 function L4jToolCall() {
+  // Still (owner, 26 November): chapter 19's real exchange, from the gateway's log.
+  const rows: [string, string, BoxTone][] = [
+    ["the question + the tool descriptions", "3 tickets Pune to Karjat this coming Saturday", "plain"],
+    ["model call 1 (194 tokens in): no text", "asks for nextDate(SATURDAY) and fare(Karjat)", "accent"],
+    ["LangChain4j runs your Java", "2026-11-28 and 140", "copy"],
+    ["model call 2 (263 tokens in)", "the results are in the conversation now", "accent"],
+    ["the answer", "Saturday is November 28, 2026; 3 tickets cost Rs 420", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="a tool call, step by step"
-      intro="Press Play to follow one question that needs Java."
-      label="the question goes to the model with the tool descriptions; the model asks for nextDate and fare; LangChain4j runs the Java methods; the results go back; the model answers"
-      steps={[
-        { label: "1. Question and tools", says: "3 tickets to Karjat this Saturday? plus the descriptions of fare and nextDate." },
-        { label: "2. The model asks", says: "No text: two tool calls, nextDate(SATURDAY) and fare(Karjat)." },
-        { label: "3. Java runs", says: "LangChain4j calls RailTools: 2026-11-28 and 140." },
-        { label: "4. Results go back", says: "Two tool messages are added to the conversation." },
-        { label: "5. The answer", says: "Saturday 28 November, three tickets for Rs 420." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="The model asks for two tools in one reply, Java runs them and returns 2026-11-28 and 140, and the second model call writes the answer with the right date and Rs 420">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

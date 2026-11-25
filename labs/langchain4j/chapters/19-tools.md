@@ -25,7 +25,7 @@ A model cannot run code. Tool calling is a conversation with an extra step:
 4. The model now writes its answer, using the result. It may ask for more tools first; LangChain4j keeps looping.
 
 :::diagram{name="l4j-tool-call"}
-The question and the tool descriptions go to the model; it asks for fare(Karjat); LangChain4j runs the Java method; the result 140 goes back; the model answers.
+This chapter's real exchange (re-run on 26 November), from the gateway's log.
 :::
 
 Here is the real exchange for "3 tickets from Pune to Karjat this coming Saturday", from the gateway's log. The
@@ -99,12 +99,18 @@ Finish `RailTools.nextDate(dayOfWeek)`:
 
 The `clock` field makes the tool testable: the check gives it a fixed Monday.
 
+The usual slip: `TemporalAdjusters.nextOrSame(day)`. On a Saturday, "this coming Saturday" would then be today,
+while the tool's description promises the next one, after today.
+
 Press **Check**.
 :::
 
 :::step{type=task task=tools_in_service title="Your turn: give Setu its tools" file="19-tools/src/main/java/com/setu/Desk.java" line="12-16"}
 Finish `Desk.assistant(model, tools)`: build the `Assistant` with `AiServices.builder(Assistant.class)`,
 `.chatModel(model)` and `.tools(tools)`. LangChain4j finds every `@Tool` method on the object.
+
+The usual slip: a fresh `new RailTools()` inside `assistant`, instead of the `tools` object you were given. It works
+with today's real date, so it looks fine, but the check's fixed Monday is ignored and its date test fails.
 
 ```bash run
 cd /workspace/19-tools && mvn -q compile exec:java
@@ -122,6 +128,9 @@ The next Saturday is on November 28, 2026. The fare for one adult ticket from Pu
 > How much is a ticket from Pune to Mumbai?
 We do not operate trains from Pune to Mumbai. Our services are available to Lonavala, Karjat, and Ratnagiri. Please let me know if you need fare information for any of these destinations.
 ```
+
+(We ran it again on 26 November, a Thursday: the same two answers, and the gateway's log showed the same two calls,
+194 and 263 tokens in. The Mumbai question took one call, 174 tokens in, with no tool.)
 
 The same request that went wrong in chapter 15, and now it is right: **28 November 2026** is the coming Saturday, and
 three tickets at Rs 140 are Rs 420. The model did the one thing it is good at (understanding "this coming Saturday" and
@@ -195,7 +204,7 @@ You can now:
 
 Next, chapter 20: tools you did not write. MCP lets Setu use a ready-made server's tools, here a filesystem of notices.
 
-:::photo{src="/lesson-images/langchain4j/l4j-19-notes.webp" alt="Handwritten notes about tools: tools are Java the model can ask for; @Tool describes when to call it; @P describes each argument; the model asks, Java runs, the model answers; facts and maths stay in Java" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-19-notes.webp" alt="Sketchnote, Tools (the model asks, your Java answers): Describe Java methods with @Tool. The model asks for the one it needs, LangChain4j runs it, and the result goes back to the model. The flow: Question + tool list, Model asks: nextDate, fare, Java runs them, Answer. What we measured: Saturday is November 28 again, not a Thursday; 3 tickets at Rs 140: Rs 420, from Java; two model calls: 194, then 263 tokens in; permissions belong inside the tool." ai="true"}
 One page of notes for this chapter.
 :::
 :::
