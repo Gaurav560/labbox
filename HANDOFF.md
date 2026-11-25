@@ -33,6 +33,8 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
+- **Latest (25 November, evening):** steps are "scenes"; Read mode's scene list (closed by default); Action mode
+  hides the lesson panel; Start machine in the Machine menu. Waiting for the owner's next small task or next lab.
 - **Latest (25 November, after the RAG rewrite):** Read mode and Action mode in every lab (CHANGELOG has the
   details); browser tests clean up their own machines (`scripts/labbox test-accounts`).
 - **Just finished (25 November):** the RAG lab rewritten chapter by chapter to `memory: lesson-rewrite-rules` (easy, a

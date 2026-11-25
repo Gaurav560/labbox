@@ -47,4 +47,6 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 ## Small tasks after each lab
 
 - After RAG (25 Nov): the Ukiyo "LOADING" plate fixed; browser tests now clean up their machines; old test machines
-  and folders removed; the model's answers in RAG chapters 11 and 13 re-run and matched; Read mode and Action mode added to every lab.
+  and folders removed; the model's answers in RAG chapters 11 and 13 re-run and matched; Read mode and Action mode added to every lab. Then: lesson steps renamed scenes; Read mode's
+  scene list on the left (closed by default, sidebar button); Action mode can hide the lesson panel; Start machine
+  moved into the Machine menu. Not kept: the three-column Read layout (reverted) and text size S at 95% (back to 90%).
