@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: LangChain chapter 23 rewritten (easy, a little detailed, checked)
+
+- Decorator, `ModelRequest` and `ToolCallRequest` are explained where they first appear; both tasks list their steps and
+  the usual slips (a lost space between the two prompt sentences; `request.tool_call.name` on a dict).
+- A new still picture: `audit_tools` around one real tool call (25 x 8 x 2 = 400).
+- Checked through the lab gateway: Marathi for Ravi, English for Asha, 400 both times, the same two audit lines. Found
+  and taught: a wrapper that returns nothing stops the run with `NotImplementedError: Unsupported message type`; to
+  block a call, return a `ToolMessage` (tried: the model told the member bookings are closed). The order of hooks was
+  checked with two middleware (before in list order, after in reverse, wraps nested). The history now says Kiczales
+  "described" cross-cutting needs (the name came later). A new notes page.
+
 ## 25 November: LangChain chapter 22 rewritten (easy, a little detailed, checked)
 
 - Middleware and hooks are explained where they first appear; both tasks list their steps and the usual slips
