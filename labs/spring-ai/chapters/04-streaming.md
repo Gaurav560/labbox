@@ -30,13 +30,15 @@ $ curl -s -o /dev/null -w 'first byte %{time_starttransfer}s, all %{time_total}s
 first byte 0.634093s, all 1.968043s
 ```
 
-With streaming, the first words arrived after 0.6 to 1.1 seconds; the whole answer took 2 to 2.5 seconds. With
+With streaming, the first words arrived after 0.6 to 1.1 seconds; the whole answer took 2 to 2.5 seconds. (We ran it
+three more times on 25 November: first byte 0.96 to 1.5 seconds, all 1.9 to 3.2 seconds. The numbers move with the
+provider's load; the gap between them is what matters.) With
 `.call()`, the visitor sees **nothing** for those full 2 to 2.5 seconds. The total is about the same; what changes is
-how long the screen stays empty, and that is what people feel. Studies of web pages keep finding the same thing:
-after about one second without feedback, people start to wonder whether something is broken.
+how long the screen stays empty, and that is what people feel. A well-known rule of thumb in usability (Jakob Nielsen, 1993) says about one second is the limit for a person's flow
+of thought to stay uninterrupted, and about ten seconds the limit for keeping their attention.
 
 :::diagram{name="ai-streaming"}
-With call(), nothing appears until the last token. With stream(), each piece is sent as soon as the model writes it.
+One measured run (first byte 0.96 s, all 1.94 s). With call(), the same answer would appear all at once at the end.
 :::
 
 **Check yourself:** does streaming make the model write faster? (No. The same tokens take the same time. Streaming only
@@ -46,16 +48,18 @@ lets the visitor read the first ones while the rest are written.)
 :::step{type=concept title="Server-sent events and Flux"}
 To send an answer in pieces over HTTP, the server keeps the response open and writes each piece when it is ready. The
 simplest standard for that is **server-sent events** (SSE): a response of type `text/event-stream`, made of small
-blocks of text, each ending with an empty line:
+blocks of text, each ending with an empty line. Each block starts with `data:` and a space, then the piece:
 
 ```text
-data:The
+data: The
 
-data: sky
+data:  sky
 
-data: is
+data:  is
 
 ```
+
+(Two spaces before "sky": one belongs to the format, one is the token's own space before the word.)
 
 Every browser understands it (with JavaScript's `EventSource`), and so does curl.
 
@@ -75,7 +79,14 @@ completes.
 :::
 
 :::step{type=task task=stream_answer title="Your turn: stream the answer" file="04-streaming/src/main/java/com/atlas/StreamController.java" line="32"}
-In `04-streaming`, make `GET /stream?q=...` stream the model's answer instead of returning the placeholder.
+In `04-streaming`, make `GET /stream?q=...` stream the model's answer instead of returning the placeholder:
+
+1. `chat.prompt().user(q)` as before.
+2. `.stream()` instead of `.call()`, then `.content()`.
+3. Return that `Flux<String>`. The `produces = TEXT_EVENT_STREAM_VALUE` on the method is already there.
+
+The usual slip: calling `.call().content()` and wrapping it in `Flux.just(...)`. It compiles, but the whole answer
+arrives as one event after the full wait.
 
 Run the app, then watch the answer arrive:
 
@@ -91,21 +102,21 @@ curl -sN "localhost:8080/stream?q=Why%20is%20the%20sky%20blue%3F"
 :::
 
 :::step{type=try title="What the pieces look like"}
-These are the first pieces of a real streamed answer:
+These are the first pieces of a real streamed answer (25 November):
 
 ```text
 $ curl -sN "localhost:8080/stream?q=Why%20is%20the%20sky%20blue%3F" | head -12
-data:The
+data: The
 
-data: sky
+data:  sky
 
-data: is
+data:  is
 
-data: blue
+data:  blue
 
-data: because
+data:  because
 
-data: of
+data:  of
 
 ```
 
@@ -120,10 +131,10 @@ have a **name**, given on an `event:` line:
 
 ```text
 event:token
-data: blue
+data:  blue
 
 event:done
-data:
+data: 
 
 ```
 
@@ -147,7 +158,16 @@ elements are still arriving: nothing waits for the whole stream.
 
 :::step{type=task task=stream_events title="Your turn: token events and a done event" file="04-streaming/src/main/java/com/atlas/StreamController.java" line="39"}
 Finish `GET /stream/events?q=...`: stream the answer as events named **`token`** (one per piece), and after the
-last piece, send one event named **`done`**.
+last piece, send one event named **`done`**:
+
+1. Stream the content as in the first task.
+2. `.map(piece -> ServerSentEvent.builder(piece).event("token").build())`.
+3. `.concatWith(Flux.just(ServerSentEvent.builder("").event("done").build()))` and return it.
+
+The usual slips:
+
+- Leaving out `.event("token")`: the events have no name, and a page listening for `token` events hears nothing.
+- Building the `done` event inside `map`: the page then gets a `done` after every piece.
 
 ```bash run
 curl -sN "localhost:8080/stream/events?q=Why%20is%20the%20sky%20blue%3F" | tail -9
@@ -157,18 +177,18 @@ Press **Check**.
 :::
 
 :::step{type=try title="The end of a stream"}
-The last lines of a real stream:
+The last lines of a real stream (25 November):
 
 ```text
 $ curl -sN "localhost:8080/stream/events?q=Why%20is%20the%20sky%20blue%3F" | tail -9
 event:token
-data: blue
+data:  time
 
 event:token
-data:!
+data: !
 
 event:done
-data:
+data: 
 
 ```
 
@@ -215,8 +235,9 @@ token, and that is what makes an assistant feel quick.
 :::
 
 :::step{type=deep-dive title="Go deeper: what streaming changes in your code"}
-**Usage arrives at the end.** When streaming, the token counts come with the last chunk (Spring AI asks for them with
-`stream_options.include_usage`). Use `.stream().chatResponse()` instead of `.content()` to see every chunk's metadata.
+**Usage arrives at the end.** When streaming, the token counts come with the last chunk, if the request asks for them
+(`stream_options.include_usage` in OpenAI's format). The LabBox gateway always asks, so its log showed 96 tokens in
+and 41 out for a streamed answer. Use `.stream().chatResponse()` instead of `.content()` to see every chunk's metadata.
 
 **Errors arrive late too.** With `.call()`, a failure is an exception before anything is sent. With streaming, the
 response may already have started when something fails; a `done` or `error` event lets the page tell "complete" from
@@ -242,7 +263,7 @@ You can now:
 
 Next, chapter 5: answers as data, so Atlas can plan a tour that the website shows as a real list of stops.
 
-:::photo{src="/lesson-images/spring-ai/springai-04-notes.webp" alt="Handwritten notes about streaming: .stream().content() = Flux<String>; text/event-stream; first token, not the last; map + concatWith; event: token ... event: done" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-04-notes.webp" alt="Sketchnote, Streaming answers (stream(), Flux and server-sent events): The model writes one token at a time. Streaming sends each piece as soon as it exists, so the screen is not empty while the rest is written. The flow: Question, .stream().content(), Flux of pieces, data: blocks, Words appear. What we measured: first words after about 1 second; the whole answer after about 2 seconds; same tokens, same price: only the wait changes; a done event says the answer is complete." ai="true"}
 One page of notes for this chapter.
 :::
 :::

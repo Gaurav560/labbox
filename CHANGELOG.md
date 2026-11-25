@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: Spring AI chapter 4 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`.call()` wrapped in `Flux.just`; events with no name; a `done`
+  built inside `map`).
+- The streaming animation is now a still timeline from one measured run (first byte 0.96 s, all 1.94 s).
+- Checked in a lab machine: three more timings (first byte 0.96 to 1.5 s, all 1.9 to 3.2 s). Corrected: the event
+  stream's format in Spring Boot 4 is `data: The` (a space after the colon, so a token's own space shows as two),
+  and both printed streams are now real output; the vague "studies of web pages" became Nielsen's one-second and
+  ten-second rule of thumb (1993); usage in streams is now said exactly (the LabBox gateway always asks for it, as
+  its code shows). A new sketchnote.
+
 ## 25 November: Spring AI chapter 3 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (only one of the two options; keeping `.content()`).

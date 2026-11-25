@@ -1669,18 +1669,25 @@ function AiTemperature() {
 }
 
 function AiStreaming() {
+  // Still (owner, 25 November): one measured run from chapter 4 (first byte 0.96 s, all 1.94 s).
+  const x0 = 96, px = 110; // 110 px a second
+  const t = (sec: number) => x0 + sec * px;
   return (
-    <SketchSteps
-      title="call versus stream"
-      intro="Press Play to compare what the visitor sees."
-      label="the model writes tokens one after another; with call the server waits for the last token and sends everything at once; with stream the server sends each token as soon as it exists"
-      steps={[
-        { label: "1. The model writes", says: "One token after another, for about two seconds." },
-        { label: "2. With call()", says: "The screen stays empty until the last token, then everything appears." },
-        { label: "3. With stream()", says: "The first words appear after about half a second." },
-        { label: "4. Same total", says: "Same tokens, same price; only the empty wait is shorter." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 250" label="The same answer two ways: with call the screen stays empty for 1.94 seconds and then the whole answer appears; with stream the first words appear at 0.96 seconds and the rest follow until 1.94 seconds">
+      {[0, 1, 2, 3].map((sec) => (
+        <g key={sec}>
+          <line className="dg-arrow" x1={t(sec)} y1={30} x2={t(sec)} y2={186} strokeDasharray="3 4" />
+          <text className="dg-note" x={t(sec) - 8} y={206}>{sec} s</text>
+        </g>
+      ))}
+      <text className="dg-label" x={8} y={66}>call()</text>
+      <Box x={t(0)} y={44} w={1.94 * px} h={34} label="screen empty" />
+      <Box x={t(1.94)} y={44} w={40} h={34} label="all" tone="copy" />
+      <text className="dg-label" x={8} y={136}>stream()</text>
+      <Box x={t(0)} y={114} w={0.96 * px} h={34} label="empty" />
+      <Box x={t(0.96)} y={114} w={0.98 * px} h={34} label="words appear" tone="copy" />
+      <text className="dg-note" x={8} y={236}>Same answer, same tokens: only the empty wait is shorter.</text>
+    </Svg>
   );
 }
 
