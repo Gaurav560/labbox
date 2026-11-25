@@ -175,7 +175,7 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
         <h1 className="next-title"><span className="deck-initial">{title.slice(0, 1)}</span>{title.slice(1)}</h1>
         <div className="next-where">
           Chapter {next.chapter_number} of {next.chapters}: {next.chapter_title}
-          {cont && <> · step {next.step} of {next.steps}</>}
+          {cont && <> · scene {next.step} of {next.steps}</>}
         </div>
         {!cont && next.reason && <p className="next-reason">{next.reason}</p>}
       </div>
@@ -191,7 +191,7 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
           playTo={chapterUrl(next.chapter_id)}
           playLabel={cont ? "Continue" : "Start the first chapter"}
           courseTo={`/courses/${next.lab_id}`}
-          stepText={`Step ${next.step} / ${next.steps}`}
+          stepText={`Scene ${next.step} / ${next.steps}`}
           chapterText={`Chapter ${String(next.chapter_number).padStart(2, "0")} / ${String(next.chapters).padStart(2, "0")}`}
         />
       ) : (

@@ -709,7 +709,7 @@ export default function LabPage() {
           )}
           {showOutline && steps && steps.length > 1 && (outlineOpen
             ? <StepOutline steps={steps} current={step} visited={visited} onGo={goStep} onClose={() => setOutlineOpen(false)} />
-            : <button className="panel-toggle step-outline-open" onClick={() => setOutlineOpen(true)} aria-label="Show the list of steps" title="Show the list of steps"><PanelIcon /></button>)}
+            : <button className="panel-toggle step-outline-open" onClick={() => setOutlineOpen(true)} aria-label="Show the list of scenes" title="Show the list of scenes"><PanelIcon /></button>)}
           {stopReason && status !== "running" && status !== "starting" && (
             <div className="limit-banner" role="alert">
               <p>{stopReason}</p>

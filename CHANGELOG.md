@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November: lesson steps are called scenes
+
+- The owner's choice: "Scene 7 of 14" above each lesson, in the dot labels, the Read-mode list ("Scenes in this
+  chapter"), the dashboard's Continue card, the course page and the home page tour. Counters inside diagrams, traces
+  and onboarding still say "step". The browser tests follow the new name.
+
 ## 25 November: Read mode lists the chapter's steps on the left
 
 - On screens 1,000 px and wider, Read mode shows every step of the chapter by name in a column on the left (the current

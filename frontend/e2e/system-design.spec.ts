@@ -10,7 +10,7 @@ test("design review: answer, get feedback, see scores", async ({ page }) => {
   await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
   await page.goto("/labs/rate-limiter");
   await page.locator("#chapter-select").selectOption("02-global-limit");
-  await page.getByRole("button", { name: "Step 5: Design review" }).click();
+  await page.getByRole("button", { name: "Scene 5: Design review" }).click();
   await expect(page.locator(".step-kind")).toHaveText("Design review");
   await expect(page.locator(".design-q")).toHaveCount(3);
   const send = page.getByRole("button", { name: "Get feedback" });
@@ -28,7 +28,7 @@ test("design review: answer, get feedback, see scores", async ({ page }) => {
     // The last attempt comes back after a reload.
     await page.reload();
     await page.locator("#chapter-select").selectOption("02-global-limit");
-    await page.getByRole("button", { name: "Step 5: Design review" }).click();
+    await page.getByRole("button", { name: "Scene 5: Design review" }).click();
     await expect(page.locator(".design-score")).toContainText("/ 10");
     await expect(page.getByLabel("Answer to question 2")).toHaveValue(/own count in memory/);
   }

@@ -9,10 +9,10 @@ export function PanelIcon() {
 /** Read mode: the chapter's steps by name, down the left (owner, 25 November); the panel button closes it. */
 export default function StepOutline({ steps, current, visited, onGo, onClose }: { steps: Step[]; current: number; visited: number; onGo: (i: number) => void; onClose: () => void }) {
   return (
-    <nav className="step-outline" aria-label="Steps in this chapter">
+    <nav className="step-outline" aria-label="Scenes in this chapter">
       <div className="step-outline-top">
-        <p className="step-outline-head">Step {current + 1} of {steps.length}</p>
-        <button className="panel-toggle" onClick={onClose} aria-label="Close the list of steps" title="Close the list of steps">
+        <p className="step-outline-head">Scene {current + 1} of {steps.length}</p>
+        <button className="panel-toggle" onClick={onClose} aria-label="Close the list of scenes" title="Close the list of scenes">
           <PanelIcon />
         </button>
       </div>

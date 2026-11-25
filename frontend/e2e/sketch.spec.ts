@@ -14,7 +14,7 @@ test("the start-up diagram plays step by step", async ({ page }) => {
   await page.evaluate((t) => localStorage.setItem("labbox.token", t), token);
   try {
     await page.goto("/labs/spring-boot-first-api?chapter=04-app-startup");
-    await page.getByRole("button", { name: /^Step 3: What SpringApplication\.run does/ }).click();
+    await page.getByRole("button", { name: /^Scene 3: What SpringApplication\.run does/ }).click();
     const fig = page.locator("figure.diagram").first();
     await expect(fig.getByRole("img")).toHaveAccessibleName(/SpringApplication\.run reads application\.properties/);
     await expect(fig.locator(".tl-step")).toHaveCount(6); // a timeline: one row per step

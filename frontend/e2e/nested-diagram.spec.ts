@@ -13,7 +13,7 @@ test("the AI circles play from the biggest to the smallest", async ({ page, requ
   await page.setViewportSize({ width: 390, height: 900 });
 
   await page.goto("/labs/langchain4j?chapter=ai-basics");
-  await page.getByRole("button", { name: /^Step 2:/ }).click();
+  await page.getByRole("button", { name: /^Scene 2:/ }).click();
   const fig = page.locator("figure.diagram").first();
   await expect(fig.getByRole("img")).toHaveAccessibleName(/artificial intelligence contains machine learning/);
   await expect(fig.locator(".nest")).toHaveCount(5);

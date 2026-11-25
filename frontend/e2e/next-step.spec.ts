@@ -37,7 +37,7 @@ test("a confident start: start here, continue where you left off, coming-up task
     await expect(cont).toContainText(/Chapter 5 of \d+: Loops/); // the course grows: count-free
     await cont.getByRole("link", { name: "Continue", exact: true }).click();
     await expect(page).toHaveURL(/\/labs\/javascript-basics\?chapter=04-loops$/);
-    await expect(page.locator(".step-count")).toHaveText("Step 6 of 14");
+    await expect(page.locator(".step-count")).toHaveText("Scene 6 of 14");
   } finally {
     await request.post("/api/labs/javascript-basics/workspace/stop", { headers });
   }

@@ -49,11 +49,11 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   // The lab opens on chapter 1, "Your first program": its story, mission and the history card.
   await page.goto("/labs/python-basics");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
-  await expect(stepCount(page)).toHaveText("Step 1 of 17");
+  await expect(stepCount(page)).toHaveText("Scene 1 of 17");
   await expect(page.locator(".step-kind")).toHaveText("Story");
   await expect(page.locator(".mission")).toContainText("Make Pocket say its first two sentences");
   await page.keyboard.press("ArrowRight");
-  await expect(stepCount(page)).toHaveText("Step 2 of 17");
+  await expect(stepCount(page)).toHaveText("Scene 2 of 17");
   await expect(page.locator(".step-kind")).toHaveText("History");
   await expect(page.locator(".history-timeline li")).toHaveCount(5);
   await expect(page.locator(".history-before")).toContainText("Guido van Rossum");
@@ -71,7 +71,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   expect(chapterJson).not.toContain("[x]");
   expect(chapterJson).not.toContain('"answer"');
   expect(chapterJson).not.toContain("Python's special value");
-  await expect(stepCount(page)).toHaveText("Step 1 of 16", { timeout: 60_000 });
+  await expect(stepCount(page)).toHaveText("Scene 1 of 16", { timeout: 60_000 });
   await expect(page.locator(".mission")).toContainText("which builds a greeting for any name");
 
   // Keyboard: right arrow through the concept and the worked example to the predict step.
@@ -103,12 +103,12 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.locator(".step-card").click();
   for (let i = 6; i <= 16; i++) {
     await page.keyboard.press("ArrowRight");
-    await expect(stepCount(page)).toHaveText(`Step ${i} of 16`);
+    await expect(stepCount(page)).toHaveText(`Scene ${i} of 16`);
   }
   await expect(page.locator(".step-kind")).toHaveText("Recap");
   await expect(page.locator(".recap-status")).toContainText("3 tasks still need to pass");
   await page.keyboard.press("ArrowLeft");
-  await expect(stepCount(page)).toHaveText("Step 15 of 16");
+  await expect(stepCount(page)).toHaveText("Scene 15 of 16");
 
   // Hint ladder on the greet task (task chip jumps to its step).
   await page.locator(".task-chip", { hasText: "greet" }).click();
@@ -142,7 +142,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.locator(".footer-actions").getByRole("button", { name: "Check" }).click();
   await expect(page.locator(".drawer-title")).toHaveText("3 of 3 passed 🎉", { timeout: 60_000 });
   // A fully passed chapter jumps to the recap.
-  await expect(stepCount(page)).toHaveText("Step 16 of 16");
+  await expect(stepCount(page)).toHaveText("Scene 16 of 16");
   await expect(page.locator(".recap-status")).toContainText("Chapter complete");
   await page.getByRole("button", { name: "Close results" }).click();
 
@@ -163,11 +163,11 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   await page.reload();
   // The page reloads on chapter 2 (the URL names it), still on its recap.
   await expect(page.locator("#chapter-select")).toHaveValue("01-functions");
-  await expect(stepCount(page)).toHaveText("Step 16 of 16");
+  await expect(stepCount(page)).toHaveText("Scene 16 of 16");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(Math.round((await panel.boundingBox())!.width)).toBe(Math.round(after));
   // The answered predict is still answered (it comes from the server).
-  await page.getByRole("button", { name: "Step 4: Guess first" }).click();
+  await page.getByRole("button", { name: "Scene 4: Guess first" }).click();
   await expect(page.locator(".predict-explain")).toContainText("special value");
   await expect(page.locator(".predict-option.is-wrong")).toContainText("An error");
 
@@ -192,7 +192,7 @@ test("java lab renders its v2 steps", async ({ page }) => {
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
   await page.goto("/labs/java-basics?chapter=01-methods"); // chapter 2 since the 22 November rewrite
-  await expect(stepCount(page)).toHaveText("Step 1 of 15", { timeout: 60_000 });
+  await expect(stepCount(page)).toHaveText("Scene 1 of 15", { timeout: 60_000 });
   await expect(page.getByText("Why does every big program start small?")).toBeVisible();
   await page.locator(".dot").nth(3).click(); // dots jump straight to a step
   await expect(page.locator(".step-kind")).toHaveText("Predict");
@@ -208,7 +208,7 @@ test("lessons show pictures, a step-through trace and task cards", async ({ page
   await page.getByRole("button", { name: "Log in" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
   await page.goto("/labs/java-basics?chapter=01-methods");
-  await expect(stepCount(page)).toHaveText("Step 1 of 15", { timeout: 60_000 });
+  await expect(stepCount(page)).toHaveText("Scene 1 of 15", { timeout: 60_000 });
   await page.locator(".dot").nth(1).click(); // A method, part by part: the recipe card
   await expect(page.locator(".picture svg")).toBeVisible();
   await page.locator(".dot").nth(8).click(); // Worked example: the shortest word

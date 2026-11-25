@@ -74,7 +74,7 @@ export default function CoursePage() {
               </Link>
             </div>
             <p className="course-where">
-              {now.title}{here ? ` · step ${next.step} of ${next.steps}` : ""}
+              {now.title}{here ? ` · scene ${next.step} of ${next.steps}` : ""}
             </p>
           </div>
         </section>
