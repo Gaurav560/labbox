@@ -33,7 +33,15 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
-- **Latest (26 November, early morning):** the Spring AI lab rewritten, all 20 chapters, with the new tall
+- **Latest (26 November, about 03:00):** the LangChain4j lab rewritten, all 30 chapters, one commit each (also on
+  `design/ukiyo`), with sketchnotes and still pictures from real runs. Lab valid, test-lab green, test machines
+  removed, no admins. Corrected on the way (details in CHANGELOG): the system message counts toward the memory window
+  (ch 17); a stray stdout line did not break LangChain4j's MCP client (ch 21 quiz); the default route is not used for
+  an unknown route name (ch 24); `TypeSafeDecisionModel` is not in 1.24 (ch 24); overlapping conditions keep either
+  reply (ch 28 quiz); a loop's default ceiling is `Integer.MAX_VALUE` (ch 28). Ollama was started for chapter 24's
+  check and stopped again. The owner said Setu keeps its name. REWRITE_LIST: 4 of 23 labs done. Next: the owner's
+  small tasks, then the next lab (owner picks; LangGraph is next in the list).
+- **Earlier (26 November, early morning):** the Spring AI lab rewritten, all 20 chapters, with the new tall
   sketchnote notes pages (owner's style; `tools/authoring/notes.py` "sketch" jobs) and still pictures from real runs.
   A real bug was found and fixed in chapter 20 (the privacy guard ran after session memory). Helper scripts for
   authoring now live in `.authoring-scratch/` (git-ignored). Next: LangChain4j (owner's order), then the owner picks.
