@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 15 rewritten: four real paths pictured, the rewrite counter's cost measured
+
+- Re-ran the four questions with the real model: the same four paths (tanker and roof searched once and answered,
+  bottled water rewritten once and answered honestly, thank-you with no search). The lesson now shows this run; the
+  bottled water's second search found the tanker rule again this time.
+- Tried with a stand-in model that always grades "not relevant": the solution makes 6 model calls; without
+  `"rewrites"` in the update the loop ran until a recursion limit of 40 stopped it, after 27 calls. That is the rewrite
+  task's slip; the grade task's slip (no `rewrites` test) points to the same cost, and the quiz now gives chapter 3's
+  measured default limit.
+- The animation is now a still picture of the four paths; a new sketchnote.
+
 ## 26 November: LangGraph chapter 14 rewritten: both questions handed over, three fixes tried, one worked
 
 - Re-ran both questions with the real model: both were handed to a person. The water answer said "tomorrow" in all
