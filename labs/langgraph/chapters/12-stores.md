@@ -74,6 +74,10 @@ def note_preferences(state: MessagesState, runtime: Runtime[Citizen]) -> dict:
 In `note_preferences`, when `prefs.language` is set, save it:
 `runtime.store.put(("citizens", runtime.context.phone), "profile", {"language": prefs.language})`.
 
+The usual slip: saving a bare string, `put(..., "profile", prefs.language)`. A store value must be a dictionary. We
+tried it: `ValueError: dictionary update sequence element #0 has length 1; 2 is required`, an unclear message for a
+simple cause.
+
 Press **Check**.
 :::
 
@@ -89,13 +93,19 @@ language = item.value["language"] if item else "English"
 system message. The thread id does not matter here: a brand-new thread from the same phone finds the same profile.
 
 :::diagram{name="lg-store"}
-Threads come and go; the store sits beside them, and every thread of the same citizen reads the same profile.
+The three real complaints of this chapter (26 November) and the one fact the store kept.
 :::
 :::
 
 :::step{type=task task=use_preference title="Your turn: use it in every thread" file="12-stores/chat.py" line="39-43"}
-In `respond`, read the profile with `runtime.store.get(("citizens", runtime.context.phone), "profile")`, and use
-`item.value["language"]` when it exists, English otherwise.
+In `respond`:
+
+1. `item = runtime.store.get(("citizens", runtime.context.phone), "profile")`;
+2. `language = item.value["language"] if item else "English"`.
+
+The usual slips, both tried: `item["language"]` (`TypeError: 'Item' object is not subscriptable`: the dictionary is
+`item.value`), and forgetting the `if item` check, which fails for every phone with no profile yet:
+`AttributeError: 'NoneType' object has no attribute 'value'`.
 
 ```bash run
 cd /workspace/12-stores && python main.py
@@ -114,7 +124,10 @@ notes.put(("crew_notes",), "n1", {"text": "Gandhi Chowk tank: the inlet valve st
 notes.search(("crew_notes",), query="the tank valve jams in the monsoon", limit=2)
 ```
 
-Each result has a `score` (similarity, higher is closer). This is how an agent finds "what do we know about this?" in a
+Each result has a `score` (similarity, higher is closer). By default the store embeds the **whole value as JSON**,
+braces and key included. We checked: the cosine of the question with the JSON text `{"text": "Gandhi Chowk tank..."}` is
+0.59, the score you will see; with the note's text alone it is 0.63. Add `"fields": ["text"]` to the index to embed
+only the text: the scores then became 0.63 and 0.30. This is how an agent finds "what do we know about this?" in a
 store full of notes, without exact words.
 :::
 
@@ -138,13 +151,16 @@ stored: [(('citizens', '98220'), {'language': 'Marathi'})]
 0.27  Station Road: the main is 40 years old, cast iron, expect bursts in summer.
 ```
 
+(We ran it again on 26 November: the same behaviour and the same two scores; the Marathi replies were worded a little
+differently.)
+
 Complaint 1 asked for Marathi: `note_preferences` saved it, and the reply came in Marathi ("we regret the lack of water
 in Shivaji Nagar; a crew will be sent there"). Complaint 2 is a **new thread**, with nothing about language in it, and
 still came in Marathi: the profile was in the store. Complaint 3, the same words from another phone, got English. The
 store holds exactly one fact.
 
 The search found the right note with none of its words: "jams" for "sticks", "monsoon" for "heavy rain". The scores are
-the cosine similarities; 0.59 against 0.27 is a clear winner.
+cosine similarities (of the JSON text, as above); 0.59 against 0.27 is a clear winner.
 
 One thing to check before shipping: nobody confirmed that 98220 really wants Marathi **forever**. A fact saved from one
 message is a guess about the person. Real systems show what they remember ("I'll reply in Marathi from now on, write
@@ -210,7 +226,7 @@ You can now:
 
 That ends Part 2. Next, chapter 13: an agent graph, built by hand.
 
-:::photo{src="/lesson-images/langgraph/lg-12-notes.webp" alt="Handwritten notes about stores: thread = one conversation; store = facts across threads; namespace + key -> value; runtime.store, runtime.context; search notes by meaning" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-12-notes.webp" alt="Handwritten notes titled Stores, facts that outlive a thread: a store keeps JSON values under a namespace and a key, shared by every thread, and nodes reach it through runtime.store while runtime.context says whose run it is; ask for Marathi, put under citizens 98220 profile, a new thread from the same phone, get Marathi, reply in Marathi; a bare string value gives ValueError; use item.value, not item with brackets; with no profile yet, check for None; search embeds the JSON and scored 0.59, with fields text 0.63" ai="true"}
 One page of notes for this chapter.
 :::
 :::

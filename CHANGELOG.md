@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 12 rewritten: what a store search really embeds, measured
+
+- Re-ran the solution with the real model: the same behaviour (Marathi in both threads of 98220, English for 70300,
+  one stored fact) and the same search scores, 0.59 and 0.27.
+- Found by computing the cosine by hand: the store's score is the similarity with the whole value as JSON
+  (`{"text": ...}`, 0.59), not with the note's text (0.63). With `index={"fields": ["text"]}` the scores became 0.63
+  and 0.30. The lesson now explains this and shows the option.
+- Slips tried: a bare string value (`ValueError: dictionary update sequence element #0...`), `item["language"]`
+  (`TypeError: 'Item' object is not subscriptable`), no `None` check (`AttributeError`).
+- The animation is now a still picture of the three threads and the one stored fact; a new sketchnote.
+
 ## 26 November: LangGraph chapter 11 rewritten: the real history pictured as two branches, slips tried
 
 - Re-ran the solution: the same output, line for line. The animation is now a still picture of thread C-311's eight

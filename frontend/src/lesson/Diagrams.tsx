@@ -3534,19 +3534,35 @@ function LgFork() {
 }
 
 function LgStore() {
+  // Still (owner, 26 November): chapter 12's real run, three threads and one store.
+  const threads: [string, string, string, BoxTone][] = [
+    ["complaint-1, phone 98220", "puts: Marathi", "reply in Marathi", "accent"],
+    ["complaint-2, phone 98220", "gets: Marathi", "reply in Marathi", "copy"],
+    ["complaint-3, phone 70300", "gets: nothing", "reply in English", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="One fact, many threads"
-      intro="Press Play to follow phone 98220."
-      label="Store"
-      steps={[
-        { label: "complaint-1", says: "'Please reply in Marathi from now on.' note_preferences asks the model: language = Marathi." },
-        { label: "put", says: "store.put(('citizens', '98220'), 'profile', {'language': 'Marathi'}): outside the thread." },
-        { label: "respond", says: "Reads the profile and replies in Marathi." },
-        { label: "complaint-2", says: "A new thread, nothing about language in it. respond reads the same profile: Marathi again." },
-        { label: "70300", says: "Another phone: no profile in the store, so English." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Three threads and one store: complaint-1 from 98220 asks for Marathi, and note_preferences puts the language under citizens 98220; complaint-2, a new thread from the same phone, gets Marathi and replies in Marathi; complaint-3 from 70300 finds nothing and replies in English">
+      <text className="dg-label" x={8} y={18}>three threads (separate checkpoints)</text>
+      {threads.map(([t, op, reply, tone], i) => {
+        const y = 28 + i * 64;
+        return (
+          <g key={t}>
+            <text className="dg-note" x={8} y={y + 14}>{t}</text>
+            <Box x={8} y={y + 20} w={150} h={34} label={op} tone={tone} />
+            <Arrow x1={158} y1={y + 37} x2={176} y2={y + 37} />
+            <Box x={176} y={y + 20} w={150} h={34} label={reply} tone="plain" />
+          </g>
+        );
+      })}
+      <Box x={338} y={48} w={94} h={150} label="" tone="accent" />
+      <text className="dg-label" x={348} y={74}>the store</text>
+      <text className="dg-note" x={346} y={104}>citizens /</text>
+      <text className="dg-note" x={346} y={124}>98220 /</text>
+      <text className="dg-note" x={346} y={144}>profile:</text>
+      <text className="dg-note" x={346} y={164}>Marathi</text>
+      <text className="dg-note" x={8} y={246}>Threads forget when they end; the store holds one fact</text>
+      <text className="dg-note" x={8} y={266}>for every thread of the same phone.</text>
+    </Svg>
   );
 }
 
