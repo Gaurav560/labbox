@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the run command's border in the theme's grey
+
+- Owner: "this green border is looking off the vibe with the whole page theme". The command's outline is the warm grey
+  of the page's rules, and the pulsing ring is a faint line in the page's ink (cream on dark, ink on light); green is
+  left only on the Run key and the $ prompt.
+
 ## 25 November (Ukiyo): no tap badge; the plate says TAP TO START
 
 - Owner: "very bad placing" (the badge above the container), then left the choice to me. The badge is gone; the
