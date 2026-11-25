@@ -7,6 +7,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import ThemeButton from "../components/ThemeButton";
+import { Seal } from "../components/UkiyoArt";
 
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
@@ -48,12 +49,12 @@ function Mark({ p }: { p: Piece }) {
   if (p.logo) return <img src={`/logos/${p.logo}.svg`} alt="" />;
   if (p.icon === "term") return (
     <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="8" width="40" height="32" rx="4" fill="#1b2533" />
-      <path d="M12 19l6 5-6 5" fill="none" stroke="#7fd08a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 19l6 5-6 5" fill="none" stroke="#e2583f" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M22 30h12" stroke="#e9e2d4" strokeWidth="3" strokeLinecap="round" /></svg>
   );
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5l4.2 11.3L40 20l-11.8 3.9L24 35l-4.2-11.1L8 20l11.8-3.7z" fill="#c63f28" />
-      <path d="M37 30l1.8 4.6 4.7 1.6-4.7 1.7L37 42.6l-1.8-4.7-4.7-1.7 4.7-1.6z" fill="#2496ed" /></svg>
+      <path d="M37 30l1.8 4.6 4.7 1.6-4.7 1.7L37 42.6l-1.8-4.7-4.7-1.7 4.7-1.6z" fill="#1f3a64" /></svg>
   );
 }
 
@@ -125,6 +126,7 @@ function LogosInABox() {
             <li key={p.name + i}><b>✓</b> <strong>{p.name}</strong> <span>{p.step}</span></li>
           ))}
         </ol>
+        <span className="ua-stamp" aria-hidden="true"><Seal lines={["READY"]} size={76} /></span>
         <div className="ua-ready">
           <span><b>Ready</b> · first challenge: {lab.challenge}</span>
           <Link className="h-btn h-btn-primary" to="/login?signup=1">Start →</Link>

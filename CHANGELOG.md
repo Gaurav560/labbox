@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): direction A in the theme's colours
+
+- Owner: "the design and colour of the animated box feel off the theme". Same animation, new dress: a paper card
+  ruled in ink instead of Docker blue; a sumi ink lid with a vermilion progress line; dashed ink slots that pulse
+  vermilion; tiles on washi with a fine rule; the log under a heavy ink rule with vermilion ticks; and when the
+  machine is ready, a red hanko seal "READY" stamps onto the lid's corner instead of the box turning green. The
+  terminal and AI icons use vermilion and indigo. Works in washi and sumi.
+
 ## 25 November (Ukiyo): direction A refined, packed step by step
 
 - Owner liked "real logos in a box" but wanted a more refined animation, "Editor and terminal" instead of VS Code
