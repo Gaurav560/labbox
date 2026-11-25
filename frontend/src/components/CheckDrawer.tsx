@@ -55,7 +55,7 @@ export default function CheckDrawer({ result, running, open, onClose, onShowOutp
                 <strong>{r.title || r.task}</strong>
                 <span className="sr-only">not started yet</span>
               </div>
-              <p className="res-message muted">Coming up in step {upcoming[r.task]}. Nothing to fix yet.</p>
+              <p className="res-message muted">Coming up in scene {upcoming[r.task]}. Nothing to fix yet.</p>
             </li>
           ) : (
             <li key={r.task} className={r.passed ? "res-pass" : "res-fail"}>
