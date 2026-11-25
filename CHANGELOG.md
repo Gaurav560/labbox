@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: browser tests clean up after themselves
+
+- New `scripts/labbox test-accounts max-id | cleanup [--since-id N] [--dry-run]`: removes the lab machines, lab networks
+  and workspace folders of browser-test accounts (named a prefix plus 6 or more digits, never id 1, never an admin);
+  account rows stay. Playwright's global setup notes the highest account id and the global teardown cleans only the
+  accounts that run signed up (`LABBOX_E2E_KEEP=1` keeps them for debugging). Unit test in `test_cli.py`.
+- One-time cleanup, approved by the owner: 356 stopped test machines and 2,704 test folders removed (volumes 66 GB to
+  962 MB); the owner's 30 machines and folder untouched. A full browser run (31 passed) then left no test machine.
+
 ## 25 November: RAG chapter 13 rewritten (easy, a little detailed, checked); the RAG lab rewrite is complete
 
 - Web services, HTTP, endpoints, GET and POST, query strings, JSON and the 422 code are explained where they first

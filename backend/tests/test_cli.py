@@ -354,3 +354,15 @@ def test_photos_need_a_file_alt_text_and_a_credit(labs_dir: Path):
     task = ':::step{type=task task=hello_pocket title="Your turn: Pocket says hello"}\n'
     ch.write_text(good.replace(task, task + ':::photo{src="/lesson-images/python/py-01-notes.webp" alt="notes" ai="true"}\nx\n:::\n'))
     assert any("(task) has a photo" in e for e in errors(labs_dir / "python-basics"))
+
+
+def test_test_account_targets_spare_the_owner_admins_and_real_names():
+    from types import SimpleNamespace as U
+
+    users = [U(id=1, username="asha", is_admin=False), U(id=2, username="next1764061234567", is_admin=True),
+             U(id=10, username="labbox-dev", is_admin=False), U(id=11, username="e2e7319330", is_admin=False), U(id=13, username="cl13106", is_admin=False),
+             U(id=12, username="tutordemo23943", is_admin=False), U(id=50, username="course1764061234", is_admin=False),
+             U(id=60, username="rd5606545", is_admin=False)]
+    assert cli.test_account_targets(users) == [(11, "e2e7319330"), (50, "course1764061234"), (60, "rd5606545")]
+    assert cli.test_account_targets(users, since_id=55) == [(60, "rd5606545")]
+    assert cli.test_account_targets([U(id=1, username="next1234567", is_admin=False)]) == []

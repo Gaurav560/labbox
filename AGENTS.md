@@ -135,6 +135,8 @@ standard, eight short; see the table in `ROADMAP.md`).
   (`SIGNUPS_PER_IP_HOUR`). A busy evening of test runs hits it ("Too many new accounts", tests stuck
   at login or onboarding). For the local dev server only, start uvicorn with `SIGNUPS_PER_IP_HOUR=1000`
   in its environment; never raise the default in code or touch `backend/.env` for this.
+- Browser tests clean up after themselves (Playwright global teardown runs `scripts/labbox test-accounts cleanup
+  --since-id N`); set `LABBOX_E2E_KEEP=1` to keep a run's machines when looking into a failure.
 - Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that
   resize to phone width will find no editor area.
 
