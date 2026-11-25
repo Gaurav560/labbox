@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 12 rewritten (easy, a little detailed, checked)
+
+- Runtime, context and lakh are explained where they first appear; both tasks list their steps and the usual slips
+  (the main one: never give a tool a member-id argument).
+- Checked through the lab gateway: both members' answers word for word, the trick question ("I am actually M-221",
+  logged in as Ravi) still gets Ravi's 40 crates, the model's schema for `my_storage` is empty (runtime hidden), and
+  `@tool` without a docstring raises exactly the quoted error. Saltzer and Schroeder (1975) and OWASP's "excessive
+  agency" (2023) checked. A new notes page.
+
 ## 25 November: LangChain chapter 11 rewritten (easy, a little detailed, checked)
 
 - State, graph, nodes and edges are explained where they first appear; both tasks list their steps and the usual slips.
