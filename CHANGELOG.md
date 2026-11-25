@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangGraph chapter 14 rewritten: both questions handed over, three fixes tried, one worked
+
+- Re-ran both questions with the real model: both were handed to a person. The water answer said "tomorrow" in all
+  three drafts (the tools say Wednesday); in the drinking answer the checker caught "tomorrow" and the unsourced advice,
+  then wrongly flagged a fact from the tools. The lesson now shows these runs (the first version had the water answer
+  pass at once).
+- Tried the lesson's own advice and two more, one run each: "Today is Tuesday." for the writer only (the writer wrote
+  "tomorrow (Wednesday)", the checker rejected it: still handed over); the same for the checker too (still handed over,
+  because the checker's rule calls "tomorrow" a new claim); "Write days exactly as the tool results give them" for the
+  writer (both answers sent). The try step teaches all three, and the recap now says "an unclear instruction, a
+  missing fact".
+- A new still picture of the real three-draft run; both tasks list steps and slips. A new sketchnote.
+
 ## 26 November: LangGraph chapter 13 rewritten: the agent's two paths measured, a wrong default corrected
 
 - Re-ran the agent three times at temperature 0: once exactly the lesson's run (both statuses fetched in one message,

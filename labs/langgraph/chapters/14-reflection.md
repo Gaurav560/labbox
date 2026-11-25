@@ -62,9 +62,14 @@ Python decides: the problems are the `new_claim` sentences, nothing else.
 :::
 
 :::step{type=task task=check_claims title="Your turn: label every sentence" file="14-reflection/reflection.py" line="51-56"}
-Finish `check(answer, tool_results)`: ask `model().with_structured_output(Verdict)` with `[SystemMessage(CHECK),
-HumanMessage(f"Tool results:\n{tool_results}\n\nAnswer:\n{answer}")]`, then return
-`[s.text for s in verdict.sentences if s.kind == "new_claim"]`.
+Finish `check(answer, tool_results)`:
+
+1. `verdict = model().with_structured_output(Verdict).invoke([SystemMessage(CHECK), HumanMessage(f"Tool
+   results:\n{tool_results}\n\nAnswer:\n{answer}")])`;
+2. `return [s.text for s in verdict.sentences if s.kind == "new_claim"]`.
+
+The usual slip: `s.kind != "from_tools"`. That brings back the first checker's fault: "I don't know" and a friendly
+closing count as problems again, and every draft fails.
 
 Press **Check**.
 :::
@@ -83,14 +88,20 @@ writers over-correct: an earlier run dropped the correct lab time and wrote "I d
 results will be available", which was false.
 
 :::diagram{name="lg-reflection"}
-Draft, check, and one of three exits; the round counter makes sure the loop ends.
+A real run (26 November): three drafts, three checks that caught the same word, and the hand-over.
 :::
 :::
 
 :::step{type=task task=revise_or_finish title="Your turn: send, rewrite or hand over" file="14-reflection/reflection.py" line="59-69"}
-Finish `check_answer`: with no `problems`, return `Command(goto=END)`; if `rounds > MAX_ROUNDS`, return
-`Command(goto="hand_over")`; otherwise return `Command(goto="agent", update={"messages": [HumanMessage(feedback,
-name="checker")], "rounds": rounds})`.
+Finish `check_answer`:
+
+1. with no `problems`, return `Command(goto=END)`;
+2. if `rounds > MAX_ROUNDS`, return `Command(goto="hand_over")`;
+3. otherwise return `Command(goto="agent", update={"messages": [HumanMessage(feedback, name="checker")], "rounds":
+   rounds})`.
+
+The usual slip: leaving `"rounds": rounds` out of the update. The counter in the state then never grows, step 2
+never fires, and only LangGraph's recursion limit stops a writer that keeps saying "tomorrow".
 
 ```bash run
 cd /workspace/14-reflection && python main.py "My number is 98220. When will my water come back?"
@@ -103,35 +114,46 @@ cd /workspace/14-reflection && python main.py "My number is 98220. Can my childr
 Press **Check**.
 :::
 
-:::step{type=try title="One answer sent, one handed to a person"}
-One question per run: a run can make a dozen model calls, and the gateway allows 20 a minute.
+:::step{type=try title="Two hand-overs, and the fix that worked"}
+One question per run: a run can make a dozen model calls, and the gateway allows 20 a minute. These are the runs of 26
+November (each draft is shortened with "..."):
 
 ```text
 $ python main.py "My number is 98220. When will my water come back?"
-> My number is 98220. When will my water come back?
-  draft: Your water issue at Tilak Nagar, lane 3 is being addressed! The crew is scheduled to visit on Wednesday between 8:00 and 11:00 AM. For the dirty water complaint, the lab results will be available by Wednesday at 6:00 PM.
-  SENT: Your water issue at Tilak Nagar, lane 3 is being addressed! The crew is scheduled to visit on Wednesday between 8:00 and 11:00 AM. For the dirty water complaint, the lab results will be available by Wednesday at 6:00 PM.
+  draft: ...they will visit between 8:00 to 11:00 tomorrow. ...lab results by 18:00 tomorrow. ...
+  checker: Do not send that yet. These claims are not in the tool results: ...8:00 to 11:00 tomorrow.; ...by 18:00 tomorrow.. ...
+  draft: ...scheduled to visit between 8:00 to 11:00 tomorrow. ...
+  checker: Do not send that yet. ...
+  draft: ...with a visit scheduled between 8:00 to 11:00 tomorrow. ...
+  SENT: I have passed your question to a person at the desk, who will reply within the hour.
 $ python main.py "My number is 98220. Can my children drink the tap water now?"
-> My number is 98220. Can my children drink the tap water now?
-  draft: Currently, there are two open complaints regarding water issues in your area. The crew is scheduled to address the no water issue by tomorrow morning, and the lab results for the dirty water will be available by Wednesday evening. It's best to wait until these issues are resolved before letting your children drink the tap water.
-  checker: Do not send that yet. These claims are not in the tool results: The crew is scheduled to address the no water issue by tomorrow morning,; It's best to wait until these issues are resolved before letting your children drink the tap water.. Rewrite the answer: keep every fact the tools gave, drop these claims, and say plainly what you do not know.
-  draft: Currently, there are two open complaints regarding water issues in your area. The crew is assigned to address the no water issue, and they will be visiting tomorrow morning between 8:00 and 11:00. The lab results for the dirty water will be available by Wednesday evening, so I cannot confirm if the tap water is safe for your children until then.
-  checker: Do not send that yet. These claims are not in the tool results: The crew is assigned to address the no water issue, and they will be visiting tomorrow morning between 8:00 and 11:00.; The lab results for the dirty water will be available by Wednesday evening, so I cannot confirm if the tap water is safe for your children until then.. Rewrite the answer: keep every fact the tools gave, drop these claims, and say plainly what you do not know.
-  draft: Currently, there are two open complaints regarding water issues in your area: one for no water and another for dirty water. The crew is assigned to the no water issue and will visit tomorrow morning between 8:00 and 11:00. I do not know if the tap water is safe for your children until the lab results for the dirty water are available.
+  draft: ...The crew is scheduled to address the no water issue by tomorrow morning, ... It's best to wait for these updates before letting your children drink the tap water.
+  checker: Do not send that yet. These claims are not in the tool results: The crew is scheduled to address the no water issue by tomorrow morning,; It's best to wait for these updates before letting your children drink the tap water.. ...
+  draft: ...they will visit on Wednesday between 8:00 to 11:00. ...I cannot confirm if the tap water is safe for your children until then.
+  checker: Do not send that yet. These claims are not in the tool results: Currently, there are two open complaints regarding water issues in your area.. ...
+  draft: There are two open complaints: one about no water and another about dirty water. ...
   SENT: I have passed your question to a person at the desk, who will reply within the hour.
 ```
 
-The first draft passed: 6:00 PM for 18:00 is the same time, and the checker did not count it as new. It went out as
-written.
+The checker did its job in the first run: the tools say **Wednesday**, every draft said "tomorrow", and after two rounds
+`hand_over` sent the citizen to a person instead of a wrong day. In the second run it caught "tomorrow morning" and the
+unsourced advice, and the writer fixed both; then it flagged "there are two open complaints", which **is** in the tool
+results. A model checker is not perfectly consistent, which is one more reason for a ceiling. (When we first wrote this
+chapter, the water question passed at once with "Wednesday"; the paths vary from run to run.)
 
-The second is the interesting one. The checker caught "tomorrow morning" and the unsourced advice, and sent the draft
-back. The writer dropped the advice, but said "tomorrow" again in each rewrite; after two rounds, `hand_over` sent the
-citizen to a person instead of a wrong day. (The checker also flagged "Wednesday evening" for 18:00, a stricter call
-than in the first run: a model checker is not perfectly consistent, which is one more reason for a ceiling.)
+Why does the writer keep saying tomorrow? We tried three fixes, one at a time, with the same two questions:
 
-Why did the writer keep saying tomorrow? It was never told what today is. The best fix is not another round of
-reflection, it is a fact: put "Today is Tuesday." in the system prompt, or format dates in Python. Reflection catches
-mistakes; facts prevent them.
+1. **"Today is Tuesday." in the writer's system message.** The writer became right: "they will visit tomorrow
+   (Wednesday)". The checker, which had not been told the day, rejected that correct sentence every round: both
+   questions were handed over.
+2. **The same sentence in the checker's instructions too.** Still both handed over: the checker's own rule says "a day
+   such as 'tomorrow'" is a new claim, and it followed its rule. A fact and a rule that disagree do not cancel out.
+3. **One sentence for the writer instead: "Write days exactly as the tool results give them, never today or
+   tomorrow."** The water answer was sent at the first draft ("on Wednesday between 8:00 and 11:00 ... by Wednesday at
+   18:00"); the drinking answer was rewritten once, without the advice, and sent.
+
+Reflection catches mistakes; clear instructions and facts prevent them. And when you give a model a fact, give it to
+every model that judges the same text.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -187,11 +209,11 @@ You can now:
 - add a reflection step: draft, check, rewrite;
 - make a model checker reliable by asking narrow questions and deciding in Python;
 - route with three exits: send, rewrite, hand over;
-- fix the cause (a missing fact) instead of adding more rounds.
+- fix the cause (an unclear instruction, a missing fact) instead of adding more rounds.
 
 Next, chapter 15: agentic RAG, so Harsh's rules come from the rulebook.
 
-:::photo{src="/lesson-images/langgraph/lg-14-notes.webp" alt="Handwritten notes about reflection: draft, check, rewrite; label each sentence; Python decides: new_claim; max 2 rounds, then a person; give it today's date!" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-14-notes.webp" alt="Handwritten notes titled Reflection, a second look before it is sent: after the model drafts an answer, a checker labels every sentence, and Python sends the draft, sends it back with feedback, or hands it to a person after two rounds; draft, checker labels each sentence, Python asks if any is a new_claim, rewrite at most 2 rounds, send or hand to a person; every draft said tomorrow while the tool said Wednesday; telling only the writer that today is Tuesday was still rejected; copying days from the tools got both answers sent; give a fact to every model that judges it" ai="true"}
 One page of notes for this chapter.
 :::
 :::
