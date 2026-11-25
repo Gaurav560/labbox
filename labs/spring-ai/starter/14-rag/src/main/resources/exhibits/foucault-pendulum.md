@@ -7,6 +7,6 @@ and slowly, the direction of its swing turns. Nothing pushes it sideways: the Ea
 
 Léon Foucault showed this in Paris in 1851, with a 67 metre pendulum in the Panthéon. It was the first simple proof that
 the Earth rotates. How fast the swing turns depends on where you are: at the North Pole it turns a full circle in 24
-hours; at the equator it does not turn at all. In Pune, at about 18.5 degrees north, a full turn takes about 76 hours.
+hours; at the equator it does not turn at all. In Pune, at about 18.5 degrees north, a full turn takes about 75 hours.
 
 Look for the small pegs around the pendulum: every so often the ball knocks one over.

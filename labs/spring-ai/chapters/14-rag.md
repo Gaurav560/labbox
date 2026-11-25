@@ -58,12 +58,15 @@ reply to the user comment. If the answer is not in the context, inform
 the user that you can't answer the question.
 ```
 
+(On 26 November we read the same text in the LabBox gateway's log, for the ticket question, through the real model.
+Only one chunk passed the threshold, so only one stood between the dashes.)
+
 1. The question, unchanged.
 2. The retrieved chunks, between two lines of dashes.
 3. Instructions: answer from the context, not from prior knowledge, and say so when the answer is not there.
 
 :::diagram{name="ai-rag"}
-The question is embedded and searched; the closest chunks are added to the prompt; the model answers from them.
+This chapter's real ticket question (26 November), read in the gateway's log.
 :::
 
 Registered with `defaultAdvisors(...)`, it applies to every call of the `ChatClient`:
@@ -84,6 +87,12 @@ measured in chapter 13.
 In `14-rag`, add a `QuestionAnswerAdvisor` built on the vector store to the `ChatClient`'s default advisors, retrieving
 the **3** closest chunks with a similarity of at least **0.35**. (The ETL from chapter 13 is already in place.)
 
+1. On the builder, before `.build()`: `.defaultAdvisors(QuestionAnswerAdvisor.builder(store)`.
+2. `.searchRequest(SearchRequest.builder().topK(3).similarityThreshold(0.35).build())`, then `.build())`.
+
+The usual slip: leaving out the threshold. Every question then gets three chunks, close or not, and the model is
+told to answer from them.
+
 ```bash run
 cd 14-rag && mvn -q -o spring-boot:run
 ```
@@ -99,7 +108,7 @@ Press **Check**.
 
 :::step{type=try title="From I don't know to 60 rupees"}
 In chapter 2 Atlas answered the ticket question honestly, and uselessly: "I'm sorry, but I don't know the ticket
-prices." With RAG:
+prices." With RAG (our re-run on 26 November gave the same price and age range):
 
 ```text
 $ curl -s -G localhost:8080/ask --data-urlencode "q=How much is a ticket for a child?"; echo
@@ -129,7 +138,13 @@ String answer = response.chatResponse().getResult().getOutput().getText();
 :::
 
 :::step{type=task task=cite_sources title="Your turn: answers with sources" file="14-rag/src/main/java/com/atlas/AskController.java" line="48"}
-Finish `GET /ask/sourced?q=...`: return the answer and the list of files of the retrieved chunks, each file once.
+Finish `GET /ask/sourced?q=...`: return the answer and the list of files of the retrieved chunks, each file once:
+
+1. End the chain with `.chatClientResponse()`.
+2. Read the documents from `response.context().get(QuestionAnswerAdvisor.RETRIEVED_DOCUMENTS)`.
+3. Map each to `getMetadata().get("file")`, keep each once with `distinct()`, and return them with the answer.
+
+The usual slip: forgetting `distinct()`. One card often gives two chunks, and the same file is listed twice.
 
 ```bash run
 curl -s -G localhost:8080/ask/sourced --data-urlencode "q=What did India find on the Moon?" | jq .
@@ -144,7 +159,7 @@ Real answers, with their sources:
 ```text
 $ curl -s -G localhost:8080/ask/sourced --data-urlencode "q=How long would the pendulum take to turn a full circle here in Pune?" | jq .
 {
-  "answer": "In Pune, the pendulum takes about 76 hours to make a full circle. This happens because the Earth is turning underneath it as it swings. You can see the brass ball knocking over small pegs along the way!",
+    "answer": "In Pune, the pendulum takes about 75 hours to turn a full circle. You can see it swinging in the Motion Gallery. Watch for the pegs it knocks over as it moves!",
   "sources": [
     "foucault-pendulum.md"
   ]
@@ -166,7 +181,11 @@ $ curl -s -G localhost:8080/ask/sourced --data-urlencode "q=Do you have a T-rex?
 }
 ```
 
-"76 hours" is on the pendulum card, worked out for Pune's latitude. The T-rex answer is the best of all: no invented
+"75 hours" is on the pendulum card, worked out for Pune's latitude: a sidereal day (23.93 hours) divided by the sine
+of 18.5 degrees is 75.4 hours. (Until 26 November the card said 76; checking the card's own arithmetic found it. The
+pendulum answer above is from after the fix; the other two are from when the lesson was written, and our re-run gave
+the same facts and sources, with one slip worth seeing: it said Vikram landed "on the Moon's south pole", where the
+card says **near** it. Always read an answer against its sources.) The T-rex answer is the best of all: no invented
 exhibit, an honest no, and a real alternative. Compare chapter 5, where Atlas invented a "Jurassic Journey".
 
 And one honest failure:
@@ -177,7 +196,8 @@ I'm sorry, but I can't answer that question about the exhibits. If you have any 
 ```
 
 A broad question is close to **every** card a little and to none strongly, so nothing passed the threshold, and the
-advisor's instructions told the model to say it cannot answer. Retrieval is for specific questions. Questions about the
+advisor's instructions told the model to say it cannot answer. (Our re-run: "I don't have information about the
+exhibits at the Deccan Science Museum. You might want to check the museum's official website".) Retrieval is for specific questions. Questions about the
 whole collection need a different tool: a list of all exhibits (from a database, or a `@Tool` like chapter 7's).
 :::
 
@@ -246,7 +266,7 @@ You can now:
 
 That ends Part 3. Next, Part 4: beyond text, and production. Chapter 15 starts with pictures.
 
-:::photo{src="/lesson-images/spring-ai/springai-14-notes.webp" alt="Handwritten notes about RAG: retrieve, augment, generate; QuestionAnswerAdvisor; topK 3, threshold 0.35; answer + sources; change the card, not the model" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-14-notes.webp" alt="Sketchnote, What is RAG? (retrieval-augmented generation): First find the exhibit chunks that match the question, then let the model answer from those chunks, and name the cards. The flow: Visitor's question, Vector store search, Chunks + question, Model, Answer + sources. What we found: child ticket: 60 rupees, from the card; no T-rex: an honest no, and Rajasaurus instead; broad questions find nothing: use a tool; read answers against their sources." ai="true"}
 One page of notes for this chapter.
 :::
 :::

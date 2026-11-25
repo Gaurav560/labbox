@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: Spring AI chapter 14 rewritten (easy, a little detailed, checked); the pendulum card corrected
+
+- Both tasks list their steps and the usual slips (no threshold; no `distinct()`).
+- The RAG animation is now a still picture of the real ticket question, read in the gateway's log (one chunk passed
+  the threshold, 0.407).
+- Checked in a lab machine: the augmented user message is word for word the lesson's, now read through the real
+  model; the ticket, Moon and T-rex answers gave the same facts and sources. Found and fixed: the pendulum card said
+  a full turn in Pune takes "about 76 hours"; a sidereal day over sin(18.5 degrees) is 75.4, so the card now says
+  about 75 hours in all ten copies (starter and solution, chapters 12, 13, 14, 16 and 20), and the lesson shows the
+  new real answer. Taught: the re-run said Vikram landed "on" the south pole where the card says "near"; read
+  answers against their sources. The other card facts (Chandrayaan-3, Mangalyaan, Rajasaurus, Foucault 1851) were
+  checked and are right. A new sketchnote.
+
 ## 26 November: Spring AI chapter 13 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (a config without the file; storing the documents instead of the
