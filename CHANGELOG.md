@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 8 rewritten (easy, a little detailed, checked)
+
+- Parameters and chunks are explained where they first appear; both tasks list their steps and the usual slips.
+- Checked by streaming through the lab gateway four times and opening a stream's chunks: the text was the same every
+  time (149 characters, 38 chunks), but the first piece came after 0.8 to 1.3 s and the whole answer after 1.2 to 1.9 s,
+  so the lesson now gives that range instead of one exact time (769 ms). Corrected: the end chunks are one with the
+  finish reason, one with the token usage and one empty; `data: [DONE]` is OpenAI's own ending, not every API's; the
+  task's "usual slip" now matches what the check really tests. The check's success message said "the passenger reads"
+  (a word from another course): it now says "the member". A new notes page.
+
 ## 25 November: LangChain chapter 7 rewritten (easy, a little detailed, checked)
 
 - Interface and integration package are explained where they first appear; both tasks list their steps and the usual
