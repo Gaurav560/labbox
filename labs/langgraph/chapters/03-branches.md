@@ -57,6 +57,9 @@ graph.add_conditional_edges("route", choose_team, ["health_team", "billing_offic
 
 After `route` runs, LangGraph calls `choose_team(state)` and goes to the node it names. The list of possible targets is
 optional but worth giving: it puts every branch in the graph's diagram, and `compile()` checks that each target exists.
+We tried both on 26 November. A misspelled target stopped the build: `ValueError: At 'route' node, 'choose_team'
+branch found unknown target 'health_teem'`. And with no list at all, the diagram could not know the branches and
+drew a wrong picture: `route --> __end__`, as if `route` were the last step.
 
 A routing function only **decides**: it returns a name and changes nothing. Updates belong in nodes.
 
@@ -68,8 +71,14 @@ Edsger W. Dijkstra in 2002.
 :::
 
 :::step{type=task task=route_by_kind title="Your turn: route by kind" file="03-branches/graph.py" line="49-53"}
-Finish `choose_team(state)`: return `"health_team"` for `dirty_water`, `"billing_office"` for `billing`, and
-`"repair_crew"` for everything else.
+Finish `choose_team(state)`:
+
+1. read `state["kind"]`;
+2. return `"health_team"` for `dirty_water` and `"billing_office"` for `billing`;
+3. return `"repair_crew"` for everything else (a dictionary with `.get(kind, "repair_crew")` does all three).
+
+The usual slip: a name that is almost right, such as `"health team"` with a space. We tried it: the run stopped with
+`KeyError: 'health team'`. The router must return a node's name exactly.
 
 Press **Check**.
 :::
@@ -89,13 +98,19 @@ The limit, `MAX_TRIES`, is what makes this a loop and not a trap. A street that 
 Path") stops after two tries and goes to `ask_citizen`, where a person takes over.
 
 :::diagram{name="lg-route"}
-The loop goes back once, then out: to route when the street is found, to ask_citizen when it never is.
+The four complaints of this chapter's run (26 November): how many tries each took, and where each ended.
 :::
 :::
 
 :::step{type=task task=retry_loop title="Your turn: try again, then ask" file="03-branches/graph.py" line="35-39"}
-Finish `after_find_zone(state)`: return `"route"` if a zone was found; `"find_zone"` if not, and fewer than `MAX_TRIES`
-attempts were made; otherwise `"ask_citizen"`.
+Finish `after_find_zone(state)`:
+
+1. if `state["zone"]` is not empty, return `"route"`;
+2. else, if `state["tries"] < MAX_TRIES`, return `"find_zone"` (try again);
+3. otherwise return `"ask_citizen"`.
+
+The usual slip: `<=` instead of `<`. We tried it: "Shivaji Path" took 3 tries instead of 2. With a model call inside
+the loop, that is one paid call more than you planned, on every lost street.
 
 ```bash run
 cd /workspace/03-branches && python main.py
@@ -125,7 +140,8 @@ $ python main.py
 ...
 ```
 
-(The diagram is shortened at both ends with "...".) Every path ran once:
+(The diagram is shortened at both ends with "...". We ran it again on 26 November: the same four lines.) Every path
+ran once:
 
 - "Gandi Chowk" was not found as written, the loop tried "gandhi chowk", and the dirty water went to the health team in
   the North zone.
@@ -146,7 +162,11 @@ You forget the `tries < MAX_TRIES` test and always return "find_zone" when no zo
 - [x] The loop never ends until LangGraph's recursion limit stops it with an error
 - [ ] It picks the nearest street
 :::explain
-A loop needs a way out. LangGraph's recursion limit is a last-resort safety net; your condition is the real one.
+We tried it on 26 November. LangGraph 1.2.24 stopped the run with `GraphRecursionError: Recursion limit of 10007
+reached`, after 1.5 seconds of plain Python. (The default is 10,007 steps in this version; you can set your own per
+run with `invoke(..., {"recursion_limit": 25})`, which stopped the same loop in 0.01 seconds.) With a model call in
+the loop, 10,007 steps would be 10,007 paid calls. A loop needs a way out. The recursion limit is a last-resort safety
+net; your condition is the real one.
 :::
 :::
 
@@ -179,7 +199,9 @@ Without the list, LangGraph cannot know where the function might send a run unti
 classification. Keep a rule-based fallback for when the model's answer is not one of the targets.
 
 **Many branches at once.** A routing function can return a list of node names; they then all run, in the same step
-(chapter 5's parallel pattern).
+(chapter 5's parallel pattern). Their updates must not clash: when we returned `["health_team", "repair_crew"]`,
+both wrote `team` in the same step and the run stopped with `InvalidUpdateError: At key 'team': Can receive only one
+value per step`. A key that several branches write needs a reducer (chapter 2).
 
 **Testing routers.** A router is a plain function of the state: test it with small dictionaries, without running the
 graph, as the hidden checks do.
@@ -195,7 +217,7 @@ You can now:
 
 Next, chapter 4: nodes that call a model.
 
-:::photo{src="/lesson-images/langgraph/lg-03-notes.webp" alt="Handwritten notes about branches and loops: router reads state, returns a name; routers decide, nodes change; a loop is an edge back; every loop needs a limit; dotted arrow = conditional" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-03-notes.webp" alt="Handwritten notes titled Branches and loops, a router decides and nodes change the state: a conditional edge calls a routing function after a node, which reads the state and returns the name of the next node, and a loop is an edge back with a limit; find_zone tries the street, the router reads zone and tries, found goes to route, the router picks the team, the team node replies; with no limit the run stopped at step 10,007; a wrong name gives KeyError; no target list gives a wrong diagram; two branches writing one key give InvalidUpdateError" ai="true"}
 One page of notes for this chapter.
 :::
 :::

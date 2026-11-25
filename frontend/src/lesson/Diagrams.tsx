@@ -3283,20 +3283,32 @@ function LgReducer() {
 }
 
 function LgRoute() {
+  // Still (owner, 26 November): chapter 3's real run, four complaints, their tries and the node each ended at.
+  const rows: [string, string, string, BoxTone][] = [
+    ["Gandi Chowk", "2: after correcting", "health, North", "copy"],
+    ["Station Road", "1: found at once", "repair, South", "copy"],
+    ["tilaknagar", "2: after correcting", "billing office", "copy"],
+    ["Shivaji Path", "2: never found", "ask_citizen", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="A street spelt wrong, and the way out"
-      intro="Press Play to follow 'Gandi Chowk' through the loop."
-      label="Branch and loop"
-      steps={[
-        { label: "find_zone", says: "Try 1 uses the street as written. Not on the map: zone is empty, tries is 1." },
-        { label: "after_find_zone", says: "No zone, and 1 is less than MAX_TRIES (2): go back to find_zone." },
-        { label: "find_zone", says: "Try 2 uses the corrected spelling 'gandhi chowk': North zone, tries is 2." },
-        { label: "after_find_zone", says: "A zone was found: go to route." },
-        { label: "choose_team", says: "The kind is dirty_water: go to health_team." },
-        { label: "Shivaji Path", says: "Never found: after 2 tries, after_find_zone sends it to ask_citizen. The limit is the way out." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Four real complaints: Gandi Chowk needed the corrected spelling and went to the health team, North zone; Station Road was found at once and went to the repair crew, South zone; tilaknagar needed the correction and went to billing; Shivaji Path was not found in two tries and went to ask_citizen">
+      <text className="dg-label" x={8} y={18}>street</text>
+      <text className="dg-label" x={120} y={18}>find_zone tries</text>
+      <text className="dg-label" x={290} y={18}>ended at</text>
+      {rows.map(([street, tries, end, tone], i) => {
+        const y = 28 + i * 58;
+        return (
+          <g key={street}>
+            <text className="dg-note" x={8} y={y + 27}>{street}</text>
+            <Box x={112} y={y} w={166} h={44} label={tries} tone="plain" />
+            <Arrow x1={278} y1={y + 22} x2={290} y2={y + 22} />
+            <Box x={290} y={y} w={142} h={44} label={end} tone={tone} />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={270}>MAX_TRIES = 2 is the way out of the loop.</text>
+      <text className="dg-note" x={8} y={290}>Without it, the run stopped only at step 10,007.</text>
+    </Svg>
   );
 }
 
