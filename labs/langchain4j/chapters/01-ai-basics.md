@@ -41,7 +41,7 @@ before:
 | **Generative AI** (GenAI) | Deep learning models that **create** new content: text, images, sound, code | Writing a polite answer to a question nobody has asked before |
 
 :::diagram{name="l4j-ai-circles"}
-AI is the biggest circle; machine learning sits inside it, deep learning inside that, and generative AI at the centre.
+Each field inside the one before, with Setu's own example of each.
 :::
 
 The difference that matters most is the first step, from AI to machine learning: **who writes the rule**. In a
@@ -152,6 +152,12 @@ Finish `Rules.reply(question)`:
 
 Capitals must not matter: "REFUND please" is a refund question.
 
+The usual slips:
+
+- Checking the rules before lower-casing the question: "REFUND please" then finds nothing.
+- Returning the text in quotes, `"REFUND"`, instead of the constant `REFUND`: the passenger would read the word
+  REFUND.
+
 ```bash run
 cd /workspace/01-ai-basics && mvn -q compile exec:java
 ```
@@ -160,7 +166,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Where rules break"}
-With the rules written, `Setu.java` asks them four questions:
+With the rules written, `Setu.java` asks them four questions (we ran the solution again on 26 November: exactly this
+output):
 
 ```text
 $ mvn -q compile exec:java
@@ -199,7 +206,8 @@ is a search: try every possible **T**, count how many examples each one gets wro
 
 `Learn.mistakes(threshold, minutesLate, complained)` already counts the mistakes of one threshold. For **T = 12** the
 rule says yes for 12, 15, 18, 25, 30 and 45, and the data disagrees only once (15 minutes, no complaint): 1 mistake.
-For **T = 20** it misses the complaints at 12 and 18: 2 mistakes.
+For **T = 20** it misses the complaints at 12 and 18: 2 mistakes. And **T = 18** also makes only 1 mistake (it misses
+the complaint at 12): 12 and 18 tie, so the tie rule decides.
 
 Notice what just happened. You did not decide that 12 is the answer; **the data did**. If next month passengers
 become more patient, you run the same code on new data and get a new rule, without changing a line. That is the
@@ -217,6 +225,9 @@ Finish `Learn.bestThreshold(minutesLate, complained)`:
 2. count its mistakes with `mistakes(...)`;
 3. return the threshold with the fewest mistakes; if two tie, return the smaller one.
 
+The usual slip: replacing the best on a tie (`<=` instead of `<` when comparing mistakes). Then 18 wins the tie with
+12, because it comes later in the list.
+
 ```bash run
 cd /workspace/01-ai-basics && mvn -q compile exec:java
 ```
@@ -230,7 +241,8 @@ Press **Check**.
 Learned: late by 12 minutes or more means a complaint (1 of 10 examples wrong)
 ```
 
-Twelve minutes. Sahyadri Rail can now say, from evidence, that a delay of 12 minutes or more is when passengers start
+Twelve minutes (18 made just as few mistakes; the rule "keep the smaller on a tie" chose 12, and that is a choice a
+person made, not the data). Sahyadri Rail can now say, from evidence, that a delay of 12 minutes or more is when passengers start
 calling, and plan its announcements around it. One of the ten examples is still wrong (a train 15 minutes late and
 nobody complained): learned rules are about **most** cases, not all of them. Remember that: every model you meet in
 this course, however large, is right most of the time, not every time.
@@ -304,7 +316,7 @@ You can now:
 
 Next, chapter 2: the building block of deep learning, an artificial neuron, built and trained in Java.
 
-:::photo{src="/lesson-images/langchain4j/l4j-01-notes.webp" alt="Handwritten notes about AI basics: AI, ML, deep learning, GenAI; rules are written by hand; ML: the rule comes from examples; learned rules are right most of the time; an LLM is in all four circles" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-01-notes.webp" alt="Sketchnote, What is AI? (rules by hand, rules from examples): In a rule-based program a person writes the rule. In machine learning the program finds the rule from examples. The flow: Delays + complaints, Try every threshold, Count the mistakes, Keep the best: 12 min. What we found: suitcase missed every keyword rule; 12 and 18 minutes tied at 1 mistake; the tie rule, written by a person, chose 12; learned rules are right most of the time." ai="true"}
 One page of notes for this chapter.
 :::
 :::

@@ -12,7 +12,7 @@ Status: **3 of 23 labs done** (60 of 319 chapters).
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
-| 3 | langchain4j | LangChain4j | 30 | next (owner, 26 Nov) | |
+| 3 | langchain4j | LangChain4j | 30 | in progress (1 of 30) | |
 | 4 | langgraph | LangGraph | 24 | not started | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangChain4j ch 1 done: still circles picture; found that 12 and 18 minutes tie (the tie rule picks 12).
 - 26 Nov, 01:00 IST: Spring AI done (20 of 20); test-lab green; test machines removed. Next: LangChain4j (owner's
   order).
 - 26 Nov: Spring AI ch 20: real bug fixed in the solution (privacy guard ran after session memory; a refused phone
