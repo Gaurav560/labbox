@@ -36,6 +36,26 @@ Status: **3 of 23 labs done** (60 of 319 chapters).
 
 The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs); the owner picks the next lab.
 
+## Log (newest first)
+
+Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
+finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
+
+- 26 Nov, 01:00 IST: Spring AI done (20 of 20); test-lab green; test machines removed. Next: LangChain4j (owner's
+  order).
+- 26 Nov: Spring AI ch 20: real bug fixed in the solution (privacy guard ran after session memory; a refused phone
+  number was stored and then blocked every later question). Ch 17's sentence about order 0 corrected.
+- 26 Nov: Spring AI ch 14: the pendulum card said 76 hours for Pune; the physics gives 75.4. Fixed in all ten copies.
+- 26 Nov: Spring AI ch 12: the task asked learners to wait for a log line only the solution printed; now part of the
+  task.
+- 26 Nov: Spring AI ch 1 to 19 rewritten, one commit each, each copied to Ukiyo.
+- 25 Nov, night: owner picked Ukiyo for now (final call after the deploy; keep both designs in sync).
+- 25 Nov, night: notes pages become tall sketchnotes (owner's sample "What is RAG?"); `notes.py` "sketch" jobs; Read
+  mode shows notes pages at full height. RAG and LangChain keep the older notes (40 pages to redraw on request).
+- 25 Nov, night: Ukiyo logo reads "by TELUSKO" (owner).
+- 25 Nov, night: LangChain done (27 of 27); test-lab green.
+- 25 Nov: RAG done (13 of 13); small tasks: Read and Action modes, scenes, the scene list, Start machine in the menu.
+
 ## Checks in every rewrite
 
 - Notes pages are tall sketchnotes (owner, 25 November night): title, subtitle, a definition box, a flow of 4 to 5
