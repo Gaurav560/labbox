@@ -1617,18 +1617,28 @@ function AiRequestFlow() {
 }
 
 function AiRoles() {
+  // Still (owner, 25 November): the messages of one real request from chapter 2's run.
+  const rows: [string, string, string, BoxTone][] = [
+    ["system", "written by you, sent with every request (79 tokens)", "You are Atlas, the friendly visitor guide of ...", "accent"],
+    ["user", "written by the visitor", "Name one planet with rings.", "plain"],
+    ["assistant", "written by the model, within the rules", "Saturn is a planet with beautiful rings. ...", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="system, user, assistant"
-      intro="Press Play to see who writes each message."
-      label="the developer writes the system message with the rules; the visitor writes the user message; the model writes the assistant message, following both"
-      steps={[
-        { label: "1. system", says: "You, the developer: who Atlas is and its rules. Sent with every request." },
-        { label: "2. user", says: "The visitor: Name one planet with rings." },
-        { label: "3. assistant", says: "The model: Saturn is a planet with rings." },
-        { label: "4. Next time", says: "The rules come first again: the model has no memory of its own." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="One request: a system message written by the developer, a user message from the visitor, and the assistant's answer from the model">
+      {rows.map(([role, who, text, tone], i) => {
+        const y = 4 + i * 92;
+        return (
+          <g key={role}>
+            <Box x={28} y={y} w={406} h={76} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 24}>{role}</text>
+            <text className="dg-note" x={42} y={y + 45}>{who}</text>
+            <text className="dg-note" x={42} y={y + 65}>{text}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 78} x2={231} y2={y + 90} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={28} y={292}>The next request sends the system message again.</text>
+    </Svg>
   );
 }
 

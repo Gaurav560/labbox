@@ -33,10 +33,10 @@ A request to a chat model is not one block of text: it is a list of **messages**
 
 Models are trained to treat the system message as the **ground rules** and the user message as **the request to
 answer within those rules**. So the rules go in the system message, and the visitor's words go in the user message,
-never mixed together. (Mixing them is how attacks like "ignore your instructions" get in; chapter 12 is about that.)
+never mixed together. (Mixing them is how attacks like "ignore your instructions" get in; chapter 17 is about that.)
 
 :::diagram{name="ai-roles"}
-The system message sets the rules; the user message asks; the model answers as the assistant.
+The three messages of one real request from this chapter's app.
 :::
 
 In Spring AI, `.user(...)` adds a user message, and `.system(...)` adds a system message to one prompt. For rules
@@ -68,7 +68,10 @@ $ curl -s "localhost:8080/ask?q=Hello%2C%20who%20are%20you%3F"; echo
 Hi! I'm Atlas, your friendly guide at the Deccan Science Museum. I'm here to help you learn about our exhibits and science. What would you like to know?
 ```
 
-Then real questions found two problems. Asked "Name one planet with rings." three times, it refused every time:
+Then real questions found two problems. Asked "Name one planet with rings." three times, it refused every time when
+this course was written. We ran the same prompt again on 25 November: it refused twice, and the one time it answered,
+it added "You can learn more about planets like Saturn in our space exhibit at the museum!", an exhibit nobody told it
+about. One of the refusals:
 
 ```text
 I can't answer that, but if you visit the Deccan Science Museum, you can learn all about planets and their features! We have fun exhibits that show how planets work, including those with rings. Come explore and discover more about space!
@@ -76,7 +79,10 @@ I can't answer that, but if you visit the Deccan Science Museum, you can learn a
 
 "Only talk about the museum" won over "and science": the model read the rule more strictly than it was meant. And
 asked to explain the Foucault pendulum to a 30-year-old, it apologised that it could only talk "in simple words for
-kids": "a twelve-year-old" had become a rule about the audience, not about the style.
+kids". Our re-run, three times: "I'm sorry, but I can only explain things to visitors who are twelve years old or
+younger", a similar refusal, and one answer that began "I'm here to help with kids!". "A twelve-year-old" had
+become a rule about the audience, not about the style. An unclear rule does not fail every time; it fails some of the
+time, which is harder to notice.
 
 The lesson every AI engineer learns early: **models follow the words you wrote, not the meaning you had in mind.** Be
 explicit about what is allowed, say what to do in the other cases, and test with real questions, including awkward
@@ -94,7 +100,7 @@ For anything else, say kindly that you are the museum's guide.
 Never invent opening hours, prices or exhibits: if you do not know, say so.
 ```
 
-The same questions, with this prompt:
+The same questions, with this prompt (our re-run on 25 November gave the same three kinds of answer, in other words):
 
 ```text
 $ curl -s "localhost:8080/ask?q=Name%20one%20planet%20with%20rings."; echo
@@ -123,7 +129,15 @@ A good system prompt usually has these parts:
 :::step{type=task task=system_prompt title="Your turn: Atlas's system prompt" file="02-prompts/src/main/java/com/atlas/AskController.java" line="15"}
 In `02-prompts`, give the `ChatClient` a default system prompt, so that every request starts with Atlas's rules. It
 must say who the model is (**Atlas**) and where it works (the **Deccan Science Museum**), plus your rules. Use the
-improved prompt above, or write your own with the same parts.
+improved prompt above, or write your own with the same parts:
+
+1. In the constructor, between `builder` and `.build()`, add `.defaultSystem("""` and the prompt's lines.
+2. Close the text block with `""")`, then `.build()` as before.
+
+The usual slips:
+
+- Putting the rules in `.user(...)` inside `ask`: the rules then travel as the visitor's words.
+- Calling `defaultSystem` on the built `ChatClient`: it belongs to the builder, so the code does not compile.
 
 Run it and try the questions above, plus one awkward question of your own:
 
@@ -154,10 +168,11 @@ chat.prompt()
 `u.text(...)` is the template; each `.param(name, value)` fills one placeholder. Why not just join strings,
 `"Tell me one fun fact about " + topic`? For one placeholder, the result is the same. As prompts grow, templates keep
 the wording in one readable piece, and they make it obvious which parts come from outside, which matters for
-safety (chapter 12).
+safety (chapter 17).
 
 **Check yourself:** what happens if the template has `{age}` but you forget `.param("age", age)`? (Spring AI refuses to
-send it, with an error naming the missing variable. Sending "{age}" to the model would be worse.)
+send it. We tried: `IllegalStateException: Not all variables were replaced in the template. Missing variable names
+are: [age]`, and nothing reached the model. Sending "{age}" to the model would be worse.)
 :::
 
 :::step{type=predict title="Guess first"}
@@ -179,6 +194,13 @@ Finish `GET /explain?exhibit=...&age=...` in `AskController.java`: ask the model
 of that age, with a prompt template and two parameters. The system prompt applies here too, because it is the
 `ChatClient`'s default.
 
+1. `.user(u -> u.text("Explain the exhibit {exhibit} to a visitor who is {age} years old.")`
+2. Fill both placeholders: `.param("exhibit", exhibit)` and `.param("age", age)`.
+3. `.call().content()` and return it.
+
+The usual slip: a name that does not match, such as `{age}` in the text and `.param("visitorAge", age)`. Spring AI
+then stops with the "Missing variable names are: [age]" error above.
+
 Try a child and an adult:
 
 ```bash run
@@ -189,7 +211,8 @@ curl -s -G localhost:8080/explain --data-urlencode "exhibit=Foucault pendulum" -
 :::
 
 :::step{type=try title="Two visitors, one exhibit"}
-With the improved system prompt, the same template gave these:
+With the improved system prompt, the same template gave these (our re-run: "a big swinging ball" and "really cool
+to watch" for the child, "rotates" and "physics" for the adult):
 
 ```text
 $ curl -s -G localhost:8080/explain --data-urlencode "exhibit=Foucault pendulum" --data-urlencode "age=7"; echo
@@ -231,8 +254,7 @@ questions that failed.
 
 :::step{type=deep-dive title="Go deeper: how to keep improving a prompt"}
 **Keep a test list.** Write down twenty real questions (easy, awkward, off-topic, tricky) and run them after every
-change to the prompt. Prompts drift: a fix for one question often breaks another. Chapter 11 turns this into
-automated tests.
+change to the prompt. Prompts drift: a fix for one question often breaks another. Chapter 16 turns this into automated tests.
 
 **Examples beat adjectives.** "Answer in a friendly tone" is vague. One example answer in the system prompt ("Visitor:
 Where is the pendulum? Atlas: In Gallery 2, next to the stairs. It swings all day!") shows the model exactly what you
@@ -242,8 +264,9 @@ mean. This is called **few-shot prompting**.
 load a template from a file: `.user(new ClassPathResource("prompts/explain.st"))`.
 
 **Shorter is cheaper.** The system prompt is sent with **every** request, so every word in it is paid for again and
-again. A 500-token system prompt on 100,000 requests is 50 million input tokens. Keep it as short as it can be while
-still clear.
+again. Atlas's improved prompt is 79 tokens (we counted with the model's tokenizer): on 100,000 requests that is 7.9
+million input tokens, about $1.19 at gpt-4o-mini's price. A 500-token prompt would be 50 million, about $7.50. Keep it
+as short as it can be while still clear.
 :::
 
 :::step{type=recap}
@@ -257,7 +280,7 @@ You can now:
 
 Next, chapter 3: options that make answers steadier and shorter, and the tokens and money behind every answer.
 
-:::photo{src="/lesson-images/spring-ai/springai-02-notes.webp" alt="Handwritten notes about prompts: system = your rules; user = the visitor's words; say what is allowed + what else; (exhibit) + .param(...); test with awkward questions" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-02-notes.webp" alt="Sketchnote, Prompts that work (system prompts and templates): The system message holds your rules. The user message holds the visitor's words. Keep them apart. The flow: System: Atlas's rules, User: the question, Model, Assistant: the answer. What we found: an unclear rule failed 2 times out of 3; say what is allowed, and what to do otherwise; a placeholder without .param stops with an error; our 79-token prompt goes with every request." ai="true"}
 One page of notes for this chapter.
 :::
 :::
