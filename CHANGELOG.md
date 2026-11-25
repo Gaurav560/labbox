@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 12 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (`totalTokenCount()` for one side; integer division). The code line
+  uses the real record's accessors.
+- Corrected: this chapter's system message is 24 tokens (counted with o200k_base), not "about 40"; the 10,000-token
+  rules book makes a question about 25 times dearer (the input part 56 times), not "fifty-fold". The arithmetic is now
+  shown.
+- Checked in a lab machine: the greeting was 37 in and 9 out again; the long question 48 in and 81 out. A new
+  sketchnote.
+
 ## 26 November: LangChain4j chapter 11 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips ("do not guess" with nowhere to send the passenger; facts in the
