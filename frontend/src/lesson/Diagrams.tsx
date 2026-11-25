@@ -2276,37 +2276,51 @@ function L4jEmbeddingSpace() {
 }
 
 function L4jAttention() {
+  // Still (owner, 26 November): chapter 6's real attention weights for "it" (hand-written 3-number vectors).
+  const bars: [string, number][] = [["train", 0.46], ["it", 0.36], ["station", 0.18]];
   return (
-    <SketchSteps
-      title="what does it attend to"
-      intro="Press Play to follow attention for one word."
-      label="the query of it is compared with the key of every word by a dot product; the scores are divided by the square root of the vector length; softmax turns them into weights; the train gets the most attention"
-      steps={[
-        { label: "1. A query", says: "The word it asks: who here moves on a schedule?" },
-        { label: "2. Compare with keys", says: "Dot product of the query with the key of train, station and it." },
-        { label: "3. Scale", says: "Divide each score by the square root of 3, the vector length." },
-        { label: "4. Softmax", says: "Scores become weights that add up to 1." },
-        { label: "5. The answer", says: "train 0.46, it 0.36, station 0.18: it mostly means the train." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 230" label="The query of it is compared with each key; after softmax, it gives the train 0.46 of its attention, itself 0.36 and the station 0.18">
+      <text className="dg-label" x={8} y={18}>where "it" puts its attention</text>
+      {bars.map(([word, w], i) => {
+        const y = 34 + i * 50;
+        return (
+          <g key={word}>
+            <text className="dg-note" x={8} y={y + 22}>{word}</text>
+            <Box x={90} y={y} w={w * 600} h={32} label="" tone={i === 0 ? "copy" : "plain"} />
+            <text className="dg-note" x={98 + w * 600} y={y + 22}>{w.toFixed(2)}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={204}>score = query . key / sqrt(3), then softmax:</text>
+      <text className="dg-note" x={8} y={224}>the weights add up to 1.00.</text>
+    </Svg>
   );
 }
 
 function L4jLlmPipeline() {
+  // Still (owner, 26 November): how gpt-4o-mini answers, with this course's real numbers where they exist.
+  const rows: [string, string, BoxTone][] = [
+    ["1. tokens (chapter 4)", "When does the Ghat Express leave Pune? = 9 tokens", "plain"],
+    ["2. embeddings (chapter 5)", "each token becomes a vector of numbers", "plain"],
+    ["3. layers of attention (this chapter)", "each token looks at all the tokens before it", "accent"],
+    ["4. scores", "one for each of about 200,000 possible next tokens", "accent"],
+    ["5. softmax and temperature", "e.g. late 0.73 at temperature 1; one token is sampled", "copy"],
+    ["6. repeat", "add the token, run the model again, until an end token", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="how an LLM answers"
-      intro="Press Play to follow one question through the model."
-      label="the question is split into tokens; each token becomes an embedding; layers of attention refine them; the last layer scores every possible next token; softmax with temperature picks one; the token is added and the loop repeats"
-      steps={[
-        { label: "1. Tokens", says: "When does the Ghat Express leave Pune? becomes 9 tokens." },
-        { label: "2. Embeddings", says: "Each token becomes a vector of numbers." },
-        { label: "3. Layers", says: "Attention and neurons, dozens of layers, refine every vector." },
-        { label: "4. Scores", says: "One score for each of about 200,000 possible next tokens." },
-        { label: "5. Pick one", says: "Softmax and temperature, then a weighted draw: The." },
-        { label: "6. Repeat", says: "Add the token, run the model again, until the answer ends." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="How a language model answers: tokens, embeddings, layers of attention, scores for every possible next token, softmax and temperature pick one, and the loop repeats">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

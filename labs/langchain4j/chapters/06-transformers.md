@@ -62,6 +62,9 @@ steps are three loops over the array: find the maximum of `score / temperature`;
 Finish `Attention.softmax(scores, temperature)`: divide every score by the temperature, subtract the largest of
 those, take `Math.exp` of each, and divide each by their sum.
 
+The usual slip: multiplying by the temperature instead of dividing. Then a low temperature flattens the
+probabilities instead of sharpening them, the opposite of what the setting means.
+
 Press **Check**.
 :::
 
@@ -122,7 +125,7 @@ For one token, attention does three things:
 3. mix the values with those weights (a high weight passes on most of that token's information).
 
 :::diagram{name="l4j-attention"}
-The query of "it" is compared with the key of every word; softmax turns the scores into weights; the train gets the most attention.
+The real weights from this chapter's example (re-run on 26 November).
 :::
 
 Your task is steps 1 and 2: the **attention weights**. They are the part that decides; step 3 is a weighted sum.
@@ -136,6 +139,9 @@ written by anyone; they are learned in training, the same way your neuron learne
 Finish `Attention.weights(query, keys)`: for each key, the score is `dot(query, key) / Math.sqrt(query.length)`;
 return `softmax` of those scores at temperature 1.0.
 
+The usual slip: `Math.sqrt(keys.length)`, the number of keys, instead of the vector length. With three keys of three
+numbers each the result happens to be the same, so check which one you used.
+
 ```bash run
 cd /workspace/06-transformers && mvn -q compile exec:java
 ```
@@ -144,6 +150,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Temperature, and what 'it' attends to"}
+(We ran the solution again on 26 November: exactly this output.)
+
 ```text
 $ mvn -q compile exec:java
 temperature 0.2: late 1.00  early 0.00  smoothly 0.00  backwards 0.00  
@@ -168,7 +176,7 @@ You have now built, in miniature, every part of a language model. Here is how th
 question:
 
 :::diagram{name="l4j-llm-pipeline"}
-Text is split into tokens, tokens become embeddings, layers of attention refine them, the last layer scores every possible next token, softmax and temperature pick one, and the loop repeats.
+The six steps, with this course's real numbers where it has them.
 :::
 
 1. **Tokens** (chapter 4): the question is split into tokens, about 15 for a short question.
@@ -252,7 +260,7 @@ You can now:
 That is the end of Part 1: you know what is on the other side of the call. Next, chapter 7: Setu calls a real model for
 the first time, with nothing but Java's own HTTP client.
 
-:::photo{src="/lesson-images/langchain4j/l4j-06-notes.webp" alt="Handwritten notes about transformers: softmax turns scores into probabilities; low temperature is sure; high temperature is surprising; attention: which words matter; one token at a time, then repeat" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-06-notes.webp" alt="Sketchnote, Inside a transformer (softmax, temperature and attention): Softmax turns scores into probabilities; temperature makes them sharper or flatter. Attention lets every word weigh every other word. The flow: Tokens, Embeddings, Attention layers, Scores, Sample one token. What we measured: temperature 0.2: late 1.00; temperature 2.0: late 0.52, backwards 0.04; it gave the train 0.46 of its attention; answers come one token at a time." ai="true"}
 One page of notes for this chapter.
 :::
 :::
