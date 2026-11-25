@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangGraph chapter 24 rewritten: the whole desk re-run on a server, every slip tried
+
+- Ran the capstone on a fresh `langgraph dev`: the same three paths (status from the tickets, the tanker rule from the
+  rulebook, the burst main paused at Rs 65,000) and, after the engineer's approval over HTTP, the same Thursday
+  booking for a flooding road. 10,469 tokens for the whole conversation. A new still picture shows the conversation.
+- Tried: the quiz (`Intent(kind="complaint")` raises a `ValidationError`); `state["intent"].kind` (`AttributeError`,
+  the first task's slip, because the intent is stored as a dictionary); the approval sent as `input=` instead of
+  `command=` (no error, and the thread still waiting at `repair`, the second task's slip).
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 23 rewritten: the review's second exit seen for real, facts checked
 
 - Every fact the lesson quotes was checked against the sources (design pressure 2.5 bar, 5 then 14 complaints,

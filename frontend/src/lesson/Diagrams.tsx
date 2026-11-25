@@ -3874,20 +3874,29 @@ function LgResearch() {
 }
 
 function LgCapstone() {
+  // Still (owner, 26 November): chapter 24's real conversation on one server thread.
+  const rows: [string, string, string, BoxTone][] = [
+    ["\"Any update? ...98220\"", "status", "two tickets, from the tools", "copy"],
+    ["\"Pay for the tanker?\"", "rules", "free if over 24 hours, a board fault", "copy"],
+    ["\"The main has burst!\"", "repair", "Rs 65,000: waits for the engineer", "accent"],
+    ["engineer: approve", "repair", "crew booked: Thursday 9:00", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="Harsh, complete"
-      intro="Press Play to follow a burst main."
-      label="Capstone"
-      steps={[
-        { label: "intake", says: "The model reads the message: kind repair, problem main_burst, street Station Road." },
-        { label: "route_intent", says: "kind repair: go to the repair node." },
-        { label: "repair", says: "REPAIR_COST says Rs 65,000: over 50,000, so interrupt and wait." },
-        { label: "server", says: "The run is saved; the client shows that the engineer is being asked." },
-        { label: "engineer", says: "Her app sends command={'resume': {'approve': True}} on the same thread." },
-        { label: "booked", says: "repair runs again, gets the approval, and books a crew. For Thursday: the urgency was never checked." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 312" label="One real conversation on one thread: the status question went to the status agent and was answered from the tickets; the tanker question went to the rules agent and was answered from the rulebook; the burst main went to repair and waited for the engineer at Rs 65,000; her approval came over HTTP and a crew was booked for Thursday, although the road was flooding">
+      {rows.map(([msg, part, answer, tone], i) => {
+        const y = 4 + i * 64;
+        return (
+          <g key={i}>
+            <text className="dg-note" x={8} y={y + 14}>{msg}</text>
+            <Box x={8} y={y + 22} w={90} h={34} label={part} tone="plain" />
+            <Arrow x1={98} y1={y + 39} x2={110} y2={y + 39} />
+            <Box x={110} y={y + 22} w={322} h={34} label={answer} tone={tone} />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={282}>The graph checked the cost, not the urgency: a flooding</text>
+      <text className="dg-note" x={8} y={304}>road waited for an approval, then for Thursday.</text>
+    </Svg>
   );
 }
 
