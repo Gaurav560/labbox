@@ -15,7 +15,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
   await expect(page.locator(".uh-hero-pic img")).toBeVisible();
   await expect(page.locator(".uh-term")).toContainText("labbox start");
-  await expect(page.locator(".uh-promise")).toHaveText("No fluff. No video hell. Only action.");
+  await expect(page.locator(".uh-promise")).toHaveText("No fluff. No tutorial hell. Only action.");
   await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
   const machine = page.locator("#machine");

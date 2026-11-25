@@ -1,5 +1,9 @@
 # Changelog
 
+## 25 November (Ukiyo): "No tutorial hell."
+
+- Owner chose "tutorial hell" over "video hell". The hero line is "No fluff. No tutorial hell. Only action."
+
 ## 25 November (Ukiyo): "No fluff. No video hell. Only action." in the hero
 
 - Owner: "add No fluff No video hell only call to action". A serif line between the hero's lead and Start free:
