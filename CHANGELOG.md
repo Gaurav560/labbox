@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November (Ukiyo): a real Docker-style shipping container
+
+- Owner: the rust box was "the most rubbish image"; "I need an original Docker container". The CSS box is gone. In
+  its place an SVG illustration in the Docker docs' hand-drawn style (`Container` in `components/UkiyoMachine.tsx`):
+  a light-blue corrugated container with the Docker whale logo on its side, a lighter roof, thick ink outlines and a
+  soft shadow. Its end doors stand open (dark) while it loads; each piece appears above the doors and drops in, the
+  container bumps as it lands and the log line appears; when full the ribbed doors close and the green tick lands.
+  The Spin up button sits below the container so the whale stays visible.
+
 ## 25 November (Ukiyo): the machine box as a shipping container
 
 - Owner: "isn't it cool if the container looks like this instead of the plain one" (a Docker-style shipping container).

@@ -56,6 +56,42 @@ function Mark({ p }: { p: Piece }) {
 }
 
 /**
+ * A shipping container in the hand-drawn style of the Docker docs: a blue corrugated box with the Docker whale on its
+ * side and doors at the end. While it loads the doors stand open (a dark opening); when it is full they close.
+ * The container gives a small bump each time a piece lands (`landed` changes).
+ */
+function Container({ open, landed }: { open: boolean; landed: number }) {
+  // front face A B C D, end face B E F C, top face A H E B (viewBox 560 x 330)
+  const ribs = [0.18, 0.36, 0.54, 0.72, 0.9];
+  const B = [398, 104], C = [400, 262], E = [484, 80], F = [482, 238];
+  const at = (p: number[], q: number[], t: number) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+  return (
+    <svg className="ua-container" viewBox="0 0 560 330" aria-hidden="true">
+      <ellipse className="ua-c-shadow" cx="280" cy="296" rx="220" ry="16" />
+      <g className="ua-c-body" key={landed}>
+        <polygon className="ua-c-top" points="68,90 152,68 484,80 398,104" />
+        <polygon className="ua-c-front" points="68,90 398,104 400,262 72,248" />
+        {/* the front's corrugation: faint vertical ribs */}
+        {Array.from({ length: 11 }, (_, i) => {
+          const t = (i + 1) / 12;
+          return <line key={i} className="ua-c-groove" x1={68 + 330 * t} y1={90 + 14 * t + 6} x2={72 + 328 * t} y2={248 + 14 * t - 6} />;
+        })}
+        <image href="/logos/docker.svg" x="148" y="104" width="170" height="150" transform="skewY(2.4)" />
+        <polygon className={`ua-c-end ${open ? "is-open" : ""}`} points={`${B} ${E} ${F} ${C}`} />
+        {!open && ribs.map((t, i) => {
+          const [x1, y1] = at(B, E, t), [x2, y2] = at(C, F, t);
+          return <line key={i} className="ua-c-rib" x1={x1} y1={y1 + 8} x2={x2} y2={y2 - 8} />;
+        })}
+        {!open && <line className="ua-c-seam" x1={at(B, E, 0.5)[0]} y1={at(B, E, 0.5)[1]} x2={at(C, F, 0.5)[0]} y2={at(C, F, 0.5)[1]} />}
+        <polygon className="ua-c-line" points="68,90 152,68 484,80 482,238 400,262 72,248" />
+        <polyline className="ua-c-line" points="68,90 398,104 484,80" />
+        <line className="ua-c-line" x1="398" y1="104" x2="400" y2="262" />
+      </g>
+    </svg>
+  );
+}
+
+/**
  * The lab's stack packs itself into one container, one piece at a time: an empty slot waits and pulses, the logo
  * flies in and settles, its line appears in the log, the progress bar and the clock move on. When the last piece is
  * in, the box seals and Start lights up. It waits for a click on Spin up.
@@ -103,28 +139,28 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         {!waiting && <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
       <div className={`ua-box ${done ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
-        {/* the shipping container around the open front: roof, ribbed side with door bars, corner castings, shadow */}
-        <span className="ua-crate-top" aria-hidden="true" />
-        <span className="ua-crate-side" aria-hidden="true"><i /><i /><i /><i /></span>
-        <span className="ua-crate-corners" aria-hidden="true"><i /><i /><i /><i /></span>
-        <span className="ua-crate-shadow" aria-hidden="true" />
         <div className="ua-lid">
           <img src="/logos/docker.svg" alt="" />
           <span>your machine · {lab.label}</span>
           <span className="ua-clock" aria-hidden="true">{waiting ? "" : done ? "ready" : `${secs} s`}</span>
           <span className="ua-bar" aria-hidden="true"><i style={{ width: `${(Math.min(step, n) / n) * 100}%` }} /></span>
         </div>
-        <ul className="ua-slots" style={{ "--cols": n > 6 ? 4 : 3 } as CSSProperties}>
-          {lab.pieces.map((p, i) => (
-            <li key={p.name + i} className={i < step ? "is-in" : i === step && !waiting ? "is-next" : ""}
-              style={{ "--fx": `${(i % 2 ? 1 : -1) * (60 + (i * 37) % 80)}px`, "--fy": `${-110 - (i * 23) % 60}px` } as CSSProperties}>
-              <span className="ua-tile">
-                <span className="ua-logo"><Mark p={p} /></span>
-                <span className="ua-name">{p.name}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="ua-ship">
+          <Container open={!done} landed={step} />
+          {/* the piece being loaded drops into the open doors */}
+          {!waiting && step > 0 && step <= n && !done && (
+            <span className="ua-drop" key={step}>
+              <span className="ua-logo"><Mark p={lab.pieces[step - 1]} /></span>
+              <span className="ua-name">{lab.pieces[step - 1].name}</span>
+            </span>
+          )}
+          {done && (
+            <span className="ua-drop is-last" key="last">
+              <span className="ua-logo"><Mark p={lab.pieces[n - 1]} /></span>
+              <span className="ua-name">{lab.pieces[n - 1].name}</span>
+            </span>
+          )}
+        </div>
         {waiting && (
           <button type="button" className="ua-go" onClick={spin}
             style={{ "--go": go.bg, "--go-ink": go.ink } as CSSProperties}>
@@ -132,7 +168,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
             <span>Spin up the {lab.label} machine</span>
           </button>
         )}
-        <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${n} * 1.85em + 24px)` }}>
+        <ol className="ua-log" aria-live="polite" style={{ minHeight: `calc(${7} * 1.85em + 24px)` }}>
           {waiting && <li className="ua-log-wait">learner:~$ <span className="ua-caret" aria-hidden="true" /></li>}
           {lab.pieces.slice(0, step).map((p, i) => (
             <li key={p.name + i}><b>✓</b> <strong>{p.name}</strong> <span>{p.step}</span></li>

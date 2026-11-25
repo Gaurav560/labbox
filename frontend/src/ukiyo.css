@@ -482,7 +482,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* waiting for a click: one clear button over the empty slots */
 .ua-box { isolation: isolate; }
 /* the earlier hanko-style button, in a softer, muted brick red (owner, 25 November: the bright red was hard on the eyes) */
-.ua-go { --go: #6e5591; --go-ink: #fbf3e8; position: absolute; z-index: 3; left: 50%; top: 52%; transform: translate(-50%, -50%); display: grid; justify-items: center;
+.ua-go { --go: #6e5591; --go-ink: #fbf3e8; position: absolute; z-index: 3; left: 50%; top: 71%; transform: translate(-50%, -50%); display: grid; justify-items: center;
   gap: 10px; padding: 20px 34px 18px; border: 0; cursor: pointer; background: var(--go); color: var(--go-ink); border-radius: 4px;
   font: 600 18px var(--font-text); white-space: nowrap;
   box-shadow: inset 0 0 0 4px var(--go), inset 0 0 0 5.5px color-mix(in srgb, var(--go-ink) 65%, transparent), 0 20px 40px -18px #0009;
@@ -494,7 +494,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-go-play { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--go-ink); color: var(--go);
   font-size: 16px; padding-left: 3px; }
 @keyframes ua-ring { 0% { opacity: .6; transform: scale(1); } 100% { opacity: 0; transform: scale(1.14); } }
-.ua-box.is-waiting .ua-slots, .ua-box.is-waiting .ua-log { opacity: .55; }
+.ua-box.is-waiting .ua-log { opacity: .55; }
 .ua-log-wait { color: var(--muted); }
 .ua-caret { display: inline-block; width: 8px; height: 15px; vertical-align: -2px; background: var(--muted); animation: ua-blink 1s steps(1) infinite; }
 @keyframes ua-blink { 50% { opacity: 0; } }
@@ -575,35 +575,31 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-swatches button[aria-checked="true"] { color: var(--text); border-color: var(--text); }
 .ua-swatches i { width: 22px; height: 22px; display: block; box-shadow: inset 0 0 0 1px #0002; }
 
-/* the box as a shipping container (owner, 25 November: "cool if the container looks like this"), drawn in the
-   theme's ink: a rust shell frames the open front; the roof and the ribbed side are skewed panels, so the stack
-   inside keeps working as before. */
-.ua-box { --crate: #9b4a34; --crate-dark: #6f3324; --crate-ink: #1c1a17;
-  margin: 40px 88px 40px 12px; border: 12px solid var(--crate); outline: 2.5px solid var(--crate-ink); }
-:root[data-theme="dark"] .ua-box { --crate: #8a432f; --crate-dark: #5e2b1e; --crate-ink: #0b0a09; }
-.ua-crate-top { position: absolute; z-index: -1; left: -14.5px; right: -14.5px; bottom: calc(100% + 12px); height: 26px;
-  background: linear-gradient(var(--crate), color-mix(in srgb, var(--crate) 80%, #fff 20%)); border: 2.5px solid var(--crate-ink);
-  transform-origin: left bottom; transform: skewX(-70.6deg); }
-.ua-crate-side { position: absolute; z-index: -1; top: -14.5px; bottom: -14.5px; left: calc(100% + 12px); width: 74px; display: flex;
-  justify-content: space-evenly; align-items: stretch; padding: 14px 6px;
-  background: linear-gradient(90deg, #0000 0 49%, var(--crate-ink) 49% 51%, #0000 51%),
-    repeating-linear-gradient(90deg, var(--crate-dark) 0 6px, color-mix(in srgb, var(--crate-dark) 72%, #000) 6px 9px);
-  border: 2.5px solid var(--crate-ink); transform-origin: left top; transform: skewY(-20deg); }
-/* the door bars, each with a handle halfway down */
-.ua-crate-side i { position: relative; width: 4px; background: color-mix(in srgb, var(--crate) 55%, #fff 45%); border: 1px solid var(--crate-ink); border-radius: 2px; }
-.ua-crate-side i::after { content: ""; position: absolute; top: 52%; left: -5px; width: 12px; height: 4px; background: var(--crate-ink); border-radius: 2px; }
-.ua-crate-corners i { position: absolute; z-index: 1; width: 16px; height: 14px; background: color-mix(in srgb, var(--crate-dark) 80%, #000);
-  border: 2px solid var(--crate-ink); }
-.ua-crate-corners i:nth-child(1) { top: -14px; left: -14px; }
-.ua-crate-corners i:nth-child(2) { top: -14px; right: -14px; }
-.ua-crate-corners i:nth-child(3) { bottom: -14px; left: -14px; }
-.ua-crate-corners i:nth-child(4) { bottom: -14px; right: -14px; }
-.ua-crate-shadow { position: absolute; z-index: -2; left: 4%; right: -40px; bottom: -48px; height: 34px; border-radius: 50%;
-  background: radial-gradient(closest-side, #0006, transparent); filter: blur(4px); }
-.ua-box.is-sealed .ua-crate-side i { opacity: 1; }
-@media (max-width: 860px) {
-  .ua-box { margin: 26px 40px 30px 8px; border-width: 8px; }
-  .ua-crate-side { width: 40px; left: calc(100% + 8px); padding: 10px 3px; }
-  .ua-crate-side i:nth-child(n+3) { display: none; }
-  .ua-crate-top { height: 15px; bottom: calc(100% + 8px); transform: skewX(-69.4deg); }
-}
+/* the shipping container (owner, 25 November: "an original Docker container"), drawn in the Docker docs' style */
+.ua-ship { position: relative; padding: 14px 10px 0; }
+.ua-container { display: block; width: 100%; height: auto; overflow: visible; }
+.ua-c-shadow { fill: #0000002e; filter: blur(6px); }
+.ua-c-front { fill: #4cc0f2; }
+.ua-c-top { fill: #8fdcfb; }
+.ua-c-end { fill: #1c8fd3; transition: fill .5s; }
+.ua-c-end.is-open { fill: #0b2f4a; }
+.ua-c-groove { stroke: #2aa6e0; stroke-width: 3; stroke-linecap: round; opacity: .55; }
+.ua-c-rib { stroke: #126aa3; stroke-width: 9; stroke-linecap: round; animation: ua-rib .5s ease-out both; }
+.ua-c-seam { stroke: #0e2233; stroke-width: 3; }
+.ua-c-line { fill: none; stroke: #14171a; stroke-width: 4.5; stroke-linejoin: round; stroke-linecap: round; }
+.ua-c-body { transform-origin: 280px 260px; animation: ua-bump .35s ease-out; }
+@keyframes ua-bump { 0% { transform: translateY(0); } 40% { transform: translateY(5px) scaleY(.985); } 100% { transform: none; } }
+@keyframes ua-rib { from { opacity: 0; } to { opacity: 1; } }
+:root[data-theme="dark"] .ua-c-line { stroke: #050607; }
+:root[data-theme="dark"] .ua-c-shadow { fill: #00000066; }
+/* the piece being loaded: appears above the doors and drops in */
+.ua-drop { position: absolute; left: 78.5%; top: 2%; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px;
+  background: #fffdf8; border: 1px solid var(--rule); border-radius: 6px; color: #1c1a17; box-shadow: 0 12px 24px -12px #0008;
+  white-space: nowrap; animation: ua-drop .7s cubic-bezier(.3, .7, .3, 1) forwards; }
+.ua-drop .ua-logo { width: 34px; height: 34px; }
+.ua-drop .ua-name { font: 600 14px var(--font-text); }
+.ua-drop.is-last { animation: ua-drop .7s cubic-bezier(.3, .7, .3, 1) forwards; }
+@keyframes ua-drop { 0% { opacity: 0; transform: translate(-50%, -24px); } 25% { opacity: 1; transform: translate(-50%, 0); }
+  70% { opacity: 1; transform: translate(-50%, 120px) scale(.6); } 100% { opacity: 0; transform: translate(-50%, 150px) scale(.3); } }
+.ua-box .ua-stamp { top: 64px; right: 40px; }
+@media (prefers-reduced-motion: reduce) { .ua-drop { display: none; } .ua-c-body { animation: none; } }
