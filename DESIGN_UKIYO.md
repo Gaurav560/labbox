@@ -51,26 +51,28 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 | Piece | Where | Notes |
 |---|---|---|
 | `LogoMark` | everywhere | a vermilion hanko with the shell prompt, stamp texture |
-| `TrackArt` | dashboard, course page | seven SVG woodblock prints, one per category |
+| `TrackArt` | dashboard, home, course page | the category's picture (`TRACK_IMAGES`); drawn SVG prints only as a fallback |
+| `LabPrint` | course page, dashboard feature | the lab's own woodblock print with a credit line |
 | `Seal` | feature, finished labs | small vermilion stamp with one or two words |
 | `BrushLevel` | lab rows | one to three brush marks for beginner, intermediate, advanced |
 | `InkProgress` | feature, rows | a fine ink line with a vermilion diamond |
 | Feature | dashboard | the next step: print, serif title, ink progress, red button, chapter ladder |
-| Category tiles | dashboard | print, name, count; they narrow the directory |
-| Lab rows | dashboard | logo, serif title, one line, level, size, progress |
+| `UkiyoDirectory` | dashboard | category tiles (print, name, count) that narrow the lab rows (logo, serif title, level, size, progress) |
+| Folding screen | home | six tall category panels; the one under the pointer opens and lists its labs |
+| `UkiyoMachine` | home | "start a lab": a Docker-style container that loads a lab's real stack and starts (below) |
 
 ## Artwork
 
 - Category pictures (`TRACK_IMAGES` in `components/UkiyoArt.tsx`, files in `public/ukiyo/tracks/`), all calm
-  Hiroshige prints, public domain: AI, a cat on a windowsill gazing out at Fuji and the rice fields (Asakusa Ricefields and
-  Torinomachi Festival, 1857);
-  (owner, 25 November: "cool images that soothe the eyes"): Languages, cherry blossoms on the Tama River
-  embankment; Frameworks, the bamboo yards at Kyobashi under a full moon; System design, the drum bridge under
-  wisteria at Kameido Tenjin; Databases, a boat on the Sumida with Azuma Bridge and Fuji (One Hundred Famous Views of
-  Edo, 1856 to 1858); DevOps, the Monkey Bridge in Kai Province by moonlight (about 1842). The original SVG prints
-  stay in the file as the fallback for categories without a picture (Cloud).
-- Two public-domain prints by Hokusai (about 1831), stored in `public/ukiyo/`: The Great Wave (faint behind the
-  home page's All labs tile) and Red Fuji (no longer used on a page).
+  public-domain Hiroshige prints (owner, 25 November: "cool images that soothe the eyes"): AI, a cat on a windowsill
+  gazing out at Fuji and the rice fields (Asakusa Ricefields and Torinomachi Festival, 1857); Languages, cherry
+  blossoms on the Tama River embankment; Frameworks, the bamboo yards at Kyobashi under a full moon; System design,
+  the drum bridge under wisteria at Kameido Tenjin; Databases, a boat on the Sumida with Azuma Bridge and Fuji (all
+  One Hundred Famous Views of Edo, 1856 to 1858); DevOps, the Monkey Bridge in Kai Province by moonlight (about
+  1842). The drawn SVG prints stay as the fallback for categories without a picture (Cloud).
+- Hokusai's The Great Wave (about 1831, public domain, `public/ukiyo/great-wave.webp`) on the dashboard's All labs tile.
+- Home page: Hiroshige's Kinryuzan Temple at Asakusa in snow (hero, `public/ukiyo/heroes/kinryuzan.webp`) and
+  Evening Snow on Mount Hira (closing panel, `public/ukiyo/hira-evening-snow.webp`). Red Fuji is kept but unused.
 - Every lab has its own real woodblock print (owner, 24 November: "classy unique images for each one of the lab"),
   shown on its course page with a credit line and on the dashboard's Continue feature. The category tiles keep
   the shared category print; "All labs" shows the Great Wave. Files: `public/ukiyo/labs/<lab>.webp` (1280 px,
@@ -112,16 +114,25 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 
 - Dashboard: rewritten (`pages/LabsPage.tsx`).
 - Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
-- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): the hero "The AI wave is here. / Learn to build on it." with a
-  lab terminal over Hiroshige's Kinryuzan Temple in snow (picked from eight options; no numbers strip);
-  "start a lab" (`components/UkiyoMachine.tsx`, picked from nine options): "One click, and a container spins up
-  for you with everything the lab needs." beside a paper box into which the lab's real stack (Linux, language,
-  framework, databases, an editor and terminal, an AI code assistant) packs itself piece by piece, a line in the log
-  for each, then a green tick and Start (to that course, through login);
-  (vermilion brush underline, no highlighter), the four numbers between fine rules (no logo strip), the lab
-  a folding screen of six tall panels, one per category (the panel
-  under the pointer opens wider and lists its labs; stacked rows on phones; picked by the owner from eight layouts),
-  then "See all labs" (the full directory stays on `/labs`, `components/UkiyoDirectory.tsx`), a closing paper
-  panel with Hiroshige's Evening Snow on Mount Hira (Eight Views of Omi, about 1834, public domain), a wide strip, and the FAQs with a thin plus and minus.
+- Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` sections 10 and 15), top to bottom:
+  - Hero: "The AI wave is here. / Learn to build AI apps, / or get left behind." (vermilion italic, then muted); the
+    lead (a code editor, a terminal and a model gateway in about a minute); "No fluff. No tutorial hell. Only
+    action."; Start free; on the right a lab session in a terminal over the Kinryuzan print (picked from eight).
+  - Start a lab (`components/UkiyoMachine.tsx`, picked from nine options and refined with the owner): nine lab tabs,
+    AI first (LangChain, Spring AI, RAG, Spring Boot, Python, Postgres, Linux, FastAPI, Redis); "One click, and a
+    container spins up for you with everything the lab needs."; the run command `$ docker run <lab>` types itself,
+    with a green Run key and "Try it: tap Run". Beside it a Docker-style shipping container (corrugated walls,
+    frame, castings, stencils, the whale). The first run starts by itself when the section comes into view; then
+    each piece of the lab's real stack appears, flies into the open doors and rides in as a cardboard crate seen
+    through the glass wall; the doors lock, `docker start` runs, the lamp and lights turn green ("RUNNING"), a
+    clock counts to 58 s, a green tick and Start (to the course, through login) appear. 1.6 s per piece
+    (`PIECE_MS`); reduced motion shows the running container at once. A tab change waits for Run or a tap.
+  - Labs: "Pick a lab. Start in a minute." and the folding screen of six category panels, then "See all labs"
+    (the full directory stays on `/labs`).
+  - A closing paper panel ("Your machine is ready when you are.") with Evening Snow on Mount Hira.
+  - FAQs without numbers, a thin plus and minus.
+  - Removed on the owner's request: the logo strip, the numbers, Inside a lab, the AI stage ladder, the AI section
+    (parked; see git history at 3b89404), the old "first win" line.
+- Menu: "AI labs" opens `/labs?category=ai` (through login, `next=`).
 - Premium Reads, login: restyled through tokens and sections 9 and 11 of `ukiyo.css`.
 - Lab page: the frame only (Check button, step marks, labels, headings); the lesson watermark is off.
