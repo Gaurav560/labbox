@@ -3441,20 +3441,39 @@ function RagChunks() {
   );
 }
 
+/** IVF as a sketch in two dimensions (real vectors have 384): cells around centroids, the question, the probed cell,
+ *  and a true neighbour just across a border. Below, the real recall from chapter 5's benchmark (100,000 synthetic
+ *  vectors, 316 lists). */
 function RagIvf() {
+  const cells = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
+  const cw = 146, ch = 104;
+  const pts = [[30, 30], [60, 70], [100, 40], [180, 25], [220, 80], [260, 50], [330, 30], [390, 75], [350, 60],
+               [40, 150], [90, 185], [120, 140], [175, 135], [205, 190], [250, 165], [320, 180], [400, 140], [360, 195]];
   return (
-    <SketchSteps
-      title="Search only the nearest lists"
-      intro="Press Play to follow one query through an IVF index."
-      label="IVF"
-      steps={[
-        { label: "the lists", says: "100,000 vectors are filed in 316 lists, each under its centroid, the middle of a group." },
-        { label: "compare with centroids", says: "The query is compared with the 316 centroids only: 316 dot products, not 100,000." },
-        { label: "pick nprobe lists", says: "The 16 closest centroids are chosen; their lists hold about 5,000 vectors." },
-        { label: "score the candidates", says: "Only those 5,000 vectors are scored exactly against the query." },
-        { label: "the answer", says: "The 10 best candidates come back. A true neighbour filed in an unopened list is missed: recall 92%." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 360" label="Six cells, each around a centroid; the question sits in the middle cell near its left border; nprobe 1 searches only that cell and misses a true neighbour just across the border">
+      {cells.map(([cx, cy]) => {
+        const on = cx === 1 && cy === 1;
+        return (
+          <g key={`${cx}${cy}`} className={`dg-box dg-${on ? "highlight" : "plain"}`}>
+            <rect x={cx * cw + 2} y={cy * ch + 2} width={cw - 4} height={ch - 4} rx={6} />
+            <text x={cx * cw + cw / 2} y={cy * ch + ch / 2 + 5} textAnchor="middle" style={{ fontSize: 20 }}>+</text>
+          </g>
+        );
+      })}
+      {pts.map(([x, y], k) => <circle key={k} cx={x} cy={y} r={3.5} className="dg-arrow" style={{ fill: "var(--figure-text)", stroke: "none" }} />)}
+      <circle cx={162} cy={160} r={7} style={{ fill: "var(--vermilion, #c63f28)" }} />
+      <text className="dg-note" x={162} y={226} textAnchor="middle">question</text>
+      <circle cx={134} cy={164} r={5.5} style={{ fill: "none", stroke: "var(--vermilion, #c63f28)", strokeWidth: 2.5 }} />
+      <text className="dg-note" x={70} y={226} textAnchor="middle">true neighbour</text>
+      <text className="dg-note" x={70} y={240} textAnchor="middle">missed: other cell</text>
+      <text className="dg-note" x={0} y={262}>+ a centroid; each cell holds the vectors nearest to it.</text>
+      <text className="dg-note" x={0} y={280}>nprobe 1: search only the question's cell (yellow).</text>
+      <text className="dg-note" x={0} y={306}>Real recall at nprobe 1, 4, 16, 64 (100,000 synthetic vectors):</text>
+      <Box x={0} y={314} w={104} h={34} label="nprobe 1: 52%" code />
+      <Box x={112} y={314} w={104} h={34} label="4: 74%" code />
+      <Box x={224} y={314} w={104} h={34} label="16: 92%" tone="highlight" code />
+      <Box x={336} y={314} w={104} h={34} label="64: 99.6%" code />
+    </Svg>
   );
 }
 

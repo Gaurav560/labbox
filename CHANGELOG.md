@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: RAG chapter 5 rewritten (easy, a little detailed, checked)
+
+- ANN, centroids and clusters, k-means step by step, Voronoi cells, inverted lists, the transpose and `argmax(axis=1)`
+  (read line by line), nprobe and candidates are explained where they first appear; tasks list their steps and slips.
+- The IVF animation is now a still sketch (in two dimensions, said so): cells around centroids, the question's probed
+  cell, a true neighbour missed just across a border, and the real recall at nprobe 1, 4, 16, 64.
+- A new history photo: Georgy Voronoy (public domain), whose 1908 cells are exactly what the IVF lists hold.
+- Checked by re-running the benchmark in the lab image: recall 52 / 73.6 / 91.8 / 99.6%, lists of 155 to 483, and the
+  quiz's 632 lists at nprobe 16 (0.5 ms, 90.2%). Corrected: the benchmark runs on 100,000 synthetic vectors (the
+  lesson never said so); nprobe 64 is 99.6%, not exactly the brute-force answer; "about the square root" is one rule of
+  thumb among several (pgvector: rows / 1000 up to a million; FAISS: several times the square root). A new notes page.
+
 ## 25 November: RAG chapter 4 rewritten (easy, a little detailed, checked)
 
 - Why documents are cut (the model reads at most 512 tokens, about 380 words, for bge-small; one vector cannot stand
