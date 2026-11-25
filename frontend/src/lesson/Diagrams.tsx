@@ -3589,6 +3589,36 @@ function RagFilter() {
   );
 }
 
+function RagRrf() {
+  // Real rankings for "CT-112" from hybrid_demo.py's Index (55 chunks).
+  const dense = ["R-0503", "R-0402", "R-0304", "R-0303", "R-0405", "R-0306", "R-0310", "FM-3.3", "R-0408", "R-0403", "R-0301"];
+  const top = 58, step = 24, h = 20, w = 150, rx = 290;
+  const y = (i: number) => top + i * step;
+  return (
+    <Svg viewBox="0 0 440 470" label="Dense search ranks R-0301 eleventh for CT-112; BM25 ranks it first; reciprocal rank fusion adds both and puts it first">
+      <text className="dg-label" x={0} y={18}>Dense (meaning)</text>
+      <text className="dg-note" x={0} y={38}>rank: chunk</text>
+      <text className="dg-label" x={rx} y={18}>BM25 (words)</text>
+      <text className="dg-note" x={rx} y={38}>rank: chunk</text>
+      <line className="dg-arrow" x1={w} y1={y(10) + h / 2} x2={rx} y2={y(0) + h / 2} style={{ markerEnd: "none", opacity: 0.6 }} />
+      <g className="dg-cells-small">
+        {dense.map((id, i) => (
+          <Box key={id} x={0} y={y(i)} w={w} h={h} label={`${i + 1}: ${id}`} tone={id === "R-0301" ? "highlight" : "plain"} code />
+        ))}
+        <Box x={rx} y={y(0)} w={w} h={h} label="1: R-0301" tone="highlight" code />
+      </g>
+      <text className="dg-note" x={rx} y={y(1) + 16}>the only chunk</text>
+      <text className="dg-note" x={rx} y={y(1) + 34}>containing ct-112</text>
+      <text className="dg-note" x={0} y={348}>Fused score: add 1 / (60 + rank) from each list.</text>
+      <g className="dg-cells-small">
+        <Box x={0} y={360} w={440} h={28} label="1st  R-0301: 1/71 + 1/61 = 0.0305" tone="highlight" code />
+        <Box x={0} y={396} w={440} h={28} label="2nd  R-0503: 1/61 = 0.0164" code />
+        <Box x={0} y={432} w={440} h={28} label="3rd  R-0402: 1/62 = 0.0161" code />
+      </g>
+    </Svg>
+  );
+}
+
 function RagTwoStage() {
   return (
     <SketchSteps
@@ -3615,6 +3645,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "rag-hnsw": RagHnsw,
   "rag-binary": RagBinary,
   "rag-filter": RagFilter,
+  "rag-rrf": RagRrf,
   "rag-two-stage": RagTwoStage,
   "rs-cli": RsCli,
   "rs-rc-refcell": RsRcRefCell,
