@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 11 rewritten (easy, a little detailed, checked)
+
+- State, graph, nodes and edges are explained where they first appear; both tasks list their steps and the usual slips.
+- Checked by running the agent through the lab gateway three times: the tomatoes question always used one tool (4
+  messages, 350 rupees), the garlic question never called a tool (2 messages), "Hello!" gave 2 messages; the
+  `mandi_price` docstring is quoted exactly; LangGraph 1.2.24's default recursion limit is 10,007, now with its
+  environment variable; the graph printed by `draw_mermaid`. The runs are labelled (the wording changes: "Rs 350" or
+  "₹350"). A new notes page, the recursion limit labelled as the lab's version.
+
 ## 25 November: LangChain chapter 10 rewritten (easy, a little detailed, checked)
 
 - Tools, docstrings, type hints and JSON schemas are explained where they first appear; both tasks list their steps and

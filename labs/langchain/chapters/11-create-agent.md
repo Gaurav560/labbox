@@ -4,7 +4,8 @@ a way to pause for a person's approval, retries when the model is busy, and limi
 run. Writing all that well is a lot of work, and every team would write it differently.
 
 LangChain's `create_agent` is that loop, finished: one function that takes a model, tools and instructions, and
-returns an agent you `invoke`. Underneath it is a small **LangGraph** graph with two steps, `model` and `tools`, and
+returns an agent you `invoke`. Underneath it is a small **LangGraph** graph: a program drawn as boxes (**nodes**) joined by arrows (**edges**), here two
+nodes, `model` and `tools`, with an arrow back from `tools` to `model`, and
 everything later in this course (memory, streaming, middleware, human approval) plugs into it.
 
 :::mission
@@ -23,7 +24,8 @@ result = agent.invoke({"messages": [{"role": "user", "content": "What does 25 cr
 result["messages"][-1].content                               # the answer
 ```
 
-The input and the output are the same shape, a **state** with a list of `messages`. The result holds every message of
+The input and the output are the same shape, a **state**: a dict the graph passes from node to node, here with a list
+of `messages`. The result holds every message of
 the run, exactly like the list your `agent_loop` grew: the question, the model's tool calls, the tool results, the
 answer.
 
@@ -60,6 +62,9 @@ old agent types. You will build the same kind of graph yourself in the LangGraph
 :::step{type=task task=first_agent title="Your turn: Navin as an agent" file="11-create-agent/agent.py" line="9-12"}
 Finish `navin_agent()`: return `create_agent("openai:ai-chat", tools=[mandi_price, storage_cost], system_prompt=SYSTEM)`.
 
+The usual slip: passing the tools as functions you call, `tools=[mandi_price(), ...]`. Pass the tools themselves;
+the agent calls them when the model asks.
+
 Press **Check**.
 :::
 
@@ -78,8 +83,14 @@ guess?"), and for cost (every tool round is another model call).
 :::
 
 :::step{type=task task=tools_used title="Your turn: which tools did it use?" file="11-create-agent/agent.py" line="15-19"}
-Finish `tools_used(result)`: go through `result["messages"]` and collect the `name` of every call in each message's
-`tool_calls` (only AI messages have them; use `getattr(m, "tool_calls", None) or []`), in order.
+Finish `tools_used(result)`:
+
+1. Go through `result["messages"]` in order.
+2. For each message, take its tool calls: `getattr(m, "tool_calls", None) or []` (only AI messages have them; the
+   `getattr` returns `None` for the others, and `or []` turns that into an empty list).
+3. Collect `call["name"]` for every call, and return the list.
+
+The usual slip: `m.tool_calls` directly, which fails on a `HumanMessage` or `ToolMessage`.
 
 ```bash run
 cd /workspace/11-create-agent && python main.py
@@ -89,6 +100,9 @@ Press **Check**.
 :::
 
 :::step{type=try title="One tool, and none"}
+A real run (we ran it twice more on 25 November: the same tools and message counts every time; the wording changed a
+little, "Rs 350" instead of "₹350"):
+
 ```text
 $ python main.py
 > What does it cost to keep 25 crates of tomatoes for a week?
@@ -155,7 +169,8 @@ Descriptions are instructions too. Chapter 12 is about writing them well.
 until the model answers without tool calls.
 
 **Recursion limit.** Instead of `max_steps`, LangGraph counts steps (each model call and each tool round) and stops at
-`recursion_limit`. In this version the default is **10,007**, effectively no limit, so pass your own:
+`recursion_limit`. In the lab's LangGraph (1.2.24) the default is **10,007**, unless the environment variable
+`LANGGRAPH_DEFAULT_RECURSION_LIMIT` sets another: effectively no limit, so pass your own:
 `agent.invoke(state, {"recursion_limit": 10})`. Chapter 22 adds limits per model call and per tool, too.
 
 **Models as objects.** Instead of a string you can pass a configured model, `create_agent(init_chat_model(...,
@@ -172,7 +187,7 @@ You can now:
 
 Next, chapter 12: writing tools well, and tools that know which member is asking.
 
-:::photo{src="/lesson-images/langchain/lc-11-notes.webp" alt="Handwritten notes about create_agent: create_agent: model, tools, prompt; The run is a list of messages; Garlic: no tool needed; Tool errors stop the run; Set your own recursion limit" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-11-notes.webp" alt="Handwritten notes about create_agent: create_agent takes a model, tools and a system prompt. A run returns every message: question, tool calls, results, answer. For garlic, the tool's description made a call unnecessary. By default, a tool's exception stops the whole run. In the lab's LangGraph the default limit is 10,007: set your own. Underneath is a graph: model, tools, and back to model." ai="true"}
 One page of notes for this chapter.
 :::
 :::
