@@ -1,5 +1,15 @@
 # Changelog
 
+## 25 November: LangChain chapter 21 rewritten (easy, a little detailed, checked)
+
+- Protocol and JSON-RPC are explained where they first appear; both tasks list their steps and the usual slips
+  (checked: FastMCP 4.2.5 accepts both `@mcp.tool` and `@mcp.tool()`).
+- The MCP animation is now a still picture of the real run, across two processes.
+- Checked through the lab gateway: the beta warning, the two tools, 4,600 and 120 again. Added what learners really
+  see: FastMCP's banner and its "Starting MCP server" line, on standard error, which ties to the quiz on printing to
+  standard output. Corrected: "supported by most AI apps within months" became "OpenAI, Google, Microsoft and many
+  frameworks". A new notes page.
+
 ## 25 November: LangChain chapter 20 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (changing a chunk in place spoils the comparison).

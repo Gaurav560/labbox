@@ -4,8 +4,9 @@ volunteer's coding assistant, maybe next year a WhatsApp bot written by a differ
 Copying `mandi_price` and `storage_cost` into each would mean three copies to keep correct when a rate or a charge
 changes.
 
-The **Model Context Protocol** (MCP) solves this: the co-op runs its tools as an **MCP server**, and any **MCP client**
-(an AI app, an IDE, an agent) can list and call them. You write the tools once, with **FastMCP**, and Navin becomes one
+The **Model Context Protocol** (MCP) solves this. A **protocol** is an agreed way for two programs to talk. With MCP,
+the co-op runs its tools as an **MCP server**, and any **MCP client** (an AI app, an IDE, an agent) can list and call
+them. You write the tools once, with **FastMCP**, and Navin becomes one
 client among many.
 
 :::mission
@@ -21,8 +22,9 @@ differently.
 
 Developer tools had the same problem with programming languages until Microsoft published the **Language Server
 Protocol** in **2016**: one protocol between editors and language tools. On **25 November 2024** Anthropic published the
-**Model Context Protocol**, built on the same idea for AI: a server offers tools (and resources and prompts) over
-JSON-RPC, and any client can use them. Within months it was supported by most AI apps and frameworks. In **December
+**Model Context Protocol**, built on the same idea for AI: a server offers tools (and resources and prompts) over JSON-RPC (a simple format for calling a function in another
+program with JSON messages), and any client can use them. Within months OpenAI, Google, Microsoft and many agent
+frameworks supported it. In **December
 2024** Jeremiah Lowin released **FastMCP**, a Pythonic way to write servers with decorators; its first version became
 part of the official MCP Python SDK.
 
@@ -56,7 +58,7 @@ It looks like chapter 12's `@tool`, on purpose: the name, the docstring and the 
 description, exactly as before. The difference is who can call it: anything that speaks MCP.
 
 :::diagram{name="lc-mcp"}
-The adapter starts the server, lists its tools, and the agent calls them over MCP until the block ends.
+Chapter 21's real run, across two processes, with the real values.
 :::
 
 | Transport | How a client reaches the server | Use for |
@@ -67,6 +69,9 @@ The adapter starts the server, lists its tools, and the agent calls them over MC
 
 :::step{type=task task=mcp_server title="Your turn: the co-op's MCP server" file="21-mcp/coop_server.py" line="8-16"}
 Offer both functions as MCP tools: put `@mcp.tool` on the line above each `def` (and remove the TODO comment).
+
+The usual slip: `@mcp.tool()` is fine too in FastMCP, but `@tool` (LangChain's decorator from chapter 12) is not: it
+makes a LangChain tool, which the MCP server does not offer.
 
 Press **Check**.
 :::
@@ -88,9 +93,15 @@ handy in tests.
 :::
 
 :::step{type=task task=mcp_agent title="Your turn: tools from the server" file="21-mcp/client.py" line="11-17"}
-Finish `ask_over_mcp(question)`: inside `async with MCPAdapter(SERVER) as adapter`, list the tools, build the agent with
-them and `system_prompt=SYSTEM`, run it with `await agent.ainvoke(...)`, and return the tool names and the last
-message's content.
+Finish `ask_over_mcp(question)`, all inside `async with MCPAdapter(SERVER) as adapter:`:
+
+1. `tools = await adapter.list_tools()`.
+2. `agent = create_agent("openai:ai-chat", tools=tools, system_prompt=SYSTEM)`.
+3. `result = await agent.ainvoke({"messages": [{"role": "user", "content": question}]})`.
+4. Return `([t.name for t in tools], result["messages"][-1].content)`.
+
+The usual slips: `agent.invoke` instead of `await agent.ainvoke` (MCP tools are async), and running the agent after
+the `async with` block, when the server has already stopped.
 
 ```bash run
 cd /workspace/21-mcp && python main.py
@@ -107,7 +118,11 @@ tools from the server: ['mandi_price', 'storage_cost']
 The rate for grapes is ₹4600 per quintal. Storing 15 crates for 4 days will cost you ₹120.
 ```
 
-(The first line is the end of the beta warning, which names the import that triggered it.)
+(The first line is the end of the beta warning, which names the import that triggered it. When you run it you will
+also see FastMCP's large banner and a "Starting MCP server ... with transport 'stdio'" log line, from the server
+process. The server writes those to **standard error**, never to standard output, because standard output is the MCP
+connection itself: the quiz below is about exactly that. We ran it again on 25 November and got the same tools and
+the same numbers.)
 
 Navin's code contains no co-op tool at all. `MCPAdapter` started `coop_server.py` as a separate process, listed its two
 tools, and the agent called them over MCP: ₹4,600 from the server's rate table and ₹120 from its arithmetic (15 × 4 ×
@@ -172,7 +187,7 @@ You can now:
 
 That ends Part 4. Next, chapter 22: middleware, the hooks that make an agent production-ready.
 
-:::photo{src="/lesson-images/langchain/lc-21-notes.webp" alt="Handwritten notes about MCP: MCP: one protocol for tools; FastMCP: @mcp.tool; stdio: the client starts it; MCPAdapter gives tools; stdout is the wire" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-21-notes.webp" alt="Handwritten notes about MCP: MCP lets AI apps list and call tools from a server. Write a tool once with FastMCP; every MCP client can use it. Over stdio, the client starts the server and talks through stdin and stdout. Never print to stdout in a stdio server: log to stderr. Run the agent inside async with MCPAdapter, then the server stops. Our answer: 4600 and 120, computed by the server." ai="true"}
 One page of notes for this chapter.
 :::
 :::

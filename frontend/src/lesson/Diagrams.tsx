@@ -2501,20 +2501,28 @@ function LcRag() {
 }
 
 function LcMcp() {
+  // Still (owner, 25 November): chapter 21's real run, across two processes.
+  const rows: [string, string, BoxTone][] = [
+    ["MCPAdapter starts coop_server.py", "a separate process, talking MCP over its stdin and stdout (stdio)", "plain"],
+    ["the server lists its tools", "mandi_price, storage_cost: they become LangChain tools", "accent"],
+    ["the agent calls them over MCP", "mandi_price(grapes) and storage_cost(crates=15, days=4)", "plain"],
+    ["the server runs its Python", "4600 from its rate table, 120 from 15 x 4 x 2", "copy"],
+    ["the answer; then the block ends", "...grapes ₹4600 per quintal ... ₹120. The server stops.", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="Navin and an MCP server"
-      intro="Press Play to follow chapter 21's question."
-      label="the adapter starts the server, lists its tools, the agent calls a tool over MCP, the server runs Python and answers, and the server stops at the end"
-      steps={[
-        { label: "1. Start", says: "MCPAdapter starts coop_server.py as a child process (stdio)." },
-        { label: "2. List", says: "The server describes mandi_price and storage_cost; they become LangChain tools." },
-        { label: "3. The model asks", says: "storage_cost with crates 15 and days 4." },
-        { label: "4. Over MCP", says: "The adapter sends the call to the server; the server runs Python: 120." },
-        { label: "5. The answer", says: "The result goes back to the model, which writes the reply." },
-        { label: "6. Stop", says: "Leaving async with closes the connection and stops the server." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 430" label="Chapter 21's run: the adapter starts the server process, lists its two tools, the agent calls them over MCP, the server computes the results, and the server stops when the block ends">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 86;
+        return (
+          <g key={title}>
+            <Box x={0} y={y} w={440} h={62} label="" tone={tone} />
+            <text className="dg-label" x={14} y={y + 24}>{title}</text>
+            <text className="dg-note" x={14} y={y + 46}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={220} y1={y + 64} x2={220} y2={y + 84} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
