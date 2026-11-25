@@ -62,8 +62,14 @@ The checkpoint "just before route" is the one whose `next` is `("route",)`. Its 
 :::
 
 :::step{type=task task=find_checkpoint title="Your turn: find the moment" file="11-time-travel/ticket.py" line="44-48"}
-Finish `snapshot_before(app, thread, node)`: loop over `app.get_state_history({"configurable": {"thread_id": thread}})`
-and return the first snapshot whose `.next == (node,)`; return `None` if there is none.
+Finish `snapshot_before(app, thread, node)`:
+
+1. loop over `app.get_state_history({"configurable": {"thread_id": thread}})` (newest first);
+2. return the first snapshot whose `.next == (node,)`, a **tuple** with one name;
+3. after the loop, return `None`.
+
+The usual slip: `snapshot.next == node`, comparing the tuple `('route',)` with the string `"route"`. They are never
+equal. We tried it: no snapshot was found, and the function returned `None`.
 
 Press **Check**.
 :::
@@ -78,19 +84,25 @@ app.invoke(None, config)
 
 `update_state` writes the values into the state **at that checkpoint**, through the reducers, as if the node named by
 `as_node` had returned them, and saves the result as a **new** checkpoint. Because it acts as `triage`, the graph's edges
-say what comes next: `route`. It returns the new checkpoint's config, and `invoke(None, config)` runs on from it.
+say what comes next: `route`. (Here `as_node` could even be left out: we tried, and LangGraph took the update as
+triage's, the last node that wrote at that checkpoint. Writing it says what you mean.) It returns the new checkpoint's config, and `invoke(None, config)` runs on from it.
 
 Nothing is overwritten. The old run stays in the history, and the corrected run becomes a new branch from the same point,
 like a branch in Git. The thread's current state is the newest checkpoint: the corrected one.
 
 :::diagram{name="lg-fork"}
-The correction starts a new branch from the checkpoint after triage; the old branch stays in the history.
+The real history of thread C-311 (26 November): the first run, and the branch the correction made.
 :::
 :::
 
 :::step{type=task task=correct_and_rerun title="Your turn: correct a step and run on" file="11-time-travel/ticket.py" line="51-56"}
-Finish `correct(app, thread, fields)`: `config = app.update_state(snapshot.config, fields, as_node="triage")`, then return
-`app.invoke(None, config)`.
+Finish `correct(app, thread, fields)`:
+
+1. `config = app.update_state(snapshot.config, fields, as_node="triage")`;
+2. `return app.invoke(None, config)`.
+
+The usual slip: skipping `update_state` and calling `app.invoke(fields, snapshot.config)`. That is a new input, so the
+run starts from START, triage runs again, and puts "other" back. We tried it: "repair crew ... 72 hours" again.
 
 ```bash run
 cd /workspace/11-time-travel && python main.py
@@ -123,6 +135,8 @@ history after the correction (newest first):
   step  0  loop   next=('triage',)    kind=-
   step -1  input  next=('__start__',) kind=-
 ```
+
+(We ran it again on 26 November: the same output, line for line.)
 
 Read the first history from the bottom up: the input arrived (step -1), triage was about to run (0), triage had
 decided "other" and route was next (1), then reply (2), then the end (3). The auditor's first question is answered by
@@ -195,7 +209,7 @@ You can now:
 
 Next, chapter 12: stores, for facts that outlive one thread.
 
-:::photo{src="/lesson-images/langgraph/lg-11-notes.webp" alt="Handwritten notes about time travel: a checkpoint after every step; history: newest first; update_state(..., as_node=); then invoke(None, config); old branch stays: audit trail" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-11-notes.webp" alt="Handwritten notes titled Time travel, read the history, fix a step, run on: a checkpointer keeps a checkpoint after every step, get_state_history lists them newest first, and update_state changes one and starts a new branch from it; find the checkpoint before route, update_state as triage, a new branch with dirty_water, invoke None with the config, health team and 4 hours; rust was not a dirty-water word so the promise was 72 hours; next equal to the string route never matches, use the tuple; invoke with fields and a config starts over and gives other again; 8 checkpoints after the fix, nothing lost" ai="true"}
 One page of notes for this chapter.
 :::
 :::
