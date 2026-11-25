@@ -18,12 +18,14 @@ Each entry in an embedding store has three parts:
 
 | Part | Setu's example | Used for |
 |---|---|---|
-| The **embedding** | 1,536 numbers from OpenAI's text-embedding-3-small | Searching by meaning |
+| The **embedding** | 1,536 numbers (text-embedding-3-small's size; other models differ) | Searching by meaning |
 | The **text** (a `TextSegment`) | "Each passenger may carry 40 kg of luggage free..." | Giving to the model, or showing |
 | The **metadata** | `title=Luggage`, `type=rule` | Filtering, citing sources |
 
+A `TextSegment` is LangChain4j's class for one piece of text plus its `Metadata`, a small map of key and value pairs.
+
 LangChain4j's `EmbeddingStore` interface has two main operations, `add(embedding, segment)` and `search(request)`, and
-30+ implementations: `InMemoryEmbeddingStore` for learning and tests, and real databases (PostgreSQL with pgvector,
+many implementations: `InMemoryEmbeddingStore` for learning and tests, and real databases (PostgreSQL with pgvector,
 Elasticsearch, Redis, Qdrant, Milvus, Pinecone...) for production. Your code depends on the interface, as it does on
 `ChatModel`.
 
@@ -33,8 +35,8 @@ This chapter uses OpenAI's embedding model through the gateway (alias `ai-embed`
 OpenAiEmbeddingModel.builder().baseUrl(baseUrl).apiKey(apiKey).modelName("ai-embed").build()
 ```
 
-It handles many languages, has 1,536 dimensions, and costs $0.02 per million tokens: embedding all of Setu's cards
-costs a small fraction of a cent.
+This model (not every model) handles many languages, gives 1,536 numbers per text, and is priced by OpenAI at $0.02 per
+million tokens: embedding all six of Setu's cards costs a small fraction of a cent.
 :::
 
 :::step{type=history title="Searching a billion vectors"}
@@ -84,9 +86,16 @@ and kinder to rate limits.
 :::
 
 :::step{type=task task=store_cards title="Your turn: store the cards" file="22-embedding-stores/src/main/java/com/setu/Store.java" line="31-37"}
-Finish `Store.load(model, cards)`: create an `InMemoryEmbeddingStore<TextSegment>`; for each card, make a
-`TextSegment` with the card's text and its `title` and `type` as metadata, embed it, and add both to the store.
-Return the store.
+Finish `Store.load(model, cards)`:
+
+1. create an `InMemoryEmbeddingStore<TextSegment>`;
+2. for each card, make a `TextSegment` with the card's text and `Metadata.from("title", card.title()).put("type",
+   card.type())`;
+3. embed the segment (`model.embed(segment).content()`) and add the embedding and the segment to the store;
+4. return the store.
+
+The usual slip: `TextSegment.from(card.text())` without the metadata. Nothing fails, and the search still finds the
+right cards, but there is no title to show. We tried it on 26 November: every answer was `[null]`.
 
 Press **Check**.
 :::
@@ -106,7 +115,7 @@ List<EmbeddingMatch<TextSegment>> matches = store.search(request).matches();   /
 Each `EmbeddingMatch` has the `score`, the `embedded()` segment (text and metadata) and its id.
 
 :::diagram{name="l4j-vector-search"}
-The question is embedded, scored against every card, and only scores of at least 0.7 come back.
+The real scores of all six cards for two questions; the dashed line is minScore(0.7).
 :::
 
 Read the scores carefully. LangChain4j's **score** is not the cosine similarity of chapter 5: it is rescaled to run
@@ -120,13 +129,22 @@ What is the capital of France?  0.543 Accessibility  0.538 Lost property  0.526 
 
 The right card scores 0.71; unrelated cards still score 0.6 or more; and a question about France, which no card
 answers, scores 0.54. When we first wrote this chapter with `minScore(0.5)`, the France question returned two cards.
-For this model and these cards, **0.7** separates the right answers from the noise. That number is not universal: test
+(We ran it again on 26 November, and every score was the same to three decimals.) For this model and these cards,
+**0.7** separates the right answers from the noise. That number is not universal: test
 your threshold on your own real questions, and test it again whenever you change the embedding model.
 :::
 
 :::step{type=task task=search_store title="Your turn: search with a threshold" file="22-embedding-stores/src/main/java/com/setu/Store.java" line="39-44"}
-Finish `Store.search(store, model, question, max)`: build an `EmbeddingSearchRequest` with the question's embedding,
-`maxResults(max)` and `minScore(0.7)`, search, and return the `"title"` metadata of each match, best first.
+Finish `Store.search(store, model, question, max)`:
+
+1. build an `EmbeddingSearchRequest` with the question's embedding, `maxResults(max)` and `minScore(0.7)`;
+2. search the store;
+3. return `match.embedded().metadata().getString("title")` for each match, best first (the matches already come in
+   that order).
+
+The usual slip: a lower threshold, such as `minScore(0.5)`. We tried it on 26 November: every question got two cards,
+so the bag question also got Luggage, the rain question Lost property, and the France question got Accessibility and
+Lost property.
 
 ```bash run
 cd /workspace/22-embedding-stores && mvn -q compile exec:java
@@ -147,6 +165,8 @@ What is the capital of France? -> []
 Can I take my bicycle?  0.712 Luggage  0.645 Lost property  0.612 Pets
 What is the capital of France?  0.543 Accessibility  0.538 Lost property  0.526 Luggage
 ```
+
+(The same output on 26 November.)
 
 Each question finds exactly its card: the bicycle question finds Luggage (bicycles travel in the guard's van), the
 rain finds Monsoon, the forgotten bag finds Lost property, though none of them shares the card's key words. And the
@@ -196,8 +216,8 @@ when you filter.
 **Metadata filters.** `EmbeddingSearchRequest.builder().filter(metadataKey("type").isEqualTo("rule"))` searches only
 the rules. Filters also enforce access: a passenger's search must never return another passenger's documents.
 
-**PGvector.** `PgVectorEmbeddingStore` keeps vectors in PostgreSQL, next to your other data, with an HNSW index. A good
-first production store for most Java teams.
+**PGvector.** `PgVectorEmbeddingStore` keeps vectors in PostgreSQL, next to your other data. pgvector offers two kinds
+of index for fast search, HNSW and IVFFlat. A good first production store for most Java teams.
 
 **Ids and updates.** `add(...)` returns an id. Keep it, so a changed card can be removed and added again instead of
 duplicated.
@@ -216,7 +236,7 @@ You can now:
 
 Next, chapter 23: retrieval-augmented generation. Setu answers from the railway's own documents, found by meaning.
 
-:::photo{src="/lesson-images/langchain4j/l4j-22-notes.webp" alt="Handwritten notes about embedding stores: vector plus text plus metadata; embed once, search many times; score equals cosine plus one, divided by two; 0.5 means unrelated; threshold from real scores: 0.7" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-22-notes.webp" alt="Handwritten notes titled Embedding stores: each piece of text is kept as its vector, the text and metadata such as a title; embed each card once, store it, embed the question, score every card, keep 0.7 and above; score is cosine plus one, divided by two, so 0.5 means unrelated; the bicycle question finds only Luggage at 0.712; the France question, best 0.543, finds no card; with minScore 0.5 every question got two cards" ai="true"}
 One page of notes for this chapter.
 :::
 :::
