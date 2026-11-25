@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangGraph chapter 19 rewritten: J-301's resume pictured, every slip tried
+
+- Re-ran every command on a new `jobs.db`: the same results and the same record (one crew, one order, one SMS per job).
+  A new still picture compares J-301's crashed run with the resume that replays saved task results.
+- Tried: the quiz (`board.order_parts` called outside a task: two orders after the resume); no `.result()`
+  (`TypeError: Type is not msgpack serializable: Future`, the first task's slip); `interrupt` without the early return
+  (a refused job booked a crew, the second task's slip).
+- Both tasks list their steps. A new sketchnote.
+
 ## 26 November: LangGraph chapter 18 rewritten: a time line of a real run, every slip tried
 
 - Re-ran it twice: the progress events at 0.00 s and 0.50 s again, the first token at 2.27 s and 2.50 s, the end at
