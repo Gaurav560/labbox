@@ -113,7 +113,7 @@ Spacing: 4, 8, 12, 16, 20, 24, 32, 48, 72 px. Radius: `--radius: 6px`, buttons 4
 - Course page: the lab's own print with its logo stamped on it and a credit line; flat hero; ink metro map headed "Skill map".
 - Home (redesigned 25 November, `pages/HomePage.tsx`, `ukiyo.css` section 10): the hero "The AI wave is here. / Learn to build on it." with a
   lab terminal over Hiroshige's Kinryuzan Temple in snow (picked from eight options; no numbers strip);
-  "start a lab" (`components/UkiyoMachine.tsx`, picked from nine options): "One click, and we spin up a container
+  "start a lab" (`components/UkiyoMachine.tsx`, picked from nine options): "One click, and a container spins up
   for you with everything the lab needs." beside a paper box into which the lab's real stack (Linux, language,
   framework, databases, an editor and terminal, an AI code assistant) packs itself piece by piece, a line in the log
   for each, then a green tick and Start (to that course, through login);

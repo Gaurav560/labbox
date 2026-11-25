@@ -1,5 +1,9 @@
 # Changelog
 
+## 25 November (Ukiyo): "One click, and a container spins up for you"
+
+- Owner: "remove we". The heading is now "One click, and a container spins up for you with everything the lab needs."
+
 ## 25 November (Ukiyo): the whale leads, the crates step back
 
 - Owner: "the whale logo should be a little bit more dominant and the item boxes a little less". The whale stays on the

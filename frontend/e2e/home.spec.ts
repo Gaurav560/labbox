@@ -18,7 +18,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
   const machine = page.locator("#machine");
-  await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click, and we spin up a container for you with everything the lab needs.");
+  await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click, and a container spins up for you with everything the lab needs.");
   await machine.scrollIntoViewIfNeeded();
   // It waits for a click (owner, 25 November): empty slots and one button.
   await page.waitForTimeout(1500);

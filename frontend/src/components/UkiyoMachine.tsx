@@ -278,7 +278,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     <div className="ua">
       <div className="ua-text">
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
-        <h2 id="machine-title">One click, and we spin up a container for you <em>with everything the lab needs.</em></h2>
+        <h2 id="machine-title">One click, and a container spins up for you <em>with everything the lab needs.</em></h2>
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
         {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
         {/* the command that starts the machine (owner picked the terminal design); it types itself, and a green Run key
