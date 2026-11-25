@@ -1901,19 +1901,28 @@ function AiEmbeddings() {
 }
 
 function AiVectorStore() {
+  // Still (owner, 26 November): chapter 12's real start-up and one real search, from the backend's log and the app.
+  const rows: [string, string, BoxTone][] = [
+    ["at start-up: 12 exhibit cards", "each a Document: text + metadata (file)", "plain"],
+    ["store.add(documents)", "12 embedding requests, about 0.4 s apart", "accent"],
+    ["the vector store", "12 x (text, 1,536 numbers, file)", "copy"],
+    ["a search: \"Where is the pendulum?\"", "1 embedding request, for the question only", "plain"],
+    ["topK 3, similarityThreshold 0.5", "foucault-pendulum.md 0.637; the next was 0.292", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="embed once, search many times"
-      intro="Press Play to follow the cards into the store."
-      label="at start-up each card is embedded once and stored with its text and metadata; later a search embeds only the question; the store compares it with every stored vector and returns the closest above the threshold"
-      steps={[
-        { label: "1. Start-up", says: "CardLoader reads 12 cards into Documents, each with its file." },
-        { label: "2. store.add", says: "Each card is embedded once; text, vector and file are kept together." },
-        { label: "3. A search", says: "Where is the pendulum? Only the question is embedded." },
-        { label: "4. Compare", says: "The store ranks every card by similarity to the question." },
-        { label: "5. Filter", says: "topK 3, threshold 0.5: foucault-pendulum.md, 0.64. Nothing weaker." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="At start-up twelve cards are embedded once, in twelve requests, and stored with their metadata; a search embeds only the question and returns the pendulum card with 0.637">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

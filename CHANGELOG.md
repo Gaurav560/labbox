@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: Spring AI chapter 12 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (adding cards one at a time; no threshold).
+- Fixed a real lesson bug: the task said to wait for "Loaded 12 exhibit cards...", but that line was only in the
+  solution, so a learner would never see it; printing it is now step 2 of the task.
+- The vector-store animation is now a still picture of the real start-up and one real search.
+- Checked in a lab machine: the same four searches with exactly the same scores (embeddings are deterministic). Measured
+  without the threshold: good matches 0.54 and 0.64, unrelated cards 0.02 to 0.29 (the lesson said 0.1 to 0.3), the
+  ticket card only 0.219. Counted in the backend's log: twelve embedding requests for twelve cards, about 0.4 s
+  apart, which confirms "one request each". A new sketchnote.
+
 ## 26 November: Spring AI chapter 11 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (returning the dot product alone; one request per exhibit).

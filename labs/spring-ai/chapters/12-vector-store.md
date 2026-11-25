@@ -44,13 +44,21 @@ MongoDB Atlas, Pinecone, Weaviate, Qdrant, Chroma and more. Atlas uses **`Simple
 memory: perfect for learning and small data, and the code is the same when you move to a real database.
 
 :::diagram{name="ai-vector-store"}
-At start-up each card is embedded once and stored with its metadata; a search embeds only the question and returns the nearest cards.
+This chapter's real start-up and one real search (26 November).
 :::
 :::
 
 :::step{type=task task=add_documents title="Your turn: load the cards" file="12-vector-store/src/main/java/com/atlas/CardLoader.java" line="34"}
 In `12-vector-store`, `CardLoader` runs at start-up (it is an `ApplicationRunner`) and already reads every card in
-`src/main/resources/exhibits/` into a `Document` with a `file` in its metadata. Add the documents to the vector store.
+`src/main/resources/exhibits/` into a `Document` with a `file` in its metadata. Add the documents to the vector store:
+
+1. Where the TODO is: `store.add(documents);`
+2. Then print what happened, so you can see when the cards are ready:
+   `System.out.println("Loaded " + documents.size() + " exhibit cards into the vector store.");`
+
+The usual slip: adding them one at a time in a loop with `store.add(List.of(doc))`. It works, but it is longer code
+for the same twelve requests: `SimpleVectorStore` already sends one embedding request per document (we counted them
+in the backend's log: twelve, about 0.4 seconds apart).
 
 ```bash run
 cd 12-vector-store && mvn -q -o spring-boot:run
@@ -81,7 +89,12 @@ Each returned `Document` carries its `getScore()`: the similarity, between 0 and
 
 :::step{type=task task=search_cards title="Your turn: search by meaning" file="12-vector-store/src/main/java/com/atlas/SearchController.java" line="28"}
 Finish `GET /search?q=...&k=...`: ask the store for the `k` most similar cards, leaving out any with a similarity below
-**0.5**.
+**0.5**:
+
+1. `SearchRequest.builder().query(q).topK(k).similarityThreshold(0.5).build()`
+2. Pass it to `store.similaritySearch(...)` and return the result.
+
+The usual slip: leaving out `similarityThreshold`. Every search then returns `k` cards, the pizza question too.
 
 ```bash run
 curl -s -G localhost:8080/search --data-urlencode "q=Where is the pendulum?" | jq -c ".[] | {file, score}"
@@ -91,7 +104,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Real searches, and one honest miss"}
-With the real embedding model:
+With the real embedding model (our re-run on 26 November gave exactly the same scores, to the last digit: embeddings
+are deterministic):
 
 ```text
 $ curl -s -G localhost:8080/search --data-urlencode "q=Where is the pendulum?" | jq -c ".[] | {file, score}"
@@ -108,8 +122,8 @@ the threshold kept the store from returning random cards. And the ticket questio
 visitor-information card does give the price. Why? That card is about opening hours, tickets **and** directions; its
 one vector is an average of all three topics, so it is not close enough to a question about one of them.
 
-Measuring without the threshold showed how the real scores spread: a good match around 0.55 to 0.65, unrelated cards
-from about 0.1 to 0.3. A whole card is often too big a unit. Chapter 13 fixes the ticket question by cutting
+Measuring without the threshold showed how the real scores spread: the good matches scored 0.54 and 0.64; unrelated
+cards 0.02 to 0.29. The ticket question's best card was visitor-information, at only 0.219. A whole card is often too big a unit. Chapter 13 fixes the ticket question by cutting
 documents into smaller, focused pieces.
 :::
 
@@ -164,7 +178,7 @@ with the same portable expression syntax on every store.
 **Persistence for `SimpleVectorStore`.** `store.save(file)` and `store.load(file)` write and read the store as JSON, handy
 for small apps and tests.
 
-**Rate limits.** `SimpleVectorStore` embeds documents one request each. For thousands of documents, a store with
+**Rate limits.** `SimpleVectorStore` embeds documents one request each (twelve requests for twelve cards, in our log). For thousands of documents, a store with
 batching (most database stores batch for you) or a slower, steady ingestion job keeps you under your provider's limits.
 :::
 
@@ -178,7 +192,7 @@ You can now:
 
 Next, chapter 13: the ETL pipeline, to read, split and load documents properly.
 
-:::photo{src="/lesson-images/spring-ai/springai-12-notes.webp" alt="Handwritten notes about the vector store: embed once, search many times; Document = text + metadata; store.add(docs); topK + similarityThreshold; a big mixed card can miss" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-12-notes.webp" alt="Sketchnote, The vector store (embed once, search many times): A vector store keeps each document's text, its embedding and its metadata. A search embeds only the question. The flow: 12 cards, store.add(), Vector store, similaritySearch(), Nearest cards. What we measured: the pendulum card scored 0.637; pizza found nothing: the 0.5 threshold worked; the ticket card scored only 0.219: too mixed; 12 cards took 12 embedding requests." ai="true"}
 One page of notes for this chapter.
 :::
 :::
