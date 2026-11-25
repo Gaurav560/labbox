@@ -3254,20 +3254,31 @@ function LgRun() {
 }
 
 function LgReducer() {
+  // Still (owner, 26 November): chapter 2's real runs on "Brown water near the district hospital."
+  const rows: [string, string, string][] = [
+    ["severity", "high", "urgent"],
+    ["log", "last line only", "both lines"],
+  ];
   return (
-    <SketchSteps
-      title="Two updates, one field"
-      intro="Press Play to see how the reducer joins each update."
-      label="Reducers"
-      steps={[
-        { label: "Start", says: "The state holds the text of a complaint about brown water near the hospital." },
-        { label: "classify", says: "Returns severity 'urgent' and log ['classify: dirty_water']. The state is empty, so both are taken." },
-        { label: "check_location", says: "Returns severity 'high' and log ['check_location: near a hospital or school']." },
-        { label: "log", says: "operator.add joins old and new: the log now has both lines, in order." },
-        { label: "severity", says: "higher('urgent', 'high') keeps the more serious value: urgent stays." },
-        { label: "Without reducers", says: "The later update would win: the log would lose a line, and urgent would drop to high." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 268" label="Brown water near the district hospital: classify sends severity urgent and one log line, check_location sends severity high and one log line. Without reducers the final severity is high and the log has only check_location's line; with the reducers severity stays urgent and the log has both lines">
+      <text className="dg-label" x={8} y={18}>two updates arrive, in this order</text>
+      <Box x={8} y={28} w={206} h={44} label="classify: urgent + a line" tone="plain" />
+      <Box x={226} y={28} w={206} h={44} label="location: high + a line" tone="plain" />
+      <text className="dg-label" x={8} y={102}>final state</text>
+      <text className="dg-label" x={110} y={102}>no reducer</text>
+      <text className="dg-label" x={274} y={102}>with the reducer</text>
+      {rows.map(([key, plain, reduced], i) => {
+        const y = 112 + i * 62;
+        return (
+          <g key={key}>
+            <text className="dg-note" x={8} y={y + 28}>{key}</text>
+            <Box x={84} y={y} w={160} h={48} label={plain} tone="highlight" />
+            <Box x={252} y={y} w={180} h={48} label={reduced} tone="copy" />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={248}>The first call is higher("", "urgent"): current starts empty.</text>
+    </Svg>
   );
 }
 
