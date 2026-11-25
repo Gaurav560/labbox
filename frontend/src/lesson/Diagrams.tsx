@@ -2758,20 +2758,29 @@ function L4jGuardrails() {
 }
 
 function L4jSupervisor() {
+  // Still (owner, 26 November): chapter 29's real run, all seven calls from the gateway's log (tokens in, out).
+  const calls: [string, string, BoxTone][] = [
+    ["planner: call the date agent", "434 in, 26 out", "accent"],
+    ["date agent: asks for nextDate", "139 in, 17 out", "plain"],
+    ["date agent: 2026-11-29", "170 in, 7 out", "plain"],
+    ["planner: call the fare agent", "552 in, 28 out", "accent"],
+    ["fare agent: asks for fare", "155 in, 16 out", "plain"],
+    ["fare agent: 420", "179 in, 2 out", "plain"],
+    ["planner: done, total 840", "667 in, 57 out", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="a supervisor plans, step by step"
-      intro="Press Play to follow the real run from this chapter."
-      label="the planner reads the request and the agents' descriptions, calls the date agent, then the fare agent, then answers done with a summary"
-      steps={[
-        { label: "1. The request", says: "2 adults, Pune to Ratnagiri, next Sunday: the date and the total fare?" },
-        { label: "2. Plan", says: "The planner reads the agents' names and descriptions and picks the date agent." },
-        { label: "3. Date agent", says: "Its tool answers 2026-11-29." },
-        { label: "4. Plan again", says: "With that result, the planner picks the fare agent for Ratnagiri." },
-        { label: "5. Fare agent", says: "Its tool answers 420: the fare for one adult." },
-        { label: "6. Done", says: "The planner writes the summary. With CONTEXT it multiplies: 2 x 420 = 840." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 384" label="Seven real calls: the planner chooses the date agent, which asks for the nextDate tool and returns 2026-11-29; the planner chooses the fare agent, which asks for the fare tool and returns 420; the planner answers done with 840 for two adults. The planner's calls grow from 434 to 667 tokens in">
+      {calls.map(([what, cost, tone], i) => {
+        const y = 4 + i * 50;
+        return (
+          <g key={what}>
+            <Box x={8} y={y} w={290} h={40} label={what} tone={tone} />
+            <text className="dg-note" x={308} y={y + 25}>{cost}</text>
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={372}>Three planner calls decide; four calls do the work.</text>
+    </Svg>
   );
 }
 

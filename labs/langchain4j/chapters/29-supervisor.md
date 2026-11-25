@@ -56,8 +56,17 @@ agents' names, descriptions and arguments to decide what to call. A vague descri
 :::
 
 :::step{type=task task=tool_agent title="Your turn: the fare agent" file="29-supervisor/src/main/java/com/setu/Supervisor.java" line="18-23"}
-Finish `Supervisor.fareAgent(model)`: `AgenticServices.agentBuilder(Specialists.FareAgent.class)` with the model,
-`.tools(new RailTools())` and the output key `"fare"`. `dateAgent(model)` below it is the same pattern, already done.
+Finish `Supervisor.fareAgent(model)`, the same pattern as `dateAgent(model)` below it:
+
+1. `AgenticServices.agentBuilder(Specialists.FareAgent.class)`;
+2. `.chatModel(model)`;
+3. `.tools(new RailTools())`;
+4. `.outputKey("fare")`, then `.build()`.
+
+The usual slip: leaving out `.tools(new RailTools())`. The agent still runs, but its model has no fare tool. We tried
+it on 26 November: it answered "I'm sorry, but I don't have access to real-time fare tools or databases...", which
+is not a number, so LangChain4j could not turn it into the `int` the method returns, and the whole run stopped with
+`OutputParsingException: Failed to parse "I'm sorry, ..."`.
 
 Press **Check**.
 :::
@@ -70,7 +79,7 @@ Press **Check**.
 2. LangChain4j runs that agent and stores its result.
 3. Back to the planner with the new result, until it answers `{"agentName": "done", "arguments": {"response": "..."}}`.
 
-LangChain4j's own planner instructions say: *"Decide which agent to invoke next, doing things in small steps and
+LangChain4j's own planner instructions say (we found the sentence in the 1.24 agentic jar's `PlannerAgent`): *"Decide which agent to invoke next, doing things in small steps and
 never taking any shortcuts or relying on your own knowledge."*
 
 Two settings shape the answer:
@@ -83,13 +92,20 @@ Two settings shape the answer:
 Setu wants `SUMMARY`: the family asked for a date and a fare, and the last agent alone knows only one of them.
 
 :::diagram{name="l4j-supervisor"}
-The planner calls the date agent, then the fare agent, then writes the summary.
+The seven calls of one real run (26 November), with the tokens of each from the gateway's log.
 :::
 :::
 
 :::step{type=task task=supervisor_agent title="Your turn: the supervisor" file="29-supervisor/src/main/java/com/setu/Supervisor.java" line="32-38"}
-Finish `Supervisor.supervisor(model)`: `AgenticServices.supervisorBuilder()` with the model, the fare and date agents as
-sub-agents, `.supervisorContext(CONTEXT)` and `.responseStrategy(SupervisorResponseStrategy.SUMMARY)`.
+Finish `Supervisor.supervisor(model)`:
+
+1. `AgenticServices.supervisorBuilder()`;
+2. `.chatModel(model)`;
+3. `.subAgents(fareAgent(model), dateAgent(model))`;
+4. `.supervisorContext(CONTEXT)`;
+5. `.responseStrategy(SupervisorResponseStrategy.SUMMARY)`, then `.build()`.
+
+The usual slip is leaving out step 4. The next step shows what happens then.
 
 `CONTEXT` is written above it. Read it before you run, and the next step shows why it is there.
 
@@ -133,15 +149,18 @@ $ mvn -q compile exec:java
 The date for next Sunday is 2026-11-29, and the total fare for 2 adults going from Pune to Ratnagiri is 840 rupees.
 ```
 
-Right this time. But notice what fixed it: a sentence, not code. The multiplication still happened inside a model,
+Right this time. (We ran both versions again on 26 November: without the context, "420 rupees" again, word for
+word; with it, "840 rupees" again.) But notice what fixed it: a sentence, not code. The multiplication still happened inside a model,
 and chapter 19 said facts and arithmetic belong in Java. For money, the sturdier fix is a tool that does the sum
 (`fare(destination, adults)`), and a golden question with two adults in chapter 26's eval, so this mistake cannot
 come back unnoticed.
 
 The trace (from the `Trace` listener) also shows the price of planning. It prints five prompts, and three of them
 only decide what to do next. Each agent also makes a second call with its tool's result, which the trace does not
-print (that request ends with a tool message, not a user message): **seven model calls** in all. A fixed workflow
-running the same two agents would take four.
+print (that request ends with a tool message, not a user message): **seven model calls** in all, and the gateway's
+log shows exactly seven. The three planner calls are also the biggest: 434, 552 and 667 tokens in, growing as the
+results pile up, against 139 to 179 for the agents' calls. A fixed workflow running the same two agents would take
+four.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -177,7 +196,8 @@ With `responseStrategy(LAST)`, what would the family have received?
 - [x] Only the last agent's result: 420
 - [ ] Nothing
 :::explain
-`LAST` returns the last sub-agent's raw output. `SUMMARY` returns the planner's recap of everything that was done.
+We tried it on 26 November: the whole answer was `420`, the fare agent's number. `LAST` returns the last sub-agent's
+raw output. `SUMMARY` returns the planner's recap of everything that was done.
 :::
 :::
 
@@ -204,7 +224,7 @@ You can now:
 
 Next, chapter 30: the capstone. Setu goes live as one Spring Boot app with everything from this course.
 
-:::photo{src="/lesson-images/langchain4j/l4j-29-notes.webp" alt="Handwritten notes about supervisors: a model plans; it reads names and descriptions; SUMMARY returns the planner's recap; right plan, wrong total of 420; context fixed it to 840" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-29-notes.webp" alt="Handwritten notes titled Supervisor agents, a model plans which agents to call: a planner model reads the request and each agent name, description and arguments, picks the next agent and repeats until it answers done; request, planner picks an agent, agent uses its tool, planner reads the result, done with a summary; 7 model calls, the planner 3 the biggest; no context gave 420 for two adults, wrong; with context 840, right; the LAST strategy answered just 420" ai="true"}
 One page of notes for this chapter.
 :::
 :::
