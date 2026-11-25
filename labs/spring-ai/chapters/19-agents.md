@@ -57,7 +57,7 @@ Atlas's tool calling in chapter 7 was already a small agent: the model decided t
 then answer. This chapter builds the two most useful workflows.
 
 :::diagram{name="ai-workflows"}
-A router picks the desk; a writer and a reviewer take turns until the label passes.
+This chapter's two workflows, as they really ran (26 November).
 :::
 :::
 
@@ -87,7 +87,14 @@ String answer = chat.prompt()
 
 :::step{type=task task=route_question title="Your turn: route to the right desk" file="19-agents/src/main/java/com/atlas/AgentController.java" line="71"}
 In `19-agents`, finish `GET /agent/route?q=...`: ask the model which `Desk` fits (the `ROUTER` prompt, as a `Routing`),
-then answer with `DESKS.get(desk)`, and return both.
+then answer with `DESKS.get(desk)`, and return both:
+
+1. The first call: `.system(ROUTER).user(q).call().entity(Routing.class).desk()`.
+2. The second call: `.system(DESKS.get(desk)).user(q).call().content()`.
+3. Return the desk and the answer.
+
+The usual slip: answering in the first call (asking for the desk and the answer together). The route is then mixed
+into free text, and your code cannot read it.
 
 ```bash run
 cd 19-agents && mvn -q -o spring-boot:run
@@ -119,6 +126,9 @@ $ curl -s -G localhost:8080/agent/route --data-urlencode "q=Can I get two seats 
 }
 ```
 
+(Our re-run on 26 November chose the same three desks; the booking link comes from the BOOKING desk's own prompt,
+and the pendulum answer again explained an ordinary swing.)
+
 Three questions, three right desks, and each desk answered in its own voice: the front desk with the real hours, the
 booking desk with where to book. But look at the pendulum answer. The router was right; the explainer was not: it
 explained why an ordinary pendulum swings, not why Foucault's pendulum **turns**. The explainer desk has no exhibit
@@ -141,7 +151,15 @@ approved or not.
 :::step{type=task task=improve_loop title="Your turn: review and rewrite" file="19-agents/src/main/java/com/atlas/AgentController.java" line="83"}
 Finish `GET /agent/label?exhibit=...`: the first draft is written. In a loop, ask the reviewer (`REVIEWER` and `RULES`,
 as a `Review`); stop when it is approved or after 3 drafts; otherwise ask the `WRITER` to rewrite, giving it the draft
-and the feedback. Return the last draft and how many drafts it took.
+and the feedback. Return the last draft and how many drafts it took:
+
+1. Count the drafts: `int drafts = 1;` (the first one is written).
+2. Loop: review the draft; if `approved()`, or `drafts` is already 3, leave the loop.
+3. Otherwise rewrite with the draft and `feedback()`, and add one to `drafts`.
+4. After the loop, `return new Label(draft, drafts);`
+
+The usual slip: `while (!review.approved())` with no count. With this reviewer, which never approves (see below),
+that loop never ends, and every round is two paid calls.
 
 ```bash run
 curl -s -G localhost:8080/agent/label --data-urlencode "exhibit=the prism room" | jq .
@@ -170,7 +188,9 @@ $ lab requests --last
 ... "content": "{\n  \"approved\": false,\n  \"feedback\": \"The label has 46 words, so reduce the word count ...
 ```
 
-Count the words of the final label yourself: 32, under the limit of 40. The reviewer was wrong. Models are poor at
+Count the words of the final label yourself: 32, under the limit of 40. The reviewer was wrong. (We ran it again on
+26 November: three drafts again, never approved; the last review said "The label contains more than 40 words" for a
+label of about 30. The same mistake, reproduced.) Models are poor at
 counting words, whether they write the text or check it, so the reviewer kept rejecting good drafts, and every round
 cost two calls. The fix is the lesson of chapter 7 again: **do not let the model calculate**. Count the words in Java
 (`text.split("\\s+").length`) and ask the reviewer only about what needs judgement: hard words, and the question at
@@ -244,7 +264,7 @@ You can now:
 
 Next, chapter 20: everything together. Atlas goes live.
 
-:::photo{src="/lesson-images/spring-ai/springai-19-notes.webp" alt="Handwritten notes about workflows and agents: start with a workflow; route: classify, then answer; write, review, rewrite; always a limit: 3 drafts; every step is a paid call" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-19-notes.webp" alt="Sketchnote, Workflows and agents (several model calls, joined by your code): Some jobs need steps: one call decides, another writes, a third checks. Start with fixed steps in your code. The flow: Question, Router: which desk?, That desk's prompt, Answer. What we found: three questions, three right desks; routing picks who answers, not what they know; the reviewer miscounted words, twice; every loop needs a limit: 3 drafts." ai="true"}
 One page of notes for this chapter.
 :::
 :::

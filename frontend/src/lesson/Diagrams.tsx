@@ -2086,19 +2086,33 @@ function AiCostMeter() {
 }
 
 function AiWorkflows() {
+  // Still (owner, 26 November): chapter 19's two real workflows.
   return (
-    <SketchSteps
-      title="routing, and review loops"
-      intro="Press Play to follow both workflows."
-      label="a router call picks a desk, and a second call answers with that desk's prompt; a writer drafts a label, a reviewer checks it against rules, and the writer rewrites with the feedback until approved or three drafts"
-      steps={[
-        { label: "1. Route", says: "Are you open on Sunday? The router says VISIT." },
-        { label: "2. Answer as that desk", says: "The front desk prompt, with the real hours, answers." },
-        { label: "3. Draft", says: "The writer drafts a label for the prism room." },
-        { label: "4. Review", says: "Too long: cut it to 40 words." },
-        { label: "5. Rewrite, review again", says: "Approved on draft 2. At most 3 drafts, so the loop always ends." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 350" label="Routing: Are you open on Sunday goes to the VISIT desk, which answers with the hours. Review loop: the writer drafts, the reviewer says more than 40 words although the label has about 30, the writer rewrites, and the loop stops at three drafts">
+      <Box x={8} y={4} w={204} h={318} label="" tone="accent" />
+      <text className="dg-label" x={20} y={28}>routing: 2 calls</text>
+      <Box x={20} y={42} w={180} h={44} label="Open on Sunday?" />
+      <Arrow x1={110} y1={88} x2={110} y2={104} />
+      <Box x={20} y={106} w={180} h={44} label="router: VISIT" tone="copy" />
+      <Arrow x1={110} y1={152} x2={110} y2={168} />
+      <Box x={20} y={170} w={180} h={44} label="the VISIT desk's prompt" />
+      <Arrow x1={110} y1={216} x2={110} y2={232} />
+      <text className="dg-note" x={20} y={256}>Yes, open on Sunday</text>
+      <text className="dg-note" x={20} y={276}>from 10:00 to 18:00.</text>
+      <Box x={228} y={4} w={206} h={318} label="" />
+      <text className="dg-label" x={240} y={28}>review loop: up to 6 calls</text>
+      <Box x={240} y={42} w={182} h={44} label="writer: a draft" tone="copy" />
+      <Arrow x1={331} y1={88} x2={331} y2={104} />
+      <Box x={240} y={106} w={182} h={58} label="" tone="highlight" />
+      <text className="dg-note" x={250} y={128}>reviewer: more than 40</text>
+      <text className="dg-note" x={250} y={150}>words (it had about 30)</text>
+      <Arrow x1={331} y1={166} x2={331} y2={182} />
+      <Box x={240} y={184} w={182} h={44} label="writer: rewrite" tone="copy" />
+      <text className="dg-note" x={240} y={256}>3 drafts, never approved:</text>
+      <text className="dg-note" x={240} y={276}>the limit ended the loop.</text>
+      <text className="dg-note" x={240} y={298}>Count words in Java.</text>
+      <text className="dg-note" x={8} y={344}>Both measured on 26 November with the real model.</text>
+    </Svg>
   );
 }
 

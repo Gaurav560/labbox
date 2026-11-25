@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: Spring AI chapter 19 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (asking for the desk and the answer in one call; a review loop with
+  no count). The label task's steps now start the `drafts` counter, which the starter does not have.
+- The workflows animation is now a still picture of both real workflows.
+- Checked in a lab machine: the same three desks (the booking link comes from the BOOKING desk's own prompt), and the
+  pendulum answer again explained an ordinary swing; the label loop again ran 3 drafts without approval, and the last
+  review again said "more than 40 words" for a label of about 30: the lesson's lesson, reproduced. A new sketchnote.
+
 ## 26 November: Spring AI chapter 18 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (integer division before the price; `management.endpoint`
