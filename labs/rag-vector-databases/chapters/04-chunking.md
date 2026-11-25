@@ -258,7 +258,7 @@ You can now:
 - measure a way of cutting by how often search finds the right section and how much the model must read;
 - explain why chunks about one thing beat both tiny and huge ones.
 
-That ends Part 1. Next, chapter 5: the first of the indexes inside every vector database.
+That ends Part 1. Next, chapter 5: IVF, the first of the two kinds of index this course builds (the other, HNSW, is chapter 6).
 
 :::photo{src="/lesson-images/rag/rag-04-notes.webp" alt="Handwritten notes about chunking: Documents are cut into chunks; each chunk gets a vector. Too small: a chunk loses its context. Too big: its vector blurs several topics. Overlap keeps border sentences whole. Cut along headings and put the title first. Measure on your own questions." ai="true"}
 One page of notes for this chapter.

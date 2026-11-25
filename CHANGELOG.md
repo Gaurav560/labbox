@@ -1,5 +1,18 @@
 # Changelog
 
+## 25 November: RAG chapter 8 rewritten (easy, a little detailed, checked)
+
+- Clients, local mode, collections, points, ids, UUIDs, payloads and JSON, distance, upsert and filters are explained
+  where they first appear; the store code is read line by line; tasks list their steps and the usual slips (each slip
+  tested in the lab image: a text id is refused as "not a valid UUID", `MatchValue(value=None)` raises a ValidationError).
+- A new still picture, `rag-filter`: the chapter's real question filtered after a top-3 search (1 result, R-0410) and
+  inside the search (3 results, the third a weaker gaur report).
+- Checked by re-running `store.py`, counting the payloads (31 manual sections with zone "all"; 24 reports: 15 core, 6
+  buffer, 3 tourism) and searching the history. Corrected: "vectors go in as lists because the client sends JSON" (client
+  1.20 accepts NumPy arrays; local mode sends no JSON); manual chunks have no beat or date; Weaviate is open source since
+  2016 (1.0 in 2021), not "2019"; hnswlib's year (not confirmed) dropped; Lucene 9 added. Also chapter 4's last line:
+  IVF is not "inside every vector database" (Qdrant uses HNSW only). A new notes page.
+
 ## 25 November: RAG chapter 7 rewritten (easy, a little detailed, checked)
 
 - float32, bits and bytes, RAM, int8, columns and scales, codes, XOR, the Hamming distance, shortlists and rescoring are
