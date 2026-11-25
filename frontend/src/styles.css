@@ -2053,7 +2053,8 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lab-page.is-reading:not(.is-phone) .step-buttons { border-top: 0; }
 .lab-page.is-reading:not(.is-phone) .step-anim { font-size: 1.04em; }
 .lab-page.is-reading:not(.is-phone) .diagram svg { max-width: 560px; }
-.lab-page.is-reading:not(.is-phone) .lesson-photo img { max-height: 520px; }
+.lab-page.is-reading:not(.is-phone) .lesson-photo:not(.is-notes) img { max-height: 520px; }
+/* Notes pages keep their full height (owner, 25 November: tall sketchnote pages must stay readable). */
 .read-task-card { display: flex; align-items: center; gap: 16px; margin: var(--space-6) var(--space-6) 0; padding: 14px 16px; border: 1px solid var(--border); border-left: 4px solid var(--warn); border-radius: 10px; background: var(--card); }
 .read-task-card > div { display: grid; gap: 3px; flex: 1; }
 .read-task-card span { color: var(--muted); font-size: 14px; }
