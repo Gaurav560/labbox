@@ -27,7 +27,8 @@ looping or wandering off. Frameworks for teams of agents followed, such as Micro
 
 In **December 2024** Anthropic's essay *Building effective agents* drew the line most teams now use: **workflows**,
 where code decides the order of the steps, and **agents**, where the model decides. Its advice was to prefer the
-simplest one that works. LangChain4j's `langchain4j-agentic` module, released in **2025**, offers both.
+simplest one that works. LangChain4j's `langchain4j-agentic` module, released in **2025**, offers both. (In 1.24 it is still a beta module:
+this lab uses version `1.24.0-beta34`, so names may change.)
 
 :::solved
 **Small, testable steps.** Each agent is an AI Service with one job; workflows join them with code you can read.
@@ -83,8 +84,14 @@ makes each agent easy to test.
 :::
 
 :::step{type=task task=first_agent title="Your turn: the classifier agent" file="27-agents/src/main/java/com/setu/Agents.java" line="12-16"}
-Finish `Agents.classifier(model)`: build `TopicClassifier` with `AgenticServices.agentBuilder(...)`, the model, and
-the output key `"topic"`.
+Finish `Agents.classifier(model)`, the same way as `writer` above:
+
+1. `AgenticServices.agentBuilder(TopicClassifier.class)`;
+2. `.chatModel(model)`;
+3. `.outputKey("topic")`, then `.build()`.
+
+The usual slip: leaving out `.outputKey("topic")`. The agent still works alone (we tried it on 26 November: "classifier
+alone: REFUND"), but in the workflow the writer finds no `topic` and the run stops with `Missing argument: topic`.
 
 Press **Check**.
 :::
@@ -104,15 +111,21 @@ AgenticServices.sequenceBuilder(DeskWorkflow.class)
 `topic` and adds `reply`), and returns `reply`.
 
 :::diagram{name="l4j-sequence"}
-One message runs through the classifier, then the writer; the scope collects message, topic and reply.
+The refund message on 26 November: what the scope holds after each step, and what each step cost.
 :::
 
 The order is **code**, not a model's decision: the classifier always runs first. That is what makes this a workflow.
 :::
 
 :::step{type=task task=sequence_workflow title="Your turn: the help desk workflow" file="27-agents/src/main/java/com/setu/Agents.java" line="25-30"}
-Finish `Agents.desk(model)`: a `sequenceBuilder(DeskWorkflow.class)` with the classifier and the writer as sub-agents,
-in that order, and the output key `"reply"`.
+Finish `Agents.desk(model)`:
+
+1. `AgenticServices.sequenceBuilder(DeskWorkflow.class)`;
+2. `.subAgents(classifier(model), writer(model))`, in that order;
+3. `.outputKey("reply")`, then `.build()`.
+
+The usual slip: the sub-agents in the wrong order, writer first. We tried it on 26 November: the writer runs before
+anyone has written `topic`, and the run stops with the same `Missing argument: topic`.
 
 ```bash run
 cd /workspace/27-agents && mvn -q compile exec:java
@@ -133,6 +146,12 @@ Your cancellation request has been forwarded to the REFUND team. They will proce
 Thank you for your feedback regarding the delay of the 7:15 train. Our Complaint team will handle your concern and get back to you shortly.
 ```
 
+We ran it again on 26 November. The classifier said `REFUND` again; the replies were worded a little differently
+("Your refund request has been sent to the REFUND team. They will process it and you should receive your money
+soon."), and the capitals leaked again. The gateway's log shows the cost of splitting: the classifier calls were
+56 and 63 tokens in with 2 and 3 tokens out (one word), the writer calls 270 and 278 in (they carry Setu's system
+message).
+
 The classifier alone answered `REFUND`, already a Java enum (chapter 15's structured output). In the workflow, each
 message took two model calls: the writer received the topic from the scope and named the right team.
 
@@ -150,7 +169,8 @@ You remove `.outputKey("topic")` from the classifier. What happens when the work
 - [x] The writer cannot find `topic` in the scope, and the workflow fails
 - [ ] Nothing changes
 :::explain
-Agents only meet through the scope. A value nobody writes is a value nobody can read.
+Agents only meet through the scope. A value nobody writes is a value nobody can read. We tried it: `Missing argument:
+topic`.
 :::
 :::
 
@@ -179,7 +199,8 @@ In a workflow it documents the agent; in chapter 29 a supervisor model reads it 
 :::
 
 :::step{type=deep-dive title="Go deeper: agents and their scope"}
-**Reading the scope.** `invokeWithAgenticScope(...)` on an untyped agent returns the result and the whole scope, so
+**Reading the scope.** `invokeWithAgenticScope(...)` on an untyped agent (`UntypedAgent`, which takes a `Map` of
+arguments) returns the result and the whole scope, so
 a test can check every intermediate value (`scope.readState("topic")`).
 
 **Non-AI agents.** A step does not have to call a model. Plain Java methods can be agents too
@@ -204,7 +225,7 @@ You can now:
 Next, chapter 28: more workflows. Loops that improve an answer, conditions that route a message, and agents that run
 in parallel.
 
-:::photo{src="/lesson-images/langchain4j/l4j-27-notes.webp" alt="Handwritten notes about agents: an agent is an AI Service plus a description; the output key puts its answer in the scope; agents meet only through the scope; in a sequence code picks the order; small steps, easy to test" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-27-notes.webp" alt="Handwritten notes titled Agents, small AI Services joined by a shared scope: an agent is an AI Service with a description and an output key, and agents pass work through the scope, a map of named values for one run; message, classifier writes topic, writer reads message and topic, writer writes reply, workflow returns reply; classifier 56 tokens in and 2 out; writer 270 in and 24 out; no output key or writer first gives Missing argument topic; in a sequence, code decides the order" ai="true"}
 One page of notes for this chapter.
 :::
 :::
