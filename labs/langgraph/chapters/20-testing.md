@@ -68,15 +68,21 @@ every time. The test runs the **whole graph**, and asserts on the final state.
 | What you test | How |
 |---|---|
 | a router or reducer | call the function with a small dict |
-| a node | call it, or `app.nodes["route"].invoke(state)` on the compiled graph |
+| a node | call it, or `app.nodes["route"].invoke(state)` on the compiled graph (we tried it: `{'team': 'health team'}`) |
 | a model node | inject a fake model (`GenericFakeChatModel`, or a fake server like this course's checks) |
 | a path through the graph | `invoke` on a known input, assert on the final state |
 | a pause | a checkpointer, a thread id, then `Command(resume=...)` |
 :::
 
 :::step{type=task task=test_routes title="Your turn: a test for routing" file="20-testing/test_desk.py" line="21-24"}
-Finish `test_dirty_water_goes_to_health`: invoke `build_graph(fake_llm())` with `{"text": "Brown water from the tap",
-"estimate": 0}`, then `assert state["kind"] == "dirty_water"` and `assert state["team"] == "health team"`.
+Finish `test_dirty_water_goes_to_health`:
+
+1. `state = build_graph(fake_llm()).invoke({"text": "Brown water from the tap", "estimate": 0})`;
+2. `assert state["kind"] == "dirty_water"`;
+3. `assert state["team"] == "health team"`.
+
+The usual slip: stopping after step 2. That test passes on the broken desk too; the guess-first question below shows
+it.
 
 ```bash run
 cd /workspace/20-testing && python -m pytest -v
@@ -102,13 +108,20 @@ Then assert what a refusal must mean: the status says so, and **no reply** was w
 happen is as important as asserting what must.
 
 :::diagram{name="lg-mutation"}
-Each test runs twice: on the correct desk, where it must pass, and with a planted bug, where it must fail.
+The real pytest results (26 November): four tests, on the correct desk and with the planted bug.
 :::
 :::
 
 :::step{type=task task=test_interrupts title="Your turn: a test for the pause" file="20-testing/test_desk.py" line="27-32"}
-Finish `test_big_repair_waits_for_engineer` as above: check the pause and where it waits, resume with a refusal, then
-`assert state["status"] == "refused: no budget"` and `assert "reply" not in state`.
+Finish `test_big_repair_waits_for_engineer` as above:
+
+1. build the graph **with** `checkpointer=InMemorySaver()` and a thread id;
+2. invoke it, and assert the interrupt's estimate and `app.get_state(config).next == ("approval",)`;
+3. resume with `Command(resume={"approve": False, "note": "no budget"})`;
+4. `assert state["status"] == "refused: no budget"` and `assert "reply" not in state`.
+
+The usual slip: leaving out the checkpointer in step 1. The pause still happens, but the resume cannot find the
+thread: chapter 10 showed the error, `RuntimeError: Cannot use Command(resume=...) without checkpointer`.
 
 ```bash run
 cd /workspace/20-testing && python -m pytest -v
@@ -130,6 +143,7 @@ test_desk.py::test_big_repair_waits_for_engineer PASSED                  [100%]
 ============================== 3 passed in 0.19s ===============================
 ```
 
+(We ran it again on 26 November: 3 passed in 0.19 s, and with the planted `TEAMS` change, the same single failure.)
 Three tests in a fifth of a second: no model, no network. Now the new developer's change, `TEAMS = {"billing":
 "billing office"}`, made by hand in `desk.py`:
 
@@ -164,7 +178,7 @@ Your routing test asserts only `state["kind"] == "dirty_water"`. The bug is plan
 - [x] The test passes: kind is still right; the bug is in the team, which nothing asserts
 - [ ] pytest refuses to run
 :::explain
-A test only checks what it asserts. The check calls such a test too weak, because it passes with the bug.
+We tried it: with the bug planted, that test passed ("1 passed in 0.17s"). A test only checks what it asserts. The check calls such a test too weak, because it passes with the bug.
 :::
 :::
 
@@ -212,7 +226,7 @@ You can now:
 
 Next, chapter 21: running Harsh as a server.
 
-:::photo{src="/lesson-images/langgraph/lg-20-notes.webp" alt="Handwritten notes about testing graphs: graphs are programs: test them; fake model = fast, free, same; test the pause and the resume; assert what must NOT happen; plant a bug: does it fail?" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-20-notes.webp" alt="Handwritten notes titled Testing graphs, graphs are programs, test them: routers, reducers and Python nodes are tested like any function, a fake model answers model nodes from a list, and a pause is tested with a checkpointer and Command resume; fake model, invoke a known input, assert the final state, plant a bug, the right test fails; 3 tests in 0.19 seconds with no model and no network; with the planted bug only the routing test failed; a test of kind only passed with the bug; assert what must not happen too, no reply" ai="true"}
 One page of notes for this chapter.
 :::
 :::

@@ -1,5 +1,14 @@
 # Changelog
 
+## 26 November: LangGraph chapter 20 rewritten: the real test grid pictured, the quiz's weak test run
+
+- Re-ran pytest: 3 passed in 0.19 s; with the planted `TEAMS` change, only the routing test failed, with the same
+  assertion. A new still picture shows four tests on the correct desk and with the bug.
+- Tried the quiz's weak test (kind only): it passed with the bug ("1 passed in 0.17s"). `app.nodes["route"].invoke(...)`
+  from the table was tried: `{'team': 'health team'}`.
+- Both tasks list their steps and a slip (the weak assertion; no checkpointer, with chapter 10's measured error).
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 19 rewritten: J-301's resume pictured, every slip tried
 
 - Re-ran every command on a new `jobs.db`: the same results and the same record (one crew, one order, one SMS per job).
