@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 27 rewritten: a still picture of the scope, both slips and the quiz tried
+
+- Re-ran the solution: the classifier said `REFUND` again; the replies were worded a little differently and the
+  capital "REFUND team" leaked again, as the lesson says. The gateway's log gives the cost of each step (classifier
+  56 and 63 tokens in, 2 and 3 out; writer 270 and 278 in); the lesson quotes it.
+- The quiz's claim was tried: without `.outputKey("topic")` the run stops with `Missing argument: topic`. Putting the
+  writer first gives the same error. Both are the tasks' usual slips now, with steps.
+- `agentAction`, `invokeWithAgenticScope`, `readState`, `@SequenceAgent` and `UntypedAgent` checked in the agentic
+  jar, which is still a beta module (`1.24.0-beta34`); the lesson says so.
+- The animation is now a still picture of the scope after each step, with real token counts. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 26 rewritten: the regression re-run four times, a false alarm found
 
 - Re-ran the eval: 100%, and exactly the same counts and cost (6 calls, 1,418 in, 98 out, $0.000272).

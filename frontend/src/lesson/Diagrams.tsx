@@ -2485,19 +2485,29 @@ function L4jRag() {
 }
 
 function L4jSequence() {
+  // Still (owner, 26 November): chapter 27's real run, the scope after each step; tokens from the gateway's log.
+  const steps: [string, string, string, BoxTone][] = [
+    ["desk.handle(message)", "", "message", "plain"],
+    ["classifier", "56 in, 2 out", "message, topic = REFUND", "accent"],
+    ["writer", "270 in, 24 out", "message, topic, reply", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="two agents in a sequence"
-      intro="Press Play to follow one message through the help desk."
-      label="a message goes into the scope; the classifier reads it and writes topic; the writer reads message and topic and writes reply; the workflow returns reply"
-      steps={[
-        { label: "1. handle(message)", says: "The workflow puts message into a new agentic scope." },
-        { label: "2. Classifier", says: "Reads message, answers COMPLAINT, and writes it to the scope as topic." },
-        { label: "3. Writer", says: "Reads message and topic from the scope." },
-        { label: "4. Reply", says: "Writes a kind first reply to the scope as reply." },
-        { label: "5. Return", says: "The workflow returns reply: two model calls, one method call." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 276" label="The refund message: the workflow puts message in the scope; the classifier, 56 tokens in and 2 out, adds topic REFUND; the writer, 270 tokens in and 24 out, reads both and adds reply, which the workflow returns">
+      <text className="dg-label" x={8} y={18}>step</text>
+      <text className="dg-label" x={218} y={18}>the scope afterwards</text>
+      {steps.map(([step, cost, scope, tone], i) => {
+        const y = 28 + i * 74;
+        return (
+          <g key={step}>
+            <Box x={8} y={y} w={190} h={46} label={step} tone={tone} />
+            {cost && <text className="dg-note" x={14} y={y + 62}>{cost}</text>}
+            <Arrow x1={198} y1={y + 23} x2={214} y2={y + 23} />
+            <Box x={214} y={y} w={218} h={46} label={scope} tone="plain" />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={268}>The workflow returns "reply". Code fixed the order.</text>
+    </Svg>
   );
 }
 

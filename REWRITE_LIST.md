@@ -12,7 +12,7 @@ Status: **3 of 23 labs done** (60 of 319 chapters).
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
-| 3 | langchain4j | LangChain4j | 30 | in progress (26 of 30) | |
+| 3 | langchain4j | LangChain4j | 30 | in progress (27 of 30) | |
 | 4 | langgraph | LangGraph | 24 | not started | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangChain4j ch 27 done: run reproduced (the REFUND capitals leak again); quiz and both slips tried (Missing argument: topic); module is beta, now said.
 - 26 Nov: LangChain4j ch 26 done: regression re-run 4 times (2 invented, 2 honest but failed the check); what was removed and the token counts corrected.
 - 26 Nov: LangChain4j ch 25 done: guardrail-off case re-run 4 times (3 copied the number); 48 corrected to 47; failure, fatal and successWith chaining checked.
 - 26 Nov: LangChain4j ch 24 done: Ollama started for the check and stopped again; local answer reproduced; default-route claim and a missing class name corrected.
