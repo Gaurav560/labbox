@@ -10,7 +10,8 @@
   gate makes no model call). Corrected: the first request took 6.2 s in one run and 8.5 s in another (now both), repeats
   0.5 to 0.9 s; `find` only filters hybrid search's at most 40 candidates (now said, with the fix); the course table's
   "full recall after rescoring" is 99.8% on synthetic vectors, and each measured number names its data. A new notes
-  page ("a real service usually keeps its vectors in a database").
+  page ("a real service usually keeps its vectors in a database"). Chapter 2 now says 512 tokens, about 380 words,
+  like chapter 4 (it said about 400).
 
 ## 25 November: RAG chapter 12 rewritten (easy, a little detailed, checked)
 
