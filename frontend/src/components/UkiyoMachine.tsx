@@ -223,7 +223,7 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
  * container lights up and hums, and Start appears.
  */
 /** How long each piece takes to come in (the CSS flight and slide follow the same pace). */
-const PIECE_MS = 1150;
+const PIECE_MS = 1600;
 
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   const [lab, setLab] = useState(LABS[0]); // LangChain: AI first
@@ -242,9 +242,9 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     const timers: number[] = [];
     let at = 200;
     for (let k = 1; k <= n; k++) { timers.push(window.setTimeout(() => setStep(k), at)); at += PIECE_MS; }
-    timers.push(window.setTimeout(() => setStep(n + 1), at + 150));
-    timers.push(window.setTimeout(() => setStep(n + 2), at + 1250));
-    timers.push(window.setTimeout(() => setStep(n + 3), at + 2850));
+    timers.push(window.setTimeout(() => setStep(n + 1), at + 200));
+    timers.push(window.setTimeout(() => setStep(n + 2), at + 1700));
+    timers.push(window.setTimeout(() => setStep(n + 3), at + 3900));
     return () => timers.forEach(clearTimeout);
   }, [run, lab, n, still]);
 
@@ -253,7 +253,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   useEffect(() => {
     setSecs(0);
     if (run === 0 || still) { if (still && run) setSecs(58); return; }
-    const total = 200 + n * PIECE_MS + 2850, t0 = performance.now();
+    const total = 200 + n * PIECE_MS + 3900, t0 = performance.now();
     const t = window.setInterval(() => {
       const s = Math.min(58, Math.round(((performance.now() - t0) / total) * 58));
       setSecs(s);

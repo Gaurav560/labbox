@@ -1,5 +1,10 @@
 # Changelog
 
+## 25 November (Ukiyo): the container run slower still
+
+- Owner: "still fast". 1.6 s per piece (was 1.15), and the flight, slide, doors, locks, sealing and starting stretched
+  to match. A LangChain run now takes about 14 s from first view to running.
+
 ## 25 November (Ukiyo): the container run a little slower
 
 - Owner: "the animation is happening too fast, slow it just a little". Everything is about a quarter slower and moves

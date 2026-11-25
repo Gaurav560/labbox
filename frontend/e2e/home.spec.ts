@@ -22,7 +22,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await machine.scrollIntoViewIfNeeded();
   // The first run starts by itself when the section comes into view (owner, 25 November).
   await expect(machine.locator(".ua-container")).toBeVisible(); // the Docker-style shipping container
-  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
+  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 30_000 });
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(6); // LangChain: Linux, Python, LangChain, gateway, editor, AI
   await expect(machine.locator(".ua-dock li")).toHaveCount(0); // all of them went in
   await expect(machine.locator(".ua-c-box")).toHaveCount(6); // each one stays inside as a crate, seen through the wall
@@ -37,7 +37,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(machine.getByText("Try it: tap Run")).toBeVisible();
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0); // a new lab waits for its own click
   await machine.getByRole("button", { name: /Spin up the Redis machine/ }).click();
-  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 15_000 });
+  await expect(machine.locator(".ua-box.is-sealed")).toBeVisible({ timeout: 30_000 });
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(7);
   await expect(machine.locator(".ua-log")).toContainText("Redis replica");
   await expect(machine).not.toContainText("VS Code");
