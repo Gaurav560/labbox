@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: LangChain chapter 25 rewritten (easy, a little detailed, checked)
+
+- Human in the loop, the checkpointer, `interrupt_on` and `__interrupt__` are explained where they first appear; both
+  tasks list their steps and the usual slips, all tried: a misspelled tool name (no pause, and the booking was made
+  without the manager), `resume=decision` without the wrapper (`KeyError: 'decisions'`), a different thread id.
+- The booking animation is now a still picture of Ravi's real booking (80 asked, paused, edited to 50, B-101).
+- Checked through the lab gateway: the same three pauses and bookings, and the same invented "try another crop". The
+  lesson now quotes what the model really receives after an edit and a reject (from LangChain's source and the run),
+  and the suggested fix was tried: a reject message that says what to do gave that answer 3 times of 3, with nothing
+  added. Added the fourth decision (`respond`) and `interrupt_mode`. Corrected the vault photo: the lock was in use
+  from 1856 to 1885 (not "an 1883 bank"), and the two-person rule is now said of vaults in general. A new notes page.
+
 ## 25 November: LangChain chapter 24 rewritten (easy, a little detailed, checked)
 
 - PII, the regular expression (piece by piece), state and the Verhoeff check digit are explained where they first
