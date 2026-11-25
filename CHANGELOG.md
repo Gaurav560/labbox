@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 23 rewritten: the review's second exit seen for real, facts checked
+
+- Every fact the lesson quotes was checked against the sources (design pressure 2.5 bar, 5 then 14 complaints,
+  rainfall 102%, roadworks in March), and the citation check was run on the table's five paragraphs: the same results.
+- Re-ran the team on a fresh test account: 85 seconds, 8,068 tokens, six questions (the prompt asks for three or
+  four). The review rejected both drafts because the recommendation cited no source, and the run ended with the
+  problem kept for a person, the quiz's scenario for real. The report tied the pressure rise to the complaints; again
+  no finding gave the design pressure. The lesson adds this run.
+- Both tasks list their steps and a slip (node names instead of `Send`, as in chapter 6; dropping `if name not in
+  known`). The animation is now a still picture of this run; a new sketchnote.
+
 ## 26 November: LangGraph chapter 22 rewritten: the plan checked again, the quiz corrected, virtual_mode tried
 
 - Re-ran the deep agent: the analyst counted street by street this time (8 calls); every complaint count was right

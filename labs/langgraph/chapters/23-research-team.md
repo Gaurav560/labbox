@@ -51,7 +51,11 @@ gateway's limit.
 :::
 
 :::step{type=task task=fan_out_questions title="Your turn: one researcher per question" file="23-research-team/team.py" line="74-77"}
-Finish `fan_out(state)`: return `[Send("research", {"question": q}) for q in state["questions"]]`.
+Finish `fan_out(state)`: return `[Send("research", {"question": q}) for q in state["questions"]]`, one `Send` per
+question, each with only its question.
+
+The usual slip is chapter 6's: returning the node's name, `["research"]`. Then `research` runs once with the whole
+study's state, which has no `"question"` key, and stops with a `KeyError`.
 
 Press **Check**.
 :::
@@ -75,17 +79,23 @@ counted as a paragraph. The check now reads both forms with one pattern (`CITE`)
 | `... said yes [council-notes].` | `unknown source [council-notes]`: no such record |
 | `**Leaks on Station Road**` | none: a title |
 
-A check like this is cheap, exact and never tired. It cannot tell whether the reasoning in a paragraph is right, only
+We ran the check on those five paragraphs on 26 November: it gave exactly the problems in the table. A check like this
+is cheap, exact and never tired. It cannot tell whether the reasoning in a paragraph is right, only
 whether its sources exist.
 
 :::diagram{name="lg-research"}
-Questions fan out to researchers in parallel; the findings come back together for the writer and the review.
+The run of 26 November: six researchers in parallel, and a review that held its ground twice.
 :::
 :::
 
 :::step{type=task task=check_citations title="Your turn: check every paragraph" file="23-research-team/team.py" line="94-103"}
-In `check_citations`, after `cited` is found: if it is empty, append `f"no source: {paragraph[:60]}"`; then append
-`f"unknown source [{name}]"` for every name in `cited` that is not in `known`.
+In `check_citations`, after `cited` is found:
+
+1. if `cited` is empty, `problems.append(f"no source: {paragraph[:60]}")`;
+2. then `problems += [f"unknown source [{name}]" for name in cited if name not in known]`.
+
+The usual slip: leaving out `if name not in known` in step 2. Then every name counts as unknown, every cited paragraph
+fails, and the writer is sent back for no reason.
 
 ```bash run
 cd /workspace/23-research-team && python main.py
@@ -133,7 +143,21 @@ Additionally, rainfall data shows that Ujjwal Nagar experienced 102% of the long
 parallel, one draft, and a clean review. The report now has the real story: pressure raised in April, leaks at the joints
 near the towers where pressure is highest, and a pressure-reducing valve as the fix before the monsoon.
 
-Read it once more as the engineer. The pipe register says the main's **design pressure is 2.5 bar**; it was raised to
+We ran it again on 26 November, on a fresh test account: 85 seconds and 8,068 tokens. The planner wrote **six**
+questions (its prompt asks for three or four), six researchers ran in parallel, and the review behaved differently:
+
+```text
+  write: draft 1
+  review: ['no source: **Recommendation:** It is recommended that the council prior']
+  write: draft 2
+  review: ['no source: **Recommendation:** It is recommended that the council prior']
+```
+
+The writer twice ended the recommendation without a citation, so after draft 2 the graph stopped with the problem kept
+in `problems`, for a person to see: the guess-first question below, for real. This time the report did tie the April
+pressure rise to the jump in complaints, and again no finding mentioned the design pressure of 2.5 bar.
+
+Read the first run's report once more as the engineer. The pipe register says the main's **design pressure is 2.5 bar**; it was raised to
 3.0 in April, and the complaints jumped from 5 in the first quarter to 14 in the second. That is the strongest evidence
 in the records, and no paragraph says it: the pipe-register researcher summarised the pipe without the design pressure,
 and the pressure-log researcher never saw the register. The report also still offers rainfall at **102% of normal** as a
@@ -150,7 +174,8 @@ The writer cites a record that does not exist, `[budget-2025]`, in two drafts in
 - [x] Sends draft 1 back with the problem, then ends after draft 2 with the problem recorded in `problems`
 - [ ] Deletes the paragraph
 :::explain
-`review` allows two drafts. After that the problems are kept in the state, for a person to see.
+`review` allows two drafts. After that the problems are kept in the state, for a person to see. Our second run did
+exactly this, with an uncited recommendation instead of an invented source.
 :::
 :::
 
@@ -199,7 +224,7 @@ You can now:
 
 Next, chapter 24: the capstone, Harsh complete.
 
-:::photo{src="/lesson-images/langgraph/lg-23-notes.webp" alt="Handwritten notes about a research team: plan, fan out, write, review; Finding = answer + sources; citations checked in Python; cited is not the same as right; pass key facts, not summaries" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-23-notes.webp" alt="Handwritten notes titled A research team, plan, research in parallel, write, review: a planner splits the topic into questions, one researcher per question runs in parallel and returns a Finding with its sources, a writer drafts the report and Python checks every paragraph citations; plan 6 questions, 6 researchers at once, write the report, check citations in Python, fix or keep the problem; one run took 85 seconds and 8,068 tokens; the recommendation was uncited twice; no finding gave the design pressure of 2.5 bar; cited is not the same as right" ai="true"}
 One page of notes for this chapter.
 :::
 :::

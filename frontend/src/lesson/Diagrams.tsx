@@ -3848,20 +3848,28 @@ function LgDeepAgent() {
 }
 
 function LgResearch() {
+  // Still (owner, 26 November): chapter 23's real run: 6 questions, 6 researchers, 2 drafts, 85 seconds.
   return (
-    <SketchSteps
-      title="A research team"
-      intro="Press Play to follow the Station Road study."
-      label="Research"
-      steps={[
-        { label: "plan", says: "The planner sees the seven records and writes seven questions." },
-        { label: "Send", says: "Seven researchers start at once, each with one question." },
-        { label: "research", says: "Each reads the sources it needs and returns a Finding with its sources." },
-        { label: "reducer", says: "operator.add collects the seven findings into one list." },
-        { label: "write", says: "The writer turns the findings into paragraphs, each ending with its sources." },
-        { label: "review", says: "Python checks every paragraph's citations; problems go back to the writer once." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 360" label="The planner wrote six questions; six researchers ran in parallel, each returning a Finding; the writer wrote draft 1; the review found the recommendation paragraph had no source; draft 2 had the same problem, so the run ended with the problem kept for a person. 85 seconds and 8,068 tokens">
+      <Box x={8} y={4} w={424} h={38} label="plan: 6 questions" tone="plain" />
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <g key={i}>
+          <Arrow x1={220} y1={42} x2={38 + i * 72} y2={60} />
+          <Box x={8 + i * 72} y={60} w={62} h={36} label={`R${i + 1}`} tone="accent" />
+          <Arrow x1={38 + i * 72} y1={96} x2={220} y2={114} />
+        </g>
+      ))}
+      <Box x={8} y={114} w={424} h={38} label="findings (operator.add): 6" tone="copy" />
+      <Box x={8} y={170} w={206} h={38} label="write: draft 1" tone="plain" />
+      <Box x={226} y={170} w={206} h={38} label="review: no source" tone="highlight" />
+      <Box x={8} y={226} w={206} h={38} label="write: draft 2" tone="plain" />
+      <Box x={226} y={226} w={206} h={38} label="review: no source" tone="highlight" />
+      <Arrow x1={214} y1={189} x2={226} y2={189} />
+      <Arrow x1={226} y1={208} x2={214} y2={226} />
+      <Arrow x1={214} y1={245} x2={226} y2={245} />
+      <Box x={8} y={282} w={424} h={38} label="end: the problem kept in problems, for a person" tone="accent" />
+      <text className="dg-note" x={8} y={350}>One run: 85 seconds, 8,068 tokens.</text>
+    </Svg>
   );
 }
 
