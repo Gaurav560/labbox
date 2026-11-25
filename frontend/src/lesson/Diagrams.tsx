@@ -3787,20 +3787,28 @@ function LgMutation() {
 }
 
 function LgServer() {
+  // Still (owner, 26 November): chapter 21's real run against langgraph dev, and the restart.
+  const rows: [string, string, BoxTone][] = [
+    ["client.py", "threads.create(): 01a214d7", "plain"],
+    ["client.py", "runs.wait(thread, \"harsh\", input=...)", "accent"],
+    ["server", "load the thread, run the graph, save", "plain"],
+    ["client.py", "state[\"messages\"][-1][\"content\"]", "copy"],
+    ["restart", "thread 01a214d7: still 6 messages", "highlight"],
+  ];
   return (
-    <SketchSteps
-      title="One message through the server"
-      intro="Press Play to follow 'Any update?' from client.py."
-      label="Server"
-      steps={[
-        { label: "threads.create", says: "The client asks for a thread; the server returns its id." },
-        { label: "runs.wait", says: "The client sends the message as JSON on that thread, for the graph named harsh." },
-        { label: "load", says: "The server loads the thread's saved state: empty the first time." },
-        { label: "run", says: "It runs harsh/graph.py's graph: agent, tools, agent." },
-        { label: "save", says: "It saves the thread itself; the graph has no checkpointer of its own." },
-        { label: "answer", says: "runs.wait returns the final state; the client prints the last message." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="The client creates thread 01a214d7, starts a run with runs.wait, the server loads the thread, runs the graph and saves it, and the client reads the last message's content. After a restart of langgraph dev the thread was still there with 6 messages, kept in the .langgraph_api folder">
+      {rows.map(([who, what, tone], i) => {
+        const y = 4 + i * 58;
+        return (
+          <g key={i}>
+            <text className="dg-label" x={8} y={y + 26}>{who}</text>
+            <Box x={96} y={y} w={336} h={42} label={what} tone={tone} />
+            {i < rows.length - 1 && <Arrow x1={264} y1={y + 42} x2={264} y2={y + 58} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={312}>langgraph dev keeps threads in .langgraph_api/store.pckl.</text>
+    </Svg>
   );
 }
 
