@@ -2454,20 +2454,33 @@ function L4jToolCall() {
 }
 
 function L4jRag() {
+  // Still (owner, 26 November): chapter 23's real run, piece count, scores and tokens from the gateway's log.
+  const once: string[] = ["5 files", "12 pieces", "412 tokens"];
+  const ask: [string, BoxTone][] = [
+    ["\"Can I bring my guitar?\" embedded: 6 tokens", "plain"],
+    ["best piece 0.711: \"Musical instruments up to 1.5 m...\"", "accent"],
+    ["next best 0.641: below 0.7, left out", "plain"],
+    ["1 piece + question + rules: 107 tokens in", "plain"],
+    ["\"Yes ... up to 1.5 metres ... free\"", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="retrieval-augmented generation"
-      intro="Press Play to follow indexing, then one question."
-      label="documents are loaded, split into pieces, embedded and stored once; a question is embedded, the closest pieces are found, and they travel to the model with the question"
-      steps={[
-        { label: "1. Load", says: "Five rule documents from the docs folder." },
-        { label: "2. Split", says: "Pieces of at most 300 characters, overlapping by 30." },
-        { label: "3. Embed and store", says: "Each piece becomes 1,536 numbers, kept with its text and file name." },
-        { label: "4. A question", says: "Can I bring my guitar? is embedded too." },
-        { label: "5. Retrieve", says: "The closest piece above 0.7: Musical instruments up to 1.5 metres travel free." },
-        { label: "6. Generate", says: "The model answers from that piece, and only from it." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 452" label="Indexing once: five files of 1,772 characters became 12 pieces, embedded in one call of 412 tokens. For the guitar question: the question is embedded, the musical instruments piece scores 0.711, the next 0.641 is left out, the request is 107 tokens, and the answer quotes the 1.5 metre rule">
+      <text className="dg-label" x={8} y={18}>indexing, once</text>
+      {once.map((t, i) => (
+        <g key={t}>
+          <Box x={8 + i * 146} y={28} w={132} h={52} label={t} tone="plain" />
+          {i < 2 && <Arrow x1={140 + i * 146} y1={54} x2={154 + i * 146} y2={54} />}
+        </g>
+      ))}      <text className="dg-note" x={8} y={100}>1,772 characters, cut at 300, embedded in one call</text>
+      <text className="dg-label" x={8} y={124}>retrieval, every question</text>
+      {ask.map(([t, tone], i) => (
+        <g key={t}>
+          <Box x={8} y={134 + i * 58} w={424} h={42} label={t} tone={tone} />
+          {i < ask.length - 1 && <Arrow x1={220} y1={176 + i * 58} x2={220} y2={192 + i * 58} />}
+        </g>
+      ))}
+      <text className="dg-note" x={8} y={444}>Of 12 pieces, one sentence travelled with the question.</text>
+    </Svg>
   );
 }
 
