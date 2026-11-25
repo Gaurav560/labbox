@@ -71,10 +71,18 @@ Nothing in the controller knows about tools, memory or retrieval. It calls one m
 :::
 
 :::step{type=task task=rules_store title="Your turn: index the rule book at start-up" file="30-capstone/src/main/java/com/setu/KnowledgeConfig.java" line="24-32"}
-Finish the `rulesStore` bean: load the documents with `ClassPathDocumentLoader.loadDocuments("rules", new
-TextDocumentParser())` (they are in `src/main/resources/rules`, so they travel inside the app), and ingest them into
-a new `InMemoryEmbeddingStore` with an `EmbeddingStoreIngestor`: `DocumentSplitters.recursive(300, 30)`, the
-embedding model, the store. Return the store.
+Finish the `rulesStore` bean:
+
+1. load the documents with `ClassPathDocumentLoader.loadDocuments("rules", new TextDocumentParser())` (they are in
+   `src/main/resources/rules`, so they travel inside the app);
+2. make a new `InMemoryEmbeddingStore<TextSegment>`;
+3. ingest with an `EmbeddingStoreIngestor`: `.documentSplitter(DocumentSplitters.recursive(300, 30))`, the embedding
+   model, the store;
+4. return the store.
+
+The usual slip is chapter 23's: leaving out the splitter. Nothing fails, but each whole file becomes one piece, and
+there the guitar question lost its 1.5-metre rule. (The gateway's log shows this bean at work: one embedding call of
+412 tokens when the app starts, the same five files as chapter 23.)
 
 This is chapter 23's ingestion, moved into a bean: it runs once, when the app starts.
 
@@ -108,8 +116,15 @@ list says the answer came from the facts or the tools, not the rule book.
 :::
 
 :::step{type=task task=answer_with_sources title="Your turn: POST /chat with sources" file="30-capstone/src/main/java/com/setu/SetuController.java" line="36-39"}
-Add `POST /chat` to `SetuController`: take a `ChatRequest` from the body, call `setu.chat(passenger, message)`, and
-return a `ChatReply` with the passenger, `result.content()`, and the distinct file names of the sources.
+Add `POST /chat` to `SetuController`:
+
+1. a `@PostMapping("/chat")` method that takes `@RequestBody ChatRequest request`;
+2. call `setu.chat(request.passenger(), request.message())`;
+3. turn `result.sources()` into the distinct file names, as above;
+4. return a `ChatReply` with the passenger, `result.content()` and those names.
+
+The usual slip: forgetting `.distinct()`. We tried it on 26 November with the landslide question: the sources came
+back as `["refunds.txt","monsoon.txt","refunds.txt"]`, because two of the three pieces were from the refund rules.
 
 Start the app in one terminal:
 
@@ -144,6 +159,14 @@ Answer using the following information:
 Musical instruments up to 1.5 metres travel free with their owner.
 ```
 
+:::diagram{name="l4j-capstone-guard"}
+The same 59-character length, two guards (26 November).
+:::
+
+We reproduced it on 26 November by putting chapter 25's `QuestionLimit` back: the 59-character bicycle question was
+refused again, while "And for my son, he is 4?" (24) and "Can I bring my guitar?" (22) were answered. The gateway's
+log shows the order: the refused question's embedding (17 tokens) was paid for, and then no chat call followed.
+
 **Input guardrails run after retrieval.** The message they check is the augmented one: the question plus the
 rule-book pieces found for it. Questions that matched the rule book grew past 300 characters; questions that matched
 nothing stayed short and passed. A guard that worked perfectly in chapter 25 broke silently when RAG was added.
@@ -173,6 +196,9 @@ $ curl -s localhost:8080/usage
 
 (The long message is shortened here with "..."; the real one was 400 characters.)
 
+We ran all five requests again on 26 November against the solution: every answer was the same, word for word, and
+`/usage` again said 4 calls, 1,968 tokens in, 145 out.
+
 Every part of the course in four requests:
 
 1. **Tools and RAG together.** The guitar rule came from `luggage.txt`; the Rs 140 came from the `fare` tool. That
@@ -181,9 +207,10 @@ Every part of the course in four requests:
    needed, and the sources say so.
 3. **Grounding.** Ravi's answer used the accessibility rules: free wheelchair spaces, the 30-minute call. The model
    declined to "note down" a number on its own; had it repeated it, `NoPhoneNumbers` would have removed it.
-4. **Guardrails.** The 400-character message was refused with HTTP 400 and never reached the model.
+4. **Guardrails.** The 400-character message was refused with HTTP 400 and never reached the chat model. (Its
+   embedding for retrieval was still made: retrieval runs first, as the bug above showed.)
 
-And the bill: 1,968 input and 145 output tokens for three answers is about $0.00038, or $0.00013 an answer. At 10,000
+And the bill: 1,968 input and 145 output tokens for three answers is about $0.00038 at gpt-4o-mini's prices, or $0.00013 an answer. At 10,000
 questions a day, Setu costs about $1.30 a day in model calls.
 :::
 
@@ -249,7 +276,7 @@ You can now:
 That is the end of the course. You started with a single neuron in chapter 2; Setu now answers passengers from the
 railway's own rules, with tools, memory and guardrails, and can tell you what every answer cost. Well done.
 
-:::photo{src="/lesson-images/langchain4j/l4j-30-notes.webp" alt="Handwritten notes about the capstone: one app with tools, RAG and memory; guardrails and a listener; the starter wires the beans; Result gives the answer plus sources; test features together" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-30-notes.webp" alt="Handwritten notes titled Setu goes live, one Spring Boot app with every piece of the course: an AiService joins the model, memory, tools, the rule book and guardrails, and POST /chat returns the answer and the rule-book files it came from; question, rule book pieces added, input guardrail, model and tools, answer and sources; 4 model calls for 3 answers at 1,968 tokens in; about 1.30 dollars a day for 10,000 questions; the old guard refused a 59-character question; test features together, not only alone" ai="true"}
 One page of notes for this chapter.
 :::
 :::

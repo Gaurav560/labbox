@@ -2757,6 +2757,33 @@ function L4jGuardrails() {
   );
 }
 
+function L4jCapstoneGuard() {
+  // Still (owner, 26 November): chapter 30's real runs; the order inside one call, the old guard against the new one.
+  const left: [string, BoxTone][] = [
+    ["bicycle question: 59 chars", "plain"], ["embed: 17 tokens", "plain"], ["+ rule-book pieces", "plain"],
+    ["old guard: over 300", "highlight"], ["HTTP 400, no chat call", "highlight"],
+  ];
+  const right: [string, BoxTone][] = [
+    ["guitar question: 59 chars", "plain"], ["embed the question", "plain"], ["+ luggage.txt piece", "plain"],
+    ["new guard: the 59 typed", "accent"], ["answer + sources", "copy"],
+  ];
+  const col = (items: [string, BoxTone][], x: number) => items.map(([t, tone], i) => (
+    <g key={x + "-" + i}>
+      <Box x={x} y={30 + i * 62} w={206} h={44} label={t} tone={tone} />
+      {i < items.length - 1 && <Arrow x1={x + 103} y1={74 + i * 62} x2={x + 103} y2={92 + i * 62} />}
+    </g>
+  ));
+  return (
+    <Svg viewBox="0 0 440 372" label="Inside one call, retrieval runs before the input guardrail. Chapter 25's guard measured the question plus the rule-book pieces, so a 59-character question about bicycles was refused with HTTP 400 after a 17-token embedding call; the capstone's guard measures only what the passenger typed, so the 59-character guitar question was answered with its source, luggage.txt">
+      <text className="dg-label" x={8} y={18}>chapter 25's guard</text>
+      <text className="dg-label" x={226} y={18}>the capstone's guard</text>
+      {col(left, 8)}
+      {col(right, 226)}
+      <text className="dg-note" x={8} y={362}>Each feature passed alone; together they broke.</text>
+    </Svg>
+  );
+}
+
 function L4jSupervisor() {
   // Still (owner, 26 November): chapter 29's real run, all seven calls from the gateway's log (tokens in, out).
   const calls: [string, string, BoxTone][] = [
@@ -4614,6 +4641,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-mcp-wire": L4jMcpWire,
   "l4j-routing": L4jRouting,
   "l4j-eval": L4jEval,
+  "l4j-capstone-guard": L4jCapstoneGuard,
   "l4j-vector-search": L4jVectorSearch,
   "l4j-guardrails": L4jGuardrails,
   "l4j-supervisor": L4jSupervisor,
