@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): the earlier Spin up button, in a softer red
+
+- Owner: "that design was good, you just have to change the colour, shade, aesthetic". Back to the hanko-style
+  rectangle (inner cream line, cream play circle), now in a muted brick red (#a9533e on washi, #94493a on sumi)
+  with cream text and a gentler ring; no "pieces" line.
+
 ## 25 November (Ukiyo): a calmer Spin up button
 
 - Owner: remove "5 pieces, 6 pieces" and "this red colour is too hard on the eyes". The button is now a cream pill
