@@ -3567,21 +3567,29 @@ function LgStore() {
 }
 
 function LgAgentLoop() {
+  // Still (owner, 26 November): chapter 13's real runs for "98220", three of them.
+  const rows: [string, string, BoxTone][] = [
+    ["agent", "asks for find_tickets(98220)", "accent"],
+    ["tools", "T-4471 no_water, T-4475 dirty_water", "plain"],
+    ["agent", "asks for 2 ticket_status, one message", "accent"],
+    ["tools", "both run: crew 2 Wed 8:00; lab by 18:00", "plain"],
+    ["agent", "no tool_calls: the answer, then END", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="The agent loop, by hand"
-      intro="Press Play to follow '98220' through the loop."
-      label="Agent loop"
-      steps={[
-        { label: "agent", says: "The model reads the chat and the tool descriptions, and asks for find_tickets(phone='98220')." },
-        { label: "should_continue", says: "The last message has tool_calls: go to tools." },
-        { label: "tools", says: "ToolNode runs find_tickets and adds a ToolMessage: T-4471 and T-4475." },
-        { label: "agent", says: "The model reads the result and asks for ticket_status twice, in one message." },
-        { label: "tools", says: "Both calls run together; two ToolMessages come back." },
-        { label: "agent", says: "Now it has the facts and answers, with no tool calls." },
-        { label: "END", says: "should_continue sees no tool_calls: the run ends with the answer." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 352" label="One real run: the agent asks for find_tickets, the tool node returns two tickets, the agent asks for both statuses in one message, the tool node runs both, and the agent answers without tool calls, which ends the run. In two of three runs the agent stopped after find_tickets and asked whether to fetch the statuses">
+      {rows.map(([node, what, tone], i) => {
+        const y = 4 + i * 58;
+        return (
+          <g key={i}>
+            <text className="dg-label" x={8} y={y + 26}>{node}</text>
+            <Box x={64} y={y} w={368} h={42} label={what} tone={tone} />
+            {i < rows.length - 1 && <Arrow x1={248} y1={y + 42} x2={248} y2={y + 58} />}
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={312}>That was 1 run of 3. In the other 2, the agent stopped after</text>
+      <text className="dg-note" x={8} y={332}>find_tickets and asked "Would you like to know the status?"</text>
+    </Svg>
   );
 }
 

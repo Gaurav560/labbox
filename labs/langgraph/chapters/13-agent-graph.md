@@ -62,6 +62,10 @@ itself.
 :::step{type=task task=agent_node title="Your turn: give the model its tools" file="13-agent-graph/agent.py" line="20-25"}
 In `agent`, call `model().bind_tools(TOOLS).invoke(...)` instead of `model().invoke(...)`.
 
+The usual slip is the starter's own line: leaving out `bind_tools`. Nothing fails, but the model does not know any
+tools exist. We tried it with "My number is 98220. Any update on my complaints?": it answered "Please provide your
+full phone number for verification", although the number was in the message.
+
 Press **Check**.
 :::
 
@@ -79,12 +83,19 @@ graph.add_edge("tools", "agent")                                         # resul
 answered, and the run ends. LangGraph also ships this function as `tools_condition`.
 
 :::diagram{name="lg-agent-loop"}
-The model and the tools take turns; the loop ends when the model answers without asking for a tool.
+One real run (26 November), node by node, and what the other runs did.
 :::
 :::
 
 :::step{type=task task=tool_loop title="Your turn: loop through the tools" file="13-agent-graph/agent.py" line="28-32"}
-Finish `should_continue(state)`: return `"tools"` if `state["messages"][-1].tool_calls` is not empty; otherwise `END`.
+Finish `should_continue(state)`:
+
+1. `last = state["messages"][-1]`;
+2. return `"tools"` if `last.tool_calls` is not empty, otherwise `END`.
+
+The usual slip: looking at `state["messages"][0]`, the citizen's first message, instead of the last. We tried it: a
+citizen's message is a `HumanMessage`, which has no tool calls at all, and the run stopped with `AttributeError:
+'HumanMessage' object has no attribute 'tool_calls'`.
 
 ```bash run
 cd /workspace/13-agent-graph && python main.py
@@ -112,13 +123,24 @@ $ python main.py
   [agent] I recommend not drinking the brown water until the lab results are available. It's best to wait for confirmation from the health team regarding its safety.
 ```
 
-Follow the loop. With no phone number, the model asked for one instead of guessing (the system prompt allows that). With
+We ran it three more times on 26 November, and the path changed, at temperature 0:
+
+- once it was the run above, word for word: both statuses fetched together, and the advice not to drink the water;
+- twice the agent stopped after `find_tickets`, listed the two tickets and asked "Would you like to know the status of
+  either ticket?", and to the safety question it answered "I cannot provide health or safety advice regarding water
+  quality. Please consult a local health authority".
+
+An agent's path is the model's choice on every turn, and it varies. That is the price of letting a model decide, and
+the reason later chapters check its work.
+
+Follow the loop in the run above. With no phone number, the model asked for one instead of guessing (the system prompt allows that). With
 it, the model called `find_tickets`, read two ticket ids, then asked for **both** statuses in one message; `ToolNode`
 ran them together, and the model answered with every fact from the tools. Compare chapter 7: "a crew is still working"
 has become "East zone crew 2, Wednesday 8:00 to 11:00".
 
 The last answer is sensible advice, and it came from nowhere: no tool says anything about safety. The model filled the
-gap with what it thought was right. Here it happens to be right; the board's rule says the same. Chapter 15 gives Harsh
+gap with what it thought was right. Here it happens to be right; the board's rule says the same. In the other two runs
+it refused instead: two different answers to the same health question, neither from the board. Chapter 15 gives Harsh
 the rulebook, so advice comes from the board, not from the model's guess.
 :::
 
@@ -130,7 +152,8 @@ You forget the edge from `tools` back to `agent`. What happens after the first t
 - [x] The tool runs, and the run ends with a tool result as the last message: the citizen gets no answer
 - [ ] LangGraph refuses to compile
 :::explain
-A node with no outgoing edge ends the run. The edge back is what makes it a loop.
+We tried it: the run ended with the `find_tickets` result as its last message. A node with no outgoing edge ends the
+run. The edge back is what makes it a loop.
 :::
 :::
 
@@ -165,8 +188,11 @@ retrieval grader (chapter 15), an approval before a tool with side effects (chap
 **Limits.** An agent can loop for ever if the model keeps asking for tools. LangGraph's recursion limit stops it
 (`invoke(..., {"recursion_limit": 10})`); a counter in the state can stop it more gently.
 
-**Tool errors.** `ToolNode` turns a tool's exception into a `ToolMessage` with the error text by default, so the model can
-read it and try again.
+**Tool errors.** By default `ToolNode` turns **bad arguments** into a `ToolMessage` with the error text, so the model can
+read it and try again; we tried it: "Error invoking tool 'broken' ... ticket_id: Field required. Please fix the
+error". An exception raised **inside** the tool is not caught: our `ValueError("database down")` stopped the run. Pass
+`ToolNode(TOOLS, handle_tool_errors=True)` to turn every error into a message; we tried that too: "Error:
+ValueError('database down') Please fix your mistakes."
 :::
 
 :::step{type=recap}
@@ -179,7 +205,7 @@ You can now:
 
 Next, chapter 14: reflection, a second look before the answer is sent.
 
-:::photo{src="/lesson-images/langgraph/lg-13-notes.webp" alt="Handwritten notes about the agent loop: bind_tools: the model can ask; ToolNode runs the calls; tool_calls? -> tools : END; tools -> agent = the loop; facts from tools, not guesses" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-13-notes.webp" alt="Handwritten notes titled The agent loop, a model node, a tool node, one edge back: bind_tools lets the model ask for tools, ToolNode runs the calls, and a conditional edge goes to the tools while the model asks and to END when it answers; agent asks for find_tickets, tools return two tickets, agent asks for both statuses, tools run both, agent answers and the run ends; 3 runs gave 2 paths because the model chooses each turn; with no bind_tools it asked for the number again; with no edge back the run ends on a tool result; a tool error stops the run by default" ai="true"}
 One page of notes for this chapter.
 :::
 :::

@@ -1,5 +1,18 @@
 # Changelog
 
+## 26 November: LangGraph chapter 13 rewritten: the agent's two paths measured, a wrong default corrected
+
+- Re-ran the agent three times at temperature 0: once exactly the lesson's run (both statuses fetched in one message,
+  advice not to drink the water); twice it stopped after `find_tickets`, asked whether to fetch the statuses, and
+  refused the safety question ("I cannot provide health or safety advice"). The lesson now shows both paths and why.
+- Corrected: the deep dive said `ToolNode` turns a tool's exception into a message by default. In 1.2.24 only bad
+  arguments become a `ToolMessage`; a `ValueError` raised inside the tool stops the run; `handle_tool_errors=True`
+  turns it into "Error: ValueError('database down') Please fix your mistakes." All three were tried.
+- Tried: no `bind_tools` (the model asked for the phone number already given), `messages[0]` in the router
+  (`AttributeError: 'HumanMessage' object has no attribute 'tool_calls'`), and the quiz (no edge back: the run ends on
+  the tool result).
+- The animation is now a still picture of the real run with the other path noted; a new sketchnote.
+
 ## 26 November: LangGraph chapter 12 rewritten: what a store search really embeds, measured
 
 - Re-ran the solution with the real model: the same behaviour (Marathi in both threads of 98220, English for 70300,
