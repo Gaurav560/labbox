@@ -3514,19 +3514,45 @@ function RagHnsw() {
 }
 
 function RagBinary() {
+  // Real rows from quant_bench.py's first question (100,000 synthetic vectors); true = in the exact top 10.
+  const byBits: [string, number, boolean][] = [
+    ["58473", 62, true], ["765", 69, true], ["57496", 71, true], ["65850", 71, true], ["34650", 72, true], ["7959", 74, false],
+    ["84978", 74, true], ["4353", 75, false], ["39354", 76, true], ["7186", 77, false], ["28950", 77, true], ["47390", 77, false],
+    ["47778", 77, true], ["63714", 77, false], ["14751", 78, false], ["95241", 78, true],
+  ];
+  const exact: [string, string][] = [
+    ["57496", "0.844"], ["58473", "0.836"], ["95241", "0.824"], ["65850", "0.810"], ["28950", "0.802"],
+    ["47778", "0.797"], ["765", "0.788"], ["39354", "0.783"], ["34650", "0.782"], ["84978", "0.780"],
+  ];
+  const top = 60, step = 21, h = 18, w = 170, rx = 270;
+  const yOf = (i: number) => top + i * step;
   return (
-    <SketchSteps
-      title="Bits for the shortlist"
-      intro="Press Play to follow a query through binary search with rescoring."
-      label="Quantization"
-      steps={[
-        { label: "bits", says: "Every vector is stored as 384 bits, 48 bytes: 1 where a number is above zero." },
-        { label: "the query's bits", says: "The query becomes 384 bits the same way." },
-        { label: "Hamming distance", says: "XOR with every code and count the ones: how many bits differ. Very cheap for all 100,000." },
-        { label: "shortlist", says: "The 200 codes with the fewest differing bits are kept: rough, but the true neighbours are almost all in there." },
-        { label: "rescore", says: "Those 200 are scored with their full float vectors, and the 10 best are returned: recall 100%." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 478" label="One question's 16 closest rows by bits, with the true top 10 marked, joined to the exact top 10 after rescoring with the full vectors">
+      <text className="dg-label" x={0} y={18}>Bits: rough order</text>
+      <text className="dg-note" x={0} y={38}>row: differing bits</text>
+      <text className="dg-label" x={rx} y={18}>Floats: exact order</text>
+      <text className="dg-note" x={rx} y={38}>row: exact score</text>
+      {byBits.map(([row, , t], i) => {
+        const j = exact.findIndex(([r]) => r === row);
+        return j < 0 ? null : (
+          <line key={`l${row}`} className="dg-arrow" x1={w} y1={yOf(i) + h / 2} x2={rx} y2={yOf(j) + h / 2} style={{ opacity: t ? 0.55 : 0 }} />
+        );
+      })}
+      <g className="dg-cells-small">
+        {byBits.map(([row, d, t], i) => (
+          <Box key={`b${row}`} x={0} y={yOf(i)} w={w} h={h} label={`${row}: ${d} bits`} tone={t ? "copy" : "plain"} code />
+        ))}
+        {exact.map(([row, sc], j) => (
+          <Box key={`e${row}`} x={rx} y={yOf(j)} w={w} h={h} label={`${row}: ${sc}`} tone="copy" code />
+        ))}
+      </g>
+      <text className="dg-note" x={rx} y={yOf(10) + 16}>the 10 nearest, best first</text>
+      <text className="dg-note" x={0} y={410}>Green: the 10 true nearest. Bits alone keep 7 of them.</text>
+      <text className="dg-note" x={0} y={430}>Real recall over 100 questions (shortlist size: recall):</text>
+      {[["10", "57.2%"], ["50", "93.7%"], ["200", "99.8%"]].map(([n, rc], i) => (
+        <Box key={n} x={i * 150} y={442} w={140} h={32} label={`${n}: ${rc}`} tone="highlight" />
+      ))}
+    </Svg>
   );
 }
 

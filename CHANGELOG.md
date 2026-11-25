@@ -1,5 +1,22 @@
 # Changelog
 
+## 25 November: RAG chapter 7 rewritten (easy, a little detailed, checked)
+
+- float32, bits and bytes, RAM, int8, columns and scales, codes, XOR, the Hamming distance, shortlists and rescoring are
+  explained where they first appear; `quantize_int8` and `hamming` are read line by line; tasks list their steps and slips.
+- The binary animation is now a still picture with real rows from the benchmark's first question: the 16 rows closest by
+  bits (7 of the true 10 in the first 10; the third best by exact score is 16th by bits) joined to the exact top 10, and
+  the real recall for shortlists of 10, 50 and 200.
+- Checked by re-running the benchmark in the lab image. Corrected: rescoring 200 gives 99.8%, not 100% (`quant_bench.py`
+  now prints one decimal); the vectors are synthetic (now said); the NumPy bit search is slower than the float search
+  here (19 against 5 ms), since it unpacks bits instead of using popcount (now said); Qdrant's documentation recommends
+  binary quantization for vectors of many numbers (1,536 and up in its list), so measure with a 384-number model;
+  "every vector database offers both" became Qdrant, Weaviate, Elasticsearch and others; int8 at 100 million vectors
+  fills about 30% of a 128 GiB server, not a third; history dates checked (Qdrant 1.1 and 1.5 in 2023, Elasticsearch in
+  2024, Cohere's int8 and binary embeddings in 2024); Charikar's signs are of random projections, ours of the numbers
+  themselves; the price ($0.8568 an hour) checked on 25 November. A new notes page; the CD photo's caption fixed (CDs
+  and DVDs). The task examples in `lab.yaml` show 99.2% and 99.8%.
+
 ## 25 November: RAG chapter 6 rewritten (easy, a little detailed, checked)
 
 - Graphs, nodes and links, greedy walks, layers, M, efConstruction and efSearch are explained where they first appear;

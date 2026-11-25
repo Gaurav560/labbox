@@ -223,7 +223,7 @@ chapters:
     - Divide by the scales, round, store as int8, and guard against a column of zeros.
     examples:
     - call: quantize_int8(vectors) for 100,000 vectors
-      gives: 38.4 MB of codes instead of 153.6 MB, recall 99%
+      gives: 38.4 MB of codes instead of 153.6 MB, recall 99.2% (100,000 synthetic vectors)
   - id: binary_rescore
     title: bits for the shortlist, floats for the answer
     xp: 20
@@ -233,7 +233,7 @@ chapters:
     - Partition the distances to keep `candidates` rows, score them exactly with the float vectors, and keep k.
     examples:
     - call: binary_search(q, bits, vectors, k=10, candidates=200)
-      gives: recall 100% from 4.8 MB of bits
+      gives: recall 99.8% from 4.8 MB of bits (100,000 synthetic vectors)
 - id: qdrant
   title: A real vector database, Qdrant
   file: chapters/08-qdrant.md
