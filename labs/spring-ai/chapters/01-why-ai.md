@@ -32,8 +32,9 @@ A **large language model** (LLM) is a program that has read an enormous amount o
 extremely well: **given some text, predict what comes next**. Ask "The capital of France is" and it continues
 "Paris". Ask a whole question, and it continues with an answer, one small piece at a time.
 
-Those small pieces are called **tokens**. A token is a word or a part of a word: "planetarium" might be two or three
-tokens, "the" is one. On average a token is about three quarters of an English word. Tokens matter because they are
+Those small pieces are called **tokens**. A token is a word or a part of a word. With the tokenizer of this course's model (OpenAI's `o200k_base`, which
+we ran on these words), "planetarium" is two tokens, `planet` and `arium`; "the" is one; "Foucault pendulum" is
+five. In ordinary English text, 100 words come to about 130 tokens. Tokens matter because they are
 how models are **measured and priced**: you pay for the tokens you send and the tokens you get back.
 
 Four facts about LLMs shape everything in this course:
@@ -43,7 +44,7 @@ Four facts about LLMs shape everything in this course:
 | It predicts likely text, it does not look things up | It can sound sure and be wrong. It does not know your museum unless you tell it. |
 | It has no memory between calls | Every call starts from nothing. To hold a conversation, you send the history again (chapter 6). |
 | Its answers vary | The same question can get a different answer each time (chapter 3 controls this). |
-| It costs money and time per token | Long questions and long answers are slower and dearer (chapters 3 and 13). |
+| It costs money and time per token | Long questions and long answers are slower and dearer (chapters 3 and 18). |
 
 The model does not run on your lab machine: it runs on big servers at a company like **OpenAI**, and you use it the
 way you use any web service, by sending an HTTP request and reading the JSON that comes back. Atlas will be a normal
@@ -126,7 +127,7 @@ while she "talked" to it, although she had watched him write the program.
 Here is the journey of one question, which you will build in this chapter:
 
 :::diagram{name="ai-request-flow"}
-The visitor asks Atlas; Atlas builds a prompt with ChatClient; the LabBox gateway passes it to the model; the answer comes back the same way.
+One real question from this chapter's app, with the numbers from the gateway's log (25 November).
 :::
 
 1. A visitor's browser calls Atlas: `GET /ask?q=When is the show?`.
@@ -180,7 +181,17 @@ same.
 
 :::step{type=task task=first_call title="Your turn: connect /ask to the model" file="01-why-ai/src/main/java/com/atlas/AskController.java" line="20"}
 In `AskController.java`, make `GET /ask?q=...` send `q` to the model as the visitor's message, and return the model's
-answer instead of the placeholder text.
+answer instead of the placeholder text:
+
+1. Start a request: `chat.prompt()`.
+2. Add the visitor's question as the user message: `.user(q)`.
+3. Send it and wait: `.call()`, then take the text: `.content()`.
+4. Return that text.
+
+The usual slips:
+
+- `.user("q")` in quotes: the model receives the letter q, not the visitor's question.
+- Leaving out `.call()`: `.content()` belongs to the answer, so the code does not compile.
 
 Then start the app, in Terminal 1:
 
@@ -204,20 +215,23 @@ When you run `/ask` with the starter's settings, the app's log shows why it fail
 
 ```text
 Request processing failed: com.openai.errors.BadRequestException: 400: Unknown model 'gpt-4o'.
-Labs use model aliases: ai-chat, ai-embed, lab-chat, lab-chat-smart, lab-code, lab-embed.
+Labs use model aliases: ai-chat, ai-embed, lab-chat, lab-chat-smart, lab-embed.
 ```
 
 (The log prints it on one long line.) The gateway refused the request: `gpt-4o` is a real OpenAI model, but LabBox
 gives each course a short list of **aliases**, names that the gateway maps to a real model. This course's chat model is
 **`ai-chat`** (behind it is OpenAI's `gpt-4o-mini`: fast, cheap and capable), and its embedding model, which you will
-meet in chapter 8, is `ai-embed`.
+meet in chapter 11, is `ai-embed`.
 
 Aliases are a good habit in real companies too: the code says what it needs ("the chat model"), and one setting
 decides which real model that is today. Changing model later then means changing one line, not hunting through code.
 :::
 
 :::step{type=task task=model_alias title="Your turn: the right model" file="01-why-ai/src/main/resources/application.properties" line="8"}
-In `application.properties`, set `spring.ai.openai.chat.options.model` to this course's chat model alias.
+In `application.properties`, set `spring.ai.openai.chat.options.model` to this course's chat model alias, `ai-chat`.
+
+The usual slip: the real model's name, `gpt-4o-mini`. We tried it: the gateway refuses that too ("Unknown model
+'gpt-4o-mini'. Labs use model aliases: ..."). Only the alias works.
 
 Stop the app (Ctrl+C), start it again, and ask:
 
@@ -229,7 +243,7 @@ This time a real model answers. Press **Check**.
 :::
 
 :::step{type=try title="Atlas's first words"}
-Here is what Atlas said when this lesson was written:
+Here is what Atlas said when this lesson was written (we asked again on 25 November and got nearly the same words):
 
 ```text
 $ curl -s "localhost:8080/ask?q=Hello%2C%20who%20are%20you%3F"; echo
@@ -238,7 +252,7 @@ Hello! I’m an AI language model created by OpenAI. I’m here to answer your q
 
 It works, and it is not Atlas yet: it introduces itself as OpenAI's assistant, because nobody told it otherwise. Ask
 it a science question, and the answer is long: the first lines of a real answer about black holes looked like this,
-and it went on for five numbered sections and about four hundred tokens:
+and it went on for five numbered sections and about four hundred tokens (our re-run: 449 tokens, 354 words):
 
 ```text
 A black hole is a region in space where the gravitational pull is so strong that nothing, not even light, can escape from it. This occurs when a massive star exhausts its nuclear fuel and collapses under its own gravity. 
@@ -271,15 +285,18 @@ course's model (`gpt-4o-mini`) is **$0.15 per million input tokens** and **$0.60
 | Example | Tokens | Cost |
 |---|---|---|
 | One short question and a three-sentence answer | about 100 in, 60 out | $0.00005 |
-| The long black hole answer above | about 15 in, 400 out | $0.00024 |
-| 40,000 visitors a month, 3 short answers each | 12 million in, 7 million out | about $6 a month |
-| The same, with long answers like the black hole one | 2 million in, 48 million out | about $29 a month |
+| The long black hole answer above (measured) | 13 in, 449 out | $0.00027 |
+| 40,000 visitors a month, 3 short answers each | 12 million in, 7.2 million out | about $6 a month |
+| The same, with long answers like the black hole one | 1.6 million in, 54 million out | about $33 a month |
 
-Cheap, and yet the length of the answers alone changes the bill five times over. Bigger models cost ten to a hundred
-times more per token, so the same choices matter far more there.
+The arithmetic for the first row: 100 tokens x $0.15 per million is $0.000015, and 60 x $0.60 per million is
+$0.000036; together $0.00005. The monthly rows are 40,000 x 3 = 120,000 answers.
 
-**Time** matters even more to a person waiting at a screen: a model writes perhaps fifty to a hundred tokens a second,
-so a 400-token answer takes several seconds to finish. Short answers (chapter 2), a cap on length (chapter 3) and
+Cheap, and yet the length of the answers alone changes the bill five times over. Larger models often cost ten times as
+much per token or more, so the same choices matter far more there.
+
+**Time** matters even more to a person waiting at a screen. Our black hole answer took 6.7 seconds for 449 tokens,
+about 67 tokens a second (speeds vary with the model and the load). Short answers (chapter 2), a cap on length (chapter 3) and
 streaming (chapter 4) are how Atlas stays quick.
 :::
 
@@ -318,6 +335,9 @@ this (OpenAI's "chat completions" format, which most providers and gateways now 
 {"messages":[{"content":"Hello","role":"user"}],"model":"ai-chat"}
 ```
 
+The gateway's log (`lab requests --last` in the terminal) shows the request it forwarded, with one more field,
+`"max_tokens": 1024`: the LabBox gateway caps every answer at 1,024 tokens when the app sets no smaller cap.
+
 and the answer comes back as JSON with the text in `choices[0].message.content`, plus a `usage` block counting the
 tokens. Spring AI 2 uses OpenAI's own Java library underneath to send it.
 
@@ -327,7 +347,7 @@ metrics. Each is a few lines with Spring AI and a small project without it.
 
 **Running a model yourself.** Open models (Llama, Qwen, Mistral, Gemma) can run on your own servers, for example with
 Ollama, which Spring AI also supports. They cost hardware instead of tokens, keep data in-house, and are usually less
-capable than the largest hosted models. LabBox's own tutor runs on such a model.
+capable than the largest hosted models.
 :::
 
 :::step{type=recap}
@@ -341,7 +361,7 @@ You can now:
 
 Next, chapter 2: a system prompt that turns a general model into Atlas, the museum's guide.
 
-:::photo{src="/lesson-images/spring-ai/springai-01-notes.webp" alt="Handwritten notes about why AI in your app: an LLM predicts the next token; no memory, no facts of yours; chat.prompt().user(q).call().content(); keys live in the environment; model alias: ai-chat" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-01-notes.webp" alt="Sketchnote, Your first AI call (Spring AI and a language model): A language model predicts the next token. Atlas sends it the visitor's question and returns the answer. The flow: GET /ask?q=..., ChatClient prompt, LabBox gateway, Model: ai-chat, Answer text. What we measured: planetarium = 2 tokens, planet + arium; 449 tokens took 6.7 seconds; long answers made the bill 5 times bigger; keys live in the environment, never in code." ai="true"}
 One page of notes for this chapter.
 :::
 :::

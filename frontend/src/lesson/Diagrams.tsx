@@ -1590,20 +1590,29 @@ function LinuxCron() {
 }
 
 function AiRequestFlow() {
+  // Still (owner, 25 November): one real question from chapter 1's run, with the gateway's numbers.
+  const rows: [string, string, BoxTone][] = [
+    ["1. GET /ask?q=What is a black hole?", "a visitor's browser calls Atlas", "plain"],
+    ["2. ChatClient builds the prompt", "chat.prompt().user(q): one user message", "plain"],
+    ["3. Spring AI sends JSON", "{messages: [...], model: \"ai-chat\"}", "plain"],
+    ["4. The LabBox gateway", "checks the budget, adds the real key, ai-chat = gpt-4o-mini", "accent"],
+    ["5. The model writes", "449 tokens in 6.7 s, about 67 a second", "copy"],
+    ["6. .content() returns the text", "13 in + 449 out = $0.000271", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="one question's journey"
-      intro="Press Play to follow a visitor's question to the model and back."
-      label="the visitor asks atlas; the controller builds a prompt with chat client; spring ai sends it as json; the labbox gateway checks the budget and forwards it with the real key; the model writes an answer; it comes back the same way as text"
-      steps={[
-        { label: "1. GET /ask?q=...", says: "A visitor's browser calls Atlas." },
-        { label: "2. ChatClient builds a prompt", says: "chat.prompt().user(q): the question becomes a user message." },
-        { label: "3. Spring AI sends JSON", says: "A chat completions request, naming the model ai-chat." },
-        { label: "4. The LabBox gateway", says: "Checks your budget, logs the call, adds the real key, forwards it." },
-        { label: "5. The model answers", says: "Token by token, then the whole answer comes back as JSON." },
-        { label: "6. .content()", says: "Spring AI hands your controller the text, and Atlas returns it." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="One question's journey: the browser calls Atlas, ChatClient builds a prompt, Spring AI sends JSON naming ai-chat, the LabBox gateway forwards it to gpt-4o-mini, the model writes 449 tokens in 6.7 seconds, and the controller returns the text">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={title}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
