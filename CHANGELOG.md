@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: LangChain chapter 5 rewritten (easy, a little detailed, checked)
+
+- Web API, HTTP request, POST, JSON, header and environment variable are explained where they first appear; both
+  tasks list their steps and the usual slips.
+- The request animation is now a still picture of the real request, there and back, with the gateway's numbers.
+- Checked by running the real request through the lab gateway (approved) and reading `lab requests --last`: 61 tokens
+  in, 38 out, max_tokens 1024 added, 42 + 8 tokens counted locally. A second run guessed "closed on public holidays"
+  too, now in the lesson. Corrected: "a chat model is a web API" became "a hosted chat model" (models can run locally);
+  "nearly every provider, from Mistral to ..." became "many providers and servers, including Ollama and vLLM". A new
+  notes page.
+
 ## 25 November: LangChain chapter 4 rewritten (easy, a little detailed, checked)
 
 - Logit, softmax, exp, temperature, query, key, value, heads and parameters are explained where they first appear;
