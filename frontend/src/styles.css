@@ -2036,54 +2036,24 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 }
 @media (prefers-reduced-motion: reduce) { .lib-tile, .lib-tile-wall { transition: none; } }
 
-/* Read mode (owner, 25 November): the lesson alone. Text keeps a reading width (68 characters: Baymard and WCAG say
-   50 to 80), wide things (code, tables, pictures) break out to about 900 px, and on wide screens the chapter's steps
-   sit on the left and the tasks on the right. Action mode is the split screen. */
+/* Read mode (owner, 25 November): the lesson alone in a calm centred column; Action mode is the split screen. */
 .mode-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
 .mode-switch button { background: none; border: 0; padding: 4px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
 .mode-switch button[aria-pressed="true"] { background: var(--chip); color: var(--text); }
 .mode-switch button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .lab-page.is-reading .left-panel { width: 100% !important; flex: 1; }
-.lab-page.is-reading:not(.is-phone) { --measure: 68ch; --read-wide: 900px; }
+.lab-page.is-reading:not(.is-phone) { --measure: 68ch; }
 .lab-page.is-reading:not(.is-phone) .step-nav,
+.lab-page.is-reading:not(.is-phone) .step-anim,
 .lab-page.is-reading:not(.is-phone) .step-buttons,
 .lab-page.is-reading:not(.is-phone) .left-footer > * { width: 100%; max-width: calc(var(--measure) + 2 * var(--space-6)); margin-left: auto; margin-right: auto; box-sizing: border-box; }
+.lab-page.is-reading:not(.is-phone) .step-card { max-width: none; }
 .lab-page.is-reading:not(.is-phone) .left-footer > * { padding-left: var(--space-6); padding-right: var(--space-6); }
 .lab-page.is-reading:not(.is-phone) .left-footer { padding-left: 0; padding-right: 0; }
 .lab-page.is-reading:not(.is-phone) .step-buttons { border-top: 0; }
-.lab-page.is-reading:not(.is-phone) .step-anim { width: 100%; max-width: calc(var(--read-wide) + 2 * var(--space-6)); margin: 0 auto; font-size: 1.04em; }
-/* the breakout: a centred text column, with wide things across the whole step */
-.lab-page.is-reading:not(.is-phone) .step-card { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) min(var(--measure), 100%) minmax(0, 1fr); }
-.lab-page.is-reading:not(.is-phone) .step-card > * { grid-column: 2; min-width: 0; }
-.lab-page.is-reading:not(.is-phone) .step-card > :is(.code-card, table, .diagram, .lesson-photo, .trace, pre) { grid-column: 1 / -1; }
-.lab-page.is-reading:not(.is-phone) .step-card > .step-kind { justify-self: start; }
-.lab-page.is-reading:not(.is-phone) .diagram svg { max-width: 600px; }
-.lab-page.is-reading:not(.is-phone) .lesson-photo img { max-height: 560px; }
-.step-outline { display: none; }
-@media (min-width: 1200px) {
-  .lab-page.is-reading:not(.is-phone) .left-panel {
-    display: grid; grid-template-columns: minmax(210px, 260px) minmax(0, 1fr) minmax(250px, 300px); grid-template-rows: auto auto minmax(0, 1fr);
-  }
-  .lab-page.is-reading:not(.is-phone) .left-panel > :is(.limit-banner, .setup-banner) { grid-column: 2; }
-  .lab-page.is-reading:not(.is-phone) .left-panel > .lesson { grid-column: 2; grid-row: 3; min-height: 0; }
-  .lab-page.is-reading:not(.is-phone) .left-panel > .chapter { grid-column: 2; grid-row: 3; }
-  .lab-page.is-reading:not(.is-phone) .step-nav { display: none; }
-  .lab-page.is-reading:not(.is-phone) .step-anim { padding-top: var(--space-3); }
-  .step-outline { display: block; grid-column: 1; grid-row: 1 / -1; overflow-y: auto; padding: var(--space-6) var(--space-3) var(--space-6) var(--space-4); border-right: 1px solid var(--border); }
-  .step-outline-head { margin: 0 0 var(--space-3) var(--space-2); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .step-outline ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-  .step-outline-item { display: flex; gap: 10px; align-items: baseline; width: 100%; text-align: left; padding: 7px 8px; border: 0; border-radius: 7px; background: none; font: inherit; font-size: 13.5px; line-height: 1.35; color: var(--muted); cursor: pointer; }
-  .step-outline-item:hover { background: var(--hover); color: var(--text); }
-  .step-outline-item.is-seen { color: var(--text); }
-  .step-outline-item.is-current { background: var(--chip); color: var(--text); font-weight: 600; }
-  .step-outline-mark { flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--muted); transform: translateY(-1px); }
-  .step-outline-item.is-seen .step-outline-mark { background: var(--muted); }
-  .step-outline-item.is-current .step-outline-mark { background: var(--text); border-color: var(--text); }
-  .step-outline-kind { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--warn); }
-  .lab-page.is-reading:not(.is-phone) .left-footer { grid-column: 3; grid-row: 1 / -1; align-self: stretch; overflow-y: auto; border-top: 0; border-left: 1px solid var(--border); padding: var(--space-6) var(--space-4); }
-  .lab-page.is-reading:not(.is-phone) .left-footer > * { max-width: none; padding-left: 0; padding-right: 0; }
-  .lab-page.is-reading:not(.is-phone) .left-footer .footer-actions { flex-wrap: wrap; }
-}
+.lab-page.is-reading:not(.is-phone) .step-anim { font-size: 1.04em; }
+.lab-page.is-reading:not(.is-phone) .diagram svg { max-width: 560px; }
+.lab-page.is-reading:not(.is-phone) .lesson-photo img { max-height: 520px; }
 .read-task-card { display: flex; align-items: center; gap: 16px; margin: var(--space-6) var(--space-6) 0; padding: 14px 16px; border: 1px solid var(--border); border-left: 4px solid var(--warn); border-radius: 10px; background: var(--card); }
 .read-task-card > div { display: grid; gap: 3px; flex: 1; }
 .read-task-card span { color: var(--muted); font-size: 14px; }
@@ -2098,12 +2068,3 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .read-code-line code { white-space: pre; background: none; padding: 0; }
 
 .btn.read-practice { flex: 1; justify-content: center; min-height: 44px; font-size: 15px; }
-
-/* The top bar on narrower laptop screens keeps the Read / Action switch whole. */
-.topbar .link { white-space: nowrap; }
-.mode-switch { flex: none; }
-@media (max-width: 1150px) {
-  .topbar .lab-progress { display: none; }
-  .topbar .brand { max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
-  .topbar .chapter-select { max-width: 240px; }
-}
