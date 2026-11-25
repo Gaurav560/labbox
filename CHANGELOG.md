@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 10 rewritten: J-201 pictured, the brief fix tried, resume mistakes quoted
+
+- Re-ran the five commands on a new `repairs.db`: the same results, and the first brief again invented "due to frequent
+  leaks and reduced water pressure". The lesson's suggested fix was tried with the real model ("Use only the facts
+  given. If no reason is given, write: No reason given."): the brief then said "No reason given." Quoted.
+- Found: without a checkpointer the interrupt still stops the run, but the resume fails with `RuntimeError: Cannot use
+  Command(resume=...) without checkpointer`; the lesson's "a checkpointer is required" now says exactly where.
+- Tried (fake model): resuming with a plain dictionary starts the job again from START and pauses again (the resume
+  task's slip); a resume sent to an unknown thread fails with `KeyError: 'work'`.
+- The animation is now a still picture of J-201's two processes; both tasks list steps and slips. A new sketchnote.
+
 ## 26 November: LangGraph chapter 9 rewritten: retry waits measured, both jobs pictured, the quiz tried
 
 - Re-ran all four commands on a new `jobs.db`: the same output, word for word, including J-103's double booking. A new

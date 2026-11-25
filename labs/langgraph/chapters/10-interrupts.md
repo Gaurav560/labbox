@@ -56,8 +56,9 @@ def approval(state: Repair) -> dict:
     return {"approved": decision["approve"], "note": decision.get("note", "")}
 ```
 
-1. The run stops at `interrupt`. The checkpointer saves the thread, with `approval` as the next step (so a checkpointer is
-   required).
+1. The run stops at `interrupt`. The checkpointer saves the thread, with `approval` as the next step. (Without a
+   checkpointer the run still stops, we found, but nothing is saved, and the later resume fails with `RuntimeError:
+   Cannot use Command(resume=...) without checkpointer`.)
 2. `invoke` returns the state so far, plus `"__interrupt__"`: a list holding your value, for the program to show the
    engineer.
 3. Later, the run is resumed with her answer, and `interrupt(...)` **returns that answer** inside the node, which goes on
@@ -68,8 +69,14 @@ up.
 :::
 
 :::step{type=task task=pause_for_engineer title="Your turn: wait for the engineer" file="10-interrupts/repair.py" line="41-46"}
-In `approval`, call `interrupt({...})` with `"job"`, `"estimate"`, `"brief"` and `"question": "Approve this repair?"`,
-and return `{"approved": decision["approve"], "note": decision.get("note", "")}` from its answer.
+In `approval`:
+
+1. `decision = interrupt({"job": state["job"], "estimate": state["estimate"], "brief": state["brief"], "question":
+   "Approve this repair?"})`;
+2. `return {"approved": decision["approve"], "note": decision.get("note", "")}`.
+
+The usual slip: leaving out the brief or the estimate. The engineer then sees a question with nothing to decide on,
+and must look the job up elsewhere, which is the work the graph was meant to save her.
 
 Press **Check**.
 :::
@@ -89,13 +96,18 @@ the resume value instead of stopping. Then the graph goes on: `after_approval` r
 resume. Keep that part free of side effects (no SMS, no order), or move side effects into a node after the approval.
 
 :::diagram{name="lg-interrupt"}
-The run stops inside the node, the process ends, and a later run re-enters the same node with the answer.
+The real job J-201 (26 November): two processes, and the approval node starting twice.
 :::
 :::
 
 :::step{type=task task=resume_with_decision title="Your turn: resume with her decision" file="10-interrupts/repair.py" line="73-77"}
 Finish `decide(app, job, approve, note)`: return `app.invoke(Command(resume={"approve": approve, "note": note}),
 {"configurable": {"thread_id": job}})`.
+
+The usual slip: invoking with a plain dictionary, `app.invoke({"approve": approve, "note": note}, config)`. A plain
+dictionary is a **new input**, not an answer. We tried it: the job ran again from START (a second brief, a second
+model call) and stopped at the same approval, still waiting. And a resume sent to a thread id that never paused runs
+from START with an empty state: `KeyError: 'work'`.
 
 ```bash run
 cd /workspace/10-interrupts && python main.py start J-201 "Replace 40 m of the cast-iron main" "Station Road" 65000
@@ -130,6 +142,9 @@ $ python main.py decide J-203 no "Not this year, the budget is for pipes"
 J-203: refused: Not this year, the budget is for pipes
 ```
 
+(We ran the five commands again on 26 November, on a new `repairs.db`: the same results. The first brief again gave
+the reason "due to frequent leaks and reduced water pressure affecting local residents", which nobody had given.)
+
 The small repair went straight to the schedule. The two big ones paused, each process ended, and each decision, in a
 new process, reached the right paused job through `repairs.db`. Notice "(the approval node starts)" printed again on
 every resume: the node really runs from its first line twice.
@@ -139,7 +154,9 @@ estimate. The brief adds "**due to frequent leaks and reduced water pressure**":
 reason, because the instruction asked for "why it is needed now" and no reason was given. An engineer approving Rs
 65,000 on an invented reason is the worst kind of error, because it looks like information. The fix is in the graph:
 pass the real reason as a fact (the street's complaint history from chapter 5: six complaints this year), and tell the
-model to use only the facts given, or to say "no reason given".
+model to use only the facts given, or to say "no reason given". We tried the second half on the same facts, adding "Use
+only the facts given. If no reason is given, write: No reason given." The brief became: "The work involves replacing
+40 meters of the cast-iron main on Station Road. No reason given." Less fluent, and true.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -151,7 +168,8 @@ SMS did she get?
 - [x] Two: the node runs from its first line again on resume
 - [ ] None
 :::explain
-Put side effects in a node of their own before the approval (it runs once and is saved), or after it.
+The output above shows why: "(the approval node starts)" is printed again on every resume, so an SMS sent there
+would be sent again. Put side effects in a node of their own before the approval (it runs once and is saved), or after it.
 :::
 :::
 
@@ -163,7 +181,8 @@ Why does `interrupt` need a checkpointer?
 - [ ] To show the question
 - [ ] It does not
 :::explain
-Without a checkpointer there is nothing to resume: the paused state would be lost when the process ends.
+Without a checkpointer there is nothing to resume: we tried it, and the resume failed with `RuntimeError: Cannot use
+Command(resume=...) without checkpointer`.
 :::
 :::
 
@@ -202,7 +221,7 @@ You can now:
 
 Next, chapter 11: time travel through a thread's checkpoints.
 
-:::photo{src="/lesson-images/langgraph/lg-10-notes.webp" alt="Handwritten notes about interrupts: interrupt() = pause + question; needs a checkpointer; Command(resume=answer); node runs again from line 1; briefs: only real facts" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-10-notes.webp" alt="Handwritten notes titled Interrupts, stop, ask a person, continue: interrupt with a value pauses a run inside a node and hands out a question, and Command with resume continues the same thread later, with interrupt returning that answer; write_brief, approval interrupt, saved and the process ends, Command resume yes, approval again then schedule; the paused node runs again from its first line; a plain dict makes the job start over and wait again; with no checkpointer the resume fails; the brief invented a reason until told not to" ai="true"}
 One page of notes for this chapter.
 :::
 :::
