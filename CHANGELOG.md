@@ -1,5 +1,21 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 24 rewritten: local model and routes re-run, the default route corrected
+
+- Started the stopped Ollama container for this check only (Qwen 2.5 0.5B, 397 MB), joined it to a test machine's
+  network, ran the chapter, then disconnected and stopped it again. The local model's sentence and the "Hi!" answer
+  were the same word for word. The long complaint's answer differed (no temperature is set) and this time named
+  "Indian Railways", a guess; the lesson says so.
+- The gateway's log proved the router's choices (`max_tokens` 60 for "Hi!", 400 for the complaint); the lesson notes
+  that `Setu.java` prints the route from its own test. A new still picture shows both routes with real token counts.
+- Corrected: the lesson said the default route is used "whenever the router cannot decide". In 1.24 it is used when
+  the router returns `ChatModelRoutingResult.defaultRoute()`; an unknown route name is an error. Tried and quoted:
+  `The router selected the unknown route 'Complex'. Available routes: [simple, complex]`.
+- Corrected: the deep dive named `TypeSafeDecisionModel`, which is not in 1.24; it now describes
+  `DecisionModelChatModelRouter`'s `minProbability` and `FallbackStrategy` (both checked in the jar).
+- Both tasks list their steps and a tried slip (an Ollama `/v1` address gives `404 page not found`; a mis-cased
+  route name). `@Experimental` on `RoutingChatModel` checked. A new sketchnote.
+
 ## 26 November: LangChain4j chapter 23 rewritten: a still picture of one real RAG run, both slips tried
 
 - Re-ran the solution in a lab machine: the same three answers, word for word; the guitar request was 107 tokens

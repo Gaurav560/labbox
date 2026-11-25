@@ -2564,6 +2564,32 @@ function L4jMemoryWindow() {
   );
 }
 
+function L4jRouting() {
+  // Still (owner, 26 November): chapter 24's real routed run, max_tokens and token counts from the gateway's log.
+  const rows: [string, string, string, BoxTone][] = [
+    ["\"Hi!\" (3 characters)", "simple: max 60 tokens", "9 in, 9 out", "plain"],
+    ["complaint (197 characters)", "complex: max 400 tokens", "52 in, 274 out", "accent"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 270" label="The router measured each message: Hi, three characters, went to the simple route with at most 60 tokens and used 9 in and 9 out; the 197-character complaint went to the complex route with at most 400 tokens and used 52 in and 274 out">
+      <text className="dg-label" x={8} y={18}>one RoutingChatModel, rule: over 120 characters is complex</text>
+      {rows.map(([msg, route, used, tone], i) => {
+        const y = 32 + i * 116;
+        return (
+          <g key={msg}>
+            <Box x={8} y={y} w={424} h={36} label={msg} tone="plain" />
+            <Arrow x1={110} y1={y + 36} x2={110} y2={y + 50} />
+            <Box x={8} y={y + 50} w={204} h={36} label={route} tone={tone} />
+            <Arrow x1={212} y1={y + 68} x2={228} y2={y + 68} />
+            <Box x={228} y={y + 50} w={204} h={36} label={used} tone="copy" />
+          </g>
+        );
+      })}
+      <text className="dg-note" x={8} y={262}>Both routes are ai-chat here, with different limits.</text>
+    </Svg>
+  );
+}
+
 function L4jMcpWire() {
   // Still (owner, 26 November): chapter 21's real stdio traffic, copied from tee logs of both streams.
   const rows: [string, string, BoxTone][] = [
@@ -4515,6 +4541,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "l4j-memory-window": L4jMemoryWindow,
   "l4j-mcp": L4jMcp,
   "l4j-mcp-wire": L4jMcpWire,
+  "l4j-routing": L4jRouting,
   "l4j-vector-search": L4jVectorSearch,
   "l4j-guardrails": L4jGuardrails,
   "l4j-supervisor": L4jSupervisor,
