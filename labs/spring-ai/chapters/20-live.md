@@ -30,18 +30,21 @@ Everything you built plugs into the `ChatClient` builder:
 | knowledge | 14 | `QuestionAnswerAdvisor` on the vector store |
 
 Advisors run in order of their `getOrder()`, not in the order you list them: the guards first (highest precedence),
-then the session, then retrieval, then the model, which may call tools. The `20-live` project already has every
+then the session, then retrieval, then the model, which may call tools. The numbers matter: the session advisors'
+own orders are about minus two billion (we read them in the lab's Spring AI), so a guard needs
+`Ordered.HIGHEST_PRECEDENCE` (the lowest number there is) to run before them. The `20-live` project already has every
 class: the cards and the ETL, the session service, `MuseumTools`, `QuestionLimitAdvisor`. What is missing is the wiring.
 
 :::diagram{name="ai-atlas-live"}
-One message passes the guards, gains the visitor's history and the closest cards, may use tools, and returns with sources.
+One real message from this chapter's app (26 November), through every piece.
 :::
 :::
 
 :::step{type=task task=assemble_atlas title="Your turn: assemble Atlas" file="20-live/src/main/java/com/atlas/AtlasConfig.java" line="35"}
 In `20-live`, finish the `ChatClient` bean in `AtlasConfig`: give it the museum's tools, and these advisors:
 
-- the privacy guard: a `SafeGuardAdvisor` with `PRIVATE_WORDS`, `PRIVACY_REPLY` and order 0;
+- the privacy guard: a `SafeGuardAdvisor` with `PRIVATE_WORDS`, `PRIVACY_REPLY` and order `Ordered.HIGHEST_PRECEDENCE`
+  (not 0, as in chapter 17: see "A real bug" below);
 - the length limit: `new QuestionLimitAdvisor(300)`;
 - session memory: compaction after 8 turns, keeping the last 4;
 - retrieval: a `QuestionAnswerAdvisor` on the store, top 3, similarity at least 0.35.
@@ -49,12 +52,27 @@ In `20-live`, finish the `ChatClient` bean in `AtlasConfig`: give it the museum'
 `SessionAdvisors...build()` returns a **list** of advisors, so give it a `defaultAdvisors(...)` call of its own; the
 builder adds each call's advisors to the ones before.
 
+In steps:
+
+1. `.defaultTools(tools)`.
+2. `.defaultAdvisors(` the guard, `new QuestionLimitAdvisor(300)`, and the `QuestionAnswerAdvisor` `)`.
+3. `.defaultAdvisors(SessionAdvisors.builder(sessions).compaction(new TurnCountTrigger(8),
+   WindowCompactionStrategy.builder().lastTurns(4).build()).build())`.
+
+The usual slip: putting the session advisors' list inside the same `defaultAdvisors(...)` as the others. It is a
+`List`, not an advisor, so the code does not compile.
+
 Press **Check**.
 :::
 
 :::step{type=task task=live_chat title="Your turn: the lobby screen's API" file="20-live/src/main/java/com/atlas/LiveController.java" line="36"}
 Finish `POST /chat` in `LiveController`: it already answers in the visitor's session. Keep the whole
-`ChatClientResponse`, and return the answer with the files of the cards that were retrieved (chapter 14).
+`ChatClientResponse`, and return the answer with the files of the cards that were retrieved (chapter 14):
+
+1. End the chain with `.chatClientResponse()`.
+2. Read the documents from the context under `QuestionAnswerAdvisor.RETRIEVED_DOCUMENTS` (it can be missing when
+   a guard answered: then there are no sources).
+3. Return the answer and each document's `file`, once.
 
 ```bash run
 cd 20-live && mvn -q -o spring-boot:run
@@ -70,7 +88,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Opening day, for real"}
-A real conversation on the lobby screen, one visitor, several questions:
+A real conversation on the lobby screen, one visitor, several questions (we ran it again on 26 November: the same
+sources and the same seats; one difference is below):
 
 ```text
 $ curl -s localhost:8080/chat -H "Content-Type: application/json" -d '{"visitor": "ria", "text": "Hi Atlas! What did India find on the Moon?"}' | jq .
@@ -110,13 +129,24 @@ Saturday?" and "What shows are there that day?" used the visitor card, the tools
 only makes sense because the session remembered Saturday, and the free seats came from `planetariumShows`. The phone
 number never left the museum.
 
-And one answer failed: "And when did it land there?" The session had the answer (the first reply says 23 August
+And one answer failed: "And when did it land there?" (In our re-run it did not fail: Atlas answered "landed on the
+Moon on 23 August 2023" from the session, with no sources. The pull between memory and retrieval decides it one way or
+the other, run by run, which is one more reason to fix it properly.) The session had the answer (the first reply says 23 August
 2023), but the follow-up has no words of its own to search with, so retrieval found no card, and the advisor's
 instruction ("if the answer is not in the context, say you can't") made Atlas refuse. Memory and RAG pull in different
 directions on follow-ups. The fix, which the deep dive of chapter 14 described, is **query rewriting**: before
 searching, a small model call turns "And when did it land there?" into "When did Chandrayaan-3 land on the Moon?",
 using the conversation. Spring AI's `RetrievalAugmentationAdvisor` does it with a `CompressionQueryTransformer`. It is
 the first thing to add after opening day, and the golden set should get a follow-up question too.
+
+**A real bug, found while rewriting this lesson.** This chapter first gave the privacy guard order 0, as in chapter
+17. With session memory added, that was wrong, and we only saw it by asking a second question. The session
+advisors run before order 0, so they saved "my phone number is 98220 12345" in Ria's session **before** the guard
+refused it. Worse, `SafeGuardAdvisor` searches the whole prompt, history included, so from then on every question
+from Ria ("Where is the pendulum?") was refused too, while another visitor got a normal answer. With
+`Ordered.HIGHEST_PRECEDENCE` the guard runs first: the number is refused, never stored (we checked the next request
+in the gateway's log: no number in it), and Ria's next question is answered. Test guards with a second message, not
+only the first.
 :::
 
 :::step{type=concept title="Before the doors open: a launch checklist"}
@@ -177,7 +207,7 @@ no model, no code change.
 
 :::step{type=deep-dive title="Go deeper: from a lab to a lobby"}
 **A real database.** Swap `SimpleVectorStore` for PGvector and `InMemorySessionRepository` for Spring AI's
-`JdbcSessionRepository`, so knowledge and conversations survive restarts and several app instances share them.
+JDBC session repository (the `spring-ai-starter-model-session-jdbc` starter of chapter 6), so knowledge and conversations survive restarts and several app instances share them.
 
 **The ETL as a job.** Load cards when they change, not at every start; give each chunk a stable id so re-loading
 updates instead of duplicating.
@@ -205,7 +235,7 @@ You can now:
 That is the end of the course. Atlas is live: built by you, from a first call to a model, to a guide that thousands of
 visitors can trust.
 
-:::photo{src="/lesson-images/spring-ai/springai-20-notes.webp" alt="Handwritten notes about Atlas goes live: one ChatClient, every piece; guards first, then memory; then the cards, then the model; answers with sources; the model is one component" ai="true"}
+:::photo{src="/lesson-images/spring-ai/springai-20-notes.webp" alt="Sketchnote, Atlas goes live (every piece in one ChatClient): The model is one component. Guards, memory, the museum's cards and tools around it make Atlas worth trusting. The flow: Visitor, Guards first, Session memory, Cards + tools, Answer + sources. What we found: a guard at order 0 ran after memory; the phone number was saved, then blocked every question; HIGHEST_PRECEDENCE fixed it; test guards with a second message too." ai="true"}
 One page of notes for this chapter.
 :::
 :::

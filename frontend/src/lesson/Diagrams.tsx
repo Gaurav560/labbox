@@ -2117,19 +2117,29 @@ function AiWorkflows() {
 }
 
 function AiAtlasLive() {
+  // Still (owner, 26 November): one real message of chapter 20's conversation, through every piece.
+  const rows: [string, string, BoxTone][] = [
+    ["Ria: What shows are there that day?", "POST /chat", "plain"],
+    ["guards (HIGHEST_PRECEDENCE)", "no private words, under 300 characters: pass", "highlight"],
+    ["session memory", "adds her earlier turns: \"this Saturday\" = 2026-11-28", "accent"],
+    ["retrieval (top 3, 0.35)", "no card close enough: sources []", "accent"],
+    ["the model, with tools", "planetariumShows {date: 2026-11-28}", "copy"],
+    ["the answer", "11:00: 4 free, 14:00: fully booked, 16:00: 11 free", "plain"],
+  ];
   return (
-    <SketchSteps
-      title="all of Atlas in one call"
-      intro="Press Play to follow one message on the lobby screen."
-      label="a message passes the length limit and the privacy guard, the session adds the visitor's conversation, retrieval adds the closest cards, the model may call tools, and the answer returns with its sources"
-      steps={[
-        { label: "1. Guards", says: "Length limit, then the privacy guard." },
-        { label: "2. Memory", says: "Ria's last turns are added from her session." },
-        { label: "3. Retrieval", says: "The 3 closest card chunks are added to her question." },
-        { label: "4. The model, with tools", says: "It may ask for openingHours or planetariumShows." },
-        { label: "5. The reply", says: "The answer, and the cards it came from." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 448" label="Ria's question what shows are there that day passes the guards, gains her session's history, finds no card, and the model calls planetariumShows for 2026-11-28 and answers with the seats">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 

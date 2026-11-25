@@ -11,6 +11,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /** The whole of Atlas in one ChatClient: everything this course built, working together. */
 @Configuration
@@ -37,7 +38,7 @@ public class AtlasConfig {
                         .compaction(new TurnCountTrigger(8), WindowCompactionStrategy.builder().lastTurns(4).build())
                         .build())
                 .defaultAdvisors(
-                        SafeGuardAdvisor.builder().sensitiveWords(PRIVATE_WORDS).failureResponse(PRIVACY_REPLY).order(0).build(),
+                        SafeGuardAdvisor.builder().sensitiveWords(PRIVATE_WORDS).failureResponse(PRIVACY_REPLY).order(Ordered.HIGHEST_PRECEDENCE).build(),
                         new QuestionLimitAdvisor(300),
                         QuestionAnswerAdvisor.builder(store)
                                 .searchRequest(SearchRequest.builder().topK(3).similarityThreshold(0.35).build())
