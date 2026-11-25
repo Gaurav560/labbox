@@ -1,5 +1,15 @@
 # Changelog
 
+## 26 November: LangChain4j chapter 15 rewritten (easy, a little detailed, checked)
+
+- Both tasks list the usual slips (keeping `String` and parsing yourself; returning `String` instead of the enum). A
+  slip I first wrote was tested and dropped: `{{message}}` instead of `{{it}}` works in this project, which is compiled
+  with parameter names; the lesson now says so.
+- A new still picture of the real extraction, with the wrong date marked.
+- Checked in a lab machine, twice: exactly the lesson's output, the wrong date (2026-11-26, a Thursday, for "this
+  coming Saturday") included; the gateway's log shows the enum schema, `"strict": true` and `{"value":"TIMETABLE"}`.
+  A new sketchnote.
+
 ## 26 November: LangChain4j chapter 14 rewritten (easy, a little detailed, checked)
 
 - Both tasks list the usual slips (returning the `Prompt` object; a `@V` name that does not match its blank).
