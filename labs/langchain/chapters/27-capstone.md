@@ -21,7 +21,7 @@ Give Navin a long-term memory of each member's facts, then serve the complete ag
 
 :::step{type=history title="Everything inside Navin"}
 :::before{title="A chatbot in 2016"}
-A help desk bot in 2016 was a decision tree: buttons, keywords, and "Sorry, I did not understand" for everything else
+Many help desk bots in 2016 were decision trees: buttons, keywords, and "Sorry, I did not understand" for everything else
 (chapter 1's rules).
 :::
 
@@ -31,7 +31,7 @@ Every part of Navin comes from the last few years:
 |---|---|---|
 | 2017 | The transformer | 4 |
 | 2020 | Retrieval-augmented generation | 19 |
-| 2022 | LangChain; prompt injection named | 7, 24 |
+| 2022 | LangChain | 7 |
 | 2023 | Function calling; JSON mode; evals | 10, 13, 26 |
 | 2024 | Structured outputs; MCP; vision in small models | 13, 21, 14 |
 | 2025 | LangChain 1.0: create_agent and middleware | 11, 22 |
@@ -51,7 +51,8 @@ can do, checks what it says, or brings a person in. That is what makes it safe t
 
 :::step{type=concept title="Short-term and long-term memory" file="27-capstone/navin.py" line="39-55"}
 Chapter 15's checkpointer remembers **one conversation** (a thread). Facts that should outlive it ("Ravi grows onions on
-3 acres in Lasalgaon") go into a **store**, shared by all of a member's threads:
+3 acres in Lasalgaon") go into a **store**: a place for saved items, each kept under a **namespace** (a tuple of names,
+like a folder path) and a **key** (its name inside that namespace). One store is shared by all of a member's threads:
 
 | Memory | Kept in | Lasts | Holds |
 |---|---|---|---|
@@ -67,12 +68,26 @@ request.runtime.store.search(("M-104", "facts"))                                
 ```
 
 The namespace `(member id, "facts")` keeps each member's facts apart, as the thread id keeps their conversations apart.
+
+:::diagram{name="lc-long-memory"}
+A real run from this chapter: one member, two threads, one store.
+:::
 :::
 
 :::step{type=task task=remember_fact title="Your turn: remember a fact" file="27-capstone/navin.py" line="39-45"}
-Finish the `remember` tool: save `{"fact": fact}` with `runtime.store.put(namespace, key, value)`, where the namespace is
-`(runtime.context.member_id, "facts")` and the key the next number, `str(len(runtime.store.search(namespace)) + 1)`.
-Return `"Saved."`.
+Finish the `remember` tool:
+
+1. The namespace: `namespace = (runtime.context.member_id, "facts")`, a tuple.
+2. The key, the next number as text: `str(len(runtime.store.search(namespace)) + 1)`.
+3. Save it: `runtime.store.put(namespace, key, {"fact": fact})`.
+4. Return `"Saved."`.
+
+The usual slips (we tried them on the store):
+
+- A plain string as the namespace, `"M-104"`: no error, but the store reads it letter by letter and files the fact
+  under `['M', '-', '1', '0', '4']`.
+- Saving the fact itself instead of a dict, `put(namespace, key, fact)`: `ValueError`. A value must be a dict.
+- The same key every time (say `"1"`): each new fact silently replaces the last one.
 
 Press **Check**.
 :::
@@ -90,15 +105,26 @@ Press **Check**.
 | `HumanInTheLoopMiddleware` on `book_storage` | 25 |
 | checkpointer and store | 15, this chapter |
 
-`app.py` wraps it in FastAPI: `POST /chat` runs the agent for a member (thread = member id, context = who they are), and
+`app.py` wraps it in **FastAPI**, a Python library for web services (each decorated function answers one URL):
+`POST /chat` runs the agent for a member (thread = member id, context = who they are), and
 `reply(result)` turns the result into JSON, either an answer or a booking waiting for the manager. `POST
 /manager/decide` resumes the member's thread with the manager's decision.
 :::
 
 :::step{type=task task=chat_endpoint title="Your turn: the chat endpoint" file="27-capstone/app.py" line="31-36"}
-Finish `chat(body)`: invoke the agent with the member's message, the config `{"configurable": {"thread_id":
-body.member_id}}` and `context=Member(body.member_id, NAMES.get(body.member_id, "a member"))`, and return
-`reply(result)`.
+Finish `chat(body)`:
+
+1. The config: `{"configurable": {"thread_id": body.member_id}}`, so each member has their own thread.
+2. The context: `Member(body.member_id, NAMES.get(body.member_id, "a member"))`.
+3. Invoke the agent with `{"messages": [{"role": "user", "content": body.message}]}`, the config, and
+   `context=...`.
+4. Return `reply(result)`: it turns the result into an answer, or a booking waiting for the manager.
+
+The usual slips:
+
+- Leaving out `context=`: `member_prompt` then fails before any model call, with `AttributeError: 'NoneType' object
+  has no attribute 'member_id'` (we tried it).
+- One fixed thread id for everyone: every member would then share one conversation, and one paused booking.
 
 Start the service in one terminal:
 
@@ -118,8 +144,12 @@ Press **Check**.
 :::step{type=try title="Navin, live"}
 With the service running, `try.sh` plays one member's morning:
 
+A real run (again on 25 November: the same six results, in other words; the loan came out as "Rs 1,50,000", the
+Indian way of grouping digits, where this run wrote "Rs 150,000"):
+
 ```text
 $ bash try.sh
+
 {"status":"answered","answer":"Hello, Ravi! It's nice to meet you. How can I assist you today?"}
 
 {"status":"answered","answer":"You can store 80 crates of onions, but you'll need the manager's approval since it's more than 50 crates. This usually takes one working day to get. Remember, the crates must be clean and labeled with your member number."}
@@ -141,14 +171,18 @@ Six requests, the whole course at work:
    chunks carry their titles (chapter 20).
 3. The booking comes back as `waiting_for_manager` with its arguments; nothing is booked yet (chapter 25).
 4. The manager approves through `/manager/decide`, and the same thread finishes: booking B-101.
-5. The Aadhaar number was masked before the model saw it (chapter 24), and Navin declined to store it.
-6. The loan: Rs 50,000 per acre for his 3 acres. Navin knew the acres from earlier in the conversation.
+5. The Aadhaar number was masked before the model saw it (chapter 24): in our re-run the thread holds "My Aadhaar
+   is ****1176, please note it.", and Navin declined to save it with `remember`; the store still held only the farm
+   fact.
+6. The loan: Rs 50,000 per acre for his 3 acres. Navin knew the acres twice over: from the first message in this
+   thread, and from the fact `remember` saved then.
 
 The last answer also shows what is still missing: the model multiplied 3 × 50,000 itself, because this agent has no loan
 tool. It is right, but chapter 12's `crop_loan_limit` belongs in the tool list.
 
 Long-term memory is clearest across two **different** threads. Ravi mentions his farm on Monday; on Friday, in a new
-conversation, he asks about a loan:
+conversation, he asks about a loan (a real run, with threads named `monday` and `friday`; on 25 November the re-run
+called `remember` on Monday, only `search_rules` on Friday, and gave the same Rs 1,50,000):
 
 ```text
 [monday] > I farm 3 acres of onions in Lasalgaon.
@@ -224,7 +258,7 @@ You can now:
 That is the end of the course. You started with a rule that answered two questions; Navin now answers a village of
 farmers from the co-op's own rules, in their own language, and asks the manager before it books. Well done.
 
-:::photo{src="/lesson-images/langchain/lc-27-notes.webp" alt="Handwritten notes about the capstone: Thread: one conversation; Store: facts per member; Every lesson, one agent; POST /chat, /manager/decide; 80 crates: now right" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-27-notes.webp" alt="Handwritten notes about the capstone: A thread keeps one conversation; the store keeps facts across them. A namespace like (M-104, facts) keeps each member's facts apart. On Friday, Navin used the 3 acres saved on Monday. POST /chat answers, or returns waiting_for_manager. POST /manager/decide resumes the paused thread. Before real members: a database, sign-in, and evals." ai="true"}
 One page of notes for this chapter.
 :::
 :::

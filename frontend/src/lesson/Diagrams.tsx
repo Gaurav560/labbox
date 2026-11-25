@@ -2614,6 +2614,34 @@ function LcGuards() {
   );
 }
 
+function LcLongMemory() {
+  // Still (owner, 25 November): chapter 27's real run: two threads of one member, one store between them.
+  return (
+    <Svg viewBox="0 0 440 292" label="Thread monday saves a fact with remember into the store under M-104 facts; thread friday never sees monday's messages, but member_prompt reads the fact from the store, so the answer uses 3 acres">
+      <Box x={8} y={4} w={204} h={96} label="" />
+      <text className="dg-label" x={20} y={28}>thread "monday"</text>
+      <text className="dg-note" x={20} y={52}>I farm 3 acres of onions</text>
+      <text className="dg-note" x={20} y={72}>in Lasalgaon.</text>
+      <text className="dg-note" x={20} y={92}>tool: remember</text>
+      <Box x={228} y={4} w={204} h={96} label="" />
+      <text className="dg-label" x={240} y={28}>thread "friday"</text>
+      <text className="dg-note" x={240} y={52}>How much crop loan for</text>
+      <text className="dg-note" x={240} y={72}>my whole farm?</text>
+      <text className="dg-note" x={240} y={92}>Rs 1,50,000 (3 acres)</text>
+      <Arrow x1={110} y1={102} x2={110} y2={166} />
+      <text className="dg-note" x={118} y={140}>store.put</text>
+      <Arrow x1={330} y1={168} x2={330} y2={104} />
+      <text className="dg-note" x={338} y={140}>member_prompt</text>
+      <text className="dg-note" x={338} y={156}>reads it</text>
+      <Box x={8} y={170} w={424} h={80} label="" tone="copy" />
+      <text className="dg-label" x={20} y={194}>store, namespace ("M-104", "facts")</text>
+      <text className="dg-note" x={20} y={218}>key "1": Ravi Patil farms 3 acres of onions</text>
+      <text className="dg-note" x={20} y={238}>in Lasalgaon.</text>
+      <text className="dg-note" x={8} y={280}>The two threads share no messages, only the store.</text>
+    </Svg>
+  );
+}
+
 function LcHumanLoop() {
   // Still (owner, 25 November): Ravi's real booking from chapter 25's run, paused, edited by the manager, resumed.
   const rows: [string, string, BoxTone][] = [
@@ -4039,6 +4067,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "lc-middleware": LcMiddleware,
   "lc-wrap-tool": LcWrapTool,
   "lc-guards": LcGuards,
+  "lc-long-memory": LcLongMemory,
   "lc-human-loop": LcHumanLoop,
   "lc-rag": LcRag,
   "lc-mcp": LcMcp,
