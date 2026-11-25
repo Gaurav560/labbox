@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November (Ukiyo): the run command, and how people know to press it
+
+- Owner picked the terminal design, then: "how will users know they have to click here? They mostly open it on a phone
+  first". The command (`$ docker run spring-boot`, short enough for a phone) types itself with a cursor when the page
+  opens; it ends in a solid green "Run ▶" key; a label above says "Try it: tap Run"; a green ring pulses around it.
+  The container itself is tappable too, with a "▶ Tap to spin it up" badge on it. The other five designs and the
+  `?buttons` switcher are removed.
+
 ## 25 November (Ukiyo): six designs to try for Spin up (?buttons)
 
 - Owner: "I still don't like any colour and design for this". Instead of colours, six designs to try live at

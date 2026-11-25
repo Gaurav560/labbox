@@ -481,36 +481,34 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---------- 15. start a lab: the machine packs itself (home page, owner 25 November) ---------- */
 /* waiting for a click: one clear button over the empty slots */
 .ua-box { isolation: isolate; }
-/* the Spin up button: designs to try (?buttons) */
-.ua-go { position: relative; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font: 600 17px var(--font-text);
-  white-space: nowrap; transition: background .2s, border-color .2s, color .2s, box-shadow .2s, transform .15s; }
-.ua-go:active { transform: translateY(1px); }
-.ua-go:focus-visible { outline: 3px solid var(--vermilion); outline-offset: 4px; }
-/* 1 terminal command */
-.ua-go-0 { padding: 14px 18px; background: #14120f; color: #e9e2d4; border: 1px solid #4a443d; border-radius: 6px; font: 500 15px var(--font-code);
-  box-shadow: 0 14px 30px -18px #000c; }
-.ua-go-0 .ua-go-prompt { color: #4ade80; font-weight: 700; }
-.ua-go-0 .ua-go-enter { margin-left: 6px; padding: 2px 8px; border: 1px solid #4a443d; border-radius: 4px; color: #a49b8c; font-size: 13px; }
-.ua-go-0:hover { border-color: #4ade80; } .ua-go-0:hover .ua-go-enter { color: #4ade80; border-color: #4ade80; }
-/* 2 docker blue */
-.ua-go-1 { padding: 12px 22px 12px 14px; background: #1d63ed; color: #fff; border: 0; border-radius: 8px; box-shadow: 0 14px 28px -16px #1d63edaa; }
-.ua-go-1 .ua-go-whale { width: 30px; height: 30px; filter: brightness(0) invert(1); }
-.ua-go-1:hover { background: #1550c9; }
-/* 3 site red, like Start free */
-.ua-go-2 { padding: 14px 24px; background: var(--vermilion); color: #fff; border: 0; border-radius: 4px; }
-.ua-go-2:hover { background: color-mix(in srgb, var(--vermilion) 85%, #000); }
-/* 4 ink outline */
-.ua-go-3 { padding: 13px 22px; background: transparent; color: var(--text); border: 1.5px solid var(--text); border-radius: 4px; }
-.ua-go-3:hover { background: var(--text); color: var(--bg); }
-/* 5 power switch */
-.ua-go-4 { padding: 0; background: none; border: 0; color: var(--text); gap: 14px; }
-.ua-go-power { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: var(--card); border: 2px solid var(--rule);
-  box-shadow: inset 0 -3px 0 #0002, 0 8px 18px -10px #0008; transition: border-color .2s, box-shadow .2s; }
-.ua-go-power svg { width: 24px; height: 24px; fill: none; stroke: #16a34a; stroke-width: 2.6; stroke-linecap: round; }
-.ua-go-4:hover .ua-go-power { border-color: #16a34a; box-shadow: 0 0 0 5px #16a34a22, 0 8px 18px -10px #0008; }
-/* 6 underlined link */
-.ua-go-5 { padding: 0 0 3px; background: none; border: 0; border-bottom: 2px solid var(--vermilion); border-radius: 0; color: var(--text); }
-.ua-go-5:hover { color: var(--vermilion); }
+/* the Spin up button: a terminal command that types itself, a green Run key, a pulsing ring (owner, 25 November) */
+.ua-try { display: grid; justify-items: start; gap: 8px; }
+.ua-try-label { margin: 0; font: 600 11px var(--font-code); letter-spacing: .14em; text-transform: uppercase; color: #16a34a; }
+.ua-try-label span { animation: ua-blink2 1.2s ease-in-out infinite; }
+.ua-go { position: relative; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 10px 10px 18px;
+  background: #14120f; color: #e9e2d4; border: 1px solid #4ade8099; border-radius: 8px; font: 500 15px var(--font-code); white-space: nowrap;
+  max-width: 100%; box-shadow: 0 14px 30px -18px #000c; transition: border-color .2s, transform .15s; }
+.ua-go::after { content: ""; position: absolute; inset: -5px; border: 2px solid #4ade80; border-radius: 11px; opacity: 0;
+  animation: ua-ring 2s ease-out 1.8s infinite; pointer-events: none; }
+@keyframes ua-ring { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(1.08); } }
+.ua-go:hover { border-color: #4ade80; } .ua-go:active { transform: translateY(1px); }
+.ua-go:focus-visible { outline: 3px solid #4ade80; outline-offset: 4px; }
+.ua-go-prompt { color: #4ade80; font-weight: 700; }
+.ua-go-cmd { display: inline-block; overflow: hidden; width: calc(var(--len) * 1ch); border-right: 2px solid transparent;
+  animation: ua-type 1.3s steps(var(--len)) .3s both, ua-cursor .8s steps(1) 1.6s 5; }
+@keyframes ua-type { from { width: 0; border-color: #e9e2d4; } to { width: calc(var(--len) * 1ch); border-color: #e9e2d4; } }
+@keyframes ua-cursor { 50% { border-color: #e9e2d4; } }
+.ua-go-run { margin-left: 4px; padding: 7px 14px; background: #16a34a; color: #fff; border-radius: 6px; font: 700 14px var(--font-text);
+  box-shadow: inset 0 -2px 0 #0003; }
+.ua-go:hover .ua-go-run { background: #15803d; }
+/* the container can be tapped too, while it waits */
+.ua-ship .is-tappable { cursor: pointer; }
+.ua-tap { position: absolute; z-index: 4; left: 42%; top: 86%; transform: translate(-50%, -50%); padding: 10px 18px; border: 0; border-radius: 999px;
+  background: #14120fe6; color: #fff; font: 700 14px var(--font-text); cursor: pointer; box-shadow: 0 10px 24px -10px #000c;
+  animation: ua-bob 1.8s ease-in-out infinite; }
+.ua-tap:hover { background: #16a34a; }
+@keyframes ua-bob { 0%, 100% { margin-top: 0; } 50% { margin-top: -4px; } }
+@media (prefers-reduced-motion: reduce) { .ua-go-cmd { animation: none; } .ua-go::after, .ua-tap, .ua-try-label span { animation: none; } }
 .ua-box.is-waiting .ua-log { opacity: .7; }
 .ua-log-wait { color: var(--muted); }
 .ua-caret { display: inline-block; width: 8px; height: 15px; vertical-align: -2px; background: var(--muted); animation: ua-blink 1s steps(1) infinite; }
@@ -582,14 +580,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   .ua { grid-template-columns: 1fr; }
   .ua-slots { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .ua-log li { white-space: normal; }
-  .ua-go { max-width: 100%; white-space: normal; text-align: left; font-size: 16px; }
+  .ua-go { font-size: 13px; padding: 8px 8px 8px 12px; gap: 8px; }
+  .ua-go-cmd { min-width: 0; text-overflow: clip; }
 }
 
-/* temporary: designs to try for the Spin up button, only with ?buttons (owner picks one, then this goes) */
-.ua-swatches { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-.ua-swatches button { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--rule); background: var(--card);
-  color: var(--muted); cursor: pointer; font: 600 12px var(--font-code); }
-.ua-swatches button[aria-checked="true"] { color: var(--text); border-color: var(--text); }
 
 /* ---- the container (owner, 25 November: "way more cool"; items visibly go in, then the container starts) ---- */
 .ua-logwrap { position: relative; }

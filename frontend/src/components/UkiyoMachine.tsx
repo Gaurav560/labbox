@@ -4,7 +4,7 @@
  * one container, piece by piece with a line in the log each, then a green tick and Start, which opens that course.
  */
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
@@ -177,13 +177,7 @@ function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "
  * doors and stays stacked inside, with its line in the log; then the doors close and lock, docker start runs, the
  * container lights up and hums, and Start appears.
  */
-// Designs to try for the Spin up button (owner, 25 November: none of the colours worked). Shown with ?buttons;
-// remove the switcher once one is picked.
-const GO_DESIGNS = ["Terminal command", "Docker blue", "Site red", "Ink outline", "Power switch", "Underlined link"] as const;
-
 export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
-  const trying = useSearchParams()[0].has("buttons");
-  const [design, setDesign] = useState(0);
   const [lab, setLab] = useState(LABS[1]);
   // It plays when the visitor asks (owner, 25 November: "better if the user clicks and sees the animation"):
   // run 0 is the waiting box with the Spin up button; each click starts a new run.
@@ -221,6 +215,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   }, [run, lab, n, still]);
 
   const waiting = run === 0;
+  const slug = lab.label.toLowerCase().replace(/\s+/g, "-"); // short enough for a phone: "docker run system-design"
   const phase = waiting ? "wait" : step <= n ? "load" : step === n + 1 ? "close" : step === n + 2 ? "start" : "run";
   const loadedNow = Math.min(step, n);
   const running = phase === "run";
@@ -250,18 +245,18 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
         <h2 id="machine-title">One click, and we spin up a container for you <em>with everything the lab needs.</em></h2>
         <p>Linux, the language, the framework, the databases, an editor and terminal, and an AI code assistant: set up and running in about a minute. Nothing to install. You go straight to the first challenge.</p>
         {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
+        {/* the command that starts the machine (owner picked the terminal design); it types itself, and a green Run key
+            and a pulsing ring make it plain that it is the thing to press, on phones too */}
         {waiting ? (
-          <button type="button" className={`ua-go ua-go-${design}`} onClick={spin} aria-label={`Spin up the ${lab.label} machine`}>
-            {design === 0 ? (
-              <><span className="ua-go-prompt">$</span><span>docker run labbox/{lab.id}</span><span className="ua-go-enter" aria-hidden="true">↵</span></>
-            ) : design === 1 ? (
-              <><img src="/logos/docker.svg" alt="" className="ua-go-whale" /><span>Spin up the {lab.label} machine</span></>
-            ) : design === 4 ? (
-              <><span className="ua-go-power" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v8M6.3 6.6a8 8 0 1 0 11.4 0" /></svg></span><span>Spin up the {lab.label} machine</span></>
-            ) : (
-              <><span>Spin up the {lab.label} machine</span><span aria-hidden="true">→</span></>
-            )}
-          </button>
+          <div className="ua-try">
+            <p className="ua-try-label"><span aria-hidden="true">●</span> Try it: tap Run</p>
+            <button type="button" className="ua-go" onClick={spin} aria-label={`Spin up the ${lab.label} machine`}
+              style={{ "--len": `docker run ${slug}`.length } as CSSProperties} key={lab.id}>
+              <span className="ua-go-prompt">$</span>
+              <span className="ua-go-cmd">docker run {slug}</span>
+              <span className="ua-go-run">Run ▶</span>
+            </button>
+          </div>
         ) : <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
       <div className={`ua-box ${running ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
@@ -286,7 +281,8 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
               );
             })()}
           </ul>
-          <div ref={svgWrap}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
+          {waiting && <button type="button" className="ua-tap" onClick={spin}>▶ Tap to spin it up</button>}
+          <div ref={svgWrap} className={waiting ? "is-tappable" : ""} onClick={waiting ? spin : undefined}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
         </div>
         <div className="ua-logwrap">
           <ol className="ua-log" aria-live="polite">
@@ -306,13 +302,6 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <Link className="h-btn h-btn-primary" to={signedIn ? `/courses/${lab.id}` : `/login?next=${encodeURIComponent(`/courses/${lab.id}`)}`}>Start →</Link>
         </div>
       </div>
-      {trying && (
-        <div className="ua-swatches" role="radiogroup" aria-label="Try a design for the Spin up button">
-          {GO_DESIGNS.map((d, i) => (
-            <button key={d} type="button" role="radio" aria-checked={i === design} onClick={() => { setDesign(i); setRun(0); }}>{i + 1}. {d}</button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

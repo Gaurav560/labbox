@@ -24,6 +24,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await page.waitForTimeout(1500);
   await expect(machine.locator(".ua-container")).toBeVisible(); // the Docker-style shipping container
   await expect(machine.locator(".ua-dock li")).toHaveCount(0); // nothing shown until the container spins up
+  await expect(machine.getByText("Try it: tap Run")).toBeVisible(); // plain that the command is the thing to press
+  await expect(machine.getByRole("button", { name: "▶ Tap to spin it up" })).toBeVisible(); // the container can be tapped too
   await expect(machine.locator(".ua-c-plate")).toContainText("EMPTY");
   await expect(machine.locator(".ua-log li.is-piece")).toHaveCount(0);
   await machine.getByRole("button", { name: /Spin up the Spring Boot machine/ }).click();
