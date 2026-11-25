@@ -1,5 +1,16 @@
 # Changelog
 
+## 25 November: RAG chapter 2, plainer, with a clear text-to-vector picture
+
+- Owner on the sample: "a little more easy to understand; not too analogy oriented, but written so the concept is easy
+  to grasp; text to vector embedding could be shown more clearly via an image; the animation is hard to understand".
+  The first concept now says plainly what an embedding model does (text in, 384 numbers out), why that helps (similar
+  meanings get similar vectors), the three steps of searching by meaning, how the model learned it and that no single
+  number means anything; the map-and-towns comparison is gone from the whole chapter.
+- The playing `rag-embed` animation is now one still picture: three real sentences, an arrow through the bge-small model,
+  and each one's first 4 numbers (the model's real output, computed in the lab's image), then the real cosine scores
+  (tiger vs big cat 0.69, tiger vs batteries 0.42). Drawn tall, so it shows at full size in the lab's lesson panel.
+
 ## 25 November: RAG chapter 2 rewritten to the 24 November review (the sample)
 
 - Owner: "write each lesson more practical, eloquent, easy to understand, yet maintaining the standard; images connected
