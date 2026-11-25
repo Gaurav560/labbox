@@ -59,8 +59,13 @@ the conversation and add their answer to it. The cost of a repair comes from a t
 :::
 
 :::step{type=task task=route_intent title="Your turn: every message to its place" file="24-capstone/harsh/graph.py" line="35-38"}
-Finish `route_intent(state)`: return `"status"`, `"rules"` or `"repair"` when `state["intent"]["kind"]` is that word,
-and `"other"` for anything else.
+Finish `route_intent(state)`:
+
+1. read `state["intent"]["kind"]`;
+2. return `"status"`, `"rules"` or `"repair"` when it is that word, and `"other"` for anything else.
+
+The usual slip: `state["intent"].kind`. The intent is stored as a dictionary (`intake` saves `intent.model_dump()`),
+so it needs `["kind"]`; we tried the attribute: `AttributeError: 'dict' object has no attribute 'kind'`.
 
 Press **Check**.
 :::
@@ -76,13 +81,16 @@ The engineer's app needs only the thread id and her answer. The server finds the
 again from its first line, and this time `interrupt` returns her decision.
 
 :::diagram{name="lg-capstone"}
-One message through the whole desk: intake, the route, the part of the desk that handles it, and the reply.
+The real conversation of 26 November, message by message, on one server thread.
 :::
 :::
 
 :::step{type=task task=approve_over_api title="Your turn: the engineer's answer over HTTP" file="24-capstone/client.py" line="10-14"}
 Finish `decide(client, thread_id, approve, note)`: return `client.runs.wait(thread_id, "harsh", command={"resume":
 {"approve": approve, "note": note}})`.
+
+The usual slip: `input={"resume": ...}` instead of `command=`. We tried it on the server: no error, and the thread was
+still waiting at `repair` afterwards. An answer to an interrupt must travel as a command.
 
 ```bash run
 cd /workspace/24-capstone && (langgraph dev --no-browser --port 2024 > server.log 2>&1 &) && sleep 10 && python client.py
@@ -109,6 +117,10 @@ $ timeout 300 python client.py
   Harsh: A crew is booked for the main burst at Station Road: Thursday, 9:00 to 12:00.
 ```
 
+(We ran it again on 26 November, on a fresh server: the same three paths and the same Thursday booking; the answers
+were worded a little differently, for example "the board will send a tanker free of charge". The whole conversation
+used 10,469 tokens.)
+
 One thread, three kinds of message, three parts of the desk. The status answer came from the tickets, the tanker answer
 from the rulebook (with its conditions, "if ... due to a board fault", not a guess), and the burst main paused for the
 engineer, whose approval came in through the server.
@@ -130,7 +142,8 @@ The intake model returns `kind: "complaint"`, a word that is not in the `Literal
 - [x] The structured output fails validation before `route_intent` runs, and the run reports the error
 - [ ] It goes to status
 :::explain
-The schema guards the router, as in chapter 4. A retry policy on intake (chapter 9) makes such failures recover.
+We tried it: `Intent(kind="complaint")` raises `ValidationError: 1 validation error for Intent, kind`. The schema
+guards the router, as in chapter 4. A retry policy on intake (chapter 9) makes such failures recover.
 :::
 :::
 
@@ -182,7 +195,7 @@ You can now:
 That is the end of the course. Harsh began as two nodes; it is now a desk that remembers, pauses for people, looks
 things up, checks itself, and runs as a server. Build the emergency branch next.
 
-:::photo{src="/lesson-images/langgraph/lg-24-notes.webp" alt="Handwritten notes about the capstone: intake -> route -> desk part; agents as nodes; money in code, not the model; resume over HTTP; urgent before cost, always" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-24-notes.webp" alt="Handwritten notes titled Harsh, complete, one server, the whole desk: an intake model reads each message once and names its kind, code routes it to the status agent, the rules agent, repairs or a person, and big repairs wait for the engineer whose answer comes over HTTP; message, intake kind, route_intent, status, rules or repair, reply; status came from the tickets and the tanker answer from the rulebook; Rs 65,000 waited for the engineer; approved, then booked for Thursday; check urgency before cost" ai="true"}
 One page of notes for this chapter.
 :::
 :::
