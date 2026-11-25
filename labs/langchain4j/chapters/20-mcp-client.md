@@ -45,7 +45,7 @@ server which folder it may touch, and nothing outside it. `McpClient` is `AutoCl
 server process.
 
 :::diagram{name="l4j-mcp"}
-The client starts the server, they shake hands, the client lists the tools and calls one when the model asks.
+This chapter's two real runs (26 November): the same question with fourteen tools and with two.
 :::
 
 **Check yourself:** who starts the Node.js server? (Your Java program, as a child process, when the client is built.)
@@ -86,6 +86,10 @@ Telephone operators at a switchboard in Anamosa, Iowa, in 1915.
 Finish `Mcp.filesystem(folder)`: build a `StdioMcpTransport` with the command
 `List.of("mcp-server-filesystem", folder.toString())`, then a `DefaultMcpClient` with key `"notices"` and that
 transport, and return the client.
+
+The usual slip: leaving out the folder, `List.of("mcp-server-filesystem")`. The server still starts and still lists
+its fourteen tools, but it has no allowed folder, so every read is refused. We tried it on 26 November; Setu answered
+"I'm unable to access the notices directly."
 
 Press **Check**.
 :::
@@ -154,6 +158,10 @@ The documentation adds a fourth: fewer tools also reduce the chance of hallucina
 Finish `Mcp.assistant(model, client)`: build it like `assistantWithAllTools` above, with
 `.filterToolNames("list_directory", "read_text_file")` added to the `McpToolProvider` builder.
 
+The usual slip: a misspelled name, such as `"read_file_text"`. There is no error: the filter quietly keeps only
+`list_directory`. We tried it on 26 November; Setu answered "I found three notices, but I cannot access their
+contents directly" and named the three files. If Setu can see files but not read them, check the spelling.
+
 ```bash run
 cd /workspace/20-mcp-client && mvn -q compile exec:java
 ```
@@ -167,6 +175,9 @@ Press **Check**.
 all 14 tools: There are no notices regarding any planned work that affects the Konkan Breeze.
 two tools:    Yes, there is planned track work affecting the Konkan Breeze. It will run 40 minutes late on November 29 and 30, from 10:00 to 16:00. The Ghat Express and Monsoon Mail are not affected.
 ```
+
+(We ran both versions again on 26 November: the fourteen-tool answer was wrong again, "There are no notices related
+to any planned work", at 1,222 tokens in; the two-tool answer was right again, at 305 tokens in, then 382 and 655.)
 
 The same question, the same model, the same server: now right, with the dates and the times. The gateway's log shows
 how it got there: the first call (**305 tokens in**, against 1,222) asked for `list_directory`; the second asked for
@@ -235,7 +246,7 @@ You can now:
 
 Next, chapter 21: the other side. Setu's own tools, served by your own Java MCP server.
 
-:::photo{src="/lesson-images/langchain4j/l4j-20-notes.webp" alt="Handwritten notes about MCP: shared tools for any app; server, client, transport; with stdio the client starts the server; 14 tools gave a wrong answer; 2 tools gave a right, safe and cheap one" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-20-notes.webp" alt="Handwritten notes titled MCP: one shared way for an app to use tools from a server; start the server, list its tools, keep only the ones you need, the model asks for a tool, answer from real files; 14 tools gave a wrong answer at 1,222 tokens in, 2 tools the right answer at 305; a misspelled tool name gives no error; fewer tools are safer and cheaper" ai="true"}
 One page of notes for this chapter.
 :::
 :::

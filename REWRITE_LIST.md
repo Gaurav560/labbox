@@ -12,7 +12,7 @@ Status: **3 of 23 labs done** (60 of 319 chapters).
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
-| 3 | langchain4j | LangChain4j | 30 | in progress (19 of 30) | |
+| 3 | langchain4j | LangChain4j | 30 | in progress (20 of 30) | |
 | 4 | langgraph | LangGraph | 24 | not started | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangChain4j ch 20 done: 14 tools wrong and 2 tools right, reproduced; both slips tried (a misspelled tool name gives no error).
 - 26 Nov: LangChain4j ch 19 done: still tool-call picture from the real log; same token counts as the lesson.
 - 26 Nov: LangChain4j ch 18 done: both slips tried; my first guess about @RequestBody was wrong and is corrected.
 - 26 Nov: LangChain4j ch 17 done: found the system message counts toward the window (3 evicted, not 2); fixed the quiz.
