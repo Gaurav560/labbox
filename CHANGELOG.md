@@ -1,5 +1,19 @@
 # Changelog
 
+## 25 November: RAG chapter 10 rewritten (easy, a little detailed, checked)
+
+- Bi-encoders and cross-encoders, transformers and layers, MS MARCO, unbounded scores and the two dials are explained
+  where they first appear; tasks list their steps and the usual slips.
+- The two-stage animation is now a still picture of the real jeep question: FM-6.2 8th of hybrid's 20 candidates, then
+  first after reranking (-6.6), with the real times.
+- Checked by re-running the demo in the lab image on 2 CPUs (the lab's size m). Corrected: "raise first to 55, every
+  chunk" was impossible (`hybrid()` fuses two top-20 lists, at most 40 candidates, 35 for the test questions; the quiz
+  now raises it to 30); a pair costs about 70 ms here, not "tens of milliseconds"; hybrid search takes under 0.1 s, not
+  "about 20 ms"; the first question's time includes loading the model (0.8 s); score guidance now measured (right chunks
+  about 4, wrong about -11, the jeep's right chunk -6.6); Nogueira and Cho's gain stated as the paper does (27%
+  relative); the GPU claim is now the model documentation's figure (about 1,800 passages a second on a V100); R-0403
+  described from its text. A new notes page.
+
 ## 25 November: RAG chapter 9 rewritten (easy, a little detailed, checked)
 
 - Dense search, BM25 (term, df, tf, idf, k1, b), tokens, reciprocal rank fusion and sparse vectors are explained where

@@ -3620,19 +3620,35 @@ function RagRrf() {
 }
 
 function RagTwoStage() {
+  // Real run of rerank_demo.py for the jeep question (55 chunks, 2 CPUs).
+  const fused = ["FM-1.2", "R-0305", "FM-2.2", "FM-3.3", "FM-6.4", "R-0307", "FM-3.2", "FM-6.2"];
+  const reranked: [string, string][] = [["FM-6.2", "-6.6"], ["R-0305", "-6.8"], ["FM-6.3", "-10.5"], ["R-0310", "-10.6"], ["FM-6.5", "-10.6"]];
+  const top = 104, step = 26, h = 22, w = 170, rx = 270;
+  const y = (i: number) => top + i * step;
   return (
-    <SketchSteps
-      title="Wide, then careful"
-      intro="Press Play to follow the jeep question through two stages."
-      label="Reranking"
-      steps={[
-        { label: "the question", says: "Can tourists get out of the jeep to take photos?" },
-        { label: "stage 1: hybrid", says: "Dense search and BM25 each rank the 55 chunks; fusion keeps the best 20. FM-6.2 is in, but only 8th." },
-        { label: "stage 2: rerank", says: "The cross-encoder reads the question with each of the 20 chunks, one pair at a time, about 100 ms each." },
-        { label: "new order", says: "FM-6.2 Visitor rules gets the highest score of the 20 and moves to the top." },
-        { label: "the best 5", says: "The top 5 go to the model as numbered sources." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 432" label="Hybrid search ranks FM-6.2 eighth of 20 candidates for the jeep question; the cross-encoder reads all 20 with the question and puts FM-6.2 first">
+      <text className="dg-note" x={0} y={16}>Can tourists get out of the jeep to take photos?</text>
+      <text className="dg-label" x={0} y={54}>Stage 1: hybrid search</text>
+      <text className="dg-note" x={0} y={74}>55 chunks to 20, under 0.1 s</text>
+      <text className="dg-note" x={0} y={92}>fused order, first 8:</text>
+      <text className="dg-label" x={rx} y={54}>Stage 2: cross-encoder</text>
+      <text className="dg-note" x={rx} y={74}>reads all 20, about 1.4 s</text>
+      <text className="dg-note" x={rx} y={92}>best 5 (score):</text>
+      <line className="dg-arrow" x1={w} y1={y(7) + h / 2} x2={rx} y2={y(0) + h / 2} style={{ markerEnd: "none", opacity: 0.6 }} />
+      <g className="dg-cells-small">
+        {fused.map((id, i) => (
+          <Box key={id} x={0} y={y(i)} w={w} h={h} label={`${i + 1}: ${id}`} tone={id === "FM-6.2" ? "highlight" : "plain"} code />
+        ))}
+        {reranked.map(([id, sc], i) => (
+          <Box key={`r${id}`} x={rx} y={y(i)} w={w} h={h} label={`${i + 1}: ${id} (${sc})`} tone={id === "FM-6.2" ? "highlight" : "copy"} code />
+        ))}
+      </g>
+      <text className="dg-note" x={0} y={y(8) + 16}>... 12 more candidates</text>
+      <text className="dg-note" x={0} y={348}>Stage 1 only has to get FM-6.2 into the 20.</text>
+      <text className="dg-note" x={0} y={368}>Stage 2 puts it first: its score is low, but the</text>
+      <text className="dg-note" x={0} y={388}>highest of the 20 candidates.</text>
+      <Box x={0} y={400} w={440} h={30} label="FM-6.2 Visitor rules: 8th, then 1st" tone="highlight" />
+    </Svg>
   );
 }
 
