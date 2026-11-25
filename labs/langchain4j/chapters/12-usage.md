@@ -27,8 +27,9 @@ the system message, any facts, the history and the question. Output tokens are t
 gpt-4o-mini costs **$0.15 per million input tokens** and **$0.60 per million output tokens**: output is four times
 dearer, because every output token needs its own pass through the model (chapter 6).
 
-**Check yourself:** Setu's system message is about 40 tokens. Over 400 questions, how many tokens is that? (16,000
-input tokens a day, just for the instructions: small, but it is why long system prompts and long fact lists matter.)
+**Check yourself:** this chapter's system message is 24 tokens (we counted it with gpt-4o-mini's tokenizer). Over 400
+questions, how many tokens is that? (9,600 input tokens a day, just for the instructions: small, but it is why long
+system prompts and long fact lists matter.)
 :::
 
 :::step{type=example title="Worked example: a cost formula" file="12-usage/src/main/java/com/setu/Bill.java" line="10-11"}
@@ -53,14 +54,23 @@ In Java, watch the arithmetic: `180 * 0.15 / 1_000_000` works because `0.15` mak
 
 :::step{type=task task=token_usage title="Your turn: read the receipt" file="12-usage/src/main/java/com/setu/Bill.java" line="20-24"}
 Finish `Bill.usage(response)`: get the `TokenUsage` from `response.metadata().tokenUsage()` and return
-`new Usage(inputTokenCount, outputTokenCount)`.
+`new Usage(inputTokenCount, outputTokenCount)`:
+
+1. `TokenUsage t = response.metadata().tokenUsage();`
+2. `return new Usage(t.inputTokenCount(), t.outputTokenCount());`
+
+The usual slip: `totalTokenCount()` for one of the two. The bill then prices the whole call at one rate.
 
 Press **Check**.
 :::
 
 :::step{type=task task=answer_cost title="Your turn: tokens to dollars" file="12-usage/src/main/java/com/setu/Bill.java" line="26-30"}
 Finish `Bill.dollars(usage)`: input tokens at `INPUT_PER_MILLION` per million, plus output tokens at
-`OUTPUT_PER_MILLION` per million.
+`OUTPUT_PER_MILLION` per million:
+`return usage.inputTokens() * INPUT_PER_MILLION / 1_000_000 + usage.outputTokens() * OUTPUT_PER_MILLION / 1_000_000;`
+
+The usual slip is the one in the worked example: dividing the token count by `1_000_000` first, which is integer
+division and gives 0.
 
 ```bash run
 cd /workspace/12-usage && mvn -q compile exec:java
@@ -80,7 +90,11 @@ Q: Explain in detail how a train climbs a steep ghat section.
 400 questions a day, about 180 tokens in and 60 out each: $0.0252 a day, $9.20 a year
 ```
 
-A greeting cost 37 tokens in and 9 out: most of the 37 are Setu's instructions, which travel with every question. The
+(We ran it again on 26 November: 37 in and 9 out for the greeting again; 48 in and 81 out for the long question,
+$0.000056.)
+
+A greeting cost 37 tokens in and 9 out: most of the 37 are Setu's instructions (24 tokens), which travel with every
+question; "Hi!" is 2, and the rest is the format that marks where each message starts and ends. The
 detailed question cost four times as much, almost all of it in output tokens. `modelName()` says `ai-chat` because
 the gateway answers with the alias; called directly, OpenAI reports the exact version, such as
 `gpt-4o-mini-2024-07-18`.
@@ -97,10 +111,11 @@ Setu starts sending the whole 20-page rules book with every question (about 10,0
 question?
 :::
 - [ ] Nothing: the answer is the same length
-- [x] It rises roughly fifty-fold, because the rules book is input tokens on every call
+- [x] It rises about twenty-five-fold, because the rules book is input tokens on every call
 - [ ] It falls, because the answers get shorter
 :::explain
-Everything sent is billed, every time. Chapter 23 sends only the few paragraphs that matter, which is why retrieval is
+Everything sent is billed, every time. With the chapter's typical question (180 in, 60 out), the cost goes from
+$0.000063 to $0.001563: the input part alone grows 56 times, the whole question about 25 times. Chapter 23 sends only the few paragraphs that matter, which is why retrieval is
 as much about cost as about quality.
 :::
 :::
@@ -154,7 +169,7 @@ You can now:
 That is the end of Part 2. Next, chapter 13: AI Services, LangChain4j's high-level API, where you describe Setu as a
 Java interface and LangChain4j writes the implementation.
 
-:::photo{src="/lesson-images/langchain4j/l4j-12-notes.webp" alt="Handwritten notes about token usage: every answer has a receipt; tokens in, tokens out; output costs four times input; 400 questions a day cost about 9 dollars a year; volume and length drive the bill" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-12-notes.webp" alt="Sketchnote, What Setu costs (every answer comes with a receipt): Every ChatResponse carries its token usage and finish reason. Input and output tokens have different prices. The flow: ChatResponse, tokenUsage(), Tokens x price, Dollars. What we measured: Hi! cost 37 tokens in, 24 of them the instructions; output costs 4 times as much as input; 400 questions a day: about 9 dollars a year; a 10,000-token rule book: 25 times dearer." ai="true"}
 One page of notes for this chapter.
 :::
 :::
