@@ -17,8 +17,9 @@ lowercase `labbox` (CLI, Docker labels and images, browser storage keys, systemd
    clear message, then show what changed and how to try it in the browser, and stop.
 3. **Ask before** deleting data, touching AWS, or adding anything that needs a paid API key.
 4. Secrets live in `backend/.env` (written by the owner). Never print it, never ask for keys in chat.
-   `OPENAI_API_KEY` there is approved **only** for cover art (`labbox cover --generate`, medium quality,
-   3 candidates per lab). Ask before using it for anything else (for example the Phase E gateway).
+   `OPENAI_API_KEY` there is approved for cover art (`labbox cover --generate`, medium quality, 3 candidates per
+   lab), notes pages, and (owner, 25 November) lesson work in general: re-running model outputs to check lessons,
+   through the lab gateway with a test account. Ask before any other paid API.
 5. Golden Rules from spec section 1: extend, do not rewrite; stay backward compatible; keep the
    `@@RESULT` protocol; only add routes; Alembic migrations are additive only (downgrade disabled);
    every phase shippable; security never regresses.
@@ -114,8 +115,8 @@ standard, eight short; see the table in `ROADMAP.md`).
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
   id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait
-  until port 8000 is free; open terminals make shutdown take a few seconds, sometimes over 20. Check that the new
-  process really started (a second uvicorn on a busy port exits with "Address already in use").
+  until port 8000 is free; open terminals make shutdown take a few seconds, sometimes minutes. Use `scripts/restart_backend.sh`: it
+  sends a second stop signal (which forces shutdown), starts a fresh backend and prints its start time.
 - Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
   /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword
