@@ -41,52 +41,57 @@ the model, and a row of 384 numbers comes out (only the first 4 are shown).
 Text in, 384 numbers out. The numbers are the model's real output, and so are the two scores at the bottom.
 :::
 
-What makes these numbers useful is one property the model was trained for: **texts with similar meanings get similar
-vectors.** "A tiger crossed the path." and "A big cat walked across the trail." share almost no words, yet their two
-rows of numbers are close, so they score **0.69**. The sentence about batteries is about something else, so its row is
-further away, and it scores only **0.42** against the tiger. You will compute these scores yourself later in this
-chapter.
+**What are the 384 numbers?** Each one is a measurement the model makes of the text. Together, the 384 measurements
+describe what the text is about. No person decided what any of them measures: the model worked them out by itself while
+it was trained, and none of them lines up with a word you could name. There is no "animal" number and no "danger"
+number; the meaning is spread across all 384 together. So you never read an embedding one number at a time. You only
+**compare** whole embeddings with each other.
 
-This is what Fieldbook needed. Comparing meanings is now comparing lists of numbers, which a computer does quickly and
-exactly. To search the manual by meaning, you will:
+**Why exactly 384?** Because the people who built this model chose that size when they designed it. Every text it reads
+comes out as exactly 384 numbers, never more and never fewer, and that cannot be changed after the model is trained.
+The number of values in a vector is called its **dimension**, so you will often read that bge-small makes
+"384-dimensional embeddings". Other models chose other sizes:
 
-1. turn every section of the manual into a vector, once;
-2. turn the ranger's question into a vector, the same way;
-3. find the sections whose vectors are closest to the question's vector.
-
-**Why 384?** It is the size the model's makers chose. Inside, the model works on text in layers that are 384 numbers
-wide, and the final vector comes out with the same width. This count is called the vector's **dimension**: bge-small
-makes 384-dimensional embeddings. Other models chose other sizes:
-
-| Model | Numbers per text |
+| Model | Numbers per text (its dimension) |
 |---|---|
 | bge-small (the one in your lab) | 384 |
 | bge-base, and many mid-size models | 768 |
 | bge-large | 1,024 |
 | OpenAI's text-embedding-3-small | 1,536 |
 
-More numbers give a model more room to keep fine differences in meaning apart, but every vector then takes more memory
+More numbers give a model more room to tell fine differences in meaning apart, but every vector then takes more memory
 and is slower to compare. 384 is a small, fast size that is good enough for a manual of a few hundred pages. Two rules
-follow from it: every vector from the same model has the same length, so any two can be compared; and vectors from
-different models can never be compared, even when their lengths match.
+follow:
 
-Because each vector is a list of numbers, you can also think of it as a **point** in a space with 384 directions, the
-same way two numbers mark a point on a sheet of graph paper. "Closest vectors" and "nearest points" mean the same thing,
-and later chapters use both.
+- every vector from the same model has the same length, so any two of them can be compared;
+- vectors from **different** models can never be compared, even when their lengths match, because each model measures
+  different things.
 
-**How does the model know which texts are similar?** It learned it. During training, the model was shown millions of
-pairs of texts that belong together (a question and its answer, a title and its article, two ways of saying the same
-thing) and millions of pairs that do not. Each time, it adjusted its internal settings slightly, so that related texts
-got closer vectors and unrelated texts got vectors further apart. Those internal settings are called **weights**; this
-model has about 33 million of them. After that training, it places sentences it has never seen before in sensible
-positions.
+**Why this helps Fieldbook.** The model was trained so that **texts with similar meanings get similar vectors.** "A
+tiger crossed the path." and "A big cat walked across the trail." share almost no words, yet their two rows of numbers
+are close, so they score **0.69**. The sentence about batteries is about something else, so its row is further away, and
+it scores only **0.42** against the tiger. You will compute these scores yourself later in this chapter.
 
-One thing to know before you use them: **no single number in the 384 means anything on its own.** There is no number for
-"animal" and no number for "danger". The meaning is in all 384 together. So you never read an embedding number by
-number; you only **compare** whole embeddings with each other.
+Comparing meanings is now comparing lists of numbers, which a computer does quickly and exactly. To search the manual by
+meaning, you will:
 
-Check yourself: two sentences have very similar embeddings. What does that tell you? (That they mean something similar,
-as far as the model can tell, even if they use different words.)
+1. turn every section of the manual into a vector, once;
+2. turn the ranger's question into a vector, the same way;
+3. find the sections whose vectors are closest to the question's vector.
+
+Because a vector is a list of 384 numbers, you can also think of it as a **point**: two numbers mark a point on a sheet of
+graph paper, and 384 numbers mark a point in a space with 384 directions. "Closest vectors" and "nearest points" mean
+the same thing, and later chapters use both.
+
+**How did the model learn which texts are similar?** During training, it was shown millions of pairs of texts that
+belong together (a question and its answer, a title and its article, two ways of saying the same thing) and millions of
+pairs that do not. Each time, it adjusted its internal settings slightly, so that related texts got closer vectors and
+unrelated texts got vectors further apart. Those internal settings are called **weights**; this model has about 33
+million of them. After that training, it gives sensible vectors even for sentences it has never seen before.
+
+Check yourself: what does it mean that this model is "384-dimensional"? (Every text it reads becomes a vector of exactly
+384 numbers.) And if two sentences have very similar embeddings, what does that tell you? (That they mean something
+similar, as far as the model can tell, even if they use different words.)
 :::
 
 :::step{type=concept title="Reading the code: the model and embed()" file="02-embeddings/fieldbook.py" line="60-71"}
