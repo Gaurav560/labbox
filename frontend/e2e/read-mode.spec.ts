@@ -27,13 +27,13 @@ test("read first, then action, and remembered", async ({ page, request }) => {
   const ws = await (await request.get(`/api/labs/${LAB}/workspace/status`, { headers: h })).json();
   expect(ws.status).not.toBe("running");
 
-  // The list of steps on the left: every step by name, the current one marked; × closes it, "Steps" reopens it.
+  // The list of steps on the left: every step by name, the current one marked; the panel button closes and reopens it.
   const outline = page.getByRole("navigation", { name: "Steps in this chapter" });
   await expect(outline.locator(".step-outline-item")).toHaveCount(steps.length);
   await expect(outline.locator("[aria-current=step]")).toHaveCount(1);
   await page.getByRole("button", { name: "Close the list of steps" }).click();
   await expect(outline).toHaveCount(0);
-  await page.getByRole("button", { name: "☰ Steps" }).click();
+  await page.getByRole("button", { name: "Show the list of steps" }).click();
   await expect(outline).toBeVisible();
 
   // A step about a file shows those lines, read-only, with the step's own lines marked.

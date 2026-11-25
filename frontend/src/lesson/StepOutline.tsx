@@ -1,13 +1,20 @@
 import type { Step } from "../api";
 import { DOT_LABEL } from "./LessonPanel";
 
-/** Read mode: the chapter's steps by name, down the left (owner, 25 November); the × closes it. */
+/** A sidebar icon (a panel with its left column): the button that closes and reopens the list of steps. */
+export function PanelIcon() {
+  return (<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" /><path d="M9.5 4.5v15" /><path d="M6 9h1M6 12h1" /></svg>);
+}
+
+/** Read mode: the chapter's steps by name, down the left (owner, 25 November); the panel button closes it. */
 export default function StepOutline({ steps, current, visited, onGo, onClose }: { steps: Step[]; current: number; visited: number; onGo: (i: number) => void; onClose: () => void }) {
   return (
     <nav className="step-outline" aria-label="Steps in this chapter">
       <div className="step-outline-top">
         <p className="step-outline-head">Step {current + 1} of {steps.length}</p>
-        <button className="step-outline-close" onClick={onClose} aria-label="Close the list of steps" title="Close the list of steps">×</button>
+        <button className="panel-toggle" onClick={onClose} aria-label="Close the list of steps" title="Close the list of steps">
+          <PanelIcon />
+        </button>
       </div>
       <ol>
         {steps.map((s, i) => (
