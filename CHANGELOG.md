@@ -1,5 +1,13 @@
 # Changelog
 
+## 25 November: RAG chapter 2 explains 384
+
+- Owner: "what is 384 in that lesson?" The lesson said "384 numbers" everywhere but never why. Step 2 now explains it:
+  the size the model's makers chose (its layers are 384 numbers wide), called the vector's dimension, with a table of
+  other models (bge-base 768, bge-large 1,024, OpenAI text-embedding-3-small 1,536), the trade-off (more room for
+  meaning against memory and speed), and the two rules that follow (same model, same length; different models never
+  compare).
+
 ## 25 November: RAG chapter 2, plainer, with a clear text-to-vector picture
 
 - Owner on the sample: "a little more easy to understand; not too analogy oriented, but written so the concept is easy
