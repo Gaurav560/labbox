@@ -1927,19 +1927,28 @@ function AiVectorStore() {
 }
 
 function AiEtl() {
+  // Still (owner, 26 November): chapter 13's real pipeline counts and one real search.
+  const rows: [string, string, BoxTone][] = [
+    ["extract: 12 Markdown cards", "MarkdownDocumentReader, file in the metadata", "plain"],
+    ["14 documents", "a new one at each heading (the visitor card has 3)", "accent"],
+    ["transform: TokenTextSplitter(100)", "23 chunks, each keeps its file", "accent"],
+    ["load: vectorStore.add(chunks)", "23 embeddings in the store", "copy"],
+    ["\"How much is a ticket for a child?\"", "visitor-information.md 0.407 (the whole card: 0.219)", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="extract, transform, load"
-      intro="Press Play to follow a card through the pipeline."
-      label="the markdown reader turns each card into documents, one per heading, with the file in metadata; the token text splitter cuts them into chunks of about 100 tokens that keep the metadata; the chunks are added to the vector store"
-      steps={[
-        { label: "1. Extract", says: "MarkdownDocumentReader: visitor-information.md becomes 3 documents, one per heading." },
-        { label: "2. Label", says: "Every document gets file = visitor-information.md." },
-        { label: "3. Transform", says: "TokenTextSplitter cuts long documents into chunks of about 100 tokens." },
-        { label: "4. Metadata follows", says: "Each chunk still knows its file." },
-        { label: "5. Load", says: "vectorStore.add(chunks): 12 cards, 14 documents, 23 chunks." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 374" label="Twelve cards are read into fourteen documents, split into twenty-three chunks of up to one hundred tokens, and loaded; the ticket question now finds the ticket chunk with 0.407">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
