@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 17 rewritten (easy, a little detailed, checked)
+
+- Both tasks list their steps and the usual slips (the whole path as the source; split_text losing the metadata).
+- Checked in a lab machine: the output word for word, including the heading chunk and the rule cut at "Bookings of
+  more than 50"; 2,000 characters really gives one chunk per file (5), now in the quiz. Corrected: Dense Passage
+  Retrieval's gain is now the paper's own figure (9 to 19 points more often than BM25 among the top 20), not "far
+  better"; "langchain-community is being retired" (not confirmed) became "many loaders live in langchain-community
+  (0.4.2 in the lab) or in separate packages". A new notes page.
+
 ## 25 November: LangChain chapter 16 rewritten (easy, a little detailed, checked)
 
 - Both tasks list their steps and the usual slips (calling on_line only at the end; no node filter).
