@@ -33,7 +33,15 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
-- **Latest (26 November, about 03:00):** the LangChain4j lab rewritten, all 30 chapters, one commit each (also on
+- **Latest (26 November, about 04:20):** the LangGraph lab rewritten, all 24 chapters, unattended at the owner's word
+  ("do it one go"), one commit each (also on `design/ukiyo`). Lab valid, test-lab green, test machines removed, no
+  admins. Lab files changed: chapter 5's notice date (Thursday 28 November is a Saturday in 2026; now Thursday 3
+  December, starter and solution). Corrected on the way (details in CHANGELOG): the default recursion limit is 10,007
+  (ch 3); a reducer's first call gets an empty string (ch 2); `ToolNode` only turns bad arguments into messages by
+  default (ch 13); store search embeds the value's JSON (ch 12); `langgraph dev` keeps threads across a restart (ch
+  21 quiz); several model-run claims now give measured counts across runs (ch 5, 13, 14, 17, 22). REWRITE_LIST: 5 of
+  23. Next: the owner's small tasks, then the next lab (owner picks).
+- **Earlier (26 November, about 03:00):** the LangChain4j lab rewritten, all 30 chapters, one commit each (also on
   `design/ukiyo`), with sketchnotes and still pictures from real runs. Lab valid, test-lab green, test machines
   removed, no admins. Corrected on the way (details in CHANGELOG): the system message counts toward the memory window
   (ch 17); a stray stdout line did not break LangChain4j's MCP client (ch 21 quiz); the default route is not used for
