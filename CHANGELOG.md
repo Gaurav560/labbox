@@ -1,5 +1,22 @@
 # Changelog
 
+## 25 November: RAG chapter 2 rewritten to the 24 November review (the sample)
+
+- Owner: "write each lesson more practical, eloquent, easy to understand, yet maintaining the standard; images connected
+  to the content; the handwritten notes more elaborate". As a sample before the rest of the course, chapter 2 of RAG and
+  vector databases ("Text as numbers") follows CONTENT_STANDARD section 7 in full; titles, story, tasks and ids are
+  unchanged. 1,906 words became 3,908:
+  - the first concept starts from a paper map (a town is two numbers; a text is 384), explains how the model learned its
+    map (training pairs, weights) and why no single number means anything, with a new playable diagram, `rag-embed`;
+  - a new step reads `model()` and `embed()` line by line (the model's name, fastembed, `@lru_cache`, the matrix shape,
+    the generator, `float32` and its 1,536 bytes);
+  - a new history step, "Before embeddings: synonyms written by hand", with a public-domain portrait of Peter Mark Roget
+    and a caption that says why he belongs here; the Mikolov photo's lead now says what word2vec did and how it leads
+    to the learner's own model; the timeline starts at 1852;
+  - cosine is worked by hand ([3, 4] and [4, 3] give 24 / 25 = 0.96; [-4, 3] gives 0; [6, 8] gives 1.0, which is why
+    it divides by the lengths), with check-yourself lines; tasks list their steps and the usual slips;
+  - a new notes page in six plain sentences ("An embedding turns any text into 384 numbers." ... "Embeddings barely
+    notice the word not."), checked letter by letter.
 ## 25 November (Ukiyo): a new picture for AI
 
 - Owner: "I don't like this image, change it" (the eagle). AI now shows Hiroshige's Asakusa Ricefields and Torinomachi
