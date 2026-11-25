@@ -1692,18 +1692,27 @@ function AiStreaming() {
 }
 
 function AiStructured() {
+  // Still (owner, 25 November): chapter 5's real tour request, from the gateway's log and the real answer.
+  const rows: [string, string, BoxTone][] = [
+    ["1. record TourPlan(title, stops)", "Spring AI writes its JSON schema", "plain"],
+    ["2. the user message", "your question + \"JSON only\" + the schema", "accent"],
+    ["3. the model answers, JSON only", "{\"title\":\"60 Minute Museum Tour\",\"stops\":[...]}", "plain"],
+    ["4. Jackson reads it", "a TourPlan: 5 stops, 10+15+15+10+10 = 60 minutes", "copy"],
+  ];
   return (
-    <SketchSteps
-      title="text in, a record out"
-      intro="Press Play to follow entity(TourPlan.class)."
-      label="spring ai writes the json schema of the record into the prompt; the model answers with json in that shape; jackson reads the json into a tourplan record; the controller returns it"
-      steps={[
-        { label: "1. entity(TourPlan.class)", says: "Spring AI looks at the record's fields." },
-        { label: "2. The schema goes in the prompt", says: "title is a string; stops is a list of gallery and minutes." },
-        { label: "3. The model answers in JSON", says: "Following the shape, with no explanations around it." },
-        { label: "4. Jackson reads it", says: "The JSON becomes a TourPlan, ready for your Java code." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 300" label="Structured output: the TourPlan record becomes a JSON schema in the user message, the model answers in JSON, and Jackson reads it into a TourPlan with five stops adding up to 60 minutes">
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={title}>
+            <Box x={28} y={y} w={406} h={56} label="" tone={tone} />
+            <text className="dg-label" x={42} y={y + 22}>{title}</text>
+            <text className="dg-note" x={42} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={231} y1={y + 58} x2={231} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
   );
 }
 
