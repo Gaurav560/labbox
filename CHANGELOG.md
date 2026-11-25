@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): pieces appear one by one, only after Spin up
+
+- Owner: the dock of chips "should not be present from the start; when I spin the container it should be present one
+  by one". Before the click only the empty container shows. After it, each piece appears on its own just above the
+  container, rises a little and flies into the open doors, where it stays stacked; then the next one comes.
+
 ## 25 November (Ukiyo): no empty space under the prompt
 
 - Owner: "why is this space left below learner". The log no longer reserves room for every line and the Start row is

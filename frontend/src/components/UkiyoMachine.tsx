@@ -255,18 +255,19 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <span className="ua-bar" aria-hidden="true"><i style={{ width: `${(Math.min(step, n + 3) / (n + 3)) * 100}%` }} /></span>
         </div>
         <div className="ua-ship" ref={shipRef}>
-          <p className="ua-dock-label">{phase === "wait" ? "Waiting on the dock" : phase === "load" ? "Loading into your container" : "All loaded"}</p>
-          <ul className="ua-dock">
-            {lab.pieces.map((p, i) => {
-              const flying = flight?.i === i && phase === "load";
-              const gone = i < (phase === "load" ? step - 1 : waiting ? 0 : n);
+          {/* each piece appears on its own when its turn comes, rises, and flies into the open doors (owner, 25 November:
+              "this should not be present from the start; when I spin the container it should appear one by one") */}
+          <ul className="ua-dock" aria-hidden="true">
+            {phase === "load" && step >= 1 && (() => {
+              const i = step - 1, p = lab.pieces[i];
+              const ready = flight?.i === i;
               return (
-                <li key={p.name + i} ref={(el) => { chips.current[i] = el; }} className={flying ? "is-flying" : gone ? "is-in" : ""}
-                  style={flying ? ({ "--dx": `${flight!.dx}px`, "--dy": `${flight!.dy}px` } as CSSProperties) : undefined}>
+                <li key={p.name + i} ref={(el) => { chips.current[i] = el; }} className={ready ? "is-flying" : "is-arriving"}
+                  style={ready ? ({ "--dx": `${flight!.dx}px`, "--dy": `${flight!.dy}px` } as CSSProperties) : undefined}>
                   <span className="ua-logo"><Mark p={p} /></span><span className="ua-name">{p.name}</span>
                 </li>
               );
-            })}
+            })()}
           </ul>
           <div ref={svgWrap}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
         </div>

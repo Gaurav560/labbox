@@ -579,18 +579,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 /* ---- the container (owner, 25 November: "way more cool"; items visibly go in, then the container starts) ---- */
 .ua-logwrap { position: relative; }
 .ua-ship { position: relative; padding: 12px 10px 0; }
-.ua-dock-label { margin: 0 0 8px; font: 600 10px var(--font-code); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-.ua-dock { list-style: none; margin: 0; padding: 0 0 4px; display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; position: relative; z-index: 4; }
-.ua-dock li { display: flex; align-items: center; gap: 8px; padding: 6px 11px 6px 6px; background: #fffdf8; color: #1c1a17; border: 1px solid var(--rule);
-  border-radius: 6px; box-shadow: 0 6px 14px -10px #0008; font: 600 12.5px var(--font-text); white-space: nowrap; transition: opacity .3s; }
-.ua-dock .ua-logo { width: 24px; height: 24px; }
-.ua-dock li.is-in { opacity: 1; background: transparent; color: var(--muted); border-style: dashed; box-shadow: none; }
-.ua-dock li.is-in .ua-logo { opacity: .35; filter: grayscale(1); }
-.ua-dock li.is-flying { animation: ua-fly-in .8s cubic-bezier(.45, .05, .35, 1) forwards; z-index: 5; }
+.ua-ship { padding-top: 40px; }
+.ua-dock { list-style: none; margin: 0; padding: 0; position: absolute; z-index: 5; top: 4px; left: 0; right: 0; display: flex; justify-content: center;
+  pointer-events: none; }
+.ua-dock li { display: flex; align-items: center; gap: 9px; padding: 7px 13px 7px 7px; background: #fffdf8; color: #1c1a17; border: 1px solid var(--rule);
+  border-radius: 6px; box-shadow: 0 10px 20px -10px #0009; font: 600 14px var(--font-text); white-space: nowrap; }
+.ua-dock .ua-logo { width: 28px; height: 28px; }
+.ua-dock li.is-arriving { opacity: 0; }
+.ua-dock li.is-flying { animation: ua-fly-in .86s cubic-bezier(.45, .05, .35, 1) forwards; }
 @keyframes ua-fly-in {
-  0% { transform: translate(0, 0) scale(1); }
-  15% { transform: translate(0, -10px) scale(1.08) rotate(-2deg); box-shadow: 0 16px 24px -10px #0009; }
-  80% { opacity: 1; transform: translate(var(--dx), var(--dy)) scale(.55); }
+  0% { opacity: 0; transform: translateY(10px) scale(.85); }
+  16% { opacity: 1; transform: none; }
+  30% { opacity: 1; transform: translateY(-6px) scale(1.06); box-shadow: 0 18px 26px -12px #000a; }
+  84% { opacity: 1; transform: translate(var(--dx), var(--dy)) scale(.5); }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.35); } }
 .ua-container { display: block; width: 100%; height: auto; overflow: visible; margin: 14px 0 4px; }
 .ua-c-shadow { fill: #00000030; filter: blur(7px); }
