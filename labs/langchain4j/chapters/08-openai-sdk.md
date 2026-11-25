@@ -72,7 +72,10 @@ the API without the endpoint: the SDK adds `/chat/completions` itself.
 
 :::step{type=task task=sdk_client title="Your turn: the client" file="08-openai-sdk/src/main/java/com/setu/Sdk.java" line="16-19"}
 Finish `Sdk.client(baseUrl, apiKey)`: build an `OpenAIClient` with `OpenAIOkHttpClient.builder()`, the base URL and the
-key.
+key: `return OpenAIOkHttpClient.builder().baseUrl(baseUrl).apiKey(apiKey).build();`
+
+The usual slip: a base URL that already ends in `/chat/completions`. The SDK adds that path itself, so the request
+goes to `.../chat/completions/chat/completions`, which does not exist.
 
 Press **Check**.
 :::
@@ -84,6 +87,9 @@ Finish `Sdk.ask(client, question)`:
    `.addUserMessage(question)`;
 2. send it with `client.chat().completions().create(params)`;
 3. return the first choice's message content, `orElse("")`.
+
+The usual slip: `.content().get()`. It works for ordinary answers, and throws `NoSuchElementException` the first
+time a message has no text (chapter 19's tool calls).
 
 ```bash run
 cd /workspace/08-openai-sdk && mvn -q compile exec:java
@@ -101,7 +107,8 @@ Sahyadri Rail operates scenic trains between Pune, Lonavala, Karjat, and Ratnagi
 ```
 
 The same question as chapter 7, with not a line of JSON in your code. We ran it twice, and the two answers differ,
-because each token is sampled (chapter 6). Now read the first answer again: "Popular trains include the **Sahyadri
+because each token is sampled (chapter 6). (Two more runs on 26 November named no trains at all, and both sent the
+passenger to "our website": the invention below comes and goes, which makes it easy to miss in a quick test.) Now read the first answer again: "Popular trains include the **Sahyadri
 Express** and the **Hill-View Special**." Sahyadri Rail has no such trains. The model invented two plausible names,
 politely and with confidence. Keep that in mind; chapter 11 fixes it.
 
@@ -170,7 +177,7 @@ You can now:
 
 Next, chapter 9: LangChain4j. One `ChatModel` interface for every provider, and Setu's first LangChain4j app.
 
-:::photo{src="/lesson-images/langchain4j/l4j-08-notes.webp" alt="Handwritten notes about the OpenAI Java SDK: typed classes; one client per application; content() is an Optional; the same request underneath; it ties you to one provider" ai="true"}
+:::photo{src="/lesson-images/langchain4j/l4j-08-notes.webp" alt="Sketchnote, The OpenAI Java SDK (the same call, with typed classes): Java classes for every request and answer, so the compiler checks your call. The request sent is the one from chapter 7. The flow: OpenAIClient, ChatCompletionCreateParams, create(params), content(): Optional. What we found: two runs, two different answers; once it invented two train names; content() is empty when a tool is called; it ties your code to one provider." ai="true"}
 One page of notes for this chapter.
 :::
 :::
