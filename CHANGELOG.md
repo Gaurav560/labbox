@@ -1,5 +1,11 @@
 # Changelog
 
+## 25 November (Ukiyo): no tap badge; the plate says TAP TO START
+
+- Owner: "very bad placing" (the badge above the container), then left the choice to me. The badge is gone; the
+  "Try it: tap Run" command is the call to action, the container stays tappable anywhere, and its status plate
+  reads "▶ TAP TO START" in softly pulsing green until it runs.
+
 ## 25 November (Ukiyo): "Tap to spin it up" above the container
 
 - Owner: "place this tap to spin it up somewhere else". It sits centred in the space above the container (where the

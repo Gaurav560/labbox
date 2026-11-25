@@ -119,7 +119,7 @@ function Casting({ at }: { at: Pt }) {
 function Container({ phase, loaded, pieces, bump }: { phase: "wait" | "load" | "close" | "start" | "run"; loaded: number; pieces: Piece[]; bump: number }) {
   const open = phase === "wait" || phase === "load";
   const strips = 26;
-  const plate = phase === "run" ? "● RUNNING" : phase === "start" ? "◐ STARTING" : phase === "close" ? "◼ SEALING" : phase === "load" ? `▲ LOADING ${loaded}/${pieces.length}` : "○ EMPTY";
+  const plate = phase === "run" ? "● RUNNING" : phase === "start" ? "◐ STARTING" : phase === "close" ? "◼ SEALING" : phase === "load" ? `▲ LOADING ${loaded}/${pieces.length}` : "▶ TAP TO START";
   const doorLeaf = (a: Pt, b: Pt, c: Pt, d: Pt, ribs: number) => (
     <>
       <polygon className="ua-c-leaf" points={pts(a, b, c, d)} />
@@ -326,8 +326,8 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
               );
             })()}
           </ul>
-          {waiting && <button type="button" className="ua-tap" onClick={spin}>▶ Tap to spin it up</button>}
-          <div ref={svgWrap} className={waiting ? "is-tappable" : ""} onClick={waiting ? spin : undefined}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
+          <div ref={svgWrap} className={waiting ? "is-tappable" : ""} onClick={waiting ? spin : undefined}
+            title={waiting ? "Tap to start" : undefined}><Container phase={phase} loaded={phase === "load" ? Math.max(0, step) : waiting ? 0 : n} pieces={lab.pieces} bump={loadedNow} /></div>
         </div>
         <div className="ua-logwrap">
           <ol className="ua-log" aria-live="polite">
