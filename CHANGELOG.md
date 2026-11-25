@@ -1,5 +1,17 @@
 # Changelog
 
+## 25 November: LangChain chapter 10 rewritten (easy, a little detailed, checked)
+
+- Tools, docstrings, type hints and JSON schemas are explained where they first appear; both tasks list their steps and
+  the usual slips.
+- The agent-loop animation is now a still picture of the real run: the question, the reply with two tool calls, the two
+  tool results, and the answer.
+- Checked by running the solution through the lab gateway (the same messages and answer; only call ids change), by
+  printing the real schema LangChain sends for `storage_cost`, by raising the garlic error, and by confirming that
+  `create_agent` lets a tool's exception through by default (a ValueError), as the deep dive says. Corrected: "models
+  are bad at arithmetic" became "a model can get arithmetic wrong: it predicts digits"; "every major provider followed"
+  became "the other major providers added the same idea"; ReAct dated October 2022. A new notes page.
+
 ## 25 November: LangChain chapter 9 rewritten (easy, a little detailed, checked)
 
 - Hallucination, grounding, mandi and quintal are explained where they first appear; both tasks list their steps and

@@ -11,7 +11,7 @@ Status: **1 of 23 labs done** (13 of 319 chapters).
 | # | Lab | Title | Chapters | Status | Done on |
 |---|---|---|---|---|---|
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
-| 2 | langchain | LangChain | 27 | in progress (9 of 27) | |
+| 2 | langchain | LangChain | 27 | in progress (10 of 27) | |
 | 3 | langchain4j | LangChain4j | 30 | not started | |
 | 4 | langgraph | LangGraph | 24 | not started | |
 | 5 | spring-ai | Spring AI | 20 | not started | |

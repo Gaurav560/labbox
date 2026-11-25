@@ -1,9 +1,9 @@
 :::step{type=story title="A model that can ask for help"}
 Chapter 9 made Navin honest by pasting facts into the prompt. But some answers are not facts to paste: "what does it
-cost to store 60 crates for 10 days?" needs **arithmetic**, and models are bad at arithmetic (they predict likely
-digits). "What is the onion rate?" needs today's **live** number from the co-op's system, which changes every morning.
+cost to store 60 crates for 10 days?" needs **arithmetic**, and a model can get arithmetic wrong: it predicts likely digits instead of calculating
+(chapter 4). For sums the co-op charges money for, the answer must come from code. "What is the onion rate?" needs today's **live** number from the co-op's system, which changes every morning.
 
-The fix is to let the model **ask your code**. You describe a few Python functions, **tools**, to the model. When it
+The fix is to let the model **ask your code**. You describe a few Python functions to the model; described this way they are called **tools**. When it
 needs one, instead of answering, it replies "please call `storage_cost` with crates=60 and days=10". Your code runs the
 function and sends back the result; the model then writes the answer. A model plus that loop is an **agent**.
 
@@ -31,7 +31,9 @@ def storage_cost(crates: int, days: int) -> int:
     return crates * days * 2
 ```
 
-The model never sees the code. It sees a **description**, built from the name, the docstring and the type hints:
+The model never sees the code. It sees a **description**, built from the function's name, its **docstring** (the text
+in triple quotes under the `def`) and its **type hints** (`int`, `str`), written as a **JSON schema** (a standard
+way to describe what shape some JSON must have). This is the real description of `storage_cost`:
 
 ```json
 {"name": "storage_cost",
@@ -49,10 +51,10 @@ Until 2023 a model could only produce text. To make it "use a calculator", appli
 phrase and searched the answer for it, which broke whenever the model phrased it differently.
 :::
 
-In **2022** the **ReAct** paper (Shunyu Yao and colleagues) showed models alternating reasoning and actions, and in
+In **October 2022** the **ReAct** paper (Shunyu Yao and colleagues) showed models alternating reasoning and actions, and in
 **February 2023** Meta's **Toolformer** taught a model to insert calls to calculators and search engines into its own
 text. In **June 2023** OpenAI added **function calling** to its API: tools described as JSON schemas, and replies that
-are structured tool calls instead of text to parse. Every major provider followed with the same idea, and LangChain's
+are structured tool calls instead of text to parse. The other major providers added the same idea, and LangChain's
 `bind_tools` and `tool_calls` hide the small differences between them.
 
 :::solved
@@ -82,9 +84,18 @@ answers.
 :::
 
 :::step{type=task task=run_tool_call title="Your turn: run one tool call" file="10-agent-loop/loop.py" line="5-10"}
-Finish `run_tool_call(call, tools_by_name)`: run the named tool with the call's args and return a `ToolMessage` with
-`str(result)` and the call's id. If the tool raises an exception, return a `ToolMessage` whose content is `"Error: "`
-plus the exception's text: the model can read it and tell the member.
+Finish `run_tool_call(call, tools_by_name)`:
+
+1. Find the tool: `tools_by_name[call["name"]]`.
+2. Run it inside `try`: `result = tool.invoke(call["args"])`.
+3. Return `ToolMessage(content=str(result), tool_call_id=call["id"])`.
+4. If the tool raises an exception, return a `ToolMessage` whose content is `"Error: "` plus the exception's text
+   (`str(e)`), with the same `tool_call_id`: the model can read it and tell the member.
+
+The usual slips:
+
+- Forgetting `tool_call_id`: the model cannot tell which request the result answers, and the API rejects the next call.
+- `content=result` without `str(...)`: a number is not text.
 
 Press **Check**.
 :::
@@ -102,7 +113,7 @@ An agent run is a loop over one growing list of messages:
 :::
 
 :::diagram{name="lc-agent-loop"}
-The model asks for tools, your code runs them and adds the results, and the model is called again until it answers.
+Chapter 10's real run as the growing list of messages: two model calls, and your code in between.
 :::
 
 Two rules keep it safe. The model may ask for several tools in one reply: run them all. And a model can keep asking
@@ -111,9 +122,19 @@ model call.
 :::
 
 :::step{type=task task=agent_loop title="Your turn: the agent loop" file="10-agent-loop/loop.py" line="13-20"}
-Finish `agent_loop(model, messages, tools, max_steps)`: at most `max_steps` times, call `model_with_tools.invoke(messages)`
-and add the reply; if it has no `tool_calls`, return it; otherwise add `run_tool_call(...)` for each call. If the steps
-run out, raise `RuntimeError("the agent did not finish in max_steps")`.
+Finish `agent_loop(model, messages, tools, max_steps)`. `model_with_tools` (already made for you) is the model with the
+tool descriptions bound to it.
+
+1. Repeat at most `max_steps` times: `reply = model_with_tools.invoke(messages)`, then `messages.append(reply)`.
+2. If `reply.tool_calls` is empty, the model has answered: return `reply`.
+3. Otherwise, for each call in `reply.tool_calls`, append `run_tool_call(call, tools_by_name)`.
+4. If the loop ends without an answer, `raise RuntimeError("the agent did not finish in max_steps")`.
+
+The usual slips:
+
+- Not appending the model's reply before the tool results: the API needs the reply with the tool calls first, then
+  one ToolMessage per call.
+- Running only the first tool call when the model asked for two.
 
 ```bash run
 cd /workspace/10-agent-loop && python main.py
@@ -123,6 +144,8 @@ Press **Check**.
 :::
 
 :::step{type=try title="Two tools in one turn"}
+A real run (we ran it again on 25 November and got the same messages; only the call ids change every time):
+
 ```text
 $ python main.py
 SystemMessage  "You are Navin, the help desk assistant of the Pimpalgaon Farmers' Cooperative near Nashik. Members grow onion
@@ -199,7 +222,7 @@ You can now:
 
 Next, chapter 11: `create_agent`, the same loop built by LangChain.
 
-:::photo{src="/lesson-images/langchain/lc-10-notes.webp" alt="Handwritten notes about an agent loop built by hand: Agent = model + tool loop; The model asks, Python runs; ToolMessage answers a call id; Errors become messages; max_steps caps the bill" ai="true"}
+:::photo{src="/lesson-images/langchain/lc-10-notes.webp" alt="Handwritten notes about the agent loop: A tool is a Python function the model can ask you to run. The model sees only its name, docstring and parameter types. A reply with tool calls has no answer yet: run the tools. Each ToolMessage carries the id of the call it answers. Repeat until a reply has no tool calls, at most max_steps times. Our question needed two model calls and two tools." ai="true"}
 One page of notes for this chapter.
 :::
 :::
