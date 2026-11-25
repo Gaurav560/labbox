@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November (Ukiyo): direction A refined, packed step by step
+
+- Owner liked "real logos in a box" but wanted a more refined animation, "Editor and terminal" instead of VS Code
+  (the editor may change if VS Code is too heavy), an "AI code assistant", and each step shown line by line. Now the
+  box shows empty slots; the next one pulses; each piece flies in, settles with a small bounce and a ring, and its
+  line appears in a log under the tiles ("✓ Java 21 the JDK the course uses"); a progress bar and a clock run in
+  the lid; when the last piece is in, the box turns green ("ready") and the first challenge with Start slides up.
+  It starts when scrolled into view, replays on a lab change, keeps its height, and stays still with reduced motion.
+
 ## 25 November (Ukiyo): four new directions for "start a lab" at /ukiyo/machine
 
 - Owner did not like the first five ("tbh I didn't like any of it", then "show me all"). The review page now has
