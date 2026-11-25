@@ -734,7 +734,7 @@ def image_provider(settings) -> tuple[str, str, str] | None:
     return None
 
 
-def generate_image(prompt: str, provider: str, key: str, model: str, quality: str = "medium") -> bytes:
+def generate_image(prompt: str, provider: str, key: str, model: str, quality: str = "medium", size: str = "1536x1024") -> bytes:
     import base64
 
     import httpx
@@ -744,7 +744,7 @@ def generate_image(prompt: str, provider: str, key: str, model: str, quality: st
         r = httpx.post(
             OPENAI_URL,
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model": model, "prompt": prompt, "size": "1536x1024", "quality": quality, "output_format": "webp", "n": 1},
+            json={"model": model, "prompt": prompt, "size": size, "quality": quality, "output_format": "webp", "n": 1},
             timeout=240,
         )
         if r.status_code != 200:
