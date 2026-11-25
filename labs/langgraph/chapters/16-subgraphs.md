@@ -60,6 +60,10 @@ back (`verdict`). `readings` stays inside the billing graph: the desk never sees
 In `build_graph`, replace the empty function with the billing office's graph: `graph.add_node("billing",
 build_billing())`.
 
+The usual slip: `build_billing` without the brackets. LangGraph then treats the **builder function** as the node and
+calls it with the state. We tried it: `TypeError: build_billing() takes 0 positional arguments but 1 was given`. The
+node must be the compiled graph that `build_billing()` returns.
+
 Press **Check**.
 :::
 
@@ -82,13 +86,18 @@ The repair office can rename anything inside its graph; only this function needs
 | State out | the shared keys are merged back | whatever the function returns |
 
 :::diagram{name="lg-subgraph"}
-Billing shares keys and runs as the node itself; repairs is called through a function that translates both ways.
+Two real tickets (26 November): billing shares keys, repairs is translated both ways.
 :::
 :::
 
 :::step{type=task task=map_state title="Your turn: translate in and out" file="16-subgraphs/desk.py" line="30-33"}
-Finish `repairs(state)`: `result = REPAIRS.invoke({"job": state["ticket"]})`, then return
-`{"repair_log": result["log"]}`.
+Finish `repairs(state)`:
+
+1. `result = REPAIRS.invoke({"job": state["ticket"]})` (ticket in, as a job);
+2. `return {"repair_log": result["log"]}` (the job's log out, as the ticket's repair log).
+
+The usual slip: skipping the function and adding the repair graph directly, `add_node("repairs", build_repairs())`,
+as with billing. The repair graph then receives the desk's keys, which have no `job`. We tried it: `KeyError: 'job'`.
 
 ```bash run
 cd /workspace/16-subgraphs && python main.py
@@ -123,7 +132,8 @@ $ python main.py
 graph, and the line after them is the subgraph's result as the desk sees it. Its update is `phone` and `verdict`, the
 shared keys; `readings` stayed inside.
 
-The first bill was held: 2,410 litres a day against an average of 611 is four times normal. The second was fine. The
+(We ran it again on 26 November: the same output, line for line.) The first bill was held: 2,410 litres a day against
+an average of 611 is 3.9 times normal, over the rule's limit of three times. The second was fine. The
 third ticket went to repairs, and even though `repairs` is a plain function that calls `REPAIRS.invoke`, its inner steps
 still appear under `repairs /`: LangGraph links a subgraph called inside a node to its parent run.
 :::
@@ -136,7 +146,8 @@ The billing office renames `verdict` to `decision` in its own graph. What happen
 - [x] The desk's `verdict` stays empty: shared keys are matched by name
 - [ ] LangGraph renames it automatically
 :::explain
-Sharing keys couples the graphs by their names. If an office's names may change, call it through a translating function.
+We tried it with a billing graph that writes `decision`: the desk's `verdict` came back `None`, with no error. Sharing
+keys couples the graphs by their names. If an office's names may change, call it through a translating function.
 :::
 :::
 
@@ -185,7 +196,7 @@ You can now:
 
 Next, chapter 17: several agents, and a supervisor that hands work between them.
 
-:::photo{src="/lesson-images/langgraph/lg-16-notes.webp" alt="Handwritten notes about subgraphs: a graph can be a node; shared keys: add it directly; other keys: translate in/out; subgraphs=True shows inside; details stay in the office" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-16-notes.webp" alt="Handwritten notes titled Subgraphs, graphs built from graphs: a compiled graph can be a node, added directly if it shares keys with the parent, or called from a function that translates in and out if it speaks other words; desk ticket T-4492, the repairs function, the ticket becomes a job, the repair graph runs, the log becomes repair_log; build_billing without brackets gave TypeError; repairs added directly gave KeyError job; a renamed key left verdict silently None; readings stayed inside the billing graph" ai="true"}
 One page of notes for this chapter.
 :::
 :::

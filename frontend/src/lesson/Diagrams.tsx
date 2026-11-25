@@ -3652,20 +3652,27 @@ function LgAgenticRag() {
 }
 
 function LgSubgraph() {
+  // Still (owner, 26 November): chapter 16's real tickets T-4490 (billing) and T-4492 (repairs).
   return (
-    <SketchSteps
-      title="Two offices, two ways to connect"
-      intro="Press Play to follow two tickets."
-      label="Subgraphs"
-      steps={[
-        { label: "triage", says: "T-4490 is a billing complaint: go to the billing node." },
-        { label: "billing", says: "The billing graph itself is the node. It reads phone from the desk's state." },
-        { label: "inside billing", says: "load_readings, then check_jump: four times the average, so the bill is held." },
-        { label: "merge back", says: "The shared key verdict comes back to the desk; readings stays inside." },
-        { label: "repairs", says: "T-4492 is a leak. The repairs function sends {'job': 'T-4492'} to the repair graph." },
-        { label: "translate back", says: "The job's log comes back as the ticket's repair_log." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 330" label="T-4490: the billing graph is the node itself; it reads the shared key phone, keeps readings inside, and returns phone and verdict, held at 2410 litres a day against 611. T-4492: the repairs function translates ticket to job, runs the repair graph, and translates its log back to repair_log">
+      <text className="dg-label" x={8} y={18}>T-4490: shared keys, the graph is the node</text>
+      <Box x={8} y={28} w={130} h={40} label="desk: phone" tone="plain" />
+      <Arrow x1={138} y1={48} x2={154} y2={48} />
+      <Box x={154} y={28} w={132} h={40} label="billing graph" tone="accent" />
+      <Arrow x1={286} y1={48} x2={302} y2={48} />
+      <Box x={302} y={28} w={130} h={40} label="desk: verdict" tone="copy" />
+      <text className="dg-note" x={154} y={88}>readings stay inside</text>
+      <text className="dg-note" x={8} y={112}>verdict: held, 2,410 litres a day against 611</text>
+      <text className="dg-label" x={8} y={156}>T-4492: other keys, a function translates</text>
+      <Box x={8} y={166} w={130} h={40} label="ticket: T-4492" tone="plain" />
+      <Arrow x1={138} y1={186} x2={154} y2={186} />
+      <Box x={154} y={166} w={132} h={40} label="job: T-4492" tone="accent" />
+      <Arrow x1={286} y1={186} x2={302} y2={186} />
+      <Box x={302} y={166} w={130} h={40} label="log" tone="accent" />
+      <Arrow x1={367} y1={206} x2={367} y2={226} />
+      <Box x={154} y={226} w={278} h={40} label="repair_log: crew, parts" tone="copy" />
+      <text className="dg-note" x={8} y={300}>Repairs added directly, without the function: KeyError: 'job'.</text>
+    </Svg>
   );
 }
 
