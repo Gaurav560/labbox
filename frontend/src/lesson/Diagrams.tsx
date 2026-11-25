@@ -3706,19 +3706,28 @@ function LgSupervisor() {
 }
 
 function LgStream() {
+  // Still (owner, 26 November): chapter 18's real run, events on a time line (seconds).
+  const x0 = 20, scale = 120;
+  const t = (sec: number) => x0 + sec * scale;
+  const marks: [number, string, number][] = [
+    [0.0, "finding your tickets", 70], [0.5, "found 2, checking", 104], [2.27, "first token", 70], [3.09, "done", 104],
+  ];
   return (
-    <SketchSteps
-      title="What reaches the screen, and when"
-      intro="Press Play to follow one update request."
-      label="Streaming"
-      steps={[
-        { label: "0.00 s", says: "lookup starts and writes 'finding your tickets': a custom event, shown at once." },
-        { label: "0.50 s", says: "The tickets are found: 'found 2, checking the crew schedule'." },
-        { label: "1.0 s", says: "lookup ends; the reply node calls the model." },
-        { label: "2.22 s", says: "The first token arrives as a messages chunk from the reply node." },
-        { label: "3.73 s", says: "The last of 72 chunks. Without streaming, the screen would have been empty until now." },
-      ]}
-    />
+    <Svg viewBox="0 0 440 236" label="One real run on a time line: progress at 0.00 and 0.50 seconds, the lookup ends at about 1 second, the first token arrives at 2.27 seconds and the reply ends at 3.09 seconds with 73 chunks">
+      <text className="dg-label" x={8} y={18}>what the screen shows, second by second</text>
+      <Box x={t(0)} y={130} w={1.0 * scale} h={26} label="lookup" tone="plain" />
+      <Box x={t(1.0)} y={130} w={1.27 * scale} h={26} label="model starts" tone="highlight" />
+      <Box x={t(2.27)} y={130} w={0.82 * scale} h={26} label="tokens" tone="copy" />
+      {marks.map(([sec, text, y]) => (
+        <g key={text}>
+          <line className="dg-arrow" x1={t(sec)} y1={y + 6} x2={t(sec)} y2={128} strokeDasharray="3 4" />
+          <text className="dg-note" x={t(sec) + 4} y={y}>{text}</text>
+        </g>
+      ))}
+      {[0, 1, 2, 3].map((sec) => <text key={sec} className="dg-note" x={t(sec) - 4} y={176}>{sec} s</text>)}
+      <text className="dg-note" x={8} y={208}>Without streaming: nothing for 3.09 s. With it: the longest</text>
+      <text className="dg-note" x={8} y={228}>silence is 1.77 s, before the first of 73 chunks.</text>
+    </Svg>
   );
 }
 

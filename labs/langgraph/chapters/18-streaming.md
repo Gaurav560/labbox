@@ -58,12 +58,20 @@ def lookup(state):
 
 Whatever you pass to `write` comes out of `app.stream(..., stream_mode="custom")`, at the moment it is written, while the
 node is still running. It is ignored when nobody streams `custom` (a plain `invoke`), so the node works the same either
-way.
+way. One catch for tests: the writer needs a running graph. We called `lookup({"phone": "98220"})` directly, as a
+unit test might, and got `RuntimeError: Called get_config outside of a runnable context`. Test such a node through the
+graph (chapter 20).
 :::
 
 :::step{type=task task=progress_events title="Your turn: progress from a node" file="18-streaming/stream.py" line="27-34"}
-In `lookup`, add `write = get_stream_writer()`, then `write({"progress": "finding your tickets"})` at the start and
-`write({"progress": f"found {len(found)}, checking the crew schedule"})` after the tickets are found.
+In `lookup`:
+
+1. at the start, `write = get_stream_writer()` and `write({"progress": "finding your tickets"})`;
+2. after the tickets are found, `write({"progress": f"found {len(found)}, checking the crew schedule"})`.
+
+The usual slip: writing a plain string, `write("finding your tickets")`. The node still runs, but `events` reads
+`chunk["progress"]`, and a string has no such key. We tried it: `TypeError: string indices must be integers, not
+'str'`.
 
 Press **Check**.
 :::
@@ -83,14 +91,20 @@ metadata says which node the tokens came from (`meta["langgraph_node"]`), so the
 not those of a classifier or a checker running elsewhere in the graph.
 
 :::diagram{name="lg-stream"}
-Progress events arrive during the lookup; tokens start arriving as soon as the model starts writing.
+One real run (26 November) on a time line: what the citizen would see, and when.
 :::
 :::
 
 :::step{type=task task=stream_tokens title="Your turn: the reply token by token" file="18-streaming/stream.py" line="51-56"}
-Finish `events(app, phone)`: loop over `app.stream({"phone": phone}, stream_mode=["custom", "messages"])`. For
-`"custom"`, `yield "progress", chunk["progress"]`; for `"messages"`, `message, meta = chunk`, and
-`yield "token", message.content` when `meta["langgraph_node"] == "reply"` and the content is not empty.
+Finish `events(app, phone)`:
+
+1. loop over `app.stream({"phone": phone}, stream_mode=["custom", "messages"])`, getting `mode, chunk`;
+2. for `"custom"`, `yield "progress", chunk["progress"]`;
+3. for `"messages"`, `message, meta = chunk`, and `yield "token", message.content` when `meta["langgraph_node"] ==
+   "reply"` and the content is not empty.
+
+The usual slip: leaving out the empty-content check. We counted: one run sent **4** empty chunks (the model's first
+and last pieces carry no text), which a screen would draw as nothing, or count as tokens.
 
 ```bash run
 cd /workspace/18-streaming && python main.py
@@ -112,7 +126,10 @@ For| ticket| T|-|447|1|,| the| East| Zone| Crew| |2| has| been| assigned| to| ad
 Each `|` marks where one chunk ended. The tokens are the model's own pieces: "T", "-", "447", "1" for a ticket number,
 a space glued to the front of most words.
 
-Read the times. The first sign of life came at **0.00 s**, and the second at 0.50 s. The model call started at about
+We ran it twice more on 26 November: the progress events came at 0.00 s and 0.50 s again; the first token at 2.27 s and
+2.50 s; the end at 3.09 s and 3.39 s, after 73 and 72 chunks. Model times vary a little; the shape does not.
+
+Read the times of the run above. The first sign of life came at **0.00 s**, and the second at 0.50 s. The model call started at about
 1.0 s; its first token arrived at **2.22 s**, and the last at **3.73 s**. Without streaming the citizen would see nothing
 for 3.73 seconds; with it, the longest silence is the 1.7 seconds between the second progress event and the first
 token (a third event, "writing your reply", would cut that too), and the reply can be read while it is written. The work
@@ -128,7 +145,8 @@ progress events?
 - [x] Nothing: with no one streaming "custom", the writer's events are dropped, and the result is the same
 - [ ] They are added to the state
 :::explain
-Stream writers only matter to a caller that asks for the custom stream.
+We tried it: `invoke` returned the usual state (`phone`, `facts`, `reply`), with no sign of the events. Stream writers
+only matter to a caller that asks for the custom stream.
 :::
 :::
 
@@ -178,7 +196,7 @@ You can now:
 
 Next, chapter 19: the Functional API, the same durable machinery in plain Python functions.
 
-:::photo{src="/lesson-images/langgraph/lg-18-notes.webp" alt="Handwritten notes about streaming: get_stream_writer() = progress; custom + messages together; only the reply node's tokens; same total time; first sign of life: 0.00 s" ai="true"}
+:::photo{src="/lesson-images/langgraph/lg-18-notes.webp" alt="Handwritten notes titled Streaming, show progress while the work happens: a node sends progress with get_stream_writer, and stream_mode custom and messages together give progress and the reply tokens as they arrive; 0.00 seconds finding your tickets, 0.50 seconds found 2, the model starts, 2.27 seconds first token, 3.09 seconds done; the same total time with no long silent wait; filter tokens to the reply node; 4 empty chunks, so check the content; a node called outside a run raises RuntimeError" ai="true"}
 One page of notes for this chapter.
 :::
 :::

@@ -1,5 +1,16 @@
 # Changelog
 
+## 26 November: LangGraph chapter 18 rewritten: a time line of a real run, every slip tried
+
+- Re-ran it twice: the progress events at 0.00 s and 0.50 s again, the first token at 2.27 s and 2.50 s, the end at
+  3.09 s and 3.39 s (73 and 72 chunks). The lesson gives the three runs; a new still picture puts one on a time line.
+- Found: calling a node that uses `get_stream_writer` directly (as a unit test might) fails with `RuntimeError: Called
+  get_config outside of a runnable context`; the lesson warns about it before chapter 20.
+- Tried: the quiz (`invoke` returns the normal state, no events); a plain string to the writer (`TypeError: string
+  indices must be integers`, the first task's slip); no empty-content check (4 empty chunks in one run, the second
+  task's slip).
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 17 rewritten: runs compared, the suggested fix tried and found to bend a fact
 
 - Re-ran the team twice: once clean (one hold, one visit), once with the case sent to billing twice. Neither run
