@@ -1,5 +1,14 @@
 # Changelog
 
+## 25 November: LangChain chapter 6 rewritten (easy, a little detailed, checked)
+
+- SDK, client, retries and async are explained where they first appear; both tasks list their steps and the usual slips.
+- Checked by running the solution through the lab gateway and reading the installed SDK itself (openai 3.57.0): the
+  default is 2 retries, and the SDK retries lost connections, timeouts and HTTP 408, 409, 429 and 500 and above, never
+  401; the co-op's Rs 2 a crate a day for cold storage is in its handbook (chapter 9). A second run gave the same
+  confident wrong "no" (61 tokens in, 28 out), now noted. Corrected: "every provider ships an SDK" became "most"; the
+  retry list is now exactly the SDK's. A new notes page.
+
 ## 25 November: LangChain chapter 5 rewritten (easy, a little detailed, checked)
 
 - Web API, HTTP request, POST, JSON, header and environment variable are explained where they first appear; both
