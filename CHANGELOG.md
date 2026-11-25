@@ -1,5 +1,17 @@
 # Changelog
 
+## 26 November: LangGraph chapter 8 rewritten: a still token chart from a new run, slips tried with a fake model
+
+- Re-ran both graphs with the real model: the same pattern (trimmed asked for the address again, summarised read it
+  back). The lesson now shows this run, with its numbers in a new still chart (tokens per turn and messages kept).
+  New in this run: the summarised Harsh promised "I will request the tanker to come after 6 PM"; the lesson points it
+  out. The deep dive's quote of the summary's bent fact now uses this run's summary.
+- Found by testing `trim_messages`: with `start_on="human"` it can keep three messages instead of four (the fourth from
+  the end was a reply); the lesson says so.
+- Slips tried: `strategy="first"` keeps the start and drops the newest message; no `token_counter` is a `TypeError`;
+  removing every message in `summarise` (fake model) leaves the state empty, the new answer included.
+- A new sketchnote.
+
 ## 26 November: LangGraph chapter 7 rewritten: three real processes pictured, every slip tried
 
 - Re-ran the three commands on a new `harsh.db`: the same answers (the first now ends "with updates shortly"),

@@ -13,7 +13,7 @@ Status: **4 of 23 labs done** (90 of 319 chapters).
 | 1 | rag-vector-databases | RAG and vector databases | 13 | done (13 of 13) | 25 Nov |
 | 2 | langchain | LangChain | 27 | done (27 of 27) | 25 Nov |
 | 3 | langchain4j | LangChain4j | 30 | done (30 of 30) | 26 Nov |
-| 4 | langgraph | LangGraph | 24 | in progress (7 of 24) | |
+| 4 | langgraph | LangGraph | 24 | in progress (8 of 24) | |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | not started | |
 | 7 | python-basics | Python from zero | 19 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 26 Nov: LangGraph ch 8 done: re-run shown with a token chart; start_on can keep 3 of 4; three slips tried.
 - 26 Nov: LangGraph ch 7 done: conversation reproduced; both slips tried and quoted; a top-level thread_id works in 1.2.24.
 - 26 Nov: LangGraph ch 6 done: output reproduced; quiz and four Send/Command mistakes tried; the Literal return type shown to fix the diagram.
 - 26 Nov: LangGraph ch 5 done: fixed a wrong weekday in the lab's notice facts; grader missed the area 3 of 4 runs; joins measured.
