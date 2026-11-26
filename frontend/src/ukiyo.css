@@ -337,6 +337,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-hero-pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
 /* dark theme: the print one shade darker, so its pale snow does not glare (owner, 26 November) */
 :root:not([data-theme="light"]) .uh-hero-pic img { filter: brightness(.82); }
+/* The lab session over the print (owner, 27 November: "very shallow", the print must show behind it): a thin, mostly
+   clear glass, light text with a soft shadow, a fixed height so the typing never makes the box jump. */
+.uh-term { position: absolute; left: 6%; right: 6%; bottom: 6%; margin: 0; padding: 14px 16px; min-height: calc(6 * 1.75em + 28px);
+  background: #14120f47; color: #f3ede2; font: 13px/1.75 var(--font-code); white-space: pre; overflow: hidden;
+  border: 1px solid #ffffff2e; border-radius: 4px; backdrop-filter: blur(1.5px) saturate(1.05); -webkit-backdrop-filter: blur(1.5px);
+  text-shadow: 0 1px 2px #000000c0; box-shadow: 0 16px 34px -22px #000a; }
+.uh-term-prompt { color: #f1c27d; }
+.uh-term-ok { color: #a9dc8e; }
+.uh-term-out { color: #f3ede2; }
+.uh-term-cursor { display: inline-block; width: .55em; height: 1.05em; vertical-align: -2px; background: #f3ede2cc; animation: uh-blink 1.1s steps(1) infinite; }
+@keyframes uh-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .uh-term-cursor { animation: none; } }
 .uh-hero-art .u-print-credit { text-align: right; }
 /* a print in a paper mat with a fine ink line, like a framed sheet */
 .uh-frame { padding: 10px; background: #fffdf8; border: 1px solid var(--rule); box-shadow: 0 30px 60px -36px #0007; }

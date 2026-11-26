@@ -2,6 +2,8 @@
 
 ## 27 November: certificates to share on LinkedIn and X
 
+- Ukiyo home: the lab terminal is back over the Hiroshige print, typing its session on a loop, on thin see-through
+  glass so the print shows behind it (owner: "very shallow").
 - **Certificates** (owner: "a certificate automatically, with a URL shareable on LinkedIn, X and other social media,
   once a lab is passed and completed"). Earned at 80% of a lab's tasks; the first asks for the full name once
   (`user_profile.certificate_name`), later ones come by themselves with the check that finishes a lab (the check's

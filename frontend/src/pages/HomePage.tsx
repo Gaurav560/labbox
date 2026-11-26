@@ -6,6 +6,7 @@ import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { HomeFaq } from "../components/HomeSections";
 import UkiyoMachine from "../components/UkiyoMachine";
+import { useTyped } from "../components/useTyped";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
 import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
@@ -58,7 +59,8 @@ export default function HomePage() {
 
       <main>
         {/* The hero (owner, 25 November, from the eight options): two short lines, what you get, and Hiroshige's snowy
-            Kinryuzan temple (the terminal box over it was removed, owner 26 November). */}
+            Kinryuzan temple, with a see-through lab terminal typing over it (owner, 27 November: "very shallow", the print
+            shows behind it). */}
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
             <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to build AI apps,</em> <span className="uh-line uh-sting">or get left behind.</span></h1>
@@ -69,6 +71,7 @@ export default function HomePage() {
           <figure className="uh-hero-art">
             <div className="uh-hero-pic">
               <img src="/ukiyo/heroes/kinryuzan.webp" width={1000} height={1526} alt="Woodblock print: Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856" />
+              <HeroTerm />
             </div>
             <figcaption className="u-print-credit">Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856</figcaption>
           </figure>
@@ -150,6 +153,32 @@ export default function HomePage() {
         <SiteLinks faq={false} />
         <Copyright />
       </footer>
+    </div>
+  );
+}
+
+
+/** The hero's lab session, typed over the print on a loop (still with reduced motion). */
+const HERO_SESSION = [
+  "$ labbox start langchain",
+  "✓ machine ready in 58 s",
+  "$ python agent.py",
+  "> Which train leaves first?",
+  "  The 7:40 to Ooty, platform 2.",
+  "✓ task passed  +20 XP",
+];
+
+function HeroTerm() {
+  const { shown, typing } = useTyped(HERO_SESSION, 5000);
+  const line = (text: string, i: number | string) =>
+    text.startsWith("$ ")
+      ? <div key={i}><span className="uh-term-prompt">learner:~$</span> {text.slice(2)}</div>
+      : <div key={i} className={text.startsWith("✓") ? "uh-term-ok" : "uh-term-out"}>{text}</div>;
+  return (
+    <div className="uh-term" aria-label="A lab terminal" role="img">
+      {shown.map((t, i) => line(t, i))}
+      {typing && line(typing, "typing")}
+      <span className="uh-term-cursor" aria-hidden="true" />
     </div>
   );
 }
