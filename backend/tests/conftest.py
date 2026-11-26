@@ -44,6 +44,7 @@ os.environ["ALLOW_SIGNUP"] = "true"
 # Tests are the unnamed (development) instance, never the live site's (INSTANCE=prod in its own .env).
 os.environ["INSTANCE"] = ""
 os.environ["RELEASE"] = ""
+os.environ["PUBLIC_URL"] = ""
 # The gateway is tested in-process with the fake provider; no second server, no real models.
 os.environ["LLM_GATEWAY_ENABLED"] = "false"
 # VS Code in labs is tested on purpose (test_ide_docker.py); other tests keep the classic setup.

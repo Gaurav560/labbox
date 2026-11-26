@@ -106,12 +106,18 @@ CHECKS_DIR=$PROD/checks
 BACKUP_DIR=$PROD/backups
 LIBRARY_UPLOADS_DIR=$PROD/library
 CORS_ORIGINS=https://$host
+PUBLIC_URL=https://$host
 # Invite only: learners' code runs on this laptop. Accounts: deploy/laptop/prod adduser <name>
 ALLOW_SIGNUP=false
 LLM_GATEWAY_PORT=9100
 SENTRY_ENVIRONMENT=production
 EOF
     )
+  fi
+  # Settings added after the first setup (the live .env is never rewritten): appended when missing.
+  if ! grep -q '^PUBLIC_URL=' "$env"; then
+    { echo "# The site's address: certificate QR codes point at its /verify page."; echo "PUBLIC_URL=https://$host"; } >> "$env"
+    say "PUBLIC_URL=https://$host added"
   fi
   if [ "${COPY_KEY:-0}" = 1 ] && ! grep -q '^OPENAI_API_KEY=.' "$env"; then
     if grep -q '^OPENAI_API_KEY=.' "$DEV/backend/.env" 2>/dev/null; then
@@ -171,6 +177,9 @@ ingress:
 EOF
   if grep -q '^CORS_ORIGINS=' "$PROD/shared/.env" 2>/dev/null; then
     sed -i "s#^CORS_ORIGINS=.*#CORS_ORIGINS=https://$host#" "$PROD/shared/.env"
+  fi
+  if grep -q '^PUBLIC_URL=' "$PROD/shared/.env" 2>/dev/null; then
+    sed -i "s#^PUBLIC_URL=.*#PUBLIC_URL=https://$host#" "$PROD/shared/.env"
   fi
   systemctl --user enable labbox-prod-tunnel.service >/dev/null
   systemctl --user restart labbox-prod-tunnel.service

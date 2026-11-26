@@ -134,3 +134,39 @@ def test_the_next_certificate_comes_by_itself(api):
     assert got is not None and got.id
     other = api.get(f"/api/certificates/{got.id}").json()
     assert other["lab_id"] == OTHER and other["name"] == "Asha Verma"
+
+
+def test_verify_from_the_server(api):
+    """The QR code's page: what the server holds for an id (owner, 27 November: "verifies the authenticity from the
+    backend"). Verified, private (hidden), unknown, the home page's sample, and the QR itself."""
+    h, uid = signup(api, "cert")
+    pass_tasks(uid, LAB, needed(LAB))
+    cid = api.post(f"/api/labs/{LAB}/certificate", json={"name": "Asha Verma"}, headers=h).json()["id"]
+    v = api.get(f"/api/verify/{cid.lower()}").json()
+    assert v["status"] == "verified" and v["id"] == cid and v["name"] == "Asha Verma" and v["lab_id"] == LAB
+    assert v["tasks_passed"] == needed(LAB) and v["issued_at"] and v["checked_at"]
+    api.patch(f"/api/certificates/{cid}", json={"hidden": True}, headers=h)
+    v = api.get(f"/api/verify/{cid}").json()
+    assert v["status"] == "private" and v["name"] is None and v["lab_id"] is None
+    assert api.get("/api/verify/ZZZZZZZZ").json()["status"] == "unknown"
+    assert api.get("/api/verify/not-an-id!").json()["status"] == "unknown"
+    assert api.get(f"/api/verify/{certificates.SAMPLE_ID}").json()["status"] == "sample"
+    # The QR: an SVG for any well-formed id (it only holds the /verify address), 404 for anything else.
+    qr = api.get(f"/api/certificates/{cid}/qr.svg")
+    assert qr.status_code == 200 and qr.headers["content-type"].startswith("image/svg+xml") and b"<svg" in qr.content
+    assert api.get("/api/certificates/bad/qr.svg").status_code == 404
+
+
+def test_the_qr_holds_the_public_address(monkeypatch):
+    """PUBLIC_URL wins over the request's address, so a picture made anywhere points at the real site."""
+    from app.config import get_settings
+
+    monkeypatch.setenv("PUBLIC_URL", "https://labbox.example.org/")
+    get_settings.cache_clear()
+    try:
+        assert certificates.verify_url(certificates.public_base("http://localhost:8000"), "ABCDEFGH") == \
+            "https://labbox.example.org/verify/ABCDEFGH"
+    finally:
+        monkeypatch.setenv("PUBLIC_URL", "")
+        get_settings.cache_clear()
+    assert certificates.public_base("http://localhost:8000") == "http://localhost:8000"

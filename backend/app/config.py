@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     INSTANCE: str = ""
     # The commit being served (the release script sets it); /api/health reports it so a deploy can wait for it.
     RELEASE: str = ""
+    # The site's public address, e.g. https://labbox.gauravships.systems: certificate QR codes point at its /verify
+    # page. Empty: the address of the request (fine in development).
+    PUBLIC_URL: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"
     IDLE_STOP_MINUTES: float = 15

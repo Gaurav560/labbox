@@ -8,6 +8,9 @@ social media once a lab is passed and completed".
   page with the Open Graph and X card tags that LinkedIn, X, WhatsApp and Facebook read (their bots run no
   JavaScript), which sends people on to the app's page. The card's picture is /api/certificates/<id>/image.jpg.
 - The learner may hide a certificate (its page then says it is not available) and correct its name once.
+- Every certificate carries a QR code (owner, 27 November: "verifiable, from the backend server"). It holds the address
+  of /verify/<id>, where the app shows what the server's database holds for that id: who, which lab, when. A picture can
+  be edited; the record cannot, so a mismatch shows a fake. A hidden certificate is confirmed as genuine but private.
 """
 import html
 import io
@@ -17,13 +20,14 @@ import secrets
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from . import metrics, slots
-from .config import BACKEND_DIR
+from .config import BACKEND_DIR, get_settings
 from .labs import LabConfig, all_labs, get_lab
 from .models import Certificate, User, UserProfile
 
@@ -34,6 +38,9 @@ ID_LENGTH = 8
 NAME_RE = re.compile(r"^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ .'\-]{0,58}[A-Za-zÀ-ÖØ-öø-ÿ.]$")
 FONTS = Path(__file__).resolve().parent / "assets" / "fonts"
 PRINTS = BACKEND_DIR.parent / "frontend" / "public" / "ukiyo" / "labs"  # Ukiyo's woodblock print for each lab
+CERT_PRINTS = BACKEND_DIR.parent / "frontend" / "public" / "ukiyo" / "certs"  # a lab's own certificate print, if any
+SAMPLE_ID = "7KQ2M9XA"  # the sample certificate on the home page: never issued, /verify says it is the sample
+ID_RE = re.compile(rf"^[{ID_ALPHABET}]{{{ID_LENGTH}}}$")
 
 
 class CertificateOut(BaseModel):
@@ -114,7 +121,7 @@ def _profile(session: Session, user_id: int) -> UserProfile:
 def _new_id(session: Session) -> str:
     while True:
         cid = "".join(secrets.choice(ID_ALPHABET) for _ in range(ID_LENGTH))
-        if session.get(Certificate, cid) is None:
+        if cid != SAMPLE_ID and session.get(Certificate, cid) is None:
             return cid
 
 
@@ -209,6 +216,75 @@ def change(session: Session, user: User, cert_id: str, name: str | None, hidden:
     return cert
 
 
+# ---------- verification (the QR code's address) ----------
+
+class Verification(BaseModel):
+    """What the server holds for a certificate id, for /verify/<id>."""
+    id: str
+    status: Literal["verified", "private", "unknown", "sample"]
+    name: str | None = None
+    lab_id: str | None = None
+    lab_title: str | None = None
+    issued_at: datetime | None = None
+    tasks_passed: int | None = None
+    tasks_total: int | None = None
+    issuer: str = ISSUER
+    checked_at: datetime
+
+
+def normal_id(raw: str) -> str | None:
+    cid = raw.strip().upper()
+    return cid if ID_RE.match(cid) else None
+
+
+def verify(session: Session, raw_id: str) -> Verification:
+    from .models import utcnow
+
+    now = utcnow()
+    cid = normal_id(raw_id)
+    if cid == SAMPLE_ID:
+        return Verification(id=cid, status="sample", checked_at=now)
+    cert = session.get(Certificate, cid) if cid else None
+    known = cert is not None and cert.lab_id in {lab.id for lab in all_labs()}
+    if not known:
+        return Verification(id=cid or raw_id.strip().upper()[:16], status="unknown", checked_at=now)
+    assert cert is not None
+    if cert.hidden:
+        return Verification(id=cid, status="private", checked_at=now)
+    return Verification(id=cid, status="verified", name=cert.name, lab_id=cert.lab_id, lab_title=get_lab(cert.lab_id).title,
+                        issued_at=cert.issued_at, tasks_passed=cert.tasks_passed, tasks_total=cert.tasks_total, checked_at=now)
+
+
+def public_base(request_base: str) -> str:
+    return (get_settings().PUBLIC_URL or request_base).rstrip("/")
+
+
+def verify_url(base: str, cid: str) -> str:
+    return f"{base}/verify/{cid}"
+
+
+def qr_svg(url: str) -> bytes:
+    import segno
+
+    out = io.BytesIO()
+    segno.make(url, error="m").save(out, kind="svg", scale=4, border=2, dark="#1c1a17", light="#ffffff", xmldecl=False,
+                                     svgclass="cert-qr-svg", title="Scan to verify this certificate")
+    return out.getvalue()
+
+
+def _qr_image(url: str, size: int):
+    """The QR as a Pillow image, square, about `size` pixels."""
+    import segno
+    from PIL import Image
+
+    qr = segno.make(url, error="m")
+    out = io.BytesIO()
+    scale = max(1, size // (qr.symbol_size(border=2)[0]))
+    qr.save(out, kind="png", scale=scale, border=2, dark="#1c1a17", light="#ffffff")
+    out.seek(0)
+    return Image.open(out).convert("RGB")
+
+
 # ---------- what LinkedIn, X and others read ----------
 
 def share_page(cert: Certificate, base: str) -> str:
@@ -259,13 +335,13 @@ def _image_version(cert: Certificate) -> str:
     return f"{int(cert.issued_at.timestamp())}{int(cert.name_corrected)}"
 
 
-def image(cert: Certificate) -> bytes:
+def image(cert: Certificate, base: str) -> bytes:
     return _render(cert.id, cert.name, cert.lab_id, cert.tasks_passed, cert.tasks_total, cert.chapters_total,
-                   cert.issued_at.strftime("%d %B %Y"))
+                   cert.issued_at.strftime("%d %B %Y"), verify_url(public_base(base), cert.id))
 
 
 @lru_cache(maxsize=128)
-def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters: int, date: str) -> bytes:
+def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters: int, date: str, verify: str = "") -> bytes:
     """The 1200 x 627 card: cream paper, the lab's woodblock print on the left (Ukiyo), the text, a red seal."""
     from PIL import Image, ImageDraw, ImageFont
 
@@ -278,7 +354,9 @@ def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters:
         return ImageFont.truetype(str(FONTS / file), size)
 
     left = 0
-    art = PRINTS / f"{lab_id}.webp"
+    art = CERT_PRINTS / f"{lab_id}.webp"
+    if not art.is_file():
+        art = PRINTS / f"{lab_id}.webp"
     if art.is_file():
         try:
             pic = Image.open(art).convert("RGB")
@@ -315,20 +393,30 @@ def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters:
     facts = f"{passed} of {total} tasks passed on a real machine  ·  {chapters} chapters"
     d.text((x, top + 298), facts, font=font("inter-latin-400-normal.woff", 21), fill=muted)
 
-    d.line((x, H - 150, W - 72, H - 150), fill=(210, 198, 176), width=1)
+    d.line((x, H - 150, W - 72 - (112 + 46 + 40 if verify else 0), H - 150), fill=(210, 198, 176), width=1)
     d.text((x, H - 128), date, font=font("inter-latin-600-normal.woff", 21), fill=ink)
     d.text((x, H - 98), f"Certificate {cid}", font=font("inter-latin-400-normal.woff", 19), fill=muted)
     d.text((x, H - 72), ISSUER, font=font("fraunces-latin-600-normal.woff", 24), fill=ink)
 
-    # The red seal: a square stamp with the product's name.
-    s = 112
+    # The red seal: a small square stamp with the product's name, in the corner (owner: "very small").
+    s = 46
     sx, sy = W - 72 - s, H - 72 - s
-    d.rounded_rectangle((sx, sy, sx + s, sy + s), radius=10, fill=red)
-    d.rounded_rectangle((sx + 7, sy + 7, sx + s - 7, sy + s - 7), radius=6, outline=(240, 214, 200), width=2)
+    d.rounded_rectangle((sx, sy, sx + s, sy + s), radius=5, fill=red)
+    d.rounded_rectangle((sx + 3, sy + 3, sx + s - 3, sy + s - 3), radius=3, outline=(240, 214, 200), width=1)
     for i, word in enumerate(("Lab", "Box")):
-        f = font("fraunces-latin-600-normal.woff", 34)
+        f = font("fraunces-latin-600-normal.woff", 14)
         tw = d.textlength(word, font=f)
-        d.text((sx + (s - tw) / 2, sy + 16 + i * 38), word, font=f, fill=(250, 240, 230))
+        d.text((sx + (s - tw) / 2, sy + 7 + i * 15), word, font=f, fill=(250, 240, 230))
+
+    # The QR code, left of the seal: it opens /verify/<id>, the server's own record of this certificate.
+    if verify:
+        qs = 112
+        q = _qr_image(verify, qs).resize((qs, qs), Image.NEAREST)
+        qx, qy = sx - 18 - qs, H - 72 - qs
+        img.paste(q, (qx, qy))
+        cap = "Scan to verify"
+        f = font("inter-latin-400-normal.woff", 15)
+        d.text((qx + (qs - d.textlength(cap, font=f)) / 2, qy - 22), cap, font=f, fill=muted)
 
     out = io.BytesIO()
     img.save(out, "JPEG", quality=88, optimize=True, progressive=True)  # a quarter of a PNG's size, for a photo-like print
