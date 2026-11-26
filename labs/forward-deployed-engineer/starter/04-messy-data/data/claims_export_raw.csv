@@ -1,0 +1,246 @@
+claim_id,received,amount,vehicle,channel
+DS-26-10038,2026-07-02,34500.00,two-wheeler,email
+DS-26-10011,02/07/2026,"₹ 3,37,500",commercial,email
+DS-26-10097,04 Jul 2026,"Rs 21,500",two-wheeler,email
+DS-26-10201,2026-07-05,36500,two-wheeler,email
+DS-26-10201,2026-07-05,36500,two-wheeler,email
+DS-26-10013,05/07/2026,37500,two-wheeler,branch
+DS-26-10225,05 Jul 2026,38000.00,two-wheeler,email
+DS-26-10096,2026-07-05,"Rs 56,500",car,email
+DS-26-10210,06/07/2026,"Rs 223,000",car,email
+DS-26-10138,06 Jul 2026,"Rs 28,500",two-wheeler,branch
+DS-26-10002,2026-07-06,170500,car,branch
+DS-26-10129,07/07/2026,"₹ 19,500",two-wheeler,email
+DS-26-10188,07 Jul 2026,"Rs 4,000",two-wheeler,email
+DS-26-10022,2026-07-07,234000.00,car,agent
+DS-26-10056,07/07/2026,"₹ 1,81,000",car,branch
+DS-26-10053,08 Jul 2026,"₹ 29,000",two-wheeler,email
+DS-26-10058,2026-07-08,14500.00,two-wheeler,branch
+DS-26-10040,08/07/2026,"Rs 49,000",car,branch
+DS-26-10204,08 Jul 2026,,car,email
+DS-26-10052,2026-07-09,31000.00,car,email
+DS-26-10162,09/07/2026,"Rs 90,500",car,email
+DS-26-10026,10 Jul 2026,"₹ 1,82,500",car,branch
+DS-26-10095,2026-07-10,"₹ 3,29,500",commercial,email
+DS-26-10049,11/07/2026,39500.00,two-wheeler,agent
+DS-26-10230,12 Jul 2026,56000.00,two-wheeler,email
+DS-26-10018,2026-07-13,"₹ 5,000",two-wheeler,email
+DS-26-10112,13/07/2026,"₹ 23,000",two-wheeler,agent
+DS-26-10009,13 Jul 2026,"₹ 42,000",car,email
+DS-26-10071,2026-07-14,"Rs 16,500",two-wheeler,branch
+DS-26-10156,14/07/2026,"₹ 26,500",car,email
+DS-26-10215,16 Jul 2026,20500,two-wheeler,branch
+DS-26-10032,2026-07-16,155500.00,car,branch
+DS-26-10050,16/07/2026,26000.00,two-wheeler,branch
+DS-26-10101,16 Jul 2026,19500.00,two-wheeler,email
+DS-26-10126,2026-07-16,37500,two-wheeler,agent
+DS-26-10183,16/07/2026,"₹ 32,000",two-wheeler,email
+DS-26-10091,16 Jul 2026,"Rs 57,500",two-wheeler,email
+DS-26-10107,2026-07-17,"₹ 32,500",two-wheeler,email
+DS-26-10165,17/07/2026,"Rs 224,500",car,branch
+DS-26-10218,18 Jul 2026,"₹ 54,500",two-wheeler,branch
+DS-26-10141,2026-07-18,"₹ 2,38,500",car,branch
+DS-26-10141,2026-07-18,"₹ 2,38,500",car,branch
+DS-26-10141,2026-07-18,"₹ 2,38,500",car,branch
+DS-26-10211,18/07/2026,16000.00,two-wheeler,agent
+DS-26-10169,18 Jul 2026,24500,two-wheeler,email
+DS-26-10154,2026-07-19,89500,car,email
+DS-26-10229,19/07/2026,"₹ 39,000",commercial,email
+DS-26-10119,19 Jul 2026,139500,commercial,agent
+DS-26-10016,2026-07-20,12000,two-wheeler,branch
+DS-26-10127,20/07/2026,83000.00,car,email
+DS-26-10134,20 Jul 2026,214500.00,commercial,email
+DS-26-10220,2026-07-20,"₹ 20,500",two-wheeler,email
+DS-26-10163,21/07/2026,"₹ 2,00,500",car,agent
+DS-26-10147,21 Jul 2026,"Rs 33,500",two-wheeler,email
+DS-26-10227,2026-07-22,"Rs 18,500",two-wheeler,email
+DS-26-10047,22/07/2026,"Rs 27,000",two-wheeler,email
+DS-26-10131,23 Jul 2026,28000,two-wheeler,email
+DS-26-10175,2026-07-23,"₹ 52,000",two-wheeler,email
+DS-26-10146,23/07/2026,73500,car,email
+DS-26-10177,23 Jul 2026,"₹ 2,25,500",car,branch
+DS-26-10157,2026-07-24,15000.00,two-wheeler,branch
+DS-26-10150,24/07/2026,224500.00,car,agent
+DS-26-10074,24 Jul 2026,"Rs 58,000",car,branch
+DS-26-10064,2026-07-26,91000,commercial,email
+DS-26-10085,26/07/2026,56500.00,two-wheeler,branch
+DS-26-10001,27 Jul 2026,40500,car,email
+DS-26-10198,2026-07-28,"₹ 33,000",two-wheeler,email
+DS-26-10017,28/07/2026,3000.00,two-wheeler,email
+DS-26-10045,28 Jul 2026,"₹ 24,500",car,email
+DS-26-10069,2026-07-29,53500,two-wheeler,email
+DS-26-10200,29/07/2026,"₹ 68,500",car,email
+DS-26-10238,29 Jul 2026,160000.00,car,agent
+DS-26-10020,2026-07-30,"₹ 85,500",car,email
+DS-26-10207,30/07/2026,"Rs 181,500",car,agent
+DS-26-10102,30 Jul 2026,"Rs 18,500",two-wheeler,branch
+DS-26-10223,2026-07-30,51500.00,car,email
+DS-26-10140,30/07/2026,"₹ 17,500",two-wheeler,email
+DS-26-10173,30 Jul 2026,71500.00,commercial,agent
+DS-26-10214,2026-07-31,"Rs 27,500",car,email
+DS-26-10004,01/08/2026,"₹ 1,96,500",car,email
+DS-26-10142,02 Aug 2026,27500.00,two-wheeler,email
+DS-26-10006,2026-08-02,"₹ 2,29,500",car,email
+DS-26-10139,02/08/2026,35500,two-wheeler,agent
+DS-26-10051,03 Aug 2026,"Rs 56,000",two-wheeler,email
+DS-26-10144,2026-08-04,"Rs 5,500",two-wheeler,email
+DS-26-10113,04/08/2026,"₹ 40,000",two-wheeler,email
+DS-26-10098,05 Aug 2026,"Rs 45,000",two-wheeler,email
+DS-26-10161,2026-08-05,"₹ 26,500",two-wheeler,branch
+DS-26-10205,06/08/2026,"₹ 54,000",two-wheeler,email
+DS-26-10067,06 Aug 2026,"Rs 96,000",car,branch
+DS-26-10043,2026-08-06,"₹ 1,07,500",car,agent
+DS-26-10089,06/08/2026,"₹ 41,500",two-wheeler,agent
+DS-26-10100,07 Aug 2026,"₹ 87,500",commercial,branch
+DS-26-10055,2026-08-07,41000.00,two-wheeler,email
+DS-26-10023,07/08/2026,153000,car,email
+DS-26-10128,09 Aug 2026,"Rs 9,000",two-wheeler,branch
+DS-26-10191,2026-08-09,"₹ 7,000",two-wheeler,branch
+DS-26-10081,10/08/2026,41500.00,two-wheeler,branch
+DS-26-10121,10 Aug 2026,18000,two-wheeler,email
+DS-26-10160,2026-08-10,"₹ 10,000",two-wheeler,email
+DS-26-10160,2026-08-10,"₹ 10,000",two-wheeler,email
+DS-26-10024,10/08/2026,83500.00,car,branch
+DS-26-10194,10 Aug 2026,"₹ 52,000",car,branch
+DS-26-10078,2026-08-11,5000,two-wheeler,branch
+DS-26-10118,11/08/2026,213000.00,car,email
+DS-26-10083,12 Aug 2026,"₹ 2,24,500",car,email
+DS-26-10036,2026-08-13,"Rs 198,000",car,email
+DS-26-10103,13/08/2026,"₹ 58,500",two-wheeler,email
+DS-26-10084,14 Aug 2026,"Rs 22,000",two-wheeler,branch
+DS-26-10176,2026-08-14,15500,two-wheeler,email
+DS-26-10123,15/08/2026,43000.00,car,branch
+DS-26-10041,15 Aug 2026,"₹ 3,38,000",commercial,email
+DS-26-10137,2026-08-16,"₹ 1,67,500",car,branch
+DS-26-10062,16/08/2026,"₹ 41,500",car,branch
+DS-26-10143,16 Aug 2026,"Rs 33,500",two-wheeler,email
+DS-26-10219,2026-08-17,20000,two-wheeler,branch
+DS-26-10028,17/08/2026,76000.00,car,branch
+DS-26-10166,18 Aug 2026,34500,two-wheeler,branch
+DS-26-10187,2026-08-18,184500.00,car,email
+DS-26-10039,18/08/2026,"Rs 6,000",two-wheeler,agent
+DS-26-10080,18 Aug 2026,"Rs 28,500",two-wheeler,email
+DS-26-10087,2026-08-19,"Rs 220,500",car,email
+DS-26-10171,19/08/2026,"Rs 101,500",car,email
+DS-26-10094,20 Aug 2026,54500.00,two-wheeler,branch
+DS-26-10059,2026-08-20,30000.00,two-wheeler,agent
+DS-26-10203,21/08/2026,"Rs 10,500",two-wheeler,branch
+DS-26-10065,21 Aug 2026,6500,two-wheeler,branch
+DS-26-10174,2026-08-22,39500.00,two-wheeler,branch
+DS-26-10115,22/08/2026,"₹ 52,500",two-wheeler,branch
+DS-26-10130,22 Aug 2026,"Rs 8,000",car,email
+DS-26-10151,2026-08-22,"Rs 188,500",car,email
+DS-26-10237,23/08/2026,"₹ 1,20,500",car,email
+DS-26-10114,23 Aug 2026,85000,commercial,agent
+DS-26-10012,2026-08-24,117500.00,car,branch
+DS-26-10222,24/08/2026,76500,car,email
+DS-26-10168,25 Aug 2026,43000.00,two-wheeler,branch
+DS-26-10213,2026-08-25,3000.00,two-wheeler,agent
+DS-26-10202,25/08/2026,50000,two-wheeler,email
+DS-26-10148,25 Aug 2026,20000,car,branch
+DS-26-10060,2026-08-25,11000,two-wheeler,email
+DS-26-10124,26/08/2026,"Rs 241,000",commercial,agent
+DS-26-10149,26 Aug 2026,24500.00,commercial,branch
+DS-26-10073,2026-08-26,32000,two-wheeler,agent
+DS-26-10189,26/08/2026,75500,car,branch
+DS-26-10228,26 Aug 2026,56000.00,two-wheeler,agent
+DS-26-10079,2026-08-27,,car,email
+DS-26-10233,27/08/2026,29000.00,two-wheeler,email
+DS-26-10106,29 Aug 2026,41000,two-wheeler,email
+DS-26-10005,2026-08-29,55000.00,two-wheeler,branch
+DS-26-10125,29/08/2026,"Rs 48,000",two-wheeler,email
+DS-26-10054,30 Aug 2026,"Rs 231,000",car,email
+DS-26-10181,2026-08-30,"₹ 2,21,500",car,email
+DS-26-10155,30/08/2026,"₹ 17,500",two-wheeler,email
+DS-26-10108,30 Aug 2026,368000.00,commercial,branch
+DS-26-10030,2026-08-31,187500.00,car,email
+DS-26-10046,31/08/2026,386000.00,commercial,agent
+DS-26-10184,01 Sep 2026,150500,car,branch
+DS-26-10068,2026-09-01,"₹ 1,75,500",commercial,email
+DS-26-10232,02/09/2026,19500.00,two-wheeler,email
+DS-26-10021,02 Sep 2026,"₹ 51,500",two-wheeler,branch
+DS-26-10035,2026-09-02,"Rs 154,500",car,branch
+DS-26-10179,03/09/2026,"₹ 44,000",car,branch
+DS-26-10034,03 Sep 2026,"Rs 12,000",two-wheeler,agent
+DS-26-10164,2026-09-03,12000,two-wheeler,branch
+DS-26-10192,03/09/2026,"Rs 40,000",two-wheeler,branch
+DS-26-10025,04 Sep 2026,58000,two-wheeler,email
+DS-26-10170,2026-09-04,28000,two-wheeler,branch
+DS-26-10116,04/09/2026,"Rs 148,000",car,email
+DS-26-10224,04 Sep 2026,4500,two-wheeler,email
+DS-26-10066,2026-09-05,33000.00,car,email
+DS-26-10209,05/09/2026,55000.00,two-wheeler,branch
+DS-26-10167,05 Sep 2026,"₹ 2,22,500",car,branch
+DS-26-10019,2026-09-06,"₹ 27,500",two-wheeler,email
+DS-26-10172,06/09/2026,22000,two-wheeler,agent
+DS-26-10178,07 Sep 2026,"₹ 35,000",two-wheeler,branch
+DS-26-10120,2026-09-07,128000,commercial,branch
+DS-26-10158,07/09/2026,34500.00,two-wheeler,email
+DS-26-10048,08 Sep 2026,"₹ 24,500",two-wheeler,email
+DS-26-10008,2026-09-08,"₹ 2,28,500",commercial,email
+DS-26-10197,08/09/2026,41500,commercial,branch
+DS-26-10075,08 Sep 2026,54000,two-wheeler,email
+DS-26-10076,2026-09-08,"Rs 26,500",two-wheeler,agent
+DS-26-10007,09/09/2026,"₹ 29,000",two-wheeler,email
+DS-26-10093,09 Sep 2026,162500.00,car,email
+DS-26-10186,2026-09-09,"Rs 19,000",two-wheeler,email
+DS-26-10221,10/09/2026,56500,two-wheeler,branch
+DS-26-10057,10 Sep 2026,7500.00,two-wheeler,branch
+DS-26-10117,2026-09-11,"₹ 1,43,000",car,email
+DS-26-10070,11/09/2026,"Rs 24,000",car,branch
+DS-26-10109,11 Sep 2026,141000.00,car,branch
+DS-26-10104,2026-09-12,51000,two-wheeler,email
+DS-26-10110,12/09/2026,39500,two-wheeler,agent
+DS-26-10086,12 Sep 2026,44500,two-wheeler,branch
+DS-26-10061,2026-09-13,44000,two-wheeler,branch
+DS-26-10212,13/09/2026,17000.00,car,agent
+DS-26-10077,13 Sep 2026,"Rs 52,500",two-wheeler,branch
+DS-26-10136,2026-09-13,23500.00,two-wheeler,email
+DS-26-10044,14/09/2026,110000.00,car,branch
+DS-26-10037,14 Sep 2026,"Rs 50,500",two-wheeler,email
+DS-26-10153,2026-09-14,"₹ 31,000",two-wheeler,branch
+DS-26-10105,14/09/2026,"Rs 39,000",two-wheeler,email
+DS-26-10105,14/09/2026,"Rs 39,000",two-wheeler,email
+DS-26-10090,15 Sep 2026,3000,two-wheeler,branch
+DS-26-10031,2026-09-15,52000,two-wheeler,email
+DS-26-10180,15/09/2026,127500.00,car,email
+DS-26-10015,15 Sep 2026,"Rs 28,500",two-wheeler,email
+DS-26-10132,2026-09-15,55500.00,two-wheeler,branch
+DS-26-10099,16/09/2026,57500.00,two-wheeler,email
+DS-26-10235,16 Sep 2026,"₹ 44,500",two-wheeler,branch
+DS-26-10196,2026-09-16,71500,car,branch
+DS-26-10208,17/09/2026,153000,car,email
+DS-26-10206,17 Sep 2026,"Rs 56,500",two-wheeler,branch
+DS-26-10063,2026-09-18,"Rs 24,500",two-wheeler,branch
+DS-26-10199,18/09/2026,"Rs 47,000",two-wheeler,email
+DS-26-10185,18 Sep 2026,"Rs 9,000",two-wheeler,agent
+DS-26-10193,2026-09-19,14000,two-wheeler,agent
+DS-26-10014,19/09/2026,"₹ 15,000",car,email
+DS-26-10088,20 Sep 2026,57500.00,two-wheeler,agent
+DS-26-10082,2026-09-21,"Rs 30,500",two-wheeler,email
+DS-26-10027,21/09/2026,"₹ 19,000",two-wheeler,email
+DS-26-10145,21 Sep 2026,"Rs 36,000",two-wheeler,branch
+DS-26-10042,2026-09-21,"Rs 78,500",car,agent
+DS-26-10111,21/09/2026,"₹ 1,00,000",car,email
+DS-26-10072,22 Sep 2026,"₹ 1,31,500",car,branch
+DS-26-10226,2026-09-22,"Rs 46,500",two-wheeler,email
+DS-26-10240,22/09/2026,"Rs 136,000",car,branch
+DS-26-10152,23 Sep 2026,55000,two-wheeler,email
+DS-26-10029,2026-09-23,219500,car,agent
+DS-26-10092,23/09/2026,226000.00,car,email
+DS-26-10133,23 Sep 2026,"₹ 41,500",two-wheeler,email
+DS-26-10239,2026-09-24,183500,car,branch
+DS-26-10159,25/09/2026,20000.00,two-wheeler,email
+DS-26-10122,25 Sep 2026,30500,two-wheeler,branch
+DS-26-10033,2026-09-26,38000,two-wheeler,email
+DS-26-10135,26/09/2026,"Rs 83,500",car,email
+DS-26-10216,26 Sep 2026,"Rs 187,000",car,agent
+DS-26-10010,2026-09-26,"Rs 141,000",car,branch
+DS-26-10234,26/09/2026,"₹ 1,77,500",car,email
+DS-26-10003,27 Sep 2026,12000,two-wheeler,agent
+DS-26-10190,2026-09-27,18000,two-wheeler,email
+DS-26-10217,28/09/2026,25500,two-wheeler,email
+DS-26-10236,28 Sep 2026,"Rs 290,000",commercial,agent
+DS-26-10182,2026-09-29,43500.00,two-wheeler,email
+DS-26-10195,29/09/2026,"₹ 31,500",two-wheeler,email
+DS-26-10231,29 Sep 2026,229500,commercial,branch
