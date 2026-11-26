@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Everyday commands for the live site on this laptop (deploy/laptop/README.md).
+set -euo pipefail
+
+PROD=/srv/labbox/prod
+UNITS=(labbox-prod labbox-prod-worker labbox-prod-caddy labbox-prod-tunnel labbox-prod-deploy.timer)
+
+live_env() { set -a; . "$PROD/shared/.env"; set +a; }
+live() { basename "$(readlink -f "$PROD/current" 2>/dev/null)" 2>/dev/null || true; }
+
+case "${1:-status}" in
+  status)
+    for u in "${UNITS[@]}"; do
+      printf '%-28s %s\n' "$u" "$(systemctl --user is-active "$u" 2>/dev/null || true)"
+    done
+    l="$(live)"
+    if [ -n "$l" ] && [ -d "$PROD/releases/$l" ]; then
+      echo "live release: ${l:0:12}  $(git -C "$PROD/src" log -1 --format='%s (%cr)' "$l" 2>/dev/null)"
+    else
+      echo "live release: none yet"
+    fi
+    [ -s "$PROD/failed" ] && echo "last failed:  $(cut -c1-12 "$PROD/failed")  (see: deploy/laptop/prod logs deploy)"
+    echo "health:       $(curl -fsS -m 5 http://127.0.0.1:8100/api/health 2>/dev/null || echo 'no answer')"
+    host="$(cat "$PROD/shared/hostname" 2>/dev/null || true)"
+    [ -n "$host" ] && echo "address:      https://$host"
+    ;;
+  logs)
+    case "${2:-backend}" in
+      backend) journalctl --user -u labbox-prod -n 200 --no-pager ;;
+      worker|caddy|tunnel) journalctl --user -u "labbox-prod-$2" -n 200 --no-pager ;;
+      deploy) tail -n 200 "$PROD/deploy.log" ;;
+      *) echo "logs: backend, worker, caddy, tunnel or deploy" >&2; exit 2 ;;
+    esac
+    ;;
+  deploy)
+    [ -n "${2:-}" ] || { echo "Usage: $0 deploy <commit or branch, e.g. origin/design/ukiyo>" >&2; exit 2; }
+    git -C "$PROD/src" fetch -q origin
+    exec "$PROD/src/deploy/laptop/release.sh" "$2"
+    ;;
+  rollback)
+    prev="$(cat "$PROD/previous" 2>/dev/null || true)"
+    [ -n "$prev" ] && [ -d "$PROD/releases/$prev" ] || { echo "No previous release to go back to." >&2; exit 1; }
+    # The timer must not put the newer commit back: it counts as failed until production moves on.
+    live > "$PROD/failed"
+    exec "$PROD/src/deploy/laptop/release.sh" "$prev"
+    ;;
+  restart)
+    systemctl --user restart labbox-prod labbox-prod-worker labbox-prod-caddy
+    ;;
+  labbox)
+    shift
+    live_env
+    exec "$PROD/current/scripts/labbox" "$@"
+    ;;
+  adduser)
+    [ -n "${2:-}" ] || { echo "Usage: $0 adduser <username>" >&2; exit 2; }
+    live_env
+    exec "$PROD/current/backend/.venv/bin/python" "$PROD/current/scripts/create_user.py" "$2"
+    ;;
+  images)
+    shift
+    [ $# -gt 0 ] || { echo "Usage: $0 images <lab>... | all" >&2; exit 2; }
+    if [ "$1" = all ]; then
+      exec "$PROD/current/scripts/build_lab_images.sh"
+    fi
+    for lab in "$@"; do
+      image="$(grep -E '^image:' "$PROD/current/labs/$lab/lab.yaml" | awk '{print $2}')"
+      echo "==> $image"
+      docker build -q -t "$image" "$PROD/current/labs/$lab" >/dev/null
+    done
+    ;;
+  *)
+    echo "Usage: $0 status | logs [backend|worker|caddy|tunnel|deploy] | deploy <commit> | rollback | restart |" >&2
+    echo "       labbox <args> | adduser <username> | images <lab>...|all" >&2
+    exit 2
+    ;;
+esac

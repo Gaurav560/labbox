@@ -1,0 +1,19 @@
+# The live site's backend (deploy/laptop/README.md). Installed by deploy/laptop/setup.sh as a user service.
+[Unit]
+Description=LabBox live backend (port 8100)
+After=network-online.target
+
+[Service]
+WorkingDirectory=/srv/labbox/prod/current/backend
+EnvironmentFile=/srv/labbox/prod/shared/.env
+# RELEASE=<commit>, written by release.sh; /api/health reports it.
+EnvironmentFile=-/srv/labbox/prod/shared/release.env
+# Two workers share state through Redis (REDIS_URL). Caddy is the only client, so its X-Forwarded-For
+# (the learner's address from Cloudflare) is trusted for rate limits.
+ExecStart=/srv/labbox/prod/current/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8100 --workers 2 --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target
