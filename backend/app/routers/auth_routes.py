@@ -33,11 +33,14 @@ def _token_out(user: User) -> TokenOut:
 
 class AuthOptions(BaseModel):
     signup: bool  # False on an invite-only site (ALLOW_SIGNUP=false): the login page says so instead of a Sign up link
+    providers: list[str] = []  # "google", "github": the sign-in buttons to show (only those whose keys are set)
 
 
 @router.get("/auth/options", response_model=AuthOptions)
 def auth_options() -> AuthOptions:
-    return AuthOptions(signup=get_settings().ALLOW_SIGNUP)
+    from .. import oauth
+
+    return AuthOptions(signup=get_settings().ALLOW_SIGNUP, providers=list(oauth.configured()))
 
 
 @router.post("/auth/signup", response_model=TokenOut)

@@ -25,6 +25,7 @@ from .routers import (
     file_routes,
     lab_routes,
     library_routes,
+    oauth_routes,
     preview_routes,
     progress_routes,
     slot_routes,
@@ -75,6 +76,7 @@ app.include_router(ai_routes.router)
 app.include_router(admin_routes.router)
 app.include_router(slot_routes.router)
 app.include_router(certificate_routes.router)
+app.include_router(oauth_routes.router)
 app.include_router(library_routes.router)
 app.include_router(library_routes.admin_router)
 

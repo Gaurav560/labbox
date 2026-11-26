@@ -18,6 +18,24 @@ class User(SQLModel, table=True):
     # How many labs this learner may have unlocked at once (owner, 26 November). None: the site's setting
     # (site_setting "lab_limit"); 0: every lab; N: N labs. Set by an admin on the learner's row.
     lab_limit: int | None = None
+    # A verified email address, from Google or GitHub sign-in (owner, 27 November); None for username-only accounts.
+    email: str | None = Field(default=None, unique=True, index=True)
+    email_verified_at: datetime | None = None
+
+
+class UserIdentity(SQLModel, table=True):
+    """A Google or GitHub account that signs into a LabBox account (owner, 27 November). One row per provider account;
+    a LabBox account may have several (Google and GitHub with the same verified email end up in the same account)."""
+    __tablename__ = "user_identity"
+    __table_args__ = (UniqueConstraint("provider", "subject"),)
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    provider: str  # "google" or "github"
+    subject: str  # the provider's stable id for the person (Google "sub", GitHub numeric id)
+    email: str | None = None
+    created_at: datetime = Field(default_factory=utcnow)
+    last_login_at: datetime = Field(default_factory=utcnow)
 
 
 class Workspace(SQLModel, table=True):
