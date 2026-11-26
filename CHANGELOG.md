@@ -10,7 +10,10 @@
 - Ukiyo home, the container: no more cardboard crates; each piece of the lab's stack is its logo alone, large, with a
   shadow under it (owner: "try only logos, large logos inside the container"). Logos that would melt into the blue get
   lighter colours of their own, the container unchanged (owner: "only change the logo colours"): LangChain's dark pill
-  turns pale; Python, Java, PostgreSQL and FastAPI brighten. The whale on the glass fades further while they load.
+  turns pale; Python, Java, PostgreSQL and FastAPI brighten. The whale on the glass fades further while they load. The
+  logos sit closer, larger and brighter, and every piece has one: GNU Bash for the editor and terminal, Hugging Face for
+  the embedding models (Simple Icons 16.37.0, CC0, `public/logos/LICENSE-simple-icons`), a torii gate drawn for the model
+  gateway, the LabBox mark for its tutor (OpenAI's logo is left out: Simple Icons removed it and OpenAI limits its use).
 - **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
   component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
   be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.

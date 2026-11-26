@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><title>Gateway</title>
+<path d="M4 9.5c6 1.6 34 1.6 40 0l-1.2 5.2c-5.4 1.2-32.2 1.2-37.6 0z" fill="#e2583f"/>
+<rect x="9" y="19" width="30" height="4" rx="1" fill="#e2583f"/>
+<rect x="12.5" y="14" width="4.2" height="30" rx="1.2" fill="#e2583f"/>
+<rect x="31.3" y="14" width="4.2" height="30" rx="1.2" fill="#e2583f"/>
+<rect x="22" y="15" width="4" height="5" fill="#e2583f"/>
+<path d="M4 9.5c6 1.6 34 1.6 40 0" fill="none" stroke="#1c1a17" stroke-width="1.6"/>
+</svg>

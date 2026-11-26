@@ -6,15 +6,17 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 
+/* Every piece shows a logo (owner, 27 November): the tools' own (Simple Icons, CC0, for Hugging Face and GNU Bash), a
+   torii gate for the model gateway, the LabBox mark for its tutor. */
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
 const P = (logo: string, name: string, step: string): Piece => ({ logo, name, step });
 const LINUX = P("linux", "Ubuntu 24.04", "your own Linux machine, in a container");
 // The editor is named for what it does, not the product (owner, 25 November: it may change if VS Code is too heavy).
-const EDITOR: Piece = { logo: null, icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
-const AI: Piece = { logo: null, icon: "ai", name: "AI code assistant", step: "explains, hints and reviews, never the answer" };
+const EDITOR: Piece = { logo: "gnubash", icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
+const AI: Piece = { logo: "labbox", icon: "ai", name: "AI code assistant", step: "explains, hints and reviews, never the answer" };
 
-const GATEWAY: Piece = { logo: null, icon: "ai", name: "Model gateway", step: "real models, no API key, every token counted" };
+const GATEWAY: Piece = { logo: "torii", icon: "ai", name: "Model gateway", step: "real models, no API key, every token counted" };
 
 // Each lab's real machine (labs/<id>/lab.yaml and Dockerfile). Owner, 25 November: three AI labs, then Spring Boot,
 // Python, a database, Linux, FastAPI and Redis.
@@ -25,7 +27,7 @@ const LABS: Lab[] = [
     pieces: [LINUX, P("java", "Java 21", "the JDK the course uses"), P("spring", "Spring Boot 4.2", "with Maven and every dependency, offline"),
       P("spring-ai", "Spring AI 2.1", "chat, prompts, tools and RAG for Java"), GATEWAY, EDITOR, AI] },
   { id: "rag-vector-databases", label: "RAG", challenge: "Find sections by their words",
-    pieces: [LINUX, P("python", "Python 3.12", "the language"), { logo: null, icon: "ai", name: "Embedding models", step: "two local models, already downloaded" },
+    pieces: [LINUX, P("python", "Python 3.12", "the language"), { logo: "huggingface", icon: "ai", name: "Embedding models", step: "two local models, already downloaded" },
       P("sql", "FAISS and Qdrant", "vector search, running locally"), GATEWAY, EDITOR, AI] },
   { id: "spring-boot-first-api", label: "Spring Boot", challenge: "Name the application",
     pieces: [LINUX, P("java", "Java 21", "the JDK the course uses"), P("spring", "Spring Boot 3.4", "with Maven and every dependency, offline"), EDITOR, AI] },
@@ -35,7 +37,7 @@ const LABS: Lab[] = [
     pieces: [LINUX, P("python", "Python 3.12", "with psql"), P("postgresql", "PostgreSQL 16", "a real database server"),
       P("sql", "1 million orders", "loaded and waiting to be slow"), EDITOR, AI] },
   { id: "linux-on-call", label: "Linux", challenge: "Find the hidden welcome note",
-    pieces: [P("linux", "Ubuntu 24.04", "a whole Linux server to explore"), { logo: null, icon: "term", name: "Bash and the classic tools", step: "grep, sed, lsof, htop, tar and the rest" }, EDITOR, AI] },
+    pieces: [P("linux", "Ubuntu 24.04", "a whole Linux server to explore"), { logo: "gnubash", icon: "term", name: "Bash and the classic tools", step: "grep, sed, lsof, htop, tar and the rest" }, EDITOR, AI] },
   { id: "fastapi-first-api", label: "FastAPI", challenge: "GET /menu: list every item",
     pieces: [LINUX, P("python", "Python 3.12", "the language, with pip"), P("fastapi", "FastAPI", "the framework, answering in the Preview tab"), EDITOR, AI] },
   { id: "redis-in-practice", label: "Redis", challenge: "Measure one round trip to Redis",
@@ -80,22 +82,23 @@ const FLOOR = (t: number, u: number): Pt => L(L(D, C, t), L(Dd, F, t), u);
 /** Where piece i of n stands inside: in stacks two high along the floor, the first stack at the far end. */
 function slot(i: number, n: number): { at: Pt; row: number } {
   const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
-  const t = 0.13 + (cols > 1 ? col * (0.55 / (cols - 1)) : 0.3); // clear of the door folded back at the end
+  // close together near the middle of the floor (owner, 27 November: "too much space between those logos")
+  const t = 0.26 + (cols > 1 ? col * (0.34 / (cols - 1)) : 0.16);
   const [x, y] = FLOOR(t, 0.72);
-  return { at: [x, y - level * 56], row: level };
+  return { at: [x, y - level * 60], row: level };
 }
 
 /** One piece of the lab's stack, as its logo alone, large (owner, 27 November: "try only logos, large logos inside the
     container"): no box around it. Pieces without a logo (the AI parts, the editor and terminal) show their sign.
     It stands on the floor at `at` (its bottom centre) and rides in from the door like the crates did. */
 function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
-  const [x, y] = at, size = 50;
+  const [x, y] = at, size = 60;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
     <g className={`ua-c-box ua-c-logo ${p.logo ? `is-${p.logo}` : ""} ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
       <ellipse className="ua-c-logo-shadow" cx={x} cy={y - 1} rx={size * 0.36} ry="3.2" />
       {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - size / 2} y={y - size - 4} width={size} height={size} />
-        : <text className="ua-c-box-glyph" x={x} y={y - 16} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
+        : <text className="ua-c-box-glyph" x={x} y={y - 18} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
     </g>
   );
 }
