@@ -137,6 +137,8 @@ standard, eight short; see the table in `ROADMAP.md`).
   twice: on the correct code, then with the planted bug from `tests/<chapter>/bug/` (settings in `own.env`).
   A new Maven dependency must be added to `warm/pom.xml` and the image rebuilt, or the offline build fails.
 
+- Sign-in is Google and GitHub only (owner, 27 November). Browser tests make accounts through the API with
+  `e2e/signin.ts` (`PASSWORD_LOGIN=true` in `backend/.env`, development only); never put a username form back.
 - Every browser test signs up a fresh account, and the app allows 60 sign-ups per address per hour
   (`SIGNUPS_PER_IP_HOUR`). A busy evening of test runs hits it ("Too many new accounts", tests stuck
   at login or onboarding). For the local dev server only, start uvicorn with `SIGNUPS_PER_IP_HOUR=1000`
