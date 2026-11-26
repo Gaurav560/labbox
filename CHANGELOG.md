@@ -1,5 +1,17 @@
 # Changelog
 
+## 27 November: sign in with Google and GitHub
+
+- **Continue with Google / Continue with GitHub** on the login page (both designs), shown only when a provider's keys are
+  in `.env` (`/api/auth/options` lists `providers`). The flow (`backend/app/oauth.py`): a server-side state bound to a
+  short HttpOnly cookie, PKCE for Google, the identity fetched from the provider, then the LabBox account: the same
+  provider account, else a verified email match (so Google and GitHub with one address share an account), else a new
+  account while sign-up is open (invite-only sites refuse and say why). The browser gets a one-time code (60 s) that
+  `/api/auth/oauth/exchange` swaps for the usual login, never the token in an address; new accounts go to onboarding.
+  `user.email` and `user_identity` (migration 0015). Admin's Learners show and search emails. Privacy policy line.
+  9 backend tests with faked providers; a browser test on each design. Also fixed: master's login page called a React
+  hook conditionally.
+
 ## 27 November: certificates to share on LinkedIn and X
 
 - **QR code to verify** a certificate: it opens `/verify/<id>`, which shows what the server's database holds for that id

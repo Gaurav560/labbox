@@ -86,8 +86,9 @@ standard, eight short; see the table in `ROADMAP.md`).
   platform (its themes or its usual tutorial projects). Pick distinctive running projects.
 - Positioning: LabBox is marketed as **AI labs** (20 to 25 AI labs); other tracks are additional.
 - **`spring-boot-first-api` is the template for every course** (owner, 21 November: "save it as template for rest"): see CONTENT_STANDARD section 0. Rewrite or build every other course to that standard.
-- Phase J (admin and funnel) done. Phase H: H1, H2, H3, H5, H6 done. H4 (Google and GitHub login) waits until the end, by the owner's
-  call; Phase I (payments) comes after the AWS deploy (K); the AI track is last.
+- Phase J (admin and funnel) done. Phase H: H1, H2, H3, H5, H6 done; H4's Google and GitHub sign-in done (27 November; the
+  session cookie and websocket ticket still to do). The owner's order since 27 November (memory `next-steps-order`): AWS
+  deploy, then the Forward Deployed Engineer course, then every course to the full standard, then a pricing page (UI only).
 - AI track (later) (`ROADMAP.md` section B.2): two owner decisions first (which model, build
   order), then stage 1. Phase H's plan is in section B.4, also waiting for an OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real
