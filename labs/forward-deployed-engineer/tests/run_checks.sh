@@ -11,6 +11,10 @@ CHAPTERS="
 the-role|01-the-role|baseline_days adjuster_hours
 discovery|02-discovery|classify_email costliest_kind
 scoping|03-scoping|pilot_slice measurable_goal
+messy-data|04-messy-data|parse_amount clean_export
+customer-database|05-customer-database|policy_for_claim lapsed_claims
+legacy-system|06-legacy-system|fetch_policy retry_busy
+data-contract|07-data-contract|claim_model contract_report
 "
 
 fail_all() { # tasks message

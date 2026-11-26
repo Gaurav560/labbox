@@ -39,7 +39,9 @@ before_you_start:
     lab: langchain
     where: chapters 2, 5 to 7 and 10 to 13
 cover: cover.svg
-cover_credit: { by: "Logos: python,fastapi", source: "devicon (MIT)" }
+cover_credit:
+  by: 'Logos: python,fastapi'
+  source: devicon (MIT)
 image: labbox/forward-deployed-engineer:v1
 resources: m
 workspace:
@@ -155,3 +157,137 @@ chapters:
       gives: '["baseline", "target", "unit", "by"]'
     - call: missing_parts(GOAL)
       gives: '[]'
+- id: messy-data
+  title: Reading the customer's messy data
+  file: chapters/04-messy-data.md
+  minutes: 45
+  folder: 04-messy-data
+  part: The customer's data
+  tasks:
+  - id: parse_amount
+    title: read rupees written four ways
+    xp: 15
+    hints:
+    - parse_amount returns None for every amount, even "36500".
+    - Take away "Rs", "₹" and every comma with replace, then strip the spaces; nothing left means None.
+    - Read the rest with float() inside try and give back its int; when float() raises ValueError, the answer is None.
+    examples:
+    - call: parse_amount("₹ 3,37,500")
+      gives: '337500'
+    - call: parse_amount("34500.00")
+      gives: '34500'
+    - call: parse_amount("")
+      gives: None
+      note: blank is not Rs 0
+  - id: clean_export
+    title: clean the real export
+    xp: 20
+    hints:
+    - clean_export returns two empty lists, so nothing is clean and nothing is rejected.
+    - A set of seen claim ids tells you a duplicate; add each id before parsing its date and amount.
+    - Reject (cid, "bad date") when parse_date gives None, then (cid, "no amount") for the amount; otherwise build the clean
+      dict.
+    examples:
+    - call: clean_export(load_raw())
+      gives: 238 clean, 7 rejected
+    - call: the same claim id twice
+      gives: ("DS-26-10201", "duplicate")
+      note: the first copy is kept
+- id: customer-database
+  title: The customer's database
+  file: chapters/05-customer-database.md
+  minutes: 45
+  folder: 05-customer-database
+  tasks:
+  - id: policy_for_claim
+    title: the policy behind a claim
+    xp: 15
+    hints:
+    - policy_for_claim returns None, even for a claim that exists.
+    - JOIN claims c to policies p ON p.policy_no = c.policy_no, with WHERE c.claim_id = ? and the id in a tuple.
+    - fetchone() gives the row or None; return dict(row) when there is one.
+    examples:
+    - call: policy_for_claim(con, "DS-26-10038")["holder"]
+      gives: '"M. Joshi"'
+    - call: policy_for_claim(con, "DS-26-99999")
+      gives: None
+    - call: policy_for_claim(con, "DS-26-99999' OR '1'='1")
+      gives: None
+      note: a parameter is data, never SQL
+  - id: lapsed_claims
+    title: claims on lapsed policies
+    xp: 20
+    hints:
+    - lapsed_claims returns an empty list.
+    - 'Compare substr(c.received_at, 1, 10) with p.end_date: the date part only.'
+    - Select c.claim_id, p.end_date and that substr, keep the later ones, ORDER BY c.claim_id, and return tuples.
+    examples:
+    - call: len(lapsed_claims(con))
+      gives: '6'
+    - call: lapsed_claims(con)[0]
+      gives: ('DS-26-10088', '2026-09-08', '2026-09-20')
+- id: legacy-system
+  title: Talking to a legacy system
+  file: chapters/06-legacy-system.md
+  minutes: 45
+  folder: 06-legacy-system
+  tasks:
+  - id: fetch_policy
+    title: read a policy from the old system
+    xp: 15
+    hints:
+    - parse_policy returns an empty dict.
+    - ET.fromstring(xml_text) gives the <policy> element; loop over its children and use child.tag and child.text.
+    - The key is TAGS.get(child.tag, child.tag); for the keys in NUMBERS store int(child.text).
+    examples:
+    - call: fetch_policy("DS-POL-40000")["policy_no"]
+      gives: '"DS-POL-40000"'
+      note: from <number>
+    - call: fetch_policy("DS-POL-40000")["sum_insured"]
+      gives: '90000'
+      note: an int, not text
+  - id: retry_busy
+    title: retry when the system is busy
+    xp: 20
+    hints:
+    - fetch_with_retry tries once, so a busy moment fails the claim.
+    - Loop with for n in range(attempts) and catch httpx.HTTPStatusError; e.response.status_code says which error.
+    - For a 503 that is not the last try, sleep for wait * 2 ** n seconds and continue; anything else is raised.
+    examples:
+    - call: busy, busy, then the policy
+      gives: the policy, after waits of 0.2 and 0.4 s
+    - call: a 500 or a 404
+      gives: raised at once, no retry
+- id: data-contract
+  title: A data contract with the customer
+  file: chapters/07-data-contract.md
+  minutes: 45
+  folder: 07-data-contract
+  tasks:
+  - id: claim_model
+    title: the claim contract
+    xp: 20
+    hints:
+    - Claim declares only claim_id, so a "bike" or an amount of 0 is accepted.
+    - Declare the six fields with type hints; patterns and limits go in Field(...), the three vehicles in a Literal.
+    - In the field_validator for vehicle_reg, upper-case and remove spaces and dashes, check REG.match, and return the clean
+      value.
+    examples:
+    - call: Claim(..., vehicle_reg="mh 12 cd 5678").vehicle_reg
+      gives: '"MH12CD5678"'
+    - call: Claim(..., vehicle="bike")
+      gives: ValidationError
+    - call: Claim(..., amount_rs="0")
+      gives: ValidationError
+  - id: contract_report
+    title: the report by row and field
+    xp: 15
+    hints:
+    - contract_report returns two empty lists.
+    - Number the rows with enumerate(rows, start=1) and try Claim(**row) for each.
+    - In except ValidationError as e, add (row_no, str(err["loc"][0]), err["msg"]) for each err in e.errors().
+    examples:
+    - call: contract_report(load_incoming())
+      gives: 5 valid, errors on rows 3, 4, 5, 6, 8, 9, 10
+    - call: errors[0]
+      gives: (3, 'vehicle', "Input should be 'two-wheeler', 'car' or 'commercial'")
