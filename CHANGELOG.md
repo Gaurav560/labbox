@@ -1,5 +1,10 @@
 # Changelog
 
+## 26 November: Ukiyo home, the print without the terminal box
+
+- The Ukiyo home hero shows Hiroshige's Kinryuzan print on its own: the lab-terminal box laid over it is gone (owner:
+  "can you remove this?"). The home browser test now checks that the box is absent.
+
 ## 26 November: the Lab access tab in Admin, and the lab limit on both designs
 
 - Admin has a **Lab access** tab (owner: "more easy to use, good looking, minimal, expressive"): the rule in one

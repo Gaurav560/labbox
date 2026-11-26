@@ -57,8 +57,8 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* The hero (owner, 25 November, from the eight options): two short lines, what you get, and a real lab
-            session over Hiroshige's snowy Kinryuzan temple. */}
+        {/* The hero (owner, 25 November, from the eight options): two short lines, what you get, and Hiroshige's snowy
+            Kinryuzan temple (the terminal box over it was removed, owner 26 November). */}
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
             <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to build AI apps,</em> <span className="uh-line uh-sting">or get left behind.</span></h1>
@@ -69,12 +69,6 @@ export default function HomePage() {
           <figure className="uh-hero-art">
             <div className="uh-hero-pic">
               <img src="/ukiyo/heroes/kinryuzan.webp" width={1000} height={1526} alt="Woodblock print: Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856" />
-              <pre className="uh-term" aria-label="A lab terminal">{`learner:~$ labbox start langchain
-✓ machine ready in 58 s
-learner:~$ python agent.py
-> Which train leaves first?
-  The 7:40 to Ooty, platform 2.
-✓ task passed  +20 XP`}</pre>
             </div>
             <figcaption className="u-print-credit">Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856</figcaption>
           </figure>
