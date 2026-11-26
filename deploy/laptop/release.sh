@@ -95,7 +95,7 @@ healthy() { # commit; up to about three minutes
 import json, sys
 h = json.load(sys.stdin)
 sys.exit(0 if h.get('release') == '$want' and h.get('docker') and h.get('database') and h.get('shared_state') else 1)
-" && curl -fsS -m 5 "$PAGE_URL" 2>/dev/null | grep -q 'id="root"'; then
+" 2>/dev/null && curl -fsS -m 5 "$PAGE_URL" 2>/dev/null | grep -q 'id="root"'; then
       return 0
     fi
     sleep 2
