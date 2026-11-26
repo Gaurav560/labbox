@@ -246,6 +246,8 @@ completed" (rules in `backend/app/certificates.py`):
 - [x] The learner may hide a certificate and correct its name once. The privacy policy says the page is public.
 - [x] Both designs: Ukiyo a paper certificate framed by the lab's print; the current design a dark card in the lab's
       colour. Migration 0014; 5 backend tests; one browser test on each design.
+- [x] A QR code on every certificate (and its share image) that opens `/verify/<id>`: the server's own record for that
+      id, so an edited picture shows up as a mismatch; hidden ones are confirmed genuine but private.
 - [ ] Later: a PDF to print, and LinkedIn's company page id (`organizationId`) so the issuer links to Telusko's page.
 
 ### 1b. Done: at most a few labs at a time (owner, 25 and 26 November)
