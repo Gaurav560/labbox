@@ -52,6 +52,8 @@ const cardHeight = (s: Station, open: boolean) => {
  * "You are here" is nowIdx when given (the chapter the learner was last in), else the first chapter not done.
  */
 export function labLines(lab: LabDetail, nowIdx?: number): MetroLine[] {
+  // A locked lab (app/slots.py): the map shows what the course covers, with no links into its lessons.
+  const locked = lab.access === "locked";
   const done = (i: number) => lab.chapters[i].tasks.length > 0 && lab.chapters[i].tasks.every((t) => t.passed);
   const now = nowIdx ?? lab.chapters.findIndex((_, i) => !done(i));
   const out: MetroLine[] = [];
@@ -61,10 +63,10 @@ export function labLines(lab: LabDetail, nowIdx?: number): MetroLine[] {
       id: c.id,
       number: String(chapterNumber(lab.chapters, i)).padStart(2, "0"),
       title: c.title,
-      topics: c.topics?.map((t) => ({ title: t.title, href: `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}&step=${t.step}` })),
+      topics: c.topics?.map((t) => ({ title: t.title, href: locked ? undefined : `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}&step=${t.step}` })),
       meta: `${passed} of ${c.tasks.length} task${c.tasks.length === 1 ? "" : "s"}${c.minutes ? ` · ${c.minutes} min` : ""}`,
-      state: i === now ? "now" : done(i) ? "done" : "open",
-      href: `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}`,
+      state: locked ? "locked" : i === now ? "now" : done(i) ? "done" : "open",
+      href: locked ? undefined : `/labs/${lab.id}?chapter=${encodeURIComponent(c.id)}`,
     };
     // A chapter with a part starts that line; chapters without one stay on the current line.
     if (!out.length || (c.part && c.part !== out[out.length - 1].name)) out.push({ name: c.part || lab.title, stations: [] });

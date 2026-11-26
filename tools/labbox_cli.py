@@ -995,6 +995,30 @@ def cmd_admin(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_lab_limit(args: argparse.Namespace) -> int:
+    """How many labs a learner may have unlocked at once (owner, 26 November; Admin, Learners, "Lab access"):
+    show it, or set a number or "off" (every lab open). --plain prints only the value (browser-test runs save it,
+    switch the limit off while they run, and put it back)."""
+    from sqlmodel import Session
+
+    from app import slots
+    from app.db import engine, init_db
+
+    init_db()
+    with Session(engine) as s:
+        if args.value is not None:
+            if args.value != "off" and not (args.value.isdigit() and 1 <= int(args.value) <= 100):
+                print("✗ Give a number from 1 to 100, or off")
+                return 1
+            slots.set_site_limit(s, None if args.value == "off" else int(args.value), None)
+        limit = slots.site_limit(s)
+    if args.plain:
+        print(limit or "off")
+    else:
+        print("✓ Every lab is open (no limit)" if limit is None else f"✓ Each learner may have {limit} labs unlocked at a time")
+    return 0
+
+
 # Browser tests sign up throwaway accounts named a short prefix plus a clock number of 6 or more digits.
 TEST_ACCOUNT_RE = re.compile(r"^[a-z][a-z0-9]*\d{6,}$")  # e2e607010207, next1764061234567, rd5606545
 
@@ -1008,7 +1032,8 @@ def test_account_targets(users, since_id: int = 0) -> list[tuple[int, str]]:
 
 def cmd_test_accounts(args: argparse.Namespace) -> int:
     """max-id: the highest account id now (a browser-test run notes it first). cleanup: remove the lab machines,
-    lab networks and workspace folders of test accounts (see test_account_targets); account rows stay."""
+    lab networks and workspace folders of test accounts (see test_account_targets), and their own lab limits (so
+    the admin's Lab access exceptions list only real learners); account rows stay."""
     from sqlmodel import Session, select
 
     from app.config import get_settings
@@ -1035,6 +1060,15 @@ def cmd_test_accounts(args: argparse.Namespace) -> int:
     print(f"{len(targets)} test accounts: {len(machines)} machines, {len(networks)} networks, {len(folders)} folders")
     if args.dry_run:
         return 0
+    with Session(engine) as s:
+        limited = [u for u in s.exec(select(User).where(User.id.in_([i for i, _ in targets] or [0]))).all()  # type: ignore[union-attr]
+                   if u.lab_limit is not None]
+        for u in limited:
+            u.lab_limit = None
+            s.add(u)
+        s.commit()
+    if limited:
+        print(f"✓ cleared the own lab limit of {len(limited)} test accounts")
     for c in machines:
         c.remove(force=True)
     for n in networks:
@@ -1068,6 +1102,11 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("action", choices=["list", "grant", "revoke"])
     a.add_argument("username", nargs="?")
     a.set_defaults(fn=cmd_admin)
+
+    ll = sub.add_parser("lab-limit", help="labs a learner may have unlocked at once: show, or set N or off")
+    ll.add_argument("value", nargs="?", help="a number from 1 to 100, or off (every lab open)")
+    ll.add_argument("--plain", action="store_true", help="print only the value (a number or off)")
+    ll.set_defaults(fn=cmd_lab_limit)
 
     ta = sub.add_parser("test-accounts", help="browser-test accounts: max-id, or cleanup [--since-id N] [--dry-run]")
     ta.add_argument("action", choices=["max-id", "cleanup"])

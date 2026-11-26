@@ -1671,7 +1671,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .metro-list .metro-here { position: static; transform: none; box-shadow: none; }
 .metro-list .metro-here::after { display: none; }
 
-}
 
 /* A lab's own page (/courses/<lab>): the step between a lab card and the lab. Coloured by the lab (--tone from
    brand.ts labTone); text stays in theme colours so bright tones (yellow Linux) still read on a light page. */
@@ -2104,3 +2103,74 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .lesson-rail .panel-toggle { width: 32px; height: 32px; }
 .lesson-rail-check { font-size: 16px; font-weight: 700; }
 .lesson-rail-check:disabled { opacity: .5; cursor: default; }
+
+/* At most a few labs at a time (owner, 26 November): the course page of a locked lab, the slot note, the
+   dashboard's slot strip and the lock on a lab tile. */
+.course-lock { display: grid; gap: 10px; padding: 14px 16px; border: 1px dashed color-mix(in srgb, var(--tone) 55%, var(--border));
+  border-radius: 12px; background: color-mix(in srgb, var(--tone) 7%, transparent); }
+.course-lock p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.course-lock-head { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.course-lock .course-where { margin: 0; }
+.course-go:disabled { cursor: not-allowed; opacity: .55; filter: grayscale(.4); transform: none; }
+.course-go .course-play svg { display: block; }
+.course-slot-note { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.course-swap-ask { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--text); }
+
+.slot-strip { display: grid; gap: 10px; margin: 0 0 18px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.slot-strip-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.slot-strip-head strong { font-size: 15px; }
+.slot-strip-head span { color: var(--muted); font-size: 13px; }
+.slot-strip ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; }
+.slot-strip li a, .slot-strip li > span { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 9px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 13.5px; }
+.slot-strip li a:hover { text-decoration: none; border-color: var(--muted); }
+.slot-strip li > span.is-free { border-style: dashed; color: var(--muted); }
+.slot-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.slot-strip p { margin: 0; color: var(--muted); font-size: 12.5px; }
+.h-lab.is-locked .h-lab-img img, .h-lab.is-locked .h-lab-img svg { filter: grayscale(.75) brightness(.8); }
+.h-lab-lock { position: absolute; top: 10px; right: 10px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 7px;
+  border-radius: 999px; background: rgba(0, 0, 0, .62); color: #fff; font-size: 12px; font-weight: 600; }
+.h-lab-lock.is-open { background: #237a43; }
+/* Admin, Lab access (owner, 26 November): one sentence that says the rule, a switch and a stepper, the three rules,
+   and the exceptions. Minimal: one accent (the logo red), large type for the rule, quiet everything else. */
+.acc { display: grid; gap: 20px; }
+.acc .adm-panel { margin: 0; }
+.acc-hero { padding: 28px 28px 22px; position: relative; overflow: hidden; }
+.acc-hero::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand-red); }
+.acc-hero h2 { font-size: 12px !important; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px !important; }
+.acc-sentence { font-size: clamp(22px, 3.2vw, 30px); line-height: 1.25; letter-spacing: -.015em; margin: 0 0 22px !important; max-width: 760px; }
+.acc-sentence strong { font-weight: 700; background: linear-gradient(transparent 62%, color-mix(in srgb, var(--brand-red) 32%, transparent) 0); padding: 0 2px; }
+.acc-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.acc-seg button { padding: 9px 16px; font-size: 14px; }
+.acc-stepper { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 999px; background: var(--card); overflow: hidden; }
+.acc-stepper button { width: 40px; height: 38px; border: 0; background: none; color: var(--text); font: 600 20px/1 var(--font-sans, inherit); cursor: pointer; }
+.acc-stepper button:hover:not(:disabled) { background: color-mix(in srgb, var(--brand-red) 14%, transparent); }
+.acc-stepper button:disabled { color: var(--muted); opacity: .4; cursor: default; }
+.acc-stepper output { min-width: 44px; text-align: center; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.acc-save { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-height: 32px; margin-top: 18px; font-size: 14px; }
+.acc-save-btn { background: var(--brand-red); border-color: var(--brand-red); color: #fff; }
+.acc-ok { color: #3fb950; font-weight: 600; }
+.acc-rules { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; transition: opacity .2s ease; }
+.acc-rules li { display: grid; gap: 6px; align-content: start; padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+.acc-rules li p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+.acc-rules strong { font-size: 15px; }
+.acc-n { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: 700;
+  color: var(--brand-red); border: 1.5px solid color-mix(in srgb, var(--brand-red) 70%, transparent); }
+.acc-rules.is-idle { opacity: .5; }
+.acc-idle-note { margin: -8px 0 0 !important; }
+.acc-exc h2 { margin-bottom: 2px; }
+.acc-exc-list { list-style: none; margin: 14px 0 0; padding: 0; }
+.acc-exc-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
+.acc-exc-name { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.acc-empty { margin: 14px 0 0 !important; padding: 14px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 14px; text-align: center; }
+.acc-add { margin-top: 16px; max-width: 420px; }
+.acc-add .adm-search { width: 100%; }
+.acc-found { list-style: none; margin: 6px 0 0; padding: 4px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
+.acc-found li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 8px; }
+.acc-select { appearance: none; background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 6px 30px 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.acc-select:hover { border-color: var(--muted); }
+@media (max-width: 760px) {
+  .acc-rules { grid-template-columns: 1fr; }
+  .acc-hero { padding: 22px 18px 18px; }
+}

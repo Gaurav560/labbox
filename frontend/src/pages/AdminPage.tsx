@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import {
   admin, api, ApiError, library, libraryImage, type CatalogLab, type LibraryItem, type LibraryItemIn, type LibraryKind, type LibraryLevel,
-  type AdminError, type AdminLabReport, type AdminLabRow, type AdminLearner, type AdminMachine, type AdminSpend, type AdminWindow, type FunnelStep,
+  type AdminError, type AdminLabReport, type AdminLabRow, type AdminLearner, type LabAccessInfo, type LimitException, type AdminMachine, type AdminSpend, type AdminWindow, type FunnelStep,
 } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
@@ -16,6 +16,7 @@ const TABS = [
   ["funnel", "Funnel"],
   ["labs", "Labs"],
   ["learners", "Learners"],
+  ["access", "Lab access"],
   ["machines", "Machines"],
   ["ai", "AI spend"],
   ["errors", "Errors"],
@@ -175,6 +176,171 @@ function LabsTab() {
   );
 }
 
+// ---------- lab access (owner, 26 November): how many labs a learner may have unlocked at once ----------
+
+const labsWord = (n: number) => `${n} lab${n === 1 ? "" : "s"}`;
+const LIMIT_CHOICES = [1, 2, 3, 4, 5, 6, 8, 10, 15, 20];
+
+/** A number with a minus and a plus: the labs a learner may have unlocked at once. */
+function Stepper({ value, onChange }: { value: number; onChange: (n: number) => void }) {
+  const set = (n: number) => onChange(Math.max(1, Math.min(100, n)));
+  return (
+    <span className="acc-stepper" role="group" aria-label="Labs at a time">
+      <button type="button" onClick={() => set(value - 1)} disabled={value <= 1} aria-label="Fewer labs">−</button>
+      <output aria-live="polite">{value}</output>
+      <button type="button" onClick={() => set(value + 1)} disabled={value >= 100} aria-label="More labs">+</button>
+    </span>
+  );
+}
+
+/** One learner's own limit: every lab or a number (and, on the Learners tab, the site's setting). */
+function LimitSelect({ value, onChange, label, siteLimit }: {
+  value: number | null; onChange: (v: number | null) => void; label: string; siteLimit?: number | null;
+}) {
+  const choices = value && !LIMIT_CHOICES.includes(value) ? [...LIMIT_CHOICES, value].sort((a, b) => a - b) : LIMIT_CHOICES;
+  return (
+    <select className="acc-select" value={value == null ? "" : String(value)} aria-label={label}
+      onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))}>
+      {siteLimit !== undefined && <option value="">Default ({siteLimit == null ? "every lab" : labsWord(siteLimit)})</option>}
+      <option value="0">Every lab</option>
+      {choices.map((c) => <option key={c} value={String(c)}>{labsWord(c)}</option>)}
+    </select>
+  );
+}
+
+/*
+ * The Lab access tab. Every lab is open until an admin turns the limit on; then each learner unlocks up to N labs (a
+ * finished lab, 80% of its tasks, frees its slot; Mondays allow a swap). Exceptions give one learner their own
+ * number. Admins are never limited. The rules live in backend/app/slots.py.
+ */
+function AccessTab() {
+  const [data, error, reload] = useLoad<LabAccessInfo>(() => admin.labAccess(), []);
+  const [draft, setDraft] = useState<number | null | undefined>(undefined);  // undefined: no change
+  const [saved, setSaved] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+  if (!data) return <Panel title="Lab access"><Loading error={error} /></Panel>;
+
+  const current = data.limit;
+  const value = draft === undefined ? current : draft;
+  const on = value != null;
+  const dirty = draft !== undefined && draft !== current;
+  const say = (v: number | null) => (v == null ? "every lab open" : `${labsWord(v)} at a time`);
+  const change = (v: number | null) => { setSaved(null); setFailed(null); setDraft(v); };
+  const save = () => admin.setLabAccess(value ?? null)
+    .then(() => { setDraft(undefined); setSaved(`Saved: ${say(value)}. Learners see it at once.`); reload(); })
+    .catch((e) => setFailed(e instanceof ApiError ? e.message : String(e)));
+
+  return (
+    <div className="acc">
+      <section className="adm-panel acc-hero" aria-labelledby="acc-title">
+        <h2 id="acc-title">Lab access</h2>
+        <p className="acc-sentence">
+          {on ? <>Each learner works in <strong>{labsWord(value!)}</strong> at a time.</>
+            : <>Every learner can open <strong>every lab</strong>.</>}
+        </p>
+        <div className="acc-controls">
+          <div className="adm-seg acc-seg" role="group" aria-label="Lab limit">
+            <button type="button" aria-pressed={!on} onClick={() => change(null)}>Every lab</button>
+            <button type="button" aria-pressed={on} onClick={() => change(value ?? 3)}>A few at a time</button>
+          </div>
+          {on && <Stepper value={value!} onChange={change} />}
+        </div>
+        <div className="acc-save" aria-live="polite">
+          {dirty ? (
+            <>
+              <span>Not saved yet: {say(current)} becomes <strong>{say(value)}</strong>.</span>
+              <button type="button" className="btn btn-small acc-save-btn" onClick={save}>Save</button>
+              <button type="button" className="btn btn-small btn-ghost" onClick={() => setDraft(undefined)}>Undo</button>
+            </>
+          ) : saved ? <span className="acc-ok" role="status">✓ {saved}</span> : <span className="muted">Admins are never limited.</span>}
+          {failed && <span className="adm-error" role="alert">{failed}</span>}
+        </div>
+      </section>
+
+      <ol className={`acc-rules ${on ? "" : "is-idle"}`} aria-label="How the limit works">
+        <li><span className="acc-n">1</span><strong>Unlock</strong><p>A learner presses Unlock on a lab's course page. A locked lab shows that page and nothing more.</p></li>
+        <li><span className="acc-n">2</span><strong>Finish at 80%</strong><p>When 80% of a lab's tasks have passed, its slot frees itself and the lab stays open.</p></li>
+        <li><span className="acc-n">3</span><strong>Swap on Mondays</strong><p>On Mondays (India time) a learner may swap an unfinished lab out. Progress is kept.</p></li>
+      </ol>
+      {!on && <p className="muted small-text acc-idle-note">These rules start once a limit is on.</p>}
+
+      <Exceptions list={data.exceptions} siteLimit={current} onChange={reload} />
+    </div>
+  );
+}
+
+/** Learners with their own limit, which beats the setting for everyone. Add one by name; Remove gives the default back. */
+function Exceptions({ list, siteLimit, onChange }: { list: LimitException[]; siteLimit: number | null; onChange: () => void }) {
+  const [typed, setTyped] = useState("");
+  const [found, setFound] = useState<AdminLearner[]>([]);
+  const [failed, setFailed] = useState<string | null>(null);
+  useEffect(() => {
+    const q = typed.trim();
+    if (!q) { setFound([]); return; }
+    const t = setTimeout(() => admin.learners(q).then((r) => setFound(r.filter((u) => !u.is_admin).slice(0, 5))).catch(() => setFound([])), 250);
+    return () => clearTimeout(t);
+  }, [typed]);
+  const set = (id: number, v: number | null) => {
+    setFailed(null);
+    admin.setLearnerLimit(id, v).then(onChange).catch((e) => setFailed(e instanceof ApiError ? e.message : String(e)));
+  };
+  const mine = new Set(list.map((x) => x.id));
+  return (
+    <section className="adm-panel acc-exc" aria-labelledby="acc-exc-title">
+      <h2 id="acc-exc-title">Exceptions</h2>
+      <p className="muted small-text">Learners with their own number. It beats the setting above, either way.</p>
+      {list.length > 0 ? (
+        <ul className="acc-exc-list">
+          {list.map((x) => (
+            <li key={x.id}>
+              <span className="acc-exc-name">{x.username}</span>
+              <LimitSelect value={x.lab_limit} label={`Lab limit for ${x.username}`} onChange={(v) => set(x.id, v)} />
+              <button type="button" className="btn btn-small btn-ghost" onClick={() => set(x.id, null)}
+                title={`Back to the default (${siteLimit == null ? "every lab" : labsWord(siteLimit)})`}>Remove</button>
+            </li>
+          ))}
+        </ul>
+      ) : <p className="acc-empty">No exceptions. Everyone follows the setting above.</p>}
+      <div className="acc-add">
+        <input className="adm-search" type="search" placeholder="Add a learner by username" aria-label="Add a learner by username"
+          value={typed} onChange={(e) => setTyped(e.target.value)} />
+        {found.length > 0 && (
+          <ul className="acc-found">
+            {found.map((u) => (
+              <li key={u.id}>
+                <span>{u.username}</span>
+                {mine.has(u.id) ? <span className="muted small-text">already listed</span> : (
+                  <button type="button" className="btn btn-small" onClick={() => { set(u.id, 5); setTyped(""); }}>Give 5 labs</button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      {failed && <p className="adm-error" role="alert">{failed}</p>}
+    </section>
+  );
+}
+
+/** One learner's own lab limit on the Learners tab: the default, every lab, or a number. Saves at once. */
+function LearnerLimit({ user, siteLimit }: { user: AdminLearner; siteLimit: number | null }) {
+  const [value, setValue] = useState<number | null>(user.lab_limit ?? null);
+  const [err, setErr] = useState<string | null>(null);
+  if (user.is_admin) return <span className="muted small-text">no limit</span>;
+  const change = (v: number | null) => {
+    const before = value;
+    setValue(v);
+    setErr(null);
+    admin.setLearnerLimit(user.id, v).catch((e) => { setValue(before); setErr(e instanceof ApiError ? e.message : String(e)); });
+  };
+  return (
+    <>
+      <LimitSelect value={value} onChange={change} label={`Lab limit for ${user.username}`} siteLimit={siteLimit} />
+      {err && <div className="adm-error small-text" role="alert">{err}</div>}
+    </>
+  );
+}
+
 function LearnersTab() {
   const [query, setQuery] = useState("");
   const [typed, setTyped] = useState("");
@@ -183,7 +349,9 @@ function LearnersTab() {
     return () => clearTimeout(t);
   }, [typed]);
   const [rows, error] = useLoad<AdminLearner[]>(() => admin.learners(query), [query]);
+  const [access] = useLoad<LabAccessInfo>(() => admin.labAccess(), []);
   return (
+    <>
     <Panel
       title="Learners"
       note={query ? `Usernames containing "${query}".` : "The 50 newest accounts."}
@@ -191,7 +359,7 @@ function LearnersTab() {
     >
       {!rows ? <Loading error={error} /> : rows.length === 0 ? <p className="muted">No one matches.</p> : (
         <table className="adm-table">
-          <thead><tr><th>Learner</th><th>Joined</th><th>Labs</th><th>XP</th><th>Checks</th><th>Last active</th></tr></thead>
+          <thead><tr><th>Learner</th><th>Joined</th><th>Labs</th><th>XP</th><th>Checks</th><th>Last active</th><th>Lab limit</th></tr></thead>
           <tbody>
             {rows.map((u) => (
               <tr key={u.id}>
@@ -201,12 +369,14 @@ function LearnersTab() {
                 <td className="adm-num">{u.xp}</td>
                 <td className="adm-num">{u.checks}</td>
                 <td>{when(u.last_active)}</td>
+                <td>{access && <LearnerLimit user={u} siteLimit={access.limit} />}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
     </Panel>
+    </>
   );
 }
 
@@ -510,6 +680,7 @@ export default function AdminPage() {
         {tab === "funnel" && <FunnelTab />}
         {tab === "labs" && <LabsTab />}
         {tab === "learners" && <LearnersTab />}
+        {tab === "access" && <AccessTab />}
         {tab === "machines" && <MachinesTab />}
         {tab === "ai" && <SpendTab />}
         {tab === "errors" && <ErrorsTab />}

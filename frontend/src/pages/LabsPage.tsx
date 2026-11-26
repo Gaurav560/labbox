@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
+import { api, type LabDetail, type LabSummary, type NextStep, type Slots } from "../api";
 import { inkOn, labDeck, labTone, mix } from "../brand";
 import RetroComputer from "../components/RetroComputer";
 import { chapterNumber } from "../components/StatusBar";
@@ -12,6 +12,7 @@ import Logo from "../components/Logo";
 import { useToast } from "../components/Toasts";
 import { useStats } from "../stats";
 import ThemeButton from "../components/ThemeButton";
+import LockIcon from "../components/LockIcon";
 
 export const TRACK_LABEL: Record<string, string> = {
   languages: "Languages",
@@ -53,10 +54,12 @@ export default function LabsPage() {
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [next, setNext] = useState<NextStep | null>(null);
   const [nextLab, setNextLab] = useState<LabDetail | null>(null);   // the lab of the next step (deck keys, rail)
+  const [slots, setSlots] = useState<Slots | null>(null);
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
     api.next().then(setNext).catch(() => {});
+    api.slots().then(setSlots).catch(() => {});
   }, [toast]);
 
   useEffect(() => {
@@ -83,13 +86,14 @@ export default function LabsPage() {
       {next && (
         <aside className="labs-side">
           <NextCard next={next} lab={nextLab} />
-          {nextLab && <NextRail next={next} lab={nextLab} />}
+          {nextLab && nextLab.access !== "locked" && <NextRail next={next} lab={nextLab} />}
         </aside>
       )}
       <main className="labs-main">
         {/* Level, streak and today's XP live in the profile panel (top right); the drill has the full width. */}
         <DrillCard />
         <h2>Your labs</h2>
+        {labs && slots?.limit != null && <SlotStrip slots={slots} labs={labs} />}
         {!labs && <p className="muted">Loading...</p>}
         {labs && <CategoryChips groups={byCategory(labs)} />}
         {labs && byCategory(labs).map((g) => (
@@ -100,7 +104,7 @@ export default function LabsPage() {
             </h3>
             {g.labs.length ? (
               <div className="h-labs labs-tiles">
-                {g.labs.map((lab) => <LabTile key={lab.id} lab={lab} />)}
+                {g.labs.map((lab) => <LabTile key={lab.id} lab={lab} limited={slots?.limit != null} />)}
               </div>
             ) : (
               <p className="lab-group-soon">{TRACK_LABEL[g.id] ?? g.id} labs are being written. They will appear here.</p>
@@ -135,16 +139,49 @@ function CategoryChips({ groups }: { groups: { id: string; labs: LabSummary[] }[
   );
 }
 
-/** The same tile as the home page's lab grid, plus a quiet progress line. */
-function LabTile({ lab }: { lab: LabSummary }) {
+/*
+ * At most a few labs at a time (owner, 26 November), shown when an admin has turned the limit on: the labs that
+ * hold a slot, the free slots, and how a slot frees itself.
+ */
+function SlotStrip({ slots, labs }: { slots: Slots; labs: LabSummary[] }) {
+  const mine = labs.filter((l) => slots.labs[l.id] === "unlocked");
+  const free = slots.free ?? 0;
+  const swapDay = new Date(slots.next_swap).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+  return (
+    <section className="slot-strip" aria-label="Your lab slots">
+      <div className="slot-strip-head">
+        <strong>Your lab slots: {slots.used} of {slots.limit} in use</strong>
+        <span>{slots.swap_open ? "Today is swap day: open a lab to swap it out." : `Next swap day: ${swapDay}`}</span>
+      </div>
+      <ul>
+        {mine.map((l) => (
+          <li key={l.id}>
+            <Link to={`/courses/${l.id}`}>
+              <span className="slot-dot" style={{ background: labTone(l.id, l.cover_credit) }} aria-hidden="true" />
+              {l.title}
+            </Link>
+          </li>
+        ))}
+        {Array.from({ length: free }, (_, i) => <li key={`free-${i}`}><span className="is-free">Free slot</span></li>)}
+      </ul>
+      <p>Pick a locked lab below to unlock it. A lab frees its slot when you finish 80% of its tasks; on Mondays you can also swap one out.</p>
+    </section>
+  );
+}
+
+/** The same tile as the home page's lab grid, plus a quiet progress line (and a lock while a limit is on). */
+function LabTile({ lab, limited }: { lab: LabSummary; limited: boolean }) {
   const { passed_tasks: done, total_tasks: total } = lab.progress;
   const pct = total ? (100 * done) / total : 0;
+  const locked = lab.access === "locked";
   return (
-    <Link to={`/courses/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""}`}>
+    <Link to={`/courses/${lab.id}`} className={`h-lab ${total && done === total ? "is-done" : ""} ${locked ? "is-locked" : ""}`}>
       <div className="h-lab-img">
         {lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : (
           <LabCover id={lab.id} title={lab.title} track={lab.track} tags={lab.tags} coverUrl={null} credit={null} />
         )}
+        {locked && <span className="h-lab-lock"><LockIcon size={12} />Locked</span>}
+        {limited && lab.access === "unlocked" && <span className="h-lab-lock is-open">Unlocked</span>}
       </div>
       <div className="h-lab-text">
         <strong>{lab.title}</strong>
@@ -164,7 +201,8 @@ function NextCard({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const idx = lab?.chapters.findIndex((c) => c.id === next.chapter_id) ?? -1;
   const prev = idx > 0 ? lab!.chapters[idx - 1] : null;
   const after = lab && idx >= 0 && idx < lab.chapters.length - 1 ? lab.chapters[idx + 1] : null;
-  const chapterUrl = (id: string) => `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
+  // A locked lab's keys all go to its course page, where it can be unlocked.
+  const chapterUrl = (id: string) => lab?.access === "locked" ? `/courses/${next.lab_id}` : `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
   const title = next.lab_title;
   const tone = labTone(next.lab_id, lab?.cover_credit);
   return (

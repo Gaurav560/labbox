@@ -219,7 +219,7 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 ### 1b. Done: at most a few labs at a time (owner, 25 and 26 November)
 
 So learners are not overwhelmed by the number of labs and study nothing (rules in `backend/app/slots.py`):
-- [x] An admin sets the limit in Admin, Learners, "Lab access": **every lab open** (the default, until the owner
+- [x] An admin sets the limit in Admin, **Lab access** tab (or `scripts/labbox lab-limit N|off`): **every lab open** (the default, until the owner
       turns it on) or **N labs at a time**; one learner can get their own number (or every lab) on their row.
       Admins are never limited.
 - [x] A learner unlocks a lab with the **Unlock this lab** button on its course page. A locked lab opens nothing but
