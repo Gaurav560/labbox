@@ -5,6 +5,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
+import { signIn } from "./signin";
 
 test.describe.configure({ mode: "serial" });
 
@@ -21,10 +22,7 @@ test.afterAll(() => {
 });
 
 async function login(page: Page, first = false) {
-  await page.goto("/login");
-  await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Password").fill("secret123");
-  await page.getByRole("button", { name: first ? "Sign up" : "Log in" }).click();
+  await signIn(page, username, { first });
   if (first) await page.getByRole("button", { name: "Skip" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
   const token = await page.evaluate(() => localStorage.getItem("labbox.token") ?? "");

@@ -18,7 +18,9 @@ test("Google and GitHub buttons, and coming back signed in", async ({ page }) =>
   const github = page.getByRole("link", { name: "Continue with GitHub" });
   await expect(google).toHaveAttribute("href", "/api/auth/oauth/google/start?next=%2Fcertificates");
   await expect(github).toHaveAttribute("href", "/api/auth/oauth/github/start?next=%2Fcertificates");
-  await expect(page.getByText("or with a username")).toBeVisible();
+  // Google and GitHub only (owner, 27 November): no username or password form.
+  await expect(page.getByLabel("Username")).toHaveCount(0);
+  await expect(page.getByLabel("Password")).toHaveCount(0);
 
   // Back from the provider: the one-time code becomes a login, and the page goes where the learner was heading.
   await page.goto("/login?oauth=one-time-code&next=/certificates");

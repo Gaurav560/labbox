@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api";
 import { useAuth } from "../auth";
@@ -47,7 +47,7 @@ function Showcase() {
 }
 
 export default function LoginPage() {
-  const { user, login, signup, adopt } = useAuth();
+  const { user, adopt } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   // Sign-up may be closed (an invite-only site, ALLOW_SIGNUP=false): then the page is a login page and says so.
@@ -56,17 +56,14 @@ export default function LoginPage() {
   // Where to go after logging in: a path on this site (never another site), else the dashboard.
   const wanted = params.get("next") ?? "";
   const next = wanted.startsWith("/") && !wanted.startsWith("//") && !wanted.startsWith("/\\") ? wanted : "/labs";
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [reveal, setReveal] = useState(false);
   const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState<string[]>([]);
+  const [loaded, setLoaded] = useState(false);
   // Back from Google or GitHub: ?oauth=<one-time code> becomes a login; ?oauth_error says why it did not.
   const oauthCode = params.get("oauth");
   const [finishing, setFinishing] = useState(Boolean(oauthCode));
   useEffect(() => {
-    api.authOptions().then((o) => { setSignupOpen(o.signup); setProviders(o.providers ?? []); }).catch(() => undefined);
+    api.authOptions().then((o) => { setSignupOpen(o.signup); setProviders(o.providers ?? []); }).catch(() => undefined).finally(() => setLoaded(true));
   }, []);
   useEffect(() => {
     const failed = params.get("oauth_error");
@@ -80,29 +77,11 @@ export default function LoginPage() {
 
   if (user) return <Navigate to={next} replace />;
 
-  async function submit(action: "login" | "signup", e?: FormEvent) {
-    e?.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      await (action === "login" ? login : signup)(username.trim(), password);
-      navigate(next);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const ready = !busy && !!username && !!password;
-  const primary = signupMode ? "signup" : "login";
-  const other = signupMode ? "login" : "signup";
-
   return (
     <div className="auth">
       <Showcase />
       <main className="auth-main">
-        <form className="auth-card" onSubmit={(e) => submit(primary, e)}>
+        <div className="auth-card">
           <div className="auth-top">
             <Logo to="/" />
             <span className="auth-top-links">
@@ -114,7 +93,7 @@ export default function LoginPage() {
           {!signupMode && <p className="muted auth-sub">Your machines are where you left them.</p>}
 
           {finishing && <p className="auth-finishing" role="status">Signing you in…</p>}
-          {providers.length > 0 && !finishing && (
+          {!finishing && (
             <div className="auth-oauth">
               {providers.includes("google") && (
                 <a className="auth-oauth-btn" href={`/api/auth/oauth/google/start?next=${encodeURIComponent(next)}`}>
@@ -126,46 +105,18 @@ export default function LoginPage() {
                   <GitHubMark /> Continue with GitHub
                 </a>
               )}
-              <p className="auth-or"><span>or with a username</span></p>
+              {loaded && providers.length === 0 && <p className="muted">Sign-in is not set up on this site yet.</p>}
             </div>
           )}
-          <label className="auth-field">
-            <span>Username</span>
-            <input value={username} onChange={(e) => setUsername(e.target.value)} autoFocus autoComplete="username" placeholder="asha" spellCheck={false} />
-          </label>
-          <label className="auth-field">
-            <span>Password</span>
-            <div className="auth-pass">
-              <input
-                type={reveal ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete={signupMode ? "new-password" : "current-password"}
-                placeholder="At least 6 characters"
-              />
-              <button type="button" className="auth-reveal" onClick={() => setReveal(!reveal)} aria-pressed={reveal} title={reveal ? "Hide" : "Show"}>
-                {reveal ? "Hide" : "Show"}
-              </button>
-            </div>
-          </label>
 
           {error && <div className="form-error" role="alert">{error}</div>}
 
-          <button type="submit" className="btn btn-primary auth-go" disabled={!ready}>
-            {busy ? "One moment…" : signupMode ? "Sign up" : "Log in"}
-          </button>
-          {signupOpen ? (
-            <p className="auth-switch muted">
-              {signupMode ? "Already have an account?" : "New to LabBox?"}{" "}
-              <button type="button" className="auth-link" disabled={!ready} onClick={() => submit(other)}>
-                {signupMode ? "Log in" : "Sign up"}
-              </button>
-            </p>
-          ) : (
-            <p className="auth-switch muted">Sign-up is by invitation for now. Got an invitation? Log in with the name and password you were given.</p>
-          )}
-          <p className="muted small auth-rules">Usernames: 3 to 32 letters, digits, dot, dash or underscore. Passwords: at least 6 characters.</p>
-        </form>
+          <p className="auth-switch muted">
+            {signupOpen
+              ? "New here? The same buttons make your account; there is no password to remember."
+              : "Sign-up is by invitation for now. Got an invitation? Continue with the Google or GitHub account of the email it was sent to."}
+          </p>
+        </div>
         <p className="auth-legal small">
           By continuing you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy policy</Link>. Questions? Read the <Link to="/faq">FAQs</Link>.
         </p>

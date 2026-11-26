@@ -4,6 +4,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
+import { signIn } from "./signin";
 
 const PY_SOLVED: Record<string, string> = {
   // Python from zero, chapter 1 (its own folder since the 22 November rewrite).
@@ -33,11 +34,8 @@ test("onboarding, daily drill, streak, XP and skill map", async ({ page }) => {
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
   // 1. Sign up: onboarding starts by itself.
-  await page.goto("/login");
-  await page.getByLabel("Username").fill(`ob${Date.now() % 1_000_000_000}`);
-  await page.getByLabel("Password").fill("secret123");
   const started = Date.now();
-  await page.getByRole("button", { name: "Sign up" }).click();
+  await signIn(page, `ob${Date.now() % 1_000_000_000}`, { first: true });
   await expect(page.getByRole("heading", { name: "What do you want to get better at?" })).toBeVisible();
 
   // 2. Goal, then 3 placement questions, then the path.

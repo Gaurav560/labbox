@@ -1,5 +1,6 @@
 /* The public home page: works logged out, shows the live catalog, and leads into sign-up and onboarding. */
 import { expect, test } from "@playwright/test";
+import { signIn } from "./signin";
 
 test("home page for visitors leads to sign up and onboarding", async ({ page }) => {
   const errors: string[] = [];
@@ -66,12 +67,11 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".h-faq-item[open]")).toContainText("lab requests");
   await expect(page.locator(".home-footer").getByRole("link", { name: "FAQs" })).toHaveCount(0);
 
-  // Start free goes to sign up (Enter signs up), then onboarding.
+  // Start free goes to sign up: Google and GitHub only (owner, 27 November); a new account then starts onboarding.
   await page.locator(".uh-hero").getByRole("link", { name: "Start free →" }).click();
   await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
-  await page.getByLabel("Username").fill(`home${Date.now() % 1_000_000_000}`);
-  await page.getByLabel("Password").fill("secret123");
-  await page.getByLabel("Password").press("Enter");
+  await expect(page.getByLabel("Username")).toHaveCount(0);
+  await signIn(page, `home${Date.now() % 1_000_000_000}`, { first: true });
   await expect(page.getByRole("heading", { name: "What do you want to get better at?" })).toBeVisible();
   await page.getByRole("button", { name: "Skip" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
