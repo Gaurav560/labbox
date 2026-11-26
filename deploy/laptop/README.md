@@ -55,6 +55,7 @@ deploy/laptop/prod logs [service]  # backend (default), worker, caddy, tunnel, d
 deploy/laptop/prod deploy <commit> # deploy by hand (same as the timer)
 deploy/laptop/prod rollback        # back to the previous release
 deploy/laptop/prod labbox ...      # the labbox CLI against the live database, e.g. `admin grant gaurav`
+deploy/laptop/prod invite <email>  # an invited tester: they sign in with Google or GitHub using that email
 ```
 
 ## Rules
@@ -63,6 +64,8 @@ deploy/laptop/prod labbox ...      # the labbox CLI against the live database, e
   `backend/.env`; only `deploy/laptop/prod labbox ...` reads the live settings.
 - Lab images are shared: building an image in development replaces the live one too. After building images
   from unfinished work, rebuild them from the live release (`deploy/laptop/prod images <lab>`).
-- Sign-up is off on the live site (`ALLOW_SIGNUP=false`): learners' code runs on this laptop, so the owner
-  creates accounts for invited testers (`deploy/laptop/prod adduser <name>`, which asks for a password).
+- Sign-in is Google and GitHub only (owner, 27 November; `PASSWORD_LOGIN` is off). Sign-up is off on the live site
+  (`ALLOW_SIGNUP=false`): learners' code runs on this laptop, so the owner invites testers by email
+  (`deploy/laptop/prod invite friend@example.com`); they then continue with the Google or GitHub account of that email.
+  An existing account gets an email with `deploy/laptop/prod labbox link-email <username> <email>`.
 - The laptop must not sleep (lid closed: do nothing; no automatic suspend), or the site goes down.

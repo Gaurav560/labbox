@@ -2,6 +2,13 @@
 
 ## 27 November: sign in with Google and GitHub
 
+- **Google and GitHub only** (owner: "remove the username and password signup and login; all sign-ups and logins via
+  Google and GitHub"). The login page shows the two buttons and nothing else (both designs); the first sign-in makes the
+  account. `PASSWORD_LOGIN` (default off) refuses the username and password API; development and tests turn it on, as
+  browser tests cannot use real Google (`e2e/signin.ts`). `labbox link-email <username> <email>` gives an existing account
+  an email so Google or GitHub opens it (the owner's `gaurav`, with all its progress and admin rights);
+  `labbox invite <email>` makes an account in advance on an invite-only site (`deploy/laptop/prod invite`, replacing
+  `adduser`).
 - **Continue with Google / Continue with GitHub** on the login page (both designs), shown only when a provider's keys are
   in `.env` (`/api/auth/options` lists `providers`). The flow (`backend/app/oauth.py`): a server-side state bound to a
   short HttpOnly cookie, PKCE for Google, the identity fetched from the provider, then the LabBox account: the same

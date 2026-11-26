@@ -237,6 +237,10 @@ The redirect address to register is `<site>/api/auth/oauth/google/callback` (or 
   `http://localhost:5174/api/auth/oauth/github/callback` (the Ukiyo dev server). `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`.
 - Live site: the keys go in `/srv/labbox/prod/shared/.env`, then `deploy/laptop/prod restart`.
 
+Sign-in is Google and GitHub only (owner, 27 November): `PASSWORD_LOGIN` is off by default, so the username and password
+API refuses; `backend/.env` turns it on in development only for the automatic tests. Existing accounts get an email with
+`scripts/labbox link-email <username> <email>`; invite-only sites invite with `scripts/labbox invite <email>`.
+
 How accounts are matched (`backend/app/oauth.py`): the same provider account always signs into the same LabBox account;
 otherwise a LabBox account with the same verified email gets it linked (Google and GitHub with one address end up
 together); otherwise a new account, only while sign-up is open (`ALLOW_SIGNUP`). Its verified email is saved on the

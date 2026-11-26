@@ -52,10 +52,12 @@ case "${1:-status}" in
     live_env
     exec "$PROD/current/scripts/labbox" "$@"
     ;;
-  adduser)
-    [ -n "${2:-}" ] || { echo "Usage: $0 adduser <username>" >&2; exit 2; }
+  invite)
+    # Google and GitHub only (owner, 27 November): an invite is an account made in advance for an email; the person
+    # signs in with the Google or GitHub account of that email.
+    [ -n "${2:-}" ] || { echo "Usage: $0 invite <email>" >&2; exit 2; }
     live_env
-    exec "$PROD/current/backend/.venv/bin/python" "$PROD/current/scripts/create_user.py" "$2"
+    exec "$PROD/current/scripts/labbox" invite "$2"
     ;;
   images)
     shift
@@ -71,7 +73,7 @@ case "${1:-status}" in
     ;;
   *)
     echo "Usage: $0 status | logs [backend|worker|caddy|tunnel|deploy] | deploy <commit> | rollback | restart |" >&2
-    echo "       labbox <args> | adduser <username> | images <lab>...|all" >&2
+    echo "       labbox <args> | invite <email> | images <lab>...|all" >&2
     exit 2
     ;;
 esac
