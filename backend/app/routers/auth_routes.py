@@ -32,20 +32,27 @@ def _token_out(user: User) -> TokenOut:
 
 
 class AuthOptions(BaseModel):
-    signup: bool  # False on an invite-only site (ALLOW_SIGNUP=false): the login page says so instead of a Sign up link
+    signup: bool  # False on an invite-only site (ALLOW_SIGNUP=false): the login page says so
     providers: list[str] = []  # "google", "github": the sign-in buttons to show (only those whose keys are set)
+    password: bool = False  # username and password sign-in (PASSWORD_LOGIN; only for automatic tests)
 
 
 @router.get("/auth/options", response_model=AuthOptions)
 def auth_options() -> AuthOptions:
     from .. import oauth
 
-    return AuthOptions(signup=get_settings().ALLOW_SIGNUP, providers=list(oauth.configured()))
+    s = get_settings()
+    return AuthOptions(signup=s.ALLOW_SIGNUP, providers=list(oauth.configured()), password=s.PASSWORD_LOGIN)
+
+
+PASSWORD_OFF = "Sign in with Google or GitHub."
 
 
 @router.post("/auth/signup", response_model=TokenOut)
 def signup(body: Credentials, request: Request, session: Session = Depends(get_session)) -> TokenOut:
     s = get_settings()
+    if not s.PASSWORD_LOGIN:
+        raise HTTPException(403, PASSWORD_OFF)
     if not s.ALLOW_SIGNUP:
         raise HTTPException(403, "Sign up is disabled")
     key = f"signup:ip:{limits.client_ip(request)}"
@@ -59,6 +66,8 @@ def signup(body: Credentials, request: Request, session: Session = Depends(get_s
 @router.post("/auth/login", response_model=TokenOut)
 def login(body: Credentials, request: Request, session: Session = Depends(get_session)) -> TokenOut:
     s = get_settings()
+    if not s.PASSWORD_LOGIN:
+        raise HTTPException(403, PASSWORD_OFF)
     by_ip, by_name = f"loginfail:ip:{limits.client_ip(request)}", f"loginfail:user:{body.username.lower()}"
     wait = "Too many wrong passwords. Wait a minute and try again."
     limits.too_many(by_ip, s.LOGIN_FAILS_PER_IP_MINUTE, 60, wait)

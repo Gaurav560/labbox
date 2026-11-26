@@ -163,3 +163,41 @@ def test_next_never_leaves_the_site():
     assert oauth.safe_next("https://evil.example") == "/labs"
     assert oauth.safe_next("/\\evil") == "/labs"
     assert oauth.safe_next("/courses/rag") == "/courses/rag"
+
+
+def test_password_sign_in_off_unless_switched_on(api, monkeypatch):
+    """Google and GitHub only (owner, 27 November): with PASSWORD_LOGIN off, the username form's API refuses."""
+    monkeypatch.setenv("PASSWORD_LOGIN", "false")
+    get_settings.cache_clear()
+    try:
+        assert api.get("/api/auth/options").json()["password"] is False
+        assert api.post("/api/auth/signup", json={"username": f"nope{uid()}", "password": "secret123"}).status_code == 403
+        assert api.post("/api/auth/login", json={"username": "gaurav", "password": "whatever1"}).status_code == 403
+    finally:
+        monkeypatch.setenv("PASSWORD_LOGIN", "true")
+        get_settings.cache_clear()
+
+
+def test_link_email_and_invite_open_the_right_account(api, keys, monkeypatch):
+    """An existing account gets an email (link-email); an invite makes one in advance. Google sign-in with that email
+    then opens it, even on an invite-only site."""
+    import importlib.util
+    from pathlib import Path
+
+    spec = importlib.util.spec_from_file_location("labbox_cli", Path(__file__).resolve().parents[2] / "tools" / "labbox_cli.py")
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    name, email = f"old{uid()}", f"old.{uid()}@example.org"
+    old = api.post("/api/auth/signup", json={"username": name, "password": "secret123"}).json()
+    assert cli.main(["link-email", name, email.upper()]) == 0
+    assert cli.main(["link-email", "no-such-account-x", f"x{uid()}@example.org"]) == 1
+    monkeypatch.setenv("ALLOW_SIGNUP", "false")
+    get_settings.cache_clear()
+    fake(monkeypatch, oauth.Identity("google", uid(), email, None, None))
+    assert sign_in(api)["user"]["id"] == old["user"]["id"]
+    guest = f"guest.{uid()}@example.org"
+    assert cli.main(["invite", guest]) == 0
+    assert cli.main(["invite", guest]) == 0  # again: already invited
+    fake(monkeypatch, oauth.Identity("github", uid(), guest, "Guest", "guesthub"))
+    got = sign_in(api, "github")
+    assert got["new"] is False and got["user"]["username"].startswith("guest")
