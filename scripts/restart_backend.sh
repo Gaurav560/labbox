@@ -4,8 +4,9 @@
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LOG="${1:-/tmp/labbox-backend.log}"
-# the uvicorn main process: its command line is "<venv>/python3.12 <venv>/uvicorn app.main:app ..."
-main_pid() { ps -eo pid=,args= | awk '$2 ~ /python/ && $3 ~ /uvicorn$/ && $4 == "app.main:app" {print $1; exit}'; }
+# the dev uvicorn main process: "<venv>/python3.12 <venv>/uvicorn app.main:app --port 8000 ...". Only port 8000 and
+# never /srv/labbox/prod: the live site's backend (port 8100) runs the same command on this laptop.
+main_pid() { ps -eo pid=,args= | awk '$2 ~ /python/ && $3 ~ /uvicorn$/ && $4 == "app.main:app" && / --port 8000( |$)/ && $3 !~ /^\/srv\/labbox\/prod/ {print $1; exit}'; }
 M=$(main_pid)
 V=""
 if [ -n "${M:-}" ]; then
