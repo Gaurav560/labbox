@@ -134,6 +134,7 @@ export function PrivacyPage() {
       <ul>
         <li><strong>Your account:</strong> your username and your password. Passwords are stored only as a one-way hash (bcrypt); we never see or store the password itself.</li>
         <li><strong>Your learning activity:</strong> which steps and tasks you have done, your check results, your answers to questions, XP, streaks, levels, the goal you pick at sign up and your time zone (so a streak day matches your day).</li>
+        <li><strong>If you sign in with Google or GitHub:</strong> we receive your name, your email address (only if they have verified it) and an account number, nothing else. We use the email to keep your account recoverable and never post anything anywhere on your behalf.</li>
         <li><strong>Your certificates:</strong> when you claim a certificate for a lab you finished, the full name you type, the lab, the date and your task count appear on a public page that anyone with its link can open (that is what makes it shareable on LinkedIn or X). You can hide any certificate on its page at any time.</li>
         <li><strong>Your lab files:</strong> the files in your lab workspace and the output of what you run in your lab machine.</li>
         <li><strong>Technical data:</strong> our servers keep standard logs of requests, which include your IP address, the time and the page or action requested. We use them to keep the service running and secure.</li>

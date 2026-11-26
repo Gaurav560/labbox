@@ -2320,3 +2320,12 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .verify-warn { padding: 10px 12px; border-radius: 8px; background: var(--chip); font-size: 14px; }
 .verify-checked { margin: 0; }
 @media (max-width: 760px) { .verify-facts div { grid-template-columns: 1fr; gap: 0; } .cert-marks { gap: 10px; } .cert-qr img { width: 72px; height: 72px; } }
+
+/* Sign in with Google and GitHub (owner, 27 November): plain outlined buttons with each brand's own mark. */
+.auth-oauth { display: grid; gap: 10px; margin: 0 0 6px; }
+.auth-oauth-btn { display: flex; align-items: center; justify-content: center; gap: 10px; height: 44px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); font: 600 15px var(--font-text); text-decoration: none; }
+.auth-oauth-btn:hover { border-color: var(--muted); background: var(--hover); }
+.auth-or { display: flex; align-items: center; gap: 12px; margin: 6px 0 2px; color: var(--muted); font-size: 13px; }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.auth-finishing { margin: 0; padding: 12px; border-radius: 10px; background: var(--chip); text-align: center; font-weight: 600; }

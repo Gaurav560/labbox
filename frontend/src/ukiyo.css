@@ -751,3 +751,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .verify-card { border-radius: 4px; }
 .verify-badge { font: 600 22px var(--font-serif); }
 .verify-form input, .verify-form .cert-box-go { border-radius: 4px; }
+
+/* Sign-in buttons on Ukiyo: paper, a fine ink line. */
+.auth-oauth-btn, .auth-finishing { border-radius: 4px; }
