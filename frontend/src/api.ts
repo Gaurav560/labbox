@@ -172,6 +172,7 @@ export interface OnboardingResult {
 // ---------- calls ----------
 
 export const api = {
+  authOptions: () => request<{ signup: boolean }>("GET", "/api/auth/options"),
   signup: (username: string, password: string) => request<AuthResponse>("POST", "/api/auth/signup", { username, password }),
   login: (username: string, password: string) => request<AuthResponse>("POST", "/api/auth/login", { username, password }),
   me: () => request<User>("GET", "/api/me"),

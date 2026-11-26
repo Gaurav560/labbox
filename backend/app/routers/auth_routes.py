@@ -31,6 +31,15 @@ def _token_out(user: User) -> TokenOut:
     return TokenOut(token=auth.create_token(user), user=UserOut(id=user.id, username=user.username, is_admin=user.is_admin))
 
 
+class AuthOptions(BaseModel):
+    signup: bool  # False on an invite-only site (ALLOW_SIGNUP=false): the login page says so instead of a Sign up link
+
+
+@router.get("/auth/options", response_model=AuthOptions)
+def auth_options() -> AuthOptions:
+    return AuthOptions(signup=get_settings().ALLOW_SIGNUP)
+
+
 @router.post("/auth/signup", response_model=TokenOut)
 def signup(body: Credentials, request: Request, session: Session = Depends(get_session)) -> TokenOut:
     s = get_settings()

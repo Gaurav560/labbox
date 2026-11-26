@@ -91,3 +91,20 @@ def test_cleanup_never_crosses_instances(instance):
         assert name in containers.running_workspace_containers()
     finally:
         c.remove(force=True)
+
+
+def test_auth_options_say_whether_signup_is_open(monkeypatch):
+    """The login page asks; an invite-only site (the live site on the laptop) shows a note instead of Sign up."""
+    from app.main import app
+
+    client = TestClient(app)
+    assert client.get("/api/auth/options").json() == {"signup": True}
+    monkeypatch.setenv("ALLOW_SIGNUP", "false")
+    get_settings.cache_clear()
+    try:
+        assert client.get("/api/auth/options").json() == {"signup": False}
+        r = client.post("/api/auth/signup", json={"username": "invitedonly", "password": "secret123"})
+        assert r.status_code == 403
+    finally:
+        monkeypatch.setenv("ALLOW_SIGNUP", "true")
+        get_settings.cache_clear()
