@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": "http://localhost:8000",
+      "/api": { target: "http://localhost:8000", xfwd: true }, // xfwd: the backend sees the address used (sign-in redirects)
       "/ws": { target: "ws://localhost:8000", ws: true },
       "/preview": { target: "http://localhost:8000", ws: true },
       "/ide": { target: "http://localhost:8000", ws: true },

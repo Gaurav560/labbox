@@ -215,7 +215,9 @@ export interface OnboardingResult {
 // ---------- calls ----------
 
 export const api = {
-  authOptions: () => request<{ signup: boolean }>("GET", "/api/auth/options"),
+  authOptions: () => request<{ signup: boolean; providers?: string[] }>("GET", "/api/auth/options"),
+  /** Google or GitHub sign-in: the one-time code from the callback, swapped once for a login (owner, 27 November). */
+  oauthExchange: (code: string) => request<AuthResponse & { new: boolean }>("POST", "/api/auth/oauth/exchange", { code }),
   signup: (username: string, password: string) => request<AuthResponse>("POST", "/api/auth/signup", { username, password }),
   login: (username: string, password: string) => request<AuthResponse>("POST", "/api/auth/login", { username, password }),
   me: () => request<User>("GET", "/api/me"),
