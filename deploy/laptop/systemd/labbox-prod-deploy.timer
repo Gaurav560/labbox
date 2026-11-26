@@ -1,0 +1,10 @@
+# Every minute: has the production branch moved?
+[Unit]
+Description=LabBox live: look for a new production commit every minute
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=60s
+
+[Install]
+WantedBy=timers.target

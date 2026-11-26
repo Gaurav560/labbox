@@ -8,6 +8,17 @@
   cleanup` see only their own instance's. Empty (development, the default): the names of before. `/api/health`
   reports `release` (the deployed commit). 6 tests (`tests/test_instance.py`, one with a real container); 316 backend
   tests green on Postgres and Redis.
+- **`deploy/laptop/`** (the live site on this laptop, owner 27 November): `setup.sh` (Caddy 2.11.9 and cloudflared
+  2026.10.7 pinned by checksum, `/srv/labbox/prod`, database `labbox_prod`, the live `.env` with fresh secrets,
+  sign-up off, systemd user services; `setup.sh tunnel <host>` for Cloudflare), `release.sh` (each commit in its own
+  folder: packages, frontend build, `validate --strict`, changed lab images, migrations, switch, health check on
+  the release and the page, switch back on failure; refuses commits older than `INSTANCE`), `pull_deploy.sh` and a
+  one-minute timer that follow the `production` branch, a `Caddyfile` (the app's paths to :8100, `/metrics` kept
+  local, the learner's address from Cloudflare for rate limits), and the `prod` helper (status, logs, deploy,
+  rollback, restart, labbox, adduser, images).
+- **The Deploy button** (`.github/workflows/deploy.yml`): Run workflow with a branch (default `design/ukiyo`), CI's
+  checks on that commit (`labs.yml` is now also callable), the `production` branch moves, and the run waits until
+  `/api/health` on the live site reports the commit. GitHub never runs anything on the laptop.
 
 ## 26 November: Ukiyo home, the print without the terminal box
 

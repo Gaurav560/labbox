@@ -1,0 +1,12 @@
+# Cloudflare Tunnel: labbox.gauravships.systems to Caddy on 127.0.0.1:8180 (setup.sh tunnel writes the config).
+[Unit]
+Description=LabBox live tunnel (cloudflared)
+After=network-online.target
+
+[Service]
+ExecStart=%h/.local/bin/cloudflared --no-autoupdate tunnel --config %h/.cloudflared/labbox.yml run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

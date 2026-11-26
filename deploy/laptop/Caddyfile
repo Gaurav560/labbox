@@ -1,0 +1,43 @@
+# The live site's web server (deploy/laptop/README.md). Only cloudflared talks to it, on 127.0.0.1:8180;
+# Cloudflare does HTTPS. Caddy serves the built frontend and passes the app's paths to the backend on 8100.
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+http://:8180 {
+	bind 127.0.0.1
+
+	# The backend: the API, the terminal websocket, previews and VS Code (HTTP and websockets alike).
+	# /metrics is left out on purpose: it is for this machine only.
+	@backend path /api/* /ws/* /preview/* /ide/* /ide-fonts/*
+	handle @backend {
+		reverse_proxy 127.0.0.1:8100 {
+			# The learner's real address (Cloudflare sends it); the backend's rate limits count per address.
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Forwarded-Proto https
+			flush_interval -1
+			transport http {
+				read_timeout 3600s
+				write_timeout 3600s
+			}
+		}
+	}
+
+	# The single page app: hashed assets cached for long, every other path gets index.html.
+	handle {
+		root * /srv/labbox/prod/current/frontend/dist
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=2592000, immutable"
+		@page not path /assets/*
+		header @page Cache-Control "no-cache"
+		try_files {path} /index.html
+		encode zstd gzip
+		file_server
+	}
+
+	request_body {
+		max_size 10MB
+	}
+}

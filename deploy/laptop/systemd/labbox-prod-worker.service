@@ -1,0 +1,15 @@
+# The live site's background worker: images, unused lab networks, nightly database backup.
+[Unit]
+Description=LabBox live worker
+After=labbox-prod.service
+
+[Service]
+WorkingDirectory=/srv/labbox/prod/current/backend
+EnvironmentFile=/srv/labbox/prod/shared/.env
+EnvironmentFile=-/srv/labbox/prod/shared/release.env
+ExecStart=/srv/labbox/prod/current/backend/.venv/bin/arq app.worker.WorkerSettings
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,9 @@
+# Deploys the production branch when it moved (the GitHub Deploy button moves it). Run by the timer.
+[Unit]
+Description=LabBox live: deploy the production branch if it moved
+
+[Service]
+Type=oneshot
+# The scripts of the newest production commit (pull_deploy.sh updates src first).
+ExecStart=/srv/labbox/prod/src/deploy/laptop/pull_deploy.sh
+TimeoutStartSec=3600
