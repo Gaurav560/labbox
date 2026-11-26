@@ -13,7 +13,9 @@
   turns pale; Python, Java, PostgreSQL and FastAPI brighten. The whale on the glass fades further while they load. The
   logos sit closer, larger and brighter, and every piece has one: GNU Bash for the editor and terminal, Hugging Face for
   the embedding models (Simple Icons 16.37.0, CC0, `public/logos/LICENSE-simple-icons`), a torii gate drawn for the model
-  gateway, the LabBox mark for its tutor (OpenAI's logo is left out: Simple Icons removed it and OpenAI limits its use).
+  gateway, the LabBox mark for its tutor, a small code window for the editor (OpenAI's logo is left out: Simple Icons
+  removed it and OpenAI limits its use). Laid out by count so they never overlap: up to 3 on the floor right of the
+  status plate, the rest in a row above that uses the whole width.
 - **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
   component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
   be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.

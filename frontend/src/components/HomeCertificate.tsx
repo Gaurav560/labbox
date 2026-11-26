@@ -26,7 +26,6 @@ const SAMPLE: Certificate = {
 // The rest of what a certificate is moved to the FAQ (owner, 27 November); LinkedIn and sharing stay here.
 const POINTS = [
   { title: "One click to LinkedIn", text: "Adds it to Licenses and certifications, with the certificate's ID and link filled in." },
-  { title: "Scan to verify", text: "Its QR code opens our server's own record of it, so anyone can check it is real." },
 ];
 
 const PLATFORMS = [

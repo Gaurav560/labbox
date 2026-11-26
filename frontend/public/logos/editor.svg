@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><title>Editor and terminal</title>
+<rect x="3" y="7" width="42" height="34" rx="5" fill="#f6f0e3" stroke="#1c1a17" stroke-width="2"/>
+<path d="M3 15h42" stroke="#1c1a17" stroke-width="2"/>
+<circle cx="8.5" cy="11" r="1.6" fill="#e2583f"/><circle cx="13.5" cy="11" r="1.6" fill="#e0a84a"/><circle cx="18.5" cy="11" r="1.6" fill="#4ade80"/>
+<path d="M10 22l5 4-5 4" fill="none" stroke="#1f3a64" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="19" y="20.5" width="15" height="2.8" rx="1.4" fill="#c63f28"/>
+<rect x="19" y="26" width="20" height="2.8" rx="1.4" fill="#1f3a64"/>
+<rect x="19" y="31.5" width="10" height="2.8" rx="1.4" fill="#6a6358"/>
+<rect x="31" y="31" width="2.4" height="4" fill="#1c1a17"/>
+</svg>

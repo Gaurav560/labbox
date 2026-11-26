@@ -13,7 +13,7 @@ type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
 const P = (logo: string, name: string, step: string): Piece => ({ logo, name, step });
 const LINUX = P("linux", "Ubuntu 24.04", "your own Linux machine, in a container");
 // The editor is named for what it does, not the product (owner, 25 November: it may change if VS Code is too heavy).
-const EDITOR: Piece = { logo: "gnubash", icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
+const EDITOR: Piece = { logo: "editor", icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
 const AI: Piece = { logo: "labbox", icon: "ai", name: "AI code assistant", step: "explains, hints and reviews, never the answer" };
 
 const GATEWAY: Piece = { logo: "torii", icon: "ai", name: "Model gateway", step: "real models, no API key, every token counted" };
@@ -79,20 +79,27 @@ export const DOOR: Pt = END(0.5, 0.55);
 /** The inside: the far wall's bottom corner, and a point on the floor (t along the length, u from the front wall back). */
 const Dd: Pt = [D[0] + (E[0] - B[0]), D[1] + (E[1] - B[1])];
 const FLOOR = (t: number, u: number): Pt => L(L(D, C, t), L(Dd, F, t), u);
-/** Where piece i of n stands inside: in stacks two high along the floor, the first stack at the far end. */
+/** Where piece i of n stands inside (owner, 27 November: "overlapping; too much space on the left, use that"): two rows
+    on the floor seen through the glass, evenly spaced and centred, never overlapping. The bottom row (up to 3) stands
+    right of the status plate; the top row holds the rest and uses the whole width, the space above the plate too.
+    Positions are in viewBox x along the floor line, which runs from x 133 (t 0) at 355 units per t. */
+const BOTTOM: [number, number] = [232, 370], TOP: [number, number] = [118, 372];
 function slot(i: number, n: number): { at: Pt; row: number } {
-  const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
-  // close together near the middle of the floor (owner, 27 November: "too much space between those logos")
-  const t = 0.26 + (cols > 1 ? col * (0.34 / (cols - 1)) : 0.16);
-  const [x, y] = FLOOR(t, 0.72);
-  return { at: [x, y - level * 60], row: level };
+  const bottomCount = Math.min(3, Math.floor(n / 2) || 1);
+  const level = i < bottomCount ? 0 : 1;
+  const k = level === 0 ? bottomCount : n - bottomCount, j = level === 0 ? i : i - bottomCount;
+  const [lo, hi] = level === 0 ? BOTTOM : TOP;
+  const step = k > 1 ? Math.min(level === 0 ? 70 : 64, (hi - lo) / (k - 1)) : 0;
+  const x = (lo + hi) / 2 + (j - (k - 1) / 2) * step;
+  const [fx, fy] = FLOOR((x - 133) / 355, 0.72);
+  return { at: [fx, fy - level * 64], row: level };
 }
 
 /** One piece of the lab's stack, as its logo alone, large (owner, 27 November: "try only logos, large logos inside the
     container"): no box around it. Pieces without a logo (the AI parts, the editor and terminal) show their sign.
     It stands on the floor at `at` (its bottom centre) and rides in from the door like the crates did. */
 function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
-  const [x, y] = at, size = 60;
+  const [x, y] = at, size = 56;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
     <g className={`ua-c-box ua-c-logo ${p.logo ? `is-${p.logo}` : ""} ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
