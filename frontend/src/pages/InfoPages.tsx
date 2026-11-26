@@ -46,6 +46,26 @@ function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNo
 
 const mail = <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>;
 
+/** Certificates (owner, 27 November): moved here from the home page's certificate section, plus how to check one. */
+export const CERT_FAQS: { q: string; a: ReactNode }[] = [
+  {
+    q: "How do I get a certificate?",
+    a: <p>Pass 80% of a lab's tasks. The check that gets you there makes your certificate: no form, no waiting. The first time, you type your full name as it should appear; later certificates use it by themselves.</p>,
+  },
+  {
+    q: "Does my certificate have its own link?",
+    a: <p>Yes. Every certificate gets an address of its own, made automatically, that anyone can open without logging in. You can hide it at any time from its page, and correct a mistake in the name once.</p>,
+  },
+  {
+    q: "What does a certificate show?",
+    a: <p>Proof, not a badge: your name, the lab, the date, how many of its tasks you passed on a real machine, how many chapters it has, and the skills you practised.</p>,
+  },
+  {
+    q: "How can someone check that a certificate is real?",
+    a: <p>Scan the QR code on it, or type its 8-character ID at <a href="/verify">/verify</a>. That page shows what our server has on record for that ID, so an edited picture shows up as a mismatch.</p>,
+  },
+];
+
 export const FAQS: { q: string; a: ReactNode }[] = [
   {
     q: `What is ${SITE.product}?`,
@@ -71,6 +91,7 @@ export const FAQS: { q: string; a: ReactNode }[] = [
     q: "How are my answers checked?",
     a: <p>When you press <strong>Check</strong>, hidden tests run against a clean copy of your files. If something fails you see what the test expected next to what your code gave.</p>,
   },
+  ...CERT_FAQS,
   {
     q: "Do hints cost anything?",
     a: <p>Hints are always there when you are stuck. Each one you open lowers the XP for that task a little (to 80%, then 60%, then 40%), so you always still earn something.</p>,

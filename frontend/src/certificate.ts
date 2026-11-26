@@ -13,6 +13,11 @@ export function imageUrl(id: string): string {
   return `/api/certificates/${encodeURIComponent(id)}/image.jpg`;
 }
 
+/** The QR code on a certificate: the address of its /verify page, where the server shows its own record. */
+export function qrUrl(id: string): string {
+  return `/api/certificates/${encodeURIComponent(id)}/qr.svg`;
+}
+
 export function issuedOn(iso: string): string {
   return new Date(iso.endsWith("Z") ? iso : `${iso}Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }

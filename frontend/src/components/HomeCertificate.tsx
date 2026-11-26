@@ -23,11 +23,10 @@ const SAMPLE: Certificate = {
   mine: false,
 };
 
+// The rest of what a certificate is moved to the FAQ (owner, 27 November); LinkedIn and sharing stay here.
 const POINTS = [
-  { title: "Made for you", text: "Pass 80% of a lab's tasks and the check that does it makes your certificate. No form, no waiting." },
-  { title: "Its own link", text: "Every certificate gets an address of its own, made automatically, that opens without a login." },
   { title: "One click to LinkedIn", text: "Adds it to Licenses and certifications, with the certificate's ID and link filled in." },
-  { title: "Proof, not a badge", text: "It shows the tasks you passed on a real machine, the chapters and the skills you practised." },
+  { title: "Scan to verify", text: "Its QR code opens our server's own record of it, so anyone can check it is real." },
 ];
 
 const PLATFORMS = [

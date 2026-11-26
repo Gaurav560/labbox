@@ -67,6 +67,20 @@ test("finish a lab, claim its certificate, share it, hide it", async ({ page, br
   const image = await page.request.get(`/api/certificates/${id}/image.jpg`);
   expect(image.headers()["content-type"]).toBe("image/jpeg");
 
+  // The QR code opens /verify/<id>, which shows the server's own record (owner: "verifies the authenticity").
+  await expect(page.getByRole("img", { name: `QR code: verify certificate ${id}` })).toBeVisible();
+  const qr = await page.request.get(`/api/certificates/${id}/qr.svg`);
+  expect(qr.headers()["content-type"]).toContain("image/svg+xml");
+  await page.getByRole("link", { name: /Scan to verify/ }).click();
+  await expect(page).toHaveURL(new RegExp(`/verify/${id}$`));
+  const card = page.getByRole("region", { name: "Verified" });
+  await expect(card).toContainText("Meera Iyer");
+  await expect(card).toContainText(`${id}`);
+  await page.getByRole("textbox", { name: "Certificate ID" }).fill("ZZZZZZZZ");
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(page.getByRole("region", { name: "Not found" })).toBeVisible();
+  await page.goto(`/certificates/${id}`);
+
   // A visitor, not logged in, sees it; once hidden, they do not.
   const visitor = await browser.newPage();
   await visitor.goto(`/certificates/${id}`);
@@ -75,6 +89,8 @@ test("finish a lab, claim its certificate, share it, hide it", async ({ page, br
   await expect(page.locator(".cert-hidden-note")).toBeVisible();
   await visitor.reload();
   await expect(visitor.getByRole("heading", { name: "This certificate is not available" })).toBeVisible();
+  await visitor.goto(`/verify/${id}`);
+  await expect(visitor.getByRole("region", { name: "Genuine, private" })).toBeVisible();
   await page.getByRole("button", { name: "Make it public again" }).click();
   await expect(page.locator(".cert-hidden-note")).toHaveCount(0);
   await visitor.close();

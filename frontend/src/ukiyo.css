@@ -728,7 +728,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .cert-issuer { font: 600 17px var(--font-serif); }
 .cert-skills li { background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink-muted); }
 .cert-foot { border-top-color: var(--line); }
-.cert-seal { border-radius: 8px; background: #b83227; font: 600 19px/1.05 var(--font-serif); box-shadow: inset 0 0 0 5px #b83227, inset 0 0 0 7px #f0d6c8; }
+.cert-seal { border-radius: 4px; background: #b83227; font: 600 9.5px/1.05 var(--font-serif); box-shadow: inset 0 0 0 2px #b83227, inset 0 0 0 3px #f0d6c8; }
 .cert-hidden-note { color: #9a5b12; }
 .cert-name, .cert-lab { text-wrap: balance; }
 .cert-list-title { font: 600 34px var(--font-serif); }
@@ -740,3 +740,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .hc-points strong { font: 600 19px var(--font-serif); }
 .hc-share-title { font: 600 19px var(--font-serif); }
 .hc-platforms li, .hc-link { border-radius: 4px; }
+
+/* QR and the verify page on Ukiyo: the QR printed on the paper, a serif title, cards like the certificate's paper. */
+.cert-sheet .cert-qr { color: var(--ink-muted); }
+.cert-sheet .cert-qr img { border-radius: 0; background: transparent; mix-blend-mode: multiply; }
+.verify-title { font: 600 40px var(--font-serif); }
+.verify-card { border-radius: 4px; }
+.verify-badge { font: 600 22px var(--font-serif); }
+.verify-form input, .verify-form .cert-box-go { border-radius: 4px; }

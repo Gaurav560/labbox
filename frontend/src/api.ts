@@ -150,6 +150,19 @@ export interface LabCertificateStatus {
   saved_name: string | null;
 }
 export interface CheckCertificate { id: string | null; needs_name: boolean }
+/** What the server holds for a certificate id (the QR code's page). */
+export interface Verification {
+  id: string;
+  status: "verified" | "private" | "unknown" | "sample";
+  name: string | null;
+  lab_id: string | null;
+  lab_title: string | null;
+  issued_at: string | null;
+  tasks_passed: number | null;
+  tasks_total: number | null;
+  issuer: string;
+  checked_at: string;
+}
 
 // ---------- engagement ----------
 
@@ -265,6 +278,7 @@ export const api = {
   claimCertificate: (labId: string, name?: string) => request<Certificate>("POST", `/api/labs/${q(labId)}/certificate`, { name: name ?? null }),
   certificates: () => request<Certificate[]>("GET", "/api/certificates"),
   certificate: (id: string) => request<Certificate>("GET", `/api/certificates/${q(id)}`),
+  verifyCertificate: (id: string) => request<Verification>("GET", `/api/verify/${q(id)}`),
   changeCertificate: (id: string, body: { name?: string; hidden?: boolean }) => request<Certificate>("PATCH", `/api/certificates/${q(id)}`, body),
   check: (labId: string, chapterId: string) => request<CheckResponse>("POST", `/api/labs/${q(labId)}/check`, { chapter_id: chapterId }),
 

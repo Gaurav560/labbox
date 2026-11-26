@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import type { Certificate } from "../api";
 import { labTone } from "../brand";
-import { issuedOn } from "../certificate";
+import { issuedOn, qrUrl } from "../certificate";
 import CertArt from "./CertArt";
 
 /** `sample`: shown inside another page (the home page), so the name and lab are not that page's headings. */
@@ -34,7 +34,13 @@ export default function CertificateSheet({ cert, label, sample = false }: { cert
             <span>Certificate {cert.id}</span>
             <span className="cert-issuer">{cert.issuer}</span>
           </div>
-          <span className="cert-seal" aria-hidden="true">Lab<br />Box</span>
+          <span className="cert-marks">
+            <a className="cert-qr" href={`/verify/${cert.id}`} title="Scan or open to verify this certificate">
+              <span>Scan to verify</span>
+              <img src={qrUrl(cert.id)} width={84} height={84} alt={`QR code: verify certificate ${cert.id}`} />
+            </a>
+            <span className="cert-seal" aria-hidden="true">Lab<br />Box</span>
+          </span>
         </footer>
         {cert.hidden && <p className="cert-hidden-note">Hidden: only you can see this page.</p>}
       </div>
