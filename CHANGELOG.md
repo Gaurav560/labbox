@@ -4,6 +4,8 @@
 
 - The Ukiyo home hero shows Hiroshige's Kinryuzan print on its own: the lab-terminal box laid over it is gone (owner:
   "can you remove this?"). The home browser test now checks that the box is absent.
+- In the dark theme the print is one shade darker (`brightness(.82)`), so its pale snow does not glare; the light
+  theme shows it as it is.
 
 ## 26 November: the Lab access tab in Admin, and the lab limit on both designs
 
