@@ -148,6 +148,12 @@ standard, eight short; see the table in `ROADMAP.md`).
   backend tests set a per-learner `lab_limit` instead and must leave the site's setting as they found it.
 - Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that
   resize to phone width will find no editor area.
+- **The live site runs on this laptop** (owner, 27 November; `deploy/laptop/README.md`): `/srv/labbox/prod`, backend
+  :8100, Caddy :8180, Cloudflare Tunnel to `labbox.gauravships.systems`, database `labbox_prod`, Redis db 2,
+  `INSTANCE=prod` (machines `lab-prod-u...`). Never point tests, browser tests or `test-accounts cleanup` at it, never
+  edit `/srv/labbox/prod` by hand, and never touch `labbox_prod`; use `deploy/laptop/prod ...` (status, logs,
+  deploy, rollback, labbox, adduser). Lab images are shared with it: after building an image from unfinished work,
+  rebuild it from the live release (`deploy/laptop/prod images <lab>`). Deploys go through GitHub (Actions, Deploy).
 
 ## POC deviations still in place (intentional)
 

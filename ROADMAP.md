@@ -195,8 +195,8 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 
 - [ ] Have the Privacy policy and Terms reviewed by someone qualified. They are drafts and not legal
       advice, so this matters most before payments arrive.
-- [ ] Decide whether the GitHub repository should be private. It is probably public now, including the
-      product spec.
+- [x] Decide whether the GitHub repository should be private: **public for a while** (owner, 27 November; GitHub
+      Actions minutes are free on public repositories). Revisit before payments.
 - [ ] Push the latest commits (`git push`): local commits wait for you to push them.
 - [ ] Serve the IDE (`/ide`) and Preview (`/preview`) from their own web address (for example
       `ide.<domain>`), so code there cannot read the learner's login token. Today they share the app's origin.
@@ -215,6 +215,22 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - [ ] Pin and test openvscode-server upgrades (today v1.109.5 in `scripts/openvscode.sh`).
 - [ ] Rebuild all images once the Ubuntu mirror works again (`scripts/build_lab_images.sh`), so every
       lab image gets the `lab requests` helper from the new base image.
+
+### 1a. Live on the laptop through Cloudflare Tunnel (owner, 27 November)
+
+A server costs too much before launch (AWS about $150 to $300 a month for 16 to 32 GB), so the live site runs on
+this laptop beside development (`deploy/laptop/README.md`), at `https://labbox.gauravships.systems`, invite only.
+- [x] `INSTANCE` setting: a second LabBox on the same Docker names and labels its own machines, checks and networks
+      (`lab-prod-u1-...`), and each instance's cleanup sees only its own; `/api/health` reports the release.
+- [x] `deploy/laptop/`: one-time `setup.sh` (Caddy and cloudflared pinned, database `labbox_prod`, live `.env`,
+      user services), `release.sh` (build per commit, validate, changed lab images, migrate, switch, health check,
+      switch back on failure), the deploy timer, and the `prod` helper (status, logs, deploy, rollback, adduser).
+- [x] The Deploy button (`.github/workflows/deploy.yml`): CI's checks, then the `production` branch moves, then the
+      run waits until the live site reports the commit. GitHub never runs anything on the laptop.
+- [ ] Owner: the domain on Cloudflare (nameservers at Hostinger), `sudo loginctl enable-linger gaurav`, the
+      Cloudflare login for `setup.sh tunnel labbox.gauravships.systems`, the OpenAI key in the live `.env`, the
+      laptop set never to sleep.
+- [ ] Move to a rented server when sign-ups open (Hetzner about EUR 16 a month for 16 GB; same scripts).
 
 ### 1b. Done: at most a few labs at a time (owner, 25 and 26 November)
 
@@ -313,7 +329,7 @@ lab (lab 16) and the `system-design` template.
 | H | Real app foundations: Postgres instead of SQLite, Redis, Google login, workers, disk quotas (spec 10) | A Google OAuth client id and secret |
 | I | Payments with Razorpay in test mode: 2 free chapters, paid unlocks the rest | Razorpay test keys |
 | J | Admin dashboard and funnel analytics (done 20 November) | Nothing |
-| K | Launch-set labs complete, deploy to AWS | AWS access, and your approval before anything runs there |
+| K | Launch-set labs complete, deploy (on the laptop through Cloudflare Tunnel since 27 November; a server later) | The steps in section 1a |
 
 ### 5. Smaller items put off by agreement
 

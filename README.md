@@ -597,7 +597,23 @@ Start button, the description, and the lab's skill map (a metro map: one line pe
 (`&step=<n>` for one step), the lesson with the editor and terminal. Level, streak and XP are in the
 profile panel behind the round button at the top right, with Exit (sign out).
 
-## 4. AWS deploy (single EC2 host)
+## 4. Deploying
+
+**The live site runs on the owner's laptop for now** (27 November: a server costs too much before launch), beside
+development, reached through Cloudflare Tunnel at `https://labbox.gauravships.systems`. Everything is in
+[`deploy/laptop/README.md`](deploy/laptop/README.md): what runs where, the one-time setup, and the commands.
+
+- **Deploy:** GitHub, Actions, **Deploy**, Run workflow, pick the branch (default `design/ukiyo`). CI's checks run
+  on that commit, the `production` branch moves to it, the laptop notices within a minute and runs
+  `deploy/laptop/release.sh` (build in its own folder, migrate, switch, health check, switch back on failure), and
+  the run turns green when the live site reports the commit.
+- **Two LabBoxes on one Docker:** the live site sets `INSTANCE=prod` (machines `lab-prod-u1-...`, label
+  `labbox.instance=prod`); each instance's cleanup, idle stop and limits see only their own. Development leaves
+  `INSTANCE` empty and keeps the names of before.
+- **Later, on a rented server:** the same release script and Deploy button; only the tunnel step changes (or
+  nginx and Let's Encrypt, as in the AWS notes below).
+
+## 4b. AWS deploy (single EC2 host, for later)
 
 ### 4.1 Launch the instance (AWS console)
 
