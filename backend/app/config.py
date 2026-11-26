@@ -53,6 +53,10 @@ class Settings(BaseSettings):
     PUBLIC_URL: str = ""
     # Sign in with Google and GitHub (owner, 27 November). Written into .env by the owner; a provider's button shows only
     # when both its values are set. Redirect address to register: <site>/api/auth/oauth/<google|github>/callback.
+    # Username and password sign-in (owner, 27 November: "all sign-ups and logins via Google and GitHub"). Off by default:
+    # the login page never shows a form, and the API refuses it. Development turns it on only for the automatic tests
+    # (browser tests make their accounts this way; real Google cannot run in a test).
+    PASSWORD_LOGIN: bool = False
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
     GITHUB_CLIENT_ID: str = ""

@@ -1027,6 +1027,64 @@ def cmd_password(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_link_email(args: argparse.Namespace) -> int:
+    """Attach an email to an existing account (owner, 27 November: sign-in is Google and GitHub only). The next Google or
+    GitHub sign-in with that verified email opens this account, with its progress and rights."""
+    from sqlmodel import Session, func, select
+
+    from app.db import engine, init_db
+    from app.models import User, utcnow
+
+    init_db()
+    email = args.email.strip().lower()
+    if "@" not in email or " " in email:
+        print(f"✗ {args.email!r} is not an email address")
+        return 1
+    with Session(engine) as s:
+        user = s.exec(select(User).where(User.username == args.username)).first()
+        if user is None:
+            print(f"✗ No account named {args.username!r}")
+            return 1
+        other = s.exec(select(User).where(func.lower(User.email) == email, User.id != user.id)).first()
+        if other is not None:
+            print(f"✗ {email} already belongs to {other.username!r}")
+            return 1
+        user.email, user.email_verified_at = email, utcnow()
+        s.add(user)
+        s.commit()
+        print(f"✓ {user.username} now signs in with Google or GitHub as {email}")
+    return 0
+
+
+def cmd_invite(args: argparse.Namespace) -> int:
+    """Invite someone to an invite-only site: an account made in advance for their email; their first Google or GitHub
+    sign-in with that email opens it (owner, 27 November)."""
+    import secrets
+
+    from sqlmodel import Session, func, select
+
+    from app import oauth
+    from app.auth import hash_password
+    from app.db import engine, init_db
+    from app.models import User
+
+    init_db()
+    email = args.email.strip().lower()
+    if "@" not in email or " " in email:
+        print(f"✗ {args.email!r} is not an email address")
+        return 1
+    with Session(engine) as s:
+        found = s.exec(select(User).where(func.lower(User.email) == email)).first()
+        if found is not None:
+            print(f"✓ {email} is already invited (account {found.username!r})")
+            return 0
+        name = oauth._free_username(s, args.username or email.split("@")[0])
+        s.add(User(username=name, password_hash=hash_password(secrets.token_urlsafe(32)), email=email))
+        s.commit()
+        print(f"✓ Invited {email} (account {name!r}): they sign in with Google or GitHub using that email")
+    return 0
+
+
 def cmd_lab_limit(args: argparse.Namespace) -> int:
     """How many labs a learner may have unlocked at once (owner, 26 November; Admin, Learners, "Lab access"):
     show it, or set a number or "off" (every lab open). --plain prints only the value (browser-test runs save it,
@@ -1141,6 +1199,16 @@ def main(argv: list[str] | None = None) -> int:
     pw = sub.add_parser("password", help="set a new password for an account (asks for it twice)")
     pw.add_argument("username")
     pw.set_defaults(fn=cmd_password)
+
+    le = sub.add_parser("link-email", help="attach an email to an account: Google or GitHub sign-in with it opens that account")
+    le.add_argument("username")
+    le.add_argument("email")
+    le.set_defaults(fn=cmd_link_email)
+
+    iv = sub.add_parser("invite", help="invite an email to an invite-only site (an account made in advance)")
+    iv.add_argument("email")
+    iv.add_argument("--username", help="the account's name (default: from the email)")
+    iv.set_defaults(fn=cmd_invite)
 
     ll = sub.add_parser("lab-limit", help="labs a learner may have unlocked at once: show, or set N or off")
     ll.add_argument("value", nargs="?", help="a number from 1 to 100, or off (every lab open)")
