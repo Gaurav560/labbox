@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { api, type LabDetail, type NextStep, type Slots } from "../api";
 import { useAuth } from "../auth";
 import { inkOn, labTone, mix } from "../brand";
+import CertificateBox from "../components/CertificateBox";
 import LabCover from "../components/LabCover";
 import LockIcon from "../components/LockIcon";
 import MetroMap, { labLines } from "../components/MetroMap";
@@ -85,6 +86,7 @@ export default function CoursePage() {
                   {now.title}{here ? ` · scene ${next.step} of ${next.steps}` : ""}
                 </p>
                 {slots?.limit != null && <SlotNote lab={lab} slots={slots} onChange={() => setReload((n) => n + 1)} />}
+                <CertificateBox labId={lab.id} />
               </>
             )}
           </div>

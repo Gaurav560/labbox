@@ -1,7 +1,7 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { api, ApiError, type CheckCertificate, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
 import { usePhone } from "../usePhone";
 import ChapterPanel from "../components/ChapterPanel";
@@ -103,6 +103,7 @@ function LabWorkspace() {
   const [activePath, setActivePath] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<CheckResponse | null>(null);
+  const [certNote, setCertNote] = useState<CheckCertificate | null>(null); // this lab just finished: its certificate
   const [terminalKey, setTerminalKey] = useState(0);
 
   // Panel sizes in px and focus mode, remembered in this browser.
@@ -643,6 +644,7 @@ function LabWorkspace() {
       const res = await api.check(labId, chapterId);
       setResult(res);
       celebrate(res.xp_awarded);
+      if (res.certificate) setCertNote(res.certificate);
       if (res.xp_awarded?.length) {
         api.chapterProgress(labId, chapterId).then((p) => setChapterXp(p.xp_earned)).catch(() => {});
       }
@@ -964,6 +966,7 @@ function LabWorkspace() {
             onClose={() => setDrawerOpen(false)}
             onShowOutput={() => setBottomTab("output")}
           />
+          {certNote && <CertificateNote labId={labId} note={certNote} onClose={() => setCertNote(null)} />}
         </section>
         </>
         )}
@@ -994,4 +997,20 @@ function revealLine(path: string, line: number, end?: number, tries = 0) {
     ed.setPosition({ lineNumber: line, column: 1 });
     ed.revealLineNearTop(line);
   }
+}
+
+
+/** After the check that finished the lab (80% of its tasks): its certificate is ready, or one click from it. */
+function CertificateNote({ labId, note, onClose }: { labId: string; note: CheckCertificate; onClose: () => void }) {
+  return (
+    <aside className="cert-note" role="status">
+      <strong>You finished this lab.</strong>
+      {note.id ? (
+        <span>Your certificate is ready. <Link to={`/certificates/${note.id}`}>View and share it</Link></span>
+      ) : (
+        <span>Your certificate is waiting: <Link to={`/courses/${labId}`}>type your name and get it</Link></span>
+      )}
+      <button type="button" className="cert-note-close" onClick={onClose} aria-label="Close">×</button>
+    </aside>
+  );
 }
