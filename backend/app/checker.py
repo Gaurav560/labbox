@@ -195,7 +195,7 @@ def _run_container(lab: LabConfig, user_id: int, tmp: Path, live_ws: Workspace |
             networking_config=services.networking_config(live_ws, "checker"),
         )
     c = containers.client().containers.run(
-        name=f"check-u{user_id}-{lab.id}-{short}",
+        name=f"check-{containers.instance_tag()}u{user_id}-{lab.id}-{short}",
         command=lab.check.command,
         detach=True,
         labels=containers.labels("check", user_id, lab.id),

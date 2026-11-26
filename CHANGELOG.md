@@ -1,5 +1,14 @@
 # Changelog
 
+## 27 November: the live site on the laptop, and the Deploy button
+
+- **`INSTANCE` setting** (backend): a second LabBox on the same Docker names its lab machines, check containers and
+  lab networks with its own word (`INSTANCE=prod`: `lab-prod-u1-...`, `labnet-prod-u1-...`) and labels them
+  `labbox.instance=prod`; idle stop, check cleanup, network cleanup, the running-labs limit and `labbox test-accounts
+  cleanup` see only their own instance's. Empty (development, the default): the names of before. `/api/health`
+  reports `release` (the deployed commit). 6 tests (`tests/test_instance.py`, one with a real container); 316 backend
+  tests green on Postgres and Redis.
+
 ## 26 November: the Lab access tab in Admin, and the lab limit on both designs
 
 - Admin has a **Lab access** tab (owner: "more easy to use, good looking, minimal, expressive"): the rule in one

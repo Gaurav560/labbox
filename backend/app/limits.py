@@ -126,9 +126,9 @@ def check_service_data(lab: LabConfig, ws: Workspace) -> None:
 
 
 def _running_for(user_id: int) -> list:
-    return containers.client().containers.list(
-        filters={"label": ["labbox=true", "labbox.kind=workspace", f"labbox.user={user_id}"], "status": "running"}
-    )
+    return containers.mine(containers.client().containers.list(
+        filters={"label": containers.label_filter("labbox.kind=workspace", f"labbox.user={user_id}"), "status": "running"}
+    ))
 
 
 def make_room(session: Session, user_id: int, lab: LabConfig) -> list[str]:

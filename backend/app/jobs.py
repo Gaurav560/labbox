@@ -135,7 +135,7 @@ def networks_job(min_age: float = NETWORK_MIN_AGE_SECONDS) -> tuple[bool, str]:
     client = containers.client()
     removed = []
     now = time.time()
-    for net in client.networks.list(filters={"label": ["labbox=true", "labbox.kind=network"]}):
+    for net in containers.mine(client.networks.list(filters={"label": containers.label_filter("labbox.kind=network")})):
         labels = net.attrs.get("Labels") or {}
         user, lab = labels.get("labbox.user"), labels.get("labbox.lab")
         if not user or not lab:
@@ -145,7 +145,7 @@ def networks_job(min_age: float = NETWORK_MIN_AGE_SECONDS) -> tuple[bool, str]:
         machine = containers.container_name(int(user), lab)
         # The same lock as starting the machine, so a learner arriving right now is never cut off.
         with shared.lock(machine, wait=30):
-            group = client.containers.list(all=True, filters={"label": [f"labbox.user={user}", f"labbox.lab={lab}"]})
+            group = containers.mine(client.containers.list(all=True, filters={"label": [f"labbox.user={user}", f"labbox.lab={lab}"]}))
             if group:
                 continue
             try:

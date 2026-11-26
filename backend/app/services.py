@@ -43,11 +43,20 @@ def _client():
 
 
 def _labels(kind: str, ws: Workspace, extra: dict[str, str] | None = None) -> dict[str, str]:
-    return {"labbox": "true", "labbox.kind": kind, "labbox.user": str(ws.user_id), "labbox.lab": ws.lab_id, **(extra or {})}
+    from .containers import instance_labels
+
+    return {"labbox": "true", "labbox.kind": kind, "labbox.user": str(ws.user_id), "labbox.lab": ws.lab_id,
+            **instance_labels(), **(extra or {})}
+
+
+def lab_network_name(user_id: int, lab_id: str) -> str:
+    from .containers import instance_tag
+
+    return f"labnet-{instance_tag()}u{user_id}-{lab_id}"
 
 
 def network_name(ws: Workspace) -> str:
-    return f"labnet-u{ws.user_id}-{ws.lab_id}"
+    return lab_network_name(ws.user_id, ws.lab_id)
 
 
 def service_container_name(ws: Workspace, svc: Service) -> str:

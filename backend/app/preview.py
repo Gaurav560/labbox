@@ -70,7 +70,7 @@ def _target(user: User, lab: LabConfig, port: int, any_port: bool = False) -> st
         raise HTTPException(403, f"Port {port} is not open for preview in this lab")
     assert user.id is not None
     name = containers.container_name(user.id, lab.id)
-    net = f"labnet-u{user.id}-{lab.id}" if lab.uses_lab_network else None
+    net = services.lab_network_name(user.id, lab.id) if lab.uses_lab_network else None
     ip = services.container_ip(name, prefer_network=net)
     if ip is None:
         raise HTTPException(503, "Your machine is not running. Start it from the lab page.")

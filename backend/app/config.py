@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 from pathlib import Path
 
@@ -40,6 +41,13 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = ""  # error reports to Sentry; empty: off (nothing is sent anywhere)
     SENTRY_ENVIRONMENT: str = "development"
     CONTAINER_RUNTIME: str = ""
+    # A second LabBox on the same Docker (the live site on the owner's laptop, 27 November) sets its own name, e.g.
+    # "prod": its lab machines, check containers and lab networks are then named lab-prod-u1-..., carry the label
+    # labbox.instance=prod, and each instance's cleanup touches only its own. Empty (the default): the names and
+    # labels of before, so existing machines keep working.
+    INSTANCE: str = ""
+    # The commit being served (the release script sets it); /api/health reports it so a deploy can wait for it.
+    RELEASE: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"
     IDLE_STOP_MINUTES: float = 15
@@ -91,6 +99,13 @@ class Settings(BaseSettings):
     def secret_long_enough(cls, v: str) -> str:
         if len(v) < 16:
             raise ValueError("JWT_SECRET must be at least 16 characters")
+        return v
+
+    @field_validator("INSTANCE")
+    @classmethod
+    def instance_name(cls, v: str) -> str:
+        if v and not re.fullmatch(r"[a-z][a-z0-9]{0,11}", v):
+            raise ValueError("INSTANCE must be lowercase letters and digits, starting with a letter, at most 12")
         return v
 
     @field_validator("LABS_DIR", "VOLUMES_DIR", "CHECKS_DIR")
