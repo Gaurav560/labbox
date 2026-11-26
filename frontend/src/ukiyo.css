@@ -680,11 +680,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-c-plank { stroke: #2a5d80; stroke-width: 1.5; }
 .ua-c-lightbar { stroke: #ffd98a; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px #ffd98a); transition: stroke .6s, filter .6s; }
 .ua-container.is-run .ua-c-lightbar { stroke: #4ade80; filter: drop-shadow(0 0 8px #22c55e); }
-/* logo tiles (owner, 27 November): white faces, a soft edge in depth, the logo large */
-.ua-c-box-front { fill: #fbf8f1; stroke: #14171a; stroke-width: 1.8; }
-.ua-c-box-top { fill: #e4ddd0; stroke: #14171a; stroke-width: 1.6; stroke-linejoin: round; }
-.ua-c-box-side { fill: #c9bfad; stroke: #14171a; stroke-width: 1.6; stroke-linejoin: round; }
-.ua-c-box-glyph { font: 800 22px var(--font-code); fill: #c63f28; }
+/* logos alone, large (owner, 27 November): a soft shadow under each so it stands on the floor */
+.ua-c-logo image { filter: drop-shadow(0 0 1.5px #fffffff0) drop-shadow(0 0 7px #ffffff8c) drop-shadow(0 4px 5px #0009); } /* a soft light halo, so dark logos read on the blue */
+.ua-c-logo-shadow { fill: #00000055; }
+.ua-c-box-glyph { font: 800 34px var(--font-code); fill: #ff7a5c; filter: drop-shadow(0 3px 4px #0008); }
 .ua-c-box-led { fill: #5b4632; stroke: #14171a; stroke-width: 1; transition: fill .4s; }
 .ua-container.is-run .ua-c-box-led { fill: #4ade80; filter: drop-shadow(0 0 4px #22c55e); }
 .ua-c-box.is-new { animation: ua-slide 1.2s 1.1s cubic-bezier(.25, .8, .25, 1) both; }
@@ -692,9 +691,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
   80% { transform: translate(0, -4px); } 100% { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ua-c-box.is-new { animation: none; } }
 .ua-c-whale { transition: opacity .6s; filter: drop-shadow(0 2px 0 #0b1a2499); }
-.ua-container:not(.is-wait) .ua-c-whale { opacity: .26; } /* faint once loading, so the logo tiles behind it read clearly */
+.ua-container:not(.is-wait) .ua-c-whale { opacity: .18; } /* faint once loading, so the logo tiles behind it read clearly */
 .ua-c-box { opacity: 1; }
-.ua-c-box-glyph { font-size: 20px; }
+.ua-c-box-glyph { font-size: 32px; }
 .ua-container.is-wait .ua-c-plate text { fill: #4ade80; animation: ua-blink2 1.4s ease-in-out infinite; }
 
 /* At most a few labs at a time (owner, 26 November): Ukiyo's slot strip, ruled like the directory, and the lock. */

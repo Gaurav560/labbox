@@ -82,23 +82,20 @@ function slot(i: number, n: number): { at: Pt; row: number } {
   const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
   const t = 0.13 + (cols > 1 ? col * (0.55 / (cols - 1)) : 0.3); // clear of the door folded back at the end
   const [x, y] = FLOOR(t, 0.72);
-  return { at: [x, y - level * 52], row: level };
+  return { at: [x, y - level * 56], row: level };
 }
 
-/** A logo tile for one piece (owner, 27 November: "instead of those boxes, decent size icons of the tech itself"): a
-    white square with a little depth, the technology's own logo large on its face, its status light in the corner.
-    It stands on the floor at `at` (its front bottom centre) and rides in from the door like the crates did. */
+/** One piece of the lab's stack, as its logo alone, large (owner, 27 November: "try only logos, large logos inside the
+    container"): no box around it. Pieces without a logo (the AI parts, the editor and terminal) show their sign.
+    It stands on the floor at `at` (its bottom centre) and rides in from the door like the crates did. */
 function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
-  const [x, y] = at, w = 48, h = 46, kx = 9, ky = -4, logo = 34;
+  const [x, y] = at, size = 50;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
-    <g className={`ua-c-box ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
-      <polygon className="ua-c-box-top" points={pts([x - w / 2 + 3, y - h], [x + w / 2 - 3, y - h], [x + w / 2 - 3 + kx, y - h + ky], [x - w / 2 + 3 + kx, y - h + ky])} />
-      <polygon className="ua-c-box-side" points={pts([x + w / 2, y - h + 3], [x + w / 2 + kx, y - h + 3 + ky], [x + w / 2 + kx, y - 3 + ky], [x + w / 2, y - 3])} />
-      <rect className="ua-c-box-front" x={x - w / 2} y={y - h} width={w} height={h} rx="7" />
-      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - logo / 2} y={y - h + (h - logo) / 2} width={logo} height={logo} />
-        : <text className="ua-c-box-glyph" x={x} y={y - h / 2 + 8} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
-      <circle className="ua-c-box-led" cx={x + w / 2 - 6} cy={y - 6} r="2.4" />
+    <g className={`ua-c-box ua-c-logo ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
+      <ellipse className="ua-c-logo-shadow" cx={x} cy={y - 1} rx={size * 0.36} ry="3.2" />
+      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - size / 2} y={y - size - 4} width={size} height={size} />
+        : <text className="ua-c-box-glyph" x={x} y={y - 16} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
     </g>
   );
 }

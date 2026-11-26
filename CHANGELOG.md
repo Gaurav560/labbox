@@ -7,8 +7,9 @@
   typed id. The share image carries it too. The seal is a small stamp. The home section keeps LinkedIn, the QR and where
   to share; the rest moved to the FAQ with a question on checking a certificate. Ukiyo: LangChain's certificate print is
   Hiroshige's Lake Biwa and Ishiyama Temple, 1853 (San Diego Museum of Art, public domain).
-- Ukiyo home, the container: the cardboard crates are now logo tiles (a white face, the technology's logo large, its
-  status light), and the whale on the glass fades further while they load so the logos read clearly.
+- Ukiyo home, the container: no more cardboard crates; each piece of the lab's stack is its logo alone, large, with a
+  soft light halo so dark logos read on the blue (owner: "try only logos, large logos inside the container"). The
+  whale on the glass fades further while they load.
 - **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
   component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
   be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.
