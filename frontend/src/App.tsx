@@ -3,6 +3,8 @@ import { Navigate, Route, Routes, useLocation, useNavigationType, useParams } fr
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
 import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
+import CertificatePage from "./pages/CertificatePage";
+import CertificatesPage from "./pages/CertificatesPage";
 import LabsPage from "./pages/LabsPage";
 import UkiyoArtPage from "./pages/UkiyoArtPage";
 import LibraryPage from "./pages/LibraryPage";
@@ -79,6 +81,9 @@ export default function App() {
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/labs" element={<RequireAuth><LabsPage /></RequireAuth>} />
       <Route path="/library" element={<LibraryPage />} />
+      {/* Certificates (owner, 27 November): a certificate's page is public; the address shared is /c/<id>. */}
+      <Route path="/certificates" element={<RequireAuth><CertificatesPage /></RequireAuth>} />
+      <Route path="/certificates/:id" element={<CertificatePage />} />
       <Route path="/ukiyo/art" element={<UkiyoArtPage />} />
       <Route
         path="/courses/:labId"

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useAuth } from "../auth";
 import { useStats } from "../stats";
@@ -67,6 +68,12 @@ export default function ProfileMenu({ username }: { username: string }) {
               </p>
             </>
           )}
+          <Link className="profile-link" to="/certificates" onClick={() => setOpen(false)}>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="9" r="6" /><path d="M8.5 14 7 22l5-3 5 3-1.5-8" />
+            </svg>
+            My certificates
+          </Link>
           <button className="profile-exit" onClick={() => { setOpen(false); logout(); }}>
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" />

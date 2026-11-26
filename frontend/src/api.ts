@@ -119,7 +119,37 @@ export interface CheckResponse {
   duration_ms: number;
   metrics?: Metric[];
   xp_awarded?: XpAward[];
+  certificate?: CheckCertificate | null; // set when this check finished the lab (80% of its tasks)
 }
+
+// ---------- certificates (owner, 27 November) ----------
+
+export interface Certificate {
+  id: string;
+  lab_id: string;
+  lab_title: string;
+  lab_subtitle: string;
+  track: string;
+  name: string;
+  tasks_passed: number;
+  tasks_total: number;
+  chapters_total: number;
+  skills: string[];
+  issued_at: string;
+  issuer: string;
+  hidden: boolean;
+  name_corrected: boolean;
+  mine: boolean;
+}
+export interface LabCertificateStatus {
+  eligible: boolean;
+  tasks_passed: number;
+  tasks_total: number;
+  tasks_needed: number;
+  certificate: Certificate | null;
+  saved_name: string | null;
+}
+export interface CheckCertificate { id: string | null; needs_name: boolean }
 
 // ---------- engagement ----------
 
@@ -231,6 +261,11 @@ export const api = {
   finishOnboarding: (goal: string, answers: number[]) => request<OnboardingResult>("POST", "/api/onboarding", { goal, answers }),
   skipOnboarding: () => request<Stats>("POST", "/api/onboarding/skip"),
 
+  labCertificate: (labId: string) => request<LabCertificateStatus>("GET", `/api/labs/${q(labId)}/certificate`),
+  claimCertificate: (labId: string, name?: string) => request<Certificate>("POST", `/api/labs/${q(labId)}/certificate`, { name: name ?? null }),
+  certificates: () => request<Certificate[]>("GET", "/api/certificates"),
+  certificate: (id: string) => request<Certificate>("GET", `/api/certificates/${q(id)}`),
+  changeCertificate: (id: string, body: { name?: string; hidden?: boolean }) => request<Certificate>("PATCH", `/api/certificates/${q(id)}`, body),
   check: (labId: string, chapterId: string) => request<CheckResponse>("POST", `/api/labs/${q(labId)}/check`, { chapter_id: chapterId }),
 
   slots: () => request<Slots>("GET", "/api/slots"),
