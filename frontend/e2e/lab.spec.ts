@@ -5,6 +5,7 @@
  */
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
+import { signIn } from "./signin";
 
 // Python from zero, chapter 2 (id 01-functions, folder 02-functions since the 22 November rewrite).
 const PY_SOLVED: Record<string, string> = {
@@ -36,10 +37,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
   // Sign up and open the lab.
-  await page.goto("/login");
-  await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Password").fill("secret123");
-  await page.getByRole("button", { name: "Sign up" }).click();
+  await signIn(page, username, { first: true });
   // New accounts start with onboarding (covered in engagement.spec.ts); skip it here.
   await page.getByRole("button", { name: "Skip" }).click();
   await expect(page.getByText("Your labs")).toBeVisible();
@@ -189,10 +187,7 @@ test("lesson flow: steps, predict, hint, run, check, recap, persistence", async 
 
 test("java lab renders its v2 steps", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic"))); // these tests drive the classic editor
-  await page.goto("/login");
-  await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Password").fill("secret123");
-  await page.getByRole("button", { name: "Log in" }).click();
+  await signIn(page, username);
   await expect(page.getByText("Your labs")).toBeVisible();
   await page.goto("/labs/java-basics?chapter=01-methods"); // chapter 2 since the 22 November rewrite
   await expect(stepCount(page)).toHaveText("Scene 1 of 15", { timeout: 60_000 });
@@ -205,10 +200,7 @@ test("java lab renders its v2 steps", async ({ page }) => {
 
 test("lessons show pictures, a step-through trace and task cards", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("labbox.editor", JSON.stringify("classic")));
-  await page.goto("/login");
-  await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Password").fill("secret123");
-  await page.getByRole("button", { name: "Log in" }).click();
+  await signIn(page, username);
   await expect(page.getByText("Your labs")).toBeVisible();
   await page.goto("/labs/java-basics?chapter=01-methods");
   await expect(stepCount(page)).toHaveText("Scene 1 of 15", { timeout: 60_000 });
