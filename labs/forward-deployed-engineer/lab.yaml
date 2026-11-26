@@ -1,0 +1,157 @@
+id: forward-deployed-engineer
+version: 2
+title: Forward Deployed Engineer
+subtitle: Eight weeks embedded at a motor insurer, from the first meeting to a system in production, building Claimdesk, an
+  AI claims assistant, the way forward deployed engineers do.
+description: 'Learn the forward deployed engineer''s job by doing it: measure the customer''s problem in their own numbers,
+  discover what really eats the time, scope a pilot you can finish, read the customer''s messy exports, database and old systems,
+  agree a data contract, call a model through a gateway, extract fields from claim emails, answer from the policy wording
+  with citations, let the model use the customer''s systems through tools and an MCP server, demo on day five, build a golden
+  set and evals the customer can read, analyse failures, protect personal data, survive timeouts and costs, run in shadow
+  mode with human review, monitor it in production, hand it over with a CI gate, and adapt it for the next customer, by building
+  Claimdesk at Deccan Shield Insurance in Pune.'
+language: python
+track: ai
+tags:
+- python
+- ai
+- fde
+- llm
+- evals
+level: intermediate
+estimated_minutes: 1100
+cover_scene: An engineer at a desk in an insurer's claims office in Pune, claim files and a laptop with a dashboard.
+before_you_start:
+  summary: Python, and a little about how a language model is called. This course is about the job of a forward deployed engineer,
+    so it assumes you can already write Python and read a small FastAPI app; everything about the role, the customer, evals
+    and production is taught from the beginning.
+  needs:
+  - know: Python functions, lists, dictionaries, classes and reading a CSV file
+    why: Every chapter is Python, and the customer's data arrives as CSV files.
+    lab: python-basics
+    where: chapters 1 to 16
+  - know: What an HTTP request and a JSON body are, and a small FastAPI endpoint
+    why: The customer's old system is called over HTTP (chapter 6), and the demo is a FastAPI app (chapter 13).
+    lab: fastapi-first-api
+    where: the whole lab
+  - know: How a language model is called, what a token is, and what a tool call is (helpful from chapter 8)
+    why: Part 3 builds with models; it recaps the basics but moves at an engineer's pace.
+    lab: langchain
+    where: chapters 2, 5 to 7 and 10 to 13
+cover: cover.svg
+cover_credit: { by: "Logos: python,fastapi", source: "devicon (MIT)" }
+image: labbox/forward-deployed-engineer:v1
+resources: m
+workspace:
+  mount_path: /workspace
+  shell: /bin/bash
+  network: lab
+llm:
+  enabled: true
+check:
+  command:
+  - bash
+  - /check/tests/run_checks.sh
+  timeout_seconds: 240
+  network: none
+chapters:
+- id: the-role
+  title: What a forward deployed engineer does
+  file: chapters/01-the-role.md
+  minutes: 45
+  folder: 01-the-role
+  part: The role
+  tasks:
+  - id: baseline_days
+    title: how long a claim takes today
+    xp: 15
+    hints:
+    - days_to_decide returns None for every claim, so there is nothing to average yet.
+    - An empty decided_at means the claim is still open. For the others, parse both strings with datetime.strptime(..., FMT).
+    - Subtract the two datetimes, then divide total_seconds() by 86400; average the values that are not None and round to
+      1 place.
+    examples:
+    - call: days_to_decide(received 3 Aug 10:00, decided 5 Aug 10:00)
+      gives: '2.0'
+    - call: days_to_decide(decided_at empty)
+      gives: None
+      note: still open, left out of the average
+    - call: baseline_days(load_claims())
+      gives: '12.5'
+  - id: adjuster_hours
+    title: what the problem costs each week
+    xp: 15
+    hints:
+    - adjuster_hours returns 0.0.
+    - Claims per week is len(claims) divided by the weeks argument.
+    - Multiply by minutes_per_claim, divide by 60, and round to 1 decimal place.
+    examples:
+    - call: adjuster_hours(load_claims())
+      gives: '10.8'
+      note: 240 claims, 13 weeks, 35 minutes each
+    - call: adjuster_hours(26 claims, minutes_per_claim=60, weeks=2)
+      gives: '13.0'
+- id: discovery
+  title: 'Discovery: finding the real problem'
+  file: chapters/02-discovery.md
+  minutes: 45
+  folder: 02-discovery
+  tasks:
+  - id: classify_email
+    title: sort the inbox by what each email is about
+    xp: 15
+    hints:
+    - classify returns "other" for every email.
+    - Join the subject and the body, lower-case the text once, then test the kinds in the order the TODO lists them.
+    - Return at the first match, so a photo email that also says "attached" stays with photos.
+    examples:
+    - call: 'classify(subject "Re: PHOTO needed")'
+      gives: '"photos"'
+    - call: classify(subject "Where is my claim?")
+      gives: '"status"'
+    - call: classify(subject "Hello", body "Thank you")
+      gives: '"other"'
+  - id: costliest_kind
+    title: find what eats the adjusters' time
+    xp: 20
+    hints:
+    - costliest returns an empty kind.
+    - minutes_by_kind already adds up the minutes; pick the kind with the largest total.
+    - Its share is its minutes divided by the sum of all minutes, times 100, rounded to 1 place.
+    examples:
+    - call: costliest(load_inbox())
+      gives: ("photos", 44.6)
+    - call: costliest(two quick status emails, one long photo email)
+      gives: ("photos", 71.4)
+      note: rank by minutes, not by count
+- id: scoping
+  title: Scoping a pilot you can finish
+  file: chapters/03-scoping.md
+  minutes: 45
+  folder: 03-scoping
+  tasks:
+  - id: pilot_slice
+    title: choose the pilot's claims
+    xp: 15
+    hints:
+    - pilot_slice returns an empty list.
+    - Three conditions must all hold, and amount_rs is a string in the CSV.
+    - Compare int(c["amount_rs"]) with 50000 using <=, and check vehicle and channel by equality.
+    examples:
+    - call: pilot_slice(a two-wheeler email claim for Rs 50,000)
+      gives: kept
+      note: includes 50,000 ("or less")
+    - call: len(pilot_slice(load_claims()))
+      gives: '57'
+  - id: measurable_goal
+    title: a goal you can win or lose
+    xp: 20
+    hints:
+    - missing_parts returns an empty list, even for "make claims faster".
+    - Go through PARTS in order; a part is missing when it is absent or empty.
+    - For baseline and target, also check isinstance(value, (int, float)); a value of 0 is a real number.
+    examples:
+    - call: 'missing_parts({"metric": "make claims faster"})'
+      gives: '["baseline", "target", "unit", "by"]'
+    - call: missing_parts(GOAL)
+      gives: '[]'

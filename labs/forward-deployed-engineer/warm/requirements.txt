@@ -1,0 +1,33 @@
+# The packages the Forward Deployed Engineer course uses, pinned (the same versions as the LangChain course image), MCP included.
+# The OpenAI SDK comes from labbox/ai-python.
+annotated-types==0.8.0
+anyio==4.16.0
+certifi==2026.11.20
+click==8.5.1
+fastapi==0.165.0
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.20
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+pydantic==2.14.4
+pytest==9.2.0
+sniffio==1.3.1
+starlette==1.10.0
+typing-inspection==0.4.5
+uvicorn==0.54.0
+typing_extensions==4.16.0
+pydantic_core==2.50.5
+attrs==26.1.0
+httpx-sse==0.4.3
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+mcp==2.3.0
+pydantic-settings==2.16.3
+python-dotenv==1.2.4
+python-multipart==0.0.34
+referencing==0.37.0
+rpds-py==2026.9.1
+sse-starlette==3.7.1
