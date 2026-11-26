@@ -45,12 +45,36 @@ def docker_ok() -> bool:
         return False
 
 
+def instance_tag() -> str:
+    """"prod-" when this LabBox has an INSTANCE name, else "" (container and network names of before)."""
+    name = get_settings().INSTANCE
+    return f"{name}-" if name else ""
+
+
 def container_name(user_id: int, lab_id: str) -> str:
-    return f"lab-u{user_id}-{lab_id}"
+    return f"lab-{instance_tag()}u{user_id}-{lab_id}"
+
+
+def instance_labels() -> dict[str, str]:
+    name = get_settings().INSTANCE
+    return {"labbox.instance": name} if name else {}
 
 
 def labels(kind: Literal["workspace", "check", "service", "network"], user_id: int, lab_id: str) -> dict[str, str]:
-    return {"labbox": "true", "labbox.kind": kind, "labbox.user": str(user_id), "labbox.lab": lab_id}
+    return {"labbox": "true", "labbox.kind": kind, "labbox.user": str(user_id), "labbox.lab": lab_id, **instance_labels()}
+
+
+def label_filter(*extra: str) -> list[str]:
+    """Docker label filters for this instance's objects (a named instance filters on its own label)."""
+    name = get_settings().INSTANCE
+    return ["labbox=true", *extra, *([f"labbox.instance={name}"] if name else [])]
+
+
+def mine(objs: list) -> list:
+    """Only this instance's containers or networks: an unnamed instance skips every named one's (Docker cannot
+    filter on a missing label)."""
+    name = get_settings().INSTANCE
+    return [o for o in objs if ((o.attrs.get("Config") or {}).get("Labels") or o.attrs.get("Labels") or {}).get("labbox.instance", "") == name]
 
 
 def security_options(lab: LabConfig) -> dict:
@@ -379,7 +403,7 @@ def reset_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
 
 
 def running_workspace_containers() -> dict[str, Container]:
-    found = client().containers.list(filters={"label": ["labbox=true", "labbox.kind=workspace"]})
+    found = mine(client().containers.list(filters={"label": label_filter("labbox.kind=workspace")}))
     return {c.name: c for c in found}
 
 
@@ -412,7 +436,7 @@ def stop_idle(session: Session, older_than: datetime) -> list[str]:
 
 def remove_old_check_containers(max_age_seconds: float) -> list[str]:
     removed = []
-    for c in client().containers.list(all=True, filters={"label": ["labbox=true", "labbox.kind=check"]}):
+    for c in mine(client().containers.list(all=True, filters={"label": label_filter("labbox.kind=check")})):
         created = datetime.fromisoformat(c.attrs["Created"].split(".")[0].rstrip("Z"))
         if (utcnow() - created).total_seconds() > max_age_seconds:
             c.remove(force=True)

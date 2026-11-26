@@ -1051,10 +1051,13 @@ def cmd_test_accounts(args: argparse.Namespace) -> int:
     import docker
 
     client = docker.from_env()
-    machines = [c for c in client.containers.list(all=True, filters={"label": "labbox.user"})
+    # Only this instance's (INSTANCE in .env): a dev cleanup never touches the live site's machines, and back.
+    from app import containers as lab_containers
+
+    machines = [c for c in lab_containers.mine(client.containers.list(all=True, filters={"label": "labbox.user"}))
                 if c.labels.get("labbox.user") in ids]
-    networks = [n for n in client.networks.list() if n.name.startswith("labnet-u")
-                and n.name.split("-")[1][1:] in ids]
+    networks = [n for n in lab_containers.mine(client.networks.list(filters={"label": "labbox.user"}))
+                if (n.attrs.get("Labels") or {}).get("labbox.user") in ids]
     volumes = get_settings().VOLUMES_DIR
     folders = [volumes / f"u{i}" for i, _ in targets if (volumes / f"u{i}").is_dir()]
     print(f"{len(targets)} test accounts: {len(machines)} machines, {len(networks)} networks, {len(folders)} folders")

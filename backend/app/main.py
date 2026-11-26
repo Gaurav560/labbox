@@ -82,6 +82,7 @@ class Health(BaseModel):
     docker: bool
     database: bool = True
     shared_state: bool = True  # Redis (or memory, which is always fine)
+    release: str = ""  # the commit being served (set by the release script); empty in development
 
 
 def _database_ok() -> bool:
@@ -101,7 +102,7 @@ async def health() -> Health:
         asyncio.to_thread(containers.docker_ok), asyncio.to_thread(_database_ok), asyncio.to_thread(shared.ping)
     )
     # ok keeps its old meaning (the backend answers); each part reports on its own.
-    return Health(ok=True, docker=docker, database=database, shared_state=state)
+    return Health(ok=True, docker=docker, database=database, shared_state=state, release=get_settings().RELEASE)
 
 
 @app.get("/metrics", include_in_schema=False, response_class=PlainTextResponse)
