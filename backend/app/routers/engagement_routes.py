@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlmodel import Session, col, select
 
-from .. import drills, engagement
+from .. import drills, engagement, slots
 from ..auth import get_current_user
 from ..content import get_content
 from ..db import get_session
@@ -81,8 +81,16 @@ def my_next(lab: str | None = None, user: User = Depends(get_current_user), sess
     if lab is not None:
         query = query.where(ChapterProgress.lab_id == lab)
     rows = session.exec(query.order_by(col(ChapterProgress.updated_at).desc())).all()
+    access = slots.state(session, user).labs
+    # A locked lab (app/slots.py) shows no lesson text here, and the dashboard picks up in an open lab instead.
+
+    def _screen_or_none(course, ch_id: str, step: int) -> dict:
+        return {"track": course.track or ""} if access.get(course.id) == "locked" else _screen(course, ch_id, step)
+
     for row in rows:
         course = labs.get(row.lab_id)
+        if lab is None and access.get(row.lab_id) == "locked":
+            continue
         ids = [c.id for c in course.chapters] if course else []
         if row.chapter_id not in ids:
             continue  # a lab or chapter that no longer exists
@@ -96,14 +104,14 @@ def my_next(lab: str | None = None, user: User = Depends(get_current_user), sess
         return NextOut(kind="continue", lab_id=course.id, lab_title=course.title, chapter_id=ch.id, chapter_title=ch.title,
                        chapter_number=_id_number(ch.id, i) if zero else i + 1,
                        chapters=_id_number(ids[-1], len(ids) - 1) if zero else len(ids),
-                       step=min(step, total - 1) + 1, steps=total, **_screen(course, ch.id, step))
+                       step=min(step, total - 1) + 1, steps=total, **_screen_or_none(course, ch.id, step))
     if lab is not None:
         first = labs[lab]
         ch = first.chapters[0]
         return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
                        chapter_number=0 if ch.id.startswith("00-") else 1,
                        chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
-                       step=1, steps=len(first.chapter_steps(ch.id)), **_screen(first, ch.id, 0))
+                       step=1, steps=len(first.chapter_steps(ch.id)), **_screen_or_none(first, ch.id, 0))
     # A new learner: the first lab of the goal they picked in onboarding, else the coding basics.
     goal_id = engagement.get_profile(session, _uid(user)).goal
     try:
@@ -112,12 +120,17 @@ def my_next(lab: str | None = None, user: User = Depends(get_current_user), sess
         goals = []  # onboarding content missing: fall back to the coding basics
     goal = next((g for g in goals if g.id == goal_id), None)
     first = next((labs[s] for s in (goal.start if goal else []) if s in labs), None) or labs.get("python-basics") or next(iter(labs.values()))
+    unlocked = [x for x in labs.values() if access.get(x.id) == "unlocked"]
+    if access.get(first.id) == "locked" and unlocked:
+        first, goal = unlocked[0], None  # the learner's own pick comes first
     ch = first.chapters[0]
     return NextOut(kind="start", lab_id=first.id, lab_title=first.title, chapter_id=ch.id, chapter_title=ch.title,
                    chapter_number=0 if ch.id.startswith("00-") else 1,
                    chapters=_id_number(first.chapters[-1].id, len(first.chapters) - 1) if ch.id.startswith("00-") else len(first.chapters),
-                   step=1, steps=len(first.chapter_steps(ch.id)), **_screen(first, ch.id, 0),
-                   reason=f"Picked for your goal: {goal.title}" if goal else "The best first lab: it builds the coding basics every track uses")
+                   step=1, steps=len(first.chapter_steps(ch.id)), **_screen_or_none(first, ch.id, 0),
+                   reason=f"Picked for your goal: {goal.title}" if goal else
+                   ("One of the labs you unlocked" if access.get(first.id) == "unlocked"
+                    else "The best first lab: it builds the coding basics every track uses"))
 
 
 # ---------- stats and profile ----------

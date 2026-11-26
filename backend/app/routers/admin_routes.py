@@ -8,10 +8,10 @@ from typing import Literal
 
 from docker.errors import NotFound
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import Session, col, select
 
-from .. import analytics, containers, limits, observability, services, shared
+from .. import analytics, containers, limits, observability, services, shared, slots
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import get_lab
@@ -125,3 +125,40 @@ async def machine_action(container: str, body: MachineAction, admin: User = Depe
                          session: Session = Depends(get_session)) -> dict:
     await asyncio.to_thread(_act, session, admin, container, body.action)
     return {"ok": True}
+
+
+# ---------- lab access (owner, 26 November): how many labs a learner may have unlocked at once ----------
+
+class LabAccess(BaseModel):
+    limit: int | None = Field(None, ge=0, le=100)  # None or 0: every lab is open
+
+
+@router.get("/lab-access", response_model=LabAccess)
+def lab_access(session: Session = Depends(get_session)) -> LabAccess:
+    return LabAccess(limit=slots.site_limit(session))
+
+
+@router.put("/lab-access", response_model=LabAccess)
+def set_lab_access(body: LabAccess, admin: User = Depends(require_admin), session: Session = Depends(get_session)) -> LabAccess:
+    limit = slots.set_site_limit(session, body.limit, admin.id)
+    log.warning("Admin %s set the lab limit for everyone to %s", admin.username, limit or "every lab")
+    return LabAccess(limit=limit)
+
+
+class LearnerLimit(BaseModel):
+    # None: the site's setting; 0: every lab; N: N labs at a time
+    lab_limit: int | None = Field(None, ge=0, le=100)
+
+
+@router.put("/learners/{user_id}/lab-limit", response_model=LearnerLimit)
+def set_learner_limit(user_id: int, body: LearnerLimit, admin: User = Depends(require_admin),
+                      session: Session = Depends(get_session)) -> LearnerLimit:
+    user = session.get(User, user_id)
+    if user is None:
+        raise HTTPException(404, "No such learner")
+    user.lab_limit = body.lab_limit
+    session.add(user)
+    session.commit()
+    log.warning("Admin %s set the lab limit of %s to %s", admin.username, user.username,
+                "the site's setting" if body.lab_limit is None else (body.lab_limit or "every lab"))
+    return LearnerLimit(lab_limit=user.lab_limit)

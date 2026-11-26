@@ -106,15 +106,16 @@ standard, eight short; see the table in `ROADMAP.md`).
   serves the editor as about 230 files. Rerun it. The app retries a failed page load, then reloads once.
 - Load checks over fixed one-second windows: a run of N seconds touches N + 1 windows, so a correct
   limiter may pass up to limit * (N + 1) / N a second. Base cut-offs on that (see rate-limiter's check.py).
-- Admin rights: never leave a test account as admin (`scripts/labbox admin list` must stay empty after
-  tests); the admin browser test revokes in a finally block. Never grant admin to asha yourself.
+- Admin rights: never leave a test account as admin (`scripts/labbox admin list` must show only `gaurav` after
+  tests); the admin browser test revokes in a finally block. The owner's account (id 1) was renamed from asha to
+  `gaurav` and made admin at the owner's request (26 November); grant admin to no one else unless the owner asks.
 - Check scripts get `LABBOX_CHAPTER` and `LABBOX_TASKS`: big courses test only that chapter (see
   `labs/go-basics/tests/run_checks.sh`). Task ids must be unique across the whole lab.
 - Growing a lab: keep every existing chapter id and task id (learner progress hangs on them); new
   starter files reach existing learners through `containers.top_up` (never overwrites). Mark every
   starter TODO with its task (`# TODO (task <id>): ...`) so each chapter opens its own file.
-- Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (asha is
-  id 1). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
+- Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (`gaurav`,
+  id 1, formerly asha). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait
   until port 8000 is free; open terminals make shutdown take a few seconds, sometimes minutes. Use `scripts/restart_backend.sh`: it
   sends a second stop signal (which forces shutdown), starts a fresh backend and prints its start time.

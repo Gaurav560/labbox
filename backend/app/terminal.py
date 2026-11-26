@@ -8,7 +8,7 @@ from fastapi import HTTPException, WebSocket, WebSocketDisconnect
 from sqlmodel import Session
 from starlette.websockets import WebSocketState
 
-from . import containers
+from . import containers, slots
 from .auth import user_from_token
 from .db import engine
 from .labs import get_lab
@@ -37,6 +37,7 @@ async def run_terminal(ws: WebSocket, lab_id: str, token: str | None) -> None:
             return
         try:
             lab = get_lab(lab_id)
+            slots.require_open(session, user, lab)
             workspace = await asyncio.to_thread(containers.ensure_workspace, session, user, lab)
             exec_id, raw, session_file = await asyncio.to_thread(containers.open_shell, lab, workspace)
         except HTTPException as e:

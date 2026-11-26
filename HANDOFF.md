@@ -33,7 +33,11 @@ update it at the end of every session. Earlier, longer versions of it are in git
   (30 minutes), 27 browser tests, 23 labs valid, `scripts/labbox admin list` empty. On 25 November: 235 backend
   tests without Docker on Postgres and Redis after migration 0012, and the browser tests for each change on both
   copies (a few failed only while Vite reloaded mid-test and passed on rerun).
-- **Latest (26 November, about 04:20):** the LangGraph lab rewritten, all 24 chapters, unattended at the owner's word
+- **Latest (26 November, afternoon): at most a few labs at a time, built** (plan approved by the owner: finished =
+  80% of tasks; the admin sets the limit for everyone or per learner, every lab open until then; locked = course page
+  only, no Read mode; an Unlock button). Rules in `backend/app/slots.py`, details in CHANGELOG and ROADMAP 1b. The
+  limit is **off** (every lab open) until an admin turns it on in Admin, Learners, "Lab access".
+- **Before that (26 November, about 04:20):** the LangGraph lab rewritten, all 24 chapters, unattended at the owner's word
   ("do it one go"), one commit each (also on `design/ukiyo`). Lab valid, test-lab green, test machines removed, no
   admins. Lab files changed: chapter 5's notice date (Thursday 28 November is a Saturday in 2026; now Thursday 3
   December, starter and solution). Corrected on the way (details in CHANGELOG): the default recursion limit is 10,007

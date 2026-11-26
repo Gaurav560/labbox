@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlmodel import Session
 
 from .. import containers, ide, preview
+from ..slots import lab_open
 from ..auth import get_current_user
 from ..config import get_settings
 from ..db import get_session
@@ -19,7 +20,7 @@ class PreviewInfo(BaseModel):
     ports: list[PreviewPort]
 
 
-@router.post("/api/labs/{lab_id}/preview/ticket", response_model=PreviewInfo)
+@router.post("/api/labs/{lab_id}/preview/ticket", response_model=PreviewInfo, dependencies=[Depends(lab_open)])
 def preview_ticket(lab_id: str, response: Response, user: User = Depends(get_current_user)) -> PreviewInfo:
     """Sets the HttpOnly preview cookie for this browser. The lab page calls it when it opens."""
     lab = get_lab(lab_id)
@@ -54,7 +55,7 @@ class IdeInfo(BaseModel):
     url: str = ""
 
 
-@router.post("/api/labs/{lab_id}/ide", response_model=IdeInfo)
+@router.post("/api/labs/{lab_id}/ide", response_model=IdeInfo, dependencies=[Depends(lab_open)])
 async def open_ide(lab_id: str, response: Response, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> IdeInfo:
     """Make sure the machine and its VS Code are running, set the proxy cookie for /ide, return the URL."""
     lab = get_lab(lab_id)

@@ -15,6 +15,9 @@ class User(SQLModel, table=True):
     password_hash: str
     created_at: datetime = Field(default_factory=utcnow)
     is_admin: bool = False  # Phase J: may open /admin; granted with `scripts/labbox admin grant <name>`
+    # How many labs this learner may have unlocked at once (owner, 26 November). None: the site's setting
+    # (site_setting "lab_limit"); 0: every lab; N: N labs. Set by an admin on the learner's row.
+    lab_limit: int | None = None
 
 
 class Workspace(SQLModel, table=True):
@@ -209,3 +212,26 @@ class LibraryItem(SQLModel, table=True):
     position: int = 0  # order within its kind, smallest first
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
+
+
+class SiteSetting(SQLModel, table=True):
+    """Settings an admin changes in the app, one row per key (owner, 26 November). Today: "lab_limit", how many
+    labs a learner may have unlocked at once ("0" or no row: every lab is open)."""
+    __tablename__ = "site_setting"
+
+    key: str = Field(primary_key=True)
+    value: str = ""
+    updated_at: datetime = Field(default_factory=utcnow)
+    updated_by: int | None = None  # the admin's user id
+
+
+class LabSlot(SQLModel, table=True):
+    """A lab a learner unlocked (owner, 26 November: at most a few labs at a time, so learners focus). One row per
+    (user, lab); a Monday swap sets released_at, and unlocking the lab again clears it."""
+    __tablename__ = "lab_slot"
+
+    user_id: int = Field(foreign_key="user.id", primary_key=True)
+    lab_id: str = Field(primary_key=True)
+    unlocked_at: datetime = Field(default_factory=utcnow)
+    released_at: datetime | None = None
+    released_reason: str | None = None  # "swapped"

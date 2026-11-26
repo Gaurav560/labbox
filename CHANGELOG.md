@@ -1,5 +1,21 @@
 # Changelog
 
+## 26 November: at most a few labs at a time (backend, master and Ukiyo)
+
+- The owner's rule, so learners focus: an admin sets how many labs a learner may have unlocked at once (Admin,
+  Learners, "Lab access": every lab open, the default, or N at a time) and can give one learner their own number or
+  every lab. Admins are never limited.
+- A locked lab opens only its course page, with an **Unlock this lab** button while a slot is free. Its lessons,
+  machine, terminal, files, checks, hints, tutor, preview and VS Code answer 403 on the server, and the lab page sends
+  a lesson link back to the course page. The skill map of a locked lab has no links.
+- A lab is finished when 80% of its tasks have passed at least once: its slot frees at once and it stays open. On
+  Mondays (India time) a learner may swap an unfinished lab out (its machine stops, progress stays).
+- The dashboard shows the slots in use and a lock or "Unlocked" badge on each lab while a limit is on; the Continue
+  card picks up in an open lab and shows no lesson text from a locked one.
+- New: `app/slots.py`, `routers/slot_routes.py` (`GET /api/slots`, `POST /api/labs/<lab>/unlock` and `/swap`),
+  admin routes `/api/admin/lab-access` and `/api/admin/learners/<id>/lab-limit`, migration 0013 (`lab_slot`,
+  `site_setting`, `user.lab_limit`), `tests/test_slots.py` (12 tests), `e2e/lab-slots.spec.ts`.
+
 ## 26 November: LangGraph chapter 24 rewritten: the whole desk re-run on a server, every slip tried
 
 - Ran the capstone on a fresh `langgraph dev`: the same three paths (status from the tickets, the tanker rule from the

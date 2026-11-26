@@ -212,6 +212,7 @@ class LearnerRow(BaseModel):
     xp: int
     checks: int
     last_active: datetime | None
+    lab_limit: int | None = None  # None: the site's setting; 0: every lab
 
 
 def learners(session: Session, query: str = "", limit: int = 50) -> list[LearnerRow]:
@@ -227,7 +228,8 @@ def learners(session: Session, query: str = "", limit: int = 50) -> list[Learner
     checks = dict(session.exec(select(CheckRun.user_id, func.count()).where(col(CheckRun.user_id).in_(ids)).group_by(CheckRun.user_id)).all())
     xp = dict(session.exec(select(UserProfile.user_id, UserProfile.xp_total).where(col(UserProfile.user_id).in_(ids))).all())
     return [LearnerRow(id=u.id, username=u.username, joined=u.created_at, is_admin=u.is_admin, labs=labs.get(u.id, 0),
-                       xp=xp.get(u.id, 0), checks=checks.get(u.id, 0), last_active=active.get(u.id)) for u in users]
+                       xp=xp.get(u.id, 0), checks=checks.get(u.id, 0), last_active=active.get(u.id),
+                       lab_limit=u.lab_limit) for u in users]
 
 
 class SpendDay(BaseModel):

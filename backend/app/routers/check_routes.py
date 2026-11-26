@@ -7,12 +7,13 @@ from sqlmodel import Session
 
 from .. import checker, limits, metrics, shared
 from ..config import get_settings
+from ..slots import lab_open
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import get_lab
 from ..models import User
 
-router = APIRouter(prefix="/api/labs/{lab_id}", tags=["check"])
+router = APIRouter(prefix="/api/labs/{lab_id}", tags=["check"], dependencies=[Depends(lab_open)])
 
 
 class CheckBody(BaseModel):

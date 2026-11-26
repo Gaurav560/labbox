@@ -216,15 +216,20 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
 - [ ] Rebuild all images once the Ubuntu mirror works again (`scripts/build_lab_images.sh`), so every
       lab image gets the `lab requests` helper from the new base image.
 
-### 1b. Feature to build: at most three labs at a time (owner, 25 November)
+### 1b. Done: at most a few labs at a time (owner, 25 and 26 November)
 
-So learners are not overwhelmed by the number of labs and study nothing:
-- A learner has at most **3 labs unlocked** at a time.
-- **Finishing a lab frees its slot** at once.
-- **Every Monday at 00:00 IST** a learner may also drop an unfinished lab to free a slot (and unlock another).
-- A lab that is not unlocked opens in **Read mode only**: lessons readable; no Action mode, no machine, no checks.
-- To plan (files, routes, migration, tests) and get the owner's OK before building; decide what counts as
-  "finished" (every task passed) and what existing learners with more than 3 started labs get.
+So learners are not overwhelmed by the number of labs and study nothing (rules in `backend/app/slots.py`):
+- [x] An admin sets the limit in Admin, Learners, "Lab access": **every lab open** (the default, until the owner
+      turns it on) or **N labs at a time**; one learner can get their own number (or every lab) on their row.
+      Admins are never limited.
+- [x] A learner unlocks a lab with the **Unlock this lab** button on its course page. A locked lab opens nothing but
+      that page (cover, description, before you start, the skill map without links): its lessons, machine, terminal,
+      editor, files, checks, tutor, preview and VS Code all answer 403, and a lesson link lands on the course page.
+- [x] **Finished = 80% of the lab's tasks passed at least once**: the slot frees at once and the lab stays open.
+- [x] **Mondays (00:00 to 24:00 India time)** a learner may swap an unfinished lab out (its machine stops; progress
+      and files stay). Lowering the limit keeps unlocked labs open; nothing new unlocks until a slot is free.
+- [x] Migration 0013 (`lab_slot`, `site_setting`, `user.lab_limit`); 12 backend tests (`tests/test_slots.py`); one
+      browser test (`e2e/lab-slots.spec.ts`); the dashboard's slot strip and lock badges, on both designs.
 
 ### 2. Next: the AI track (24 labs), waiting for your OK on the plan
 
