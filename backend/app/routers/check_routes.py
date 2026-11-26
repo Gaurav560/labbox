@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from .. import checker, limits, metrics, shared
+from .. import certificates, checker, limits, metrics, shared
 from ..config import get_settings
 from ..slots import lab_open
 from ..auth import get_current_user
@@ -39,7 +39,10 @@ async def check(
             raise
         metrics.count("labbox_checks_total", result="passed" if out.passed_count == out.total_count else "failed")
         metrics.observe("labbox_check_duration_seconds", time.monotonic() - started, buckets=metrics.CHECK_BUCKETS)
-        return out
+    if out.passed_count:
+        # The check that finishes the lab issues its certificate (or asks for the name, the first time).
+        out.certificate = certificates.after_check(session, user, lab)
+    return out
 
 
 @router.get("/checks", response_model=list[checker.CheckRunOut])
