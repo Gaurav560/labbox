@@ -82,23 +82,23 @@ function slot(i: number, n: number): { at: Pt; row: number } {
   const cols = Math.ceil(n / 2), col = Math.floor(i / 2), level = i % 2;
   const t = 0.13 + (cols > 1 ? col * (0.55 / (cols - 1)) : 0.3); // clear of the door folded back at the end
   const [x, y] = FLOOR(t, 0.72);
-  return { at: [x, y - level * 42], row: level };
+  return { at: [x, y - level * 52], row: level };
 }
 
-/** A cardboard crate with the piece's logo on its front, standing on the floor at `at` (its front bottom centre). */
+/** A logo tile for one piece (owner, 27 November: "instead of those boxes, decent size icons of the tech itself"): a
+    white square with a little depth, the technology's own logo large on its face, its status light in the corner.
+    It stands on the floor at `at` (its front bottom centre) and rides in from the door like the crates did. */
 function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
-  const [x, y] = at, w = 44, h = 40, kx = 14, ky = -5;
+  const [x, y] = at, w = 48, h = 46, kx = 9, ky = -4, logo = 34;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
     <g className={`ua-c-box ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
-      <polygon className="ua-c-box-top" points={pts([x - w / 2, y - h], [x + w / 2, y - h], [x + w / 2 + kx, y - h + ky], [x - w / 2 + kx, y - h + ky])} />
-      <polygon className="ua-c-box-side" points={pts([x + w / 2, y - h], [x + w / 2 + kx, y - h + ky], [x + w / 2 + kx, y + ky], [x + w / 2, y])} />
-      <rect className="ua-c-box-front" x={x - w / 2} y={y - h} width={w} height={h} rx="2" />
-      <line className="ua-c-box-tape" x1={x + kx / 2 - 2} y1={y - h + ky / 2} x2={x + kx / 2 + 2} y2={y - h + ky / 2} />
-      <rect className="ua-c-box-label" x={x - 15} y={y - h + 6} width="30" height="28" rx="3" />
-      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - 11} y={y - h + 9} width="22" height="22" />
-        : <text className="ua-c-box-glyph" x={x} y={y - h + 26} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
-      <circle className="ua-c-box-led" cx={x - w / 2 + 6} cy={y - 6} r="2.6" />
+      <polygon className="ua-c-box-top" points={pts([x - w / 2 + 3, y - h], [x + w / 2 - 3, y - h], [x + w / 2 - 3 + kx, y - h + ky], [x - w / 2 + 3 + kx, y - h + ky])} />
+      <polygon className="ua-c-box-side" points={pts([x + w / 2, y - h + 3], [x + w / 2 + kx, y - h + 3 + ky], [x + w / 2 + kx, y - 3 + ky], [x + w / 2, y - 3])} />
+      <rect className="ua-c-box-front" x={x - w / 2} y={y - h} width={w} height={h} rx="7" />
+      {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - logo / 2} y={y - h + (h - logo) / 2} width={logo} height={logo} />
+        : <text className="ua-c-box-glyph" x={x} y={y - h / 2 + 8} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}
+      <circle className="ua-c-box-led" cx={x + w / 2 - 6} cy={y - 6} r="2.4" />
     </g>
   );
 }

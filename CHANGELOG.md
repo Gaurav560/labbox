@@ -2,6 +2,13 @@
 
 ## 27 November: certificates to share on LinkedIn and X
 
+- **QR code to verify** a certificate: it opens `/verify/<id>`, which shows what the server's database holds for that id
+  (verified with the name, lab, date and tasks; genuine but private; unknown; or the home page's sample), and takes a
+  typed id. The share image carries it too. The seal is a small stamp. The home section keeps LinkedIn, the QR and where
+  to share; the rest moved to the FAQ with a question on checking a certificate. Ukiyo: LangChain's certificate print is
+  Hiroshige's Lake Biwa and Ishiyama Temple, 1853 (San Diego Museum of Art, public domain).
+- Ukiyo home, the container: the cardboard crates are now logo tiles (a white face, the technology's logo large, its
+  status light), and the whale on the glass fades further while they load so the logos read clearly.
 - **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
   component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
   be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.
