@@ -11,7 +11,7 @@ The same scripts work on a rented Linux server later (only the tunnel step chang
 | Code | `~/labs_poc`, `~/labs_poc_ukiyo` | `/srv/labbox/prod/releases/<commit>`, `current` points at the live one |
 | Backend | :8000 | :8100 (`labbox-prod`), AI gateway :9100 |
 | Worker | `arq` by hand | `labbox-prod-worker` |
-| Web | Vite :5173, :5174 | Caddy :8180 (`labbox-prod-caddy`): the built frontend, `/api`, `/ws`, `/preview`, `/ide` |
+| Web | Vite :5173, :5174 | Caddy :8180 (`labbox-prod-caddy`): the built frontend, `/api`, `/ws`, `/preview`, `/ide`, `/c` (certificate share pages) |
 | Internet | none | `labbox-prod-tunnel` (cloudflared) |
 | Database | `labbox` | `labbox_prod` (same Postgres container) |
 | Redis | db 0 (tests: 15) | db 2 |

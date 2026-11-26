@@ -118,7 +118,8 @@ standard, eight short; see the table in `ROADMAP.md`).
   id 1, formerly asha). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.
 - Restarting a multi-worker backend: stop the uvicorn main process (not a worker, it is replaced) and wait
   until port 8000 is free; open terminals make shutdown take a few seconds, sometimes minutes. Use `scripts/restart_backend.sh`: it
-  sends a second stop signal (which forces shutdown), starts a fresh backend and prints its start time.
+  sends a second stop signal (which forces shutdown), starts a fresh backend and prints its start time. It only touches
+  the dev backend on port 8000; never stop a `uvicorn app.main:app` by pattern, the live site's backend (:8100) runs the same command.
 - Per-user Docker networks: Docker's default pool runs out after about 30 (/16 each); lab networks use
   /28s from `LAB_SUBNET_POOL`.
 - `validate` refuses hints that contain a solution line (10+ characters, not in the starter). Reword

@@ -1,5 +1,20 @@
 # Changelog
 
+## 27 November: certificates to share on LinkedIn and X
+
+- **Certificates** (owner: "a certificate automatically, with a URL shareable on LinkedIn, X and other social media,
+  once a lab is passed and completed"). Earned at 80% of a lab's tasks; the first asks for the full name once
+  (`user_profile.certificate_name`), later ones come by themselves with the check that finishes a lab (the check's
+  answer gains `certificate`; the lab shows a note). Public page `/certificates/<id>`; the address to share is `/c/<id>`,
+  whose HTML carries the Open Graph and X card tags and a 1200 x 627 JPEG drawn with Pillow in the site's fonts
+  (Fraunces and Inter, OFL, in `backend/app/assets/fonts`), with Ukiyo's woodblock print of the lab. Share bar:
+  LinkedIn "Add to profile" (the certification form filled in), LinkedIn post, X, WhatsApp, Facebook, copy link,
+  download. Hide a certificate, or correct its name once. My certificates (profile menu), a certificate box on every
+  course page, a line in the privacy policy. Caddy, nginx and Vite send `/c/` to the backend. Migration 0014.
+  5 backend tests, a browser test on each design.
+- `scripts/restart_backend.sh` matched any `uvicorn app.main:app`, the live site's backend included; it now only
+  touches the development backend on port 8000.
+
 ## 27 November: the live site on the laptop, and the Deploy button
 
 - **Invite-only login page**: `GET /api/auth/options` says whether sign-up is open; when it is not (the live site,
