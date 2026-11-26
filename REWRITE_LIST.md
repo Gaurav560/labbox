@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 27 Nov, night: NEW COURSE Forward Deployed Engineer (owner asleep, approved unattended): research done (Wikipedia, a16z, OpenAI and Anthropic postings, Udemy/fde.academy/FDE Masters syllabi); 22 chapters planned; Part 1 (chapters 1 to 3) built: code, checks, lessons, 3 photos, 3 notes pages; test-lab green.
 - 26 Nov, 04:20 IST: LangGraph done (24 of 24), unattended (owner asleep); test-lab green; test machines removed; no
   admins; nothing pushed.
 - 26 Nov: LangGraph ch 24 done: the desk re-run on a server (same Thursday booking); quiz and both slips tried.
