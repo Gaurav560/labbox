@@ -685,3 +685,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-c-box { opacity: .92; filter: saturate(.85); }
 .ua-c-box-glyph { font-size: 14px; }
 .ua-container.is-wait .ua-c-plate text { fill: #4ade80; animation: ua-blink2 1.4s ease-in-out infinite; }
+
+/* At most a few labs at a time (owner, 26 November): Ukiyo's slot strip, ruled like the directory, and the lock. */
+.u-dash .slot-strip { border-radius: 0; border: 0; border-top: 2px solid var(--text); border-bottom: 1px solid var(--rule); background: transparent; padding: 14px 0; }
+.u-dash .slot-strip-head strong { font: 600 19px/1.2 var(--font-serif); }
+.u-dash .slot-strip li a, .u-dash .slot-strip li > span { border-radius: 0; border-color: var(--rule); background: transparent; }
+.u-row.is-locked .u-row-logo, .u-row.is-locked .u-row-title { opacity: .62; }
+.u-row-lock { display: inline-flex; align-items: center; gap: 5px; font: 500 12px var(--font-code); color: var(--muted); }
+.course-lock { border-radius: 0; }

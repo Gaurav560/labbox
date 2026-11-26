@@ -1,6 +1,6 @@
 import confetti from "canvas-confetti";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
 import { usePhone } from "../usePhone";
@@ -53,7 +53,24 @@ function confettiBurst() {
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+/*
+ * At most a few labs at a time (owner, 26 November): a locked lab opens nothing but its course page, so the lab
+ * page asks first and sends the learner there (with the Unlock button) before any lesson or machine is asked for.
+ */
 export default function LabPage() {
+  const { labId = "" } = useParams();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    setOpen(false);
+    api.slots()
+      .then((s) => (s.labs[labId] === "locked" ? navigate(`/courses/${labId}`, { replace: true }) : setOpen(true)))
+      .catch(() => setOpen(true));  // the lab's own calls still answer 403 if it is locked
+  }, [labId, navigate]);
+  return open ? <LabWorkspace /> : null;
+}
+
+function LabWorkspace() {
   const { labId = "" } = useParams();
   const { user } = useAuth();
   const toast = useToast();

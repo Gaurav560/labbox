@@ -1,6 +1,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
-import type { LabInfo, Progress } from "../api";
+import type { LabAccess, LabInfo, Progress } from "../api";
+import LockIcon from "./LockIcon";
 import { labBrand } from "../brand";
 import { BrushLevel, InkProgress, Seal, TRACK_INK, TRACK_MOTIF, TrackArt } from "./UkiyoArt";
 
@@ -29,7 +30,7 @@ const UPCOMING = new Set(["cloud", "aws"]);
 const LEVEL_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 };
 
 /** What a row needs: the public catalog has all of it; the dashboard's labs add progress. */
-export type DirectoryLab = LabInfo & { id: string; title: string; chapter_count: number; description?: string; progress?: Progress };
+export type DirectoryLab = LabInfo & { id: string; title: string; chapter_count: number; description?: string; progress?: Progress; access?: LabAccess };
 type Group<L> = { id: string; labs: L[] };
 
 export function byCategory<L extends DirectoryLab>(labs: L[]): Group<L>[] {
@@ -79,8 +80,9 @@ export function LabRow({ lab, to }: { lab: DirectoryLab; to: string }) {
   const total = lab.progress?.total_tasks ?? 0;
   const finished = total > 0 && done === total;
   const brand = labBrand(lab.cover_credit);
+  const locked = lab.access === "locked";  // a limit is on and this lab is not unlocked (owner, 26 November)
   return (
-    <li className={`u-row ${finished ? "is-done" : ""}`}>
+    <li className={`u-row ${finished ? "is-done" : ""} ${locked ? "is-locked" : ""}`}>
       <Link to={to} className="u-row-link">
         <span className="u-row-logo" aria-hidden="true">
           {brand ? <img src={brand.logo} alt="" /> : <span className="u-row-mono">{lab.title.slice(0, 1)}</span>}
@@ -96,6 +98,7 @@ export function LabRow({ lab, to }: { lab: DirectoryLab; to: string }) {
         </span>
         <span className="u-row-progress">
           {!lab.progress ? (lab.estimated_minutes ? <small className="muted">{duration(lab.estimated_minutes)}</small> : null)
+            : locked ? <small className="u-row-lock"><LockIcon size={13} />Locked</small>
             : finished ? <Seal lines={["✓"]} size={30} title="Finished" />
             : done ? <><InkProgress value={done / total} label={`${lab.title}: ${done} of ${total} tasks`} /><small>{done} / {total}</small></>
             : <small className="muted">Not started</small>}

@@ -61,7 +61,10 @@ export interface LabInfo {
   cover_url: string | null; // the lab's own cover; otherwise LabCover draws one
   cover_credit: { by: string; url: string; source: string } | null;
 }
-export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress }
+/** open: no limit; unlocked: holds a slot; finished: 80% of tasks passed (open for good); locked: course page only. */
+export type LabAccess = "open" | "unlocked" | "finished" | "locked";
+export interface Slots { limit: number | null; used: number; free: number | null; swap_open: boolean; next_swap: string; labs: Record<string, LabAccess> }
+export interface LabSummary extends LabInfo { id: string; title: string; description: string; language: string; chapter_count: number; progress: Progress; access?: LabAccess }
 /** The dashboard's first card: continue where the learner left off, or where to start. */
 export interface NextStep { kind: "continue" | "start"; lab_id: string; lab_title: string; chapter_id: string; chapter_title: string; chapter_number: number; chapters: number; step: number; steps: number; reason: string | null; track?: string; step_title?: string | null; code?: string[] }
 export interface TaskExample { call: string; gives: string; note: string | null }
@@ -70,7 +73,7 @@ export interface Chapter { id: string; title: string; tasks: Task[]; minutes: nu
 export interface PreviewPort { name: string; port: number; path: string }
 export interface Need { know: string; why: string; lab: string | null; lab_title: string | null; where: string }
 export interface BeforeYouStart { summary: string; needs: Need[] }
-export interface LabDetail extends LabInfo { before_you_start?: BeforeYouStart | null; preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress }
+export interface LabDetail extends LabInfo { before_you_start?: BeforeYouStart | null; preview: PreviewPort[]; services: string[]; check_mode: "fresh" | "live"; id: string; title: string; description: string; language: string; chapters: Chapter[]; progress: Progress; access?: LabAccess }
 export type StepType = "story" | "concept" | "example" | "predict" | "try" | "task" | "incident" | "recap" | "deep-dive" | "design" | "history";
 // The answer and explanation are not sent with the chapter; they come back once answered correctly.
 export interface Predict { question: string; options: { text: string }[] }
@@ -228,6 +231,10 @@ export const api = {
   skipOnboarding: () => request<Stats>("POST", "/api/onboarding/skip"),
 
   check: (labId: string, chapterId: string) => request<CheckResponse>("POST", `/api/labs/${q(labId)}/check`, { chapter_id: chapterId }),
+
+  slots: () => request<Slots>("GET", "/api/slots"),
+  unlock: (labId: string) => request<Slots>("POST", `/api/labs/${q(labId)}/unlock`),
+  swap: (labId: string) => request<Slots>("POST", `/api/labs/${q(labId)}/swap`),
 };
 
 // ---------- admin (Phase J) ----------
@@ -239,10 +246,13 @@ export interface AdminStep { index: number; title: string; type: string; stopped
 export interface AdminChapter { id: string; title: string; started: number; completed: number; steps: AdminStep[] }
 export interface AdminTask { id: string; title: string; chapter_id: string; attempted: number; passed: number; pass_rate: number | null; failed_checks_per_learner: number; hints_per_learner: number; hint_count: number; confusion: number }
 export interface AdminLabReport { id: string; title: string; learners: number; chapters: AdminChapter[]; tasks: AdminTask[] }
-export interface AdminLearner { id: number; username: string; joined: string; is_admin: boolean; labs: number; xp: number; checks: number; last_active: string | null }
+export interface AdminLearner { id: number; username: string; joined: string; is_admin: boolean; labs: number; xp: number; checks: number; last_active: string | null; lab_limit?: number | null }
 export interface SpendRow { name: string; requests: number; tokens: number; cost_usd: number }
 export interface AdminSpend { days: { day: string; requests: number; tokens: number; cost_usd: number }[]; by_model: SpendRow[]; top_learners: SpendRow[] }
 export interface AdminMachine { container: string; user_id: number; username: string; lab_id: string; lab_title: string; started_at: string | null; files_mb: number }
+export interface LimitException { id: number; username: string; lab_limit: number }
+/** The site's lab limit (null: every lab open) and the learners with their own. */
+export interface LabAccessInfo { limit: number | null; exceptions: LimitException[] }
 export interface AdminError { at: string; method: string; route: string; status: number; request_id: string; ms: number; error: string }
 
 export const admin = {
@@ -254,6 +264,10 @@ export const admin = {
   machines: () => request<AdminMachine[]>("GET", "/api/admin/machines"),
   machineAction: (container: string, action: "stop" | "kill") => request<{ ok: boolean }>("POST", `/api/admin/machines/${q(container)}`, { action }),
   errors: () => request<AdminError[]>("GET", "/api/admin/errors"),
+  labAccess: () => request<LabAccessInfo>("GET", "/api/admin/lab-access"),
+  setLabAccess: (limit: number | null) => request<LabAccessInfo>("PUT", "/api/admin/lab-access", { limit }),
+  setLearnerLimit: (userId: number, labLimit: number | null) =>
+    request<{ lab_limit: number | null }>("PUT", `/api/admin/learners/${userId}/lab-limit`, { lab_limit: labLimit }),
 };
 
 export function terminalUrl(labId: string): string {

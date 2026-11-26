@@ -234,8 +234,8 @@ def test_admin_sets_the_limit_for_everyone_and_for_one_learner(api):
     plain, plain_id = signup(api)
     try:
         assert api.put("/api/admin/lab-access", json={"limit": 3}, headers=plain).status_code == 403
-        assert api.get("/api/admin/lab-access", headers=boss).json() == {"limit": None}
-        assert api.put("/api/admin/lab-access", json={"limit": 3}, headers=boss).json() == {"limit": 3}
+        assert api.get("/api/admin/lab-access", headers=boss).json()["limit"] is None
+        assert api.put("/api/admin/lab-access", json={"limit": 3}, headers=boss).json()["limit"] == 3
         s = api.get("/api/slots", headers=plain).json()
         assert s["limit"] == 3 and s["labs"][A] == "locked"
         # One learner gets 10, then every lab, then the site's setting again.
@@ -248,6 +248,8 @@ def test_admin_sets_the_limit_for_everyone_and_for_one_learner(api):
             name = db.get(User, plain_id).username
         rows = api.get(f"/api/admin/learners?q={name}", headers=boss).json()
         assert rows[0]["lab_limit"] == 0
+        exceptions = api.get("/api/admin/lab-access", headers=boss).json()["exceptions"]
+        assert {"id": plain_id, "username": name, "lab_limit": 0} in exceptions
         api.put(f"/api/admin/learners/{plain_id}/lab-limit", json={"lab_limit": None}, headers=boss)
         assert api.get("/api/slots", headers=plain).json()["limit"] == 3
         assert api.put("/api/admin/lab-access", json={"limit": -1}, headers=boss).status_code == 422

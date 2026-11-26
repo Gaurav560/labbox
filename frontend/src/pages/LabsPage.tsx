@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { api, type LabDetail, type LabSummary, type NextStep } from "../api";
+import { api, type LabDetail, type LabSummary, type NextStep, type Slots } from "../api";
 import { chapterNumber } from "../components/StatusBar";
 import { InkProgress, LabPrint, Seal, TRACK_INK } from "../components/UkiyoArt";
 import { byCategory, Directory, TRACK_LABEL } from "../components/UkiyoDirectory";
@@ -25,10 +25,12 @@ export default function LabsPage() {
   const [labs, setLabs] = useState<LabSummary[] | null>(null);
   const [next, setNext] = useState<NextStep | null>(null);
   const [nextLab, setNextLab] = useState<LabDetail | null>(null);   // the lab of the next step (chapters, track)
+  const [slots, setSlots] = useState<Slots | null>(null);
 
   useEffect(() => {
     api.labs().then(setLabs).catch((e) => toast(e.message));
     api.next().then(setNext).catch(() => {});
+    api.slots().then(setSlots).catch(() => {});
   }, [toast]);
 
   useEffect(() => {
@@ -77,11 +79,42 @@ export default function LabsPage() {
             <h2 id="your-labs">Your labs</h2>
             <span className="u-rule-fill" aria-hidden="true" />
           </div>
+          {labs && slots?.limit != null && <SlotStrip slots={slots} labs={labs} />}
           {!labs && <p className="muted">Loading...</p>}
           {labs && <Directory labs={labs} link={(lab) => `/courses/${lab.id}`} initial={category || "all"} />}
         </section>
       </main>
     </div>
+  );
+}
+
+/*
+ * At most a few labs at a time (owner, 26 November), shown when an admin has turned the limit on: the labs that
+ * hold a slot, the free slots, and how a slot frees itself.
+ */
+function SlotStrip({ slots, labs }: { slots: Slots; labs: LabSummary[] }) {
+  const mine = labs.filter((l) => slots.labs[l.id] === "unlocked");
+  const free = slots.free ?? 0;
+  const swapDay = new Date(slots.next_swap).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+  return (
+    <section className="slot-strip" aria-label="Your lab slots">
+      <div className="slot-strip-head">
+        <strong>Your lab slots: {slots.used} of {slots.limit} in use</strong>
+        <span>{slots.swap_open ? "Today is swap day: open a lab to swap it out." : `Next swap day: ${swapDay}`}</span>
+      </div>
+      <ul>
+        {mine.map((l) => (
+          <li key={l.id}>
+            <Link to={`/courses/${l.id}`}>
+              <span className="slot-dot" style={{ background: TRACK_INK[l.track] ?? "var(--text)" }} aria-hidden="true" />
+              {l.title}
+            </Link>
+          </li>
+        ))}
+        {Array.from({ length: free }, (_, i) => <li key={`free-${i}`}><span className="is-free">Free slot</span></li>)}
+      </ul>
+      <p>Pick a locked lab below to unlock it. A lab frees its slot when you finish 80% of its tasks; on Mondays you can also swap one out.</p>
+    </section>
   );
 }
 
@@ -97,7 +130,9 @@ function greeting(): string {
 function Feature({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
   const cont = next.kind === "continue";
   const pct = cont ? (next.step - 1) / Math.max(1, next.steps) : 0;
-  const chapterUrl = (id: string) => `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
+  // A locked lab's buttons go to its course page, where it can be unlocked.
+  const locked = lab?.access === "locked";
+  const chapterUrl = (id: string) => locked ? `/courses/${next.lab_id}` : `/labs/${next.lab_id}?chapter=${encodeURIComponent(id)}`;
   const track = lab?.track ?? next.track ?? "languages";
   return (
     <section className={`u-feature ${cont ? "is-continue" : "is-start"}`} aria-label={cont ? "Continue where you left off" : "Start here"}
@@ -119,7 +154,7 @@ function Feature({ next, lab }: { next: NextStep; lab: LabDetail | null }) {
           <Link className="btn u-btn-seal u-feature-go" to={chapterUrl(next.chapter_id)}>{cont ? "Continue" : "Start the first chapter"}</Link>
           <Link className="btn btn-ghost" to={`/courses/${next.lab_id}`}>Course page</Link>
         </div>
-        {lab && (
+        {lab && !locked && (
           <nav className="u-ladder" aria-label={`Chapters of ${lab.title}`}>
             {lab.chapters.map((c, i) => {
               const done = c.tasks.length > 0 && c.tasks.every((t) => t.passed);

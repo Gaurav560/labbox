@@ -143,6 +143,9 @@ standard, eight short; see the table in `ROADMAP.md`).
   `labbox.mode` to "action" so tests that drive the editor work; a test about Read mode clears it (`read-mode.spec.ts`).
 - Browser tests clean up after themselves (Playwright global teardown runs `scripts/labbox test-accounts cleanup
   --since-id N`); set `LABBOX_E2E_KEEP=1` to keep a run's machines when looking into a failure.
+- Lab limit (owner, 26 November): with a limit on, a fresh account's labs are locked (403 on lessons, machine,
+  checks). Browser runs switch it off in global setup and restore it in teardown (`scripts/labbox lab-limit`);
+  backend tests set a per-learner `lab_limit` instead and must leave the site's setting as they found it.
 - Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that
   resize to phone width will find no editor area.
 

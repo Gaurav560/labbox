@@ -133,16 +133,32 @@ class LabAccess(BaseModel):
     limit: int | None = Field(None, ge=0, le=100)  # None or 0: every lab is open
 
 
-@router.get("/lab-access", response_model=LabAccess)
-def lab_access(session: Session = Depends(get_session)) -> LabAccess:
-    return LabAccess(limit=slots.site_limit(session))
+class LimitException(BaseModel):
+    id: int
+    username: str
+    lab_limit: int  # 0: every lab
 
 
-@router.put("/lab-access", response_model=LabAccess)
-def set_lab_access(body: LabAccess, admin: User = Depends(require_admin), session: Session = Depends(get_session)) -> LabAccess:
+class LabAccessOut(LabAccess):
+    exceptions: list[LimitException] = []  # learners with their own limit, A to Z
+
+
+def _access_out(session: Session) -> LabAccessOut:
+    rows = session.exec(select(User).where(col(User.lab_limit).is_not(None)).order_by(User.username)).all()
+    return LabAccessOut(limit=slots.site_limit(session),
+                        exceptions=[LimitException(id=u.id, username=u.username, lab_limit=u.lab_limit) for u in rows])
+
+
+@router.get("/lab-access", response_model=LabAccessOut)
+def lab_access(session: Session = Depends(get_session)) -> LabAccessOut:
+    return _access_out(session)
+
+
+@router.put("/lab-access", response_model=LabAccessOut)
+def set_lab_access(body: LabAccess, admin: User = Depends(require_admin), session: Session = Depends(get_session)) -> LabAccessOut:
     limit = slots.set_site_limit(session, body.limit, admin.id)
     log.warning("Admin %s set the lab limit for everyone to %s", admin.username, limit or "every lab")
-    return LabAccess(limit=limit)
+    return _access_out(session)
 
 
 class LearnerLimit(BaseModel):

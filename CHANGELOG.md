@@ -1,5 +1,22 @@
 # Changelog
 
+## 26 November: the Lab access tab in Admin, and the lab limit on both designs
+
+- Admin has a **Lab access** tab (owner: "more easy to use, good looking, minimal, expressive"): the rule in one
+  sentence ("Each learner works in 3 labs at a time."), a switch (Every lab / A few at a time) and a minus and plus
+  stepper; a change shows what it will become and waits for Save or Undo. Below: the three rules (Unlock, Finish at
+  80%, Swap on Mondays), faded while every lab is open, and **Exceptions**, the learners with their own number,
+  changed in place, removed, or added by searching a username. The Learners tab keeps a limit on each row, its
+  default named ("Default (3 labs)").
+- Frontend of the lab limit (master and Ukiyo): the locked course page with Unlock, the slot note and Monday swap on
+  an unlocked lab, the dashboard's slot strip with Locked and Unlocked marks (Ukiyo: on its lab rows), the lab page
+  sending a locked lab to its course page, a skill map without links on a locked lab.
+- `scripts/labbox lab-limit [N|off] [--plain]` shows or sets the limit for everyone. Browser-test runs switch the limit
+  off while they run and put the owner's setting back (a stopped run gives it back at the start of the next), and
+  `test-accounts cleanup` clears test accounts' own limits, so Exceptions lists only real learners.
+- Fixed: a stray `}` in `styles.css` (since 21 November) made browsers skip the `.course-page` rule after it; it
+  showed up only now, when a style with an inline picture made Vite check the whole file.
+
 ## 26 November: at most a few labs at a time (backend, master and Ukiyo)
 
 - The owner's rule, so learners focus: an admin sets how many labs a learner may have unlocked at once (Admin,
