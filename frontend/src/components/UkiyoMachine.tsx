@@ -92,7 +92,7 @@ function Crate({ p, at, fresh }: { p: Piece; at: Pt; fresh: boolean }) {
   const [x, y] = at, size = 50;
   const sx = DOOR[0] - x, sy = DOOR[1] - y;
   return (
-    <g className={`ua-c-box ua-c-logo ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
+    <g className={`ua-c-box ua-c-logo ${p.logo ? `is-${p.logo}` : ""} ${fresh ? "is-new" : ""}`} style={{ "--sx": `${sx}px`, "--sy": `${sy}px` } as CSSProperties}>
       <ellipse className="ua-c-logo-shadow" cx={x} cy={y - 1} rx={size * 0.36} ry="3.2" />
       {p.logo ? <image href={`/logos/${p.logo}.svg`} x={x - size / 2} y={y - size - 4} width={size} height={size} />
         : <text className="ua-c-box-glyph" x={x} y={y - 16} textAnchor="middle">{p.icon === "term" ? ">_" : "✦"}</text>}

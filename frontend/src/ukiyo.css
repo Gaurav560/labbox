@@ -681,7 +681,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .ua-c-lightbar { stroke: #ffd98a; stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px #ffd98a); transition: stroke .6s, filter .6s; }
 .ua-container.is-run .ua-c-lightbar { stroke: #4ade80; filter: drop-shadow(0 0 8px #22c55e); }
 /* logos alone, large (owner, 27 November): a soft shadow under each so it stands on the floor */
-.ua-c-logo image { filter: drop-shadow(0 0 1.5px #fffffff0) drop-shadow(0 0 7px #ffffff8c) drop-shadow(0 4px 5px #0009); } /* a soft light halo, so dark logos read on the blue */
+.ua-c-logo image { filter: drop-shadow(0 4px 5px #0009); }
+/* Logos that would melt into the container's blue get lighter colours of their own (owner, 27 November: "do not change
+   the container, only the logo colours"): LangChain's dark pill turns pale with dark marks; the blue ones brighten. */
+.ua-c-logo.is-langchain image { filter: invert(1) hue-rotate(180deg) brightness(1.08) drop-shadow(0 4px 5px #0009); }
+.ua-c-logo.is-python image, .ua-c-logo.is-java image, .ua-c-logo.is-postgresql image, .ua-c-logo.is-fastapi image {
+  filter: brightness(1.55) saturate(1.25) drop-shadow(0 4px 5px #0009); }
 .ua-c-logo-shadow { fill: #00000055; }
 .ua-c-box-glyph { font: 800 34px var(--font-code); fill: #ff7a5c; filter: drop-shadow(0 3px 4px #0008); }
 .ua-c-box-led { fill: #5b4632; stroke: #14171a; stroke-width: 1; transition: fill .4s; }
