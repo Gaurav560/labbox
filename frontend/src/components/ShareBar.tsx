@@ -12,7 +12,7 @@ const ICONS: Record<string, string> = {
   facebook: "M13.5 22v-8.2h2.75l.41-3.2H13.5V8.56c0-.93.26-1.56 1.59-1.56h1.7V4.14A22.8 22.8 0 0 0 14.31 4c-2.46 0-4.14 1.5-4.14 4.25v2.35H7.4v3.2h2.77V22z",
 };
 
-function Icon({ name }: { name: string }) {
+export function ShareIcon({ name }: { name: string }) {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="currentColor">
       <path d={ICONS[name]} />
@@ -38,13 +38,13 @@ export default function ShareBar({ cert }: { cert: Certificate }) {
   return (
     <section className="cert-share" aria-label="Share this certificate">
       <a className="cert-share-main" href={profile.href} target="_blank" rel="noopener noreferrer">
-        <Icon name={profile.key} />
+        <ShareIcon name={profile.key} />
         {profile.label}
       </a>
       <div className="cert-share-row">
         {rest.map((l) => (
           <a key={l.key} className="cert-share-btn" href={l.href} target="_blank" rel="noopener noreferrer">
-            <Icon name={l.key} />
+            <ShareIcon name={l.key} />
             {l.label}
           </a>
         ))}

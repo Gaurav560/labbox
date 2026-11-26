@@ -9,6 +9,11 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("The AI wave is here. Learn to build AI apps, or get left behind.");
   await expect(page).toHaveTitle(/LabBox by Telusko/);
+  // Certificates (owner, 27 November): a sample certificate and how it is shared.
+  const certs = page.locator("#certificates");
+  await expect(certs.getByRole("heading", { level: 2 })).toHaveText("Finish a lab. Share the proof.");
+  await expect(certs.getByRole("article", { name: "A sample certificate" })).toContainText("Meera Iyer");
+  await expect(certs.getByRole("list", { name: "Share on" })).toContainText("LinkedIn");
   // The logo, as a link home and as the favicon.
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");

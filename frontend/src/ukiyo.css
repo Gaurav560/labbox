@@ -734,3 +734,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .cert-list-title { font: 600 34px var(--font-serif); }
 .cert-share { border-radius: 6px; }
 .cert-box { border-radius: 6px; }
+
+/* The home page's certificate section on Ukiyo: serif points between fine rules, quiet chips. */
+.hc-points li { border-left: 0; padding: 0 0 14px; border-bottom: 1px solid var(--rule); }
+.hc-points strong { font: 600 19px var(--font-serif); }
+.hc-share-title { font: 600 19px var(--font-serif); }
+.hc-platforms li, .hc-link { border-radius: 4px; }

@@ -1,13 +1,12 @@
 /* A certificate's public page (owner, 27 November), /certificates/<id>: anyone with the link may open it, no login.
    Its learner also sees the switch to hide it and the one name correction. The address people share is /c/<id>
    (see certificate.ts). Same file on both designs; only CertArt (the picture beside the text) differs. */
-import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, ApiError, type Certificate } from "../api";
 import { useAuth } from "../auth";
-import { labTone } from "../brand";
 import { issuedOn } from "../certificate";
-import CertArt from "../components/CertArt";
+import CertificateSheet from "../components/CertificateSheet";
 import Logo from "../components/Logo";
 import ShareBar from "../components/ShareBar";
 import ThemeButton from "../components/ThemeButton";
@@ -47,7 +46,7 @@ export default function CertificatePage() {
             <Link className="link" to="/">Go to LabBox</Link>
           </section>
         )}
-        {cert && <Sheet cert={cert} />}
+        {cert && <CertificateSheet cert={cert} />}
         {cert && !cert.hidden && <ShareBar cert={cert} />}
         {cert?.mine && <OwnerControls cert={cert} onChange={setCert} />}
         {cert && !cert.mine && (
@@ -57,39 +56,6 @@ export default function CertificatePage() {
         )}
       </main>
     </div>
-  );
-}
-
-function Sheet({ cert }: { cert: Certificate }) {
-  return (
-    <article className="cert-sheet" style={{ "--tone": labTone(cert.lab_id) } as CSSProperties} aria-label={`Certificate ${cert.id}`}>
-      <CertArt cert={cert} />
-      <div className="cert-body">
-        <p className="cert-kicker">Certificate of completion</p>
-        <p className="cert-small">This certifies that</p>
-        <h1 className="cert-name">{cert.name}</h1>
-        <p className="cert-small">completed the hands-on lab</p>
-        <h2 className="cert-lab">{cert.lab_title}</h2>
-        {cert.lab_subtitle && <p className="cert-sub">{cert.lab_subtitle}</p>}
-        <p className="cert-facts">
-          {cert.tasks_passed} of {cert.tasks_total} tasks passed on a real machine · {cert.chapters_total} chapters
-        </p>
-        {cert.skills.length > 0 && (
-          <ul className="cert-skills" aria-label="Skills">
-            {cert.skills.map((s) => <li key={s}>{s}</li>)}
-          </ul>
-        )}
-        <footer className="cert-foot">
-          <div>
-            <strong>{issuedOn(cert.issued_at)}</strong>
-            <span>Certificate {cert.id}</span>
-            <span className="cert-issuer">{cert.issuer}</span>
-          </div>
-          <span className="cert-seal" aria-hidden="true">Lab<br />Box</span>
-        </footer>
-        {cert.hidden && <p className="cert-hidden-note">Hidden: only you can see this page.</p>}
-      </div>
-    </article>
   );
 }
 

@@ -5,6 +5,7 @@ import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { HomeFaq } from "../components/HomeSections";
+import HomeCertificate from "../components/HomeCertificate";
 import UkiyoMachine from "../components/UkiyoMachine";
 import { useTyped } from "../components/useTyped";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
@@ -114,6 +115,15 @@ export default function HomePage() {
             <p className="uh-all"><Link to={allLabs}>See all {live.length} labs →</Link></p>
           </section>
         )}
+
+        <section id="certificates" className="uh-section uh-certs" aria-labelledby="cert-title">
+          <header className="uh-head">
+            <p className="u-kicker">Certificates</p>
+            <h2 id="cert-title">Finish a lab. <em>Share the proof.</em></h2>
+            <p className="uh-section-lead">Every lab you finish gives you a certificate with its own link, made automatically. Post it on LinkedIn, X, WhatsApp or anywhere else.</p>
+          </header>
+          <HomeCertificate />
+        </section>
 
         <section className="uh-final" aria-labelledby="final-title">
           <figure className="uh-final-print">

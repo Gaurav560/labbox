@@ -2,6 +2,9 @@
 
 ## 27 November: certificates to share on LinkedIn and X
 
+- **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
+  component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
+  be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.
 - Ukiyo home: the lab terminal is back over the Hiroshige print, typing its session on a loop, on thin see-through
   glass so the print shows behind it (owner: "very shallow").
 - **Certificates** (owner: "a certificate automatically, with a URL shareable on LinkedIn, X and other social media,
