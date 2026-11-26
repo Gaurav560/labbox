@@ -333,9 +333,11 @@ lab (lab 16) and the `system-design` template.
    Redis, so uvicorn can run several workers; in memory when `REDIS_URL` is empty.
 3. **H3 worker (arq) (done):** pre-pull lab images, hourly cleanup of unused lab networks, nightly Postgres
    dump to `/srv/labbox/backups`.
-4. **H4 login (moved to the end, by your call):** HttpOnly session cookie with CSRF protection, a 60 s websocket ticket instead of the
-   token in the terminal URL, Google and GitHub sign-in (buttons only when keys are in `.env`;
-   accounts linked by verified email). Email verification and password reset wait for Phase K.
+4. **H4 login:** Google and GitHub sign-in **done (27 November)**: buttons only when keys are in `.env`, accounts linked
+   by verified email, a one-time code instead of the token in the address, `user.email` saved (`app/oauth.py`, README
+   "Sign in with Google and GitHub"). Still to do: link Google or GitHub to an existing username account from the
+   profile; password reset by email (needs an email sender); an HttpOnly session cookie with CSRF protection and a
+   60 s websocket ticket instead of the token in the terminal URL.
 5. **H5 safety (done):** disk quota per learner (default 500 MB), stop machines at 100% CPU for 10+ minutes,
    4 h session limit, at most 2 running labs per learner, per-IP rate limits on signup, login, check.
 6. **H6 operations (done):** `/metrics` for Prometheus and a Grafana dashboard file, JSON logs option, CI on

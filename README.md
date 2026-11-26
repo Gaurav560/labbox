@@ -220,6 +220,28 @@ cd backend
 
 `tests/test_migrations.py` fails if a model changes without a matching migration.
 
+### Sign in with Google and GitHub (H4)
+
+Buttons appear on the login page only when a provider's two keys are in `.env` (the owner writes them; never in chat).
+The redirect address to register is `<site>/api/auth/oauth/google/callback` (or `/github/callback`); `<site>` is
+`PUBLIC_URL` when set, else the address in the browser.
+
+- **Google:** console.cloud.google.com, APIs and Services, OAuth consent screen (External; app name LabBox; scopes
+  `openid`, `email`, `profile`), then Credentials, Create credentials, OAuth client ID, Web application. Authorised
+  redirect URIs: `https://labbox.gauravships.systems/api/auth/oauth/google/callback`, and for development
+  `http://localhost:5173/...` and `http://localhost:5174/...`. Put the ID and secret in `GOOGLE_CLIENT_ID` and
+  `GOOGLE_CLIENT_SECRET`. While the consent screen is in Testing, only its test users can sign in; publish it for everyone
+  (these scopes need no Google review).
+- **GitHub:** Settings, Developer settings, OAuth Apps, New OAuth App. GitHub allows one callback address per app, so make
+  two: "LabBox" with `https://labbox.gauravships.systems/api/auth/oauth/github/callback`, and "LabBox (dev)" with
+  `http://localhost:5174/api/auth/oauth/github/callback` (the Ukiyo dev server). `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`.
+- Live site: the keys go in `/srv/labbox/prod/shared/.env`, then `deploy/laptop/prod restart`.
+
+How accounts are matched (`backend/app/oauth.py`): the same provider account always signs into the same LabBox account;
+otherwise a LabBox account with the same verified email gets it linked (Google and GitHub with one address end up
+together); otherwise a new account, only while sign-up is open (`ALLOW_SIGNUP`). Its verified email is saved on the
+account (Admin, Learners shows it).
+
 ### Configuration (`backend/.env`)
 
 | Key | Meaning |
