@@ -2,6 +2,9 @@
 
 ## 27 November: certificates to share on LinkedIn and X
 
+- **Home page: a Certificates section** ("Finish a lab. Share the proof."): a sample certificate drawn by the same
+  component as the real page (`CertificateSheet`), its own link, what happens when a lab is finished, and where it can
+  be shared (LinkedIn, X, WhatsApp, Facebook, email, a CV, any page). Both designs; checked in the home browser test.
 - **Certificates** (owner: "a certificate automatically, with a URL shareable on LinkedIn, X and other social media,
   once a lab is passed and completed"). Earned at 80% of a lab's tasks; the first asks for the full name once
   (`user_profile.certificate_name`), later ones come by themselves with the check that finishes a lab (the check's

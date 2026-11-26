@@ -5,6 +5,7 @@ import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import HeroTour from "../components/HeroTour";
+import HomeCertificate from "../components/HomeCertificate";
 import { AiTrack, HomeFaq, InsideLab } from "../components/HomeSections";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
@@ -166,6 +167,13 @@ export default function HomePage() {
             </div>
           </section>
         )}
+
+        <section id="certificates" className="h-section" aria-labelledby="cert-title">
+          <p className="h-kicker">Certificates</p>
+          <h2 id="cert-title">Finish a lab. <span className="h-yellow">Share the proof.</span></h2>
+          <p className="h-section-lead">Every lab you finish gives you a certificate with its own link, made automatically. Post it on LinkedIn, X, WhatsApp or anywhere else.</p>
+          <HomeCertificate />
+        </section>
 
         <section className="home-tracks h-section" id="tracks" aria-labelledby="tracks-title">
           <p className="h-kicker">Also on LabBox</p>

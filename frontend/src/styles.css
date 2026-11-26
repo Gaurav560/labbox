@@ -2263,3 +2263,31 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
   .cert-top, .cert-share, .cert-owner, .cert-verify { display: none; }
   .cert-sheet { box-shadow: none; }
 }
+
+/* The home page's certificate section (owner, 27 November): the sample certificate and how sharing works. */
+.hc { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+.hc-sample { display: grid; gap: 12px; min-width: 0; }
+.hc-sample .cert-sheet { grid-template-columns: minmax(120px, 28%) 1fr; }
+.hc-sample .cert-body { padding: 24px 26px 22px; }
+.hc-sample .cert-name { font-size: clamp(26px, 3.2vw, 38px); }
+.hc-sample .cert-lab { font-size: clamp(20px, 2.4vw, 26px); }
+.hc-sample .cert-sub { display: none; }
+.hc-link { display: inline-flex; align-items: center; gap: 8px; justify-self: start; margin: 0; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--muted); font: 13px var(--font-code); overflow-wrap: anywhere; }
+.hc-link strong { color: var(--text); font-weight: 600; }
+.hc-link-dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--success); }
+.hc-points { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.hc-points li { display: grid; gap: 2px; padding-left: 14px; border-left: 2px solid var(--border); }
+.hc-points strong { font-size: 16px; }
+.hc-points span { color: var(--muted); font-size: 15px; line-height: 1.55; }
+.hc-share-title { margin: 26px 0 10px; font-weight: 700; }
+.hc-platforms { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.hc-platforms li { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--card); font-size: 13.5px; font-weight: 600; }
+.hc-note { margin: 12px 0 0; color: var(--muted); font-size: 13.5px; }
+@media (max-width: 900px) { .hc { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .hc-sample .cert-sheet { grid-template-columns: 1fr; }
+  .hc-sample .cert-art { min-height: 150px; }
+  .hc-sample .cert-body { padding: 20px 18px; }
+}
