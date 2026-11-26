@@ -1,4 +1,4 @@
-# Handoff: where the work stands (25 November 2026)
+# Handoff: where the work stands (27 November 2026)
 
 Read this first when a session starts. `AGENTS.md` has the rules and how to run and test, `ROADMAP.md`
 the status of every lab and phase, `CHANGELOG.md` the history (newest first), `CONTENT_STANDARD.md` what a
@@ -6,6 +6,15 @@ course must be, and `COURSE_PRODUCTION.md` how one is built. This file is only t
 update it at the end of every session. Earlier, longer versions of it are in git history.
 
 ## Resume here
+
+- **Live site on this laptop (owner, 27 November; `deploy/laptop/README.md`).** No server yet (too costly), so the
+  live site runs beside development at `/srv/labbox/prod` (backend :8100, Caddy :8180, `INSTANCE=prod`, database
+  `labbox_prod`, Redis db 2), reached through Cloudflare Tunnel at `https://labbox.gauravships.systems`, invite only.
+  Setup done (`deploy/laptop/setup.sh`, OpenAI key copied with the owner's OK). The domain moved to Cloudflare
+  (nameservers `lou`/`piper.ns.cloudflare.com`, every old record DNS only so the Vercel portfolio and Hostinger
+  email are untouched). Left: the tunnel (`setup.sh tunnel labbox.gauravships.systems`, the owner clicks Authorize),
+  `sudo loginctl enable-linger gaurav` (owner), the first release, the owner's admin account on the live site.
+  Deploys: GitHub, Actions, Deploy. Status: `deploy/laptop/prod status`.
 
 - **Design comparison (owner, 24 and 25 November): two copies of the site, same backend.** The current design on
   `master` at http://localhost:5173; the "Ukiyo" design (Japanese woodblock prints and Swiss editorial layout) on
