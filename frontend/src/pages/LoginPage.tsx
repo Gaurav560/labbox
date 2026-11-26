@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { api } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import ThemeButton from "../components/ThemeButton";
@@ -49,7 +50,9 @@ export default function LoginPage() {
   const { user, login, signup } = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const signupMode = params.get("signup") === "1"; // from "Start free" on the home page
+  // Sign-up may be closed (an invite-only site, ALLOW_SIGNUP=false): then the page is a login page and says so.
+  const [signupOpen, setSignupOpen] = useState(true);
+  const signupMode = signupOpen && params.get("signup") === "1"; // from "Start free" on the home page
   // Where to go after logging in: a path on this site (never another site), else the dashboard.
   const wanted = params.get("next") ?? "";
   const next = wanted.startsWith("/") && !wanted.startsWith("//") && !wanted.startsWith("/\\") ? wanted : "/labs";
@@ -58,6 +61,9 @@ export default function LoginPage() {
   const [reveal, setReveal] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    api.authOptions().then((o) => setSignupOpen(o.signup)).catch(() => undefined);
+  }, []);
 
   if (user) return <Navigate to={next} replace />;
 
@@ -119,12 +125,16 @@ export default function LoginPage() {
           <button type="submit" className="btn btn-primary auth-go" disabled={!ready}>
             {busy ? "One moment…" : signupMode ? "Sign up" : "Log in"}
           </button>
-          <p className="auth-switch muted">
-            {signupMode ? "Already have an account?" : "New to LabBox?"}{" "}
-            <button type="button" className="auth-link" disabled={!ready} onClick={() => submit(other)}>
-              {signupMode ? "Log in" : "Sign up"}
-            </button>
-          </p>
+          {signupOpen ? (
+            <p className="auth-switch muted">
+              {signupMode ? "Already have an account?" : "New to LabBox?"}{" "}
+              <button type="button" className="auth-link" disabled={!ready} onClick={() => submit(other)}>
+                {signupMode ? "Log in" : "Sign up"}
+              </button>
+            </p>
+          ) : (
+            <p className="auth-switch muted">Sign-up is by invitation for now. Got an invitation? Log in with the name and password you were given.</p>
+          )}
           <p className="muted small auth-rules">Usernames: 3 to 32 letters, digits, dot, dash or underscore. Passwords: at least 6 characters.</p>
         </form>
         <p className="auth-legal small">

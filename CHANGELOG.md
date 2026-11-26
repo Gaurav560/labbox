@@ -2,6 +2,9 @@
 
 ## 27 November: the live site on the laptop, and the Deploy button
 
+- **Invite-only login page**: `GET /api/auth/options` says whether sign-up is open; when it is not (the live site,
+  `ALLOW_SIGNUP=false`), the login page says "Sign-up is by invitation for now" instead of a Sign up link, and "Start
+  free" lands on the login form (both designs). One test.
 - **`labbox password <username>`**: sets a new password (asked twice, never shown; 6 to 72 characters, as at sign-up).
   On the live site: `deploy/laptop/prod labbox password <username>`. There is no reset by email yet. One test.
 - **`INSTANCE` setting** (backend): a second LabBox on the same Docker names its lab machines, check containers and
