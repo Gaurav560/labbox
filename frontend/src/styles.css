@@ -2204,8 +2204,9 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .cert-foot div { display: grid; gap: 2px; font-size: 13.5px; color: var(--muted); }
 .cert-foot strong { color: var(--text); font-size: 15px; }
 .cert-issuer { color: var(--text); font-weight: 700; }
-.cert-seal { display: grid; place-items: center; width: 74px; height: 74px; flex: none; border-radius: 10px; background: var(--brand-red); color: #fff;
-  font: 700 18px/1.05 var(--font-text); text-align: center; box-shadow: inset 0 0 0 4px #ffffff30; }
+/* a small stamp, never large (owner, 27 November) */
+.cert-seal { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 5px; background: var(--brand-red); color: #fff;
+  font: 700 9px/1.05 var(--font-text); text-align: center; box-shadow: inset 0 0 0 2px #ffffff30; }
 .cert-hidden-note { margin: 12px 0 0; color: var(--warn); font-size: 13.5px; }
 .cert-verify { margin: 0; text-align: center; }
 
@@ -2291,3 +2292,31 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
   .hc-sample .cert-art { min-height: 150px; }
   .hc-sample .cert-body { padding: 20px 18px; }
 }
+
+/* Certificate QR code and the verify page (owner, 27 November). */
+.cert-marks { display: inline-flex; align-items: flex-end; gap: 14px; flex: none; }
+.cert-qr { display: grid; justify-items: center; gap: 4px; color: var(--muted); font-size: 11px; text-decoration: none; }
+.cert-qr img { display: block; width: 84px; height: 84px; border-radius: 4px; background: #fff; image-rendering: pixelated; }
+.verify-main { max-width: 720px; }
+.verify-title { margin: 8px 0 0; font-size: var(--h1); }
+.verify-lead { margin: 0; line-height: 1.6; }
+.verify-form { display: flex; flex-wrap: wrap; gap: 8px; }
+.verify-form input { flex: 1 1 240px; height: 42px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--text); font: 16px var(--font-code); letter-spacing: .06em; text-transform: uppercase; }
+.verify-form .cert-box-go { height: 42px; }
+.verify-card { display: grid; gap: 12px; padding: 20px 22px; border-radius: 14px; border: 1px solid var(--border); background: var(--card); }
+.verify-card p { margin: 0; line-height: 1.6; }
+.verify-card.is-ok { border-color: color-mix(in srgb, var(--success) 60%, var(--border)); }
+.verify-card.is-private { border-color: color-mix(in srgb, var(--warn) 50%, var(--border)); }
+.verify-card.is-bad { border-color: color-mix(in srgb, var(--danger) 60%, var(--border)); }
+.verify-badge { font-weight: 700; font-size: 18px; }
+.is-ok .verify-badge span { color: var(--success); }
+.is-private .verify-badge span { color: var(--warn); }
+.is-bad .verify-badge span { color: var(--danger); }
+.verify-facts { display: grid; gap: 8px; margin: 0; }
+.verify-facts div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; }
+.verify-facts dt { color: var(--muted); }
+.verify-facts dd { margin: 0; font-weight: 600; }
+.verify-warn { padding: 10px 12px; border-radius: 8px; background: var(--chip); font-size: 14px; }
+.verify-checked { margin: 0; }
+@media (max-width: 760px) { .verify-facts div { grid-template-columns: 1fr; gap: 0; } .cert-marks { gap: 10px; } .cert-qr img { width: 72px; height: 72px; } }

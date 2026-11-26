@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from "react";
-import { FAQS } from "../pages/InfoPages";
+import { CERT_FAQS, FAQS } from "../pages/InfoPages";
 import SHOTS from "../homeShots.json";
 import { LAB_TONES } from "../brand";
 
@@ -114,7 +114,9 @@ const AI_FAQ = [
 
 /** FAQs right above the footer: one numbered list, one answer open at a time, opening smoothly. */
 export function HomeFaq() {
-  const items = [...AI_FAQ, ...FAQS.filter((f) => !f.q.startsWith("What is"))].slice(0, 8);
+  // The AI labs first, then certificates, then the rest (owner, 27 November).
+  const rest = FAQS.filter((f) => !f.q.startsWith("What is") && !CERT_FAQS.includes(f));
+  const items = [...AI_FAQ, ...CERT_FAQS, ...rest].slice(0, 10);
   return (
     <div className="h-faq">
       {items.map((f, i) => (

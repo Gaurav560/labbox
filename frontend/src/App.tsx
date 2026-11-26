@@ -6,6 +6,7 @@ import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
 import CertificatePage from "./pages/CertificatePage";
 import CertificatesPage from "./pages/CertificatesPage";
 import LabsPage from "./pages/LabsPage";
+import VerifyPage from "./pages/VerifyPage";
 import LibraryPage from "./pages/LibraryPage";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -81,6 +82,8 @@ export default function App() {
       {/* Certificates (owner, 27 November): a certificate's page is public; the address shared is /c/<id>. */}
       <Route path="/certificates" element={<RequireAuth><CertificatesPage /></RequireAuth>} />
       <Route path="/certificates/:id" element={<CertificatePage />} />
+      <Route path="/verify" element={<VerifyPage />} />
+      <Route path="/verify/:id" element={<VerifyPage />} />
       <Route
         path="/courses/:labId"
         element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><CoursePage /></Suspense></RequireAuth>}
