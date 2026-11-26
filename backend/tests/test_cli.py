@@ -366,3 +366,30 @@ def test_test_account_targets_spare_the_owner_admins_and_real_names():
     assert cli.test_account_targets(users) == [(11, "e2e7319330"), (50, "course1764061234"), (60, "rd5606545")]
     assert cli.test_account_targets(users, since_id=55) == [(60, "rd5606545")]
     assert cli.test_account_targets([U(id=1, username="next1234567", is_admin=False)]) == []
+
+
+def test_password_command(monkeypatch, capsys):
+    """labbox password <username>: asks twice, checks the length, and the new password logs in (owner, 27 November)."""
+    import uuid
+
+    from sqlmodel import Session
+
+    from app import auth
+    from app.db import engine, init_db
+
+    init_db()
+    name = f"pw{uuid.uuid4().hex[:8]}"
+    with Session(engine) as s:
+        auth.create_user(s, name, "old-secret")
+    answers = iter(["new-secret-1", "new-secret-1"])
+    monkeypatch.setattr("getpass.getpass", lambda prompt="": next(answers))
+    assert cli.main(["password", name]) == 0
+    with Session(engine) as s:
+        assert auth.authenticate(s, name, "new-secret-1").username == name
+    # Too short, or two different answers: nothing changes.
+    for pair in (["abc", "abc"], ["new-secret-2", "other-one"]):
+        answers = iter(pair)
+        assert cli.main(["password", name]) == 1
+    assert cli.main(["password", "no-such-account-x"]) == 1
+    with Session(engine) as s:
+        assert auth.authenticate(s, name, "new-secret-1").username == name

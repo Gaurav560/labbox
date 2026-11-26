@@ -2,6 +2,8 @@
 
 ## 27 November: the live site on the laptop, and the Deploy button
 
+- **`labbox password <username>`**: sets a new password (asked twice, never shown; 6 to 72 characters, as at sign-up).
+  On the live site: `deploy/laptop/prod labbox password <username>`. There is no reset by email yet. One test.
 - **`INSTANCE` setting** (backend): a second LabBox on the same Docker names its lab machines, check containers and
   lab networks with its own word (`INSTANCE=prod`: `lab-prod-u1-...`, `labnet-prod-u1-...`) and labels them
   `labbox.instance=prod`; idle stop, check cleanup, network cleanup, the running-labs limit and `labbox test-accounts

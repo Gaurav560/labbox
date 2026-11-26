@@ -995,6 +995,38 @@ def cmd_admin(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_password(args: argparse.Namespace) -> int:
+    """Set a new password for an account (owner, 27 November: there is no reset by email yet). Asks for it twice,
+    never shows it; the same rule as sign-up (6 to 72 characters). On the live site: deploy/laptop/prod labbox
+    password <username>."""
+    import getpass
+
+    from sqlmodel import Session, select
+
+    from app.auth import hash_password
+    from app.db import engine, init_db
+    from app.models import User
+
+    init_db()
+    with Session(engine) as s:
+        user = s.exec(select(User).where(User.username == args.username)).first()
+        if user is None:
+            print(f"✗ No account named {args.username!r}")
+            return 1
+        new = getpass.getpass(f"New password for {user.username}: ")
+        if not 6 <= len(new) <= 72:
+            print("✗ A password has 6 to 72 characters; nothing changed")
+            return 1
+        if getpass.getpass("Again: ") != new:
+            print("✗ The two did not match; nothing changed")
+            return 1
+        user.password_hash = hash_password(new)
+        s.add(user)
+        s.commit()
+        print(f"✓ New password set for {user.username}")
+    return 0
+
+
 def cmd_lab_limit(args: argparse.Namespace) -> int:
     """How many labs a learner may have unlocked at once (owner, 26 November; Admin, Learners, "Lab access"):
     show it, or set a number or "off" (every lab open). --plain prints only the value (browser-test runs save it,
@@ -1105,6 +1137,10 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("action", choices=["list", "grant", "revoke"])
     a.add_argument("username", nargs="?")
     a.set_defaults(fn=cmd_admin)
+
+    pw = sub.add_parser("password", help="set a new password for an account (asks for it twice)")
+    pw.add_argument("username")
+    pw.set_defaults(fn=cmd_password)
 
     ll = sub.add_parser("lab-limit", help="labs a learner may have unlocked at once: show, or set N or off")
     ll.add_argument("value", nargs="?", help="a number from 1 to 100, or off (every lab open)")
