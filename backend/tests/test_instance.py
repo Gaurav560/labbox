@@ -98,11 +98,11 @@ def test_auth_options_say_whether_signup_is_open(monkeypatch):
     from app.main import app
 
     client = TestClient(app)
-    assert client.get("/api/auth/options").json() == {"signup": True}
+    assert client.get("/api/auth/options").json() == {"signup": True, "providers": []}
     monkeypatch.setenv("ALLOW_SIGNUP", "false")
     get_settings.cache_clear()
     try:
-        assert client.get("/api/auth/options").json() == {"signup": False}
+        assert client.get("/api/auth/options").json() == {"signup": False, "providers": []}
         r = client.post("/api/auth/signup", json={"username": "invitedonly", "password": "secret123"})
         assert r.status_code == 403
     finally:

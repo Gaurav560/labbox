@@ -45,6 +45,9 @@ os.environ["ALLOW_SIGNUP"] = "true"
 os.environ["INSTANCE"] = ""
 os.environ["RELEASE"] = ""
 os.environ["PUBLIC_URL"] = ""
+# Sign in with Google and GitHub is off unless a test turns it on (test_oauth.py fakes the providers).
+for _k in ("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"):
+    os.environ[_k] = ""
 # The gateway is tested in-process with the fake provider; no second server, no real models.
 os.environ["LLM_GATEWAY_ENABLED"] = "false"
 # VS Code in labs is tested on purpose (test_ide_docker.py); other tests keep the classic setup.

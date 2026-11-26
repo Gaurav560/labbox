@@ -49,8 +49,14 @@ class Settings(BaseSettings):
     # The commit being served (the release script sets it); /api/health reports it so a deploy can wait for it.
     RELEASE: str = ""
     # The site's public address, e.g. https://labbox.gauravships.systems: certificate QR codes point at its /verify
-    # page. Empty: the address of the request (fine in development).
+    # page, and Google and GitHub send learners back to it after sign-in. Empty: the address of the request (development).
     PUBLIC_URL: str = ""
+    # Sign in with Google and GitHub (owner, 27 November). Written into .env by the owner; a provider's button shows only
+    # when both its values are set. Redirect address to register: <site>/api/auth/oauth/<google|github>/callback.
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GITHUB_CLIENT_ID: str = ""
+    GITHUB_CLIENT_SECRET: str = ""
     # Per-user lab networks get a /28 each from this range (4,096 networks); empty: Docker's own pool.
     LAB_SUBNET_POOL: str = "10.88.0.0/16"
     IDLE_STOP_MINUTES: float = 15
