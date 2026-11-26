@@ -7,13 +7,14 @@ from sqlmodel import Session
 
 from .. import containers, limits
 from .. import workspace_files as wf
+from ..slots import lab_open
 from ..auth import get_current_user
 from ..config import get_settings
 from ..db import get_session
 from ..labs import get_lab
 from ..models import User, Workspace
 
-router = APIRouter(prefix="/api/labs/{lab_id}/files", tags=["files"])
+router = APIRouter(prefix="/api/labs/{lab_id}/files", tags=["files"], dependencies=[Depends(lab_open)])
 
 
 class FileContent(BaseModel):

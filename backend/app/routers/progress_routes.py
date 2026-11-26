@@ -5,12 +5,13 @@ from pydantic import BaseModel, Field
 from sqlmodel import Session
 
 from .. import containers, design, engagement, lab_setup, progress, tutor
+from ..slots import lab_open
 from ..auth import get_current_user
 from ..db import get_session
 from ..labs import LabConfig, get_lab
 from ..models import User
 
-router = APIRouter(prefix="/api/labs/{lab_id}/chapters/{chapter_id}", tags=["progress"])
+router = APIRouter(prefix="/api/labs/{lab_id}/chapters/{chapter_id}", tags=["progress"], dependencies=[Depends(lab_open)])
 
 
 class ChapterProgressOut(BaseModel):

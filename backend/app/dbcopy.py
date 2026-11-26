@@ -9,7 +9,7 @@ Postgres id sequences then continue after the highest copied id. Row counts are 
 from dataclasses import dataclass
 
 from alembic.script import ScriptDirectory
-from sqlalchemy import Engine, create_engine, func, inspect, select, text
+from sqlalchemy import Engine, Integer, create_engine, func, inspect, select, text
 from sqlalchemy.engine import make_url
 from sqlmodel import SQLModel
 
@@ -84,7 +84,7 @@ def copy_database(source: Engine, target: Engine) -> list[TableCount]:
             # Ids were copied as they are, so each id sequence must continue after the highest one.
             for t in tables:
                 pk = list(t.primary_key.columns)
-                if len(pk) == 1 and pk[0].autoincrement in (True, "auto") and pk[0].type.python_type is int:
+                if len(pk) == 1 and pk[0].autoincrement in (True, "auto") and isinstance(pk[0].type, Integer):
                     dst.execute(text(
                         f"SELECT setval(pg_get_serial_sequence('\"{t.name}\"', '{pk[0].name}'), "
                         f"COALESCE(MAX(\"{pk[0].name}\"), 1), MAX(\"{pk[0].name}\") IS NOT NULL) FROM \"{t.name}\""

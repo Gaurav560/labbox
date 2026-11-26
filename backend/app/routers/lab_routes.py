@@ -11,12 +11,13 @@ import json
 import time
 from pathlib import Path
 
-from .. import containers, ide, limits, progress, services
+from .. import containers, ide, limits, progress, services, slots
 from ..focus import chapter_focus, step_file, task_focus
 from ..auth import get_current_user
 from ..checker import task_states
 from ..db import get_session
 from ..labs import COVER_TYPES, LabConfig, PreviewPort, all_labs, get_lab
+from ..slots import lab_open
 from ..lessons import PublicStep, StepType, public_step, redact_markdown
 from ..models import User
 
@@ -47,6 +48,7 @@ class LabSummary(LabInfo):
     language: str
     chapter_count: int
     progress: Progress
+    access: slots.Access = "open"  # locked: only the course page opens (app/slots.py)
 
 
 class TaskOut(BaseModel):
@@ -103,6 +105,7 @@ class LabDetail(LabInfo):
     language: str
     chapters: list[ChapterOut]
     progress: Progress
+    access: slots.Access = "open"  # locked: only the course page opens (app/slots.py)
 
 
 class ChapterContent(BaseModel):
@@ -145,6 +148,7 @@ def _info(lab: LabConfig) -> dict:
 @router.get("", response_model=list[LabSummary])
 def list_labs(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> list[LabSummary]:
     assert user.id is not None
+    access = slots.state(session, user).labs
     out = []
     for lab in all_labs():
         states = task_states(session, user.id, lab)
@@ -157,6 +161,7 @@ def list_labs(user: User = Depends(get_current_user), session: Session = Depends
                 language=lab.language,
                 chapter_count=len(lab.chapters),
                 progress=Progress(passed_tasks=sum(states.values()), total_tasks=lab.task_count),
+                access=access.get(lab.id, "open"),
             )
         )
     return out
@@ -213,10 +218,11 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
             for c in lab.chapters
         ],
         progress=Progress(passed_tasks=sum(states.values()), total_tasks=lab.task_count),
+        access=slots.access(session, user, lab),
     )
 
 
-@router.get("/{lab_id}/chapters/{chapter_id}", response_model=ChapterContent)
+@router.get("/{lab_id}/chapters/{chapter_id}", response_model=ChapterContent, dependencies=[Depends(lab_open)])
 def chapter(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)) -> ChapterContent:
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
@@ -228,7 +234,7 @@ def chapter(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)
     )
 
 
-@router.get("/{lab_id}/chapters/{chapter_id}/outline", response_model=Outline)
+@router.get("/{lab_id}/chapters/{chapter_id}/outline", response_model=Outline, dependencies=[Depends(lab_open)])
 def outline(lab_id: str, chapter_id: str, user: User = Depends(get_current_user)) -> Outline:
     lab = get_lab(lab_id)
     lab.chapter(chapter_id)
@@ -246,7 +252,7 @@ class FocusOut(BaseModel):
     end_line: int | None = None  # with a step's line range: the lines to highlight
 
 
-@router.post("/{lab_id}/chapters/{chapter_id}/focus", response_model=FocusOut)
+@router.post("/{lab_id}/chapters/{chapter_id}/focus", response_model=FocusOut, dependencies=[Depends(lab_open)])
 async def chapter_focus_route(
     lab_id: str, chapter_id: str, body: FocusIn | None = None,
     user: User = Depends(get_current_user), session: Session = Depends(get_session),
@@ -291,7 +297,7 @@ class StepCodeOut(BaseModel):
 STEP_CODE_MAX = 40  # lines shown for one step in Read mode
 
 
-@router.get("/{lab_id}/chapters/{chapter_id}/steps/{step}/code", response_model=StepCodeOut)
+@router.get("/{lab_id}/chapters/{chapter_id}/steps/{step}/code", response_model=StepCodeOut, dependencies=[Depends(lab_open)])
 async def step_code_route(
     lab_id: str, chapter_id: str, step: int,
     user: User = Depends(get_current_user), session: Session = Depends(get_session),
@@ -358,7 +364,7 @@ class WorkspaceStatus(BaseModel):
     stopped_reason: str | None = None  # a safety limit stopped it (Phase H5): the lab page says why
 
 
-@router.post("/{lab_id}/workspace/start", response_model=WorkspaceStatus, response_model_exclude_none=True)
+@router.post("/{lab_id}/workspace/start", response_model=WorkspaceStatus, response_model_exclude_none=True, dependencies=[Depends(lab_open)])
 async def workspace_start(
     lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
 ) -> WorkspaceStatus:
@@ -374,7 +380,7 @@ async def workspace_stop(
     return WorkspaceStatus(status="stopped", container=name)
 
 
-@router.post("/{lab_id}/workspace/reset", response_model=WorkspaceStatus, response_model_exclude_none=True)
+@router.post("/{lab_id}/workspace/reset", response_model=WorkspaceStatus, response_model_exclude_none=True, dependencies=[Depends(lab_open)])
 async def workspace_reset(
     lab_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)
 ) -> WorkspaceStatus:

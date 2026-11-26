@@ -26,6 +26,7 @@ from .routers import (
     library_routes,
     preview_routes,
     progress_routes,
+    slot_routes,
     terminal_routes,
 )
 
@@ -71,6 +72,7 @@ app.include_router(engagement_routes.router)
 app.include_router(preview_routes.router)
 app.include_router(ai_routes.router)
 app.include_router(admin_routes.router)
+app.include_router(slot_routes.router)
 app.include_router(library_routes.router)
 app.include_router(library_routes.admin_router)
 
