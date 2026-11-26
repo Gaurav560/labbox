@@ -7,6 +7,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Certificates (owner, 27 November; ROADMAP 1c).** Earned at 80% of a lab's tasks, full name typed once, public page
+  `/certificates/<id>`, share address `/c/<id>` (card tags and a picture for LinkedIn and X), share bar, hide, one name
+  correction, on both designs. Rules: `backend/app/certificates.py`.
 - **Live site on this laptop (owner, 27 November; `deploy/laptop/README.md`).** No server yet (too costly), so the
   live site runs beside development at `/srv/labbox/prod` (backend :8100, Caddy :8180, `INSTANCE=prod`, database
   `labbox_prod`, Redis db 2), reached through Cloudflare Tunnel at `https://labbox.gauravships.systems`, invite only.

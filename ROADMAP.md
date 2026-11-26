@@ -232,6 +232,22 @@ this laptop beside development (`deploy/laptop/README.md`), at `https://labbox.g
       laptop set never to sleep.
 - [ ] Move to a rented server when sign-ups open (Hetzner about EUR 16 a month for 16 GB; same scripts).
 
+### 1c. Done: certificates to share (owner, 27 November)
+
+"A certificate automatically, with a URL shareable on LinkedIn, X and other social media, once a lab is passed and
+completed" (rules in `backend/app/certificates.py`):
+- [x] Earned at **80% of a lab's tasks** (the moment its slot frees). The first certificate asks for the **full name**
+      once; after that the check that finishes a lab issues the next one by itself, and the lab says so.
+- [x] A public page `/certificates/<id>` (8-character id), and the address to share `/c/<id>`, with the card tags
+      LinkedIn, X, WhatsApp and Facebook read and a 1200 x 627 picture drawn by the backend (the lab's woodblock
+      print, the name, the lab, the task count, the date, the id, a red seal).
+- [x] Share: LinkedIn "Add to profile" (Licenses and certifications, filled in), a LinkedIn post, X, WhatsApp,
+      Facebook, copy the link, download the picture. My certificates in the profile menu; a box on each course page.
+- [x] The learner may hide a certificate and correct its name once. The privacy policy says the page is public.
+- [x] Both designs: Ukiyo a paper certificate framed by the lab's print; the current design a dark card in the lab's
+      colour. Migration 0014; 5 backend tests; one browser test on each design.
+- [ ] Later: a PDF to print, and LinkedIn's company page id (`organizationId`) so the issuer links to Telusko's page.
+
 ### 1b. Done: at most a few labs at a time (owner, 25 and 26 November)
 
 So learners are not overwhelmed by the number of labs and study nothing (rules in `backend/app/slots.py`):
