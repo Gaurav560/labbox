@@ -94,6 +94,7 @@ class UserProfile(SQLModel, table=True):
 
     user_id: int = Field(foreign_key="user.id", primary_key=True)
     display_name: str | None = None
+    certificate_name: str | None = None  # the full name for certificates, typed when the first one is claimed
     timezone: str | None = None  # IANA name, e.g. Asia/Kolkata; None until the browser sends it
     goal: str | None = None
     placement_level: str | None = None
@@ -223,6 +224,26 @@ class SiteSetting(SQLModel, table=True):
     value: str = ""
     updated_at: datetime = Field(default_factory=utcnow)
     updated_by: int | None = None  # the admin's user id
+
+
+class Certificate(SQLModel, table=True):
+    """A lab completed (owner, 27 November: 80% of its tasks passed, the same moment its slot frees), with a public
+    page at /c/<id> to share on LinkedIn, X and elsewhere. One per (user, lab). The name is the one the learner typed
+    for certificates (user_profile.certificate_name), copied here so later changes never alter an issued one, except
+    the single correction the learner may make."""
+    __tablename__ = "certificate"
+    __table_args__ = (UniqueConstraint("user_id", "lab_id"),)
+
+    id: str = Field(primary_key=True)  # 8 characters, easy to read aloud: no 0, 1, I, L, O or U
+    user_id: int = Field(foreign_key="user.id", index=True)
+    lab_id: str
+    name: str
+    tasks_passed: int
+    tasks_total: int
+    chapters_total: int
+    issued_at: datetime = Field(default_factory=utcnow)
+    hidden: bool = False  # the learner may hide it: its page then says it is not available
+    name_corrected: bool = False  # one correction of the name, then it is final
 
 
 class LabSlot(SQLModel, table=True):

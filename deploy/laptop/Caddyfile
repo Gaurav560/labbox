@@ -9,9 +9,10 @@
 http://:8180 {
 	bind 127.0.0.1
 
-	# The backend: the API, the terminal websocket, previews and VS Code (HTTP and websockets alike).
+	# The backend: the API, the terminal websocket, previews, VS Code (HTTP and websockets alike), and /c/<id>, the
+	# certificate address learners share (its page carries the card tags LinkedIn and X read).
 	# /metrics is left out on purpose: it is for this machine only.
-	@backend path /api/* /ws/* /preview/* /ide/* /ide-fonts/*
+	@backend path /api/* /ws/* /preview/* /ide/* /ide-fonts/* /c/*
 	handle @backend {
 		reverse_proxy 127.0.0.1:8100 {
 			# The learner's real address (Cloudflare sends it); the backend's rate limits count per address.

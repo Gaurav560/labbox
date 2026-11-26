@@ -19,6 +19,7 @@ from .routers import (
     admin_routes,
     ai_routes,
     auth_routes,
+    certificate_routes,
     check_routes,
     engagement_routes,
     file_routes,
@@ -73,6 +74,7 @@ app.include_router(preview_routes.router)
 app.include_router(ai_routes.router)
 app.include_router(admin_routes.router)
 app.include_router(slot_routes.router)
+app.include_router(certificate_routes.router)
 app.include_router(library_routes.router)
 app.include_router(library_routes.admin_router)
 

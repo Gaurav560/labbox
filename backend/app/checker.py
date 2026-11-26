@@ -16,6 +16,7 @@ from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, col, select
 
 from . import containers, engagement, progress, services, shared, workspace_files
+from .certificates import CheckCertificate
 from .config import get_settings
 from .labs import CHECKER_IMAGE, LabConfig
 from .models import CheckRun, User, Workspace
@@ -58,6 +59,8 @@ class CheckResponse(BaseModel):
     metrics: list[Metric] = []
     timed_out: bool = False
     xp_awarded: list[engagement.XpAward] = []
+    # Set when this check finished the lab (80% of its tasks): the certificate issued, or a prompt to claim it.
+    certificate: CheckCertificate | None = None
 
 
 class _RawResult(BaseModel):
