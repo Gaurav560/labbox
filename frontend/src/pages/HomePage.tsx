@@ -74,7 +74,8 @@ export default function HomePage() {
           <figure className="uh-hero-art is-wave">
             {/* the plain picture, no animation (owner, 27 November: "remove whatever animation, only the normal image") */}
             <div className="uh-hero-pic">
-              <img src="/ukiyo/heroes/wave.webp" width={1200} height={800} alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
+              {/* the owner's photo of a breaking green wave (27 November: "use this image as hero section wave") */}
+              <img src="/ukiyo/heroes/wave-photo.webp" width={1800} height={1202} alt="A green ocean wave curling over as it breaks, seen from the water" />
             </div>
           </figure>
         </section>

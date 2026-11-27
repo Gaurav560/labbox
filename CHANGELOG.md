@@ -1,5 +1,11 @@
 # Changelog
 
+## 27 November: Ukiyo home, the owner's wave photo in the hero
+
+- The hero picture is now the owner's photo of a breaking green wave (`/ukiyo/heroes/wave-photo.webp`, 1800 px,
+  250 KB), in place of the generated woodblock-style wave (still in `wave.webp`, to switch back). Plain picture, no
+  frame or filter in either theme. Ukiyo only.
+
 ## 27 November: chapter 1 shows chapter 1's folder, in both editors and for old workspaces
 
 - The owner opened chapter 1 of FDE and still saw all 22 folders: their workspace was made before plan A, and plan A
