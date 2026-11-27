@@ -1,5 +1,19 @@
 # Changelog
 
+## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
+
+- The claim email demo is off for now (owner: "remove this email animation for now"); the spotlight's big picture
+  takes its place on the right, with no caption on it, and the parts list under the description is gone. The tag line
+  reads "New · Learn the hottest job in the tech market" (the owner's words). `ClaimDemo` stays in `HomeAiLabs.tsx`.
+- The AI rows are compact (smaller pictures, type and spacing), and a course of 15 chapters or fewer is marked
+  "Micro" (owner: "write micro in front of small courses"); today that is RAG and vector databases.
+- Ukiyo's art, made with OpenAI image generation in a woodblock style (four concepts for the spotlight, five row
+  pictures, about $0.36 in all): the spotlight shows "Arrival", an engineer at the prow of a small boat riding a great
+  wave of light points toward a modern city under a snow-capped mountain; each AI row shows a picture made for its
+  course (a museum's bronze horse, a hill train on a viaduct, a farmer in a wheat field, a canal that branches like a
+  graph, a ranger and a tiger). Files in `frontend/public/home/`.
+
+
 ## 27 November: public intro pages for the AI courses, a pricing page, new art for the FDE spotlight
 
 - **The AI courses' intro pages are public** (owner: "do not send them to login signup page directly", "actual intro

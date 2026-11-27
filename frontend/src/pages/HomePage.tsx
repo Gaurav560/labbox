@@ -86,9 +86,9 @@ export default function HomePage() {
           <HomeAiLabs
             labs={live}
             signedIn={!!user}
+            thumb={(lab) => <img src={`/home/ai/${lab.id}.webp`} alt="" loading="lazy" />}
             spotArt={<>
-              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer at a laptop in a busy insurance office, a river of data flowing from stacks of claim forms into the laptop, a city road and hills beyond the windows" />
-              <span className="ai-spot-credit">Illustration made for LabBox in woodblock style (AI)</span>
+              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
             lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}
