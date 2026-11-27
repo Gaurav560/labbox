@@ -2543,3 +2543,20 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .hc-logo.is-facebook .hc-logo-mark { color: #1877f2; }
 .hc-logo.is-email .hc-logo-mark, .hc-logo.is-link .hc-logo-mark { color: var(--muted); }
 .hc-logo:hover .hc-logo-mark { transform: none; }
+
+/* the heading between the FDE spotlight and the other AI labs (owner, 27 November) */
+.ai-more-title { margin: var(--space-8) 0 0; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.ai-more-title + .ai-rows { margin-top: var(--space-3); }
+
+/* share options as one quiet line (owner, 27 November: "try something else"): the marks in their own colours with the
+   names beside them, no boxes, no grid; a thin underline draws in on hover */
+.hc-platforms { display: flex; flex-wrap: wrap; gap: 10px 26px; border-top: 0; }
+.hc-platforms li.hc-logo, .hc-platforms li.hc-logo:not(:nth-child(3n)) { position: relative; padding: 4px 0; border: 0; }
+.hc-platforms li.hc-logo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform 260ms ease; }
+.hc-platforms li.hc-logo:hover::after { transform: scaleX(1); }
+/* a little space between the date, the stamp and the QR code (owner, 27 November) */
+.cert-foot { gap: 28px; }
+.cert-foot .cert-stamp { margin: 0 6px; }
+.cert-foot { gap: 18px; } .cert-foot > div { flex: none; white-space: nowrap; } .cert-foot .cert-stamp { margin: 0 2px; }
+.ai-spot-tag, .ai-tag-a { color: var(--red); }

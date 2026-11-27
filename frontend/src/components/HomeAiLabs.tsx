@@ -151,8 +151,9 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead
             {spotArt && <div className="ai-spot-art">{spotArt}</div>}
           </article>
         )}
+        {others.length > 0 && <h3 className="ai-more-title">Explore more AI labs</h3>}
         {others.length > 0 && (
-          <ul className="ai-rows">
+          <ul className="ai-rows" aria-label="More AI labs">
             {others.map((o, i) => (
               <li key={o.id} style={{ "--i": i } as CSSProperties}>
                 <Link className="ai-row" to={course(o.lab!)}>
