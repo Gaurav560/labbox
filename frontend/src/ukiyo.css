@@ -1139,3 +1139,21 @@ html { scroll-behavior: smooth; }
 .um-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { .um-knob, .um-knob-logo { transition: none; } }
 @media (max-width: 480px) { .um-knobwrap { flex-direction: column; align-items: flex-start; } }
+
+/* The hero as half text, half print (owner, 27 November: option 7, "this one"): the print fills the right side out to
+   the window's edge and fades into the page under the text, in both themes. */
+.u-home { overflow-x: clip; }
+.uh-hero.is-print { position: relative; display: flex; align-items: center; min-height: clamp(520px, 44vw, 660px);
+  padding: clamp(48px, 6vw, 80px) 0; }
+.uh-hero.is-print .uh-hero-text { position: relative; z-index: 1; max-width: 620px; }
+.uh-hero.is-print .uh-lead { max-width: 29em; }
+.uh-hero-print { position: absolute; top: 0; bottom: 0; left: 40%; right: min(0px, calc(50% - 50vw)); z-index: 0; }
+.uh-hero-print img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 30% 55%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #0000004d 12%, #000000b3 26%, #000 40%);
+          mask-image: linear-gradient(90deg, transparent 0, #0000004d 12%, #000000b3 26%, #000 40%); }
+:root:not([data-theme="light"]) .uh-hero-print img { filter: brightness(.8) saturate(1.05); }
+@media (max-width: 900px) {
+  .uh-hero.is-print { flex-direction: column-reverse; align-items: stretch; min-height: 0; padding-top: 0; }
+  .uh-hero-print { position: relative; left: auto; right: auto; height: 260px; margin: 0 -16px 8px; }
+  .uh-hero-print img { -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
+}

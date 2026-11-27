@@ -1,5 +1,14 @@
 # Changelog
 
+## 27 November: Ukiyo home, half text and half print in the hero
+
+- The hero is now half text, half print (owner picked option 7 of ten real prints): Hiroshige, *A Great Wave by the
+  Coast* (Shichiri Beach in Sagami), about 1835, public domain (Wikimedia Commons, the 3004 px scan). It fills the
+  right side out to the window's edge and fades into the page under the text, in both themes (a little darker in the
+  dark one). The print's title column is trimmed off so the headline sits on clean paper. On phones the print sits
+  above the text and fades downward. `/ukiyo/heroes/hiroshige-coast.webp`, 2000 px, 470 KB.
+- The home browser test checks the new print and that the page never scrolls sideways.
+
 ## 27 November: Ukiyo home, the owner's wave photo in the hero
 
 - The hero picture is now the owner's photo of a breaking green wave (`/ukiyo/heroes/wave-photo.webp`, 1800 px,

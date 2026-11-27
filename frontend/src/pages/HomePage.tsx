@@ -62,7 +62,7 @@ export default function HomePage() {
       <main>
         {/* The hero (owner, 27 November): "The AI wave is here. Learn to ride it." beside the picture that says it, an
             engineer riding a wave of light toward the city (made for LabBox in woodblock style); no terminal over it. */}
-        <section className="uh-hero" aria-labelledby="hero-title">
+        <section className="uh-hero is-print" aria-labelledby="hero-title">
           <div className="uh-hero-text">
             {/* Owner, 27 November: "fix this way of writing"; picked "ride the wave" (an invitation, not a threat; it matches
                 the Forward Deployed Engineer picture of an engineer riding a wave). Ink and indigo, no red but the button. */}
@@ -71,13 +71,12 @@ export default function HomePage() {
             <p className="uh-promise"><span>No videos to sit through.</span> <em>You learn by building.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
-          <figure className="uh-hero-art is-wave">
-            {/* the plain picture, no animation (owner, 27 November: "remove whatever animation, only the normal image") */}
-            <div className="uh-hero-pic">
-              {/* the owner's photo of a breaking green wave (27 November: "use this image as hero section wave") */}
-              <img src="/ukiyo/heroes/wave-photo.webp" width={1800} height={1202} alt="A green ocean wave curling over as it breaks, seen from the water" />
-            </div>
-          </figure>
+          {/* Half text, half print (owner, 27 November: picked option 7 of ten real prints, the print fading into the
+              page): Hiroshige, A Great Wave by the Coast (Shichiri Beach in Sagami), about 1835, public domain
+              (Wikimedia Commons). Its title column is trimmed off so the headline sits on clean paper. */}
+          <div className="uh-hero-print" aria-hidden="true">
+            <img src="/ukiyo/heroes/hiroshige-coast.webp" width={2000} height={1599} alt="" />
+          </div>
         </section>
 
         {/* AI labs first, with the Forward Deployed Engineer course in the spotlight (owner, 27 November) */}
