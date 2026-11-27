@@ -1,5 +1,21 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 7 rewritten (easy, a little detailed, checked)
+
+- Chapter 7, "Configuration and profiles", to the lesson rules: environment variable explained; YAML indentation
+  said precisely (two spaces is the usual choice, any consistent number works); all three tasks list their slips
+  (tabs, a missing space after the colon, a mismatched prefix, a misnamed profile file, a missing
+  `--spring.profiles.active`).
+- Checked on a lab machine with the solution. Measured and quoted: `/shop/info` with the defaults, with
+  `--shop.name=...`, with the `prod` profile (the log line `The following 1 profile is active: "prod"`), with
+  `SPRING_PROFILES_ACTIVE=prod`, `SHOP_NAME`, and both environment spellings for the dashed name (Spring's documented
+  `SHOP_FREEDELIVERYABOVEPAISE` and `SHOP_FREE_DELIVERY_ABOVE_PAISE`; both worked). The JSON key order changed between
+  runs (a `Map.of` has no fixed order), now said.
+- Corrected: a quick check offered `FREE_DELIVERY_ABOVE_PAISE` as the environment variable (without the `SHOP_`
+  prefix it fills nothing); the recap's relaxed-binding line likewise; `@Validated` settings need the validation
+  starter (said). The example's real delivery company (Dunzo) is now a made-up one, Pheri Couriers.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 6 rewritten (easy, a little detailed, checked)
 
 - Chapter 6, "Dependency injection: more than one bean", to the lesson rules: UPI and payment gateway explained;
