@@ -2376,6 +2376,34 @@ function L4jLlmPipeline() {
   );
 }
 
+function HttpConversation() {
+  // Still (owner's lesson rules, 28 November): chapter 1's request for one menu item (the lesson's example request)
+  // and the real response a lab machine gave to it.
+  const req: [string, string][] = [["GET /menu/2 HTTP/1.1", "request line"], ["Host: localhost:8080", "headers"], ["Accept: application/json", ""]];
+  const res: [string, string][] = [["HTTP/1.1 200", "status line"], ["Content-Type: application/json", "headers"], ["", "empty line"],
+    ['{"id":2,"name":"Samosa",', "body (JSON)"], ['"pricePaise":1800}', ""]];
+  const block = (y: number, rows: [string, string][], tone: BoxTone) => (
+    <g>
+      <Box x={8} y={y} w={424} h={rows.length * 22 + 14} label="" tone={tone} />
+      {rows.map(([code, what], i) => (
+        <g key={i}>
+          <text className="dg-note dg-code" x={20} y={y + 26 + i * 22}>{code}</text>
+          {what && <text className="dg-note" x={318} y={y + 26 + i * 22}>{what}</text>}
+        </g>
+      ))}
+    </g>
+  );
+  return (
+    <Svg viewBox="0 0 440 300" label="The request GET /menu/2 HTTP/1.1 with the headers Host localhost:8080 and Accept application/json; the response HTTP/1.1 200 with Content-Type application/json, an empty line, and the JSON body id 2, name Samosa, pricePaise 1800">
+      <text className="dg-label" x={8} y={14}>the request (from a client)</text>
+      {block(22, req, "accent")}
+      <Arrow x1={220} y1={106} x2={220} y2={134} />
+      <text className="dg-label" x={8} y={150}>the response (the server answers)</text>
+      {block(158, res, "copy")}
+    </Svg>
+  );
+}
+
 function L4jHttpCall() {
   // Still (owner, 26 November): chapter 7's real call, from the program and the gateway's log.
   const rows: [string, string, BoxTone][] = [
@@ -5149,6 +5177,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "traceback-bottom-up": TracebackBottomUp,
   "library-vs-framework": LibraryVsFramework,
   "backend-stack": BackendStack,
+  "http-conversation": HttpConversation,
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
   "bean-lifecycle": BeanLifecycle,

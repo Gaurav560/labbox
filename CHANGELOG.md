@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 1 rewritten (easy, a little detailed, checked)
+
+- Chapter 1, "How the web works", to the lesson rules: API, resource, media type, paise, Transfer-Encoding and
+  Content-Length, TLS, load balancer and proxy explained where they first appear; statelessness said precisely (HTTP
+  forgets; apps remember with cookies, tokens or the login itself); REST named with its source (Fielding, 2000);
+  401's misleading name explained.
+- Every curl in the chapter re-run on a lab machine against the real menu API; outputs now quoted as they came.
+  Corrected: the 405 answer's header is `Allow: DELETE, GET` (the lesson said `GET, DELETE`), and it has a JSON body;
+  the URL-parts example `/menu/search?...` answers 400 on this API, now said plainly. Confirmed: 200, 404 with
+  `Content-Length: 0`, 201 with `Location: /menu/4`, 204, broken JSON gives 400.
+- The second task now warns that a second POST gets `/menu/5` while the check expects the first POST's `/menu/4`.
+- A new still picture, `http-conversation`: a request for one menu item and the real response, part by part. A new
+  sketchnote notes page, checked word by word.
+
 ## 28 November: Spring Boot chapter 0 rewritten (easy, a little detailed, checked)
 
 - The Spring Boot rewrite starts (owner: "start spring boot rewrite"). Chapter 0, "What is Spring Boot?", rewritten
