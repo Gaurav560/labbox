@@ -1,5 +1,21 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 4 rewritten (easy, a little detailed, checked)
+
+- Chapter 4, "How the app starts", to the lesson rules: JVM, `.class`, log levels and the shortened class names,
+  bean explained where they appear; why the start-up picture plays (a sequence in time); both tasks list their
+  slips (a package line that does not match the folder; quotes around the value; not restarting).
+- Checked on a lab machine with the starter and the solution. Corrected: the start-up animation said
+  auto-configuration "sees spring-boot-starter-web in your pom.xml" (it checks the classpath: the debug report says
+  "found required class ... DispatcherServlet"); `@SpringBootApplication` holds `@SpringBootConfiguration` (a kind
+  of `@Configuration`), now said; the missing-setting error is now quoted as it really came, from
+  `greetingController`, with its `PlaceholderResolutionException`; the debug report's wording is now quoted from a
+  real run. The start-up log is now this chapter's real log (683 ms, 1.23 seconds, Java 21.0.13.1), and the three
+  DispatcherServlet lines that appear on the first request are explained.
+- Confirmed: the misplaced `status.StatusController` answers 404 with nothing in the log; `/greeting` says `not
+  set` until the property is set.
+- A new sketchnote page, redrawn once so the scanning bullet keeps its qualifier ("not under com.shop").
+
 ## 28 November: Spring Boot chapter 3 rewritten (easy, a little detailed, checked)
 
 - Chapter 3, "Your first endpoints", to the lesson rules: endpoint, routing, UTF-8 and records' accessor methods
