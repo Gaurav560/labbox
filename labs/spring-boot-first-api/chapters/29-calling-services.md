@@ -90,10 +90,11 @@ curl -i localhost:8080/supplier-stock/KUL-1
 
 ```text
 HTTP/1.1 200
-{"available":-1,"sku":"KUL-1"}
+{"sku":"KUL-1","available":-1}
 ```
 
-`-1`: the client code is not written yet, and the supplier's terminal shows nobody called it.
+`-1`: the client code is not written yet, and the supplier's terminal shows nobody called it. (That is our lab
+machine's answer. The two keys may come in either order.)
 :::
 
 :::step{type=example title="Worked example: a weather client"}
@@ -137,7 +138,12 @@ curl localhost:8080/supplier-stock/KUL-1
 {"available":120,"sku":"KUL-1"}
 ```
 
-And in Terminal 1, the supplier says `Supplier: someone asked for KUL-1`. Two servers just talked. Press **Check**.
+And in Terminal 1, the supplier says `Supplier: someone asked for KUL-1`. Two servers just talked. (Both lines are
+what our lab machine showed.) Press **Check**.
+
+Usual slips: `.uri("/stock/" + sku)` built by gluing text (it works for simple skus, but the placeholder form encodes
+odd characters safely), forgetting `.retrieve()` before `.body(...)`, or a `SupplierStock` whose field names differ
+from the JSON (`stock` instead of `available` leaves the number at 0).
 :::
 
 :::step{type=concept title="When the other side says no: 404"}
@@ -174,7 +180,7 @@ curl -i localhost:8080/supplier-stock/SLOW
 ```
 
 Your request waits the full 3 seconds. Now imagine the supplier is having a bad day and *every* call takes 30
-seconds. Each waiting request holds one of Tomcat's worker threads (about 200, chapter 10). Within a minute, all
+seconds. Each waiting request holds one of Tomcat's worker threads (at most 200 by default, chapter 10). Within a minute, all
 200 are waiting on the supplier, and the Shop API stops answering **everyone**, even customers who just want the
 product list. One slow dependency has taken your whole app down. This is one of the most common real outages.
 
@@ -215,8 +221,14 @@ Rebuild, restart the Shop API, and try all three cases:
 curl -i localhost:8080/supplier-stock/MISSING; echo; curl -i -w "\ntook %{time_total}s\n" localhost:8080/supplier-stock/SLOW
 ```
 
-`200` with `"available":0`, then `503` after about **1 second**, not 3. Finally, stop the supplier (Ctrl+C in
-Terminal 1) and ask for kulfi: still a calm `503`, `{"sku":"KUL-1","error":"Supplier unavailable"}`. Press **Check**.
+`200` with `"available":0`, then `503` after about **1 second**, not 3 (on our lab machine: `took 1.004898s`).
+Finally, stop the supplier (Ctrl+C in Terminal 1) and ask for kulfi: still a calm `503`,
+`{"sku":"KUL-1","error":"Supplier unavailable"}`. All three answers are what our lab machine gave. Press **Check**.
+
+Usual slips: the timeout factory created but not passed to the builder (`.requestFactory(factory)` is easy to
+forget; the slow call then still takes 3 seconds), catching `HttpClientErrorException` in the controller instead of
+`RestClientException` (a timeout is not a client error, so it still becomes a 500), or returning 0 for *every*
+error (then "supplier down" looks like "out of stock").
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -283,7 +295,7 @@ You can now call other services safely:
 - **Always set timeouts**; one slow dependency can otherwise use up every thread.
 - A failing dependency becomes a fast **503** from your API.
 
-:::photo{src="/lesson-images/spring/spring-29-notes.webp" alt="Handwritten notes about Calling other services: RestClient from the Builder, base URL is a setting, 4xx and 5xx become exceptions, ALWAYS set timeouts, slow dependency? fast 503" ai="true"}
+:::photo{src="/lesson-images/spring/spring-29-notes.webp" alt="Sketchnote: Calling other services. Your app becomes a client, and every answer needs a meaning. Flow: RestClient GET, the supplier answers or not, you decide what each answer means, too slow gives a fast 503. Remember: the base URL is a setting; 4xx, 5xx and no answer become exceptions; always set timeouts; a failing dependency becomes a fast 503." ai="true"}
 One page of notes for this chapter.
 :::
 
