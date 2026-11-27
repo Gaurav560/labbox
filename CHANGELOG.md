@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 10 rewritten (easy, a little detailed, checked)
+
+- Chapter 10, "How Spring handles a request", to the lesson rules: REST spelled out, why the journey picture plays
+  (a sequence in time), "No view rendering" and `headers={masked}` explained; both tasks list their slips.
+- Checked on a lab machine with the starter and the solution, with web logging at TRACE. The route list and the
+  request's log lines are now quoted as they really came (the lesson's version left out the second `/error`
+  mapping, "4 mappings", and the `Arguments`, `cacheSeconds`, `No view rendering` lines); the 406 answer now shows
+  its `Content-Length: 0`. Confirmed: `["kulfi"]`, the old path 404, `[]` twice.
+- Corrected: Tomcat's pool is at most 200 threads by default (`server.tomcat.threads.max`), not "about 200" (also in
+  the request-journey animation).
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 9 rewritten (easy, a little detailed, checked)
 
 - Chapter 9, "The life of a bean", to the lesson rules: Jakarta EE, thread names in the shutdown log and why the
