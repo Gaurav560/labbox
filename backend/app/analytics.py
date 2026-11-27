@@ -214,6 +214,7 @@ class LearnerRow(BaseModel):
     last_active: datetime | None
     lab_limit: int | None = None  # None: the site's setting; 0: every lab
     email: str | None = None  # a verified address from Google or GitHub sign-in (owner, 27 November)
+    plan: str = "free"  # "free" or "pro" (owner, 28 November)
 
 
 def learners(session: Session, query: str = "", limit: int = 50) -> list[LearnerRow]:
@@ -230,7 +231,7 @@ def learners(session: Session, query: str = "", limit: int = 50) -> list[Learner
     xp = dict(session.exec(select(UserProfile.user_id, UserProfile.xp_total).where(col(UserProfile.user_id).in_(ids))).all())
     return [LearnerRow(id=u.id, username=u.username, joined=u.created_at, is_admin=u.is_admin, labs=labs.get(u.id, 0),
                        xp=xp.get(u.id, 0), checks=checks.get(u.id, 0), last_active=active.get(u.id),
-                       lab_limit=u.lab_limit, email=u.email) for u in users]
+                       lab_limit=u.lab_limit, email=u.email, plan=u.plan) for u in users]
 
 
 class SpendDay(BaseModel):

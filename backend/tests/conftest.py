@@ -54,6 +54,7 @@ for _k in ("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GITHUB_CLIENT_ID", "GITH
 os.environ["LLM_GATEWAY_ENABLED"] = "false"
 # VS Code in labs is tested on purpose (test_ide_docker.py); other tests keep the classic setup.
 os.environ["IDE_ENABLED"] = "false"
+os.environ["JARVIS_PROVIDER"] = "fake"  # Jarvis never calls OpenAI in tests
 os.environ["LLM_MODELS"] = "lab-chat=fake/chat-small,lab-chat-smart=fake/chat-big,lab-embed=fake/embed,lab-code=fake/code,ai-chat=fake/chat-small,ai-embed=fake/embed"
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 

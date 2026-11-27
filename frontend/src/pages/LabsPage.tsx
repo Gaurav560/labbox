@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import Jarvis from "../components/Jarvis";
 import { Link, useNavigate } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep, type Slots } from "../api";
 import { inkOn, labDeck, labTone, mix } from "../brand";
@@ -113,6 +114,7 @@ export default function LabsPage() {
         ))}
       </main>
       </div>
+      <Jarvis />
     </div>
   );
 }

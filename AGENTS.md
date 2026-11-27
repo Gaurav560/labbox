@@ -158,6 +158,11 @@ standard, eight short; see the table in `ROADMAP.md`).
 - Lab limit (owner, 26 November): with a limit on, a fresh account's labs are locked (403 on lessons, machine,
   checks). Browser runs switch it off in global setup and restore it in teardown (`scripts/labbox lab-limit`);
   backend tests set a per-learner `lab_limit` instead and must leave the site's setting as they found it.
+- Jarvis (owner, 28 November; `app/jarvis.py`, ROADMAP B 2e): realtime voice over WebRTC with OpenAI, paid, on a
+  $50 credit. Tests use `JARVIS_PROVIDER=fake` (conftest) and must never call OpenAI; budgets and trial counts are
+  site-wide, so tests lift them in a fixture and put the site's settings back. A real check costs about a cent per
+  half minute; keep them short and few. Browser tests can talk to him with Chrome's fake microphone and a text item
+  sent on the data channel.
 - Phones (under 760 px) get a reading mode that starts no machine (`usePhone`); browser tests that
   resize to phone width will find no editor area.
 - **The live site runs on this laptop** (owner, 27 November; `deploy/laptop/README.md`): `/srv/labbox/prod`, backend

@@ -21,6 +21,8 @@ class User(SQLModel, table=True):
     # A verified email address, from Google or GitHub sign-in (owner, 27 November); None for username-only accounts.
     email: str | None = Field(default=None, unique=True, index=True)
     email_verified_at: datetime | None = None
+    # "free" or "pro" (owner, 28 November). Set by an admin by hand until payments exist; Jarvis's voice is for Pro.
+    plan: str = "free"
 
 
 class UserIdentity(SQLModel, table=True):
@@ -274,3 +276,28 @@ class LabSlot(SQLModel, table=True):
     unlocked_at: datetime = Field(default_factory=utcnow)
     released_at: datetime | None = None
     released_reason: str | None = None  # "swapped"
+
+
+class JarvisSession(SQLModel, table=True):
+    """One voice conversation with Jarvis (owner, 28 November): who, where, how long, and what it cost, from the usage
+    OpenAI reports after each reply. kind is "pro" or "trial" (a free learner's one-time taste)."""
+    __tablename__ = "jarvis_session"
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    kind: str = "pro"
+    lab_id: str | None = None
+    chapter_id: str | None = None
+    started_at: datetime = Field(default_factory=utcnow, index=True)
+    last_seen_at: datetime = Field(default_factory=utcnow)
+    ended_at: datetime | None = None
+    seconds: int = 0
+    max_seconds: int = 0
+    audio_in_tokens: int = 0
+    audio_cached_tokens: int = 0
+    text_in_tokens: int = 0
+    text_cached_tokens: int = 0
+    audio_out_tokens: int = 0
+    text_out_tokens: int = 0
+    cost_usd: float = 0.0
+    call_id: str | None = None

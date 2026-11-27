@@ -336,6 +336,27 @@ What it takes, per course:
   learners stop, tasks with many failed checks or hints). How the videos are made (recorded by a person, or made from
   the lesson's own diagrams and animations) is the owner's call. Nothing is built yet.
 
+### 2e. Jarvis, each learner's realtime voice assistant (owner, 28 November)
+
+Step 1 is done (see CHANGELOG, 28 November). The owner's brief: an assistant for each learner, with context of
+everything about them, that notices when they sign up, log in, study or get stuck, and talks like a human. Realtime
+speech to speech only (OpenAI `gpt-realtime-2.1-mini` over WebRTC). Agreed limits: $1.50 a day, a hard stop at $40 a
+month (the OpenAI credit is $50), Pro 20 minutes a day, free learners one 3-minute trial (at most 10 a day); all
+changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until payments (phase I) exist.
+
+- [x] Step 1: talk with Jarvis on any lab page or the dashboard; he knows the learner (name, goal, level, streak, labs
+  started, certificates, where they struggled this week, the exact lab, chapter, step and task on screen) and calls
+  read-only tools (the step, the task and the hints seen, the learner's code, the last check, progress). Limits, cost
+  from OpenAI's reported usage, server-side hangup at a limit, Admin tab, Pro switch, pricing page lines.
+- [ ] Step 2: notice "stuck" (the same check failing three or more times, every hint used, a long pause on one step,
+  code undone again and again) with backend rules, and offer help through the orb (a line of text and one tap; a
+  browser cannot start sound by itself).
+- [ ] Step 3: welcome on sign-up and on return (Pro: by voice after one tap), and memory across visits: a short text
+  summary saved after each conversation and given to the next one.
+- [ ] Step 4: celebrations, learner settings (talk to me first, off switch), a consent note on what Jarvis can see.
+- Known limits: a spoken reply cannot be filtered before it is heard (the rules and the tools keep solutions out);
+  the browser reports usage, and the server caps the counted seconds by the wall clock and hangs up at a limit.
+
 ### 3. More labs in the other tracks (after the AI track)
 
 **Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.

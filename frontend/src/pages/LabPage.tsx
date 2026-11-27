@@ -1,4 +1,5 @@
 import confetti from "canvas-confetti";
+import Jarvis from "../components/Jarvis";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, useMemo } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError, type CheckCertificate, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
@@ -712,6 +713,7 @@ function LabWorkspace() {
 
   return (
     <div className={`lab-page ${focus && !reading ? "focus-mode" : ""} ${phone ? "is-phone" : ""} ${reading ? "is-reading" : "is-action"} ${showOutline && outlineOpen ? "has-outline" : ""} ${lessonHidden ? "lesson-hidden" : ""}`} data-lab={labId}>
+      {!phone && <Jarvis labId={labId} chapterId={chapterId ?? undefined} step={step} />}
       <StatusBar
         title={lab?.title ?? labId}
         chapters={lab?.chapters ?? []}

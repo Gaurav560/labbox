@@ -1,5 +1,33 @@
 # Changelog
 
+## 28 November: Jarvis, each learner's realtime voice assistant (step 1)
+
+- **Jarvis talks with learners out loud, in real time** (owner: "build the ultimate context abled jarvis"). A glowing
+  orb on every lab page and the dashboard; one tap and the browser connects straight to OpenAI's realtime model
+  (`gpt-realtime-2.1-mini`) over WebRTC: speech in, speech out, interruptible, with live captions and a countdown.
+  He speaks first, greeting the learner by name and saying where they are.
+- **He knows the learner**: name, goal and level from sign-up, XP, level and streak, every lab started with tasks
+  passed and the last chapter, certificates, the tasks they failed at least twice this week, and the exact lab,
+  chapter, step and task on screen. He calls read-only tools for more: the current step's text, the task and the hints
+  already seen, the learner's own files, the last check's output, their progress. No tool returns the solution (a test
+  runs every tool on every task step of four chapters against the solution lines).
+- **Who and how long**: Pro learners (`user.plan`, set in Admin, Learners; admins count as Pro) talk 20 minutes a day;
+  a free learner gets one 3-minute trial, at most 10 trials a day site-wide, then the lock that points to Pro. Budgets:
+  $1.50 a day and a hard stop at $40 a month (the owner's OpenAI credit is $50); when a budget is spent, new
+  conversations are refused and running ones are hung up from the server.
+- **Cost from real usage**: after every reply the browser passes on the usage OpenAI reports; the backend prices it
+  (audio and text, cached apart) and keeps it per conversation (`jarvis_session`, migration 0016). The browser's clock
+  is capped by the server's. Admin, Jarvis shows today's and this month's spend, cost per minute, conversations and the
+  limits (editable).
+- **The browser never sees the key**: the backend mints a short-lived pass (`/v1/realtime/client_secrets`) with
+  Jarvis's instructions, voice and tools baked in.
+- Tried for real on the dev site (two short conversations, $0.016 in total): he greeted "Hello, Meera. You're in the
+  Python from zero lab, on Chapter 1, working through the Pocket says hello task", and on "I am stuck" called
+  get_current_step, get_task and get_my_code by himself. Fixed on the way: several tools in one reply are now answered
+  together before one new reply (OpenAI refuses a second reply while one is running).
+- Pricing page: Jarvis under Pro, the one free trial under Free. Tests: 9 new backend tests (fake provider, never
+  OpenAI); 286 fast backend tests pass; lab, home and admin browser tests pass on both designs.
+
 ## 28 November: the Spring Boot lab rewrite is complete
 
 - All 31 chapters rewritten to the lesson rules and checked on a lab machine (see each chapter's entry below).
