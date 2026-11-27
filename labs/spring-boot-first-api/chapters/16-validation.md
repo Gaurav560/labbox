@@ -250,7 +250,7 @@ You can now keep bad data out of your API:
   the server log.
 - `[0-9]{10}`: exactly ten digits.
 
-:::photo{src="/lesson-images/spring/spring-16-notes.webp" alt="Sketchnote: Validation. Write the rules as annotations and switch them on with @Valid. Flow: JSON body, read into a record, @Valid checks each rule, 400 or your method runs. Remember: no @Valid, no checking; most rules accept null, so add @NotNull or @NotBlank to require a field; [0-9]{10} means exactly ten digits; the log names every failed field." ai="true"}
+:::photo{src="/lesson-images/spring/spring-16-notes.webp" alt="Sketchnote: Validation. Write the rules as annotations and switch them on with @Valid. Flow: JSON body, read into a record, @Valid checks each rule, 400 or your method runs. Remember: no @Valid, no checking; most rules accept null, so add @NotNull or @NotBlank to require a field; the pattern [0-9] ten times means exactly ten digits; the log names every failed field." ai="true"}
 One page of notes for this chapter.
 :::
 
