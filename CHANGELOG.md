@@ -1,5 +1,29 @@
 # Changelog
 
+## 27 November: a new course, Forward Deployed Engineer
+
+- **New AI course, `forward-deployed-engineer`** (owner, before sleeping: "scrape the whole internet for the Forward
+  Deployed Engineer role and build a lab course on it, full standard"; built unattended). Research first: the role's
+  history (Palantir), OpenAI's and Anthropic's FDE postings, a16z on the role, and the syllabi of the paid courses on it.
+  The course follows one engagement: Claimdesk, a claims assistant for Deccan Shield Insurance in Pune. 22 chapters,
+  44 tasks, six parts: the role (baseline, discovery, scoping), the customer's data (messy CSV, SQL and injection, an old
+  XML system with backoff, a data contract), building with models (the gateway and cost in rupees, extraction with a
+  strict schema, cited answers, tools, an MCP server, the day-five demo), proving it works (golden set, evals and a
+  regression gate, failure analysis), ready for real claims (privacy and prompt injection, pacing and caching, shadow
+  mode and a go-live check, monitoring with drift alerts), leaving well (settings, smoke test, CI, runbook; a second
+  customer through an adapter and per-customer config).
+- **Every model output is real**, captured through the LabBox gateway with an author account: dates without a year came
+  back as 2023 (and still did when the prompt gave today's date); the model called a policy "not in force" on a date
+  inside its period; 15 of 30 unpaced calls hit the rate limit (paced: 0 of 30, 93 s); a prompt change raised all-fields
+  accuracy from 73.3% to 80.0% but lowered dates from 83.3% to 80.0%, and the gate refused it; two quiet prompt
+  injections made the model record Rs 1,00,000, stopped only by the pilot limit in code. Chapter 20's request log is a
+  simulation built from the 109 real calls' latencies and tokens, and says so.
+- Checks run with a fake OpenAI server (no network); test-lab green: every starter fails, every solution passes.
+  20 photos (public domain or CC, credited), 22 handwritten notes pages, 9 playing diagrams (`fde-*` in
+  `Diagrams.tsx`), `before_you_start`, a lab tone, the AI track's six FDE nodes, and the lab in `test_test_lab`.
+- Consistency fix: chapter 8 sized the model cost as if the Pune pilot handled 80 claims a day (it is about 57 a
+  quarter); it now sizes it for a rollout to every office, and chapter 20 is set in December, after that rollout.
+
 ## 27 November: sign in with Google and GitHub
 
 - **Google and GitHub only** (owner: "remove the username and password signup and login; all sign-ups and logins via

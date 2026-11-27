@@ -7,6 +7,12 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Forward Deployed Engineer course (27 November, built unattended at the owner's request).** Complete on `master`:
+  22 chapters, 44 tasks, test-lab green, lab valid, 271 fast backend tests pass. Commits 9a543dc to the latest "FDE"
+  commits; the generator scripts and captures were in the session's scratchpad (not kept). Still to do: copy the
+  frontend parts to `design/ukiyo` (the course itself is content, shared), give it a woodblock print there
+  (Hokusai's "In the Mountains of Tōtomi Province", CC0 from the Met, chosen), and a full Postgres run. Next in the
+  owner's order: AWS (waiting for the budget answer), then every course to the full standard, then the pricing page.
 - **Certificates (owner, 27 November; ROADMAP 1c).** Earned at 80% of a lab's tasks, full name typed once, public page
   `/certificates/<id>`, share address `/c/<id>` (card tags and a picture for LinkedIn and X), share bar, hide, one name
   correction, on both designs. Rules: `backend/app/certificates.py`.
