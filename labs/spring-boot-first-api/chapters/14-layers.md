@@ -110,7 +110,8 @@ cd 14-layers && mvn -q -o package -DskipTests && java -jar target/layers.jar
 curl localhost:8080/products/average-price
 ```
 
-It answers `3950`: the average of 2000, 3000, 1800 and 9000. The right number, from the wrong place.
+It answers `3950`: the average of 2000, 3000, 1800 and 9000 (15800 / 4). The right number, from the wrong place.
+(On our lab machine, `curl localhost:8080/products/budget` answered `[]` at this point: that is the second task.)
 :::
 
 :::step{type=task task=thin_controller title="Your turn: a thin controller"}
@@ -124,6 +125,10 @@ Move the calculation where it belongs:
 
 `GET /products/average-price` still answers `3950`; the check also makes sure the service does the work.
 Press **Check**.
+
+Usual slips: `average()` gives an `OptionalDouble` (a decimal that may be missing), not an `int`; finish it with
+`.orElse(0)` and turn it into an `int` with `(int)`, or use `sum()` and divide by the count yourself (checking for
+zero products first, because dividing by zero crashes).
 :::
 
 :::step{type=concept title="Repositories answer questions about data" file="14-layers/src/main/java/com/shop/product/ProductRepository.java" line="9-27"}
@@ -162,7 +167,11 @@ Rebuild, run, and try:
 curl localhost:8080/products/budget
 ```
 
-You should get the mango kulfi, the fruit custard and the samosa; not the paneer roll (Rs 90). Press **Check**.
+You should get the mango kulfi, the fruit custard and the samosa; not the paneer roll (Rs 90). (`BUDGET_PAISE`
+is 5000, Rs 50.) Press **Check**.
+
+Usual slips: `<=` instead of `<` ("below" means strictly less), or filtering in the service instead of in the
+repository (the answer is the same, but the check looks for the data question in the repository).
 :::
 
 :::step{type=concept title="Where do things go? A quick guide"}
@@ -244,7 +253,7 @@ You can now organise a Spring app the way professional teams do:
 - Services return plain data, never `ResponseEntity`.
 - `mapToInt(...).sum()` adds up values from a stream.
 
-:::photo{src="/lesson-images/spring/spring-14-notes.webp" alt="Handwritten notes about Layers: controller speaks HTTP, service holds the rules, repository stores data, each calls only the one below, one rule, one place" ai="true"}
+:::photo{src="/lesson-images/spring/spring-14-notes.webp" alt="Sketchnote: Layers. Split the work by job: HTTP, business rules, data. Flow: request, controller, service, repository, data. Remember: a controller speaks HTTP; a service holds the rules and never returns ResponseEntity; a repository answers data questions; each layer calls only the one below." ai="true"}
 One page of notes for this chapter.
 :::
 
