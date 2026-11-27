@@ -39,8 +39,9 @@ shop:
   free-delivery-above-paise: 50000
 ```
 
-Read it as "`spring` contains `application`, which contains `name`". Each level of indentation (two
-spaces) is one more dot in the properties version. Both files mean exactly the same to Spring; teams choose
+Read it as "`spring` contains `application`, which contains `name`". Each level of indentation is one more dot in
+the properties version. Here each level is two spaces, the usual choice; YAML accepts any number of spaces as long
+as the items of one level line up exactly. Both files mean exactly the same to Spring; teams choose
 whichever they find easier to read. YAML is nice when many settings share a prefix, because you write the
 prefix once.
 
@@ -71,7 +72,7 @@ with these settings:
 
 ```yaml
 delivery:
-  partner: Dunzo
+  partner: Pheri Couriers
   max-km: 8
   slot: 30m
 ```
@@ -105,7 +106,9 @@ public class DeliveryController {
 }
 ```
 
-`GET /delivery/info` answers `{"partner":"Dunzo","maxKm":8}`.
+`GET /delivery/info` answers `{"partner":"Pheri Couriers","maxKm":8}`. (Pheri Couriers is a made-up delivery partner for
+this example. A map made with `Map.of` keeps no fixed order, so the two keys may come out in either order; with
+this chapter's `/shop/info`, we saw the order change from one run to the next.)
 
 One more thing makes it work: Spring must know the settings class exists. In this chapter's project,
 `ShopApiApplication` already has **`@ConfigurationPropertiesScan`**, which tells Spring to look for
@@ -125,6 +128,8 @@ Three small changes, in three files:
 3. **`config/ShopInfoController.java`**: receive `ShopProperties` in a constructor, and answer
    `GET /shop/info` with its `name` and `freeDeliveryAbovePaise`.
 
+For step 2, look at the worked example's first line: the record needs the same annotation with `prefix = "shop"`.
+
 Build, run and try:
 
 ```bash run
@@ -135,8 +140,12 @@ cd 07-configuration-and-profiles && mvn -q -o package -DskipTests && java -jar t
 curl localhost:8080/shop/info
 ```
 
-You should see `{"name":"Shop API","freeDeliveryAbovePaise":50000}` (the two keys may come in either order).
-Press **Check**.
+You should see `{"name":"Shop API","freeDeliveryAbovePaise":50000}` (the two keys may come in either order; ours
+came as `{"freeDeliveryAbovePaise":50000,"name":"Shop API"}`). Press **Check**.
+
+Usual slips: a tab instead of spaces in the YAML (the app stops at start-up with an error about the YAML),
+`name:Shop API` without the space after the colon, or a `prefix` that does not match the YAML (then the record's
+fields stay empty: `null` and `0`).
 :::
 
 :::step{type=concept title="Where else settings come from"}
@@ -146,8 +155,10 @@ sources, from weakest to strongest:
 
 1. **`application.yml` / `application.properties`** inside the jar: the defaults you ship.
 2. **`application-{profile}.yml`** for the active profile (next steps): overrides for one environment.
-3. **Environment variables** of the process, like `SHOP_NAME=...`. (Relaxed binding again: `SHOP_NAME`
-   means `shop.name`; dots and dashes become underscores, all in capitals.)
+3. **Environment variables** of the process, like `SHOP_NAME=...`. An environment variable is a named value that
+   the operating system hands to a program when it starts. (Relaxed binding again: `SHOP_NAME` means `shop.name`;
+   write it in capitals, with underscores for the dots. For the dashes, Spring's documentation says to remove them:
+   `SHOP_FREEDELIVERYABOVEPAISE`. On our lab machine `SHOP_FREE_DELIVERY_ABOVE_PAISE` worked too.)
 4. **Command-line arguments**: `java -jar app.jar --shop.name=...`.
 
 This order is designed for how apps are run. The jar carries sensible defaults; each server sets what is
@@ -160,7 +171,9 @@ Try the strongest one now (with your settings class working):
 java -jar target/configuration.jar --shop.name="Shop API (night test)"
 ```
 
-and in the second terminal, `curl localhost:8080/shop/info`. The command line beat the file. Stop the app.
+and in the second terminal, `curl localhost:8080/shop/info`. On our lab machine it answered
+`{"freeDeliveryAbovePaise":50000,"name":"Shop API (night test)"}`: the command line beat the file. (The quotes are
+for the terminal, so the spaces and brackets stay part of one value.) Stop the app.
 :::
 
 :::step{type=concept title="Profiles: a set of settings for one environment"}
@@ -232,19 +245,24 @@ mvn -q -o package -DskipTests && java -jar target/configuration.jar --spring.pro
 ```
 
 Check the start-up log for `The following 1 profile is active: "prod"`, then `curl localhost:8080/shop/info`.
-You should see the production values. Press **Check**.
+You should see the production values (ours: `{"freeDeliveryAbovePaise":100000,"name":"Shop API (production)"}`).
+Press **Check**.
+
+Usual slips: the file named `application.prod.yml` or `application-production.yml` (it must be exactly
+`application-` plus the profile name), the file in the wrong folder (it belongs in `src/main/resources/`), or
+starting without `--spring.profiles.active=prod` (then the log still says "No active profile set").
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
 :::question
-Which setting name matches the record component `freeDeliveryAbovePaise`?
+`ShopProperties` has the prefix `shop`. Which settings fill its component `freeDeliveryAbovePaise`?
 :::
-- [ ] Only free-delivery-above-paise
-- [ ] Only freeDeliveryAbovePaise
-- [x] Both, and also FREE_DELIVERY_ABOVE_PAISE as an environment variable
+- [ ] Only shop.free-delivery-above-paise
+- [ ] Only shop.freeDeliveryAbovePaise
+- [x] Both, and also the environment variable SHOP_FREEDELIVERYABOVEPAISE
 :::explain
 Relaxed binding accepts all those forms. The recommended style in files is kebab-case,
-`free-delivery-above-paise`; environment variables use capitals and underscores.
+`shop.free-delivery-above-paise`; environment variables use capitals, underscores for the dots, and no dashes.
 :::
 :::
 
@@ -275,8 +293,9 @@ history). Secrets are passed to the running app from outside: environment variab
 :::
 
 :::step{type=deep-dive title="Go deeper: validating settings, and config files outside the jar"}
-**Validated settings.** Add `@Validated` to a settings record and constraints to its components
-(`@NotBlank String name`, `@Min(0) int freeDeliveryAbovePaise`). A missing or wrong setting then stops the
+**Validated settings.** With the validation starter in the pom (chapter 16 adds it), put `@Validated` on a
+settings record and constraints on its components (`@NotBlank String name`, `@Min(0) int
+freeDeliveryAbovePaise`). A missing or wrong setting then stops the
 app at start-up with a clear message, instead of failing at 2 a.m. on the first order. (Validation
 annotations come in chapter 16.)
 
@@ -296,14 +315,14 @@ You can now configure a Spring Boot app the way real teams do:
   instead of dots, spaces only).
 - A **settings class** with `@ConfigurationProperties(prefix = "...")` groups related settings in one typed
   record, found by `@ConfigurationPropertiesScan` and injected like any bean.
-- **Relaxed binding**: `free-delivery-above-paise`, `freeDeliveryAbovePaise` and `FREE_DELIVERY_ABOVE_PAISE`
-  are the same setting; text is converted to numbers, durations and more.
+- **Relaxed binding**: `shop.free-delivery-above-paise`, `shop.freeDeliveryAbovePaise` and the environment variable
+  `SHOP_FREEDELIVERYABOVEPAISE` are the same setting; text is converted to numbers, durations and more.
 - Sources, weakest to strongest: settings file, profile file, environment variables, command line.
 - **Profiles**: `application-prod.yml` overrides the defaults when started with
   `--spring.profiles.active=prod` (or `SPRING_PROFILES_ACTIVE=prod`); the log shows the active profile.
 - Secrets never go into files committed with the code.
 
-:::photo{src="/lesson-images/spring/spring-07-notes.webp" alt="Handwritten notes about Configuration and profiles: settings live outside the code, @ConfigurationProperties, file < profile < env < command line, application-prod.yml, no secrets in git!" ai="true"}
+:::photo{src="/lesson-images/spring/spring-07-notes.webp" alt="Sketchnote: Configuration and profiles. Settings live outside the code, so one jar runs anywhere. Flow from weakest to strongest: application.yml, application-prod.yml, environment variables, command line. Remember: @ConfigurationProperties fills a typed record; relaxed binding matches max-km and maxKm; a profile file holds only what differs; secrets never go into git." ai="true"}
 One page of notes for this chapter.
 :::
 
