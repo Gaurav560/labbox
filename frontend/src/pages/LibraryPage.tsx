@@ -12,10 +12,11 @@ import { labTone } from "../brand";
 // it can be shared and found by search engines; every pick says why it matters and which lab lets you practise it.
 // Admins keep the list current from Admin > Library.
 
+// Order (owner, 27 November): tech blogs, then research papers, then books; the first opens by default.
 export const LIBRARY_TABS: [LibraryKind, string, string][] = [
-  ["book", "Books", "The books our labs are built on: from first principles to how real systems work."],
-  ["paper", "Research papers", "The papers behind the ideas you build in the labs, most of them free to read."],
   ["blog", "Tech blogs", "Engineers and companies who explain how real systems are built, updated every week."],
+  ["paper", "Research papers", "The papers behind the ideas you build in the labs, most of them free to read."],
+  ["book", "Books", "The books our labs are built on: from first principles to how real systems work."],
 ];
 
 /** The three sections as big tiles: a colour, an icon, a line that says what is inside. */
@@ -224,7 +225,7 @@ export default function LibraryPage() {
   const { user } = useAuth();
   const signedIn = !!user;
   const [params, setParams] = useSearchParams();
-  const kind = (LIBRARY_TABS.find(([k]) => k === params.get("tab"))?.[0] ?? "book") as LibraryKind;
+  const kind = (LIBRARY_TABS.find(([k]) => k === params.get("tab"))?.[0] ?? LIBRARY_TABS[0][0]) as LibraryKind;
   const [items, setItems] = useState<LibraryItem[] | null>(null);
   const [labs, setLabs] = useState<Map<string, CatalogLab>>(new Map());
   const [error, setError] = useState<string | null>(null);

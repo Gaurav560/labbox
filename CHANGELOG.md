@@ -2,6 +2,7 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Premium Reads: Tech blogs first, then Research papers, then Books; Tech blogs open by default (owner).
 - "Lab", not "course", in visitor-facing text (owner): the Premium Reads page ("behind every LabBox lab", "the books
   our labs are built on"), the home page's AI section ("Each AI lab", "New lab", "AI labs live") and master's hero pill.
 - The "start a lab" picker is a printed index under "Pick a lab to try": three ruled columns, each cell a logo on paper,

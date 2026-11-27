@@ -21,7 +21,7 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   page.on("pageerror", (e) => errors.push(e.message));
 
   // A visitor, with no account: the page, a Start here pick, links to the labs that practise each idea, Start free.
-  await page.goto("/library");
+  await page.goto("/library?tab=book");  // the books' Start here pick (tech blogs open first since 27 November)
   await expect(page.getByRole("heading", { level: 1, name: "Premium reads." })).toBeVisible();
   await expect(page.getByRole("article", { name: "Featured: AI Engineering" })).toBeVisible();
   await expect(page.locator(".lib-featured")).not.toContainText("Start here"); // no kicker on the card (owner, 25 November)
@@ -39,7 +39,9 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await expect(page.getByRole("link", { name: /^Practise it hands-on/ }).first()).toHaveAttribute("href", /^\/courses\//);
   await expect(page.getByRole("link", { name: "Edit the library" })).toHaveCount(0);
   const tabs = page.getByRole("navigation", { name: "Library sections" });
-  await expect(page.getByRole("list", { name: "Books" }).getByRole("listitem").first()).toBeVisible();
+  // Tech blogs open first, then research papers, then books (owner, 27 November).
+  await expect(page.getByRole("list", { name: "Tech blogs" }).getByRole("listitem").first()).toBeVisible();
+  await expect(tabs.getByRole("button")).toHaveText([/Tech blogs/, /Research papers/, /Books/]);
   await tabs.getByRole("button", { name: /Research papers/ }).click();
   await expect(page).toHaveURL(/tab=paper/);
   const papers = page.getByRole("list", { name: "Research papers" });
@@ -64,8 +66,8 @@ test("learners read the library; an admin adds and removes an item", async ({ pa
   await page.getByRole("group", { name: /Filter research papers by topic/ }).getByRole("button", { name: /^Databases/ }).click();
   await expect(page.getByRole("link", { name: "Attention Is All You Need" })).toHaveCount(0);
   await expect(papers.getByRole("listitem").first()).toBeVisible();
-  await tabs.getByRole("button", { name: /Tech blogs/ }).click();
-  await expect(page.getByRole("list", { name: "Tech blogs" }).getByRole("listitem").first()).toBeVisible();
+  await tabs.getByRole("button", { name: /Books/ }).click();
+  await expect(page.getByRole("list", { name: "Books" }).getByRole("listitem").first()).toBeVisible();
 
   // An admin adds a blog, sees it on the Library page, then removes it.
   const boss = await signup(page, "libadmin");
