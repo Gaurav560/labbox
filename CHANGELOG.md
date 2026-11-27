@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- The home page's lab picker is a knob: each lab's logo around a dial, the knob points at the picked one, its name and
+  "1 of 9 labs" beside it; click the knob to turn, click a logo to jump, or use the arrow keys. The "spin up another"
+  buttons never offer the lab that is already running.
 - The Forward Deployed Engineer lab's description opens with the market (owner: "write Palantir, OpenAI and other AI
   companies paying ... the hype"): Palantir invented the job, OpenAI and Anthropic are racing to fill it, total pay
   estimated at $350,000 to $550,000 a year (published estimates of salary plus equity; posted base bands are about

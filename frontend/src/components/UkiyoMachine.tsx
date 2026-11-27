@@ -52,19 +52,40 @@ const PICK_LOGO: Record<string, string> = {
   "redis-in-practice": "redis",
 };
 
+/*
+ * The lab picker as a knob (owner, 27 November, design 17 from the picker page): each lab's logo sits around a dial, the
+ * knob turns to point at the picked one, and its name shows beside it. Click the knob to turn to the next lab, click a
+ * logo to jump to it, or use the arrow keys.
+ */
 function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
+  const i = Math.max(0, LABS.findIndex((x) => x.id === lab.id));
+  const step = 360 / LABS.length;
+  const turn = (d: number) => onPick(LABS[(i + d + LABS.length) % LABS.length]);
   return (
-    <>
-      {/* a dock of logos (owner, 27 November: the grid was "the most useless way"); the name shows under the picked one */}
-      <div className="um-picker um-dock" role="tablist" aria-label="Pick a lab to try">
-        {LABS.map((l) => (
-          <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>
-            <span className="um-pick-logo" aria-hidden="true">{PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}</span>
-            <span className="um-pick-name">{l.label}</span>
-          </button>
-        ))}
+    <div className="um-knobwrap">
+      <div className="um-knob-ring" role="tablist" aria-label="Pick a lab to try"
+        onKeyDown={(e) => { if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); turn(1); }
+          if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); turn(-1); } }}>
+        {LABS.map((l, k) => {
+          const a = (k * step - 90) * Math.PI / 180;
+          return (
+            <button key={l.id} type="button" role="tab" aria-selected={k === i} tabIndex={k === i ? 0 : -1} title={l.label}
+              className="um-knob-logo" style={{ left: `${50 + 44 * Math.cos(a)}%`, top: `${50 + 44 * Math.sin(a)}%` }} onClick={() => onPick(l)}>
+              {PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}
+              <span className="um-sr">{l.label}</span>
+            </button>
+          );
+        })}
+        <button type="button" className="um-knob" aria-label={`Turn to the next lab (now ${lab.label})`} onClick={() => turn(1)}
+          style={{ transform: `rotate(${i * step}deg)` }} tabIndex={-1}>
+          <i aria-hidden="true" />
+        </button>
       </div>
-    </>
+      <div className="um-knob-label" aria-live="polite">
+        <strong>{lab.label}</strong>
+        <span>{i + 1} of {LABS.length} labs · turn the knob</span>
+      </div>
+    </div>
   );
 }
 
@@ -347,7 +368,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
           <div className="ua-next">
             <p className="ua-next-label">{running ? `Your ${lab.label} machine is ready. Spin up another:` : "Other labs start the same way:"}</p>
             <div className="ua-next-row">
-              {[1, 2].map((k) => LABS[(LABS.indexOf(lab) + k) % LABS.length]).map((l) => (
+              {[1, 2].map((k) => LABS[(Math.max(0, LABS.findIndex((x) => x.id === lab.id)) + k) % LABS.length]).map((l) => (
                 <button key={l.id} type="button" className="ua-next-btn" onClick={() => { setLab(l); setRun((r) => r + 1); }}
                   aria-label={`Spin up the ${l.label} machine`}>
                   {PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}
