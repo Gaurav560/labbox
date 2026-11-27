@@ -1,5 +1,10 @@
 # Changelog
 
+## 28 November: Ukiyo home, the light-theme hero back on paper
+
+- The ink band under the light-theme hero is gone again (owner: "revert it back, light for light, dark for dark"):
+  the picture fades into the cream page as before; the dark theme is unchanged.
+
 ## 28 November: top bars fit every screen, the light-theme hero on an ink band
 
 - Responsive check of every page (home, sign-in, FAQ, pricing, privacy, terms, a course page, verify; signed in: the
