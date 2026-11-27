@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 12 rewritten (easy, a little detailed, checked)
+
+- Chapter 12, "Request bodies and DTOs", to the lesson rules: the body, the form content type and the parse error's
+  "code 112" explained; both tasks list their slips (a missing `@RequestBody`, `%2d`, `/ 100.0`).
+- Checked on a lab machine with the solution. Quoted as they came: the leak (`"costPaise":900`), the created
+  product, 415 without the header and 400 for broken JSON with their real log lines (now exact: the form type
+  carries `;charset=UTF-8`, the parse error names `'p' (code 112)`), the ignored `costPaise` (mass assignment
+  refused), a body without a price stored as `0`, the view `{"id":1,"name":"Mango kulfi","price":"Rs 20.00"}` and
+  its 404.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 11 rewritten (easy, a little detailed, checked)
 
 - Chapter 11, "Reading the request", to the lesson rules: both tasks list their steps' slips (returning null, a
