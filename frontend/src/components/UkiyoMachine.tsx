@@ -55,8 +55,8 @@ const PICK_LOGO: Record<string, string> = {
 function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
   return (
     <>
-      <p className="um-pick-label" id="um-pick-label">Pick a lab to try</p>
-      <div className="um-picker" role="tablist" aria-labelledby="um-pick-label">
+      {/* a dock of logos (owner, 27 November: the grid was "the most useless way"); the name shows under the picked one */}
+      <div className="um-picker um-dock" role="tablist" aria-label="Pick a lab to try">
         {LABS.map((l) => (
           <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>
             <span className="um-pick-logo" aria-hidden="true">{PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}</span>
@@ -325,9 +325,9 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
   return (
     <div className="ua" ref={rootRef}>
       <div className="ua-text">
-        <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
         <h2 id="machine-title">One click. <em>Your lab is ready.</em></h2>{/* short, one or two lines (owner, 27 November) */}
         <p>Nothing to install. You go straight to the challenge.</p>{/* owner, 27 November: "keep it just" this */}
+        <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
         {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
         {/* the command that starts the machine (owner picked the terminal design); it types itself, and a green Run key
             and a pulsing ring make it plain that it is the thing to press, on phones too */}

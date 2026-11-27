@@ -1065,3 +1065,30 @@ html { scroll-behavior: smooth; }
 /* the plain picture in both themes: no fade, no border, no dimming (owner, 27 November: "keep image only") */
 .uh-hero-art.is-wave .uh-hero-pic, :root[data-theme="light"] .uh-hero-art.is-wave .uh-hero-pic { -webkit-mask-image: none; mask-image: none; border: 0; padding: 0; box-shadow: none; background: none; }
 :root:not([data-theme="light"]) .uh-hero-art.is-wave .uh-hero-pic img, .uh-hero-art.is-wave .uh-hero-pic img { filter: none; }
+/* the lab picker as a dock of logos (owner, 27 November): one row of paper squares, the picked one lifted with a
+   vermilion line under it and its name below; hover lifts a logo and shows its name */
+.um-picker.um-dock { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 34px; border: 0; }
+.um-dock button, .um-dock button:not(:nth-child(3n)) { position: relative; display: block; width: 50px; height: 50px; padding: 0; border: 1px solid var(--rule);
+  border-radius: 6px; background: #fffdf8; box-shadow: 0 1px 0 var(--rule); cursor: pointer;
+  transition: transform 220ms cubic-bezier(.2, .7, .2, 1), box-shadow 220ms, border-color 220ms; }
+.um-dock button::before { content: ""; position: absolute; left: 12px; right: 12px; top: auto; bottom: -7px; height: 2px; width: auto;
+  background: var(--vermilion); transform: scaleX(0); transition: transform 260ms; }
+.um-dock .um-pick-logo { display: grid; place-items: center; width: 100%; height: 100%; border: 0; background: none; }
+.um-dock .um-pick-logo img { width: 28px; height: 28px; }
+.um-dock .um-pick-name { position: absolute; left: 50%; top: calc(100% + 10px); transform: translateX(-50%); white-space: nowrap;
+  font: 600 12px var(--font-text); color: var(--muted); opacity: 0; pointer-events: none; transition: opacity 200ms; }
+.um-dock .um-pick-name::after { display: none; }
+.um-dock button:hover { transform: translateY(-3px); box-shadow: 0 10px 18px -10px #0007; background: #fffdf8; }
+.um-dock button:hover .um-pick-name { opacity: 1; }
+.um-dock button[aria-selected="true"] { transform: translateY(-4px); border-color: var(--text); background: #fffdf8;
+  box-shadow: 0 12px 22px -12px #0008; }
+.um-dock button[aria-selected="true"]::before { transform: scaleX(1); }
+.um-dock button[aria-selected="true"] .um-pick-name { opacity: 1; color: var(--text); top: calc(100% + 12px); }
+.um-dock:hover button[aria-selected="true"]:not(:hover) .um-pick-name { opacity: 0; }
+.um-picker.um-dock { flex-wrap: nowrap; gap: 8px; }
+.um-dock button, .um-dock button:not(:nth-child(3n)) { width: 44px; height: 44px; flex: none; }
+.um-dock .um-pick-logo img { width: 24px; height: 24px; }
+.um-dock button::before { left: 10px; right: 10px; }
+@media (max-width: 560px) { .um-picker.um-dock { flex-wrap: wrap; row-gap: 34px; } }
+.um-dock .um-pick-name { left: 0; transform: none; }
+.um-picker.um-dock { margin-bottom: 40px; }
