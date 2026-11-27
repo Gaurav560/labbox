@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 6 rewritten (easy, a little detailed, checked)
+
+- Chapter 6, "Dependency injection: more than one bean", to the lesson rules: UPI and payment gateway explained;
+  both tasks list their slips.
+- Checked on a lab machine with the starter, the solution and three altered copies. The start-up failure is now
+  quoted as it really comes, including a line the lesson left out ("This may be due to missing parameter name
+  information"), now explained: Spring also picks the bean whose name equals the constructor parameter's name (tried:
+  naming the parameter `upiGateway` made the app start with UPI), added to the deep dive. New slip, checked: two
+  `@Primary` beans fail without the "APPLICATION FAILED TO START" block, with `more than one 'primary' bean found
+  among candidates: [cardGateway, upiGateway]` in the last `Caused by` line. Confirmed: `Paid Rs 50 by UPI` and
+  `["card","upi"]`.
+- Corrected in the recap: "more than one bean stops the start-up" now says "unless you say which one".
+- A new sketchnote page, redrawn once (its box had the same overstatement).
+
 ## 28 November: Spring Boot chapter 5 rewritten (easy, a little detailed, checked)
 
 - Chapter 5, "Beans", to the lesson rules: GST and paise, `null`, scope, "parameter 0" and `ObjectMapper` explained
