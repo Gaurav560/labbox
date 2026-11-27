@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- The "start a lab" picker: round buttons with each lab's logo, under "Pick a lab to try", that lift on hover; the picked
+  one is ink (owner: "some learners will miss that these are real buttons"). The red line under the machine's lid shows
+  before Run too (owner: "keep it").
 - Ukiyo's "AI labs" menu link jumps to the home page's AI section (smooth scroll, below the sticky header) instead of
   the AI labs list (owner, 27 November).
 - Pricing: the Teams plan is greyed out, and Pro's button reads "Join the waitlist" (owner, 27 November).

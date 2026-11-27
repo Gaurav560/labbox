@@ -45,11 +45,26 @@ const LABS: Lab[] = [
       P("redis", "Redis 7.4", "the primary server"), P("redis", "Redis replica", "a second server, copying the first"), EDITOR, AI] },
 ];
 
+// Each lab's logo on its picker button (owner, 27 November: "some learners will miss that these are real buttons").
+const PICK_LOGO: Record<string, string> = {
+  langchain: "langchain", "spring-ai": "spring-ai", "rag-vector-databases": "huggingface", "spring-boot-first-api": "spring",
+  "python-basics": "python", "postgres-indexing-incident": "postgresql", "linux-on-call": "linux", "fastapi-first-api": "fastapi",
+  "redis-in-practice": "redis",
+};
+
 function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
   return (
-    <div className="um-picker" role="tablist" aria-label="Pick a lab">
-      {LABS.map((l) => <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>{l.label}</button>)}
-    </div>
+    <>
+      <p className="um-pick-label" id="um-pick-label">Pick a lab to try <span aria-hidden="true">↓</span></p>
+      <div className="um-picker" role="tablist" aria-labelledby="um-pick-label">
+        {LABS.map((l) => (
+          <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>
+            {PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}
+            {l.label}
+          </button>
+        ))}
+      </div>
+    </>
   );
 }
 
