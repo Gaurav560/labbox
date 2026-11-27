@@ -38,7 +38,6 @@ export default function HomePage() {
     <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
   const allLabs = user ? "/labs" : "/login?signup=1";
-  const aiCount = live.filter((l) => l.track === "ai").length;
 
   return (
     <div className="home u-home">
@@ -93,7 +92,7 @@ export default function HomePage() {
               <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
-            lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}
+            lead="Each AI course is a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway."
           />
         </div>
 
