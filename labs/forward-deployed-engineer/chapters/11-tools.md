@@ -29,6 +29,10 @@ The model never runs anything. The conversation goes like this:
 
 So you stay in control: the model can only **ask** for what you described, and you decide what actually happens.
 
+:::diagram{name="fde-tool-loop"}
+The loop with this chapter's real question and the real model's answer, including its mistake.
+:::
+
 A tool description has three parts, all read by the model:
 
 | Part | Example | Good practice |

@@ -131,6 +131,10 @@ Claimdesk.
 The extra-work pair, E-15 and E-19, are above the pilot limit, so Claimdesk referred them, as agreed in chapter 3.
 The adjusters checked and paid. That is the limit doing its job, not a mistake.
 
+:::diagram{name="fde-shadow"}
+The shadow week and its replay, with the numbers from review.py.
+:::
+
 So two changes: a theft rule (`theft: investigation team`, always refer) and chapter 17's guard. Then the same week is
 **replayed**: the same 30 emails, through the changed Claimdesk:
 

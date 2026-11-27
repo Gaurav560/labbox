@@ -208,6 +208,10 @@ polite ones succeeded.
 Now follow the fields into chapter 13's triage. Rs 1,00,000 is **above the pilot limit**, so both drafts are `refer`. The
 attack reached the model and stopped at the code. That is the design you built in chapter 13 doing its job: the model
 reads, code decides, and code has limits the email cannot change.
+
+:::diagram{name="fde-injection"}
+Attack A as it really ran: the model obeyed, the list missed it, the limit held.
+:::
 :::
 
 :::step{type=predict title="Guess first"}

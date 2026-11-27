@@ -137,6 +137,10 @@ Go and no-go plug gauges: a hole passes only if the go end fits and the no-go en
 **Tolerance.** At temperature 0 a model usually gives the same answer twice, but not always. With 30 cases, one email
 changing is 3.3 points. A `tolerance` lets you accept a fall of up to that many points, as noise. It starts at 0: allow
 noise only when you have seen it, and say how much.
+
+:::diagram{name="fde-eval-gate"}
+The real numbers from the two runs you score in this chapter.
+:::
 :::
 
 :::step{type=task task=regression_gate title="Your turn: the regression gate"}

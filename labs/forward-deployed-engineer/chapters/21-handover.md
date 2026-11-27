@@ -1,5 +1,6 @@
 :::step{type=story title="The last two weeks"}
-Your engagement at Deccan Shield ends in two weeks. Claimdesk works, people use it, and from the first Monday after you
+The eight weeks planned in chapter 1 became four months, as engagements do: the pilot, then the rollout to every
+office. Now your engagement at Deccan Shield ends in two weeks. Claimdesk works, people use it, and from the first Monday after you
 leave, **Priya's team owns it**.
 
 That changes what "done" means. Until now, Claimdesk only had to work. Now it has to work **without you**: started by

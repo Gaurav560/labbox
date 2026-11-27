@@ -127,3 +127,26 @@ nodes:
     title: RAG that works (RAG and vector databases, Part 3)
     requires: [rag-inside]
     chapters: [rag-vector-databases/hybrid, rag-vector-databases/rerank, rag-vector-databases/grounded-answers, rag-vector-databases/evaluation, rag-vector-databases/capstone]
+  - id: fde-role
+    title: The role (Forward Deployed Engineer, Part 1)
+    chapters: [forward-deployed-engineer/the-role, forward-deployed-engineer/discovery, forward-deployed-engineer/scoping]
+  - id: fde-data
+    title: The customer's data (Forward Deployed Engineer, Part 2)
+    requires: [fde-role]
+    chapters: [forward-deployed-engineer/messy-data, forward-deployed-engineer/customer-database, forward-deployed-engineer/legacy-system, forward-deployed-engineer/data-contract]
+  - id: fde-models
+    title: Building with models (Forward Deployed Engineer, Part 3)
+    requires: [fde-data]
+    chapters: [forward-deployed-engineer/first-call, forward-deployed-engineer/extraction, forward-deployed-engineer/policy-lookup, forward-deployed-engineer/tools, forward-deployed-engineer/mcp-server, forward-deployed-engineer/day-five-demo]
+  - id: fde-proving
+    title: Proving it works (Forward Deployed Engineer, Part 4)
+    requires: [fde-models]
+    chapters: [forward-deployed-engineer/golden-set, forward-deployed-engineer/evals, forward-deployed-engineer/failure-analysis]
+  - id: fde-ready
+    title: Ready for real claims (Forward Deployed Engineer, Part 5)
+    requires: [fde-proving]
+    chapters: [forward-deployed-engineer/privacy, forward-deployed-engineer/reliability, forward-deployed-engineer/human-review, forward-deployed-engineer/monitoring]
+  - id: fde-leaving
+    title: Leaving well (Forward Deployed Engineer, Part 6)
+    requires: [fde-ready]
+    chapters: [forward-deployed-engineer/handover, forward-deployed-engineer/second-customer]

@@ -127,6 +127,10 @@ Three details make the difference between a cache that helps and one that hurts:
 
 `cached_extract` returns `(fields, problem, called)`. `called` tells `run_batch` whether a model call happened, so it can
 count what the run cost.
+
+:::diagram{name="fde-cached-call"}
+One email through cached_extract, the pacer and the fallback.
+:::
 :::
 
 :::step{type=predict title="Guess first"}

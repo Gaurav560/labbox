@@ -123,6 +123,10 @@ a day at 62.2               -> alert: ("2026-12-16", "refer_pct", 32.3, 62.2)
 
 The factor is a trade-off. Too low (1.1), and normal day-to-day wobble raises alerts until people ignore them. Too high
 (3), and real problems hide for days. Start somewhere sensible, look at what fires, and adjust, writing down why.
+
+:::diagram{name="fde-alert"}
+16 December, the first day after the emails changed, with the numbers from monitor.py.
+:::
 :::
 
 :::step{type=task task=drift_alerts title="Your turn: drift alerts"}
