@@ -997,7 +997,4 @@ html { scroll-behavior: smooth; }
 .um-pick-name { white-space: normal; }
 /* the FDE spotlight's "New" label in red (owner, 27 November: "keep it red") */
 .uh-ai .ai-tag-new { background: var(--vermilion); color: #fff; }
-/* "Before you start" on every course page in indigo, not red (owner, 27 November: "keep this blue") */
-.course-before::before { background: var(--indigo); }
-.course-need-check { background: var(--indigo); color: #fff; }
-.course-need-link:hover { color: var(--indigo); }
+/* "Before you start" stays red (owner, 27 November: tried blue, then "revert back to red only") */
