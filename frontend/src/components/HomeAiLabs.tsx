@@ -139,12 +139,8 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead
             <div className="ai-spot-text">
               <p className="ai-spot-tag"><span className="ai-dot" aria-hidden="true" />New · Learn the hottest job in the tech market</p>
               <h3 id="ai-spot-title">{spot.title}</h3>
-              <p className="ai-spot-sub">Join a motor insurer for one engagement and build Claimdesk, its AI claims assistant: discovery, messy data, model calls, evals, privacy, shadow mode, monitoring and the handover.</p>
-              <p className="ai-spot-facts">
-                <span><strong>{spot.chapter_count}</strong> chapters</span>
-                <span><strong>44</strong> tasks</span>
-                {spot.estimated_minutes ? <span><strong>{Math.round(spot.estimated_minutes / 60)}</strong> hours</span> : null}
-              </p>
+              {/* Only the tag line, the name and the button (owner, 27 November: "remove this one also", the description and
+                  the chapters, tasks and hours) */}
               <Link className="h-btn h-btn-primary ai-spot-go" to={course(spot)}>{signedIn ? "Open the course →" : "See the course →"}</Link>
             </div>
             {/* The claim demo is off for now (owner, 27 November: "remove this email animation for now"); the picture
