@@ -6,9 +6,9 @@ import { Copyright, SiteLinks } from "../components/SiteFooter";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
 
-// FAQs, Privacy policy and Terms of Service: public pages in one simple reading layout.
+// FAQs, Pricing, Privacy policy and Terms of Service: public pages in one simple reading layout.
 
-function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNode; children: ReactNode }) {
+function InfoLayout({ title, intro, wide, children }: { title: string; intro?: ReactNode; wide?: boolean; children: ReactNode }) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   useEffect(() => {
@@ -30,7 +30,7 @@ function InfoLayout({ title, intro, children }: { title: string; intro?: ReactNo
         )}
       </header>
       <main className="info-main">
-        <article className="info-article">
+        <article className={`info-article ${wide ? "is-wide" : ""}`}>
           <h1>{title}</h1>
           {intro && <div className="info-intro">{intro}</div>}
           {children}
@@ -124,6 +124,82 @@ export function FaqPage() {
     </InfoLayout>
   );
 }
+
+/*
+ * Pricing (owner, 27 November: "plans, no prices yet"; UI only). Free is what every account has today; Pro and Teams
+ * are planned, so they carry no price and no buy button. Every line on Free must stay true of the app as it is.
+ */
+type Plan = { id: string; name: string; price: string; note: string; lines: string[]; cta: ReactNode; soon?: boolean };
+
+export function PricingPage() {
+  const { user } = useAuth();
+  const plans: Plan[] = [
+    {
+      id: "free", name: "Free", price: "₹0", note: "Every account, today",
+      lines: [
+        "Every lab's lessons, tasks and instant checks",
+        "Your own Linux machine with an editor and a terminal",
+        "Real models through the LabBox gateway, with a daily allowance",
+        "Up to 3 labs open at a time; finish one to free a slot",
+        "A certificate with its own link for every lab you finish",
+      ],
+      cta: user ? <Link className="btn btn-primary" to="/labs">Your labs →</Link> : <Link className="btn btn-primary" to="/login?signup=1">Start free →</Link>,
+    },
+    {
+      id: "pro", name: "Pro", price: "Coming soon", note: "For learners who want more", soon: true,
+      lines: [
+        "Everything in Free",
+        "Every lab open at once, no 3-lab limit",
+        "A larger daily allowance for the tutor and the model gateway",
+        "Every Premium Read",
+      ],
+      cta: <a className="btn" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("LabBox Pro")}`}>Tell me when it launches</a>,
+    },
+    {
+      id: "teams", name: "Teams", price: "Coming soon", note: "For colleges and companies", soon: true,
+      lines: [
+        "Everything in Pro, for each member",
+        "Invite a class or a team to the same labs",
+        "See each member's progress and certificates",
+        "One bill for everyone",
+      ],
+      cta: <a className="btn" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("LabBox for teams")}`}>Talk to us</a>,
+    },
+  ];
+  return (
+    <InfoLayout wide title="Pricing" intro={<p>{SITE.product} is free while Pro and Teams are being built. Prices are not set yet; nothing here asks for payment.</p>}>
+      <div className="pricing">
+        {plans.map((p) => (
+          <section key={p.id} className={`plan ${p.soon ? "is-soon" : "is-now"}`} aria-labelledby={`plan-${p.id}`}>
+            <header>
+              <h2 id={`plan-${p.id}`}>{p.name}</h2>
+              <p className="plan-price">{p.price}</p>
+              <p className="plan-note">{p.note}</p>
+            </header>
+            <ul>{p.lines.map((l) => <li key={l}>{l}</li>)}</ul>
+            <div className="plan-cta">{p.cta}</div>
+          </section>
+        ))}
+      </div>
+      <h2>Questions</h2>
+      <div className="faq-list">
+        {PRICING_FAQS.map((f) => (
+          <details key={f.q} className="faq">
+            <summary>{f.q}</summary>
+            <div className="faq-a">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </InfoLayout>
+  );
+}
+
+const PRICING_FAQS: { q: string; a: ReactNode }[] = [
+  { q: "Is LabBox free right now?", a: <p>Yes. Every account is on Free, with every lab, your own machine, real models within a daily allowance, and certificates.</p> },
+  { q: "What happens to my progress when Pro launches?", a: <p>Nothing changes. Your labs, tasks, streak and certificates stay with your account on any plan.</p> },
+  { q: "How much will Pro cost?", a: <p>The price is not set yet. When it is, it will be on this page before anything is charged.</p> },
+  { q: "Can my college or company use LabBox?", a: <p>Yes, on Free today. For a class or a team with progress reports and one bill, write to {mail}.</p> },
+];
 
 export function PrivacyPage() {
   return (

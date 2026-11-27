@@ -269,12 +269,37 @@ def test_public_catalog_needs_no_login_and_leaks_nothing(client: TestClient):
     assert r.status_code == 200
     by_id = {lab["id"]: lab for lab in r.json()}
     assert {"python-basics", "java-basics", "postgres-indexing-incident"} <= set(by_id)
-    assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count", "cover_url", "cover_credit"}
+    assert set(by_id["python-basics"]) == {"id", "title", "subtitle", "track", "tags", "level", "estimated_minutes", "chapter_count", "cover_url", "cover_credit", "parts"}
+    # The part names, in order, for the home page's course details (owner, 27 November); names only.
+    fde = by_id.get("forward-deployed-engineer")
+    if fde:
+        assert fde["parts"][:2] == ["The role", "The customer's data"] and len(fde["parts"]) == 6
     lab = labs.get_lab("python-basics")
     hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints]
     hidden += [(lab.root / "solution" / "02-functions" / "greet.py").read_text().strip().splitlines()[-1].strip(), "chapters/", "@@RESULT"]
     for text in hidden:
         assert text not in r.text
+
+
+def test_public_course_page_only_for_ai_courses_and_titles_only(client: TestClient):
+    # Owner, 27 November: the AI courses' intro pages (skill map included) open for visitors; other courses do not.
+    ai = [lab for lab in labs.all_labs() if lab.track == "ai"]
+    assert ai, "the AI courses are loaded"
+    lab = ai[0]
+    r = client.get(f"/api/courses/{lab.id}")  # no login
+    assert r.status_code == 200
+    body = r.json()
+    assert body["access"] == "locked" and body["progress"] == {"passed_tasks": 0, "total_tasks": lab.task_count}
+    assert [c["id"] for c in body["chapters"]] == [c.id for c in lab.chapters]
+    assert any(c["topics"] for c in body["chapters"])  # the skill map's subtopics
+    for c in body["chapters"]:
+        for t in c["tasks"]:
+            assert t["passed"] is None and t["examples"] == [] and t["hint_count"] == 0
+    hidden = [h for c in lab.chapters for t in c.tasks for h in t.hints] + ["@@RESULT", ":::step"]
+    for text in hidden:
+        assert text not in r.text
+    assert client.get("/api/courses/python-basics").status_code == 404
+    assert client.get("/api/courses/no-such-lab").status_code == 404
 
 
 # ---------- cover images ----------

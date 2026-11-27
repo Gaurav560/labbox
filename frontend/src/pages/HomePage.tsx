@@ -10,7 +10,7 @@ import HomeCertificate from "../components/HomeCertificate";
 import UkiyoMachine from "../components/UkiyoMachine";
 import { useTyped } from "../components/useTyped";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
-import { printCredit, TRACK_INK, TrackArt } from "../components/UkiyoArt";
+import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
 
@@ -38,9 +38,7 @@ export default function HomePage() {
     <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
   const allLabs = user ? "/labs" : "/login?signup=1";
-  const labLink = (lab: CatalogLab) => (user ? `/courses/${lab.id}` : "/login?signup=1");
   const aiCount = live.filter((l) => l.track === "ai").length;
-  const fdeCredit = printCredit("forward-deployed-engineer");
 
   return (
     <div className="home u-home">
@@ -49,6 +47,7 @@ export default function HomePage() {
         <nav aria-label="Main" className="home-nav">
           <Link to="/labs?category=ai">AI labs</Link>
           <Link to="/library">Premium Reads</Link>
+          <Link to="/pricing">Pricing</Link>
           <a href="#faq">FAQs</a>
         </nav>
         <span className="spacer" />
@@ -86,11 +85,10 @@ export default function HomePage() {
         <div className="uh-ai">
           <HomeAiLabs
             labs={live}
-            labLink={labLink}
-            art={(lab) => <img src={`/ukiyo/labs/${lab.id}.webp`} alt="" loading="lazy" />}
+            signedIn={!!user}
             spotArt={<>
-              <img src="/ukiyo/labs/forward-deployed-engineer.webp" alt={fdeCredit ? `Woodblock print: ${fdeCredit}` : ""} loading="lazy" />
-              {fdeCredit && <span className="ai-spot-credit">{fdeCredit}</span>}
+              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer at a laptop in a busy insurance office, a river of data flowing from stacks of claim forms into the laptop, a city road and hills beyond the windows" />
+              <span className="ai-spot-credit">Illustration made for LabBox in woodblock style (AI)</span>
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
             lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}

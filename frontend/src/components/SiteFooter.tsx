@@ -6,6 +6,7 @@ export function SiteLinks({ className = "", faq = true }: { className?: string; 
   return (
     <nav aria-label="About" className={`site-links ${className}`}>
       {faq && <Link to="/faq">FAQs</Link>}
+      <Link to="/pricing">Pricing</Link>
       <Link to="/privacy">Privacy policy</Link>
       <Link to="/terms">Terms of Service</Link>
     </nav>

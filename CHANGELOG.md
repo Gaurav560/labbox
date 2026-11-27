@@ -1,22 +1,45 @@
 # Changelog
 
+## 27 November: public intro pages for the AI courses, a pricing page, new art for the FDE spotlight
+
+- **The AI courses' intro pages are public** (owner: "do not send them to login signup page directly", "actual intro
+  page where skill map is present", "only the AI courses"). `/courses/<lab>` opens for visitors for the six AI courses:
+  cover, description, Before you start and the skill map, with "Start free" (sign-up, then back to the course)
+  instead of Start, and no links into the lessons. One new public route, `GET /api/courses/{lab_id}`, AI track only
+  (404 otherwise), titles only: parts, chapters, subtopics and task titles, never lessons, hints, task cards, tests or
+  solutions. Any other course still sends a visitor to log in, then back. The public catalog also lists each course's
+  part names (`parts`).
+- **Home page AI rows:** no numbers, a small logo per lab like the dashboard's list, and each row opens the course's
+  intro page; the spotlight's button reads "See the course" (or "Open the course" when signed in) and its parts are
+  listed under the description. The real LangChain, LangChain4j and LangGraph logos (and the logo lookup that reads
+  "Logo: ...") come to master from Ukiyo.
+- **New art for the FDE spotlight** (owner: "a big image ... cool one"): made with OpenAI image generation (medium
+  quality, 3 candidates per design, about $0.25): a woodblock-style scene for Ukiyo (an engineer at an insurer, a
+  river of data from the claim forms into the laptop) and a neon diorama for master. Shown big above the course name,
+  slowly drifting, credited as an AI illustration. The other candidates stay out of the repo.
+- **Pricing page, UI only** (`/pricing`, owner: "plans, no prices yet"): Free (what every account has today), Pro and
+  Teams marked "Coming soon" with no price and no buy button, four questions; linked from the home menu and every
+  public page's footer, on both designs (Ukiyo: fine rules, serif, a vermilion rule on Free).
+- Tests: a backend test for the public course route (AI only, titles only, nothing hidden leaks); browser tests for
+  visitors on a course page, the rows' links and logos, and the pricing page.
+
 ## 27 November: AI labs first on the home page, the Forward Deployed Engineer course in the spotlight
 
 - **The AI labs sit right under the hero on both designs** (owner: "ai section labs at the forefront on the homepage,
   with cool animation, so the forward deployed engineer gets the max visibility"). One shared component,
   `frontend/src/components/HomeAiLabs.tsx`: a spotlight for the Forward Deployed Engineer course (chapters, tasks,
-  hours, Start) with a playing demo, then the five other AI labs, which rise in one after another as the section
-  scrolls into view.
+  hours, Start) with a playing demo, then the five other AI labs as ruled index rows (number, title, one line,
+  chapters and hours), which rise in one after another as the section scrolls into view. No pictures in the section
+  (owner: "i dont want cards for this", "too many images on the home page"): the demo is its only picture.
 - **The demo is a real run** (chapter 17's attack A): a claim email for Rs 15,750 types in with a hidden note to record
   Rs 1,00,000; the model's six fields fill in one by one, amount_rs 100000 marked; code checks the Rs 50,000 pilot
   limit and stamps "Refer to an adjuster". It plays only while on screen and shows the last frame with reduced motion.
-- **Current design:** a slow light runs round the spotlight's border; the ship photo from chapter 1 (U.S. Navy, public
-  domain); the hero pill reads "New: the Forward Deployed Engineer course" and jumps to the section; the old "24 labs
+- **Current design:** a slow light runs round the spotlight's border; a red rule slides along a row on hover; the hero pill reads "New: the Forward Deployed Engineer course" and jumps to the section; the old "24 labs
   launching" block is gone, and the numbers row counts the live AI courses.
 - **Ukiyo:** paper and fine rules, a ruled claim ledger, a straight vermilion seal for the decision, a vermilion rule
-  that draws across the spotlight, the course's Hokusai print and each AI lab's own print. The hero terminal now types
+  that draws across the spotlight and under a row on hover. The hero terminal now types
   the course's real eval gate and smoke test. The menu's "AI labs" still opens the AI labs (owner, 25 November).
-- Browser tests: the home test checks the spotlight, the five cards, the demo's last frame and that the section comes
+- Browser tests: the home test checks the spotlight, the five rows, no pictures, the demo's last frame and that the section comes
   right after the hero.
 
 ## 27 November: a new course, Forward Deployed Engineer

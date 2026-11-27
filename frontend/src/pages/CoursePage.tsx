@@ -1,6 +1,6 @@
 import { LabPrint, TRACK_HEX, printCredit } from "../components/UkiyoArt";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { api, type LabDetail, type NextStep, type Slots } from "../api";
 import { useAuth } from "../auth";
 import { inkOn, labBrand, labTone, mix } from "../brand";
@@ -28,12 +28,20 @@ export default function CoursePage() {
   const [next, setNext] = useState<NextStep | null>(null);
   const [slots, setSlots] = useState<Slots | null>(null);
   const [reload, setReload] = useState(0);
+  // Visitors see the AI courses' intro pages too (owner, 27 November); any other course asks them to log in.
+  const visitor = !user;
+  const [closed, setClosed] = useState(false);
   useEffect(() => {
     if (!reload) setLab(null);
+    if (visitor) {
+      setClosed(false);
+      api.publicCourse(labId).then(setLab).catch(() => setClosed(true));
+      return;
+    }
     api.lab(labId).then(setLab).catch((e) => toast(e.message));
     api.next(labId).then(setNext).catch(() => setNext(null));
     api.slots().then(setSlots).catch(() => setSlots(null));
-  }, [labId, toast, reload]);
+  }, [labId, toast, reload, visitor]);
 
   const lines = useMemo(() => {
     if (!lab) return [];
@@ -41,6 +49,8 @@ export default function CoursePage() {
     return labLines(lab, at >= 0 ? at : undefined);
   }, [lab, next]);
 
+  const here_ = `/courses/${labId}`;
+  if (visitor && closed) return <Navigate to={`/login?next=${encodeURIComponent(here_)}`} replace />;
   if (!lab) return <div className="course-page"><Topbar title={labId} username={user?.username ?? ""} /></div>;
 
   const done = (c: LabDetail["chapters"][number]) => c.tasks.length > 0 && c.tasks.every((t) => t.passed);
@@ -74,11 +84,20 @@ export default function CoursePage() {
             <div className="course-kicker">{[TRACK_LABEL[lab.track] ?? lab.track, level].filter(Boolean).join(" · ")}</div>
             <h1>{lab.title}</h1>
             <p className="course-sub">{lab.subtitle}</p>
-            <div className="course-progress" role="progressbar" aria-label="Chapters done" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+            {!visitor && <div className="course-progress" role="progressbar" aria-label="Chapters done" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
               <div className="course-bar"><div style={{ width: `${pct}%` }} /></div>
               <span>{doneCount} of {lab.chapters.length} chapters · {lab.progress.passed_tasks} of {lab.progress.total_tasks} tasks</span>
-            </div>
-            {lab.access === "locked" ? (
+            </div>}
+            {visitor ? (
+              <>
+                <div className="course-actions">
+                  <Link className="course-go" to={`/login?signup=1&next=${encodeURIComponent(here_)}`}>
+                    <span aria-hidden="true" className="course-play">▶</span>Start free →
+                  </Link>
+                </div>
+                <p className="course-where">Sign up with Google or GitHub, and your own machine starts in about a minute.</p>
+              </>
+            ) : lab.access === "locked" ? (
               <UnlockBox lab={lab} slots={slots} onChange={() => setReload((n) => n + 1)} />
             ) : (
               <>
@@ -134,7 +153,9 @@ export default function CoursePage() {
 
         <section className="course-syllabus" aria-label="Chapters">
           <h2>Skill map</h2>
-          <p className="muted">{lab.access === "locked"
+          <p className="muted">{visitor
+            ? "What this course covers, chapter by chapter. Sign up free to open its lessons."
+            : lab.access === "locked"
             ? "What this course covers, chapter by chapter. Unlock the lab to open its lessons."
             : "Every chapter on its line; each subtopic opens its lesson."}</p>
           <MetroMap lines={lines} />
@@ -222,11 +243,11 @@ function Topbar({ title, username }: { title: string; username: string }) {
   return (
     <header className="topbar">
       <Link to="/" className="logo" aria-label="LabBox by Telusko home"><LogoMark size={24} /></Link>
-      <Link to="/labs" className="link">← Dashboard</Link>
+      {username ? <Link to="/labs" className="link">← Dashboard</Link> : <Link to="/#ai" className="link">← AI labs</Link>}
       <span className="brand">{title}</span>
       <span className="spacer" />
       <ThemeButton />
-      <ProfileMenu username={username} />
+      {username ? <ProfileMenu username={username} /> : <Link to="/login" className="btn btn-small">Log in</Link>}
     </header>
   );
 }

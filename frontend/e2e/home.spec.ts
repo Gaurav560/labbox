@@ -58,8 +58,10 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // (owner, 27 November); its demo plays a real run: the model obeys the email, the limit in code refers the claim.
   const ai = page.locator("#ai");
   await expect(ai.locator(".ai-spot h3")).toHaveText("Forward Deployed Engineer");
-  await expect(ai.locator(".ai-spot-go")).toHaveAttribute("href", "/login?signup=1");
-  await expect(ai.locator(".ai-cards li")).toHaveCount(5);
+  await expect(ai.locator(".ai-spot-go")).toHaveAttribute("href", "/courses/forward-deployed-engineer"); // not straight to sign-up
+  await expect(ai.locator(".ai-rows li")).toHaveCount(5);
+  await expect(ai.locator(".ai-rows img")).toHaveCount(5); // small logos, like the dashboard's list
+  await expect(ai.locator(".ai-rows a").first()).toHaveAttribute("href", /^\/courses\//);
   await ai.locator(".ai-demo").scrollIntoViewIfNeeded();
   await expect(ai.locator(".ai-demo-stamp")).toHaveClass(/is-on/, { timeout: 20_000 });
   await expect(ai.locator(".ai-demo-fields li.is-bad")).toContainText("100000");
@@ -124,4 +126,30 @@ test("FAQ, privacy policy and terms are public and linked from the home page", a
   await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
   await page.locator(".auth-legal").getByRole("link", { name: "Terms of Service" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Terms of Service");
+});
+
+test("the AI courses' intro pages open for visitors; other courses ask them to log in", async ({ page }) => {
+  // Owner, 27 November: the home page's AI rows open "the actual intro page where the skill map is", AI courses only.
+  await page.goto("/courses/langchain");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("LangChain");
+  await expect(page.getByRole("heading", { name: "Skill map" })).toBeVisible();
+  await expect(page.locator(".course-syllabus")).toContainText("Sign up free to open its lessons");
+  await expect(page.locator(".course-go")).toHaveAttribute("href", "/login?signup=1&next=%2Fcourses%2Flangchain");
+  await expect(page.locator(".course-syllabus a[href^='/labs/']")).toHaveCount(0); // no way into the lessons
+  await expect(page.locator(".course-progress")).toHaveCount(0);
+  await page.goto("/courses/python-basics");
+  await expect(page).toHaveURL(/\/login\?next=%2Fcourses%2Fpython-basics/);
+});
+
+test("pricing: plans without prices, linked from the home menu and the footer", async ({ page }) => {
+  // Owner, 27 November: a pricing page, UI only, "plans, no prices yet".
+  await page.goto("/");
+  await page.locator(".home-nav").getByRole("link", { name: "Pricing" }).click();
+  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Pricing");
+  await expect(page.locator(".plan")).toHaveCount(3);
+  await expect(page.locator(".plan.is-now")).toContainText("₹0");
+  await expect(page.locator(".plan.is-soon .plan-price")).toHaveText(["Coming soon", "Coming soon"]);
+  await expect(page.locator(".plan.is-now a")).toHaveAttribute("href", "/login?signup=1");
+  await expect(page.locator(".info-footer").getByRole("link", { name: "Pricing" })).toHaveAttribute("href", "/pricing");
 });
