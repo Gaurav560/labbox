@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 5 rewritten (easy, a little detailed, checked)
+
+- Chapter 5, "Beans", to the lesson rules: GST and paise, `null`, scope, "parameter 0" and `ObjectMapper` explained
+  where they appear; both tasks list their slips (a missing import, a misnamed constructor, `calculator =
+  calculator`, a final field set twice).
+- Checked on a lab machine with the starter, the solution and two altered copies. Measured and now quoted: the
+  starter answers `0` for the price and leaves `/stats` at `0` after three visits; the solution answers `2360`
+  and `/stats` goes from 0 to 2; the finished app has 158 beans, six of them the app's own ("well over a hundred"
+  made exact); the missing-`@Service` error as Spring really prints it, with full class names.
+- The recap and notes keep "by default" on "one shared object per bean" (other scopes exist). A new sketchnote
+  page, redrawn once for that qualifier.
+
 ## 28 November: Spring Boot chapter 4 rewritten (easy, a little detailed, checked)
 
 - Chapter 4, "How the app starts", to the lesson rules: JVM, `.class`, log levels and the shortened class names,
