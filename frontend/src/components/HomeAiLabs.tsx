@@ -137,7 +137,10 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead
         {spot && (
           <article className="ai-spot" aria-labelledby="ai-spot-title">
             <div className="ai-spot-text">
-              <p className="ai-spot-tag"><span className="ai-dot" aria-hidden="true" />New · The hottest job in AI. Learn it by doing it.</p>
+              <p className="ai-spot-tag">
+                <span className="ai-tag-new">New</span>
+                <span className="ai-tag-a">The hottest job in AI.</span> <em className="ai-tag-b">Learn it by doing it.</em>
+              </p>
               <h3 id="ai-spot-title">{spot.title}</h3>
               {/* Only the tag line, the name and the button (owner, 27 November: "remove this one also", the description and
                   the chapters, tasks and hours) */}

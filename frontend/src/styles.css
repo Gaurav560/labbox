@@ -2492,3 +2492,11 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .ai-row small { font-size: 11px; }
 .ai-micro { margin-right: 8px; padding: 1px 7px; font-size: 9.5px; vertical-align: 2px; }
 @media (max-width: 760px) { .ai-row { grid-template-columns: 34px minmax(0, 1fr) 1.2em; } .ai-row strong { white-space: normal; } }
+
+/* the spotlight's tag line, in the hero's voice: large, the italic half in yellow; no red (owner, 27 November) */
+.ai-spot-tag { display: block; margin: 0 0 4px; font: 800 clamp(20px, 1.9vw, 26px)/1.25 var(--font-text, inherit); letter-spacing: -.02em; color: var(--text); }
+.ai-tag-new { display: inline-block; margin: 0 12px 0 0; padding: 3px 10px; vertical-align: 4px; border-radius: 999px; background: var(--yellow); color: #111512;
+  font: 800 10.5px var(--font-code); letter-spacing: .1em; text-transform: uppercase; }
+.ai-tag-b { font-style: italic; font-weight: 700; color: var(--yellow); }
+:root[data-theme="light"] .ai-tag-b { color: var(--text); background: linear-gradient(transparent 62%, var(--yellow) 62%); }
+.ai-tag-b { display: table; margin-top: 4px; }
