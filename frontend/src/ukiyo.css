@@ -1118,3 +1118,8 @@ html { scroll-behavior: smooth; }
 /* the "Learn it in ..." links inside Before you start in blue (owner, 27 November); the box stays two soft reds */
 .course-need-link { color: var(--indigo); }
 .course-need-link:hover { color: var(--indigo); text-decoration: underline; }
+/* the "Learn it in" links match the box (owner, 27 November: blue "is not matching"): ink text, a soft red underline
+   that turns solid on hover */
+.course-need-link { color: var(--text); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--vermilion) 45%, transparent);
+  text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.course-need-link:hover { color: var(--text); text-decoration-color: var(--vermilion); }
