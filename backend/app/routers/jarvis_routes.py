@@ -24,7 +24,7 @@ class StartIn(BaseModel):
     lab_id: str | None = None
     chapter_id: str | None = None
     step: int | None = Field(None, ge=0, le=500)
-    reason: Literal["fails", "hints", "idle"] | None = None  # set when the learner accepted Jarvis's offer of help
+    reason: Literal["fails", "hints", "idle", "welcome"] | None = None  # set when the learner accepted Jarvis's offer
 
 
 @router.get("/nudge", response_model=jarvis.Nudge)
@@ -33,6 +33,12 @@ def nudge(lab_id: str, chapter_id: str, step: int, idle: int = 0, user: User = D
     """Is this learner stuck on the task in front of them? Rules only, no model: the lab page asks after every check
     and now and then while they work."""
     return jarvis.nudge(session, user, lab_id, chapter_id, step, max(0, min(idle, 24 * 3600)))
+
+
+@router.get("/welcome", response_model=jarvis.Welcome)
+def welcome(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> jarvis.Welcome:
+    """A welcome for a new learner, or one back after a while (the dashboard asks once per browser session)."""
+    return jarvis.welcome(session, user)
 
 
 @router.post("/session", response_model=jarvis.SessionOut)

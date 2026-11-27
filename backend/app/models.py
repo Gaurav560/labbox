@@ -301,3 +301,6 @@ class JarvisSession(SQLModel, table=True):
     text_out_tokens: int = 0
     cost_usd: float = 0.0
     call_id: str | None = None
+    # What Jarvis keeps from this conversation for the next ones (step 3, Pro): two or three sentences he writes
+    # himself at the end. None when the conversation ended before he could.
+    summary: str | None = None

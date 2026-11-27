@@ -355,6 +355,7 @@ export const library = {
 export interface JarvisStatus { enabled: boolean; plan: "free" | "pro"; kind: "pro" | "trial" | "locked"; reason: string; seconds_left: number; trial_used: boolean }
 export interface JarvisSession { session_id: number; client_secret: string; expires_at: number; model: string; kind: "pro" | "trial"; max_seconds: number }
 export interface JarvisNudge { nudge: boolean; reason: "" | "fails" | "hints" | "idle"; task_id: string | null; line: string; detail: string }
+export interface JarvisWelcome { show: boolean; kind: "" | "new" | "back"; line: string; continue_url: string | null; continue_label: string; detail: string }
 export interface JarvisBeat { stop: boolean; reason: string; seconds_left: number; cost_usd: number }
 export interface JarvisAdmin {
   today_usd: number; month_usd: number; today_sessions: number; today_minutes: number; trials_today: number; pro_learners: number;
@@ -367,7 +368,8 @@ export const jarvisApi = {
     request<JarvisSession>("POST", "/api/jarvis/session", { lab_id: labId ?? null, chapter_id: chapterId ?? null, step: step ?? null, reason: reason || null }),
   nudge: (labId: string, chapterId: string, step: number, idle: number) =>
     request<JarvisNudge>("GET", `/api/jarvis/nudge?lab_id=${encodeURIComponent(labId)}&chapter_id=${encodeURIComponent(chapterId)}&step=${step}&idle=${Math.round(idle)}`),
-  heartbeat: (id: number, body: { seconds: number; usage: unknown[]; call_id?: string | null; ended?: boolean }) =>
+  welcome: () => request<JarvisWelcome>("GET", "/api/jarvis/welcome"),
+  heartbeat: (id: number, body: { seconds: number; usage: unknown[]; call_id?: string | null; ended?: boolean; summary?: string | null }) =>
     request<JarvisBeat>("POST", `/api/jarvis/session/${id}/heartbeat`, body),
   tool: (id: number, name: string, step?: number) =>
     request<{ output: string }>("POST", `/api/jarvis/session/${id}/tool`, { name, step: step ?? null }),

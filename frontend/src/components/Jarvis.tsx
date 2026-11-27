@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ApiError, jarvisApi, type JarvisNudge, type JarvisStatus } from "../api";
+import { ApiError, jarvisApi, type JarvisNudge, type JarvisStatus, type JarvisWelcome } from "../api";
 
 /*
  * Jarvis, the learner's realtime voice assistant (owner, 28 November). The browser talks straight to OpenAI's realtime
@@ -11,7 +11,7 @@ import { ApiError, jarvisApi, type JarvisNudge, type JarvisStatus } from "../api
  * Pro learners talk; a free learner gets one short trial, then the lock that points to Pro.
  */
 
-type Phase = "idle" | "connecting" | "live" | "ended";
+type Phase = "idle" | "connecting" | "live" | "ending" | "ended";
 type Mood = "listening" | "thinking" | "speaking";
 
 const CALLS_URL = "https://api.openai.com/v1/realtime/calls";
@@ -40,6 +40,12 @@ function markOffered(taskId: string): void {
   }
 }
 
+const WELCOMED_KEY = "labbox.jarvis.welcomed"; // once per browser session (step 3)
+const MEMORY_WAIT_MS = 8_000; // how long the end of a Pro conversation waits for Jarvis's note to himself
+const MEMORY_PROMPT = "The conversation is ending. Write two or three plain sentences for your own memory of this learner: "
+  + "what they worked on, where they struggled or what they understood, and anything they told you about themselves or their "
+  + "goals that would help next time. Facts only, no greeting, no advice to them.";
+
 const mmss = (s: number) => `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, "0")}`;
 
 export default function Jarvis({ labId, chapterId, step }: { labId?: string; chapterId?: string; step?: number }) {
@@ -51,6 +57,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const [note, setNote] = useState("");
   const [left, setLeft] = useState(0);
   const [offer, setOffer] = useState<JarvisNudge | null>(null);
+  const [welcome, setWelcome] = useState<JarvisWelcome | null>(null);
 
   const pc = useRef<RTCPeerConnection | null>(null);
   const dc = useRef<RTCDataChannel | null>(null);
@@ -64,10 +71,22 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const stepRef = useRef(step);
   stepRef.current = step;
   const reasonRef = useRef("");
+  const kindRef = useRef<"pro" | "trial">("pro");
+  const memory = useRef<((text: string) => void) | null>(null);
   const onStepSince = useRef(Date.now());
 
   const refresh = useCallback(() => { jarvisApi.status().then(setStatus).catch(() => setStatus(null)); }, []);
   useEffect(refresh, [refresh]);
+
+  // Step 3: a welcome for a new learner, or one back after a while, once per browser session (on the dashboard).
+  useEffect(() => {
+    if (labId || !status?.enabled) return;
+    try { if (sessionStorage.getItem(WELCOMED_KEY)) return; } catch { /* no storage: show it */ }
+    jarvisApi.welcome().then((w) => {
+      try { sessionStorage.setItem(WELCOMED_KEY, "1"); } catch { /* fine */ }
+      if (w.show) { setWelcome(w); setOpen(true); }
+    }).catch(() => {});
+  }, [labId, status?.enabled]);
 
   // Step 2: notice when the learner is stuck. Rules on the backend, no model, so asking costs nothing.
   useEffect(() => { onStepSince.current = Date.now(); setOffer(null); }, [labId, chapterId, step]);
@@ -115,16 +134,34 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
     mic.current = null;
   }, []);
 
-  const stop = useCallback((reason = "") => {
+  // At the end of a Pro conversation, Jarvis writes himself a short note (a text-only reply outside the conversation),
+  // kept for the next one (step 3). If it takes too long, the conversation ends without it.
+  const askMemory = (): Promise<string | null> => {
+    if (kindRef.current !== "pro" || dc.current?.readyState !== "open") return Promise.resolve(null);
+    return new Promise((resolve) => {
+      const t = window.setTimeout(() => { memory.current = null; resolve(null); }, MEMORY_WAIT_MS);
+      memory.current = (text) => { window.clearTimeout(t); memory.current = null; resolve(text); };
+      send({ type: "response.cancel" });
+      send({ type: "response.create", response: { conversation: "none", output_modalities: ["text"], metadata: { topic: "memory" }, instructions: MEMORY_PROMPT } });
+    });
+  };
+
+  const stop = useCallback(async (reason = "") => {
     if (sid.current == null) return;
     const id = sid.current;
+    sid.current = null;
+    setPhase("ending");
+    if (audio.current) audio.current.muted = true;
+    mic.current?.getTracks().forEach((t) => (t.enabled = false));
+    const summary = await askMemory();
     const batch = usage.current.splice(0);
     cleanup();
-    jarvisApi.heartbeat(id, { seconds: seconds(), usage: batch, call_id: callId.current, ended: true }).catch(() => {});
-    sid.current = null;
+    jarvisApi.heartbeat(id, { seconds: seconds(), usage: batch, call_id: callId.current, ended: true, summary }).catch(() => {});
+    if (audio.current) audio.current.muted = false;
     setPhase("ended");
     setNote(reason);
     refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cleanup, refresh]);
 
   // Leaving the page ends the conversation.
@@ -144,6 +181,12 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
       case "response.created": setCaption(""); break;
       case "response.done": {
         if (ev.response?.usage) usage.current.push(ev.response.usage);
+        if (ev.response?.metadata?.topic === "memory") {
+          const text = (ev.response.output ?? []).flatMap((o: { content?: { text?: string; transcript?: string }[] }) => o.content ?? [])
+            .map((c: { text?: string; transcript?: string }) => c.text ?? c.transcript ?? "").join(" ").trim();
+          memory.current?.(text);
+          break;
+        }
         // Jarvis may call several tools in one reply: answer them all, then ask for one reply (OpenAI refuses a
         // second response while one is in progress).
         const calls = (ev.response?.output ?? []).filter((o: { type?: string }) => o.type === "function_call");
@@ -162,13 +205,14 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
         break;
       }
       case "response.function_call_arguments.done": setMood("thinking"); break;
-      case "error": if (ev.error?.message) setNote(ev.error.message); break;
+      case "error": if (ev.error?.message && sid.current != null) setNote(ev.error.message); break; // errors while ending (a cancel with nothing to cancel) are not news
     }
   }, []);
 
   const begin = useCallback(async (reason = "") => {
     reasonRef.current = reason;
     setOffer(null);
+    setWelcome(null);
     setNote("");
     setCaption("");
     setPhase("connecting");
@@ -177,6 +221,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
       mic.current = media;
       const s = await jarvisApi.start(labId, chapterId, stepRef.current, reason);
       sid.current = s.session_id;
+      kindRef.current = s.kind;
       setLeft(s.max_seconds);
       const conn = new RTCPeerConnection();
       pc.current = conn;
@@ -188,7 +233,9 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
       // Jarvis speaks first: a short greeting by name, from what he knows.
       channel.onopen = () => {
         send({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text",
-          text: reasonRef.current
+          text: reasonRef.current === "welcome"
+            ? "The learner just tapped Talk on your welcome. Follow the instructions under 'Why this conversation started'."
+            : reasonRef.current
             ? "The learner just accepted your offer of help with the task in front of them. In one short, kind sentence, say what you noticed, then ask what they have tried so far. You may use your tools to look at the task and their code."
             : "The learner has just opened the conversation. Greet them by their first name in one or two short sentences, mention where they are or what they did last, and ask how you can help. Do not call any tool yet." }] } });
         send({ type: "response.create" });
@@ -223,7 +270,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const label = live ? (mood === "speaking" ? "Jarvis is speaking" : mood === "thinking" ? "Jarvis is thinking" : "Jarvis is listening") : "Talk to Jarvis";
 
   return (
-    <div className={`jv ${open ? "is-open" : ""} ${offer && !live ? "has-offer" : ""}`} data-phase={phase} data-mood={live ? mood : "idle"}>
+    <div className={`jv ${open ? "is-open" : ""} ${(offer || welcome) && !live ? "has-offer" : ""}`} data-phase={phase} data-mood={live ? mood : "idle"}>
       <audio ref={audio} autoPlay />
       {open && (
         <section className="jv-panel" aria-label="Jarvis" aria-live="polite">
@@ -232,7 +279,21 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
             <span className="jv-plan">{status.plan === "pro" ? "Pro" : status.kind === "trial" ? "Free trial" : "Pro feature"}</span>
             <button type="button" className="jv-x" aria-label="Close Jarvis" onClick={() => { if (live) stop(); setOpen(false); }}>✕</button>
           </header>
-          {offer && !live && phase !== "connecting" ? (
+          {welcome && !live && phase !== "connecting" ? (
+            <>
+              <p className="jv-caption">{welcome.line}</p>
+              <div className="jv-row jv-offer">
+                {welcome.continue_url && <Link className="btn btn-small btn-primary" to={welcome.continue_url}>{welcome.continue_label} →</Link>}
+                {status.kind !== "locked" && (
+                  <button type="button" className={`btn btn-small ${welcome.continue_url ? "" : "btn-primary"}`} onClick={() => begin("welcome")}>
+                    {status.kind === "trial" ? "Talk to Jarvis (free trial)" : "Talk to Jarvis"}
+                  </button>
+                )}
+                {!welcome.continue_url && status.kind === "locked" && <Link className="btn btn-small btn-primary" to="/labs#labs">See the labs</Link>}
+                <button type="button" className="btn btn-small" onClick={() => { setWelcome(null); setOpen(false); }}>Not now</button>
+              </div>
+            </>
+          ) : offer && !live && phase !== "connecting" ? (
             <>
               <p className="jv-caption">{offer.line}</p>
               <div className="jv-row jv-offer">
@@ -261,6 +322,8 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
             </>
           ) : phase === "connecting" ? (
             <p className="jv-caption">Waking Jarvis up...</p>
+          ) : phase === "ending" ? (
+            <p className="jv-caption">Jarvis is noting what to remember...</p>
           ) : locked ? (
             <>
               <p className="jv-caption">{status.reason}</p>
