@@ -64,7 +64,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(ai.locator(".ai-rows a").first()).toHaveAttribute("href", /^\/courses\//);
   await expect(ai.locator(".ai-spot-art img")).toBeVisible(); // its big picture (the email demo is off for now)
   await expect(ai.locator(".ai-demo")).toHaveCount(0);
-  await expect(ai.locator(".ai-spot-tag")).toContainText("Learn the hottest job in the tech market");
+  await expect(ai.locator(".ai-spot-tag")).toContainText("The hottest job in AI. Learn it by doing it.");
   expect(await page.evaluate(() => {
     const hero = document.querySelector("main")!.firstElementChild!;
     return !!hero.nextElementSibling?.matches("#ai, :has(> #ai)");

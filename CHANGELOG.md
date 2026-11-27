@@ -5,7 +5,7 @@
 - The claim email demo is off for now (owner: "remove this email animation for now"); the spotlight's big picture
   takes its place on the right, with no caption on it. Beside it only the tag line, the course name and the button
   remain (owner: the description and the chapters, tasks and hours line are gone too). The tag line
-  reads "New · Learn the hottest job in the tech market" (the owner's words). `ClaimDemo` stays in `HomeAiLabs.tsx`.
+  reads "New · The hottest job in AI. Learn it by doing it." (picked by the owner). `ClaimDemo` stays in `HomeAiLabs.tsx`.
 - The AI rows are compact (smaller pictures, type and spacing), and a course of 15 chapters or fewer is marked
   "Micro" (owner: "write micro in front of small courses"); today that is RAG and vector databases.
 - Ukiyo's art, made with OpenAI image generation in a woodblock style (four concepts for the spotlight, five row
