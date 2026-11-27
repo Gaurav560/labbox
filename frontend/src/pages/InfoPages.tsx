@@ -153,7 +153,7 @@ export function PricingPage() {
         "A larger daily allowance for the tutor and the model gateway",
         "Every Premium Read",
       ],
-      cta: <a className="btn" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("LabBox Pro")}`}>Tell me when it launches</a>,
+      cta: <a className="btn" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("LabBox Pro waitlist")}`}>Join the waitlist →</a>,
     },
     {
       id: "teams", name: "Teams", price: "Coming soon", note: "For colleges and companies", soon: true, off: true, // greyed out (owner, 27 November)
