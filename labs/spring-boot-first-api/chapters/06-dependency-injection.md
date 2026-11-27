@@ -2,8 +2,9 @@
 In chapter 5, every time a class asked for a bean, there was exactly one that fitted: one
 `PriceCalculator`, one `VisitCounter`. Spring's job was easy.
 
-Real shops are not that tidy. Our Shop API accepts payments by **card** and by **UPI**, and next year maybe
-by wallet too. Each is its own class, and they all do the same kind of job. So when a class says "I need
+Real shops are not that tidy. Our Shop API accepts payments by **card** and by **UPI** (Unified Payments
+Interface, India's system for paying straight from a bank account with a phone), and next year maybe by wallet
+too. Each is its own class, and they all do the same kind of job. So when a class says "I need
 something that can take a payment", there are two (or three) beans that fit. Which one should Spring
 pass in?
 
@@ -17,8 +18,9 @@ Make the Shop API start again by choosing a main payment gateway, then list ever
 :::
 
 :::step{type=concept title="Depend on what it does, not who does it" file="06-dependency-injection/src/main/java/com/shop/payments/PaymentGateway.java" line="3-11"}
-Open the project on the right: `PaymentGateway.java` is an **interface**. An interface in Java is a list
-of methods with no code inside, a promise: "anything that is a `PaymentGateway` can do *these* things".
+Open the project on the right: `PaymentGateway.java` is an **interface**. An interface in Java is a list of methods
+with no code inside, a promise: "anything that is a `PaymentGateway` can do *these* things". (A payment
+**gateway** is the service that actually moves the money for a shop.)
 
 ```java
 public interface PaymentGateway {
@@ -70,8 +72,8 @@ Build and run this chapter's project:
 cd 06-dependency-injection && mvn -q -o package -DskipTests && java -jar target/dependency-injection.jar
 ```
 
-The app does not start. Scroll up a little in the output and find this block (it is the most readable
-part of any start-up failure):
+The app does not start. Scroll up a little in the output and find this block (it is the most readable part of
+any start-up failure). This is what it said on our lab machine, with the long file locations shortened to `...`:
 
 ```text
 ***************************
@@ -84,10 +86,12 @@ Parameter 0 of constructor in com.shop.payments.CheckoutService required a singl
 	- cardGateway: defined in URL [...CardGateway.class]
 	- upiGateway: defined in URL [...UpiGateway.class]
 
+This may be due to missing parameter name information
+
 Action:
 
-Consider marking one of the beans as @Primary, updating the consumer to accept multiple beans, or
-using @Qualifier to identify the bean that should be consumed
+Consider marking one of the beans as @Primary, updating the consumer to accept multiple beans, or using
+@Qualifier to identify the bean that should be consumed
 ```
 
 Read it slowly. It is a very good error message:
@@ -98,6 +102,11 @@ Read it slowly. It is a very good error message:
 - **Which two:** `cardGateway` and `upiGateway`. Those are the **bean names**: by default, the class name
   with a small first letter.
 - **What you can do:** three options. We will go through all three, and you will use two of them.
+
+And the line "This may be due to missing parameter name information"? Spring has one more way to choose: if the
+constructor parameter's *name* matches a bean's name, it uses that bean. Our parameter is called `gateway`, which
+matches neither, so this line is only a general hint (we tried renaming the parameter to `upiGateway` on our lab
+machine, and the app started with UPI). The deep dive at the end comes back to it.
 
 Whenever a Spring app fails to start, look for this `APPLICATION FAILED TO START` block first.
 :::
@@ -131,7 +140,12 @@ Rebuild and run. The app starts again. Then:
 curl localhost:8080/pay/5000
 ```
 
-It should answer `Paid Rs 50 by UPI`. Press **Check**.
+It should answer `Paid Rs 50 by UPI` (5000 paise is Rs 50). Press **Check**.
+
+Usual slips: `@Primary` on `CardGateway` instead (then the answer says card), or on both gateways. We tried both
+on our lab machine: the second fails again, this time without the tidy "APPLICATION FAILED TO START" block, as a
+long error whose last `Caused by` line says `more than one 'primary' bean found among candidates: [cardGateway,
+upiGateway]`. With a long error, read the last `Caused by` line first.
 :::
 
 :::step{type=concept title="Option 2: name the one you want with @Qualifier"}
@@ -225,8 +239,11 @@ Rebuild, run, and try:
 curl localhost:8080/gateways
 ```
 
-You should see `["card","upi"]`. Notice that `@Primary` did not change anything here: when you ask for a
-list, you get all of them. Press **Check**.
+You should see `["card","upi"]`. Notice that `@Primary` did not change anything here: when you ask for a list, you
+get all of them. Press **Check**.
+
+Usual slips: returning `List.of()` still (the TODO's placeholder), returning the gateway objects instead of their
+names, or forgetting `.sorted()`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -278,6 +295,11 @@ from a request parameter.
 **Bean names.** You can give a bean an explicit name: `@Component("upi")`. Then `@Qualifier("upi")`
 refers to it. Explicit names survive renaming the class, which is nice for qualifiers.
 
+**Matching by parameter name.** As the error message hinted, when several beans fit and none is primary, Spring
+also tries the bean whose name equals the constructor parameter's name: `PaymentGateway upiGateway` gets the
+`upiGateway` bean. It works (we tried it), but renaming a parameter then silently changes which bean you get, so
+`@Primary` or `@Qualifier` say it more clearly.
+
 **Field injection.** You will see `@Autowired` on fields in older code (`@Autowired private PaymentGateway
 gateway;`). It works, but as chapter 5 explained, constructors are better: the dependencies are visible,
 the field can be `final`, and tests can pass in fakes without tricks.
@@ -287,15 +309,15 @@ the field can be `final`, and tests can pass in fakes without tricks.
 You can now handle the most common dependency injection situations:
 
 - Depend on an **interface**, so any implementation can be injected: **loose coupling**.
-- Spring injects by **type**: one fitting bean is injected; none, or more than one, stops the start-up
-  with a clear message. Look for **APPLICATION FAILED TO START**.
+- Spring injects by **type**: one fitting bean is injected; none stops the start-up; more than one stops it too,
+  unless you say which one. Look for **APPLICATION FAILED TO START**, or the last `Caused by` line.
 - **`@Primary`** marks the default bean when several fit.
 - **`@Qualifier("beanName")`** asks for one specific bean; it wins over `@Primary`. Bean names are the
   class name with a small first letter.
 - **`List<Type>`** in a constructor gets **all** the beans of that type; add a class, and it joins the list.
 - `.map(...)` in a stream turns each item into something else.
 
-:::photo{src="/lesson-images/spring/spring-06-notes.webp" alt="Handwritten notes about Dependency injection: depend on an interface, Spring injects by type, @Primary = the default, @Qualifier picks one, List<Type> gets them all" ai="true"}
+:::photo{src="/lesson-images/spring/spring-06-notes.webp" alt="Sketchnote: Dependency injection with several beans. Spring injects by type; no fitting bean fails the start-up, and with two you must choose. Flow: ask for an interface, Spring finds the beans of that type, one wins or a list gets all. Remember: @Primary sets the default; @Qualifier names one and wins over @Primary; List gets every bean; read APPLICATION FAILED TO START first." ai="true"}
 One page of notes for this chapter.
 :::
 
