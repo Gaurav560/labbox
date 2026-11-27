@@ -2627,5 +2627,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .jv.has-offer .jv-core { animation: jv-attn 1.6s ease-in-out infinite; }
 @keyframes jv-attn { 0%, 100% { box-shadow: 0 0 18px 2px color-mix(in srgb, var(--jv-a) 55%, transparent), inset 0 -4px 10px #0006; }
   50% { box-shadow: 0 0 30px 10px color-mix(in srgb, #ffb347 70%, transparent), inset 0 -4px 10px #0006; } }
-.jv-offer { justify-content: flex-start; gap: 8px; }
+.jv-offer { justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
+.jv-offer .btn { white-space: nowrap; }
 .jv-small a { color: var(--jv-b); }

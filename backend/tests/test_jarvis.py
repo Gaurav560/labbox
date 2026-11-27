@@ -243,3 +243,60 @@ def test_accepting_the_offer_tells_jarvis_why(api):
     assert "Why this conversation started" in text and "failed 3 checks" in text and "Expected two lines" in text
     r = api.post("/api/jarvis/session", json={"lab_id": LAB, "chapter_id": "first-program", "step": TASK_STEP, "reason": "fails"}, headers=h)
     assert r.status_code == 200, r.text
+
+
+# ---------- step 3: welcome, and memory across conversations ----------
+
+def test_a_new_learner_is_welcomed_and_a_returning_one_after_a_while(api):
+    from datetime import timedelta
+
+    from app.models import ChapterProgress, utcnow
+
+    h, uid = signup(api)
+    w = api.get("/api/jarvis/welcome", headers=h).json()
+    assert w["show"] and w["kind"] == "new" and "Welcome to LabBox" in w["line"]
+    with Session(engine) as s:
+        s.add(ChapterProgress(user_id=uid, lab_id=LAB, chapter_id="first-program", updated_at=utcnow()))
+        s.commit()
+    assert api.get("/api/jarvis/welcome", headers=h).json()["show"] is False  # was here a moment ago
+    with Session(engine) as s:
+        cp = s.get(ChapterProgress, (uid, LAB, "first-program"))
+        cp.updated_at = utcnow() - timedelta(days=2)
+        s.add(cp)
+        s.commit()
+    w = api.get("/api/jarvis/welcome", headers=h).json()
+    assert w["show"] and w["kind"] == "back" and "2 days ago" in w["line"]
+    assert w["continue_url"] == f"/labs/{LAB}?chapter=first-program"
+    # Talking from the welcome tells Jarvis why.
+    hp, up = signup(api, plan="pro")
+    r = api.post("/api/jarvis/session", json={"reason": "welcome"}, headers=hp)
+    assert r.status_code == 200, r.text
+
+
+def test_the_goal_reads_as_its_title(api):
+    from app import engagement
+
+    h, uid = signup(api)
+    with Session(engine) as s:
+        p = engagement.get_profile(s, uid)
+        p.goal = "backend-job"
+        s.add(p)
+        s.commit()
+    assert "Get a backend job" in api.get("/api/jarvis/welcome", headers=h).json()["line"]
+
+
+def test_jarvis_remembers_earlier_conversations_for_pro_only(api):
+    h, uid = signup(api, plan="pro")
+    sid = start(api, h).json()["session_id"]
+    api.post(f"/api/jarvis/session/{sid}/heartbeat", json={"seconds": 5, "ended": True,
+             "summary": "Meera struggled with print() and quotes; we fixed the missing closing quote together."}, headers=h)
+    with Session(engine) as s:
+        assert "closing quote" in s.get(JarvisSession, sid).summary
+        text = jarvis.instructions(s, s.get(User, uid), LAB, "first-program", 0)
+    assert "What you remember from your earlier conversations" in text and "closing quote" in text
+    # A free learner's trial conversation is not carried into anything.
+    hf, uf = signup(api)
+    sidf = start(api, hf).json()["session_id"]
+    api.post(f"/api/jarvis/session/{sidf}/heartbeat", json={"seconds": 5, "ended": True, "summary": "secret trial note"}, headers=hf)
+    with Session(engine) as s:
+        assert "secret trial note" not in jarvis.instructions(s, s.get(User, uf), LAB, "first-program", 0)

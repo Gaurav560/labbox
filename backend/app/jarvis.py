@@ -173,6 +173,18 @@ def _chapter_number(lab: LabConfig, chapter_id: str) -> int:
     return ids.index(chapter_id) + first if chapter_id in ids else 0
 
 
+def goal_title(goal_id: str | None) -> str | None:
+    """The onboarding goal's title ("Get a backend job"), from its id ("backend-job")."""
+    if not goal_id:
+        return None
+    try:
+        from .content import get_content
+        ob = get_content().onboarding
+        return next((g.title for g in (ob.goals if ob else []) if g.id == goal_id), goal_id)
+    except Exception:
+        return goal_id
+
+
 def _local_time(profile: UserProfile, now: datetime) -> str:
     local = now.replace(tzinfo=timezone.utc).astimezone(engagement.tz_or_default(profile.timezone))
     part = "morning" if 5 <= local.hour < 12 else "afternoon" if local.hour < 17 else "evening" if local.hour < 22 else "night"
@@ -211,7 +223,7 @@ def learner_context(session: Session, user: User, lab_id: str | None, chapter_id
         f"Member since {user.created_at:%d %B %Y} ({(now - user.created_at).days} days).",
     ]
     if profile.goal:
-        lines.append(f"Their goal, from sign-up: {profile.goal}.")
+        lines.append(f"Their goal, from sign-up: {goal_title(profile.goal)}.")
     if profile.placement_level:
         lines.append(f"Their level, from sign-up: {profile.placement_level}.")
     lines.append(f"Progress: level {profile.level}, {profile.xp_total} XP, a {profile.streak_current}-day streak (best {profile.streak_best}).")
@@ -244,6 +256,13 @@ def learner_context(session: Session, user: User, lab_id: str | None, chapter_id
     if stuck:
         lines.append("Where they have struggled this week:\n" + "\n".join(f"- {s}" for s in stuck))
 
+    if is_pro(user):
+        memories = session.exec(select(JarvisSession).where(JarvisSession.user_id == user.id, col(JarvisSession.summary).is_not(None))
+                                .order_by(col(JarvisSession.id).desc()).limit(MEMORY_COUNT)).all()
+        if memories:
+            lines.append("What you remember from your earlier conversations with them (newest first):\n"
+                         + "\n".join(f"- {m.started_at:%d %b}: {m.summary}" for m in memories))
+
     lab = _safe_lab(lab_id)
     if lab:
         here = [f"Right now they are in the lab \"{lab.title}\"."]
@@ -266,7 +285,9 @@ def learner_context(session: Session, user: User, lab_id: str | None, chapter_id
 
 def instructions(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None, help_reason: str = "") -> str:
     text = PERSONA + "\n\nWhat you know about this learner right now:\n" + learner_context(session, user, lab_id, chapter_id, step)
-    if help_reason:
+    if help_reason.startswith("WELCOME:"):
+        text += "\n\nWhy this conversation started: " + help_reason[len("WELCOME:"):]
+    elif help_reason:
         text += ("\n\nWhy this conversation started: you noticed they might be stuck and offered help, and they accepted. "
                  + help_reason + " Open by acknowledging it in one short, kind sentence, then ask what they have tried.")
     return text
@@ -333,6 +354,9 @@ def run_tool(session: Session, user: User, js: JarvisSession, name: str, step: i
 
 # ---------- noticing when a learner is stuck (step 2) ----------
 
+MEMORY_COUNT = 3  # earlier conversations' summaries given to a new one (Pro)
+SUMMARY_MAX = 600  # characters kept from one summary
+
 FAILS_TO_NUDGE = 3  # the same task failing this many checks in a row, without a pass
 IDLE_TO_NUDGE = 8 * 60  # seconds on one task step without pressing Check
 
@@ -395,6 +419,51 @@ def nudge(session: Session, user: User, lab_id: str | None, chapter_id: str | No
     return Nudge(nudge=False)
 
 
+# ---------- welcome on sign-up and on return (step 3) ----------
+
+AWAY_TO_WELCOME = timedelta(hours=6)  # away this long: "welcome back"
+
+
+class Welcome(BaseModel):
+    show: bool
+    kind: str = ""  # "new" (nothing started yet) or "back"
+    line: str = ""  # what the orb says
+    continue_url: str | None = None  # where they left off
+    continue_label: str = ""
+    detail: str = ""  # for Jarvis, when they tap Talk: why the conversation started
+
+
+def welcome(session: Session, user: User, now: datetime | None = None, force: bool = False) -> Welcome:
+    """A new learner (no lab opened yet) or one back after AWAY_TO_WELCOME. The dashboard asks once per browser
+    session. Text for everyone; the voice greeting is one tap away for Pro and trial learners."""
+    now = now or utcnow()
+    profile = engagement.get_profile(session, user.id)
+    first = (profile.display_name or user.username).split()[0]
+    last = session.exec(select(ChapterProgress).where(ChapterProgress.user_id == user.id).order_by(col(ChapterProgress.updated_at).desc()).limit(1)).first()
+    if last is None:
+        goal = f" Your goal: {goal_title(profile.goal)}." if profile.goal else ""
+        return Welcome(show=True, kind="new", line=f"Welcome to LabBox, {first}.{goal} Shall I help you pick your first lab?",
+                       detail=("WELCOME: they are new to LabBox and have not opened a lab yet. Welcome them warmly by name in one "
+                               "or two sentences, then ask one question about what they want to learn, and suggest one lab "
+                               "that fits. Use get_progress to see the labs on offer."))
+    if not force and now - last.updated_at < AWAY_TO_WELCOME:
+        return Welcome(show=False)
+    lab = _safe_lab(last.lab_id)
+    if not lab:
+        return Welcome(show=False)
+    ch = next((c for c in lab.chapters if c.id == last.chapter_id), None)
+    num = _chapter_number(lab, last.chapter_id)
+    days = (now - last.updated_at).days
+    when = "today" if days == 0 else "yesterday" if days == 1 else f"{days} days ago"
+    where = f"chapter {num}, \"{ch.title}\"" if ch else "your last chapter"
+    return Welcome(show=True, kind="back",
+                   line=f"Welcome back, {first}. You were in {lab.title}, {where}, {when}. Shall we pick up there?",
+                   continue_url=f"/labs/{lab.id}?chapter={last.chapter_id}", continue_label=f"Continue {lab.title}",
+                   detail=(f"WELCOME: they are back after {when if days else 'a few hours'}; they were last in {lab.title}, {where}. "
+                           "Welcome them back by name in one or two sentences, remind them where they stopped (and what you "
+                           "remember, if anything), and ask whether they want to pick up there."))
+
+
 # ---------- sessions ----------
 
 class SessionOut(BaseModel):
@@ -446,7 +515,10 @@ async def start(session: Session, user: User, lab_id: str | None, chapter_id: st
     lab = _safe_lab(lab_id)
     chapter = chapter_id if lab and any(c.id == chapter_id for c in lab.chapters) else None
     help_reason = ""
-    if reason and lab and chapter:
+    if reason == "welcome":
+        w = welcome(session, user, force=True)
+        help_reason = w.detail
+    elif reason and lab and chapter:
         n = nudge(session, user, lab.id, chapter, step, idle_seconds=IDLE_TO_NUDGE if reason == "idle" else 0)
         help_reason = n.detail if n.nudge else ""
     secret, expires = await mint_secret(instructions(session, user, lab.id if lab else None, chapter, step, help_reason))
@@ -497,6 +569,7 @@ class Heartbeat(BaseModel):
     usage: list[dict] = []  # response.done usage objects since the last heartbeat
     call_id: str | None = None
     ended: bool = False
+    summary: str | None = None  # Jarvis's own note on the conversation, written at the end (step 3)
 
 
 class HeartbeatOut(BaseModel):
@@ -522,6 +595,8 @@ async def heartbeat(session: Session, user: User, session_id: int, hb: Heartbeat
         js.cost_usd += cost(u)
     if hb.call_id and not js.call_id:
         js.call_id = hb.call_id[:80]
+    if hb.summary and hb.summary.strip():
+        js.summary = hb.summary.strip()[:SUMMARY_MAX]
     js.last_seen_at = now
     if hb.ended and js.ended_at is None:
         js.ended_at = now

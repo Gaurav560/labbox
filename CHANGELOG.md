@@ -1,5 +1,23 @@
 # Changelog
 
+## 28 November: Jarvis welcomes learners and remembers them (step 3)
+
+- **A welcome on the dashboard**, once per browser session (`GET /api/jarvis/welcome`, read only). A new learner (no
+  lab opened yet): "Welcome to LabBox, Ravi. Your goal: Get a backend job. Shall I help you pick your first lab?" A
+  learner back after 6 hours or more: "Welcome back, Meera. You were in Python from zero, chapter 1, "Your first
+  program", 2 days ago. Shall we pick up there?" with a **Continue** button. Pro and trial learners can tap **Talk to
+  Jarvis** and he opens from the welcome (the reason `welcome` on `POST /api/jarvis/session`).
+- **Memory across conversations (Pro).** When a Pro conversation ends, Jarvis writes himself two or three plain
+  sentences (what they worked on, where they struggled, what they told him about themselves) as a text-only reply
+  outside the conversation; it is sent with the last heartbeat and kept in `jarvis_session.summary` (migration 0017,
+  additive). The last 3 notes go into the next conversation's context. If the note takes over 8 seconds, the
+  conversation ends without it.
+- Checked with one real conversation (20 seconds, $0.028): the note came back in about 1 second and read "Meera is a
+  beginner learner working through Python from zero ... expressed confusion about why print outputs separate lines and
+  also shared a goal of getting a backend job within six months."
+- Tests: 3 new (welcome for new and returning learners, the goal shown as its title, memory for Pro only); 293 fast
+  backend tests pass.
+
 ## 28 November: Jarvis notices when a learner is stuck (step 2)
 
 - **Jarvis offers help when a learner looks stuck**, from rules on data LabBox already has (no model, so it costs

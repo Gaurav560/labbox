@@ -353,8 +353,12 @@ changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until paymen
   trial learners tap "Talk it through" (Jarvis is told why and opens with it); a free learner after the trial gets
   "Ask AI (typed)", which opens the tutor. Once per task per 6 hours, never on a passed task. Not done: "code undone
   again and again" (file edits are not recorded on the server yet).
-- [ ] Step 3: welcome on sign-up and on return (Pro: by voice after one tap), and memory across visits: a short text
-  summary saved after each conversation and given to the next one.
+- [x] Step 3: welcome on sign-up and on return, and memory across visits. The dashboard asks once per browser session
+  (`GET /api/jarvis/welcome`): a learner with no lab opened yet is welcomed by name with their goal; one away 6 hours or
+  more is told where they stopped, with a Continue link. Pro and trial learners can tap Talk to Jarvis, and he opens
+  from the welcome. At the end of a Pro conversation Jarvis writes himself a two or three sentence note (a text-only
+  reply outside the conversation, about 1 second); the last 3 notes are in his next conversation's context
+  (`jarvis_session.summary`, migration 0017).
 - [ ] Step 4: celebrations, learner settings (talk to me first, off switch), a consent note on what Jarvis can see.
 - Known limits: a spoken reply cannot be filtered before it is heard (the rules and the tools keep solutions out);
   the browser reports usage, and the server caps the counted seconds by the wall clock and hangs up at a limit.
