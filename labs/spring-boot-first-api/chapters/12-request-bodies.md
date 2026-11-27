@@ -3,7 +3,8 @@ Reading data is half of an API. The other half is accepting it: a shop owner add
 customer places an order, someone updates their address. That data arrives as **JSON in the request
 body**, and your code needs it as a Java object.
 
-This chapter covers that, and something just as important: **what you send back**. Right now the Shop API
+This chapter covers that, and something just as important: **what you send back**. (The body is the part of a
+request or response after the headers and the empty line, chapter 1.) Right now the Shop API
 has a quiet data leak. Every product it returns includes `costPaise`, what the shop *paid* for it, which
 customers (and competitors) should never see. The fix is a habit every professional API follows: separate
 classes for what comes in, what is stored, and what goes out. They are called **DTOs**, and you will
@@ -36,7 +37,8 @@ curl localhost:8080/products
 [{"id":1,"name":"Mango kulfi","pricePaise":2000,"costPaise":900}, ...]
 ```
 
-There it is: kulfi costs the shop Rs 9 and sells for Rs 20. Jackson writes **every field** of the object you
+That is the start of what our lab machine sent. There it is: kulfi costs the shop Rs 9 (900 paise) and sells for
+Rs 20 (2000 paise). Jackson writes **every field** of the object you
 return. It has no idea which ones are secret. Keep that in mind; we will fix it in the second task. Leave
 the app running.
 :::
@@ -67,14 +69,15 @@ the raw JSON text.
 Three details worth knowing:
 
 - **A missing field** gets the type's default: `null` for objects like `String`, `0` for `int`, `false` for
-  `boolean`. (Chapter 16 adds validation to refuse bodies with missing or wrong values.)
+  `boolean`. (On our lab machine, a product sent with only a name was stored with `"pricePaise":0`. Chapter 16 adds
+  validation to refuse bodies with missing or wrong values.)
 - **An extra field** the record does not have is **ignored** (Spring Boot sets Jackson up that way).
 - The client must say the body is JSON, with the header `Content-Type: application/json`.
 :::
 
 :::step{type=example title="Worked example: one body, three outcomes"}
-Let's see what happens with a good body, a forgotten header, and broken JSON, using the solved version of
-this chapter's endpoint:
+Let's see what happens with a good body, a forgotten header, and broken JSON, using the solved version of this
+chapter's endpoint on our lab machine:
 
 ```text
 POST /products   Content-Type: application/json   {"name": "Vada pav", "pricePaise": 2500}
@@ -87,11 +90,13 @@ POST /products   Content-Type: application/json   {"name": "Vada pav", pricePais
 -> 400 Bad Request
 ```
 
-- **415** happens because curl, without `-H "Content-Type: application/json"`, labels the body as a web
-  form. Spring has no converter that turns a form into a `NewProduct`, so it refuses. The server log even
-  says why: `Content-Type 'application/x-www-form-urlencoded' is not supported`.
-- **400** happens because the JSON is broken (a name without quotes, a missing `}`). Jackson cannot read
-  it, and the log says `JSON parse error: Unexpected character ('p')... was expecting double-quote`.
+- **415** happens because curl, without `-H "Content-Type: application/json"`, labels the body as a web form
+  (`application/x-www-form-urlencoded`, what an HTML form sends). Spring has no converter that turns a form into a
+  `NewProduct`, so it refuses. The server log even says why: `Content-Type
+  'application/x-www-form-urlencoded;charset=UTF-8' is not supported`.
+- **400** happens because the JSON is broken (a name without quotes, a missing `}`). Jackson cannot read it, and the
+  log says `JSON parse error: Unexpected character ('p' (code 112)): was expecting double-quote to start field
+  name`. (112 is the computer's number for the letter `p`.)
 
 In both error cases, your method never runs. When a POST "does nothing", check these two things first:
 the Content-Type header, and the JSON itself.
@@ -111,7 +116,11 @@ Rebuild, run, and add a product:
 curl -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Vada pav", "pricePaise": 2500}'
 ```
 
-You get it back with its new id, 4. Then `curl localhost:8080/products` shows four products. Press **Check**.
+You get it back with its new id, 4: `{"id":4,"name":"Vada pav","pricePaise":2500,"costPaise":0}`. Then `curl
+localhost:8080/products` shows four products. Press **Check**.
+
+Usual slips: a missing `@RequestBody` (then Spring does not read the body, and the fields arrive empty: `null` and
+`0`), `@GetMapping` instead of `@PostMapping`, or a different cost than `NEW_PRODUCT_COST_PAISE`.
 :::
 
 :::step{type=concept title="Why one class is not enough: DTOs"}
@@ -187,7 +196,10 @@ curl localhost:8080/products/1/view
 {"id":1,"name":"Mango kulfi","price":"Rs 20.00"}
 ```
 
-No `costPaise` anywhere. Press **Check**.
+No `costPaise` anywhere. (An unknown id, like `/products/99/view`, still answers 404.) Press **Check**.
+
+Usual slips: `%2d` instead of `%02d` (that pads with a space, giving `Rs 20. 0`), or `/ 100.0` (that makes a
+decimal number, and `%d` then fails with an error).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -255,7 +267,7 @@ You can now accept data safely and control exactly what you send:
   what a client may see (no leaks); the internal model holds everything.
 - Money in paise, formatted with `String.format("Rs %d.%02d", paise / 100, paise % 100)`.
 
-:::photo{src="/lesson-images/spring/spring-12-notes.webp" alt="Handwritten notes about Request bodies: @RequestBody: JSON to object, no Content-Type: 415, broken JSON: 400, input DTO: only what clients may set, money in paise" ai="true"}
+:::photo{src="/lesson-images/spring/spring-12-notes.webp" alt="Sketchnote: Request bodies and DTOs. The client sends JSON in the body, and @RequestBody turns it into a Java object. Flow: JSON body, Jackson, input DTO, stored model, output DTO. Remember: no Content-Type header gives 415; broken JSON gives 400; an input DTO holds only what clients may set; an output DTO holds only what clients may see." ai="true"}
 One page of notes for this chapter.
 :::
 
