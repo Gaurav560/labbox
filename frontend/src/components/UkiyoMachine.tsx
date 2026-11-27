@@ -55,12 +55,13 @@ const PICK_LOGO: Record<string, string> = {
 function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
   return (
     <>
-      <p className="um-pick-label" id="um-pick-label">Pick a lab to try <span aria-hidden="true">↓</span></p>
+      <p className="um-pick-label" id="um-pick-label">Pick a lab to try</p>
       <div className="um-picker" role="tablist" aria-labelledby="um-pick-label">
         {LABS.map((l) => (
           <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>
-            {PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}
-            {l.label}
+            <span className="um-pick-logo" aria-hidden="true">{PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}</span>
+            <span className="um-pick-name">{l.label}</span>
+            <span className="um-pick-go" aria-hidden="true">→</span>
           </button>
         ))}
       </div>

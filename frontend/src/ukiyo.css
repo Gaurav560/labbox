@@ -964,19 +964,37 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 #ai { scroll-margin-top: 72px; }  /* the menu's AI labs link lands below the sticky header */
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-/* the lab picker as round buttons with logos (owner, 27 November: learners must see they are buttons; no plain boxes) */
-.um-pick-label { margin: 0 0 10px; font: 600 12px var(--font-code); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.um-pick-label span { color: var(--vermilion); }
-.um-picker { gap: 8px; margin-bottom: 10px; }
-.um-picker button { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px 6px 8px; border: 1px solid var(--border);
-  border-radius: 999px; background: var(--card); color: var(--text); font: 500 14px var(--font-text); cursor: pointer;
-  box-shadow: 0 1px 0 var(--rule); transition: transform var(--t-soft), border-color var(--t-soft), box-shadow var(--t-soft); }
-.um-picker button img { width: 18px; height: 18px; object-fit: contain; padding: 2px; border-radius: 50%; background: #fffdf8; }
+/* the lab picker as a printed index (owner, 27 November: the round buttons "look out of this page"): three ruled
+   columns like the AI rows and the dashboard's list; each cell a logo on paper, a serif name and an arrow; the picked one
+   has a vermilion bar on its left and a soft tint */
+.um-pick-label { margin: 0 0 8px; font: 600 11px var(--font-code); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.um-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0 0 18px; border-top: 1px solid var(--rule); }
+.um-picker button { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+  padding: 9px 10px 9px 12px; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none;
+  color: var(--text); font: 600 15px/1.2 var(--font-serif); text-align: left; cursor: pointer; transition: background var(--t-soft); }
+.um-picker button:not(:nth-child(3n)) { border-right: 1px solid var(--rule); }
 .um-picker button::after { display: none; }
-.um-picker button:hover { transform: translateY(-2px); border-color: var(--text); box-shadow: 0 6px 14px -8px #0006; }
-.um-picker button[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600;
-  box-shadow: inset 0 -2px 0 var(--vermilion); }
-.um-picker button:focus-visible { outline: 2px solid var(--vermilion); outline-offset: 2px; }
+.um-picker button::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; background: var(--vermilion);
+  transform: scaleY(0); transition: transform 260ms cubic-bezier(.2, .7, .2, 1); }
+.um-pick-logo { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--rule); background: #fffdf8; }
+.um-pick-logo img { width: 17px; height: 17px; object-fit: contain; }
+.um-pick-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.um-pick-go { color: var(--muted); font: 14px var(--font-text); opacity: 0; transform: translateX(-4px); transition: opacity var(--t-soft), transform var(--t-soft); }
+.um-picker button:hover { transform: none; background: var(--tint-accent); }
+.um-picker button:hover .um-pick-go { opacity: 1; transform: none; }
+.um-picker button[aria-selected="true"] { background: color-mix(in srgb, var(--vermilion) 8%, transparent); color: var(--text); box-shadow: none; }
+.um-picker button[aria-selected="true"]::before { transform: scaleY(1); }
+.um-picker button[aria-selected="true"] .um-pick-go { opacity: 1; transform: none; color: var(--vermilion); }
+.um-picker button:focus-visible { outline: 2px solid var(--vermilion); outline-offset: -2px; }
+@media (max-width: 520px) { .um-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .um-picker button:not(:nth-child(3n)) { border-right: 0; } .um-picker button:nth-child(odd) { border-right: 1px solid var(--rule); } }
 /* the red line under the machine's lid stays visible before Run too (owner, 27 November: "keep it"); the bright fill
    still runs across it while the machine loads */
 .ua-bar { background: color-mix(in srgb, var(--vermilion) 55%, transparent); }
+/* names never cut: the arrow floats over the cell's right edge instead of taking a column */
+.um-picker button { grid-template-columns: 26px minmax(0, 1fr); padding-right: 22px; font-size: 14.5px; }
+.um-pick-logo { width: 26px; height: 26px; }
+.um-pick-name { white-space: normal; }
+.um-pick-go { position: absolute; right: 8px; top: 50%; margin-top: -9px; }
+/* the FDE spotlight's "New" label in red (owner, 27 November: "keep it red") */
+.uh-ai .ai-tag-new { background: var(--vermilion); color: #fff; }
