@@ -89,7 +89,8 @@ standard, eight short; see the table in `ROADMAP.md`).
 - Phase J (admin and funnel) done. Phase H: H1, H2, H3, H5, H6 done; H4's Google and GitHub sign-in done (27 November; the
   session cookie and websocket ticket still to do). The owner's order since 27 November (memory `next-steps-order`): AWS
   deploy (waiting for the owner's budget answer), then the Forward Deployed Engineer course (done 27 November), then every
-  course to the full standard, then a pricing page (UI only).
+  course to the full standard, then a pricing page (UI only; done 27 November, `/pricing`, plans without prices). The
+  AI courses' intro pages are public (`GET /api/courses/{lab_id}`, AI track only, titles only).
 - AI track (later) (`ROADMAP.md` section B.2): two owner decisions first (which model, build
   order), then stage 1. Phase H's plan is in section B.4, also waiting for an OK.
 - Pre-launch items (separate origin for /ide and /preview, self-hosted VS Code webview files, a real

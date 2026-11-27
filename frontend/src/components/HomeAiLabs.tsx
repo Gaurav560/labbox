@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { Link } from "react-router-dom";
 import type { CatalogLab } from "../api";
+import { labBrand } from "../brand";
 
 /*
  * The home page's AI section (owner, 27 November: "ai section labs at the forefront on the homepage, with cool
  * animation, so the forward deployed engineer gets the max visibility"). The same file on both designs; each design
- * styles the `ai-` classes in its own stylesheet and passes its own picture for a lab (`art`).
+ * styles the `ai-` classes in its own stylesheet. No pictures here (owner, 27 November: "too many images on the home
+ * page"): the spotlight keeps one big picture ("i need a big image for Forward Deployed Engineer like it was
+ * before"), and the other AI labs are ruled rows with a small logo, like the dashboard's list.
  */
 
 export const SPOTLIGHT = "forward-deployed-engineer";
@@ -102,16 +105,28 @@ export function ClaimDemo() {
 
 const hours = (min?: number | null) => (min ? `${Math.round(min / 60)} hours` : "");
 
+/** A course's parts in order, as a short path (its syllabus at a glance). */
+function Parts({ parts }: { parts?: string[] }) {
+  if (!parts?.length) return null;
+  return (
+    <ol className="ai-parts" aria-label="The course's parts">
+      {parts.map((p) => <li key={p}>{p}</li>)}
+    </ol>
+  );
+}
+
 /** The AI section: the Forward Deployed Engineer spotlight with its demo, then the other AI labs. */
-export default function HomeAiLabs({ labs, labLink, art, spotArt, title, lead }: {
+export default function HomeAiLabs({ labs, signedIn, spotArt, title, lead }: {
   labs: CatalogLab[];
-  labLink: (lab: CatalogLab) => string;
-  art: (lab: CatalogLab) => ReactNode;
-  spotArt?: ReactNode; // the spotlight's picture; the lab's own `art` when not given
+  signedIn: boolean;
+  spotArt?: ReactNode; // the spotlight's big picture
   title: ReactNode;
   lead: ReactNode;
 }) {
   const [ref, seen] = useOnScreen<HTMLDivElement>();
+  // Every AI course opens its own intro page, the one with the skill map, for visitors too (owner, 27 November:
+  // "do not send them to the login or sign-up page directly").
+  const course = (lab: CatalogLab) => `/courses/${lab.id}`;
   const spot = labs.find((l) => l.id === SPOTLIGHT);
   const others = OTHERS.map((o) => ({ ...o, lab: labs.find((l) => l.id === o.id) })).filter((o) => o.lab);
   if (!spot && !others.length) return null;
@@ -126,31 +141,33 @@ export default function HomeAiLabs({ labs, labLink, art, spotArt, title, lead }:
         {spot && (
           <article className="ai-spot" aria-labelledby="ai-spot-title">
             <div className="ai-spot-text">
-              <div className="ai-spot-art">{spotArt ?? art(spot)}</div>
+              {spotArt && <div className="ai-spot-art">{spotArt}</div>}
               <p className="ai-spot-tag"><span className="ai-dot" aria-hidden="true" />New · where a model meets a real customer</p>
               <h3 id="ai-spot-title">{spot.title}</h3>
               <p className="ai-spot-sub">Join a motor insurer for one engagement and build Claimdesk, its AI claims assistant: discovery, messy data, model calls, evals, privacy, shadow mode, monitoring and the handover.</p>
+              <Parts parts={spot.parts} />
               <p className="ai-spot-facts">
                 <span><strong>{spot.chapter_count}</strong> chapters</span>
                 <span><strong>44</strong> tasks</span>
                 {spot.estimated_minutes ? <span><strong>{Math.round(spot.estimated_minutes / 60)}</strong> hours</span> : null}
               </p>
-              <Link className="h-btn h-btn-primary ai-spot-go" to={labLink(spot)}>Start the course →</Link>
+              <Link className="h-btn h-btn-primary ai-spot-go" to={course(spot)}>{signedIn ? "Open the course →" : "See the course →"}</Link>
             </div>
             <ClaimDemo />
           </article>
         )}
         {others.length > 0 && (
-          <ul className="ai-cards">
+          <ul className="ai-rows">
             {others.map((o, i) => (
               <li key={o.id} style={{ "--i": i } as CSSProperties}>
-                <Link className="ai-card" to={labLink(o.lab!)}>
-                  <span className="ai-card-art" aria-hidden="true">{art(o.lab!)}</span>
-                  <span className="ai-card-text">
-                    <strong>{o.lab!.title}</strong>
-                    <span>{o.line}</span>
-                    <small>{o.lab!.chapter_count} chapters{o.lab!.estimated_minutes ? ` · ${hours(o.lab!.estimated_minutes)}` : ""}</small>
+                <Link className="ai-row" to={course(o.lab!)}>
+                  <span className="ai-logo" aria-hidden="true">
+                    {labBrand(o.lab!.cover_credit) ? <img src={labBrand(o.lab!.cover_credit)!.logo} alt="" /> : <b>{o.lab!.title.slice(0, 1)}</b>}
                   </span>
+                  <strong>{o.lab!.title}</strong>
+                  <span className="ai-row-line">{o.line}</span>
+                  <small>{o.lab!.chapter_count} chapters{o.lab!.estimated_minutes ? ` · ${hours(o.lab!.estimated_minutes)}` : ""}</small>
+                  <span className="ai-row-go" aria-hidden="true">→</span>
                 </Link>
               </li>
             ))}

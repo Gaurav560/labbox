@@ -6,12 +6,15 @@ const COLORS: Record<string, string> = {
   javascript: "#F7DF1E", express: "#8a8a8a", redis: "#DC382D", nodejs: "#5FA04E",
   typescript: "#3178C6", linux: "#FCC624", git: "#F05033", docker: "#2496ED", kubernetes: "#326CE5",
   nginx: "#009639", mysql: "#00758F", mongodb: "#47A248",
+  langchain: "#4fd1a5", langchain4j: "#f5a623", langgraph: "#5fb3d9", rust: "#e8743b",
 };
 
 export function labBrand(coverCredit: { by?: string } | null | undefined): { logo: string; color: string } | null {
-  const m = /Logos:\s*([\w-]+)/.exec(coverCredit?.by ?? "");
-  if (!m || !COLORS[m[1]]) return null;
-  return { logo: `/logos/${m[1]}.svg`, color: COLORS[m[1]] };
+  // "Logos: redis,python" (devicon names) or "Logo: LangChain4j" (a brand name): both give the first logo's file.
+  const m = /Logos?:\s*([\w-]+)/.exec(coverCredit?.by ?? "");
+  const name = m?.[1].toLowerCase();
+  if (!name || !COLORS[name]) return null;
+  return { logo: `/logos/${name}.svg`, color: COLORS[name] };
 }
 
 // Each lab's colour on a dark surface: its cover's brand colour, but dark ones (navy Java, grey Linux)

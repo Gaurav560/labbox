@@ -414,11 +414,57 @@ class CatalogLab(LabInfo):
     id: str
     title: str
     chapter_count: int
+    # The course's part names, in order (its syllabus at a glance, for the home page's course details; owner,
+    # 27 November: "show the description, do not send them to sign up directly"). Names only, never chapters.
+    parts: list[str] = []
+
+
+def _parts(lab) -> list[str]:
+    seen: list[str] = []
+    for c in lab.chapters:
+        if c.part and c.part not in seen:
+            seen.append(c.part)
+    return seen
 
 
 @public_router.get("/catalog", response_model=list[CatalogLab])
 def catalog() -> list[CatalogLab]:
-    return [CatalogLab(**_info(lab), id=lab.id, title=lab.title, chapter_count=len(lab.chapters)) for lab in all_labs()]
+    return [CatalogLab(**_info(lab), id=lab.id, title=lab.title, chapter_count=len(lab.chapters), parts=_parts(lab))
+            for lab in all_labs()]
+
+
+# The AI courses' intro pages are public (owner, 27 November: the home page's AI rows open "the actual intro page
+# where the skill map is", for visitors too; "only the AI courses"). Titles only, as a locked lab's course page shows
+# them: parts, chapters, subtopics and task titles. Never lessons, hints, task cards, tests or solutions.
+PUBLIC_COURSE_TRACKS = {"ai"}
+
+
+@public_router.get("/courses/{lab_id}", response_model=LabDetail)
+def public_course(lab_id: str) -> LabDetail:
+    lab = get_lab(lab_id)
+    if lab.track not in PUBLIC_COURSE_TRACKS:
+        raise HTTPException(404, "Log in to see this course")
+    return LabDetail(
+        **_info(lab),
+        before_you_start=_before_you_start(lab),
+        id=lab.id,
+        title=lab.title,
+        description=lab.description,
+        language=lab.language,
+        chapters=[
+            ChapterOut(
+                id=c.id,
+                title=c.title,
+                minutes=c.minutes,
+                part=c.part,
+                topics=chapter_topics(lab, c.id),
+                tasks=[TaskOut(id=t.id, title=t.title, passed=None, xp=t.xp) for t in c.tasks],
+            )
+            for c in lab.chapters
+        ],
+        progress=Progress(passed_tasks=0, total_tasks=lab.task_count),
+        access="locked",
+    )
 
 
 @public_router.get("/labs/{lab_id}/cover", include_in_schema=False)

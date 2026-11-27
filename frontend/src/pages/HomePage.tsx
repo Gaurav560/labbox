@@ -91,6 +91,7 @@ export default function HomePage() {
         <nav aria-label="Main" className="home-nav">
           <a href="#ai">AI labs</a>
           <Link to="/library">Premium Reads</Link>
+          <Link to="/pricing">Pricing</Link>
           <a href="#faq">FAQs</a>
         </nav>
         <span className="spacer" />
@@ -127,11 +128,10 @@ export default function HomePage() {
         {/* AI labs first, with the Forward Deployed Engineer course in the spotlight (owner, 27 November) */}
         <HomeAiLabs
           labs={live}
-          labLink={labLink}
-          art={(lab) => (lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : null)}
+          signedIn={!!user}
           spotArt={<>
-            <img src="/lesson-images/forward-deployed-engineer/fde-blue-ridge.webp" alt="The command ship USS Blue Ridge being guided into its forward deployed base by a tug" loading="lazy" />
-            <span className="ai-spot-credit">U.S. Navy photo, public domain</span>
+            <img src="/home/fde-spotlight.webp" alt="A miniature insurance office at night: an engineer at a laptop sends claim forms and emails from filing cabinets through a glowing AI core to a dashboard of checks, with one red stop barrier" />
+            <span className="ai-spot-credit">Illustration made for LabBox (AI)</span>
           </>}
           title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
           lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}

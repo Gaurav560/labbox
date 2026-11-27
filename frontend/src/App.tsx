@@ -2,7 +2,7 @@ import { lazy, Suspense, useLayoutEffect, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigationType, useParams } from "react-router-dom";
 import { useAuth } from "./auth";
 import HomePage from "./pages/HomePage";
-import { FaqPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
+import { FaqPage, PricingPage, PrivacyPage, TermsPage } from "./pages/InfoPages";
 import CertificatePage from "./pages/CertificatePage";
 import CertificatesPage from "./pages/CertificatesPage";
 import LabsPage from "./pages/LabsPage";
@@ -48,6 +48,13 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Waits for the sign-in check, then shows the page signed in or not (the AI courses' intro pages are public). */
+function AuthReady({ children }: { children: ReactNode }) {
+  const { loading } = useAuth();
+  if (loading) return <div className="center-screen">Loading...</div>;
+  return <>{children}</>;
+}
+
 function SkillsRedirect() {
   const { labId = "" } = useParams();
   return <Navigate to={`/courses/${labId}`} replace />;
@@ -75,6 +82,7 @@ export default function App() {
       <Route path="/" element={<HomeOrDashboard />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/faq" element={<FaqPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/labs" element={<RequireAuth><LabsPage /></RequireAuth>} />
@@ -86,7 +94,7 @@ export default function App() {
       <Route path="/verify/:id" element={<VerifyPage />} />
       <Route
         path="/courses/:labId"
-        element={<RequireAuth><Suspense fallback={<div className="center-screen">Loading...</div>}><CoursePage /></Suspense></RequireAuth>}
+        element={<AuthReady><Suspense fallback={<div className="center-screen">Loading...</div>}><CoursePage /></Suspense></AuthReady>}
       />
       <Route
         path="/labs/:labId"

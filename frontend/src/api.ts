@@ -201,7 +201,7 @@ export interface SkillNode {
   state: NodeState;
 }
 export interface SkillMap { track: string; title: string; nodes: SkillNode[] }
-export interface CatalogLab extends LabInfo { id: string; title: string; chapter_count: number }
+export interface CatalogLab extends LabInfo { id: string; title: string; chapter_count: number; parts?: string[] }
 export interface TrackSummary { track: string; title: string; nodes: number; done: number }
 export interface Onboarding { goals: { id: string; title: string; blurb: string }[]; placement: { question: string; options: string[] }[] }
 export interface OnboardingResult {
@@ -266,6 +266,7 @@ export const api = {
   deleteEntry: (labId: string, path: string) => request<{ deleted: boolean }>("DELETE", `/api/labs/${q(labId)}/files?path=${q(path)}`),
 
   catalog: () => request<CatalogLab[]>("GET", "/api/catalog"), // public, no login
+  publicCourse: (labId: string) => request<LabDetail>("GET", `/api/courses/${q(labId)}`), // AI courses only, no login
   stats: () => request<Stats>("GET", "/api/me/stats"),
   saveProfile: (p: Partial<Pick<Profile, "display_name" | "timezone" | "goal">>) => request<Profile>("PUT", "/api/me/profile", p),
   drillToday: () => request<DrillState>("GET", "/api/drill/today"),

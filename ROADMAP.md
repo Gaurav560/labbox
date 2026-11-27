@@ -129,9 +129,11 @@ Every lab passes `validate --strict` and `test-lab` (the starter fails, the solu
   connect@telusko.com. Names live in `frontend/src/site.ts`.
 - **Home page (AI first):** hero "Learn AI by building it, not watching it", the pill "New: the Forward Deployed
   Engineer course", then the **AI labs** right under the hero (27 November: the FDE course in a spotlight with a playing
-  claim demo, the five other AI labs beside it; `HomeAiLabs.tsx`, the same file on both designs), **Inside a lab** (a real lab screenshot in a framed window, a different one of 26, from all 16 labs, on each visit, framed in that lab's colour, six
+  claim demo and new AI art, the five other AI labs as rows with small logos that open each course's public intro page; `HomeAiLabs.tsx`, the same file on both designs), **Inside a lab** (a real lab screenshot in a framed window, a different one of 26, from all 16 labs, on each visit, framed in that lab's colour, six
   one-line features), the lab grid, "Also on LabBox" tracks, the red closing panel, then
   **FAQs just above the footer** (heading on the left, one numbered list that opens smoothly) (the home footer no longer links to them).
+- **Pricing page (27 November, UI only):** `/pricing`, Free, Pro and Teams; Pro and Teams "Coming soon" with no price
+  and no payment. Linked from the home menu and public footers.
 - **Home page look:**
   - Colours: GitHub charcoal (`#111512`) with a faint tile grid, black panels, white buttons, a muted brick red for small accents, and a little yellow.
   - Hero product tour: Read, Guess, Code, Check scenes for all 15 labs, in a random order for each visitor, with opt-in sound.
