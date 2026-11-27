@@ -1128,6 +1128,12 @@ html { scroll-behavior: smooth; }
   transition: transform 520ms cubic-bezier(.3, 1.3, .5, 1); }
 .um-knob i { position: absolute; left: 50%; top: 8px; width: 4px; height: 24px; margin-left: -2px; border-radius: 2px; background: var(--vermilion); }
 .um-knob::after { content: ""; position: absolute; inset: 30px; border-radius: 50%; border: 1px solid var(--rule); }
+/* Light theme: the same dark knob as the dark theme (owner, 27 November: the white knob "is not so good looking" on
+   paper, "in dark theme it looks good"); it matches the ink terminal under it. */
+:root[data-theme="light"] .um-knob { border-color: #14120f;
+  background: radial-gradient(circle at 38% 32%, #57514a, #2a2723 62%, #1c1a17);
+  box-shadow: inset 0 -6px 14px #0007, inset 0 2px 0 #ffffff1f, 0 14px 24px -12px #1c1a1799; }
+:root[data-theme="light"] .um-knob::after { border-color: #ffffff22; }
 .um-knob-label strong { display: block; font: 600 26px/1.15 var(--font-serif); }
 .um-knob-label span { font: 500 12px var(--font-code); color: var(--muted); letter-spacing: .03em; }
 .um-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

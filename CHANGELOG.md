@@ -1,5 +1,11 @@
 # Changelog
 
+## 27 November: Ukiyo home, a dark knob in the light theme too
+
+- The lab picker's knob on the home page is dark in the light theme as well (owner: the white knob "is not so good
+  looking" on paper, "in dark theme it looks good"). It now matches the ink terminal under it. Ukiyo only; master has
+  no knob.
+
 ## 27 November: chapter folders appear one chapter at a time (plan A)
 
 - **A learner's machine shows a chapter's starter folder only once they reach that chapter** (owner: all 22 folders in
