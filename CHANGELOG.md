@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 25 rewritten (easy, a little detailed, checked)
+
+- Chapter 25, "Testing controllers", to the lesson rules: exit code explained; the photo lead says why it belongs;
+  the first task lists its slips (`@MockBean` from old tutorials, a `when` for a different id, a test method not
+  `void` or not `@Test`).
+- Checked on a lab machine with the starter, the solution and an altered copy: the starter's empty test class runs
+  silently with exit code 0; the solution's two tests pass, the web slice starting in 1.282 seconds; expecting
+  `"Samosa"` fails exactly as quoted, now with the real "Time elapsed" and "Failures:" lines.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 24 rewritten (easy, a little detailed, checked)
 
 - Chapter 24, "Migrations with Flyway", to the lesson rules: `ALTER TABLE`, checksum and schema explained; why V1

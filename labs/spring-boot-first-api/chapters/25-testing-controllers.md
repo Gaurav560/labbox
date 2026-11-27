@@ -34,7 +34,7 @@ Car makers have the same idea, built in metal: a crash test dummy is crashed on 
 failure shows up in the lab and never on the road. A good test does that for your code.
 
 :::photo{src="/lesson-images/spring/crash-dummy.webp" alt="A THOR crash test dummy with a tan body and visible joints and cables, sitting in a test laboratory" credit="Lin Pan" license="CC BY-SA 3.0" source="https://commons.wikimedia.org/wiki/File:Female_Crash_Test_Dummy_-_THOR_5th.jpg"}
-A crash test dummy: break it in the lab, so nothing breaks on the road.
+A crash test dummy: break it in the lab, so nothing breaks on the road. Your tests are the dummy for your code.
 :::
 
 Every test has the same three parts, often written as comments:
@@ -62,7 +62,8 @@ A slice starts one layer; the layer below it is replaced by a mock.
 - **`@DataJpaTest`**: starts entities, repositories and an in-memory database (chapter 26).
 - **`@SpringBootTest`**: everything, for testing a whole flow end to end.
 
-A web slice starts in about a second and checks exactly the controller's job. But the controller needs a
+A web slice starts in about a second (this chapter's took 1.282 seconds on our lab machine) and checks exactly the
+controller's job. But the controller needs a
 `ProductService`, and the slice does not create one. So you give it a **fake**.
 :::
 
@@ -180,7 +181,8 @@ Maven runs every test in `src/test/java`:
 cd 25-testing-controllers && mvn -q -o test
 ```
 
-With no tests yet, it succeeds silently. Once you have written them, a passing run prints Spring's start-up lines
+With no tests yet, it succeeds silently (on our lab machine: no output at all, and an exit code of 0, the
+terminal's way of saying "it worked"). Once you have written them, a passing run prints Spring's start-up lines
 and nothing else; a failing run prints which test failed, and why.
 :::
 
@@ -198,12 +200,22 @@ You need the `MockMvc` field, the `@MockitoBean ProductService` field, and the i
 Run `mvn -q -o test` until it passes. Then try breaking one on purpose: expect `"Samosa"` instead of
 `"Mango kulfi"`, and run again:
 
+On our lab machine, among the output:
+
 ```text
-[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0 <<< FAILURE! -- in com.shop.product.ProductControllerTest
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1.618 s <<< FAILURE! -- in com.shop.product.ProductControllerTest
+...
+[ERROR] Failures:
 [ERROR]   ProductControllerTest.returnsTheProduct:30 JSON path "$.name" expected:<Samosa> but was:<Mango kulfi>
 ```
 
-The test's name, the line, what was expected and what came back. Put it back, and press **Check**.
+The test's name, the line (30, in our version of the file), what was expected and what came back. Put it back, and
+press **Check**.
+
+Usual slips: `@MockBean` from an old tutorial (it still works in Spring Boot 3.4 but is marked as going away; use
+`@MockitoBean`), a `when(...)` for a different id than the one in the request (`find(2)` set up, `/products/1`
+requested: the mock then returns an empty `Optional`, and the first test gets 404), or a test method that is not `void` or
+not annotated `@Test` (JUnit then skips it, and `Tests run` shows fewer tests than you wrote).
 :::
 
 :::step{type=task task=catches_bug title="Your turn: catch the planted bug"}
@@ -278,7 +290,7 @@ You can now test the web layer the way professional teams do:
 - **`MockMvc`**: `perform(get(...))`, `andExpect(status()...)`, `andExpect(jsonPath("$.field").value(...))`.
 - Read a failure: test name, line, expected and actual.
 
-:::photo{src="/lesson-images/spring/spring-25-notes.webp" alt="Handwritten notes about Testing controllers: @WebMvcTest: only the web layer, @MockitoBean fakes the service, MockMvc: perform, andExpect, jsonPath checks the JSON, a good test fails on wrong code" ai="true"}
+:::photo{src="/lesson-images/spring/spring-25-notes.webp" alt="Sketchnote: Testing controllers. A good test passes on right code and fails on wrong code. Flow: arrange the mock, perform a request, expect the status, check the JSON. Remember: @WebMvcTest starts only the web layer; @MockitoBean replaces the service with a mock; jsonPath reads a field of the answer; a test proves only what it checks." ai="true"}
 One page of notes for this chapter.
 :::
 
