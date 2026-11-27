@@ -133,7 +133,7 @@ export default function HomePage() {
             <img src="/home/fde-spotlight.webp" alt="A miniature insurance office at night: an engineer at a laptop sends claim forms and emails from filing cabinets through a glowing AI core to a dashboard of checks, with one red stop barrier" />
           </>}
           title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
-          lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}
+          lead="Each AI course is a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway."
         />
 
         <section className="h-strip" aria-label="Technologies you practise on">

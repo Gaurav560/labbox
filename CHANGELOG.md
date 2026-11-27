@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- The AI section's lead no longer counts the courses (owner: "remove 6"): "Each AI course is a real build on your own
+  machine: model calls, RAG search, agents and evals, through the LabBox gateway."
 - The claim email demo is off for now (owner: "remove this email animation for now"); the spotlight's big picture
   takes its place on the right, with no caption on it. Beside it only the tag line, the course name and the button
   remain (owner: the description and the chapters, tasks and hours line are gone too). The tag line
