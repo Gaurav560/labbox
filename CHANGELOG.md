@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 8 rewritten (easy, a little detailed, checked)
+
+- Chapter 8, "Auto-configuration", to the lesson rules: the report's bracketed condition names and `SearchStrategy`
+  explained; both tasks list their slips (the annotation on the wrong bean; `havingValue` without quotes does not
+  compile).
+- Checked on a lab machine with the starter and the solution. Quoted as they really came: the two-greeter failure
+  (with chapter 6's parameter-name hint line), `Welcome to the Shop API`, the banner on and `No festival today` with
+  `--shop.festival.enabled=false`, and the debug report's entries (now with their real suffixes; the report is about
+  1,000 lines). "About 150 more" auto-configurations made exact: the 3.4.1 jar lists 153.
+- Corrected: `management.endpoints.web.exposure.include` decides which Actuator endpoints can be reached over the
+  web, not which exist.
+- A new sketchnote page, redrawn once (the backing-off bullet had lost "yours wins").
+
 ## 28 November: Spring Boot chapter 7 rewritten (easy, a little detailed, checked)
 
 - Chapter 7, "Configuration and profiles", to the lesson rules: environment variable explained; YAML indentation
