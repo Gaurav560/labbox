@@ -6,7 +6,7 @@ real code and data, still pictures with real numbers, new notes pages. The rules
 After each lab: stop, tell the owner, do the owner's small tasks, then the next lab. What was wrong and fixed in each
 chapter is in `CHANGELOG.md`.
 
-Status: **5 of 23 labs done** (114 of 319 chapters).
+Status: **6 of 23 labs done** (145 of 319 chapters).
 
 | # | Lab | Title | Chapters | Status | Done on |
 |---|---|---|---|---|---|
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Spring Boot lab DONE: 31 of 31; validate passes; test-lab green; ROADMAP and HANDOFF updated.
 - 28 Nov: Spring Boot ch 30 done: checkout answers quoted; five promises of a non-existent 'production course' (ch 15, 22, 23, 28, 30) reworded; sketchnote. SPRING BOOT LAB DONE (31 of 31).
 - 28 Nov: Spring Boot ch 29 done: supplier calls re-run (120, 0, 503 in 1.005 s, 503 when down); 200 threads made exact; slips; sketchnote (redrawn once).
 - 28 Nov: Spring Boot ch 28 done: CSRF-on DELETE is 401 not 403 (tried; text, tip, quick check fixed); anyRequest order and {noop} tried; full 401 headers quoted; sketchnote.

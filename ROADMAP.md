@@ -70,7 +70,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | rag-vector-databases | RAG and vector databases | ai | 13 | 26 | 9.3 | Fieldbook, a wildlife sanctuary's rangers' assistant (fastembed, FAISS, Qdrant) | 14 | full (24 Nov); rewritten and fact-checked 25 Nov |
 | forward-deployed-engineer | Forward Deployed Engineer | ai | 22 | 44 | 17 | Claimdesk, a motor insurer's claims assistant (Python, FastAPI, MCP; real model outputs through the gateway) | 20 | full (27 Nov, new course) |
 | rust-basics | Rust from zero | languages | 28 | 56 | 21.7 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 21 | full (24 Nov) |
-| spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
+| spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov); rewritten and fact-checked 28 Nov |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
 | java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |
 | javascript-basics | JavaScript from zero | languages | 18 | 36 | 13 | Mixtape, a playlist app | 10 | full (22 Nov) |

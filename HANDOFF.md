@@ -7,15 +7,15 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
-- **Spring Boot rewrite in progress (owner, 28 November: "start spring boot rewrite").** Chapters 0 to 18 done (Parts 1 and 2),
-  one commit each on both branches; REWRITE_LIST tracks the count, CHANGELOG has what was corrected per chapter. Next:
-  chapter 19. Method per chapter: run every claim on a lab machine (`.authoring-scratch/lab-machine.sh
-  spring-boot-first-api` starts one with the solution; `.authoring-scratch/sb/run.sh DIR JAR` runs a built app in it;
-  starter copies go to fresh `/tmp/chNN...` folders, never removed), rewrite to the lesson rules, add a still picture
-  where it helps (`Diagrams.tsx`; `StepRows` draws a step column), a sketchnote (`.authoring-scratch/sb/nNN.json`,
-  `tools/authoring/notes.py`; check every word, redraw when a qualifier is lost), then `changelog.py` and
-  `commit.sh`. Pictures may not sit on task steps (validate refuses it). Stop after the whole lab and report. The lab machine is stopped when idle (`docker exec` does not count); `run.sh` keeps it
-  alive through the API with the token `lab-machine.sh` saves. Always check `validate`'s exit code before committing.
+- **Spring Boot rewrite done (owner, 28 November: "start spring boot rewrite").** All 31 chapters, one commit each on
+  both branches; lab valid, test-lab green (every starter fails, every solution passes). What was corrected per chapter
+  is in CHANGELOG. REWRITE_LIST: 6 of 23. Next: the owner's small tasks, then the next lab (owner picks; Python is next
+  in the list). Method used (keep for the next lab): run every claim on a lab machine
+  (`.authoring-scratch/lab-machine.sh <lab>`; `.authoring-scratch/sb/run.sh DIR JAR`; starter copies go to fresh
+  `/tmp/chNN...` folders), rewrite to the lesson rules, a still picture where it helps (`Diagrams.tsx`, `StepRows`), a
+  sketchnote (`tools/authoring/notes.py`; check every word, redraw when a qualifier is lost), then `changelog.py` and
+  `commit.sh`. Pictures may not sit on task steps; braces in a photo's alt text break the tag; check `validate`'s exit
+  code before committing; the lab machine stops when idle (`run.sh` keeps it alive through the API).
 - **Forward Deployed Engineer course (27 November, built unattended at the owner's request).** Complete on `master`:
   22 chapters, 44 tasks, test-lab green, lab valid, 271 fast backend tests pass. Commits 9a543dc to the latest "FDE"
   commits; the generator scripts and captures were in the session's scratchpad (not kept). Also on `design/ukiyo`
