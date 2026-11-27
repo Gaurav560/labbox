@@ -20,6 +20,7 @@ export function labBrand(coverCredit: { by?: string } | null | undefined): { log
 export const LAB_TONES: Record<string, string> = {
   "express-api": "#8b949e",
   "fastapi-first-api": "#009688",
+  "forward-deployed-engineer": "#2bb5a0",
   "git-without-fear": "#F05033",
   "go-basics": "#00ADD8",
   "java-basics": "#f89820",

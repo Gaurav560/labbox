@@ -110,8 +110,12 @@ parts, at Deccan Shield:
 | 2. The customer's data | What does their data really look like? | readers for messy exports, SQL, an old system, a data contract |
 | 3. Building with models | Can a model do the work, on their data? | extraction, cited answers, tools, an MCP server, a demo |
 | 4. Proving it works | Is it right often enough to trust? | a golden set, evals, a failure analysis |
-| 5. Production | Can it run every day, safely? | privacy, fallbacks, shadow mode, monitoring |
-| 6. Leaving it better | Can they run it without you? | a handover with a CI gate, and the next customer |
+| 5. Ready for real claims | Can it run every day, safely? | privacy, fallbacks, shadow mode, monitoring |
+| 6. Leaving well | Can they run it without you? | a handover with a CI gate, and the next customer |
+
+:::diagram{name="fde-engagement"}
+The same shape, step by step, with Claimdesk's real numbers. Each step is a part of this course.
+:::
 
 The product you build is **Claimdesk**: an assistant that reads a claim email, pulls the customer's policy from Deccan
 Shield's systems, and drafts a decision for a human adjuster to approve. An **adjuster** is the person at an insurer who

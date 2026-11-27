@@ -34,6 +34,10 @@ Look at how the work is divided inside `/triage`:
 The model touches the claim exactly once, to read it. Everything that decides is ordinary code you can test, read aloud to
 an auditor, and change when the rules change.
 
+:::diagram{name="fde-triage"}
+E-24 from the golden set, step by step: one model call, then only code.
+:::
+
 The **reasons** list is the heart of it. Each check that fails adds a sentence an adjuster understands:
 
 - `"no policy number"` or `"unknown policy"`;

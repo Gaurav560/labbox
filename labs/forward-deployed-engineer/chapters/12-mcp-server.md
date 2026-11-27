@@ -39,6 +39,10 @@ docstring matters so much: it is what every client shows to its model.
 
 Check yourself: who runs `get_policy`, the client or the server? The server, in its own process, with its own database
 access. The client only asks.
+
+:::diagram{name="fde-mcp"}
+One session between a client and Claimdesk's server, with the outputs you will see at the end of this chapter.
+:::
 :::
 
 :::step{type=history title="One protocol, many tools"}
