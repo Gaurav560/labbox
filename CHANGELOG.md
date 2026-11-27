@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 13 rewritten (easy, a little detailed, checked)
+
+- Chapter 13, "Status codes with ResponseEntity", to the lesson rules: builder explained; both tasks list their
+  slips (the old return type, building the Location before saving, `ResponseEntity<Product>` for a delete,
+  calling `delete` twice).
+- Checked on a lab machine with the starter, the solution and an altered copy. Quoted as they came: the starter's
+  two misleading 200s, the 201 with `Location: /products/4`, the 204 then 404 for deleting product 3 twice. The
+  "forgot `.build()`" compile error is now quoted exactly as the compiler printed it ("HeadersBuilder<capture#1 of
+  ?> cannot be converted to ... ResponseEntity<java.lang.Void>"), instead of a paraphrase.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 12 rewritten (easy, a little detailed, checked)
 
 - Chapter 12, "Request bodies and DTOs", to the lesson rules: the body, the form content type and the parse error's
