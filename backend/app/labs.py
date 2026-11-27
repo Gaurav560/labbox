@@ -329,6 +329,23 @@ class LabConfig(_Strict):
             return {}
         return found
 
+    def chapter_folder(self, c: "Chapter") -> str | None:
+        """The folder that belongs to this chapter: declared with `folder:` (also folders a chapter's setup builds, as
+        in Git and Linux), or a starter folder named after the chapter in a lab that reveals its folders."""
+        if c.folder:
+            return c.folder
+        return c.id if c.id in self.chapter_folders() else None
+
+    def folders_after(self, at: int) -> list[str]:
+        """Chapter folders whose first chapter comes after chapter `at` (0-based): the editor hides them while the
+        learner is in chapter `at` (owner, 27 November: chapter 1 shows chapter 1's folder only)."""
+        first: dict[str, int] = {}
+        for i, c in enumerate(self.chapters):
+            name = self.chapter_folder(c)
+            if name and name not in first:
+                first[name] = i
+        return sorted(n for n, i in first.items() if i > at)
+
     def chapter_index(self, chapter_id: str) -> int:
         for i, c in enumerate(self.chapters):
             if c.id == chapter_id:

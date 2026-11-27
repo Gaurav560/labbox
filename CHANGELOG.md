@@ -1,5 +1,19 @@
 # Changelog
 
+## 27 November: chapter 1 shows chapter 1's folder, in both editors and for old workspaces
+
+- The owner opened chapter 1 of FDE and still saw all 22 folders: their workspace was made before plan A, and plan A
+  kept old workspaces as they were and counted every chapter they had ever opened. Now:
+- **The editor shows the chapters up to the one open**, whatever the learner opened before: Lite's Files panel filters
+  them (the lab API names each chapter's folder, `chapters[].folder`), and VS Code's Explorer hides them through
+  `files.exclude` in the lab's workspace file, rewritten when the learner moves to another chapter. The files stay
+  on disk; moving to chapter 3 shows folders 1 to 3 again.
+- **Workspaces from before plan A are tidied once**: each folder of a chapter not reached yet that is still exactly
+  the starter copy is removed, and comes back the same when the learner gets there. A folder with any of the
+  learner's own work stays. New workspaces are marked when made, so the pass never runs on them.
+- Checked in the browser on Ukiyo with a learner who had opened chapter 5: chapter 1 shows `01-the-role` only in
+  VS Code and in Lite; chapter 3 shows folders 1 to 3.
+
 ## 27 November: chapter folders appear one chapter at a time (plan A)
 
 - **A learner's machine shows a chapter's starter folder only once they reach that chapter** (owner: all 22 folders in

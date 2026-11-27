@@ -1,4 +1,5 @@
 """ALL docker logic lives here. Every function is blocking: call it via asyncio.to_thread."""
+import filecmp
 import json
 import logging
 import shutil
@@ -153,6 +154,7 @@ def seed(lab: LabConfig, folder: Path, upto: int | None = None) -> None:
                 shutil.copy2(lab.starter_dir / rel, dst, follow_symlinks=False)
     workspace_files.chown_tree(folder)
     _write_record(folder, files)
+    _mark_tidied(folder)  # made under plan A: nothing to put away later
     log.info("Seeded %s with %d starter files of %s", folder, len(files), lab.id)
 
 
@@ -208,11 +210,15 @@ def top_up(lab: LabConfig, ws: Workspace, upto: int | None = None) -> list[str]:
     folder = Path(ws.volume_path)
     files = visible_files(lab, upto)
     known = _read_record(folder)
-    if known is not None and known.issuperset(files):
+    # A workspace from before plan A holds every chapter's folder: tidy it once (see put_away).
+    old = known is not None and upto is not None and not known.issubset(files) and not _tidied(folder)
+    if known is not None and known.issuperset(files) and not old:
         return []  # the usual case: one small file read
     added: list[str] = []
     with shared.lock(f"{ws.container_name}:seed"):
         known = _read_record(folder) or set()
+        if upto is not None and not _tidied(folder):
+            known -= put_away(lab, folder, upto, known)
         root = folder.resolve()
         for rel in files:
             if rel in known:
@@ -236,6 +242,59 @@ def top_up(lab: LabConfig, ws: Workspace, upto: int | None = None) -> list[str]:
     if added:
         log.info("Topped up %s with new starter files of %s: %s", folder, lab.id, ", ".join(added))
     return added
+
+
+def put_away(lab: LabConfig, folder: Path, upto: int, known: set[str]) -> set[str]:
+    """Once per workspace from before plan A (owner, 27 November: "why are you still showing me all the folders in
+    chapter 1?"): remove each folder of a chapter after `upto` that is still exactly the starter copy (nothing added,
+    nothing changed). It comes back, the same, when the learner reaches that chapter. A folder with any of the
+    learner's own work stays. Runs once (new workspaces are marked when seeded), so a folder brought in by opening a
+    chapter is never taken away again. Returns the files removed from the record."""
+    removed: set[str] = set()
+    for name, i in sorted(lab.chapter_folders().items()):
+        mine = {f for f in known if Path(f).parts[0] == name}
+        if i <= upto or not mine:
+            continue
+        d = folder / name
+        if d.is_symlink() or not d.is_dir():
+            removed |= mine  # the learner removed or replaced it; let it come back when reached
+        elif _same_as_starter(lab, d, name):
+            shutil.rmtree(d)
+            removed |= mine
+            log.info("Put away %s/%s until the learner reaches it", folder, name)
+    _mark_tidied(folder)
+    return removed
+
+
+def _same_as_starter(lab: LabConfig, d: Path, name: str) -> bool:
+    """True when folder d holds exactly the starter's files for `name`, byte for byte, and nothing else."""
+    want = {f for f in starter_files(lab) if Path(f).parts[0] == name}
+    have: set[str] = set()
+    for p in d.rglob("*"):
+        if p.is_symlink():
+            return False
+        if p.is_file():
+            have.add(str(Path(name) / p.relative_to(d)))
+        elif not p.is_dir():
+            return False
+    if have != want:
+        return False
+    return all(filecmp.cmp(lab.starter_dir / f, d.parent / f, shallow=False) for f in want)
+
+
+def _tidied_path(folder: Path) -> Path:
+    return Path(f"{folder}.tidied")
+
+
+def _tidied(folder: Path) -> bool:
+    return _tidied_path(folder).exists()
+
+
+def _mark_tidied(folder: Path) -> None:
+    try:
+        _tidied_path(folder).touch()
+    except OSError:
+        pass
 
 
 def touch(session: Session, ws: Workspace, force: bool = True) -> None:

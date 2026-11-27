@@ -69,7 +69,7 @@ export interface LabSummary extends LabInfo { id: string; title: string; descrip
 export interface NextStep { kind: "continue" | "start"; lab_id: string; lab_title: string; chapter_id: string; chapter_title: string; chapter_number: number; chapters: number; step: number; steps: number; reason: string | null; track?: string; step_title?: string | null; code?: string[] }
 export interface TaskExample { call: string; gives: string; note: string | null }
 export interface Task { id: string; title: string; passed: boolean | null; xp: number; hint_count: number; hints_used: number; examples?: TaskExample[] }
-export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; part?: string | null; topics?: { title: string; step: number }[]; has_setup: boolean }
+export interface Chapter { id: string; title: string; tasks: Task[]; minutes: number | null; part?: string | null; topics?: { title: string; step: number }[]; has_setup: boolean; folder?: string | null }
 export interface PreviewPort { name: string; port: number; path: string }
 export interface Need { know: string; why: string; lab: string | null; lab_title: string | null; where: string }
 export interface BeforeYouStart { summary: string; needs: Need[] }
