@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- "Before you start" on Ukiyo course pages in two soft reds (owner: "two tone shallow red"): a pale red wash, a bar that
+  fades from red, light red check boxes with a red tick and red links. The sign-in buttons are back to plain boxes (owner:
+  "earlier one was good").
 - Once the home page's machine is running, it offers the next two labs to spin up ("Your LangChain machine is ready.
   Spin up another:" with `docker run spring-ai` and `docker run rag` buttons), so visitors find the other labs by
   playing (owner: "how do I show there are other labs to test via a Docker container").
@@ -17,8 +20,6 @@
 - "Explore more AI labs" heads the rows under the FDE spotlight; the FDE tag line "The hottest job in AI." is red;
   the share options are one quiet line of coloured marks and names (owner: "try something else"); a little more space
   between the certificate's date, stamp and QR code.
-- Ukiyo's sign-in: Google and GitHub as ruled rows (the mark on a paper square, a serif name, an arrow and a
-  vermilion rule on hover) instead of boxes (owner: "apart from rectangular boxes ... can you do something").
 - The certificate section's share options are a ruled grid of three columns, each the platform's mark in its own
   colour and its name, instead of round buttons (owner: "some other design, not circular").
 - The FDE tag line is now just "New · The hottest job in AI." (owner: "remove learn it by doing it").
