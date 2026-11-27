@@ -1,5 +1,5 @@
 import confetti from "canvas-confetti";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, useMemo } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, ApiError, type CheckCertificate, type CheckResponse, type FileNode, type LabDetail, type DesignAttempt, type PredictState, type ServiceStatus, type Step } from "../api";
 import { useAuth } from "../auth";
@@ -247,6 +247,17 @@ function LabWorkspace() {
 
   // Chapter setup: seed data or an injected incident, once per learner. Also starts the incident timer.
   const chapterMeta = lab?.chapters.find((c) => c.id === chapterId);
+  // The Files panel shows the chapters up to the one open, not every chapter the learner has looked at (owner,
+  // 27 November: "why are you still showing me all the folders in chapter 1?"). A folder belongs to the first chapter
+  // that names it; files outside chapter folders always show. The files stay on disk; only the panel hides them.
+  const shownTree = useMemo(() => {
+    const at = lab?.chapters.findIndex((c) => c.id === chapterId) ?? -1;
+    if (!lab || at < 0) return tree;
+    const first = new Map<string, number>();
+    lab.chapters.forEach((c, i) => { if (c.folder && !first.has(c.folder)) first.set(c.folder, i); });
+    if (!first.size) return tree;
+    return tree.filter((n) => n.type !== "dir" || (first.get(n.name) ?? -1) <= at);
+  }, [tree, lab, chapterId]);
   // Fetch every photo of this chapter in the background as soon as it opens, so each one is already there when its
   // step comes up (owner, 24 November: "sometimes it fetches, sometimes it does not").
   useEffect(() => {
@@ -414,15 +425,15 @@ function LabWorkspace() {
 
   // Open the first file once, so a new learner lands with code in front of them.
   useEffect(() => {
-    if (autoOpened.current || tree.length === 0) return;
+    if (autoOpened.current || shownTree.length === 0) return;
     autoOpened.current = true;
     // The chapter's own file (chapter focus) beats "the first file": skip it once that file is open.
     // (If the chapter's file is asked for later, it still wins: the last file asked for is shown.)
     if (chapterFileOpened.current) return;
-    const first = firstFile(tree);
+    const first = firstFile(shownTree);
     if (first && tabsRef.current.length === 0) openFile(first);
-    // Only tree is a dependency on purpose: this runs once per page, when the files first arrive.
-  }, [tree]);
+    // Only the files are a dependency on purpose: this runs once per page, when the files first arrive.
+  }, [shownTree]);
 
   // Free Monaco models of closed tabs so reopening a file shows fresh content.
   useEffect(() => {
@@ -885,7 +896,7 @@ function LabWorkspace() {
               <>
                 <div style={{ width: treeW }} className="tree-wrap">
                   <FileTree
-                    tree={tree}
+                    tree={shownTree}
                     activePath={activePath}
                     onOpen={openFile}
                     onNew={newEntry}

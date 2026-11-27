@@ -13,12 +13,13 @@ import json
 import logging
 import re
 import time
+from pathlib import Path
 
 import httpx
 
 from . import containers, services
 from .config import get_settings
-from .labs import LabConfig
+from .labs import LabConfig, get_lab
 from .models import Workspace
 
 log = logging.getLogger(__name__)
@@ -109,7 +110,7 @@ def _command(ws: Workspace) -> list[str]:
     quoted = " ".join("'" + a.replace("'", "'\\''") + "'" for a in server)
     stamp = setup_stamp()
     wsf = workspace_file(ws.lab_id)
-    workspace_json = json.dumps({"folders": [{"path": "/workspace"}], "settings": {}})
+    workspace_json = workspace_config(get_lab(ws.lab_id), _chapter_at(ws))
     return [
         "sh", "-c",
         # First, every time: the lab's workspace file (cheap, and it must exist even when VS Code is
@@ -126,6 +127,48 @@ def _command(ws: Workspace) -> list[str]:
         "cp ~/.openvscode-server/data/Machine/settings.json ~/.openvscode-server/data/User/settings.json; "
         f"setsid nohup {quoted} > /tmp/openvscode.log 2>&1 < /dev/null &",
     ]
+
+
+def workspace_config(lab: LabConfig, at: int) -> str:
+    """The lab's .code-workspace: /workspace, with the folders of chapters after chapter `at` hidden from the
+    Explorer (files.exclude; the files stay on disk). VS Code reloads this file when it changes."""
+    hide = {name: True for name in lab.folders_after(at) if "'" not in name} if at >= 0 else {}
+    return json.dumps({"folders": [{"path": "/workspace"}], "settings": {"files.exclude": hide} if hide else {}})
+
+
+def _chapter_mark(ws: Workspace) -> Path:
+    return Path(f"{ws.volume_path}.chapter")
+
+
+def _chapter_at(ws: Workspace) -> int:
+    try:
+        return int(_chapter_mark(ws).read_text().strip())
+    except (OSError, ValueError):
+        return -1
+
+
+def show_chapter(lab: LabConfig, ws: Workspace, at: int) -> None:
+    """The learner opened chapter `at`: remember it (VS Code starts with it) and, when VS Code already runs in the
+    machine, rewrite its workspace file so the Explorer shows the chapters up to this one."""
+    if at < 0 or not lab.folders_after(-1):
+        return
+    if _chapter_at(ws) == at:
+        return  # unchanged (each step of a chapter calls this); VS Code starts from the mark, so it is up to date
+    try:
+        _chapter_mark(ws).write_text(str(at))
+    except OSError:
+        return
+    if not available():
+        return
+    try:
+        c = containers.client().containers.get(ws.container_name)
+        if c.status != "running":
+            return
+        wsf = workspace_file(ws.lab_id)
+        c.exec_run(["sh", "-c", f"[ -f '{wsf}' ] && printf '%s' '{workspace_config(lab, at)}' > '{wsf}'"],
+                   user=containers.LEARNER_USER)
+    except Exception as e:  # the editor view is a nicety; never fail the lesson for it
+        log.info("Could not update the VS Code workspace of %s: %s", ws.container_name, e)
 
 
 def setup_stamp() -> str:

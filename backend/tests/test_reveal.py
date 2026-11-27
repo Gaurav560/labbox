@@ -52,6 +52,9 @@ def test_a_new_workspace_starts_with_chapter_one_and_grows(tmp_path):
     assert {Path(a).parts[0] for a in added} == {"02-discovery", "03-scoping"}
     assert _tops(folder) == {"01-the-role", "02-discovery", "03-scoping"}
     assert containers.top_up(lab, _ws(folder), 2) == []  # once is enough
+    # A folder brought in by opening a chapter stays, even when a later request counts only saved progress.
+    containers.top_up(lab, _ws(folder), 0)
+    assert "03-scoping" in _tops(folder)
     # Their own work in chapter 1 is never replaced when more folders arrive.
     mine = next(p for p in (folder / "01-the-role").glob("*.py"))
     mine.write_text("# my own version\n")
@@ -60,16 +63,46 @@ def test_a_new_workspace_starts_with_chapter_one_and_grows(tmp_path):
     assert "06-legacy-system" in _tops(folder) and "07-data-contract" not in _tops(folder)
 
 
-def test_an_old_workspace_with_every_folder_keeps_them(tmp_path):
-    # Learners who started before plan A received every folder; nothing is removed or re-copied.
+def test_an_old_workspace_puts_away_untouched_later_folders(tmp_path):
+    # Learners who started before plan A received every folder (owner, 27 November: "why are you still showing me all
+    # the folders in chapter 1?"). Folders of chapters not reached that are still the starter copy go away and come
+    # back the same later; a folder with the learner's own work stays.
     init_labs(get_settings().LABS_DIR)
     lab = get_lab(FDE)
     folder = tmp_path / "u12345678" / FDE
     folder.mkdir(parents=True)
     containers.seed(lab, folder)  # the old way: everything
+    containers._tidied_path(folder).unlink()  # workspaces from before plan A have no mark
     assert len(_tops(folder)) == 22
-    assert containers.top_up(lab, _ws(folder), 0) == []
-    assert len(_tops(folder)) == 22
+    mine = next((folder / "09-extraction").glob("*.py"))
+    mine.write_text("# I started this one early\n")
+    (folder / "12-mcp-server" / "notes.txt").write_text("mine\n")
+    assert containers.top_up(lab, _ws(folder), 1) == []
+    assert _tops(folder) == {"01-the-role", "02-discovery", "09-extraction", "12-mcp-server"}
+    assert mine.read_text() == "# I started this one early\n"
+    assert containers.top_up(lab, _ws(folder), 1) == []  # once only: kept folders are not compared again
+    # Reaching chapter 3 brings its folder back, byte for byte the starter.
+    assert {Path(a).parts[0] for a in containers.top_up(lab, _ws(folder), 2)} == {"03-scoping"}
+    for f in (lab.starter_dir / "03-scoping").rglob("*"):
+        if f.is_file():
+            assert (folder / f.relative_to(lab.starter_dir)).read_bytes() == f.read_bytes()
+
+
+def test_the_lab_page_learns_each_chapters_folder():
+    # The Files panel hides the folders of chapters after the one open; the lab API names each chapter's folder.
+    init_labs(get_settings().LABS_DIR)
+    fde = get_lab(FDE)
+    assert fde.chapter_folder(fde.chapters[0]) == "01-the-role"
+    git = get_lab("git-without-fear")  # folders made by each chapter's setup
+    assert git.chapter_folder(git.chapters[0]) == "01-why-version-control"
+    express = get_lab("express-api")
+    assert express.chapter_folder(express.chapters[0]) is None and express.folders_after(-1) == []
+    # VS Code: in chapter 3 the Explorer hides folders 4 to 22.
+    import json
+    from app import ide
+    hidden = json.loads(ide.workspace_config(fde, 2))["settings"]["files.exclude"]
+    assert "03-scoping" not in hidden and "04-messy-data" in hidden and len(hidden) == 19
+    assert json.loads(ide.workspace_config(fde, -1))["settings"] == {}
 
 
 @pytest.fixture(scope="module")

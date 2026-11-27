@@ -92,6 +92,7 @@ class ChapterOut(BaseModel):
     part: str | None = None  # the course part; null means "same part as the chapter before"
     topics: list[TopicOut] = []  # the lesson's concept steps (the skill map lists them under the chapter)
     has_setup: bool = False  # the lab page calls .../setup when the chapter opens
+    folder: str | None = None  # the chapter's own top-level folder; the Files panel hides those of later chapters
 
 
 class LabDetail(LabInfo):
@@ -202,6 +203,7 @@ def lab_detail(lab_id: str, user: User = Depends(get_current_user), session: Ses
                 part=c.part,
                 topics=chapter_topics(lab, c.id),
                 has_setup=bool(c.setup),
+                folder=lab.chapter_folder(c),
                 tasks=[
                     TaskOut(
                         id=t.id,
@@ -264,6 +266,7 @@ async def chapter_focus_route(
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
     ws = containers.get_workspace(session, user, lab, chapter_id)  # opening a chapter brings its folder in (plan A)
+    await asyncio.to_thread(ide.show_chapter, lab, ws, lab.chapter_index(chapter_id))  # VS Code hides later chapters
     folder = Path(ws.volume_path)
     end: int | None = None
     if body and body.step is not None:
