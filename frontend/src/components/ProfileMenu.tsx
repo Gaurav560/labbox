@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useAuth } from "../auth";
 import { useStats } from "../stats";
+import { JarvisSwitch } from "./Jarvis";
 
 /*
  * The top bars' profile button (owner, 22 November: level, streak and stars go in a profile section; an Exit
@@ -68,6 +69,7 @@ export default function ProfileMenu({ username }: { username: string }) {
               </p>
             </>
           )}
+          <JarvisSwitch />
           <Link className="profile-link" to="/certificates" onClick={() => setOpen(false)}>
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="9" r="6" /><path d="M8.5 14 7 22l5-3 5 3-1.5-8" />

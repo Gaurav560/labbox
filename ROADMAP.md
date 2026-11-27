@@ -338,7 +338,7 @@ What it takes, per course:
 
 ### 2e. Jarvis, each learner's realtime voice assistant (owner, 28 November)
 
-Step 1 is done (see CHANGELOG, 28 November). The owner's brief: an assistant for each learner, with context of
+Steps 1 to 4 are done (see CHANGELOG, 28 November); his voice and tone are to be tuned later (owner). The owner's brief: an assistant for each learner, with context of
 everything about them, that notices when they sign up, log in, study or get stuck, and talks like a human. Realtime
 speech to speech only (OpenAI `gpt-realtime-2.1-mini` over WebRTC). Agreed limits: $1.50 a day, a hard stop at $40 a
 month (the OpenAI credit is $50), Pro 20 minutes a day, free learners one 3-minute trial (at most 10 a day); all
@@ -359,7 +359,13 @@ changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until paymen
   from the welcome. At the end of a Pro conversation Jarvis writes himself a two or three sentence note (a text-only
   reply outside the conversation, about 1 second); the last 3 notes are in his next conversation's context
   (`jarvis_session.summary`, migration 0017).
-- [ ] Step 4: celebrations, learner settings (talk to me first, off switch), a consent note on what Jarvis can see.
+- [x] Step 4: celebrations, learner settings and what Jarvis can see. After a check the lab page asks
+  `GET /api/jarvis/cheer`: a first task ever, a finished chapter (with a link to the next) or a finished lab (with its
+  certificate) is celebrated once, in a line; Pro learners can tap Talk. Settings behind the gear on the panel
+  (`PUT /api/jarvis/settings`, `user.jarvis_mode`, migration 0018): offer and wait for a tap (the default), talk first
+  (Pro: he starts by himself when the browser allows the microphone and sound), or off (no offers, no orb; the profile
+  menu turns him back on). Before the first conversation the learner reads "What Jarvis can see" once
+  (`user.jarvis_note_seen`). Pro learners can make him forget his notes (`DELETE /api/jarvis/memory`).
 - Known limits: a spoken reply cannot be filtered before it is heard (the rules and the tools keep solutions out);
   the browser reports usage, and the server caps the counted seconds by the wall clock and hangs up at a limit.
 

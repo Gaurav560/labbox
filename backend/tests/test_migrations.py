@@ -12,7 +12,7 @@ from alembic import command
 from app.db import alembic_config, init_db
 
 NEW_TABLES = {"chapter_progress", "task_progress", "predict_answer", "user_profile", "xp_event", "drill_answer", "llm_request", "design_answer", "analytics_event", "library_item", "site_setting", "lab_slot", "certificate", "user_identity"}
-HEAD = "0017"
+HEAD = "0018"
 
 # The schema exactly as the POC's SQLModel.metadata.create_all() made it.
 POC_SCHEMA = """

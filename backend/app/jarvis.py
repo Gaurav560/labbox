@@ -131,6 +131,9 @@ class Status(BaseModel):
     reason: str = ""  # why it is locked, in a sentence the page can show
     seconds_left: int = 0  # for this conversation
     trial_used: bool = False
+    mode: str = "tap"  # the learner's setting: "tap", "first" (Pro) or "off"
+    note_seen: bool = False  # they read what Jarvis can see
+    memories: int = 0  # notes Jarvis keeps from earlier conversations (Pro)
 
 
 def status(session: Session, user: User, now: datetime | None = None) -> Status:
@@ -138,7 +141,10 @@ def status(session: Session, user: User, now: datetime | None = None) -> Status:
     s = get_settings()
     plan = "pro" if is_pro(user) else "free"
     used_trial = trial_used(session, user.id)
-    base = {"enabled": s.JARVIS_ENABLED, "plan": plan, "trial_used": used_trial}
+    memories = int(session.exec(select(func.count()).select_from(JarvisSession)
+                                .where(JarvisSession.user_id == user.id, col(JarvisSession.summary).is_not(None))).one())
+    base = {"enabled": s.JARVIS_ENABLED, "plan": plan, "trial_used": used_trial, "mode": user.jarvis_mode or "tap",
+            "note_seen": bool(user.jarvis_note_seen), "memories": memories}
     if not s.JARVIS_ENABLED or (s.JARVIS_PROVIDER == "openai" and not s.OPENAI_API_KEY):
         return Status(**base, kind="locked", reason="Jarvis is resting at the moment.")
     if spent_usd(session, _month_start(now)) >= setting(session, "jarvis_monthly_usd") or \
@@ -285,8 +291,8 @@ def learner_context(session: Session, user: User, lab_id: str | None, chapter_id
 
 def instructions(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None, help_reason: str = "") -> str:
     text = PERSONA + "\n\nWhat you know about this learner right now:\n" + learner_context(session, user, lab_id, chapter_id, step)
-    if help_reason.startswith("WELCOME:"):
-        text += "\n\nWhy this conversation started: " + help_reason[len("WELCOME:"):]
+    if help_reason.startswith(("WELCOME:", "CHEER:")):
+        text += "\n\nWhy this conversation started: " + help_reason.split(":", 1)[1].strip()
     elif help_reason:
         text += ("\n\nWhy this conversation started: you noticed they might be stuck and offered help, and they accepted. "
                  + help_reason + " Open by acknowledging it in one short, kind sentence, then ask what they have tried.")
@@ -389,7 +395,7 @@ def nudge(session: Session, user: User, lab_id: str | None, chapter_id: str | No
     """Rules, not a model (so it costs nothing): the same check failing again and again, every hint used, or a long
     pause on a task. Only on a task step whose task is not passed yet."""
     lab = _safe_lab(lab_id)
-    if not lab or not chapter_id or step is None or not any(c.id == chapter_id for c in lab.chapters):
+    if user.jarvis_mode == "off" or not lab or not chapter_id or step is None or not any(c.id == chapter_id for c in lab.chapters):
         return Nudge(nudge=False)
     steps = lab.chapter_steps(chapter_id)
     st = steps[step] if 0 <= step < len(steps) else None
@@ -437,6 +443,8 @@ def welcome(session: Session, user: User, now: datetime | None = None, force: bo
     """A new learner (no lab opened yet) or one back after AWAY_TO_WELCOME. The dashboard asks once per browser
     session. Text for everyone; the voice greeting is one tap away for Pro and trial learners."""
     now = now or utcnow()
+    if user.jarvis_mode == "off" and not force:
+        return Welcome(show=False)
     profile = engagement.get_profile(session, user.id)
     first = (profile.display_name or user.username).split()[0]
     last = session.exec(select(ChapterProgress).where(ChapterProgress.user_id == user.id).order_by(col(ChapterProgress.updated_at).desc()).limit(1)).first()
@@ -462,6 +470,94 @@ def welcome(session: Session, user: User, now: datetime | None = None, force: bo
                    detail=(f"WELCOME: they are back after {when if days else 'a few hours'}; they were last in {lab.title}, {where}. "
                            "Welcome them back by name in one or two sentences, remind them where they stopped (and what you "
                            "remember, if anything), and ask whether they want to pick up there."))
+
+
+# ---------- celebrations (step 4) ----------
+
+CHEER_WINDOW = timedelta(minutes=3)  # a chapter or first task done this recently is news
+CERT_WINDOW = timedelta(minutes=10)  # a certificate may wait for the learner to type their name first
+CHEER_TALK_WINDOW = timedelta(minutes=30)  # tapping Talk on a cheer a little later still works
+
+
+class Cheer(BaseModel):
+    show: bool
+    kind: str = ""  # "lab" (certificate), "chapter" or "first" (the learner's first task ever)
+    key: str = ""  # the page shows each cheer once
+    line: str = ""
+    link_url: str | None = None
+    link_label: str = ""
+    detail: str = ""  # for Jarvis, when they tap Talk
+
+
+def cheer(session: Session, user: User, lab_id: str | None, chapter_id: str | None, now: datetime | None = None,
+          window: timedelta | None = None) -> Cheer:
+    """Something worth celebrating just happened in this lab: the lab finished (its certificate), the chapter finished,
+    or the learner's first task ever passed. Rules, no model; the lab page asks after every check."""
+    now = now or utcnow()
+    lab = _safe_lab(lab_id)
+    if user.jarvis_mode == "off" or not lab or not any(c.id == chapter_id for c in lab.chapters):
+        return Cheer(show=False)
+    first = (engagement.get_profile(session, user.id).display_name or user.username).split()[0]
+    cert = session.exec(select(Certificate).where(Certificate.user_id == user.id, Certificate.lab_id == lab.id)).first()
+    if cert and now - cert.issued_at < (window or CERT_WINDOW):
+        return Cheer(show=True, kind="lab", key=f"lab:{lab.id}",
+                     line=f"{first}, you finished {lab.title}: {cert.tasks_passed} of {cert.tasks_total} tasks. Your certificate is ready.",
+                     link_url=f"/c/{cert.id}", link_label="See your certificate",
+                     detail=(f"CHEER: they just finished the lab {lab.title} ({cert.tasks_passed} of {cert.tasks_total} tasks) "
+                             "and earned its certificate. Congratulate them warmly in two sentences, name the biggest thing "
+                             "they can now do, and ask what they want to learn next."))
+    chapter = next(c for c in lab.chapters if c.id == chapter_id)
+    cp = session.get(ChapterProgress, (user.id, lab.id, chapter_id))
+    if cp and cp.completed_at and now - cp.completed_at < (window or CHEER_WINDOW):
+        num = _chapter_number(lab, chapter_id)
+        i = [c.id for c in lab.chapters].index(chapter_id)
+        nxt = lab.chapters[i + 1] if i + 1 < len(lab.chapters) else None
+        line = f"Chapter {num} done, {first}: every task in \"{chapter.title}\" passes."
+        if nxt:
+            line += f" Next is chapter {num + 1}, \"{nxt.title}\"."
+        return Cheer(show=True, kind="chapter", key=f"chapter:{lab.id}:{chapter_id}", line=line,
+                     link_url=f"/labs/{lab.id}?chapter={nxt.id}" if nxt else None,
+                     link_label=f"Start chapter {num + 1}" if nxt else "",
+                     detail=(f"CHEER: they just passed every task in chapter {num} of {lab.title}, \"{chapter.title}\". "
+                             "Congratulate them in one or two sentences, say in plain words what they can now do, then ask "
+                             "whether they want a quick look at what comes next"
+                             + (f" (chapter {num + 1}, \"{nxt.title}\")." if nxt else ".")))
+    passed = session.exec(select(TaskProgress).where(TaskProgress.user_id == user.id, TaskProgress.passed == True)  # noqa: E712
+                          .limit(2)).all()
+    if len(passed) == 1 and passed[0].lab_id == lab.id and passed[0].first_passed_at \
+            and now - passed[0].first_passed_at < (window or CHEER_WINDOW):
+        task = lab.task(passed[0].chapter_id, passed[0].task_id)
+        return Cheer(show=True, kind="first", key="first",
+                     line=f"Your first task passes, {first}: \"{task.title}\". Code you wrote, checked by a real test.",
+                     detail=(f"CHEER: their very first task on LabBox just passed (\"{task.title}\" in {lab.title}). "
+                             "Congratulate them in one or two sentences and tell them that every task works this way: "
+                             "write the code, press Check, a real test decides."))
+    return Cheer(show=False)
+
+
+MODES = ("tap", "first", "off")
+
+
+def set_learner_settings(session: Session, user: User, mode: str | None = None, note_seen: bool | None = None) -> None:
+    if mode is not None:
+        user.jarvis_mode = mode
+    if note_seen is not None:
+        user.jarvis_note_seen = note_seen
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+
+def forget(session: Session, user: User) -> int:
+    """The learner asked Jarvis to forget: every note he kept from their conversations goes (the conversations' length
+    and cost stay, for the budgets)."""
+    rows = session.exec(select(JarvisSession).where(JarvisSession.user_id == user.id, col(JarvisSession.summary).is_not(None))).all()
+    for js in rows:
+        js.summary = None
+        session.add(js)
+    session.commit()
+    log.info("Jarvis forgot %s notes for %s", len(rows), user.username)
+    return len(rows)
 
 
 # ---------- sessions ----------
@@ -518,6 +614,9 @@ async def start(session: Session, user: User, lab_id: str | None, chapter_id: st
     if reason == "welcome":
         w = welcome(session, user, force=True)
         help_reason = w.detail
+    elif reason == "cheer" and lab and chapter:
+        c = cheer(session, user, lab.id, chapter, window=CHEER_TALK_WINDOW)
+        help_reason = c.detail if c.show else ""
     elif reason and lab and chapter:
         n = nudge(session, user, lab.id, chapter, step, idle_seconds=IDLE_TO_NUDGE if reason == "idle" else 0)
         help_reason = n.detail if n.nudge else ""

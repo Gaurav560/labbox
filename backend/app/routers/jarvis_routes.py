@@ -24,7 +24,7 @@ class StartIn(BaseModel):
     lab_id: str | None = None
     chapter_id: str | None = None
     step: int | None = Field(None, ge=0, le=500)
-    reason: Literal["fails", "hints", "idle", "welcome"] | None = None  # set when the learner accepted Jarvis's offer
+    reason: Literal["fails", "hints", "idle", "welcome", "cheer"] | None = None  # set when the learner accepted Jarvis's offer
 
 
 @router.get("/nudge", response_model=jarvis.Nudge)
@@ -39,6 +39,34 @@ def nudge(lab_id: str, chapter_id: str, step: int, idle: int = 0, user: User = D
 def welcome(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> jarvis.Welcome:
     """A welcome for a new learner, or one back after a while (the dashboard asks once per browser session)."""
     return jarvis.welcome(session, user)
+
+
+@router.get("/cheer", response_model=jarvis.Cheer)
+def cheer(lab_id: str, chapter_id: str, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> jarvis.Cheer:
+    """Something to celebrate in this lab just now? (the lab page asks after every check)"""
+    return jarvis.cheer(session, user, lab_id, chapter_id)
+
+
+class SettingsIn(BaseModel):
+    mode: Literal["tap", "first", "off"] | None = None
+    note_seen: bool | None = None
+
+
+@router.put("/settings", response_model=jarvis.Status)
+def settings(body: SettingsIn, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> jarvis.Status:
+    """The learner's own Jarvis settings: when he speaks, or off; and that they read what he can see."""
+    jarvis.set_learner_settings(session, user, body.mode, body.note_seen)
+    return jarvis.status(session, user)
+
+
+class Forgotten(BaseModel):
+    forgotten: int
+
+
+@router.delete("/memory", response_model=Forgotten)
+def forget(user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> Forgotten:
+    """Forget every note Jarvis kept from this learner's conversations."""
+    return Forgotten(forgotten=jarvis.forget(session, user))
 
 
 @router.post("/session", response_model=jarvis.SessionOut)
