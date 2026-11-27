@@ -1,5 +1,13 @@
 # Changelog
 
+## 28 November: the Spring Boot lab rewrite is complete
+
+- All 31 chapters rewritten to the lesson rules and checked on a lab machine (see each chapter's entry below).
+  `scripts/labbox validate spring-boot-first-api --strict` passes; `scripts/labbox test-lab spring-boot-first-api`
+  is green (every chapter's starter fails, every solution passes). REWRITE_LIST: 6 of 23 labs (145 of 319 chapters).
+- New still pictures: `http-conversation` (ch 1), `fat-jar` (ch 2), `first-endpoint` (ch 3), `n-plus-one` (ch 21);
+  31 new sketchnote notes pages (13 redrawn once, each time because a qualifier such as "by default" had been lost).
+
 ## 28 November: Spring Boot chapter 30 rewritten; the Spring Boot lab is done (31 of 31)
 
 - Chapter 30, "The checkout capstone", to the lesson rules: both tasks list their slips (no `@Transactional`,
