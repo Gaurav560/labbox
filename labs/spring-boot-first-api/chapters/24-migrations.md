@@ -6,7 +6,8 @@ of your app.
 
 So how does the database change when the app changes? Version 12 of the Shop API adds a `category` to
 products. The production database's `product` table has no such column, and it is full of real data that must
-not be lost. Someone has to run `ALTER TABLE`, exactly once, on every database (your laptop, the test server,
+not be lost. Someone has to run `ALTER TABLE` (the SQL command that changes an existing table's structure), exactly once,
+on every database (your laptop, the test server,
 production), in the right order, and remember that it was done.
 
 That someone is a **migration tool**. In this chapter you use the most common one in the Java world,
@@ -47,7 +48,8 @@ Flyway is strict about names, and for good reasons:
 - **The name** is `V<version>__<description>.sql`: a capital **V**, the version number, **two** underscores,
   then a description with underscores for spaces. `V2__add_category.sql` is version 2, "add category".
   A single underscore, or a lower-case `v`, and Flyway ignores the file silently.
-- **Never edit a migration that has run.** Flyway stores a checksum of each applied script. If you change
+- **Never edit a migration that has run.** Flyway stores a **checksum** of each applied script (a number computed
+  from the file's exact contents; change one character and the number changes). If you change
   `V1__create_product.sql` after it ran, the next start-up **fails** with a checksum mismatch: the file no longer
   describes what was actually done. To change something, you always add a **new** version.
 - **Versions only go forward.** You fix a mistake in V2 with a V3, not by rewriting V2.
@@ -84,7 +86,7 @@ The `Product` entity, on the right, has a new field: `category`. Version 12 of t
 cd 24-migrations && mvn -q -o package -DskipTests && java -jar target/migrations.jar
 ```
 
-It refuses to start. Look for the cause:
+It refuses to start. Look for the cause (from our lab machine):
 
 ```text
 Schema-validation: missing column [category] in table [product]
@@ -94,10 +96,12 @@ That is `validate` doing its job: the code and the database disagree, and it wou
 little higher in the log too, at Flyway's own lines:
 
 ```text
-Successfully validated 1 migration
+Successfully validated 1 migration (execution time 00:00.008s)
 Migrating schema "PUBLIC" to version "1 - create product"
-Successfully applied 1 migration to schema "PUBLIC", now at version v1
+Successfully applied 1 migration to schema "PUBLIC", now at version v1 (execution time 00:00.014s)
 ```
+
+(`PUBLIC` is H2's default **schema**: a named group of tables inside one database.)
 
 Flyway ran V1. Now you need a V2.
 :::
@@ -135,7 +139,13 @@ Migrating schema "PUBLIC" to version "2 - add category"
 Successfully applied 2 migrations to schema "PUBLIC", now at version v2
 ```
 
-and the app starts. `curl localhost:8080/products` shows every product with `"category":"other"`. Press **Check**.
+(Flyway runs V1 again because this lab's H2 database lives in memory and starts empty each time. On a real
+database it would run only V2.) And the app starts. `curl localhost:8080/products` shows every product with `"category":"other"`. Press **Check**.
+
+Usual slips: one underscore (`V2_add_category.sql`; see the second quick check below), or renaming a migration file
+and rebuilding with `mvn package` only. `package` does not delete old files from `target/`, so the old name is still
+there and Flyway sees both. We fell into exactly this on our lab machine; after renaming a migration, build with
+`mvn -q -o clean package -DskipTests` (`clean` empties `target/` first).
 :::
 
 :::step{type=concept title="Data migrations"}
@@ -159,8 +169,17 @@ Create **`V3__set_categories.sql`**: the two sweets, **KUL-1** and **CUS-1**, ge
 and **SAM-1** gets **`snacks`**. (Use `UPDATE ... SET ... WHERE sku ...`; `WHERE sku IN ('A', 'B')` matches
 several values.)
 
-Rebuild and run: Flyway now migrates to version 3, and `curl localhost:8080/products` shows the right
-categories. Press **Check**.
+Rebuild and run: Flyway now migrates to version 3, and `curl localhost:8080/products` shows the right categories.
+On our lab machine:
+
+```text
+[{"id":1,"name":"Mango kulfi",...,"category":"sweets","sku":"KUL-1"},{"id":2,"name":"Fruit custard",...,"category":"sweets","sku":"CUS-1"},{"id":3,"name":"Samosa",...,"category":"snacks","sku":"SAM-1"}]
+```
+
+Press **Check**.
+
+Usual slips: double quotes around the values (`"sweets"`; SQL text values use single quotes: `'sweets'`), or
+editing V2 to set the categories instead of adding V3.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -184,8 +203,10 @@ A file is named `V4_add_index.sql` (one underscore). What happens?
 - [x] Flyway does not recognise it as a migration, and silently skips it
 - [ ] Start-up fails
 :::explain
-The separator is two underscores. With one, the name does not match Flyway's pattern, and the file is ignored:
-one of the most common migration mistakes.
+The separator is two underscores. With one, the name does not match Flyway's pattern, and the file is ignored
+without a word. We tried it on our lab machine with V2 named `V2_add_category.sql`: Flyway said "Successfully
+validated 2 migrations", ran V1, skipped V2, and then V3 failed, because the column V2 should have added was not
+there. One of the most common migration mistakes.
 :::
 :::
 
@@ -228,7 +249,7 @@ You can now change a database that holds real data, safely:
 - **`ddl-auto=validate`**: Hibernate only checks that tables match entities; Flyway owns the schema.
 - New required columns need a **default** for existing rows; **data** changes are migrations too.
 
-:::photo{src="/lesson-images/spring/spring-24-notes.webp" alt="Handwritten notes about Migrations: Flyway runs numbered SQL scripts, V2__add_stock.sql (two _), each runs once, in order, never edit an applied one, ddl-auto=validate" ai="true"}
+:::photo{src="/lesson-images/spring/spring-24-notes.webp" alt="Sketchnote: Migrations with Flyway. Every database change is a numbered SQL file, run once, in order, on every database. Flow: V1, V2, V3, recorded in flyway_schema_history. Remember: the name is V, the version, two underscores, a description; never edit an applied migration; ddl-auto=validate only checks; a new required column on a table with rows needs a default." ai="true"}
 One page of notes for this chapter.
 :::
 
