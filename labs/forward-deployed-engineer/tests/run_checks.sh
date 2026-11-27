@@ -24,6 +24,10 @@ day-five-demo|13-day-five-demo|triage_endpoint input_guard
 golden-set|14-golden-set|field_match stratified
 evals|15-evals|eval_report regression_gate
 failure-analysis|16-failure-analysis|classify_failure fix_fields
+privacy|17-privacy|redact_pii instruction_guard
+reliability|18-reliability|pacer cache
+human-review|19-human-review|shadow_report go_live_check
+monitoring|20-monitoring|daily_metrics drift_alerts
 "
 
 fail_all() { # tasks message

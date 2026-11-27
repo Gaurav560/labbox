@@ -567,3 +567,120 @@ chapters:
       note: today is 2026-10-31
     - call: eval_report on run v1 after the fixes
       gives: all_fields 93.3
+- id: privacy
+  title: Privacy and prompt injection
+  file: chapters/17-privacy.md
+  minutes: 50
+  folder: 17-privacy
+  part: Ready for real claims
+  tasks:
+  - id: redact_pii
+    title: keep personal data out
+    xp: 20
+    hints:
+    - PHONE matches nothing yet, and redact returns the text unchanged.
+    - 'A mobile number: an optional +91 with an optional space or dash, a first digit 6 to 9, then nine more digits with an
+      optional separator after the fifth.'
+    - Guard both edges with (?<!\d) and (?!\d), and replace ID12 before EMAIL and PHONE.
+    examples:
+    - call: redact('Call me on +91 98220 45117')
+      gives: '''Call me on [PHONE]'''
+    - call: redact('Policy DS-POL-41120, Rs 1,00,000')
+      gives: unchanged
+  - id: instruction_guard
+    title: send orders to a person
+    xp: 15
+    hints:
+    - E-30 has no flags yet, so its pay draft stands.
+    - Search each SUSPICIOUS pattern ignoring case, and keep the words the email used.
+    - 'With flags, build a new dict: refer, the old reasons plus one, and the flags.'
+    examples:
+    - call: instruction_flags(E-30)
+      gives: '[''ignore your previous instructions'', ''approve this claim'']'
+    - call: 'guard_draft({''draft'': ''pay'', ''reasons'': []}, E-30)[''draft'']'
+      gives: '''refer'''
+- id: reliability
+  title: 'Reliability: pacing, caching, falling back'
+  file: chapters/18-reliability.md
+  minutes: 45
+  folder: 18-reliability
+  tasks:
+  - id: pacer
+    title: the pacer
+    xp: 15
+    hints:
+    - wait never sleeps, so a batch fires as fast as it can.
+    - Sleep only when there was a previous call and less than gap seconds have passed since it.
+    - After sleeping, read the clock again before remembering the time.
+    examples:
+    - call: 'Pacer(20): a call 1 s after the last'
+      gives: sleeps 2.0 s
+    - call: 'Pacer(20): a call 5 s after the last'
+      gives: no sleep
+  - id: cache
+    title: the cache
+    xp: 15
+    hints:
+    - Every call reaches the model, even for an email read a moment ago.
+    - Look the key up first; on a hit there is no call and called is False.
+    - 'Store only successful reads: a failure is returned but not remembered.'
+    examples:
+    - call: the same email twice
+      gives: 1 model call
+    - call: a RateLimitError
+      gives: (None, problem, True), not stored
+- id: human-review
+  title: Shadow mode and the go-live check
+  file: chapters/19-human-review.md
+  minutes: 45
+  folder: 19-human-review
+  tasks:
+  - id: shadow_report
+    title: the shadow report
+    xp: 15
+    hints:
+    - The report sees no agreement and no disagreement.
+    - Claimdesk pay with adjuster refer is unsafe; Claimdesk refer with adjuster pay is extra work.
+    - 'Agreement is what is left: the rows minus both lists, as a percent rounded to 1 place.'
+    examples:
+    - call: shadow_report(week 1)
+      gives: unsafe E-02, E-25, E-30; 83.3%
+  - id: go_live_check
+    title: the go-live check
+    xp: 15
+    hints:
+    - The check says yes to everything.
+    - 'Three rules in order: enough cases, no unsafe drafts, enough agreement.'
+    - Collect every reason that applies, not only the first, and ok is True when there are none.
+    examples:
+    - call: go_live_check(week 1)
+      gives: '(False, [''unsafe drafts: E-02, E-25, E-30'', ''agreement 83.3% is below 90.0%''])'
+    - call: go_live_check(week 1 replayed)
+      gives: (True, [])
+- id: monitoring
+  title: 'Monitoring: numbers and drift'
+  file: chapters/20-monitoring.md
+  minutes: 45
+  folder: 20-monitoring
+  tasks:
+  - id: daily_metrics
+    title: daily numbers
+    xp: 20
+    hints:
+    - daily_metrics returns nothing, so the table is empty.
+    - Group the rows by day with a defaultdict(list), and go through the days in sorted order.
+    - Use percentile for p50 and p95, and count errors, refers and missing amounts as percents of the day.
+    examples:
+    - call: daily_metrics(log)[8]['p95_ms']
+      gives: '10000'
+      note: 10 November
+  - id: drift_alerts
+    title: drift alerts
+    xp: 15
+    hints:
+    - No alerts, even on the day the provider timed out.
+    - The baseline of each WATCH metric is its mean over the first baseline_days days, rounded to 1 place.
+    - Check only the later days, metric by metric in WATCH order, against factor times the baseline.
+    examples:
+    - call: drift_alerts(days)[0]
+      gives: ('2026-11-10', 'p95_ms', 1770.3, 10000)
