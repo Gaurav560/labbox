@@ -1096,3 +1096,15 @@ html { scroll-behavior: smooth; }
    so the whole print shows; no drift */
 .uh-ai .ai-spot-art { aspect-ratio: 2 / 1; padding: 0; background: none; border: 0; }
 .uh-ai .ai-spot-art img, .uh-ai .ai-body.is-in .ai-spot-art img { animation: none; transform: none; object-position: 50% 50%; filter: none; outline: 0; }
+/* after Run: the next labs to spin up (owner, 27 November) */
+.ua-next { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; animation: ua-next-in 420ms ease both; }
+@keyframes ua-next-in { from { opacity: 0; transform: translateY(6px); } }
+.ua-next-label { margin: 0; font: 600 14px var(--font-text); color: var(--text); }
+.ua-next-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ua-next-btn { display: inline-flex; align-items: center; gap: 10px; padding: 7px 8px 7px 10px; border: 1px solid var(--rule); background: var(--card);
+  color: var(--text); font: 13px var(--font-code); cursor: pointer; transition: border-color var(--t-soft), transform var(--t-soft); }
+.ua-next-btn img { width: 18px; height: 18px; padding: 2px; background: #fffdf8; object-fit: contain; }
+.ua-next-btn b { padding: 3px 8px; background: #2f8a4a; color: #fff; font-size: 11px; }
+.ua-next-btn:hover { border-color: var(--text); transform: translateY(-2px); }
+.ua-next .uh-replay { margin-top: 4px; font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .ua-next { animation: none; } }

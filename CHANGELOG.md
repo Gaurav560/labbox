@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Once the home page's machine is running, it offers the next two labs to spin up ("Your LangChain machine is ready.
+  Spin up another:" with `docker run spring-ai` and `docker run rag` buttons), so visitors find the other labs by
+  playing (owner: "how do I show there are other labs to test via a Docker container").
 - Ukiyo's FDE spotlight shows a real print, not AI art (owner: "try this"): Utagawa Hiroshige, View toward Kasumigaseki
   in Edo, about 1830 (public domain, Wikimedia Commons), wide so the whole print shows. The lab picker is a dock of logos.
 - The hero wave is the plain picture in both themes: no animation, no fade, no border (owner: "only the normal image").

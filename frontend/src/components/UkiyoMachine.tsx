@@ -341,6 +341,23 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
               <span className="ua-go-run">Run ▶</span>
             </button>
           </div>
+        ) : running ? (
+          /* once a machine is up, offer the next ones, so visitors find the other labs by playing (owner, 27 November:
+             "how do I show there are other labs to test via a Docker container") */
+          <div className="ua-next">
+            <p className="ua-next-label">Your {lab.label} machine is ready. Spin up another:</p>
+            <div className="ua-next-row">
+              {[1, 2].map((k) => LABS[(LABS.indexOf(lab) + k) % LABS.length]).map((l) => (
+                <button key={l.id} type="button" className="ua-next-btn" onClick={() => { setLab(l); setRun((r) => r + 1); }}
+                  aria-label={`Spin up the ${l.label} machine`}>
+                  {PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}
+                  <span>docker run {l.label.toLowerCase().replace(/\s+/g, "-")}</span>
+                  <b aria-hidden="true">▶</b>
+                </button>
+              ))}
+            </div>
+            <button type="button" className="uh-replay" onClick={spin}>↺ Spin {lab.label} up again</button>
+          </div>
         ) : <button type="button" className="uh-replay" onClick={spin}>↺ Spin it up again</button>}
       </div>
       <div className={`ua-box ${running ? "is-sealed" : ""} ${waiting ? "is-waiting" : ""}`} key={`${lab.id}-${run}`}>
