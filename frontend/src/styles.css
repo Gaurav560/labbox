@@ -2368,3 +2368,20 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 /* Teams greyed out (owner, 27 November): later than Pro */
 .plan.is-off { opacity: .5; filter: grayscale(1); background: transparent; }
 .plan.is-off:hover { opacity: .7; }
+
+/* share logos as a ruled grid, not circles (owner, 27 November: "some other design, not circular"): three columns of
+   fine rules, each cell the platform mark in its own colour and its name */
+.hc-platforms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--border); }
+.hc-platforms li.hc-logo { flex-direction: row; justify-content: flex-start; gap: 10px; padding: 12px 12px; border-bottom: 1px solid var(--border);
+  font-size: 14px; color: var(--text); }
+.hc-platforms li.hc-logo:not(:nth-child(3n)) { border-right: 1px solid var(--border); }
+.hc-logo-mark, .hc-logo.is-linkedin .hc-logo-mark, .hc-logo.is-x .hc-logo-mark, .hc-logo.is-whatsapp .hc-logo-mark,
+.hc-logo.is-facebook .hc-logo-mark, .hc-logo.is-email .hc-logo-mark, .hc-logo.is-link .hc-logo-mark {
+  width: auto; height: auto; border-radius: 0; background: none; box-shadow: none; }
+.hc-logo-mark svg { width: 20px; height: 20px; }
+.hc-logo.is-linkedin .hc-logo-mark { color: #0a66c2; }
+.hc-logo.is-x .hc-logo-mark { color: var(--text); }
+.hc-logo.is-whatsapp .hc-logo-mark { color: #25d366; }
+.hc-logo.is-facebook .hc-logo-mark { color: #1877f2; }
+.hc-logo.is-email .hc-logo-mark, .hc-logo.is-link .hc-logo-mark { color: var(--muted); }
+.hc-logo:hover .hc-logo-mark { transform: none; }

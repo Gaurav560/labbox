@@ -998,3 +998,4 @@ html { scroll-behavior: smooth; }
 /* the FDE spotlight's "New" label in red (owner, 27 November: "keep it red") */
 .uh-ai .ai-tag-new { background: var(--vermilion); color: #fff; }
 /* "Before you start" stays red (owner, 27 November: tried blue, then "revert back to red only") */
+.hc-platforms { border-top-color: var(--rule); } .hc-platforms li.hc-logo { border-color: var(--rule); font: 600 15px var(--font-serif); }
