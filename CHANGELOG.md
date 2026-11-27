@@ -1,5 +1,23 @@
 # Changelog
 
+## 27 November: chapter folders appear one chapter at a time (plan A)
+
+- **A learner's machine shows a chapter's starter folder only once they reach that chapter** (owner: all 22 folders in
+  chapter 1 "will create a huge mental blockage"). A new workspace starts with chapter 1's folder plus the files every
+  chapter shares (go.mod, README.md); opening a chapter (the lab page's chapter focus), checking it, or asking the
+  tutor about it brings that chapter's folder and every earlier one in. Jumping ahead to chapter 9 brings 1 to 9.
+- On by itself for every lab whose chapters have their own top-level folder in `starter/` (3 or more): 13 courses,
+  FDE, Python, Java, JavaScript, Go, Rust, Spring Boot, Spring AI, LangChain, LangChain4j, LangGraph, RAG, SQL, plus
+  Linux and Redis for the chapters that have folders. `reveal: all` in `lab.yaml` turns it off for a lab.
+- Nothing is ever removed: learners who already have every folder keep them; a file a learner already has is never
+  replaced (`containers.top_up` as before). The lessons, starter code and checks are unchanged. The file tree refreshes
+  as soon as a chapter opens.
+- How far a learner has got comes from their saved progress (chapters opened, tasks passed), so a restarted or reset
+  machine gets the same folders back.
+- Plan B, one codebase that grows through the course, is written up for later in `ROADMAP.md` (B, 2b).
+- Tests: `tests/test_reveal.py` (which labs reveal, a new workspace grows chapter by chapter, an old one keeps every
+  folder, opening a chapter through the API brings its folder).
+
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
 - FDE chapter 1's history has a Palantir photo (owner: "without copyrighted"): Alex Karp, Palantir's chief executive, at a

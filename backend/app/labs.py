@@ -244,6 +244,10 @@ class LabConfig(_Strict):
     services: list[Service] = []
     preview: list[PreviewPort] = []
     llm: LLMConfig = LLMConfig()
+    # Plan A (owner, 27 November: all 22 folders on day one "creates a huge mental blockage"): a workspace shows a
+    # chapter's starter folder only once the learner reaches that chapter. auto = on when 3 or more chapters have their
+    # own top-level folder in starter/; files outside the chapter folders (go.mod, README.md) always come at once.
+    reveal: Literal["auto", "all", "chapters"] = "auto"
 
     # Set by the loader, not read from YAML.
     root: Path = Field(default=Path("."), exclude=True)
@@ -310,6 +314,26 @@ class LabConfig(_Strict):
     @property
     def starter_dir(self) -> Path:
         return self.root / "starter"
+
+    def chapter_folders(self) -> dict[str, int]:
+        """Top-level starter folders that belong to one chapter, and that chapter's index (0-based). Empty when the
+        lab shows every starter file at once (reveal: all, or fewer than 3 chapter folders on auto)."""
+        if self.reveal == "all" or not self.starter_dir.is_dir():
+            return {}
+        found: dict[str, int] = {}
+        for i, c in enumerate(self.chapters):
+            name = c.folder or c.id
+            if name not in found and (self.starter_dir / name).is_dir():
+                found[name] = i
+        if self.reveal == "auto" and len(found) < 3:
+            return {}
+        return found
+
+    def chapter_index(self, chapter_id: str) -> int:
+        for i, c in enumerate(self.chapters):
+            if c.id == chapter_id:
+                return i
+        return -1
 
     @property
     def tests_dir(self) -> Path:

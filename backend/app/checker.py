@@ -277,10 +277,11 @@ def run_check(session: Session, user: User, lab: LabConfig, chapter_id: str) -> 
     assert user.id is not None
     lab.chapter(chapter_id)  # 404 if unknown
     if lab.check.mode == "live":
+        containers.get_workspace(session, user, lab, chapter_id)  # this chapter's starter folder is in (plan A)
         ws = containers.ensure_workspace(session, user, lab)  # the system must be running to be checked
         res = check_live(lab, chapter_id, ws)
     else:
-        ws = containers.get_workspace(session, user, lab)
+        ws = containers.get_workspace(session, user, lab, chapter_id)
         containers.touch(session, ws)
         res = check_folder(lab, chapter_id, Path(ws.volume_path), user.id)
 
