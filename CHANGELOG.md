@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 22 rewritten (easy, a little detailed, checked)
+
+- Chapter 22, "Paging and JPQL", to the lesson rules: the photo lead says why it belongs; both tasks list their slips
+  (`List` instead of `Page`, a `findAll()` without the pageable, `page=2` for the second page, column names or the
+  table in JPQL, a missing `@Param`).
+- Checked on a lab machine with the starter and the solution. Quoted as they came: the starter's unsorted list, the
+  page JSON (`content` plus `page` with size 2, number 1, 6 elements, 3 pages), both SQL queries, the price range
+  in order and its query.
+- Added: the `content` + `page` shape comes from the main class's `@EnableSpringDataWebSupport(pageSerializationMode
+  = VIA_DTO)`, which the lesson did not mention.
+- A new sketchnote page, redrawn once ("pages start at 0" now says Spring Data's pages).
+
 ## 28 November: Spring Boot chapter 21 rewritten (easy, a little detailed, checked)
 
 - Chapter 21, "Relationships and N+1", to the lesson rules: "basic type" explained; both tasks list their slips
