@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 18 rewritten (easy, a little detailed, checked)
+
+- Chapter 18, "Filters and interceptors", to the lesson rules: UUID spelled out; both tasks list their slips (the
+  header set after `chain.doFilter`, blank ids, a removed `chain.doFilter`, `/api/*` for `/api/**`, a misspelled
+  `addInterceptors` without `@Override`).
+- Checked on a lab machine with the solution and an altered copy: both headers on `/api/products`, only the
+  request id on `/ping`, `order-42` kept, now quoted from a real run.
+- Corrected: quick check 1 said an interceptor cannot run for an unmapped path because "there is no handler". Tried:
+  registered for `/**`, it ran for `/nothing-here` and named `BasicErrorController#error`, because Spring Boot passes
+  a 404 to its error controller. The question now asks about this chapter's setup (`/api/**`), where only the
+  filter runs (confirmed), and the answer explains both.
+- A new sketchnote page, redrawn once (the request-id bullet overclaimed "everywhere").
+
 ## 28 November: Spring Boot chapter 17 rewritten (easy, a little detailed, checked)
 
 - Chapter 17, "Errors as answers", to the lesson rules: stack trace explained; both tasks list their slips
