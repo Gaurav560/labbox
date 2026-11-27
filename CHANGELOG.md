@@ -13,7 +13,10 @@
   ride it.*", then "Build real AI apps on your own machine: an editor, a terminal and real models, ready in about a
   minute." and "No videos to sit through. *You learn by building.*" Ink and indigo; red only on the Start button.
 - No italic display type on the Ukiyo home page (owner: "the part i dont like is cursive", and the font size): the
-  emphasised half of every heading is upright, in indigo; the hero and the section headings are a size smaller. `ClaimDemo` stays in `HomeAiLabs.tsx`.
+  emphasised half of every heading is upright, in indigo; the hero and the section headings are a size smaller.
+- The "start a lab" section: one line under its heading, "Nothing to install. You go straight to the challenge."
+  (owner: "keep it just" that), and the lab picker is a row of words, the picked one in ink with a vermilion
+  underline, instead of boxes (owner: "do something with these rectangle boxes", "keep red some parts"). `ClaimDemo` stays in `HomeAiLabs.tsx`.
 - The AI rows are compact (smaller pictures, type and spacing), and a course of 15 chapters or fewer is marked
   "Micro" (owner: "write micro in front of small courses"); today that is RAG and vector databases.
 - Ukiyo's art, made with OpenAI image generation in a woodblock style (four concepts for the spotlight, five row

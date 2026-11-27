@@ -934,3 +934,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-promise em { font-weight: 600; color: var(--indigo); }
 .uh-ai .ai-tag-b { font-weight: 600; }
 .uh-head h2, .uh-ai .ai-head h2 { font-size: clamp(28px, 3.2vw, 44px); line-height: 1.1; }
+/* the lab picker as a row of words, not boxes (owner, 27 November: "do something with these rectangle boxes"):
+   the picked one in ink with a vermilion rule under it (red for some parts, not every title) */
+.um-picker { gap: 4px 22px; border-bottom: 1px solid var(--rule); padding-bottom: 0; }
+.um-picker button { position: relative; padding: 8px 0 10px; border: 0; background: none; color: var(--muted);
+  font: 500 14.5px var(--font-text); letter-spacing: 0; transition: color var(--t-soft); }
+.um-picker button::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--vermilion);
+  transform: scaleX(0); transform-origin: left; transition: transform 320ms cubic-bezier(.2, .7, .2, 1); }
+.um-picker button:hover { color: var(--text); }
+.um-picker button[aria-selected="true"] { background: none; color: var(--text); font-weight: 600; }
+.um-picker button[aria-selected="true"]::after { transform: scaleX(1); }
+.uh-machine .ua-text h2 + p { font-size: 18px; color: var(--text); }
+.um-picker { border-bottom: 0; margin-bottom: 6px; }
