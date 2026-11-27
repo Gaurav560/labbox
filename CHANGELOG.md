@@ -1,5 +1,12 @@
 # Changelog
 
+## 28 November: Ukiyo home, the wave rider with a real wave
+
+- The hero's wave is now real water (owner: the dotted wave was "not looking real, too much animated"): the same
+  mirrored picture redrawn with gpt-image (edit, medium quality, 3 candidates, about $0.12), the owner picked A, the
+  wave made real (translucent water, light through the curl, real spray) and the rest still an illustration.
+  `/ukiyo/heroes/wave-rider-real.webp`, 1536 px.
+
 ## 28 November: Ukiyo home, the wave rider in the hero, mirrored
 
 - The hero picture is the engineer riding the wave of light again (owner: "use this image in the hero section and

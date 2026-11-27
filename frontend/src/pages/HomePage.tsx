@@ -75,7 +75,9 @@ export default function HomePage() {
               photo fills the right side and melts into the page"): the engineer riding the wave of light, made for
               LabBox in woodblock style, mirrored so he stands on the right and looks toward the headline. */}
           <div className="uh-hero-print is-rider" aria-hidden="true">
-            <img src="/ukiyo/heroes/wave-rider.webp" width={1200} height={800} alt="" />
+            {/* the wave redrawn as real water (owner, 28 November: "not looking real, too much animated"; picked A, the
+                wave made real and the rest an illustration) */}
+            <img src="/ukiyo/heroes/wave-rider-real.webp" width={1536} height={1024} alt="" />
           </div>
         </section>
 
