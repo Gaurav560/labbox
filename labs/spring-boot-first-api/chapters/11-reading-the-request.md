@@ -3,8 +3,8 @@ Your endpoints so far have ignored the request almost completely: `GET /hello` a
 same list. Real endpoints depend on what the client asks: *which* product, products *cheaper than* what,
 sorted *how*.
 
-A request carries that information in a few places: **in the path** (`/products/2`), **in the query
-string** (`?maxPrice=2500&sort=price`) and **in headers**. (The body is the fourth place; it gets its own
+A request carries that information in a few places: **in the path** (`/products/2`), **in the query string**
+(`?maxPrice=2500&sort=price`, the part after the `?`, chapter 1) and **in headers**. (The body is the fourth place; it gets its own
 chapter, 12.) This chapter teaches you to read each one into a plain Java parameter, and what Spring does
 when the client sends something that does not fit.
 
@@ -72,7 +72,11 @@ is empty. **`orElseThrow`** says "give me what is in the box, or, if it is empty
 And `ResponseStatusException` is a special exception that Spring catches and turns into a response with
 that status code.
 
-So: found, return it (200 + JSON). Not found, throw (404). Your method stays one clear expression. (In
+So: found, return it (200 + JSON). Not found, throw (404). Your method stays one clear expression.
+
+One surprise: the message you give the exception ("No customer 99") does not appear in the answer. Spring Boot
+leaves messages out of error answers by default, because they can reveal details about your code. Chapter 17 shows
+how to send a helpful message on purpose. (In
 chapter 13 you will meet `ResponseEntity`, the other way to choose a status; chapter 17 shows how to give
 every error a consistent JSON body.)
 :::
@@ -120,8 +124,14 @@ cd 11-reading-the-request && mvn -q -o package -DskipTests && java -jar target/r
 curl -i localhost:8080/products/2; echo; curl -i localhost:8080/products/99; echo; curl -i localhost:8080/products/abc
 ```
 
-You should get `200` with the fruit custard, `404`, and `400` (Spring could not turn `abc` into a number,
-so your method never ran). Press **Check**.
+You should get `200` with the fruit custard, `404`, and `400` (Spring could not turn `abc` into a number, so your
+method never ran). On our lab machine the three answers were `{"id":2,"name":"Fruit custard","pricePaise":3000}`,
+then a 404 whose JSON body said `"error":"Not Found","path":"/products/99"`, then a 400 saying `"error":"Bad
+Request","path":"/products/abc"`. Press **Check**.
+
+Usual slips: returning `null` when nothing is found (that gives `200` with an empty body, not 404), a parameter
+named differently from the placeholder (`{id}` needs a parameter called `id`), or the wrong `HttpStatus` import
+(it is `org.springframework.http.HttpStatus`).
 :::
 
 :::step{type=concept title="Values in the query string: @RequestParam"}
@@ -194,8 +204,15 @@ curl "localhost:8080/products/search?maxPrice=2500"; echo; curl "localhost:8080/
 
 (The quotes around the URL matter: without them, your shell would treat `&` as a command of its own.)
 
-You should get the mango kulfi and the samosa (sorted by name), then all four from cheapest to dearest,
-then a `400`, because `cheap` is not a number. Press **Check**.
+You should get the mango kulfi and the samosa (sorted by name), then all four from cheapest to dearest, then a
+`400`, because `cheap` is not a number. On our lab machine, the second call answered Samosa (1800), Mango kulfi
+(2000), Fruit custard (3000), Paneer roll (9000), and a search with no parameters at all answered all four from
+Fruit custard to Samosa (A to Z). Press **Check**.
+
+Usual slips: `int maxPrice` with `required = false` (an `int` cannot be null; we tried it on our lab machine, and
+a search without `maxPrice` answered `500`, with the log saying `Optional int parameter 'maxPrice' is present but
+cannot be translated into a null value`; use `Integer`), `<` instead of `<=` (a product priced exactly at the limit must be kept), or comparing the
+`sort` text with `==` instead of `.equals` (for text, `==` compares objects, not letters).
 :::
 
 :::step{type=concept title="Two routes that look alike"}
@@ -264,8 +281,9 @@ Your method finds no product and returns `null`. What does the client receive?
 - [x] 200 with an empty body: Spring does not treat null as "not found"
 - [ ] 500 Internal Server Error
 :::explain
-Returning null means "here is the answer, and it is empty". To say "not found", throw a
-`ResponseStatusException(HttpStatus.NOT_FOUND, ...)` or return a `ResponseEntity` with 404 (chapter 13).
+Returning null means "here is the answer, and it is empty". We tried it on our lab machine: `200` with
+`Content-Length: 0`. To say "not found", throw a `ResponseStatusException(HttpStatus.NOT_FOUND, ...)` or return a
+`ResponseEntity` with 404 (chapter 13).
 :::
 :::
 
@@ -296,7 +314,7 @@ You can now read everything a request carries outside its body:
   `sorted`.
 - A fixed route (`/products/search`) beats a placeholder route (`/products/{id}`).
 
-:::photo{src="/lesson-images/spring/spring-11-notes.webp" alt="Handwritten notes about Reading the request: @PathVariable reads the id from the path, @RequestParam: ?q=pen, bad text gives 400 by itself, not found? throw, never return null, a fixed route beats a placeholder" ai="true"}
+:::photo{src="/lesson-images/spring/spring-11-notes.webp" alt="Sketchnote: Reading the request. A request carries data in the path, the query string and the headers. Flow: the request arrives, Spring reads the text from the path, query or header, converts it to your type, and your method gets the values. Remember: text Spring cannot convert gives 400 by itself; @RequestParam is required unless optional or defaulted; not found means throw a 404, never return null; a fixed route beats a placeholder." ai="true"}
 One page of notes for this chapter.
 :::
 
