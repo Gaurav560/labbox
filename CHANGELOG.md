@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- "Lab", not "course", in visitor-facing text (owner): the Premium Reads page ("behind every LabBox lab", "the books
+  our labs are built on"), the home page's AI section ("Each AI lab", "New lab", "AI labs live") and master's hero pill.
 - The "start a lab" picker is a printed index under "Pick a lab to try": three ruled columns, each cell a logo on paper,
   the lab's serif name and an arrow on hover; the picked one has a vermilion bar and a soft tint (owner: "some learners
   will miss that these are real buttons"; round buttons "look out of this page"). The FDE "New" label is red again.

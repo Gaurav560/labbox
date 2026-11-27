@@ -92,7 +92,7 @@ export default function HomePage() {
               <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
-            lead="Each AI course is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
+            lead="Each AI lab is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
           />
         </div>
 
