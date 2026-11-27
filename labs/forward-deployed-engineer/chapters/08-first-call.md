@@ -202,8 +202,10 @@ rupees  = dollars x 88
 
 For our call, 41 tokens in and 39 out: (41 x 0.15 + 39 x 0.60) / 1,000,000 = $0.00002955, which is about Rs 0.0026.
 
-One call is nothing. The question finance asks is **per month**: the pilot handles about 80 claims a day across all its
-steps, so `monthly_rs(usage, 80)` multiplies the cost of one call by 80 calls a day and 30 days.
+One call is nothing. The question finance asks is **per month**, and for the size Claimdesk might grow to, not just the
+pilot. The Pune pilot is about 57 claims a quarter. If it works, Deccan Shield will want it in all its claims offices:
+about 40 claims a day, each needing a couple of model calls. So size it at 80 calls a day: `monthly_rs(usage, 80)`
+multiplies the cost of one call by 80 calls a day and 30 days.
 
 Do not round inside `cost_rs`: rounding Rs 0.0026 to two places gives Rs 0.00, and multiplying zero by 2,400 calls still
 gives zero. Round once, at the end, in `monthly_rs`.

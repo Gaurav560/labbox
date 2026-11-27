@@ -25,7 +25,7 @@ def test_daily_metrics():
             return r.failed("daily_metrics", "Price tokens like chapter 8: 1,000,000 input tokens is $0.15, which is Rs 13.20.", 13.2, d1.get("cost_rs"))
         real = daily_metrics(load_log())
         if len(real) != 14 or real[8].get("p95_ms") != 10000:
-            return r.failed("daily_metrics", "The real log has 14 days, and on 10 November p95 is 10000 ms.")
+            return r.failed("daily_metrics", "The real log has 14 days, and on 15 December p95 is 10000 ms.")
         r.passed("daily_metrics", "Fourteen days in one table: speed, errors, refers and cost, the numbers someone will ask about.")
     r.task("daily_metrics", check)
 
@@ -50,7 +50,7 @@ def test_drift_alerts():
         if drift_alerts(days, factor=1.4) != order:
             return r.failed("drift_alerts", "Within a day, follow the order of WATCH: p95_ms, error_pct, refer_pct, no_amount_pct.")
         real = drift_alerts(daily_metrics(load_log()))
-        if real[:2] != [("2026-11-10", "p95_ms", 1770.3, 10000), ("2026-11-10", "error_pct", 3.1, 5.3)]:
-            return r.failed("drift_alerts", "On the real log, 10 November alerts on p95_ms and error_pct first.", None, real[:2])
+        if real[:2] != [("2026-12-15", "p95_ms", 1770.3, 10000), ("2026-12-15", "error_pct", 3.1, 5.3)]:
+            return r.failed("drift_alerts", "On the real log, 15 December alerts on p95_ms and error_pct first.", None, real[:2])
         r.passed("drift_alerts", "The slow day and the day the emails changed both stand out, without anyone reading 560 log lines.")
     r.task("drift_alerts", check)

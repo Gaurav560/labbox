@@ -673,7 +673,7 @@ chapters:
     examples:
     - call: daily_metrics(log)[8]['p95_ms']
       gives: '10000'
-      note: 10 November
+      note: 15 December
   - id: drift_alerts
     title: drift alerts
     xp: 15
@@ -683,4 +683,4 @@ chapters:
     - Check only the later days, metric by metric in WATCH order, against factor times the baseline.
     examples:
     - call: drift_alerts(days)[0]
-      gives: ('2026-11-10', 'p95_ms', 1770.3, 10000)
+      gives: ('2026-12-15', 'p95_ms', 1770.3, 10000)
