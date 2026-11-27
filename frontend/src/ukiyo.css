@@ -1080,3 +1080,7 @@ html { scroll-behavior: smooth; }
 @keyframes uh-wave-swell { from { transform: scale(1); } to { transform: scale(1.025) translateY(-0.4%); } }
 @keyframes uh-wave-ride { 0%, 100% { transform: translate(0, 0.5%); } 50% { transform: translate(0.6%, -1.2%); } }
 .uh-wave img { object-position: 50% 50%; }
+/* light theme: the plain picture, sharp edges, no fade and no border (owner, 27 November: the fade "is not working" in
+   light) */
+:root[data-theme="light"] .uh-hero-art.is-wave .uh-hero-pic { -webkit-mask-image: none; mask-image: none; border: 0; padding: 0; box-shadow: none; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .uh-hero-art.is-wave .uh-hero-pic { -webkit-mask-image: none; mask-image: none; } }
