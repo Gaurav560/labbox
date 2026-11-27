@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 24 rewritten (easy, a little detailed, checked)
+
+- Chapter 24, "Migrations with Flyway", to the lesson rules: `ALTER TABLE`, checksum and schema explained; why V1
+  runs again in this lab (an in-memory H2); both tasks list their slips (one underscore, double quotes in SQL,
+  editing V2 instead of adding V3, and renaming a migration with `mvn package` only).
+- Checked on a lab machine with the starter, the solution and an altered copy. Quoted as they came: the
+  schema-validation failure, Flyway's lines with their timings, V1 to V3 applied, the three products with their
+  categories.
+- Tried the second quick check: with V2 named `V2_add_category.sql`, Flyway said "Successfully validated 2
+  migrations", skipped V2 without a word, and V3 then failed. Found on the way: `mvn package` keeps an old copy of a
+  renamed migration in `target/` (our first try was fooled by exactly that); the lesson now says to build with
+  `clean` after renaming.
+- A new sketchnote page, redrawn once (the default-value bullet now says "existing rows").
+
 ## 28 November: Spring Boot chapter 23 rewritten (easy, a little detailed, checked)
 
 - Chapter 23, "Transactions", to the lesson rules: proxy explained where it first appears; the photo lead says why
