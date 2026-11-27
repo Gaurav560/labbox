@@ -1157,3 +1157,5 @@ html { scroll-behavior: smooth; }
   .uh-hero-print { position: relative; left: auto; right: auto; height: 260px; margin: 0 -16px 8px; }
   .uh-hero-print img { -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%); }
 }
+/* the wave rider (owner, 28 November): keep him and the crest in view, the city fades under the text */
+.uh-hero-print.is-rider img { object-position: 72% 40%; }

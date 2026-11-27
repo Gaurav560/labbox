@@ -1,5 +1,13 @@
 # Changelog
 
+## 28 November: Ukiyo home, the wave rider in the hero, mirrored
+
+- The hero picture is the engineer riding the wave of light again (owner: "use this image in the hero section and
+  flip the wave and boy"), mirrored so he and the crest stand on the right and he looks toward the headline; the city
+  and Fuji fade under the text. Same half text, half picture layout as before (the picture fills the right side and
+  melts into the page). `/ukiyo/heroes/wave-rider.webp`; Hiroshige's print (`hiroshige-coast.webp`) stays in the
+  repo, one line to switch back.
+
 ## 27 November: Ukiyo home, half text and half print in the hero
 
 - The hero is now half text, half print (owner picked option 7 of ten real prints): Hiroshige, *A Great Wave by the
