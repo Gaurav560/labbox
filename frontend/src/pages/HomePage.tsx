@@ -72,9 +72,7 @@ export default function HomePage() {
             <div className="uh-cta">{cta}</div>
           </div>
           <figure className="uh-hero-art is-wave">
-            <div className="uh-hero-pic">
-              <img src="/ukiyo/heroes/wave.webp" width={1200} height={800} alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
-            </div>
+            <WaveHero />
           </figure>
         </section>
 
@@ -175,6 +173,35 @@ export default function HomePage() {
         <SiteLinks faq={false} />
         <Copyright />
       </footer>
+    </div>
+  );
+}
+
+/*
+ * The hero's wave, gently animated (owner, 27 November: "make the image a little animated, the boy sailing in the AI
+ * wave"). Two layers of the same picture, made with OpenAI image edits: the scene without the rider, and the rider and
+ * his boat alone. The boat rises and falls with the swell, points of light twinkle along the wave, spray lifts off the
+ * bow. Still with reduced motion.
+ */
+const SPARKS = Array.from({ length: 34 }, (_, i) => {
+  const t = (i * 0.6180339) % 1, u = (i * 0.4142135) % 1;          // a fixed, even scatter (no randomness per render)
+  const ang = Math.PI * (0.55 + 0.9 * t);                              // along the curl of the wave, left half
+  return { x: 30 + Math.cos(ang) * (22 + 12 * u), y: 52 - Math.sin(ang) * (34 + 10 * u), d: (i % 7) * 0.55, s: 0.6 + (i % 4) * 0.35 };
+});
+const SPRAY = Array.from({ length: 9 }, (_, i) => ({ x: 40 + (i % 5) * 4.2, d: i * 0.45, s: 0.7 + (i % 3) * 0.4 }));
+
+function WaveHero() {
+  return (
+    <div className="uh-hero-pic uh-wave" role="img"
+      aria-label="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain">
+      <img className="uh-wave-plate" src="/ukiyo/heroes/wave-plate.webp" width={1536} height={1024} alt="" />
+      <span className="uh-wave-sparks" aria-hidden="true">
+        {SPARKS.map((p, i) => <i key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, animationDelay: `${p.d}s`, "--s": p.s } as CSSProperties} />)}
+      </span>
+      <img className="uh-wave-rider" src="/ukiyo/heroes/wave-rider.webp" width={1536} height={1024} alt="" aria-hidden="true" />
+      <span className="uh-wave-spray" aria-hidden="true">
+        {SPRAY.map((p, i) => <i key={i} style={{ left: `${p.x}%`, animationDelay: `${p.d}s`, "--s": p.s } as CSSProperties} />)}
+      </span>
     </div>
   );
 }
