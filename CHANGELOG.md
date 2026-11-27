@@ -1,5 +1,22 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 2 rewritten (easy, a little detailed, checked)
+
+- Chapter 2, "Maven and the pom.xml", to the lesson rules: classpath, Maven Central and `~/.m2`, compiled classes,
+  the tree's notation and every command's parts explained where they appear.
+- Checked on a lab machine with the starter and the solution. Corrected: the dependency-tree command's
+  `-Dexcludes=...starter-test` did not hide the test starter (learners saw a longer tree than the lesson); it is now
+  `-Dscope=compile`, and the printed tree is marked as an excerpt of the real 31 lines. "Maven runs these four
+  phases" now says Maven has more than twenty and these are the four used daily (resources are copied too). Gradle's
+  date (2012) added; "the most widely used in companies" softened to "many companies use".
+- Measured and now quoted: demo.jar 20,671,846 bytes with 30 libraries; with the Actuator 36 libraries and about
+  23 MB; the health answer `{"status":"UP"}` with its `application/vnd.spring-boot.actuator.v3+json` type and the
+  "Exposing 1 endpoint" log line.
+- New slips in the tasks, found while checking: an app from an earlier chapter still on port 8080 (the new one
+  fails with "Port 8080 was already in use" and curl reaches the old app, which answers 404), and changing the
+  parent's artifactId.
+- A new still picture, `fat-jar`: what is inside demo.jar, with the real counts. A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 1 rewritten (easy, a little detailed, checked)
 
 - Chapter 1, "How the web works", to the lesson rules: API, resource, media type, paise, Transfer-Encoding and

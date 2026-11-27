@@ -17,20 +17,22 @@ Understand the pom.xml and the project folders, add the Actuator starter, and gi
 :::step{type=concept title="Why a build tool at all?"}
 Imagine building a Java web app by hand. You would need to:
 
-1. Find and download Spring, Tomcat, Jackson and their own dependencies (Spring alone needs several
-   other libraries, and *those* need others). For our tiny app, that is **30 separate jar files**.
+1. Find and download Spring, Tomcat, Jackson and their own dependencies (Spring alone needs several other
+   libraries, and *those* need others). For our tiny app, that is **30 separate jar files** (we counted them in the
+   built app on our lab machine).
 2. Make sure all their **versions fit together**. A Jackson version that is too new for your Spring
    version can fail in strange ways at run time.
-3. Compile your `.java` files with all those jars on the classpath.
+3. Compile your `.java` files with all those jars on the **classpath**: the list of folders and jar files where
+   Java looks for classes. If a library is not on the classpath, your code cannot use it.
 4. Run your tests.
 5. Pack everything into something you can ship and run on a server.
 
 And repeat it, identically, on every developer's laptop and on the build server. Doing this by hand is
 slow and fragile.
 
-A **build tool** does all of it from one description of your project. In the Java world the two common
-ones are **Maven** (since 2004, with the `pom.xml` file) and **Gradle** (with `build.gradle`). Both are
-fine; Spring supports both. This course uses Maven, which is still the most widely used in companies.
+A **build tool** does all of it from one description of your project. In the Java world the two common ones are
+**Maven** (version 1.0 came out in 2004; it uses the `pom.xml` file) and **Gradle** (2012; it uses
+`build.gradle`). Both are fine, and Spring supports both. This course uses Maven, which many companies use.
 :::
 
 :::step{type=concept title="The pom.xml: who this project is" file="02-maven-and-the-project/pom.xml" line="12-18"}
@@ -91,10 +93,14 @@ Maven can draw the full tree of dependencies. Run this in the terminal (it reads
 change anything):
 
 ```bash run
-cd 02-maven-and-the-project && mvn -o -q dependency:tree -Dexcludes=org.springframework.boot:spring-boot-starter-test -DoutputFile=/dev/stdout
+cd 02-maven-and-the-project && mvn -o -q dependency:tree -Dscope=compile -DoutputFile=/dev/stdout
 ```
 
-Here is the start of what it prints:
+The parts: `dependency:tree` asks Maven's dependency plugin to draw the tree; `-Dscope=compile` keeps only the
+libraries the app itself uses (it leaves out the test tools); `-DoutputFile=/dev/stdout` prints the tree in the
+terminal instead of into a file.
+
+Here is part of what it printed on our lab machine (the full tree is 31 lines; we left some out):
 
 ```text
 com.shop:demo:jar:1.0
@@ -104,13 +110,21 @@ com.shop:demo:jar:1.0
 |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:3.4.1:compile
 |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:3.4.1:compile
 |  |  |  +- ch.qos.logback:logback-classic:jar:1.5.12:compile
+|  |  |  ...
 |  +- org.springframework.boot:spring-boot-starter-json:jar:3.4.1:compile
 |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.18.2:compile
+|  |  ...
 |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:3.4.1:compile
 |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:10.1.34:compile
+|  |  ...
 |  +- org.springframework:spring-web:jar:6.2.1:compile
+|  |  ...
 |  \- org.springframework:spring-webmvc:jar:6.2.1:compile
+|     ...
 ```
+
+Each line is `group:artifact:jar:version:scope`. The `+-` and `\-` marks are branches: a line indented under
+another is a library that the one above needed.
 
 Read it like a family tree. The web starter brought:
 - **spring-boot** and **spring-boot-autoconfigure**: Spring Boot itself.
@@ -119,10 +133,10 @@ Read it like a family tree. The web starter brought:
 - **tomcat-embed-core**: the web server that runs inside your app.
 - **spring-web** and **spring-webmvc**: Spring's web layer, which you will use from the next chapter.
 
-One line in your pom; a whole web stack in your project. (The `-o` option means **offline**: your lab
-machine already has every library downloaded, so Maven does not need the internet. On your own computer,
-the first build downloads them from **Maven Central**, the public library store, and keeps them in a
-folder called `~/.m2`.)
+One entry in your pom; a whole web stack in your project. (The `-o` option means **offline**: your lab machine
+already has every library downloaded, so Maven does not need the internet. On your own computer, the first build
+downloads them from **Maven Central**, the public online store of Java libraries, and keeps them in a folder
+called `~/.m2` (`~` means your home folder), so later builds do not download them again.)
 :::
 
 :::step{type=concept title="The folders of a Maven project"}
@@ -149,10 +163,12 @@ Look at the file tree on the left of the editor: you can see this exact layout i
 :::
 
 :::step{type=concept title="Building: phases and the jar"}
-When you type `mvn package`, Maven runs a sequence of **phases**, in order, each building on the last:
+When you type `mvn package`, Maven runs a sequence of **phases**, in order, each building on the last. Maven's
+standard build has more than twenty phases; these four are the ones you meet every day:
 
 1. **validate**: is the pom correct?
-2. **compile**: turn `src/main/java` into `.class` files in `target/classes`.
+2. **compile**: turn `src/main/java` into `.class` files (compiled Java) in `target/classes`. Files from
+   `src/main/resources` are copied there too, just before.
 3. **test**: compile and run the tests in `src/test/java`. If a test fails, the build stops here.
 4. **package**: pack everything into a **jar** file in `target/`.
 
@@ -174,10 +190,17 @@ file):
 mvn -q -o package -DskipTests && ls -l target/*.jar && jar tf target/demo.jar | grep "BOOT-INF/lib/" | head -12
 ```
 
-You will see a jar of about 20 MB called `demo.jar` (because the finalName says `demo`), and inside it a
-`BOOT-INF/lib/` folder full of libraries: `spring-boot-3.4.1.jar`, `logback-classic`, `jackson`,
-`tomcat-embed-core`... Your own classes are in `BOOT-INF/classes/`. Everything the app needs, in one
-file.
+On our lab machine this printed a jar of 20,671,846 bytes (about 20 MB) called `demo.jar` (because the
+finalName says `demo`). Inside it, the `BOOT-INF/lib/` folder held 30 libraries, starting with
+`spring-boot-3.4.1.jar`, `spring-boot-autoconfigure-3.4.1.jar` and `logback-classic-1.5.12.jar`. Your own classes
+are in `BOOT-INF/classes/`. Everything the app needs, in one file.
+
+The command in parts: `ls -l target/*.jar` lists the jar with its size in bytes; `jar tf` lists the files inside
+a jar; `grep "BOOT-INF/lib/"` keeps only the library lines; `head -12` shows the first twelve.
+
+:::diagram{name="fat-jar"}
+What our lab machine found inside demo.jar: your code, 30 libraries, Spring Boot's launcher, and the manifest.
+:::
 :::
 
 :::step{type=example title="Adding a dependency: the Actuator"}
@@ -197,9 +220,10 @@ a different starter, the validation one, would look like:
 </dependency>
 ```
 
-No version, because the parent picks it. Save the pom, build again, and the new library (and everything
-it brings) is in your project. And here is the Spring Boot part: you do not write any code to use the
-Actuator. It is on the classpath, so auto-configuration notices it at start-up and switches it on.
+No version, because the parent picks it. Save the pom, build again, and the new library (and everything it brings)
+is in your project. And here is the Spring Boot part: you do not write any code to use the Actuator. Its jar is
+on the classpath, so auto-configuration notices it at start-up and switches it on. (On our lab machine, adding it
+grew the jar from 30 libraries to 36, and from about 20 MB to about 23 MB.)
 :::
 
 :::step{type=task task=add_actuator title="Your turn: add the Actuator starter"}
@@ -216,8 +240,26 @@ mvn -q -o package -DskipTests && java -jar target/demo.jar
 curl -i localhost:8080/actuator/health
 ```
 
-You should get `200` and `{"status":"UP"}`. You did not write a single line of Java for that endpoint.
+On our lab machine the answer was:
+
+```text
+HTTP/1.1 200
+Content-Type: application/vnd.spring-boot.actuator.v3+json
+...
+{"status":"UP"}
+```
+
+`200` and `{"status":"UP"}`: the app is healthy. The odd-looking Content-Type is still JSON; it is the Actuator's
+own name for its version 3 format. At start-up the log also said `Exposing 1 endpoint beneath base path
+'/actuator'`: by default only the health endpoint is open over the web (chapter 27 opens more). You did not write
+a single line of Java for any of it.
+
 Stop the app with Ctrl+C in Terminal 1, then press **Check**.
+
+Usual slips: the dependency written outside `<dependencies>`, or with a `<version>` that does not match the
+parent (leave the version out). And if an app from an earlier chapter is still running in another terminal, the
+new one stops at start-up with `Web server failed to start. Port 8080 was already in use.`, and your curl reaches
+the *old* app instead (which answers 404 for `/actuator/health`). Stop the old one with Ctrl+C first.
 :::
 
 :::step{type=task task=project_identity title="Your turn: give the project its real name"}
@@ -228,6 +270,9 @@ The project is still called `demo`, so its jar is `demo.jar`. In the same `pom.x
 - the `<finalName>` inside `<build>` from `demo` to `shop-api`.
 
 Build again: `target/shop-api.jar` appears. Press **Check**.
+
+Usual slip: changing the `<artifactId>` inside `<parent>` (that one must stay `spring-boot-starter-parent`, or
+Maven cannot find the parent and the build fails).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -296,11 +341,11 @@ You can now read and change the heart of any Spring Boot project:
 - A **starter** is a bundle; its libraries arrive as **transitive dependencies** (`mvn dependency:tree`).
 - Projects follow fixed folders: `src/main/java`, `src/main/resources`, `src/test/java`, and `target/`
   for output.
-- `mvn package` runs validate, compile, test, package; Spring Boot's plugin makes a **fat jar** that
-  runs with `java -jar`.
+- `mvn package` runs the phases up to package (validate, compile, test, package are the main ones); Spring Boot's
+  plugin makes a **fat jar** that runs with `java -jar`.
 - You added the Actuator, and a health endpoint appeared without any Java code.
 
-:::photo{src="/lesson-images/spring/spring-02-notes.webp" alt="Handwritten notes about Maven and the project: pom.xml = what the project needs, a starter = a bundle of libraries, src/main/java, src/test/java, mvn package makes a jar, target/ can be deleted" ai="true"}
+:::photo{src="/lesson-images/spring/spring-02-notes.webp" alt="Sketchnote: Maven and the pom.xml. The pom describes the project and the libraries it needs. Flow: pom.xml, download libraries, compile and test, a fat jar. Remember: the parent picks tested versions; a starter is a bundle of libraries; code in src/main/java, tests in src/test/java; target/ is output." ai="true"}
 One page of notes for this chapter.
 :::
 

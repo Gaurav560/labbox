@@ -15,7 +15,7 @@ Status: **5 of 23 labs done** (114 of 319 chapters).
 | 3 | langchain4j | LangChain4j | 30 | done (30 of 30) | 26 Nov |
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
-| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (2 of 31) | |
+| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (3 of 31) | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Spring Boot ch 2 done: dependency:tree command fixed (-Dscope=compile; -Dexcludes did not hide the test starter); phases said honestly; jar and Actuator re-measured; port-in-use slip added; fat-jar picture; sketchnote.
 - 28 Nov: Spring Boot ch 1 done: every curl re-run; 405's Allow header corrected (DELETE, GET); search URL answers 400 (said); double-POST slip warned; new http-conversation picture; sketchnote.
 - 28 Nov: Spring Boot ch 0 done: versions, start-up lines, 404 reply re-measured on a lab machine; three half-true claims fixed (support length, old code runs, Pivotal/VMware); timeline + Boot 3.4; sketchnote.
 - 27 Nov, morning: FDE Part 6 (chapters 21 and 22: handover, second customer). Course complete: 22 chapters, 44 tasks. Real runs: the smoke test passes 3 of 3 through the gateway, and a limit of 10,000 fails it on E-01 (exit 1); a bad start lists every problem with no secret shown. Chapter 22 needs no model (the second insurer sends CSV): an adapter plus rules from per-customer config. 2 photos (relay baton, container port), 2 notes; test-lab green (44 tasks).
