@@ -291,3 +291,189 @@ chapters:
       gives: 5 valid, errors on rows 3, 4, 5, 6, 8, 9, 10
     - call: errors[0]
       gives: (3, 'vehicle', "Input should be 'two-wheeler', 'car' or 'commercial'")
+- id: first-call
+  title: The first model call, through a gateway
+  file: chapters/08-first-call.md
+  minutes: 45
+  folder: 08-first-call
+  part: Building with models
+  tasks:
+  - id: ask_model
+    title: the first call through the gateway
+    xp: 15
+    hints:
+    - ask() returns an empty answer and no usage, so the report crashes on the token counts.
+    - 'Use openai.chat.completions.create: MODEL as the model, a temperature of 0, a system and a user message.'
+    - The answer is completion.choices[0].message.content; the token counts are completion.usage.
+    examples:
+    - call: ask("What is a deductible?")
+      gives: ("A deductible is ...", usage)
+    - call: the request
+      gives: model "ai-chat", temperature 0, two messages
+  - id: call_cost
+    title: what each call costs
+    xp: 15
+    hints:
+    - cost_rs and monthly_rs both return 0.0.
+    - Input tokens use USD_PER_MILLION_IN and output tokens USD_PER_MILLION_OUT; divide by 1,000,000, then times RS_PER_USD.
+    - Do not round in cost_rs; round only the monthly total to 2 places.
+    examples:
+    - call: cost_rs(1000 in, 500 out)
+      gives: '0.0396'
+    - call: monthly_rs(1000 in, 500 out, 80)
+      gives: '95.04'
+      note: 80 a day for 30 days
+- id: extraction
+  title: Structured extraction from claim emails
+  file: chapters/09-extraction.md
+  minutes: 50
+  folder: 09-extraction
+  tasks:
+  - id: extract_claim
+    title: read the fields from an email
+    xp: 20
+    hints:
+    - extract_claim returns None for every email.
+    - Send RESPONSE_FORMAT as the response format, SYSTEM as the system message and the email as the user message.
+    - Pass the answer's message.content to ClaimFields.model_validate_json and return what it gives.
+    examples:
+    - call: extract_claim(E-01)
+      gives: ClaimFields(policy_no='DS-POL-40000', amount_rs=12500, ...)
+    - call: the request
+      gives: a strict json_schema response_format
+  - id: safe_extract
+    title: never stop the batch
+    xp: 15
+    hints:
+    - safe_extract lets every error escape, so one bad email stops the batch.
+    - Call extract_claim inside try; catch ValidationError first, then Exception.
+    - Return (None, the reason) from each except; type(e).__name__ names the failed call.
+    examples:
+    - call: safe_extract(a refusal)
+      gives: (None, 'the answer did not match the claim fields')
+    - call: safe_extract(gateway unreachable)
+      gives: '(None, ''the model call failed: APIConnectionError'')'
+- id: policy-lookup
+  title: Answering from the policy wording
+  file: chapters/10-policy-lookup.md
+  minutes: 50
+  folder: 10-policy-lookup
+  tasks:
+  - id: find_clauses
+    title: find the clauses a question is about
+    xp: 15
+    hints:
+    - find_clauses returns an empty list, even for the windscreen question.
+    - Score each clause by len(words(question) & words(title + ' ' + text)) and drop the zeros.
+    - Sort by score, highest first (sorted keeps ties in order), and keep k ids.
+    examples:
+    - call: find_clauses('Is a cracked windscreen paid without the deductible?')
+      gives: '[''C4'', ''C3'', ''C9'']'
+    - call: find_clauses('Do we pay for a puncture?')
+      gives: '[]'
+      note: no shared word
+  - id: cited_answer
+    title: an answer that cites its clauses
+    xp: 20
+    hints:
+    - cited_answer never calls the model.
+    - 'Send the question and one line per found clause, written [C4] Title: text.'
+    - Find the cited ids with re.findall, drop repeats, and set ok only when all of them were sent.
+    examples:
+    - call: answer '... [C4]'
+      gives: cited ['C4'], ok True
+    - call: answer '... [C12]', C12 not sent
+      gives: ok False
+    - call: answer with no citation
+      gives: ok False
+- id: tools
+  title: Letting the model use the customer's systems
+  file: chapters/11-tools.md
+  minutes: 50
+  folder: 11-tools
+  tasks:
+  - id: policy_tool
+    title: the get_policy tool
+    xp: 15
+    hints:
+    - TOOLS is empty and run_tool answers 'not written yet'.
+    - 'One tool: type function, name get_policy, a description, and parameters with a required string policy_no.'
+    - In run_tool, json.loads the arguments and return json.dumps of the policy, or of an error dict when there is none.
+    examples:
+    - call: 'run_tool("get_policy", ''{"policy_no": "DS-POL-40185"}'')'
+      gives: the policy as JSON
+    - call: 'run_tool("get_policy", ''{"policy_no": "DS-POL-99999"}'')'
+      gives: '{"error": "no policy DS-POL-99999"}'
+  - id: tool_loop
+    title: the agent loop
+    xp: 20
+    hints:
+    - run_agent returns an empty answer without calling the model.
+    - Loop at most max_turns times; a message without tool_calls is the answer.
+    - Append the model's message, then a role tool message with tool_call_id and run_tool's result for each call.
+    examples:
+    - call: run_agent('Is DS-POL-40185 in force?')
+      gives: the answer, [('get_policy', ...)]
+    - call: a model that only asks for tools
+      gives: '''Stopped after 4 model calls without an answer.'''
+- id: mcp-server
+  title: Offering Claimdesk's tools over MCP
+  file: chapters/12-mcp-server.md
+  minutes: 45
+  folder: 12-mcp-server
+  tasks:
+  - id: mcp_tools
+    title: two tools over MCP
+    xp: 20
+    hints:
+    - The server offers no tools yet, so clients get 'Unknown tool'.
+    - Write get_policy and in_force with type hints and docstrings, and register each with the server's tool decorator.
+    - 'in_force compares start_date <= on <= end_date: YYYY-MM-DD text compares correctly.'
+    examples:
+    - call: list_tools()
+      gives: get_policy, in_force
+    - call: in_force("DS-POL-40185", "2026-10-04")
+      gives: 'true'
+    - call: in_force("DS-POL-40925", "2026-10-26")
+      gives: 'false'
+  - id: tool_errors
+    title: clear errors for unknown policies
+    xp: 15
+    hints:
+    - An unknown policy does not give the client a clear error yet.
+    - When _policy returns None, raise an exception the client can read.
+    - Raise ToolError with the message No policy and the number; a ValueError would be hidden.
+    examples:
+    - call: get_policy("DS-POL-99999")
+      gives: is_error True, '... No policy DS-POL-99999'
+- id: day-five-demo
+  title: The day-five demo
+  file: chapters/13-day-five-demo.md
+  minutes: 50
+  folder: 13-day-five-demo
+  tasks:
+  - id: triage_endpoint
+    title: the triage endpoint
+    xp: 25
+    hints:
+    - triage always answers refer, 'not written yet'.
+    - Read the fields with safe_extract, look up the policy, and append one reason per failed check, in the TODO's order.
+    - The draft is pay when the reasons list is empty, otherwise refer; include fields.model_dump().
+    examples:
+    - call: POST /triage E-01
+      gives: '{"draft": "pay", "reasons": []}'
+    - call: POST /triage E-24
+      gives: 'refer: registration does not match the policy, above the pilot limit'
+  - id: input_guard
+    title: guard the door
+    xp: 10
+    hints:
+    - An empty email or 'help' still reaches the endpoint.
+    - Give TriageIn.email limits with pydantic's Field.
+    - At least 20 characters and at most 8000; FastAPI then answers 422 before triage runs.
+    examples:
+    - call: 'POST /triage {"email": "help"}'
+      gives: '422'
+      note: no model call
+    - call: an email of 8,000 characters
+      gives: '200'
