@@ -3,13 +3,14 @@ version: 2
 title: Forward Deployed Engineer
 subtitle: Embedded at a motor insurer, from the first meeting to a system in production and a second customer, building Claimdesk, an
   AI claims assistant, the way forward deployed engineers do.
-description: 'Learn the forward deployed engineer''s job by doing it: measure the customer''s problem in their own numbers,
-  discover what really eats the time, scope a pilot you can finish, read the customer''s messy exports, database and old systems,
-  agree a data contract, call a model through a gateway, extract fields from claim emails, answer from the policy wording
-  with citations, let the model use the customer''s systems through tools and an MCP server, demo on day five, build a golden
-  set and evals the customer can read, analyse failures, protect personal data, survive timeouts and costs, run in shadow
-  mode with human review, monitor it in production, hand it over with a CI gate, and adapt it for the next customer, by building
-  Claimdesk at Deccan Shield Insurance in Pune.'
+description: Palantir invented the job. OpenAI and Anthropic are now racing to fill it, with total pay estimated at $350,000
+  to $550,000 a year. The forward deployed engineer is the one a model company sends into a customer's office to turn a demo
+  into a system the business runs on, and this lab puts you in that seat. You join Deccan Shield Insurance in Pune and build
+  Claimdesk, an AI claims assistant. First you measure the problem in the customer's own numbers, find what really eats the
+  time and scope a pilot you can finish. Then you read their messy exports, database and old systems, call a model through
+  a gateway, answer from the policy wording with citations, and hand the model the customer's systems through tools and an
+  MCP server. Finally you prove it works with a golden set and evals, protect personal data, run it in shadow mode, monitor
+  it in production, hand it over with a CI gate and take it to the next customer.
 language: python
 track: ai
 tags:
