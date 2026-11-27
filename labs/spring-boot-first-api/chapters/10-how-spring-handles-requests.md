@@ -3,12 +3,12 @@ Welcome to Part 2. In Part 1 you learned what Spring is doing underneath everyth
 configuration, auto-configuration. From now on, we build the Shop API's real REST endpoints: reading
 requests, accepting JSON, answering with the right status codes, validating input and handling errors.
 
-The word **REST** comes from this man's PhD thesis. In 2000, **Roy Fielding**, one of the authors of the HTTP
-standard itself, described the style the web works best in: resources with addresses, a few standard methods, and
+The word **REST** (Representational State Transfer) comes from this man's PhD thesis. In 2000, **Roy Fielding**,
+one of the authors of the HTTP standard itself, described the style the web works best in: resources with addresses, a few standard methods, and
 status codes that mean the same thing everywhere. Part 2 is that style, in Spring.
 
 :::photo{src="/lesson-images/spring/fielding.webp" alt="Roy Fielding, a man with curly brown hair in a light shirt, speaking at a lectern on a dark stage" credit="Phil Whitehouse" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:Roy_Fielding_(cropped).jpg"}
-Roy Fielding, who named and described REST in 2000.
+Roy Fielding, who named and described REST in 2000: the style every endpoint in Part 2 follows.
 :::
 
 Before writing more endpoints, it pays to know precisely what happens to **one request** inside Spring.
@@ -37,7 +37,7 @@ a table of where everything goes.
 A switchboard in 1975: one operator routes every call, like the DispatcherServlet routes every request.
 :::
 
-Press **▶ Play** and read each step:
+A request's journey is a sequence in time, so this picture plays. Press **▶ Play** and read each step:
 
 :::diagram{name="request-journey"}
 Only step 5 is your code. Spring does everything around it, the same way for every request.
@@ -63,8 +63,8 @@ way up (`TRACE` is the most detailed log level):
 cd 10-how-spring-handles-requests && mvn -q -o package -DskipTests && java -jar target/requests.jar --logging.level.org.springframework.web=TRACE
 ```
 
-First look at the **start-up** part of the log. Among the lines, Spring lists every route it registered,
-per controller:
+First look at the **start-up** part of the log. Among the lines, Spring lists every route it registered, per
+controller. On our lab machine:
 
 ```text
 c.s.c.CartController:
@@ -72,11 +72,14 @@ c.s.c.CartController:
 	{GET [/cart]}: cart()
 o.s.b.a.w.s.e.BasicErrorController:
 	{ [/error]}: error(HttpServletRequest)
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+...
+4 mappings in 'requestMappingHandlerMapping'
 ```
 
-That is the handler mapping table, being built. (`c.s.c.CartController` is `com.shop.cart.CartController`,
-shortened. `BasicErrorController` is Spring Boot's own controller that writes error answers; more on it
-in chapter 17.)
+That is the handler mapping table, being built: 4 routes. (`c.s.c.CartController` is
+`com.shop.cart.CartController`, shortened. `BasicErrorController` is Spring Boot's own controller that writes error
+answers: JSON for programs, and the HTML Whitelabel page for browsers, chapter 3. More on it in chapter 17.)
 
 Now send a request from a second terminal:
 
@@ -84,20 +87,25 @@ Now send a request from a second terminal:
 curl localhost:8080/cart
 ```
 
-and read what Terminal 1 printed for it:
+and read what Terminal 1 printed for it. The first request also prints a few lines about the DispatcherServlet
+getting ready (chapter 4); after those, on our lab machine, came these (class names shortened):
 
 ```text
 DispatcherServlet : GET "/cart", parameters={}, headers={masked} in DispatcherServlet 'dispatcherServlet'
 RequestMappingHandlerMapping : Mapped to com.shop.cart.CartController#cart()
+HandlerMethod : Arguments: []
 RequestResponseBodyMethodProcessor : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 RequestResponseBodyMethodProcessor : Writing [[]]
-DispatcherServlet : Completed 200 OK
+RequestMappingHandlerAdapter : Applying default cacheSeconds=-1
+DispatcherServlet : No view rendering, null ModelAndView returned.
+DispatcherServlet : Completed 200 OK, headers={masked}
 ```
 
-That is the journey from the animation, in Spring's own words: the request arrived at the
-DispatcherServlet, the handler mapping found `CartController#cart()`, the converter chose JSON (curl
-accepts anything, `*/*`), wrote the empty list `[]`, and the request completed with 200. Leave the app
-running for the next steps.
+That is the journey from the animation, in Spring's own words: the request arrived at the DispatcherServlet, the
+handler mapping found `CartController#cart()`, the method needed no arguments, the converter chose JSON (curl
+accepts anything, `*/*`), wrote the empty list `[]`, and the request completed with 200. ("No view rendering" means
+no HTML page was made; that is normal for a REST controller. `headers={masked}` hides the headers in the log, in
+case they hold passwords.) Leave the app running for the next steps.
 :::
 
 :::step{type=concept title="404, 405, 406: three different no's"}
@@ -116,10 +124,12 @@ curl -i -H "Accept: application/xml" localhost:8080/cart
 ```text
 HTTP/1.1 406
 Accept: application/json, application/*+json
+Content-Length: 0
 ```
 
-The client said "I only accept XML"; Spring can only write JSON here (only Jackson's JSON converter is
-present), so it refuses, and tells you what it *can* produce. This step, choosing the format from the
+That is the real answer from our lab machine. The client said "I only accept XML"; Spring can only write JSON here
+(only Jackson's JSON converter is present), so it refuses with an empty body, and its `Accept` header tells you what
+it *can* produce. This step, choosing the format from the
 `Accept` header, is called **content negotiation**. Browsers and curl send "anything is fine" by default,
 so you rarely see 406, but now you know exactly what it means when you do.
 
@@ -182,6 +192,9 @@ curl -X POST localhost:8080/api/v1/cart/items/kulfi; echo; curl -i localhost:808
 ```
 
 The first adds kulfi and shows `["kulfi"]`. The second, the old path, is now 404. Press **Check**.
+
+Usual slip: the prefix added to each method as well as to the class (then the path becomes
+`/api/v1/api/v1/cart`).
 :::
 
 :::step{type=concept title="Same path, different methods" file="10-how-spring-handles-requests/src/main/java/com/shop/cart/CartController.java"}
@@ -216,11 +229,15 @@ curl -X POST localhost:8080/api/v1/cart/items/samosa; echo; curl -X DELETE local
 ```
 
 You should see `["samosa"]`, then `[]` twice. Press **Check**.
+
+Usual slips: `@DeleteMapping("/api/v1/cart")` (the class already adds `/api/v1`, so write only `/cart`), or
+returning a new empty list without clearing the field (the next GET then still shows the old items).
 :::
 
 :::step{type=concept title="One thread per request, and why it matters"}
-Back to step 1 of the journey, because it has a consequence you met in chapter 9. Tomcat handles each
-request in progress on its **own thread**, from a pool of about 200. So 50 customers loading their carts
+Back to step 1 of the journey, because it has a consequence you met in chapter 9. Tomcat handles each request in
+progress on its **own thread**, from a pool of at most 200 threads by default (the setting
+`server.tomcat.threads.max`). So 50 customers loading their carts
 at the same moment means 50 threads running *your* controller methods at the same moment.
 
 But there is only **one** `CartController` object (a singleton). All 50 threads run the same object's
@@ -297,7 +314,7 @@ You can now follow any request through Spring:
 - The same path can have different Java methods for different HTTP methods.
 - One controller object serves every request at once: no per-customer data in fields.
 
-:::photo{src="/lesson-images/spring/spring-10-notes.webp" alt="Handwritten notes about How a request is handled: Tomcat gives it a thread, DispatcherServlet finds the method, 404 no path, 405 wrong method, @RequestMapping('/api/v1') on the class, one controller serves all requests" ai="true"}
+:::photo{src="/lesson-images/spring/spring-10-notes.webp" alt="Sketchnote: How Spring handles a request. Every request goes through the DispatcherServlet, the one front door. Flow: Tomcat thread, DispatcherServlet, handler mapping, your method, Jackson writes JSON. Remember: 404 no route for the path; 405 the path exists but not that method; 406 the client wants a format Spring cannot write; @RequestMapping on the class adds a prefix." ai="true"}
 One page of notes for this chapter.
 :::
 
