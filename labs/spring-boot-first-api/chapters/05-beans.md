@@ -17,8 +17,9 @@ controllers each count visits on their own.
 :::step{type=concept title="First, the problem" file="05-beans/src/main/java/com/shop/pricing/PriceCalculator.java" line="4-9"}
 Let's start with plain Java, no Spring.
 
-Your shop needs to show prices with GST added. Here is a small class for that. It is open on the right:
-this is the real `PriceCalculator` from your project.
+Your shop needs to show prices with GST added. (GST is India's Goods and Services Tax; in this course every price
+gets 18%.) Here is a small class for that. It is open on the right: this is the real `PriceCalculator` from your
+project. Prices are in paise, so `2000` is Rs 20, and `paise * 18 / 100` is 18% of it in whole paise.
 
 ```java
 public class PriceCalculator {
@@ -154,9 +155,11 @@ System.out.println(context.getBeanDefinitionCount() + " beans");
 PriceCalculator calc = context.getBean(PriceCalculator.class);   // ask the container directly
 ```
 
-Our small app has well over a hundred beans! Only a few are yours. The rest belong to Spring Boot:
-Tomcat, Jackson's `ObjectMapper`, the part that routes requests, and many more, all created by
-auto-configuration.
+We tried it on our lab machine with the finished project: this chapter's small app had **158 beans**. Only six are
+yours: the main class, `PriceController`, `PriceCalculator`, `HomeController`, `StatsController` and `VisitCounter`.
+The rest
+belong to Spring Boot: Tomcat's set-up, Jackson's `ObjectMapper` (the object that writes JSON), the part that routes
+requests, and many more, all created by auto-configuration.
 
 You will almost never call `getBean` yourself in real code (constructor injection, which you just learned, is the
 proper way to get a bean). But it helps to know that the context is a real object, sitting in memory, full
@@ -225,10 +228,17 @@ You write `PriceController` with the constructor that takes a `PriceCalculator`,
 - [x] The app does not start: there is no `PriceCalculator` bean to pass in
 - [ ] The app starts, and `calculator` is `null`
 :::explain
-The container only passes in beans, and without a mark `PriceCalculator` is not a bean. Spring stops
-at start-up with a message like "Parameter 0 of constructor in PriceController required a bean of type
-'PriceCalculator' that could not be found." When you see that message, the fix is almost always a
-missing `@Component` or `@Service`. It is one of the most common Spring errors, and now you know it.
+The container only passes in beans, and without a mark `PriceCalculator` is not a bean. We tried it on our lab
+machine; Spring stopped at start-up with:
+
+```text
+Parameter 0 of constructor in com.shop.pricing.PriceController required a bean of type
+'com.shop.pricing.PriceCalculator' that could not be found.
+```
+
+("Parameter 0" is the first parameter; Java counts from 0.) When you see that message, the fix is almost always a
+missing `@Component` or `@Service`, or a class outside the scanned packages (chapter 4). It is one of the most
+common Spring errors, and now you know it.
 :::
 :::
 
@@ -239,8 +249,8 @@ Open `05-beans/src/main/java/com/shop/pricing/PriceController.java`. Look at the
 private PriceCalculator calculator;
 ```
 
-There is no `new`, and there is no constructor. So nobody ever puts a calculator in this field. It stays
-`null`, and the method answers `0` when that happens.
+There is no `new`, and there is no constructor. So nobody ever puts a calculator in this field. It stays `null`
+(Java's "no object here"), and the method is written to answer `0` in that case, instead of crashing.
 
 Run the app as it is, and see:
 
@@ -265,17 +275,23 @@ Two small changes, both in `05-beans/src/main/java/com/shop/pricing/`:
 2. In `PriceController.java`, add a constructor that takes a `PriceCalculator` and stores it in the
    field. Make the field `final` while you are there.
 
-Stop the app (Ctrl+C), run it again, and ask for the price. It should now answer `2360`: 2000 paise plus
-18% GST. If the app does not start, read the first line of the error: it names the class Spring could
-not find.
+Stop the app (Ctrl+C), build and run it again, and ask for the price. It should now answer `2360`: 2000 paise plus
+360 paise of GST (18% of 2000). If the app does not start, read the error's Description: it names the class Spring
+could not find.
+
+Usual slips: `@Service` without its import (`org.springframework.stereotype.Service`; the editor offers it), a
+constructor with a different name from the class (then it is a method, not a constructor), or assigning the
+parameter to itself (`calculator = calculator;` instead of `this.calculator = calculator;`, which leaves the field
+`null`).
 :::
 
 :::step{type=concept title="How many calculators are there now?"}
 Here is a question worth stopping on. Suppose three controllers each ask for a `PriceCalculator` in
 their constructors. How many `PriceCalculator` objects does the container make?
 
-**One.** By default, the container creates **one object per bean** and passes that same object to
-everyone who asks. (Spring calls this the *singleton* scope.)
+**One.** By default, the container creates **one object per bean** and passes that same object to everyone who
+asks. Spring calls this the *singleton* scope; a bean's **scope** says how many objects of it exist and how long
+each one lives.
 
 This is not a small detail. It means a bean is **shared**. If a bean keeps some data, every class that
 was given that bean sees the same data.
@@ -330,11 +346,17 @@ private object the whole time. The fix is the same as before: ask for the bean i
 In `05-beans/src/main/java/com/shop/visits/HomeController.java`, stop creating a `VisitCounter` with `new`.
 Ask for it in the constructor instead, like `StatsController` does.
 
-Then try it: visit `/` twice, and `GET /stats` should go up by 2.
+Then build, run and try it: visit `/` twice, and `GET /stats` should go up by 2.
 
 ```bash run
 curl -s localhost:8080/ > /dev/null; curl -s localhost:8080/ > /dev/null; curl -s localhost:8080/stats; echo
 ```
+
+(`> /dev/null` throws away the "Welcome" answers, so you only see the stats.) On our lab machine, before the fix,
+three visits left `/stats` at `0`; after it, two visits took it from `0` to `2`. Press **Check**.
+
+Usual slip: keeping `= new VisitCounter()` on the field *and* adding the constructor. A `final` field set in two
+places does not compile; remove the `new`.
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -385,10 +407,10 @@ Look at what you have learned in this chapter:
 - You know what a **bean** is: an object the Spring **container** creates and looks after.
 - You can make one, with `@Component` or `@Service`.
 - You can ask for one, with a **constructor parameter**. That is dependency injection.
-- You know there is **one shared object per bean**, and why `new` can quietly break that.
+- You know that, by default, there is **one shared object per bean**, and why `new` can quietly break that.
 - And when you see "required a bean of type ... that could not be found", you know exactly what to fix.
 
-:::photo{src="/lesson-images/spring/spring-05-notes.webp" alt="Handwritten notes about Beans: bean = object Spring looks after, @Component, @Service, ask with a constructor parameter, one shared object per bean, never new a bean yourself" ai="true"}
+:::photo{src="/lesson-images/spring/spring-05-notes.webp" alt="Sketchnote: Beans. A bean is an object the Spring container creates and looks after. Flow: mark the class with @Component or @Service, scanning finds it, the container creates one, it is passed to constructors. Remember: ask for a bean with a constructor parameter; by default one shared object per bean; an object made with new is not a bean; the not-found error means a missing mark." ai="true"}
 One page of notes for this chapter.
 :::
 

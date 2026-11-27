@@ -15,7 +15,7 @@ Status: **5 of 23 labs done** (114 of 319 chapters).
 | 3 | langchain4j | LangChain4j | 30 | done (30 of 30) | 26 Nov |
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
-| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (5 of 31) | |
+| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (6 of 31) | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Spring Boot ch 5 done: 158 beans measured (6 ours); real missing-bean error; starter/solution answers confirmed; slips added; 'by default' kept on singleton; sketchnote (redrawn once).
 - 28 Nov: Spring Boot ch 4 done: animation's 'sees the starter in your pom' corrected (classpath); real start-up log; real placeholder error; real debug report wording; slips added; sketchnote (redrawn once for a lost qualifier).
 - 28 Nov: Spring Boot ch 3 done: 'path must start with /' corrected (Spring adds it); browsers-send-only-GET corrected; records' accessors named; slips added; first-endpoint picture; sketchnote.
 - 28 Nov: Spring Boot ch 2 done: dependency:tree command fixed (-Dscope=compile; -Dexcludes did not hide the test starter); phases said honestly; jar and Actuator re-measured; port-in-use slip added; fat-jar picture; sketchnote.
