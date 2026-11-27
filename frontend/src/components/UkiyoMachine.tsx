@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 type Piece = { logo: string | null; icon?: "term" | "ai"; name: string; step: string };
 type Lab = { id: string; label: string; challenge: string; pieces: Piece[] };
 const P = (logo: string, name: string, step: string): Piece => ({ logo, name, step });
-const LINUX = P("linux", "Ubuntu 24.04", "your own Linux machine, in a container");
+const LINUX = P("linux", "Ubuntu 24.04", "a Linux machine for you, in a container");
 // The editor is named for what it does, not the product (owner, 25 November: it may change if VS Code is too heavy).
 const EDITOR: Piece = { logo: "editor", icon: "term", name: "Editor and terminal", step: "a code editor and a terminal, in your browser" };
 const AI: Piece = { logo: "labbox", icon: "ai", name: "AI code assistant", step: "explains, hints and reviews, never the answer" };

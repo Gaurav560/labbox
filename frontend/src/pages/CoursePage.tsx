@@ -95,7 +95,7 @@ export default function CoursePage() {
                     <span aria-hidden="true" className="course-play">▶</span>Start free →
                   </Link>
                 </div>
-                <p className="course-where">Sign up with Google or GitHub, and your own machine starts in about a minute.</p>
+                <p className="course-where">Sign up with Google or GitHub, and a lab machine opens in your browser in about a minute.</p>
               </>
             ) : lab.access === "locked" ? (
               <UnlockBox lab={lab} slots={slots} onChange={() => setReload((n) => n + 1)} />
@@ -122,7 +122,7 @@ export default function CoursePage() {
             <li><strong>{lab.chapters.length}</strong><span>chapters</span></li>
             <li><strong>{lab.progress.total_tasks}</strong><span>hands-on tasks</span></li>
             {lines.length > 1 && <li><strong>{lines.length}</strong><span>parts</span></li>}
-            <li><strong>Your own machine</strong><span>editor, terminal, instant checks</span></li>
+            <li><strong>A lab machine in your browser</strong><span>editor, terminal, instant checks</span></li>
           </ul>
         </section>
 

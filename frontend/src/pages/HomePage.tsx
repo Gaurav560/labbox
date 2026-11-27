@@ -69,7 +69,7 @@ export default function HomePage() {
             {/* Owner, 27 November: "fix this way of writing"; picked "ride the wave" (an invitation, not a threat; it matches
                 the Forward Deployed Engineer picture of an engineer riding a wave). Ink and indigo, no red but the button. */}
             <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to ride it.</em></h1>
-            <p className="uh-lead">Build real AI apps on your own machine: an editor, a terminal and real models, ready in about a minute.</p>
+            <p className="uh-lead">Build real AI apps in your browser. A lab machine with an editor, a terminal and real models is ready in about a minute.</p>
             <p className="uh-promise"><span>No videos to sit through.</span> <em>You learn by building.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
@@ -92,7 +92,7 @@ export default function HomePage() {
               <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
-            lead="Each AI course is a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway."
+            lead="Each AI course is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
           />
         </div>
 
