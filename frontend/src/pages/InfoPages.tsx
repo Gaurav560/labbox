@@ -142,6 +142,7 @@ export function PricingPage() {
         "Real models through the LabBox gateway, with a daily allowance",
         "Up to 3 labs open at a time; finish one to free a slot",
         "A certificate with its own link for every lab you finish",
+        "Meet Jarvis: one free 3-minute voice conversation",
       ],
       cta: user ? <Link className="btn btn-primary" to="/labs">Your labs →</Link> : <Link className="btn btn-primary" to="/login?signup=1">Start free →</Link>,
     },
@@ -149,6 +150,7 @@ export function PricingPage() {
       id: "pro", name: "Pro", price: "Coming soon", note: "For learners who want more", soon: true,
       lines: [
         "Everything in Free",
+        "Jarvis, your personal voice guide: he knows your labs, your code and where you are stuck, and you talk with him out loud, every day",
         "Every lab open at once, no 3-lab limit",
         "A larger daily allowance for the tutor and the model gateway",
         "Every Premium Read",

@@ -19,6 +19,7 @@ class UserOut(BaseModel):
     id: int
     username: str
     is_admin: bool = False  # Phase J: shows the Admin link
+    plan: str = "free"  # "free" or "pro" (owner, 28 November: Jarvis's voice is for Pro)
 
 
 class TokenOut(BaseModel):
@@ -28,7 +29,7 @@ class TokenOut(BaseModel):
 
 def _token_out(user: User) -> TokenOut:
     assert user.id is not None
-    return TokenOut(token=auth.create_token(user), user=UserOut(id=user.id, username=user.username, is_admin=user.is_admin))
+    return TokenOut(token=auth.create_token(user), user=UserOut(id=user.id, username=user.username, is_admin=user.is_admin, plan=user.plan))
 
 
 class AuthOptions(BaseModel):
@@ -86,4 +87,4 @@ def login(body: Credentials, request: Request, session: Session = Depends(get_se
 @router.get("/me", response_model=UserOut)
 def me(user: User = Depends(auth.get_current_user)) -> UserOut:
     assert user.id is not None
-    return UserOut(id=user.id, username=user.username, is_admin=user.is_admin)
+    return UserOut(id=user.id, username=user.username, is_admin=user.is_admin, plan=user.plan)

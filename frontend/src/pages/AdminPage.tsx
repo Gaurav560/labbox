@@ -8,6 +8,7 @@ import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import ThemeButton from "../components/ThemeButton";
 import { LIBRARY_TABS } from "./LibraryPage";
+import { jarvisApi, type JarvisAdmin } from "../api";
 
 // The admin area (Phase J): what to improve, and what is running. Only for accounts with is_admin;
 // the backend refuses everyone else, this page only hides itself.
@@ -19,6 +20,7 @@ const TABS = [
   ["access", "Lab access"],
   ["machines", "Machines"],
   ["ai", "AI spend"],
+  ["jarvis", "Jarvis"],
   ["errors", "Errors"],
   ["library", "Premium Reads"],
 ] as const;
@@ -359,7 +361,7 @@ function LearnersTab() {
     >
       {!rows ? <Loading error={error} /> : rows.length === 0 ? <p className="muted">No one matches.</p> : (
         <table className="adm-table">
-          <thead><tr><th>Learner</th><th>Joined</th><th>Labs</th><th>XP</th><th>Checks</th><th>Last active</th><th>Lab limit</th></tr></thead>
+          <thead><tr><th>Learner</th><th>Joined</th><th>Labs</th><th>XP</th><th>Checks</th><th>Last active</th><th>Lab limit</th><th>Plan</th></tr></thead>
           <tbody>
             {rows.map((u) => (
               <tr key={u.id}>
@@ -370,12 +372,105 @@ function LearnersTab() {
                 <td className="adm-num">{u.checks}</td>
                 <td>{when(u.last_active)}</td>
                 <td>{access && <LearnerLimit user={u} siteLimit={access.limit} />}</td>
+                <td><LearnerPlan user={u} /></td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
     </Panel>
+    </>
+  );
+}
+
+/** One learner's plan on the Learners tab (owner, 28 November): Pro talks with Jarvis. Saves at once. */
+function LearnerPlan({ user }: { user: AdminLearner }) {
+  const [plan, setPlan] = useState<"free" | "pro">(user.plan ?? "free");
+  const [err, setErr] = useState<string | null>(null);
+  if (user.is_admin) return <span className="muted small-text">pro (admin)</span>;
+  const change = (v: "free" | "pro") => {
+    const before = plan;
+    setPlan(v);
+    setErr(null);
+    jarvisApi.setPlan(user.id, v).catch((e) => { setPlan(before); setErr(e instanceof ApiError ? e.message : String(e)); });
+  };
+  return (
+    <>
+      <select className="adm-select" aria-label={`Plan for ${user.username}`} value={plan} onChange={(e) => change(e.target.value as "free" | "pro")}>
+        <option value="free">Free</option>
+        <option value="pro">Pro</option>
+      </select>
+      {err && <div className="adm-error small-text" role="alert">{err}</div>}
+    </>
+  );
+}
+
+const JARVIS_FIELDS: [string, string, string][] = [
+  ["jarvis_daily_usd", "Daily budget (USD)", "Nobody starts a new conversation once today's spend reaches this."],
+  ["jarvis_monthly_usd", "Monthly hard stop (USD)", "Everything stops at this, so the OpenAI credit never runs dry."],
+  ["jarvis_pro_minutes", "Pro minutes a day", "Per learner."],
+  ["jarvis_trial_minutes", "Free trial minutes", "Once per account."],
+  ["jarvis_trials_per_day", "Free trials a day", "Across the whole site."],
+];
+
+/** The Jarvis tab (owner, 28 November): what it costs, today and this month, and the limits that keep it in budget. */
+function JarvisTab() {
+  const [data, error, reload] = useLoad<JarvisAdmin>(() => jarvisApi.admin(), []);
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  const [msg, setMsg] = useState<string | null>(null);
+  if (!data) return <Panel title="Jarvis"><Loading error={error} /></Panel>;
+  const save = async () => {
+    const values: Record<string, number> = {};
+    for (const [k, v] of Object.entries(draft)) if (v.trim() !== "" && !Number.isNaN(Number(v))) values[k] = Number(v);
+    try {
+      await jarvisApi.adminSettings(values);
+      setDraft({});
+      setMsg("Saved.");
+      reload();
+    } catch (e) {
+      setMsg(e instanceof ApiError ? e.message : String(e));
+    }
+  };
+  const usd = (v: number) => `$${v.toFixed(v < 1 ? 3 : 2)}`;
+  return (
+    <>
+      <Panel title="Jarvis" note="Realtime voice conversations, measured from the usage OpenAI reports after every reply." actions={<button className="btn btn-small" onClick={reload}>Refresh</button>}>
+        <div className="jv-adm-cards">
+          <div><span>Today</span><strong>{usd(data.today_usd)}</strong><small>of {usd(data.settings.jarvis_daily_usd)}</small></div>
+          <div><span>This month</span><strong>{usd(data.month_usd)}</strong><small>of {usd(data.settings.jarvis_monthly_usd)}</small></div>
+          <div><span>Conversations today</span><strong>{data.today_sessions}</strong><small>{data.today_minutes} min, {data.trials_today} trials</small></div>
+          <div><span>Cost per minute</span><strong>{data.cost_per_minute_usd == null ? "n/a" : usd(data.cost_per_minute_usd)}</strong><small>this month, measured</small></div>
+          <div><span>Pro learners</span><strong>{data.pro_learners}</strong><small>admins count as Pro too</small></div>
+        </div>
+      </Panel>
+      <Panel title="Limits" note="Changes apply to the next conversation.">
+        <div className="jv-adm-fields">
+          {JARVIS_FIELDS.map(([k, label, hint]) => (
+            <label key={k}>
+              <span>{label}</span>
+              <input type="number" min={0} step="any" value={draft[k] ?? String(data.settings[k])} onChange={(e) => setDraft({ ...draft, [k]: e.target.value })} />
+              <small className="muted">{hint}</small>
+            </label>
+          ))}
+        </div>
+        <button className="btn btn-small btn-primary" onClick={save} disabled={!Object.keys(draft).length}>Save limits</button>
+        {msg && <p className="adm-note" role="status">{msg}</p>}
+      </Panel>
+      <Panel title="Recent conversations">
+        {data.recent.length === 0 ? <p className="muted">Nobody has talked with Jarvis yet.</p> : (
+          <table className="adm-table">
+            <thead><tr><th>Learner</th><th>Kind</th><th>Lab</th><th>Started</th><th>Length</th><th>Cost</th></tr></thead>
+            <tbody>
+              {data.recent.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.username}</td><td>{r.kind}</td><td>{r.lab_id ?? "dashboard"}</td><td>{when(r.started_at)}</td>
+                  <td className="adm-num">{secs(r.seconds)}</td><td className="adm-num">{usd(r.cost_usd)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Panel>
     </>
   );
 }
@@ -683,6 +778,7 @@ export default function AdminPage() {
         {tab === "access" && <AccessTab />}
         {tab === "machines" && <MachinesTab />}
         {tab === "ai" && <SpendTab />}
+        {tab === "jarvis" && <JarvisTab />}
         {tab === "errors" && <ErrorsTab />}
         {tab === "library" && <LibraryTab />}
       </main>

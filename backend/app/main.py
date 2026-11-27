@@ -20,6 +20,7 @@ from .routers import (
     ai_routes,
     auth_routes,
     certificate_routes,
+    jarvis_routes,
     check_routes,
     engagement_routes,
     file_routes,
@@ -79,6 +80,8 @@ app.include_router(certificate_routes.router)
 app.include_router(oauth_routes.router)
 app.include_router(library_routes.router)
 app.include_router(library_routes.admin_router)
+app.include_router(jarvis_routes.router)
+app.include_router(jarvis_routes.admin_router)
 
 
 class Health(BaseModel):

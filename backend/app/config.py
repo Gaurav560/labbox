@@ -107,6 +107,28 @@ class Settings(BaseSettings):
     LLM_EMBED_RPM: int = 300  # embeddings have their own limits: a vector store embeds one document per request
     LLM_EMBED_DAILY_TOKENS: int = 500_000  # about 1 US cent of text-embedding-3-small
 
+    # Jarvis, the learner's realtime voice assistant (owner, 28 November). Speech to speech with OpenAI's realtime
+    # model, Pro learners only, with a one-time trial for free learners. The owner approved the paid realtime model
+    # with these limits: $1.50 a day, a hard stop at $40 a month (OpenAI credit is $50). An admin can change the
+    # budgets and minutes in Admin, Jarvis (site settings); these are the defaults. "fake" (tests) never calls OpenAI.
+    JARVIS_ENABLED: bool = True
+    JARVIS_PROVIDER: str = "openai"
+    JARVIS_MODEL: str = "gpt-realtime-2.1-mini"
+    JARVIS_VOICE: str = "cedar"
+    JARVIS_DAILY_BUDGET_USD: float = 1.50
+    JARVIS_MONTHLY_BUDGET_USD: float = 40.0
+    JARVIS_PRO_DAILY_MINUTES: int = 20
+    JARVIS_TRIAL_MINUTES: int = 3
+    JARVIS_TRIALS_PER_DAY: int = 10
+    # USD per million tokens for the realtime mini model (third-party price lists, November 2026; checked against
+    # the usage OpenAI reports per response). Text rates are an estimate on the high side.
+    JARVIS_PRICE_AUDIO_IN: float = 10.0
+    JARVIS_PRICE_AUDIO_CACHED: float = 0.30
+    JARVIS_PRICE_TEXT_IN: float = 0.60
+    JARVIS_PRICE_TEXT_CACHED: float = 0.06
+    JARVIS_PRICE_AUDIO_OUT: float = 20.0
+    JARVIS_PRICE_TEXT_OUT: float = 2.40
+
     @field_validator("JWT_SECRET")
     @classmethod
     def secret_long_enough(cls, v: str) -> str:

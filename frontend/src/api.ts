@@ -49,7 +49,7 @@ const q = encodeURIComponent;
 
 // ---------- types ----------
 
-export interface User { id: number; username: string; is_admin?: boolean }
+export interface User { id: number; username: string; is_admin?: boolean; plan?: "free" | "pro" }
 export interface AuthResponse { token: string; user: User }
 export interface Progress { passed_tasks: number; total_tasks: number }
 export interface LabInfo {
@@ -299,7 +299,7 @@ export interface AdminStep { index: number; title: string; type: string; stopped
 export interface AdminChapter { id: string; title: string; started: number; completed: number; steps: AdminStep[] }
 export interface AdminTask { id: string; title: string; chapter_id: string; attempted: number; passed: number; pass_rate: number | null; failed_checks_per_learner: number; hints_per_learner: number; hint_count: number; confusion: number }
 export interface AdminLabReport { id: string; title: string; learners: number; chapters: AdminChapter[]; tasks: AdminTask[] }
-export interface AdminLearner { id: number; username: string; joined: string; is_admin: boolean; labs: number; xp: number; checks: number; last_active: string | null; lab_limit?: number | null }
+export interface AdminLearner { id: number; username: string; joined: string; is_admin: boolean; labs: number; xp: number; checks: number; last_active: string | null; lab_limit?: number | null; plan?: "free" | "pro" }
 export interface SpendRow { name: string; requests: number; tokens: number; cost_usd: number }
 export interface AdminSpend { days: { day: string; requests: number; tokens: number; cost_usd: number }[]; by_model: SpendRow[]; top_learners: SpendRow[] }
 export interface AdminMachine { container: string; user_id: number; username: string; lab_id: string; lab_title: string; started_at: string | null; files_mb: number }
@@ -349,4 +349,26 @@ export const library = {
   remove: (id: number) => request<{ ok: boolean }>("DELETE", `/api/admin/library/${id}`),
   setImage: (id: number, dataUrl: string) => request<LibraryItem>("PUT", `/api/admin/library/${id}/image`, { data: dataUrl }),
   removeImage: (id: number) => request<LibraryItem>("DELETE", `/api/admin/library/${id}/image`),
+};
+
+// ---------- Jarvis, the learner's realtime voice assistant (owner, 28 November) ----------
+export interface JarvisStatus { enabled: boolean; plan: "free" | "pro"; kind: "pro" | "trial" | "locked"; reason: string; seconds_left: number; trial_used: boolean }
+export interface JarvisSession { session_id: number; client_secret: string; expires_at: number; model: string; kind: "pro" | "trial"; max_seconds: number }
+export interface JarvisBeat { stop: boolean; reason: string; seconds_left: number; cost_usd: number }
+export interface JarvisAdmin {
+  today_usd: number; month_usd: number; today_sessions: number; today_minutes: number; trials_today: number; pro_learners: number;
+  cost_per_minute_usd: number | null; settings: Record<string, number>;
+  recent: { id: number; username: string; kind: string; lab_id: string | null; started_at: string; seconds: number; cost_usd: number }[];
+}
+export const jarvisApi = {
+  status: () => request<JarvisStatus>("GET", "/api/jarvis/status"),
+  start: (labId?: string, chapterId?: string, step?: number) =>
+    request<JarvisSession>("POST", "/api/jarvis/session", { lab_id: labId ?? null, chapter_id: chapterId ?? null, step: step ?? null }),
+  heartbeat: (id: number, body: { seconds: number; usage: unknown[]; call_id?: string | null; ended?: boolean }) =>
+    request<JarvisBeat>("POST", `/api/jarvis/session/${id}/heartbeat`, body),
+  tool: (id: number, name: string, step?: number) =>
+    request<{ output: string }>("POST", `/api/jarvis/session/${id}/tool`, { name, step: step ?? null }),
+  admin: () => request<JarvisAdmin>("GET", "/api/admin/jarvis"),
+  adminSettings: (s: Record<string, number>) => request<JarvisAdmin>("PUT", "/api/admin/jarvis", s),
+  setPlan: (userId: number, plan: "free" | "pro") => request<{ plan: string }>("PUT", `/api/admin/learners/${userId}/plan`, { plan }),
 };

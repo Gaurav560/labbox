@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import Jarvis from "../components/Jarvis";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, type LabDetail, type LabSummary, type NextStep, type Slots } from "../api";
 import { chapterNumber } from "../components/StatusBar";
@@ -84,6 +85,7 @@ export default function LabsPage() {
           {labs && <Directory labs={labs} link={(lab) => `/courses/${lab.id}`} initial={category || "all"} />}
         </section>
       </main>
+      <Jarvis />
     </div>
   );
 }
