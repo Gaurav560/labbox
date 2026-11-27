@@ -34,11 +34,14 @@ HTTP/1.1 500
 {"timestamp":"...","status":500,"error":"Internal Server Error","path":"/products/99"}
 ```
 
-**500 Internal Server Error**: "the server is broken". It is not; the client asked for something that does not
-exist, which is a 404. And look at Terminal 1: a long **stack trace** in the log, the kind of alarm that wakes
-up the on-call engineer at night, for a perfectly normal situation.
+**500 Internal Server Error**: "the server is broken". It is not; the client asked for something that does not exist,
+which is a 404. And look at Terminal 1: an `ERROR` line followed by a long **stack trace** (the list of method calls
+that were running when the exception was thrown, one `at ...` line each; on our lab machine, 52 of them). That is
+the kind of alarm that wakes up the on-call engineer at night, for a perfectly normal situation.
 
-Any exception your code does not handle becomes a 500. So: we need to handle them.
+An exception of your own that nothing handles becomes a 500. (Some of Spring's own exceptions carry a status, like
+the `ResponseStatusException` from chapter 11 or chapter 16's validation failure; those become their status. Yours
+do not.) So: we need to handle ours.
 :::
 
 :::step{type=concept title="One place for every error: @RestControllerAdvice" file="17-errors/src/main/java/com/shop/ApiErrors.java" line="5-14"}
@@ -132,7 +135,10 @@ Content-Type: application/problem+json
 {"type":"about:blank","title":"Product not found","status":404,"detail":"No product 99","instance":"/products/99"}
 ```
 
-And no stack trace in the log. Press **Check**.
+That is the real answer from our lab machine. And no stack trace in the log. Press **Check**.
+
+Usual slips: `forStatus` instead of `forStatusAndDetail` (then the `detail` is missing), the wrong `HttpStatus`
+(`NOT_FOUND` is 404), or the handler method not inside the `@RestControllerAdvice` class.
 :::
 
 :::step{type=concept title="Validation errors, with every field"}
@@ -159,7 +165,10 @@ problem.setProperty("errors", errors);
 
 - **`forStatus`** creates a problem with only a status (there is no single detail for several errors).
 - **`setProperty(name, value)`** adds your own field to the JSON.
-- A **`LinkedHashMap`** keeps the order you put things in (a plain `HashMap` does not promise any order).
+- A **`LinkedHashMap`** keeps the order you put things in (a plain `HashMap` does not promise any order). The
+  validator itself, though, does not report the fields in a fixed order: on our lab machine, three runs of the same
+  request gave `name` first once and `pricePaise` first twice. Clients should look fields up by name, never by
+  position.
 
 The client then receives:
 
@@ -182,7 +191,11 @@ Rebuild, run, and send an invalid product:
 curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "", "pricePaise": -1}'
 ```
 
-You should see `400`, `application/problem+json`, and both fields in `errors`. Press **Check**.
+You should see `400`, `application/problem+json`, and both fields in `errors` (in either order). Press **Check**.
+
+Usual slips: `MethodArgumentNotValidException` imported from the wrong package (it is
+`org.springframework.web.bind`), `getGlobalErrors()` instead of `getFieldErrors()`, or the map added with a name
+other than `errors`.
 :::
 
 :::step{type=concept title="What about bugs? The 500 that does not leak"}
@@ -264,7 +277,7 @@ class for full control.
 :::step{type=recap title="What you can do now"}
 Your API now fails clearly and consistently:
 
-- An **unhandled exception is a 500**. Business exceptions (like "not found") need a handler.
+- An exception of your own with **no handler is a 500**. Business exceptions (like "not found") need a handler.
 - **`@RestControllerAdvice`** + **`@ExceptionHandler(X.class)`**: one class that turns exceptions from every
   controller into responses.
 - **`ProblemDetail`** (RFC 9457): `title`, `status`, `detail`, `instance`, `type`, plus your own properties
@@ -273,7 +286,7 @@ Your API now fails clearly and consistently:
   400 problem with it.
 - Unexpected errors: log the details on the server, give the client a short, generic 500.
 
-:::photo{src="/lesson-images/spring/spring-17-notes.webp" alt="Handwritten notes about Errors: unhandled exception = 500, @RestControllerAdvice, @ExceptionHandler(X.class), ProblemDetail: title, status, detail, log details, show a short 500" ai="true"}
+:::photo{src="/lesson-images/spring/spring-17-notes.webp" alt="Sketchnote: Errors as answers. Turn exceptions into clear, standard error answers in one place. Flow: a service throws, the controller does not catch, the advice's handler runs, a ProblemDetail is sent. Remember: your own exception with no handler is a 500; @RestControllerAdvice applies to every controller; ProblemDetail has title, status, detail and instance; log the details and send the client a short 500." ai="true"}
 One page of notes for this chapter.
 :::
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 17 rewritten (easy, a little detailed, checked)
+
+- Chapter 17, "Errors as answers", to the lesson rules: stack trace explained; both tasks list their slips
+  (`forStatus` without a detail, the wrong status, the handler outside the advice class, the wrong import,
+  `getGlobalErrors`, a different property name).
+- Checked on a lab machine with the starter and the solution: the starter's 500 for product 99 (an `ERROR` line and
+  a 52-line stack trace), the solution's 404 `application/problem+json` answer word for word (and no stack trace),
+  and the 400 problem with its `errors` map.
+- Corrected: "any exception your code does not handle becomes a 500" (Spring's own exceptions that carry a status,
+  like chapter 11's `ResponseStatusException` and chapter 16's validation failure, become that status; your own
+  become 500), in the text, the recap and the notes. Added: the validator reports fields in no fixed order (three
+  runs: `name` first once, `pricePaise` first twice), so clients must look fields up by name.
+- A new sketchnote page, redrawn once (its first bullet had the same overstatement).
+
 ## 28 November: Spring Boot chapter 16 rewritten (easy, a little detailed, checked)
 
 - Chapter 16, "Validation", to the lesson rules: both tasks list their slips (`@Valid` forgotten, the wrong
