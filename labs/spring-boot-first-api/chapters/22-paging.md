@@ -18,7 +18,7 @@ Libraries solved this problem long before databases: a card catalogue is the who
 pull out **one drawer at a time**. A page is a drawer.
 
 :::photo{src="/lesson-images/spring/card-catalog.webp" alt="Rows of small wooden drawers with brass label holders in a library card catalogue, with a pull-out shelf" credit="TBurmeister (WMF)" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Card_catalog_at_the_Indiana_State_Library_-_cabinet_exterior.jpg"}
-A library card catalogue: everything is there, one drawer at a time.
+A library card catalogue: everything is there, one drawer at a time, which is exactly how an API serves a big list.
 :::
 
 To return page 2 of a list sorted by name, with 20 items per page, the database needs three instructions:
@@ -77,7 +77,8 @@ cd 22-paging && mvn -q -o package -DskipTests && java -jar target/paging.jar --s
 curl "localhost:8080/products?page=1&size=2&sort=name"
 ```
 
-All six products come back, unsorted. The parameters are ignored, because nothing in the method reads them.
+All six products come back, unsorted (on our lab machine, starting with the Mango kulfi). The parameters are
+ignored, because nothing in the method reads them.
 :::
 
 :::step{type=task task=paged_products title="Your turn: products a page at a time"}
@@ -90,14 +91,20 @@ Rebuild, run, and ask for the second page of two, by name:
 curl "localhost:8080/products?page=1&size=2&sort=name"
 ```
 
+On our lab machine (the product fields shortened to `...`):
+
 ```text
 {"content":[{"id":4,"name":"Kachori",...},{"id":1,"name":"Mango kulfi",...}],
  "page":{"size":2,"number":1,"totalElements":6,"totalPages":3}}
 ```
 
+(The shape `content` plus `page` comes from one line already in this project's main class:
+`@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)`. It tells Spring Data to write a page in this small,
+stable shape, instead of writing its internal page object as it is, whose shape can change between versions.)
+
 Read the answer: `content` is the page (Kachori and Mango kulfi: positions 3 and 4 by name, because page 0 held
 Bhel puri and Fruit custard), and `page` tells the client everything it needs for a pager: 6 products, 3 pages,
-this is number 1. And in the log, the two queries from the first step:
+this is number 1. And in the log, the two queries from the first step (ours, with the column list shortened):
 
 ```text
 Hibernate: select ... from product p1_0 order by p1_0.name offset ? rows fetch first ? rows only
@@ -105,6 +112,9 @@ Hibernate: select count(p1_0.id) from product p1_0
 ```
 
 Press **Check**.
+
+Usual slips: returning `List<Product>` (then the totals are lost; the method must return `Page<Product>`), calling
+`findAll()` without passing the `pageable`, or asking for `page=2` and expecting the second page (pages start at 0).
 :::
 
 :::step{type=concept title="When a name is not enough: @Query and JPQL"}
@@ -147,14 +157,17 @@ Rebuild, run, and try:
 curl "localhost:8080/products/price-range?min=2000&max=3000"
 ```
 
-You should get Mango kulfi (2000), Kachori (2200), Vada pav (2500) and Fruit custard (3000), in that order. The log
-shows your JPQL, translated:
+You should get Mango kulfi (2000), Kachori (2200), Vada pav (2500) and Fruit custard (3000), in that order; that is
+what our lab machine answered. The log shows your JPQL, translated:
 
 ```text
 Hibernate: select ... from product p1_0 where p1_0.price_paise between ? and ? order by p1_0.price_paise
 ```
 
 Press **Check**.
+
+Usual slips: `price_paise` (the column) instead of `pricePaise` (the field) in JPQL, `:min` in the query without
+`@Param("min")` on the parameter, or `from product` (the table) instead of `from Product` (the entity).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -218,7 +231,7 @@ Your API can now serve big catalogues:
 - **`@Query`** with **JPQL** writes your own queries about entities and fields, with **named parameters**
   (`:name` + `@Param`), checked at start-up, safe from SQL injection.
 
-:::photo{src="/lesson-images/spring/spring-22-notes.webp" alt="Handwritten notes about Paging: the database pages: limit, offset, Pageable from ?page=&size=&sort=, page numbers start at 0, @Query with JPQL, named parameters: :name" ai="true"}
+:::photo{src="/lesson-images/spring/spring-22-notes.webp" alt="Sketchnote: Paging and JPQL. Let the database return one page at a time. Flow: page, size and sort in the query string, a Pageable, order by with offset and limit, a Page with the totals. Remember: Spring Data pages start at 0; a Page costs a second count query; JPQL talks about entities and fields; named parameters keep queries safe." ai="true"}
 One page of notes for this chapter.
 :::
 
