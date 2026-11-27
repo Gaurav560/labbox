@@ -300,3 +300,83 @@ def test_jarvis_remembers_earlier_conversations_for_pro_only(api):
     api.post(f"/api/jarvis/session/{sidf}/heartbeat", json={"seconds": 5, "ended": True, "summary": "secret trial note"}, headers=hf)
     with Session(engine) as s:
         assert "secret trial note" not in jarvis.instructions(s, s.get(User, uf), LAB, "first-program", 0)
+
+
+def test_jarvis_cheers_a_first_task_a_chapter_and_a_finished_lab(api):
+    from datetime import timedelta
+
+    from app.models import Certificate, ChapterProgress, TaskProgress, utcnow
+
+    h, uid = signup(api, plan="pro")
+    q = {"lab_id": LAB, "chapter_id": "first-program"}
+    assert api.get("/api/jarvis/cheer", params=q, headers=h).json()["show"] is False
+    with Session(engine) as s:
+        s.add(TaskProgress(user_id=uid, lab_id=LAB, task_id="hello_pocket", chapter_id="first-program", passed=True, first_passed_at=utcnow()))
+        s.commit()
+    c = api.get("/api/jarvis/cheer", params=q, headers=h).json()
+    assert c["show"] and c["kind"] == "first" and "first task passes" in c["line"]
+    with Session(engine) as s:
+        s.add(ChapterProgress(user_id=uid, lab_id=LAB, chapter_id="first-program", completed_at=utcnow()))
+        s.commit()
+    c = api.get("/api/jarvis/cheer", params=q, headers=h).json()
+    assert c["kind"] == "chapter" and c["line"].startswith("Chapter 1 done") and "Next is chapter 2" in c["line"]
+    assert c["link_url"].startswith(f"/labs/{LAB}?chapter=")
+    # Talking from a cheer tells Jarvis what happened.
+    with Session(engine) as s:
+        detail = jarvis.cheer(s, s.get(User, uid), LAB, "first-program").detail
+        assert "Why this conversation started: they just passed every task in chapter 1" in jarvis.instructions(s, s.get(User, uid), LAB, "first-program", 0, detail)
+    assert start(api, h, reason="cheer").status_code == 200
+    with Session(engine) as s:
+        s.add(Certificate(id=f"T{random.randint(10**6, 10**7)}", user_id=uid, lab_id=LAB, name="Meera", tasks_passed=30, tasks_total=36, chapters_total=19))
+        s.commit()
+    c = api.get("/api/jarvis/cheer", params=q, headers=h).json()
+    assert c["kind"] == "lab" and "certificate is ready" in c["line"] and c["link_url"].startswith("/c/")
+    # Old news is not news.
+    with Session(engine) as s:
+        cert = s.exec(select(Certificate).where(Certificate.user_id == uid)).one()
+        cert.issued_at = utcnow() - timedelta(hours=1)
+        cp = s.get(ChapterProgress, (uid, LAB, "first-program"))
+        cp.completed_at = utcnow() - timedelta(hours=1)
+        tp = s.get(TaskProgress, (uid, LAB, "hello_pocket"))
+        tp.first_passed_at = utcnow() - timedelta(hours=1)
+        s.add_all([cert, cp, tp])
+        s.commit()
+    assert api.get("/api/jarvis/cheer", params=q, headers=h).json()["show"] is False
+
+
+def test_learners_set_jarvis_to_talk_first_or_off_and_read_what_he_sees(api):
+    from app.models import TaskProgress, utcnow
+
+    h, uid = signup(api)
+    st = api.get("/api/jarvis/status", headers=h).json()
+    assert st["mode"] == "tap" and st["note_seen"] is False
+    st = api.put("/api/jarvis/settings", json={"note_seen": True, "mode": "first"}, headers=h).json()
+    assert st["mode"] == "first" and st["note_seen"] is True
+    assert api.put("/api/jarvis/settings", json={"mode": "loud"}, headers=h).status_code == 422
+    # Off: no welcome, no offers, no cheers.
+    api.put("/api/jarvis/settings", json={"mode": "off"}, headers=h)
+    assert api.get("/api/jarvis/welcome", headers=h).json()["show"] is False
+    with Session(engine) as s:
+        for _ in range(3):
+            s.add(CheckRun(user_id=uid, lab_id=LAB, chapter_id="first-program", passed_count=0, total_count=2, output_tail="", duration_ms=10,
+                           results_json='[{"task": "hello_pocket", "passed": false, "message": "Expected two lines"}]'))
+        s.add(TaskProgress(user_id=uid, lab_id=LAB, task_id="fix_first_errors", chapter_id="first-program", passed=True, first_passed_at=utcnow()))
+        s.commit()
+    step = next(i for i, st in enumerate(jarvis.get_lab(LAB).chapter_steps("first-program")) if st.task == "hello_pocket")
+    assert api.get("/api/jarvis/nudge", params={"lab_id": LAB, "chapter_id": "first-program", "step": step}, headers=h).json()["nudge"] is False
+    assert api.get("/api/jarvis/cheer", params={"lab_id": LAB, "chapter_id": "first-program"}, headers=h).json()["show"] is False
+    api.put("/api/jarvis/settings", json={"mode": "tap"}, headers=h)
+    assert api.get("/api/jarvis/nudge", params={"lab_id": LAB, "chapter_id": "first-program", "step": step}, headers=h).json()["nudge"] is True
+
+
+def test_a_learner_can_make_jarvis_forget(api):
+    h, uid = signup(api, plan="pro")
+    for note in ("Likes short answers.", "Struggled with loops."):
+        sid = start(api, h).json()["session_id"]
+        api.post(f"/api/jarvis/session/{sid}/heartbeat", json={"seconds": 5, "ended": True, "summary": note}, headers=h)
+    assert api.get("/api/jarvis/status", headers=h).json()["memories"] == 2
+    assert api.delete("/api/jarvis/memory", headers=h).json() == {"forgotten": 2}
+    assert api.get("/api/jarvis/status", headers=h).json()["memories"] == 0
+    with Session(engine) as s:
+        assert "Struggled with loops" not in jarvis.instructions(s, s.get(User, uid), LAB, "first-program", 0)
+        assert len(s.exec(select(JarvisSession).where(JarvisSession.user_id == uid)).all()) == 2  # the record of time and cost stays

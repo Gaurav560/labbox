@@ -352,7 +352,9 @@ export const library = {
 };
 
 // ---------- Jarvis, the learner's realtime voice assistant (owner, 28 November) ----------
-export interface JarvisStatus { enabled: boolean; plan: "free" | "pro"; kind: "pro" | "trial" | "locked"; reason: string; seconds_left: number; trial_used: boolean }
+export interface JarvisStatus { enabled: boolean; plan: "free" | "pro"; kind: "pro" | "trial" | "locked"; reason: string; seconds_left: number; trial_used: boolean; mode: JarvisMode; note_seen: boolean; memories: number }
+export type JarvisMode = "tap" | "first" | "off";
+export interface JarvisCheer { show: boolean; kind: "" | "lab" | "chapter" | "first"; key: string; line: string; link_url: string | null; link_label: string; detail: string }
 export interface JarvisSession { session_id: number; client_secret: string; expires_at: number; model: string; kind: "pro" | "trial"; max_seconds: number }
 export interface JarvisNudge { nudge: boolean; reason: "" | "fails" | "hints" | "idle"; task_id: string | null; line: string; detail: string }
 export interface JarvisWelcome { show: boolean; kind: "" | "new" | "back"; line: string; continue_url: string | null; continue_label: string; detail: string }
@@ -369,6 +371,10 @@ export const jarvisApi = {
   nudge: (labId: string, chapterId: string, step: number, idle: number) =>
     request<JarvisNudge>("GET", `/api/jarvis/nudge?lab_id=${encodeURIComponent(labId)}&chapter_id=${encodeURIComponent(chapterId)}&step=${step}&idle=${Math.round(idle)}`),
   welcome: () => request<JarvisWelcome>("GET", "/api/jarvis/welcome"),
+  cheer: (labId: string, chapterId: string) =>
+    request<JarvisCheer>("GET", `/api/jarvis/cheer?lab_id=${encodeURIComponent(labId)}&chapter_id=${encodeURIComponent(chapterId)}`),
+  settings: (s: { mode?: JarvisMode; note_seen?: boolean }) => request<JarvisStatus>("PUT", "/api/jarvis/settings", s),
+  forget: () => request<{ forgotten: number }>("DELETE", "/api/jarvis/memory"),
   heartbeat: (id: number, body: { seconds: number; usage: unknown[]; call_id?: string | null; ended?: boolean; summary?: string | null }) =>
     request<JarvisBeat>("POST", `/api/jarvis/session/${id}/heartbeat`, body),
   tool: (id: number, name: string, step?: number) =>

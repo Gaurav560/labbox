@@ -23,6 +23,10 @@ class User(SQLModel, table=True):
     email_verified_at: datetime | None = None
     # "free" or "pro" (owner, 28 November). Set by an admin by hand until payments exist; Jarvis's voice is for Pro.
     plan: str = "free"
+    # Jarvis, as this learner set him (owner, 28 November, step 4): "tap" (he offers, a tap starts the talk), "first" (Pro:
+    # he starts talking himself when he has something to say, if the browser allows it), or "off" (no offers, no orb).
+    jarvis_mode: str = "tap"
+    jarvis_note_seen: bool = False  # read "What Jarvis can see" (shown once, before the first conversation)
 
 
 class UserIdentity(SQLModel, table=True):

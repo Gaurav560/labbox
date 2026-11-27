@@ -2630,3 +2630,21 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .jv-offer { justify-content: flex-start; flex-wrap: wrap; gap: 8px; }
 .jv-offer .btn { white-space: nowrap; }
 .jv-small a { color: var(--jv-b); }
+
+/* Jarvis, step 4: settings, what he can see, celebrations */
+.jv-gear { margin-left: auto; border: 0; background: none; color: inherit; cursor: pointer; font-size: 13px; opacity: .7; padding: 2px 4px; }
+.jv-gear + .jv-x { margin-left: 0; }
+.jv-gear:hover, .jv-x:hover { opacity: 1; }
+.jv-set { display: flex; flex-direction: column; gap: 10px; }
+.jv-set h4 { margin: 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
+.jv-choice { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; cursor: pointer; }
+.jv-choice input { margin-top: 3px; accent-color: var(--jv-b); }
+.jv-choice small { display: block; font-size: 12px; opacity: .75; }
+.jv-choice.is-off { opacity: .55; cursor: not-allowed; }
+.jv-see { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 4px; }
+.jv-linkish { border: 0; background: none; padding: 0; color: var(--jv-b); cursor: pointer; font: inherit; font-size: 12.5px; text-decoration: underline; text-underline-offset: 2px; align-self: flex-start; }
+.jv.has-cheer .jv-core { animation: jv-cheer 1.2s ease-in-out 3; }
+@keyframes jv-cheer { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); box-shadow: 0 0 34px 12px color-mix(in srgb, #7ee081 70%, transparent), inset 0 -4px 10px #0006; } }
+@media (prefers-reduced-motion: reduce) { .jv.has-cheer .jv-core, .jv.has-offer .jv-core { animation: none; } }
+.profile-jarvis { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; padding: 8px 2px; }
+.profile-jarvis select { font: inherit; font-size: 12.5px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }

@@ -1,5 +1,27 @@
 # Changelog
 
+## 28 November: Jarvis celebrates, and learners choose how he behaves (step 4)
+
+- **Celebrations.** After every check the lab page asks `GET /api/jarvis/cheer` (rules, no model, no cost). A
+  learner's first task ever ("Your first task passes, Meera: ..."), a finished chapter ("Chapter 1 done, Meera: every
+  task in "Your first program" passes. Next is chapter 2, "Your first functions".", with a Start chapter 2 button) or
+  a finished lab (with a link to its certificate) is shown once, with a short green pulse of the orb. Pro learners can
+  tap **Talk to Jarvis** and he opens with it (the reason `cheer`).
+- **Settings**, behind a gear on the panel (`PUT /api/jarvis/settings`; `user.jarvis_mode`, migration 0018, additive):
+  **Offer, then wait for my tap** (the default); **Talk first** (Pro: when he has something to say he starts by
+  himself, if the browser already allows the microphone and the learner has used the page; otherwise the offer waits
+  for a tap); **Off** (no welcome, offers or cheers, and no orb). The profile menu (top right) has a Jarvis switch, so
+  an off Jarvis can come back.
+- **What Jarvis can see**, in plain words, shown once before a learner's first conversation ("Got it, start talking")
+  and kept in the settings: their name, goal, level, streak and labs; the step on screen, their code and last check;
+  on Pro, his short notes. The microphone is on only while they talk; their voice goes to OpenAI for that conversation;
+  LabBox does not record it (`user.jarvis_note_seen`).
+- **Forget**: Pro learners see how many notes Jarvis keeps and can make him forget them (`DELETE /api/jarvis/memory`;
+  the record of time and cost stays, for the budgets).
+- Checked in the browser on both designs (the cheer, the settings, the note before a first talk, off and back on from
+  the profile menu, and Talk first starting by itself, with the paid call stubbed). Tests: 3 new; 296 fast backend
+  tests pass.
+
 ## 28 November: Jarvis welcomes learners and remembers them (step 3)
 
 - **A welcome on the dashboard**, once per browser session (`GET /api/jarvis/welcome`, read only). A new learner (no
