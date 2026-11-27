@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 20 rewritten (easy, a little detailed, checked)
+
+- Chapter 20, "Derived queries", to the lesson rules: index and Hibernate's `p1_0` alias explained; both tasks list
+  their slips (`OrderBy` before `By`, the category query called without a category, `findBy` instead of `existsBy`,
+  saving before checking).
+- Checked on a lab machine with the starter, the solution and a misspelled copy. Quoted as they came: the starter's
+  unfiltered list and its 500 with H2's `Unique index or primary key violation ... (SKU NULLS FIRST) ... 'KUL-1'`,
+  the solution's three snacks A to Z with the full `where p1_0.category=? order by p1_0.name` query, the
+  `existsBySku` query (`fetch first ? rows only`), 409 then 201, and the misspelling error `No property 'catgory'
+  found for type 'Product'`.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 19 rewritten (easy, a little detailed, checked)
 
 - Chapter 19, "Databases and JPA", to the lesson rules: driver, `bigint` and `varchar(255)` explained; the RAMAC
