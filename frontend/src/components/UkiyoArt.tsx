@@ -220,6 +220,7 @@ export const LAB_PRINTS: Record<string, LabPrintInfo> = {
   langchain: { artist: HK, title: "Fujimigahara in Owari Province", year: "about 1831" },
   langgraph: { artist: HK, title: "The Waterwheel at Onden", year: "about 1831" },
   "rag-vector-databases": { artist: HK, title: "Ushibori in Hitachi Province", year: "about 1831" },
+  "forward-deployed-engineer": { artist: HK, title: "In the Mountains of Tōtomi Province", year: "about 1831" },
   "spring-ai": { artist: HK, title: "Sazai Hall at the Temple of the Five Hundred Arhats", year: "about 1831" },
   "java-collections": { artist: HK, title: "Mitsui Shop at Surugachō in Edo", year: "about 1831" },
   "go-basics": { artist: HK, title: "Hodogaya on the Tōkaidō", year: "about 1831" },
