@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 19 rewritten (easy, a little detailed, checked)
+
+- Chapter 19, "Databases and JPA", to the lesson rules: driver, `bigint` and `varchar(255)` explained; the RAMAC
+  comparison made exact (5 million characters against a 1 TB drive: about 200,000 times); both tasks list their slips
+  (the Spring Data `@Id` instead of JPA's, a private constructor, another id strategy, `unique` without
+  `nullable = false`).
+- Checked on a lab machine with the starter and the solution: the starter's `Not a managed type: class
+  com.shop.product.Product`, the three HikariPool lines, the three products from `data.sql`, the real `create table`
+  (now quoted with both tasks done, `sku varchar(255) not null unique`, and how it reads before the second task) and
+  the `findAll` query. Start-up measured at about 2.4 seconds with the database.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 18 rewritten (easy, a little detailed, checked)
 
 - Chapter 18, "Filters and interceptors", to the lesson rules: UUID spelled out; both tasks list their slips (the
