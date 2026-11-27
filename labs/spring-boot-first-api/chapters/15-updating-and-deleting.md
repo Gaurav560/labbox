@@ -109,7 +109,12 @@ curl -X PUT localhost:8080/products/2 -H "Content-Type: application/json" -d '{"
 {"id":2,"name":"Fruit custard (large)","pricePaise":3500,"stock":0}
 ```
 
-The stock is now 0. Not a bug in your code: that is what "replace the whole thing" means. Press **Check**.
+The stock is now 0. Not a bug in your code: that is what "replace the whole thing" means. (Both answers above are
+what our lab machine sent; the first came with `200`.) Press **Check**.
+
+Usual slips: taking the id from the body (`ProductInput` has none on purpose; use the path's `id`), answering 200
+for an unknown id instead of 404 (on our lab machine, the finished version answered `404` for `PUT
+/products/99`), or `@PostMapping` instead of `@PutMapping`.
 :::
 
 :::step{type=concept title="PATCH: change only what is sent"}
@@ -191,7 +196,11 @@ curl -X PATCH localhost:8080/products/1 -H "Content-Type: application/json" -d '
 {"id":1,"name":"Mango kulfi","pricePaise":2200,"stock":40}
 ```
 
-The price changed; the name and the stock (40) did not. Press **Check**.
+The price changed; the name and the stock (40) did not. That is the real answer from our lab machine, and `PATCH
+/products/99` answered `404`. Press **Check**.
+
+Usual slips: `patch.pricePaise() != 0` instead of `!= null` (a missing `Integer` is `null`, not 0), or keeping the
+old value when the patch *has* one (the `? :` the wrong way round).
 :::
 
 :::step{type=concept title="DELETE, once more, and what to answer"}
@@ -200,9 +209,10 @@ You already have `DELETE /products/{id}`. A few points to round off the picture 
 - **204 No Content** is the usual answer to a successful DELETE: there is nothing left to show.
 - **DELETE is idempotent**: deleting product 3 twice leaves it deleted. The *second* DELETE answers 404
   (it is not there), and that is fine; the state of the server is the same either way.
-- In real shops, products are often not truly deleted but **marked** inactive, because old orders still
-  refer to them. That is called a **soft delete**. The API still says `DELETE`; the database keeps a
-  record. You will see why that matters once orders and products are linked, in chapter 21.
+- In real shops, products are often not truly deleted but **marked** inactive, because old orders still refer to
+  them. That is called a **soft delete**. The API still says `DELETE`; the database keeps a record. Once orders
+  point at products (chapter 21 links records like that), truly deleting a product that old orders used would
+  leave those orders pointing at nothing.
 
 Here is the full picture of a REST resource, which the Shop API's products now have:
 
@@ -279,7 +289,7 @@ Products in the Shop API now have the full set of operations:
 - `condition ? a : b` picks a value; `ResponseEntity.of(optional)` answers 200 or 404 from an Optional.
 - **DELETE** answers 204, is idempotent, and real systems often soft-delete instead.
 
-:::photo{src="/lesson-images/spring/spring-15-notes.webp" alt="Handwritten notes about Updating and deleting: PUT replaces the whole thing, PATCH changes only what is sent, Integer, not int: null = not sent, DELETE: 204, idempotent, soft delete in real systems" ai="true"}
+:::photo{src="/lesson-images/spring/spring-15-notes.webp" alt="Sketchnote: Updating and deleting. PUT replaces the whole thing; PATCH changes only the fields sent. Flow: find by id, 404 if missing, merge or replace, save, 200 with the result. Remember: the id comes from the path; a field missing from a PUT becomes its default; in a PATCH use Integer, not int, so null means not sent; DELETE gives 204, or 404 if nothing was there." ai="true"}
 One page of notes for this chapter.
 :::
 
