@@ -23,16 +23,16 @@ const SAMPLE: Certificate = {
   mine: false,
 };
 
-// The rest of what a certificate is moved to the FAQ (owner, 27 November); LinkedIn and sharing stay here.
-const POINTS = [
-  { title: "One click to LinkedIn", text: "Adds it to Licenses and certifications, with the certificate's ID and link filled in." },
-];
+// Only the sharing logos stay here (owner, 27 November: the LinkedIn point removed; the rest is in the FAQ).
 
+// Real logos in their own colours, no boxes (owner, 27 November: "logos").
 const PLATFORMS = [
   { key: "linkedin", label: "LinkedIn" },
   { key: "x", label: "X" },
   { key: "whatsapp", label: "WhatsApp" },
   { key: "facebook", label: "Facebook" },
+  { key: "email", label: "Email" },
+  { key: "link", label: "Any page" },
 ];
 
 export default function HomeCertificate() {
@@ -46,21 +46,13 @@ export default function HomeCertificate() {
         </p>
       </div>
       <div className="hc-text">
-        <ul className="hc-points">
-          {POINTS.map((p) => (
-            <li key={p.title}><strong>{p.title}</strong><span>{p.text}</span></li>
-          ))}
-        </ul>
         <p className="hc-share-title">Share it anywhere a link goes</p>
         <ul className="hc-platforms" aria-label="Share on">
           {PLATFORMS.map((p) => (
-            <li key={p.key}><ShareIcon name={p.key} /> {p.label}</li>
+            <li key={p.key} className={`hc-logo is-${p.key}`}><span className="hc-logo-mark"><ShareIcon name={p.key} /></span>{p.label}</li>
           ))}
-          <li>Email</li>
-          <li>Your CV</li>
-          <li>Any page</li>
         </ul>
-        <p className="hc-note">On LinkedIn, X and WhatsApp the link opens as a card with the certificate's picture.</p>
+        <p className="hc-note">Paste it in your CV too. On LinkedIn, X and WhatsApp the link opens as a card with the certificate's picture.</p>
       </div>
     </div>
   );

@@ -138,7 +138,7 @@ export function PricingPage() {
       id: "free", name: "Free", price: "₹0", note: "Every account, today",
       lines: [
         "Every lab's lessons, tasks and instant checks",
-        "Your own Linux machine with an editor and a terminal",
+        "A Linux lab machine in your browser, with an editor and a terminal",
         "Real models through the LabBox gateway, with a daily allowance",
         "Up to 3 labs open at a time; finish one to free a slot",
         "A certificate with its own link for every lab you finish",
@@ -195,7 +195,7 @@ export function PricingPage() {
 }
 
 const PRICING_FAQS: { q: string; a: ReactNode }[] = [
-  { q: "Is LabBox free right now?", a: <p>Yes. Every account is on Free, with every lab, your own machine, real models within a daily allowance, and certificates.</p> },
+  { q: "Is LabBox free right now?", a: <p>Yes. Every account is on Free, with every lab, a lab machine in the browser, real models within a daily allowance, and certificates.</p> },
   { q: "What happens to my progress when Pro launches?", a: <p>Nothing changes. Your labs, tasks, streak and certificates stay with your account on any plan.</p> },
   { q: "How much will Pro cost?", a: <p>The price is not set yet. When it is, it will be on this page before anything is charged.</p> },
   { q: "Can my college or company use LabBox?", a: <p>Yes, on Free today. For a class or a team with progress reports and one bill, write to {mail}.</p> },

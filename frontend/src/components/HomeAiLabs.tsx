@@ -144,7 +144,7 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead
               <h3 id="ai-spot-title">{spot.title}</h3>
               {/* Only the tag line, the name and the button (owner, 27 November: "remove this one also", the description and
                   the chapters, tasks and hours) */}
-              <Link className="h-btn h-btn-primary ai-spot-go" to={course(spot)}>{signedIn ? "Open the course →" : "See the course →"}</Link>
+              <Link className="h-btn h-btn-primary ai-spot-go" to={course(spot)}>{signedIn ? "Open the lab →" : "Explore the lab →"}</Link>
             </div>
             {/* The claim demo is off for now (owner, 27 November: "remove this email animation for now"); the picture
                 takes its place. ClaimDemo stays below, ready to come back. */}

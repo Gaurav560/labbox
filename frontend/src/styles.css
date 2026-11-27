@@ -2500,3 +2500,26 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .ai-tag-b { font-style: italic; font-weight: 700; color: var(--yellow); }
 :root[data-theme="light"] .ai-tag-b { color: var(--text); background: linear-gradient(transparent 62%, var(--yellow) 62%); }
 .ai-tag-b { display: table; margin-top: 4px; }
+
+/* share logos, no boxes (owner, 27 November: "logos"): each platform's mark in its own colour, the name under it */
+.hc-platforms { gap: 18px 22px; }
+.hc-platforms li.hc-logo { flex-direction: column; gap: 6px; height: auto; padding: 0; border: 0; border-radius: 0; background: none;
+  font-size: 12px; font-weight: 600; color: var(--muted); }
+.hc-logo-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: #fff; background: var(--text);
+  transition: transform var(--t-fast, 160ms); }
+.hc-logo:hover .hc-logo-mark { transform: translateY(-2px); }
+.hc-logo-mark svg { width: 20px; height: 20px; }
+.hc-logo.is-linkedin .hc-logo-mark { background: #0a66c2; }
+.hc-logo.is-x .hc-logo-mark { background: #000; box-shadow: inset 0 0 0 1px #ffffff26; }
+.hc-logo.is-whatsapp .hc-logo-mark { background: #25d366; }
+.hc-logo.is-facebook .hc-logo-mark { background: #1877f2; }
+.hc-logo.is-email .hc-logo-mark, .hc-logo.is-link .hc-logo-mark { background: var(--chip); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
+/* the seal as a stamp on the certificate: pressed over the footer's rule, beside the date; small (owner: "never large") */
+.cert-foot { position: relative; }
+
+/* the round stamp on a certificate (owner, 27 November: "this style"), pressed over the footer's rule between the
+   date and the QR as its own item in the footer, covering nothing; upright */
+.cert-foot .cert-stamp { flex: none; align-self: center; width: 100px; height: 100px; color: #c2362c; opacity: .95; pointer-events: none; }
+@media (max-width: 520px) { .cert-foot .cert-stamp { width: 70px; height: 70px; } }
+.cert-sheet .cert-foot .cert-stamp { color: #e0655c; }
+:root[data-theme="light"] .cert-sheet .cert-foot .cert-stamp { color: #c2362c; }

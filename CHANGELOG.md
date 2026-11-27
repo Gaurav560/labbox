@@ -2,6 +2,15 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Wording: nothing says "on your own machine" any more (owner: "this is wrong wording"; the machine runs on LabBox and
+  opens in the browser). Ukiyo's hero line: "Build real AI apps in your browser. A lab machine with an editor, a
+  terminal and real models is ready in about a minute."; the AI lead, course pages, pricing and FAQ say "a lab machine
+  in your browser". The FDE button reads "Explore the lab" ("Open the lab" when signed in).
+- Certificates: the share list shows each platform's logo in its own colour with the name under it, no boxes (owner:
+  "logos"); the "One click to LinkedIn" point is gone. The little LabBox square became a round rubber stamp on the
+  certificate (owner: "this style"): two rings, LABBOX BY TELUSKO over the top, HANDS-ON LAB along the bottom,
+  COMPLETED and the year across the middle, slightly worn ink, upright, between the date and the QR code. The lab's
+  name on a Ukiyo certificate is upright, not italic.
 - The AI section's lead no longer counts the courses (owner: "remove 6"): "Each AI course is a real build on your own
   machine: model calls, RAG search, agents and evals, through the LabBox gateway."
 - The claim email demo is off for now (owner: "remove this email animation for now"); the spotlight's big picture

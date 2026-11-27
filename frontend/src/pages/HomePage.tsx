@@ -116,7 +116,7 @@ export default function HomePage() {
             <h1 id="hero-title">
               Learn AI by <span className="h-red-word">building<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span> it, not <span className="h-strike">watching</span>.
             </h1>
-            <p className="hero-sub">Hands-on AI labs on your own machine in the browser: call real models, build RAG search and agents, write evals, with a guide checking every step. And the engineering around them: system design, languages, databases and DevOps.</p>
+            <p className="hero-sub">Hands-on AI labs on a real machine in your browser: call real models, build RAG search and agents, write evals, with a guide checking every step. And the engineering around them: system design, languages, databases and DevOps.</p>
             <div className="hero-cta">
               {cta}
               <a className="h-btn h-btn-ghost" href="#inside">See inside a lab</a>
@@ -133,7 +133,7 @@ export default function HomePage() {
             <img src="/home/fde-spotlight.webp" alt="A miniature insurance office at night: an engineer at a laptop sends claim forms and emails from filing cabinets through a glowing AI core to a dashboard of checks, with one red stop barrier" />
           </>}
           title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
-          lead="Each AI course is a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway."
+          lead="Each AI course is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
         />
 
         <section className="h-strip" aria-label="Technologies you practise on">
