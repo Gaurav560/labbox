@@ -2397,3 +2397,20 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 .cert-foot { gap: 28px; }
 .cert-foot .cert-stamp { margin: 0 6px; }
 .cert-foot { gap: 18px; } .cert-foot > div { flex: none; white-space: nowrap; } .cert-foot .cert-stamp { margin: 0 2px; }
+
+/* Top bars never run off the screen (responsive check, 28 November): the back link stays on one line, the title gives
+   way first; on tablets and small laptops the lab page drops the lab title, the progress bar and the machine's label
+   (the chapter menu says where you are) and lets the chapter menu shrink. */
+.topbar > .link { white-space: nowrap; }
+.topbar > .brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.topbar .chapter-select { min-width: 0; text-overflow: ellipsis; }
+@media (max-width: 1180px) {
+  .lab-page .topbar > .brand, .lab-page .topbar > .brand + .muted, .lab-page .topbar .progress-inline,
+  .lab-page .topbar .status-label { display: none; }
+  .lab-page .topbar .chapter-select { flex: 0 1 auto; max-width: 260px; }
+  .lab-page .topbar { gap: 8px; }
+}
+/* Buttons in a top bar keep their size and stay on one line; only the title and the chapter menu shrink. */
+.topbar > * { flex-shrink: 0; }
+.topbar > .brand, .topbar > .chapter-select { flex-shrink: 1; }
+.topbar .btn, .topbar button, .topbar .link { white-space: nowrap; }

@@ -1161,3 +1161,10 @@ html { scroll-behavior: smooth; }
 .uh-hero-print.is-rider img { object-position: 72% 40%; }
 /* "Learn to ride it." in red (owner, 28 November) */
 .uh-hero h1 em { color: var(--vermilion); }
+/* The light theme's hero is the dark theme's hero (owner, 28 November: "dark theme looks supercool"; on cream the
+   picture faded into a pale haze and lost its print look). An ink band edge to edge; the page under it stays paper. */
+:root[data-theme="light"] .uh-hero.is-print { --bg: #14120f; --text: #ede6d8; --muted: #a49b8c; --indigo: #8aa6d6;
+  --vermilion: #e2583f; --rule: #ede6d826; color: var(--text); isolation: isolate; }
+:root[data-theme="light"] .uh-hero.is-print::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0;
+  left: calc(50% - 50vw); right: calc(50% - 50vw); background: #14120f; }
+:root[data-theme="light"] .uh-hero-print img { filter: brightness(.8) saturate(1.05); }
