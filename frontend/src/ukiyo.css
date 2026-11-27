@@ -903,3 +903,20 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-ai .ai-row-go { font-size: 14px; }
 .uh-ai .ai-micro { margin-right: 8px; padding: 1px 5px; font-size: 9px; vertical-align: 2px; }
 @media (max-width: 760px) { .uh-ai .ai-row { grid-template-columns: 52px minmax(0, 1fr) 1.2em; } .uh-ai .ai-thumb { width: 52px; height: 36px; } .uh-ai .ai-row strong { white-space: normal; } }
+
+/* the spotlight's tag line, in the hero's voice: serif, ink and an indigo italic, a gold "New"; no red (owner,
+   27 November: "not visible", "why red everywhere", "i dont like the way the font style is put") */
+.uh-ai .ai-spot-tag { display: block; margin: 0 0 4px; font: 600 clamp(20px, 1.9vw, 26px)/1.25 var(--font-serif); letter-spacing: -.01em;
+  text-transform: none; color: var(--text); }
+.uh-ai .ai-tag-new { display: inline-block; margin: 0 12px 0 0; padding: 3px 9px 2px; vertical-align: 4px; background: var(--gold); color: #1c1a17;
+  font: 700 10.5px var(--font-text); letter-spacing: .14em; text-transform: uppercase; }
+.uh-ai .ai-tag-b { font-style: italic; font-weight: 400; color: var(--indigo); }
+.uh-ai .ai-tag-b { display: block; margin-top: 2px; }
+/* less red in the AI section (owner, 27 November: "why do you always have to use red everywhere"): gold and indigo;
+   the one red button per screen stays */
+.uh-ai .ai-new { background: var(--gold); color: #1c1a17; }
+.uh-ai .ai-head h2 em { color: var(--indigo); }
+.uh-ai .ai-micro { border-color: var(--indigo); color: var(--indigo); }
+.uh-ai .ai-row::after { background: var(--gold); }
+.uh-ai .ai-row:hover strong, .uh-ai .ai-row:hover .ai-row-go { color: var(--indigo); }
+.uh-ai .ai-spot::before { background: var(--gold); }
