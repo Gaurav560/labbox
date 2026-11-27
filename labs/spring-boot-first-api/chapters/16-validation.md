@@ -31,7 +31,7 @@ Location: /products/4
 {"id":4,"name":"","pricePaise":-5,"costPaise":0}
 ```
 
-`201 Created`. The shop now sells a nameless product for minus five paise. Every client of the API can do
+That is what our lab machine answered: `201 Created`. The shop now sells a nameless product for minus five paise. Every client of the API can do
 this. Let's close the door.
 :::
 
@@ -115,6 +115,10 @@ curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '
 ```
 
 This time: `400 Bad Request`, and nothing is saved. A valid product still gets `201`. Press **Check**.
+
+Usual slips: the rules written but `@Valid` forgotten (everything is still accepted), `@Positive` from the wrong
+package (it must be `jakarta.validation.constraints.Positive`), or `@Size(40)` instead of `@Size(max = 40)` (that
+does not compile: `@Size` has no single value).
 :::
 
 :::step{type=example title="What the server knows, and the client does not (yet)"}
@@ -127,8 +131,8 @@ Content-Type: application/json
 {"timestamp":"2026-11-21T11:54:01.646+00:00","status":400,"error":"Bad Request","path":"/products"}
 ```
 
-It says *something* was wrong, but not what. Now look at the server's log in Terminal 1. Spring logged the
-full story (shortened here):
+It says *something* was wrong, but not what. Now look at the server's log in Terminal 1. Spring logged the full
+story; on our lab machine it was one very long line, shortened here:
 
 ```text
 Resolved [MethodArgumentNotValidException: Validation failed for argument [0] ... with 2 errors:
@@ -175,7 +179,10 @@ curl -i -X POST localhost:8080/customers -H "Content-Type: application/json" -d 
 curl -i -X POST localhost:8080/customers -H "Content-Type: application/json" -d '{"name": "Asha", "email": "asha@shop.in", "phone": "9876543210"}'
 ```
 
-`400`, then `201`. Press **Check**.
+`400`, then `201` (that is what our lab machine answered). Press **Check**.
+
+Usual slips: only `@Email` on the email (a missing email then passes; add `@NotBlank`), or `@Pattern(regexp =
+"[0-9]{10}")` on a number type (a pattern needs a `String`; keep `phone` as text).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -243,7 +250,7 @@ You can now keep bad data out of your API:
   the server log.
 - `[0-9]{10}`: exactly ten digits.
 
-:::photo{src="/lesson-images/spring/spring-16-notes.webp" alt="Handwritten notes about Validation: @NotBlank @Size @Min @Email, @Valid switches checking on, fails: 400 with every field, most rules allow null, a pattern for exactly ten digits" ai="true"}
+:::photo{src="/lesson-images/spring/spring-16-notes.webp" alt="Sketchnote: Validation. Write the rules as annotations and switch them on with @Valid. Flow: JSON body, read into a record, @Valid checks each rule, 400 or your method runs. Remember: no @Valid, no checking; most rules accept null, so add @NotNull or @NotBlank to require a field; [0-9]{10} means exactly ten digits; the log names every failed field." ai="true"}
 One page of notes for this chapter.
 :::
 

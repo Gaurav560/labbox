@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 16 rewritten (easy, a little detailed, checked)
+
+- Chapter 16, "Validation", to the lesson rules: both tasks list their slips (`@Valid` forgotten, the wrong
+  `@Positive` package, `@Size(40)` does not compile, `@Email` alone lets a missing email through, a pattern on a
+  number type).
+- Checked on a lab machine with the starter and the solution: the starter's `201` for a nameless product at -5
+  paise, the solution's `400` with its JSON body, the real `MethodArgumentNotValidException` log line (the lesson's
+  shortened version is a fair cut of it), the bad phone `400`, the good customer and product `201`.
+- Corrected: the notes' description said a failure gives "400 with every field"; the client gets a plain 400 and
+  only the log names the fields (chapter 17 sends them).
+- A new sketchnote page, redrawn once (`@NotNull` had dropped out of "add a rule to require a field").
+
 ## 28 November: Spring Boot chapter 15 rewritten (easy, a little detailed, checked)
 
 - Chapter 15, "Updating and deleting", to the lesson rules: both tasks list their slips (the id from the body, 200
