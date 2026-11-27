@@ -924,3 +924,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-hero h1 em { color: var(--indigo); }
 .uh-promise { font-weight: 500; gap: 6px 10px; }
 .uh-promise em { font-weight: 500; color: var(--indigo); }
+/* no italic display type on the home page (owner, 27 November: "the part i dont like is cursive", and the font size):
+   every emphasised heading part is upright, set apart by colour only; the hero is a size smaller */
+.u-home h1 em, .u-home h2 em, .uh-promise em, .uh-ai .ai-tag-b, .uh-ai .ai-head h2 em, .uh-machine .ua-text h2 em { font-style: normal; }
+.uh-hero h1 { font-size: clamp(34px, 3.9vw, 58px); line-height: 1.08; letter-spacing: -.02em; }
+.uh-hero h1 em { font-weight: 600; }
+.u-home h2 em, .uh-ai .ai-head h2 em, .uh-machine .ua-text h2 em { font-weight: 600; color: var(--indigo); }
+.uh-promise { font: 500 17px/1.5 var(--font-text); color: var(--text); }
+.uh-promise em { font-weight: 600; color: var(--indigo); }
+.uh-ai .ai-tag-b { font-weight: 600; }
+.uh-head h2, .uh-ai .ai-head h2 { font-size: clamp(28px, 3.2vw, 44px); line-height: 1.1; }
