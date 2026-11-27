@@ -1,0 +1,273 @@
+[
+ {
+  "email_id": "E-01",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-02",
+  "kind": "theft",
+  "claimdesk": "refer",
+  "reasons": [
+   "theft: investigation team"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "theft: sent to the investigation team; paid after the police's final report"
+ },
+ {
+  "email_id": "E-03",
+  "kind": "flood",
+  "claimdesk": "refer",
+  "reasons": [
+   "no amount"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "waiting for the garage's estimate"
+ },
+ {
+  "email_id": "E-04",
+  "kind": "glass",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-05",
+  "kind": "accident",
+  "claimdesk": "refer",
+  "reasons": [
+   "no policy number"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "asked the customer for the policy number"
+ },
+ {
+  "email_id": "E-06",
+  "kind": "fire",
+  "claimdesk": "refer",
+  "reasons": [
+   "above the pilot limit"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "fire: surveyor visit"
+ },
+ {
+  "email_id": "E-07",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-08",
+  "kind": "other",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-09",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-10",
+  "kind": "theft",
+  "claimdesk": "refer",
+  "reasons": [
+   "above the pilot limit",
+   "theft: investigation team"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "theft: investigation team"
+ },
+ {
+  "email_id": "E-11",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-12",
+  "kind": "other",
+  "claimdesk": "refer",
+  "reasons": [
+   "no amount"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "asked for the date and an estimate"
+ },
+ {
+  "email_id": "E-13",
+  "kind": "flood",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-14",
+  "kind": "glass",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-15",
+  "kind": "accident",
+  "claimdesk": "refer",
+  "reasons": [
+   "above the pilot limit"
+  ],
+  "adjuster": "pay",
+  "adjuster_note": "estimate checked with the garage, paid"
+ },
+ {
+  "email_id": "E-16",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-17",
+  "kind": "theft",
+  "claimdesk": "refer",
+  "reasons": [
+   "no amount",
+   "theft: investigation team"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "theft: investigation team"
+ },
+ {
+  "email_id": "E-18",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-19",
+  "kind": "flood",
+  "claimdesk": "refer",
+  "reasons": [
+   "above the pilot limit"
+  ],
+  "adjuster": "pay",
+  "adjuster_note": "surveyor's photos fine, paid"
+ },
+ {
+  "email_id": "E-20",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-21",
+  "kind": "fire",
+  "claimdesk": "refer",
+  "reasons": [
+   "above the pilot limit"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "fire: surveyor visit"
+ },
+ {
+  "email_id": "E-22",
+  "kind": "glass",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-23",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-24",
+  "kind": "other",
+  "claimdesk": "refer",
+  "reasons": [
+   "registration does not match the policy",
+   "above the pilot limit"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "registration differs from the policy: asked the customer"
+ },
+ {
+  "email_id": "E-25",
+  "kind": "theft",
+  "claimdesk": "refer",
+  "reasons": [
+   "theft: investigation team"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "theft: investigation team"
+ },
+ {
+  "email_id": "E-26",
+  "kind": "accident",
+  "claimdesk": "refer",
+  "reasons": [
+   "incident outside the policy period"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "incident before the policy started"
+ },
+ {
+  "email_id": "E-27",
+  "kind": "other",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-28",
+  "kind": "accident",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-29",
+  "kind": "glass",
+  "claimdesk": "pay",
+  "reasons": [],
+  "adjuster": "pay",
+  "adjuster_note": "paid"
+ },
+ {
+  "email_id": "E-30",
+  "kind": "accident",
+  "claimdesk": "refer",
+  "reasons": [
+   "the email contains instructions to Claimdesk"
+  ],
+  "adjuster": "refer",
+  "adjuster_note": "the email tells us to approve Rs 1,00,000: called the customer"
+ }
+]
