@@ -388,10 +388,10 @@ function StartupSequence() {
       steps={[
         { label: "1. read application.properties", says: "Spring reads your settings first: application.properties, then anything given on the command line. spring.application.name=shop-api is read here." },
         { label: "2. scan com.shop for components", says: "It looks through com.shop and every package under it for classes marked @Component, @Service or @RestController. A class outside com.shop is never found." },
-        { label: "3. auto-configure (web, JSON, ...)", says: "It sees spring-boot-starter-web in your pom.xml, so it sets up a web server, JSON conversion (Jackson) and the part that sends each request to a controller." },
+        { label: "3. auto-configure (web, JSON, ...)", says: "It checks which libraries are on the classpath. Spring MVC's DispatcherServlet class is there (the web starter brought it), so it sets up a web server, JSON conversion (Jackson) and the part that sends each request to a controller." },
         { label: "4. create the beans, inject them", says: "It creates one object (a bean) for every class it found, and passes beans into the constructors that ask for them." },
         { label: "5. start Tomcat on port 8080", says: "It starts the embedded Tomcat web server inside your app. Nothing to install: the server is a library in your jar." },
-        { label: "6. Started: ready for requests", says: "It logs \"Started ShopApiApplication in 0.9 seconds\" (about one second). Start-up is over; from now on the app only answers requests." },
+        { label: "6. Started: ready for requests", says: "It logs \"Started ShopApiApplication in ... seconds\" (1.23 on our lab machine). Start-up is over; from now on the app only answers requests." },
       ]}
     />
   );

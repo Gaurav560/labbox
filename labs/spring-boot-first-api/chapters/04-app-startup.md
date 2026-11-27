@@ -1,6 +1,6 @@
 :::step{type=story title="What happens in that one second"}
-Every time you have started the Shop API, about one second passed between `java -jar` and
-`Started ShopApiApplication`. In that second, Spring did a surprising amount of work: it found your
+Every time you have started the Shop API, about a second passed between `java -jar` and `Started
+ShopApiApplication` (1.23 seconds of Spring's own work for this chapter's project on our lab machine). In that second, Spring did a surprising amount of work: it found your
 controller (without you ever mentioning it anywhere), set up a web server, prepared JSON, and wired
 everything together.
 
@@ -16,7 +16,8 @@ application.properties.
 :::
 
 :::step{type=concept title="It all starts in main" file="04-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="10"}
-Every Java program begins at a `main` method, and the JVM (the Java virtual machine) runs it. Ours has
+Every Java program begins at a `main` method, and the JVM (the Java Virtual Machine, the program that runs
+compiled Java) runs it. Ours has
 one line, highlighted on the right:
 
 ```java
@@ -25,8 +26,9 @@ SpringApplication.run(ShopApiApplication.class, args);
 
 Two arguments go in:
 
-- `ShopApiApplication.class`: the class to start from. Spring reads its annotations to learn how to
-  start, and uses its **package** (`com.shop`) as the place to look for your code.
+- `ShopApiApplication.class`: the class to start from. (`.class` gives Java's description of a class, so Spring
+  can look at it.) Spring reads its annotations to learn how to start, and uses its **package** (`com.shop`) as the
+  place to look for your code.
 - `args`: whatever was typed after `java -jar app.jar` on the command line. Spring can read settings from
   there too (for example `--server.port=9090`).
 
@@ -35,8 +37,8 @@ So everything Spring does at start-up happens *inside this one call*. Let's look
 :::
 
 :::step{type=concept title="What SpringApplication.run does" file="04-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="10"}
-Press **▶ Play** to watch the start-up one step at a time (or use **Next** to go at your own pace). Read
-the line under the picture at each step.
+Start-up is a sequence in time, so this picture plays. Press **▶ Play** to watch it one step at a time (or use
+**Next** to go at your own pace), and read the line under the picture at each step.
 
 :::diagram{name="startup-sequence"}
 Everything happens once, at start-up. After that, the application only answers requests.
@@ -49,45 +51,52 @@ That is why most configuration mistakes show up immediately, at start-up, and no
 :::
 
 :::step{type=example title="Reading the start-up log"}
-The log you see when the app starts tells this same story. Here is a real one from this chapter's
-project, with the timestamps shortened:
+The log you see when the app starts tells this same story. Here is the real one from this chapter's project on
+our lab machine, with the date, time and process number cut from the front of each line, and two Tomcat lines left
+out:
 
 ```text
  :: Spring Boot ::                (v3.4.1)
 
-INFO [shop-api] [main] com.shop.ShopApiApplication : Starting ShopApiApplication v1.0 using Java 21.0.13 with PID 74
+INFO [shop-api] [main] com.shop.ShopApiApplication : Starting ShopApiApplication v1.0 using Java 21.0.13.1 with PID 1242
 INFO [shop-api] [main] com.shop.ShopApiApplication : No active profile set, falling back to 1 default profile: "default"
 INFO [shop-api] [main] o.s.b.w.embedded.tomcat.TomcatWebServer : Tomcat initialized with port 8080 (http)
 INFO [shop-api] [main] o.apache.catalina.core.StandardService : Starting service [Tomcat]
-INFO [shop-api] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 482 ms
+INFO [shop-api] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 683 ms
 INFO [shop-api] [main] o.s.b.w.embedded.tomcat.TomcatWebServer : Tomcat started on port 8080 (http) with context path '/'
-INFO [shop-api] [main] com.shop.ShopApiApplication : Started ShopApiApplication in 0.933 seconds
+INFO [shop-api] [main] com.shop.ShopApiApplication : Started ShopApiApplication in 1.23 seconds (process running for 1.506)
 ```
 
-Every line has the same parts: the **level** (`INFO`), the **app name** in brackets (that is the
-`spring.application.name` you set in chapter 0!), the **thread** (`main`, the start-up thread), the
-**class** that wrote it (shortened), and the **message**. Now the messages, in order:
+Every line has the same parts: the **level** (`INFO`, meaning ordinary information; chapter 27 covers levels), the
+**app name** in brackets (the `spring.application.name` you set in chapter 0), the **thread** (`main`, the start-up
+thread), the **class** that wrote it (with the package shortened to initials, so `o.s.b.w` is
+`org.springframework.boot.web`), and the **message**. Now the messages, in order:
 
 1. **Starting...**: which app, which Java version, the process id (PID).
 2. **No active profile set**: Spring uses the default settings. (Profiles let you have different settings
    for development and production; chapter 7.)
 3. **Tomcat initialized with port 8080**: auto-configuration saw the web starter and set up Tomcat.
-4. **initialization completed in 482 ms**: the **application context** (Spring's container, full of your
-   objects) is ready. Your controllers were found and created in this phase.
+4. **initialization completed in 683 ms** (on our lab machine): the **application context** (Spring's
+   container, full of your objects) is ready. Your controllers were found and created in this phase.
 5. **Tomcat started on port 8080**: the server is listening.
 6. **Started ShopApiApplication**: done. Ready for requests.
 
-When something fails, the log stops at the step that broke, followed by an error. So reading where it
-stopped already tells you a lot.
+Then, when the *first* request arrives, three more lines appear, on a different thread called
+`nio-8080-exec-1` (one of Tomcat's request threads): `Initializing Spring DispatcherServlet 'dispatcherServlet'` and
+two more. Spring prepares the part that routes requests (chapter 10) only when it is first needed.
+
+When something fails, the log stops at the step that broke, followed by an error. So reading where it stopped
+already tells you a lot.
 :::
 
 :::step{type=concept title="@SpringBootApplication: three annotations in one" file="04-app-startup/src/main/java/com/shop/ShopApiApplication.java" line="6-7"}
 Now look at the annotation on the class: `@SpringBootApplication`. It is a shortcut for **three**
 annotations, and each one switches on one part of the start-up you just watched:
 
-- **`@Configuration`**: this class may define objects for Spring to manage (chapter 5 shows how).
-- **`@EnableAutoConfiguration`**: switch on Spring Boot's auto-configuration (step 3 of the animation:
-  look at the libraries present and set them up). Chapter 8 opens this box completely.
+- **`@Configuration`** (strictly, `@SpringBootConfiguration`, a special kind of `@Configuration`): this class may
+  define objects for Spring to manage (chapter 5 shows how).
+- **`@EnableAutoConfiguration`**: switch on Spring Boot's auto-configuration (step 3 of the animation: look at
+  which libraries are on the classpath and set them up). Chapter 8 opens this box completely.
 - **`@ComponentScan`**: **scan for components** (step 2). Search this class's package, and every package
   inside it, for classes marked `@RestController`, `@Component`, `@Service` and similar, and create them.
 
@@ -152,7 +161,8 @@ In a second terminal:
 curl -i localhost:8080/status
 ```
 
-404. The class is perfectly fine, it is just in a place Spring never looks. Stop the app with Ctrl+C.
+404. The class is perfectly fine; it is just in a place Spring never looks. There is no error or warning in the
+log either: Spring does not know the class exists. Stop the app with Ctrl+C.
 :::
 
 :::step{type=task task=component_scan title="Your turn: let Spring find StatusController"}
@@ -170,6 +180,10 @@ changes, and both are needed:
 2. **The package line** at the top of the file: change `package status;` to match the new folder.
 
 Rebuild, run, and `curl localhost:8080/status` should answer `ok`. Press **Check**.
+
+Usual slips: moving the file but leaving `package status;` (the build then fails with an error about the package
+not matching), or changing the package line but leaving the file where it was (the same build error). Run the
+`mkdir` command from inside `04-app-startup`, where the lesson's first command left you.
 :::
 
 :::step{type=concept title="Settings, read into your code: @Value" file="04-app-startup/src/main/java/com/shop/GreetingController.java" line="10-12"}
@@ -207,12 +221,14 @@ private String supportEmail;
 ```
 
 If `shop.support-email` is not in the settings, **the application refuses to start**. The log stops before
-`Started`, and you get an error like:
+`Started`. We tried it on our lab machine by adding those two lines to `GreetingController`, and got (shortened):
 
 ```text
-Error creating bean with name 'supportController'
-Could not resolve placeholder 'shop.support-email' in value "${shop.support-email}"
+Error creating bean with name 'greetingController': Injection of autowired dependencies failed
+Caused by: org.springframework.util.PlaceholderResolutionException: Could not resolve placeholder 'shop.support-email' in value "${shop.support-email}"
 ```
+
+("Bean" is Spring's word for an object it creates and manages; chapter 5 explains it.)
 
 That is actually helpful: a required setting is missing, and Spring tells you at start-up, with the exact
 property name, instead of letting the app run with a broken value. So the choice is yours:
@@ -225,14 +241,17 @@ property name, instead of letting the app run with a broken value. So the choice
 In `04-app-startup/src/main/resources/application.properties`, add a property `shop.greeting` with the
 value `Welcome to the Shop API`.
 
-Rebuild, run, and try:
+Write it as one line: the property name, `=`, the text (no quotes). Rebuild, run, and try:
 
 ```bash run
 curl localhost:8080/greeting
 ```
 
-It should answer `Welcome to the Shop API`. You did not touch any Java code: the controller read the new
-value from the settings when Spring created it. Press **Check**.
+It should answer `Welcome to the Shop API`. You did not touch any Java code: the controller read the new value from
+the settings when Spring created it. Press **Check**.
+
+Usual slips: quotes around the value (they become part of the greeting), a different property name (the field
+asks for exactly `shop.greeting`), or not restarting the app (a running app keeps the value it read at start-up).
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -268,9 +287,16 @@ your own text in a `banner.txt` file in `src/main/resources`, or switch it off w
 
 **The conditions report.** Run the app with `--debug` at the end of the command
 (`java -jar target/app-startup.jar --debug`). Spring then prints a long **conditions evaluation report**:
-every auto-configuration it considered, and whether it was used and why. "DispatcherServletAutoConfiguration
-matched: found class DispatcherServlet". It looks overwhelming at first, but it is the best tool for
-answering "why did Spring set up X?" or "why not?". Chapter 8 uses it.
+every auto-configuration it considered, and whether it was used and why. On our lab machine it began with
+"Positive matches", including:
+
+```text
+   DispatcherServletAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet' (OnClassCondition)
+```
+
+then a much longer list of "Negative matches" (set-ups it skipped, each with the reason). It looks overwhelming at
+first, but it is the best tool for answering "why did Spring set up X?" or "why not?". Chapter 8 uses it.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -284,7 +310,7 @@ The start-up second is no longer a black box. You know:
   silently ignored, so its endpoints answer 404.
 - `@Value("${name:default}")` reads a setting into a field; without a default, a missing setting stops the app.
 
-:::photo{src="/lesson-images/spring/spring-04-notes.webp" alt="Handwritten notes about How the app starts: SpringApplication.run, scan, auto-configure, create beans, @SpringBootApplication = 3 in 1, only scans its own package and below, @Value reads a setting" ai="true"}
+:::photo{src="/lesson-images/spring/spring-04-notes.webp" alt="Sketchnote: How the app starts. SpringApplication.run prepares everything once, then serves requests. Flow: read settings, scan com.shop and below, auto-configure, create the beans, start Tomcat. Remember: @SpringBootApplication is three annotations in one; a class not under com.shop is silently ignored; @Value with a default is optional, without one it is required." ai="true"}
 One page of notes for this chapter.
 :::
 
