@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Ukiyo's FDE spotlight shows a real print, not AI art (owner: "try this"): Utagawa Hiroshige, View toward Kasumigaseki
+  in Edo, about 1830 (public domain, Wikimedia Commons), wide so the whole print shows. The lab picker is a dock of logos.
 - The hero wave is the plain picture in both themes: no animation, no fade, no border (owner: "only the normal image").
   (A two-layer animation was tried the same day and removed.)
 - Ukiyo's hero shows the wave (owner: "yes, build on Ukiyo"): "The AI wave is here. Learn to ride it." beside the engineer

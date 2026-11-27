@@ -1092,3 +1092,7 @@ html { scroll-behavior: smooth; }
 @media (max-width: 560px) { .um-picker.um-dock { flex-wrap: wrap; row-gap: 34px; } }
 .um-dock .um-pick-name { left: 0; transform: none; }
 .um-picker.um-dock { margin-bottom: 40px; }
+/* the FDE spotlight shows a real print, Hiroshige's View toward Kasumigaseki (owner, 27 November: "try this"); wide,
+   so the whole print shows; no drift */
+.uh-ai .ai-spot-art { aspect-ratio: 2 / 1; padding: 0; background: none; border: 0; }
+.uh-ai .ai-spot-art img, .uh-ai .ai-body.is-in .ai-spot-art img { animation: none; transform: none; object-position: 50% 50%; filter: none; outline: 0; }

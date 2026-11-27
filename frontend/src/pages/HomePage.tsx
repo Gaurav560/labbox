@@ -86,7 +86,7 @@ export default function HomePage() {
             signedIn={!!user}
             thumb={(lab) => <img src={`/home/ai/${lab.id}.webp`} alt="" loading="lazy" />}
             spotArt={<>
-              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer stands on a rocky summit above a sea of clouds at dawn, laptop open on a rock, lines of light running down to a city below, a great red sun behind" />
+              <img src="/home/fde-spotlight.webp" width={1800} height={872} alt="Woodblock print: Utagawa Hiroshige, View toward Kasumigaseki in Edo, about 1830. A wide street of white-walled mansions climbs toward red-lit trees, crowds and processions in the foreground." />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
             lead="Each AI lab is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
