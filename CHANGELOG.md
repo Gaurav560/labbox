@@ -9,8 +9,7 @@
 - "Before you start" on Ukiyo course pages in two soft reds (owner: "two tone shallow red"): a pale red wash, a bar that
   fades from red, light red check boxes with a red tick; its "Learn it in" links are ink with a soft red
   underline (blue did not match).
-- Ukiyo's sign-in: Google and GitHub as ruled rows (the mark on a paper square, a serif name, an arrow and a vermilion
-  rule on hover) instead of boxes (owner: "it was more good looking").
+- Ukiyo's sign-in keeps its plain boxed buttons, a little taller (52 px); ruled rows were tried and dropped.
 - Once the home page's machine is running, it offers the next two labs to spin up ("Your LangChain machine is ready.
   Spin up another:" with `docker run spring-ai` and `docker run rag` buttons), so visitors find the other labs by
   playing (owner: "how do I show there are other labs to test via a Docker container").
