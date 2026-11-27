@@ -1,5 +1,20 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 0 rewritten (easy, a little detailed, checked)
+
+- The Spring Boot rewrite starts (owner: "start spring boot rewrite"). Chapter 0, "What is Spring Boot?", rewritten
+  to the lesson rules: plain and a little fuller; every term explained where it first appears (port, threads, HTTP,
+  JSON, XML, container, jar, localhost, context path, headers); the `@GetMapping` example read line by line; the task
+  lists its steps and the usual slips.
+- Checked on a lab machine with the solution: Spring Boot 3.4.1, Java 21, Tomcat 10.1.34, Jackson 2.18.2, Spring Web
+  MVC 6.2.1, 30 libraries in a 20 MB jar, a 2-second build, "Started ShopApiApplication in 1.122 seconds", and the
+  404 answer for `/products` word for word (now shown with its real headers). The `[shop-api]` log tag confirmed.
+- Corrected: "each version gets years of fixes" (free fixes last about a year per version; paid support longer);
+  "code written five years ago still runs" (removed: Spring Boot 3 renamed `javax` to `jakarta`); "Broadcom bought
+  VMware, Pivotal's parent, in 2023" (Pivotal became part of VMware in 2019; Broadcom bought VMware in 2023). The
+  survey claim now names its source (JetBrains' yearly developer survey); the name story is "usually explained".
+- The timeline picture gains Spring Boot 3.4 (2024, the version in this course). A new sketchnote notes page,
+  checked word by word.
 ## 28 November: Ukiyo home, Hiroshige's print back in the hero
 
 - The hero picture is Hiroshige's *A Great Wave by the Coast* again (owner: "I still like this image"), in the same

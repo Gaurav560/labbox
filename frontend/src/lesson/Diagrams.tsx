@@ -361,10 +361,11 @@ function SpringTimeline() {
     [2014, "Spring Boot 1.0", "just run it, no XML"],
     [2018, "Spring Boot 2", "reactive web, Java 8+"],
     [2022, "Spring Boot 3", "Java 17, Jakarta EE"],
+    [2024, "Spring Boot 3.4", "the version in this course"],
   ];
   return (
-    <Svg viewBox="0 0 440 226" label="A timeline: 2002 Rod Johnson's book, 2004 Spring 1.0, 2014 Spring Boot 1.0, 2018 Spring Boot 2, 2022 Spring Boot 3">
-      <line className="dg-arrow" x1={30} y1={24} x2={30} y2={212} />
+    <Svg viewBox="0 0 440 268" label="A timeline: 2002 Rod Johnson's book, 2004 Spring 1.0, 2014 Spring Boot 1.0, 2018 Spring Boot 2, 2022 Spring Boot 3, 2024 Spring Boot 3.4, the version in this course">
+      <line className="dg-arrow" x1={30} y1={24} x2={30} y2={254} />
       {events.map(([year, what, why], i) => (
         <g key={year}>
           <Box x={46} y={8 + i * 42} w={60} h={30} label={String(year)} tone="accent" code />
