@@ -71,13 +71,12 @@ export default function HomePage() {
             <p className="uh-promise"><span>No videos to sit through.</span> <em>You learn by building.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
-          {/* Half text, half picture (owner, 28 November: "use this image in the hero, flip the wave and boy, the
-              photo fills the right side and melts into the page"): the engineer riding the wave of light, made for
-              LabBox in woodblock style, mirrored so he stands on the right and looks toward the headline. */}
-          <div className="uh-hero-print is-rider" aria-hidden="true">
-            {/* the wave redrawn as real water (owner, 28 November: "not looking real, too much animated"; picked A, the
-                wave made real and the rest an illustration) */}
-            <img src="/ukiyo/heroes/wave-rider-real.webp" width={1536} height={1024} alt="" />
+          {/* Half text, half print (owner, 28 November: "I still like this image", back from the wave rider): Hiroshige,
+              A Great Wave by the Coast (Shichiri Beach in Sagami), about 1835, public domain (Wikimedia Commons).
+              Its title column is trimmed off so the headline sits on clean paper. The wave rider stays in
+              /ukiyo/heroes/wave-rider-real.webp. */}
+          <div className="uh-hero-print" aria-hidden="true">
+            <img src="/ukiyo/heroes/hiroshige-coast.webp" width={2000} height={1599} alt="" />
           </div>
         </section>
 

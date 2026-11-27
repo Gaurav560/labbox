@@ -1,5 +1,11 @@
 # Changelog
 
+## 28 November: Ukiyo home, Hiroshige's print back in the hero
+
+- The hero picture is Hiroshige's *A Great Wave by the Coast* again (owner: "I still like this image"), in the same
+  half text, half print layout, fading into the page in both themes. The wave rider stays in
+  `/ukiyo/heroes/wave-rider-real.webp`, one line to switch back.
+
 ## 28 November: Ukiyo home, the light-theme hero back on paper
 
 - The ink band under the light-theme hero is gone again (owner: "revert it back, light for light, dark for dark"):

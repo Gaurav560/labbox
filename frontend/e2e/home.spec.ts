@@ -21,8 +21,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
   await expect(page.locator(".uh-hero-print img")).toBeVisible();
   await expect(page.locator(".uh-promise")).toHaveText("No videos to sit through. You learn by building.");
-  // Half text, half picture: the wave rider, mirrored, fading into the page (owner, 28 November)
-  await expect(page.locator(".uh-hero-print img")).toHaveAttribute("src", "/ukiyo/heroes/wave-rider-real.webp");
+  // Half text, half print: Hiroshige's A Great Wave by the Coast fading into the page (owner, 28 November)
+  await expect(page.locator(".uh-hero-print img")).toHaveAttribute("src", "/ukiyo/heroes/hiroshige-coast.webp");
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBe(0); // no sideways scroll
   await expect(page.locator(".uh-term")).toHaveCount(0);
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
