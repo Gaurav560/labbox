@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 28 rewritten (easy, a little detailed, checked)
+
+- Chapter 28, "Security", to the lesson rules: the protective headers and the session cookie explained; both tasks
+  list their slips (no `{noop}`, `roles("ROLE_ADMIN")`, rule order, lower-case role names).
+- Checked on a lab machine with the starter, the solution and three altered copies. Quoted as they came: the
+  generated password lines and the starter's full 401 headers (the lesson left out the session cookie and four
+  headers), the solution's 200, 401, report, 401, 403 and 204. Tried: a rule after `anyRequest()` stops the start-up
+  with "Can't configure mvcMatchers after anyRequest"; passwords without `{noop}` answer 401.
+- Corrected: with CSRF left on, the lesson (text, task tip and quick check 2) said an admin's DELETE answers 403.
+  Tried: it answers 401, because the CSRF filter runs before the Basic login is read, so the request is still
+  anonymous when it is refused. The lesson now says so (and that a form login, already logged in, sees 403).
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 27 rewritten (easy, a little detailed, checked)
 
 - Chapter 27, "Logging and health", to the lesson rules: UTC and the process id explained; both photo leads say why
