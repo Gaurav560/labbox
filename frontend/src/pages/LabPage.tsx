@@ -485,6 +485,7 @@ function LabWorkspace() {
     focusedRef.current = key;
     if (hasOwnFile(steps[step])) return;
     api.chapterFocus(labId, chapterId, useIde).then((f) => {
+      refreshTree(); // opening a chapter may have brought its starter folder in (plan A)
       if (!f.path || useIde) return;
       const path = f.path;
       chapterFileOpened.current = true;
@@ -502,6 +503,7 @@ function LabWorkspace() {
     if (stepFocusRef.current === key) return;
     stepFocusRef.current = key;
     api.chapterFocus(labId, chapterId, useIde, step).then((f) => {
+      if (step === 0 || !chapterFileOpened.current) refreshTree(); // a newly reached chapter's folder (plan A)
       if (!f.path || useIde) return;
       const path = f.path;
       chapterFileOpened.current = true;

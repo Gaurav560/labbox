@@ -137,7 +137,7 @@ async def ask_tutor(
     assert user.id is not None
     lab = get_lab(lab_id)
     lab.task(chapter_id, task_id)  # 404 if unknown
-    ws = containers.get_workspace(session, user, lab)
+    ws = containers.get_workspace(session, user, lab, chapter_id)
     return await tutor.ask(session, user.id, lab, chapter_id, task_id, body.question, ws)
 
 
@@ -149,7 +149,7 @@ async def review_code(
     assert user.id is not None
     lab = get_lab(lab_id)
     lab.task(chapter_id, task_id)
-    ws = containers.get_workspace(session, user, lab)
+    ws = containers.get_workspace(session, user, lab, chapter_id)
     return await tutor.review(session, user.id, lab, chapter_id, task_id, ws)
 
 

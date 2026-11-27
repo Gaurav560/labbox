@@ -117,7 +117,11 @@ def test_start_workspace(client: TestClient, user):
     assert host["PidsLimit"] == 256 and host["Memory"] == 512 * 1024 * 1024 and not host["Privileged"]
     assert not any("docker.sock" in b for b in host["Binds"])
     tree = client.get("/api/labs/python-basics/files", headers=h).json()
-    assert {"01-first-program", "02-functions"} <= {n["name"] for n in tree}  # one folder per chapter (the course grows)
+    # One folder per chapter, shown one chapter at a time (plan A, 27 November): a new learner sees chapter 1's only,
+    # and opening chapter 2 (the lab page's chapter focus) brings its folder in.
+    assert {n["name"] for n in tree} == {"01-first-program"}
+    assert client.post("/api/labs/python-basics/chapters/01-functions/focus", json={}, headers=h).status_code == 200
+    assert {"01-first-program", "02-functions"} <= {n["name"] for n in client.get("/api/labs/python-basics/files", headers=h).json()}
     assert client.get("/api/labs/python-basics/workspace/status", headers=h).json()["status"] == "running"
 
 
@@ -183,7 +187,7 @@ def test_users_are_isolated(client: TestClient, user):
     r = client.get("/api/labs/python-basics/files/content", headers=h2, params={"path": "secret.py"})
     assert r.status_code == 404
     names = {n["name"] for n in client.get("/api/labs/python-basics/files", headers=h2).json()}
-    assert "secret.py" not in names and {"01-first-program", "02-functions"} <= names
+    assert "secret.py" not in names and "01-first-program" in names
 
 
 def test_terminal_echo(client: TestClient, user):
@@ -250,6 +254,7 @@ def test_check_v2_fields_and_task_progress(client: TestClient):
 def test_real_check_awards_xp_once(client: TestClient):
     h, uid = signup(client, "xp")
     client.post("/api/labs/python-basics/workspace/start", headers=h)
+    client.post("/api/labs/python-basics/chapters/01-functions/focus", json={}, headers=h)  # the learner opens chapter 2
     for path, content in PY_SOLVED.items():
         write(client, h, "python-basics", path, content)
     first = check(client, h, "python-basics", "01-functions")

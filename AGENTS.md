@@ -115,7 +115,10 @@ standard, eight short; see the table in `ROADMAP.md`).
 - Check scripts get `LABBOX_CHAPTER` and `LABBOX_TASKS`: big courses test only that chapter (see
   `labs/go-basics/tests/run_checks.sh`). Task ids must be unique across the whole lab.
 - Growing a lab: keep every existing chapter id and task id (learner progress hangs on them); new
-  starter files reach existing learners through `containers.top_up` (never overwrites). Mark every
+  starter files reach existing learners through `containers.top_up` (never overwrites).
+- Chapter folders appear one chapter at a time (plan A, 27 November): a workspace gets a chapter's top-level starter
+  folder (`folder:` or the chapter id) only once the learner reaches it; files outside chapter folders come at once.
+  `reveal: all` in lab.yaml shows everything. Plan B (one growing codebase per course) is in ROADMAP B 2b. Mark every
   starter TODO with its task (`# TODO (task <id>): ...`) so each chapter opens its own file.
 - Test accounts must never get small ids: a test machine `lab-u1-...` is the owner's machine (`gaurav`,
   id 1, formerly asha). `tests/conftest.py` starts test ids at a random 8-digit number; keep it that way.

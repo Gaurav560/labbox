@@ -263,7 +263,7 @@ async def chapter_focus_route(
     lab's own content are ever opened, never a path sent by the browser."""
     lab = get_lab(lab_id)
     ch = lab.chapter(chapter_id)
-    ws = containers.get_workspace(session, user, lab)
+    ws = containers.get_workspace(session, user, lab, chapter_id)  # opening a chapter brings its folder in (plan A)
     folder = Path(ws.volume_path)
     end: int | None = None
     if body and body.step is not None:
@@ -310,7 +310,7 @@ async def step_code_route(
     if not 0 <= step < len(steps):
         raise HTTPException(404, f"Step {step} not found in chapter {chapter_id!r}")
     st = steps[step]
-    folder = Path(containers.get_workspace(session, user, lab).volume_path)
+    folder = Path(containers.get_workspace(session, user, lab, chapter_id).volume_path)
     if st.file and await asyncio.to_thread(step_file, lab, st.file, folder):
         path, start, end = st.file, st.line or 1, st.end_line or st.line or 1
     elif st.task and not st.file:

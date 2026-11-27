@@ -290,6 +290,39 @@ services). Decisions needed from you before building:
 2. **Build order and size:** suggested first release is stage 1 (6 Foundations labs), then one
    stage at a time, each lab to the content standard above.
 
+### 2b. Later: one codebase that grows through the course (owner, 27 November: "we will be doing it in future")
+
+Today most big labs keep **one folder per chapter** in `starter/` (`01-the-role/`, `02-discovery/`, ...): each chapter is a
+small separate program. Plan A (done 27 November) only shows those folders one at a time. Plan B changes how the code
+is built: **one project that every chapter adds to**, so the learner grows a tiny codebase into a real app and knows
+every file because they wrote it.
+
+Example, the Forward Deployed Engineer lab:
+
+```
+chapter 1    claimdesk/  baseline.py, data/claims.csv
+chapter 4    claimdesk/  baseline.py, clean.py (new), data/...
+chapter 9    claimdesk/  ... extract.py (new: read a claim email with the model)
+chapter 13   claimdesk/  ... app.py (new: uses clean.py and extract.py together)
+chapter 22   claimdesk/  about 15 files, one real app
+```
+
+What it takes, per course:
+- **Starter:** one project folder. Each chapter adds files or a TODO in an existing file (`# TODO (task <id>)`), never
+  a new copy of the project. Later chapters must import and call earlier chapters' code, so it truly grows.
+- **Solution:** the finished project after each chapter (a git-like series: `solution/after-01/`, `after-02/`, ... or
+  one solution plus per-chapter patches), so `test-lab` can check that each chapter's starter fails and its
+  solution passes on top of the previous chapters' solutions.
+- **Checks:** `run_checks.sh` tests only the current chapter's tasks (`LABBOX_CHAPTER`), but on the whole project.
+- **Lessons:** name the growing files ("open `clean.py`, the file you wrote in chapter 4"), every step with
+  `file="..." line="..."` as CONTENT_STANDARD section 3 asks.
+- **Learners already in the course:** keep their folders; `containers.top_up` never overwrites. Plan B applies to new
+  workspaces, or to a new lab id if the change is too big to merge.
+- **Effort:** about a day per big course. Do it as part of "every course to the full standard", course by course,
+  starting with the Forward Deployed Engineer (Claimdesk).
+- Rust from zero already works close to this (one Cargo workspace, a crate per chapter); Spring Boot is also one app
+  per chapter. Look at both first.
+
 ### 3. More labs in the other tracks (after the AI track)
 
 **Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.

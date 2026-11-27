@@ -20,7 +20,7 @@ from sqlmodel import Session, select
 from . import ide, services, shared, workspace_files
 from .config import get_settings
 from .labs import LabConfig, get_lab
-from .models import ChapterProgress, User, Workspace, utcnow
+from .models import ChapterProgress, TaskProgress, User, Workspace, utcnow
 
 log = logging.getLogger(__name__)
 
@@ -93,9 +93,11 @@ def security_options(lab: LabConfig) -> dict:
 # ---------- workspace rows and host folders ----------
 
 
-def get_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
-    """Get or create the Workspace row, its host folder, and seed starter files once."""
+def get_workspace(session: Session, user: User, lab: LabConfig, chapter_id: str | None = None) -> Workspace:
+    """Get or create the Workspace row, its host folder, and seed starter files once. With chapter_id (the chapter
+    the learner just opened), that chapter's starter folder and every earlier one are added if missing (plan A)."""
     assert user.id is not None
+    upto = max(reached(session, user.id, lab), lab.chapter_index(chapter_id) if chapter_id else -1, 0)
     ws = session.exec(select(Workspace).where(Workspace.user_id == user.id, Workspace.lab_id == lab.id)).first()
     if ws is None:
         folder = get_settings().VOLUMES_DIR / f"u{user.id}" / lab.id
@@ -121,22 +123,48 @@ def get_workspace(session: Session, user: User, lab: LabConfig) -> Workspace:
         with shared.lock(f"{ws.container_name}:seed"):
             session.refresh(ws)
             if not ws.seeded:
-                seed(lab, folder)
+                seed(lab, folder, upto)
                 ws.seeded = True
                 session.add(ws)
                 session.commit()
     else:
-        top_up(lab, ws)
+        top_up(lab, ws, upto)
     return ws
 
 
-def seed(lab: LabConfig, folder: Path) -> None:
-    """Copy starter/ (never tests/) into the workspace folder."""
+def reached(session: Session, user_id: int, lab: LabConfig) -> int:
+    """The furthest chapter (0-based index) this learner has opened or passed a task in; 0 for a new learner."""
+    ids = set(session.exec(select(ChapterProgress.chapter_id).where(ChapterProgress.user_id == user_id, ChapterProgress.lab_id == lab.id)).all())
+    ids |= set(session.exec(select(TaskProgress.chapter_id).where(TaskProgress.user_id == user_id, TaskProgress.lab_id == lab.id)).all())
+    return max((lab.chapter_index(c) for c in ids), default=0)
+
+
+def seed(lab: LabConfig, folder: Path, upto: int | None = None) -> None:
+    """Copy starter/ (never tests/) into the workspace folder: everything, or for a lab that reveals its chapter
+    folders one at a time, the shared files and the folders of chapters 0..upto."""
+    files = visible_files(lab, upto)
     if lab.starter_dir.is_dir():
-        shutil.copytree(lab.starter_dir, folder, dirs_exist_ok=True, symlinks=True)
+        if len(files) == len(starter_files(lab)):
+            shutil.copytree(lab.starter_dir, folder, dirs_exist_ok=True, symlinks=True)
+        else:
+            for rel in files:
+                dst = folder / rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(lab.starter_dir / rel, dst, follow_symlinks=False)
     workspace_files.chown_tree(folder)
-    _write_record(folder, starter_files(lab))
-    log.info("Seeded %s with starter files of %s", folder, lab.id)
+    _write_record(folder, files)
+    log.info("Seeded %s with %d starter files of %s", folder, len(files), lab.id)
+
+
+def visible_files(lab: LabConfig, upto: int | None) -> tuple[str, ...]:
+    """The starter files a learner who has reached chapter `upto` (0-based) should have. None means all."""
+    files = starter_files(lab)
+    if upto is None:
+        return files
+    folders = lab.chapter_folders()
+    if not folders:
+        return files
+    return tuple(f for f in files if folders.get(Path(f).parts[0], -1) <= upto)
 
 
 # ---------- new starter files for labs that grow ----------
@@ -174,10 +202,11 @@ def _read_record(folder: Path) -> set[str] | None:
         return None  # a workspace from before the record existed
 
 
-def top_up(lab: LabConfig, ws: Workspace) -> list[str]:
-    """Copy starter files this learner never received. Returns the files copied."""
+def top_up(lab: LabConfig, ws: Workspace, upto: int | None = None) -> list[str]:
+    """Copy starter files this learner never received (for a lab that reveals chapter folders, only those of
+    chapters 0..upto). Returns the files copied."""
     folder = Path(ws.volume_path)
-    files = starter_files(lab)
+    files = visible_files(lab, upto)
     known = _read_record(folder)
     if known is not None and known.issuperset(files):
         return []  # the usual case: one small file read
