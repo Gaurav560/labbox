@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 26 rewritten (easy, a little detailed, checked)
+
+- Chapter 26, "Testing the data layer", to the lesson rules: the first task lists its slips (snacks saved already
+  in order, `contains` or `hasSize`, JUnit's `assertThat` instead of AssertJ's).
+- Checked on a lab machine with the solution and an altered copy: the test passes, the data slice starting in 1.563
+  seconds; expecting "Samosa" first fails with AssertJ's message, now quoted as it came (actual, expected, and each
+  differing index).
+- A new sketchnote page, redrawn once ("only containsExactly checks the order" now says what it checks, without
+  claiming to be the only such check).
+
 ## 28 November: Spring Boot chapter 25 rewritten (easy, a little detailed, checked)
 
 - Chapter 25, "Testing controllers", to the lesson rules: exit code explained; the photo lead says why it belongs;

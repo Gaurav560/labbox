@@ -15,7 +15,7 @@ Status: **5 of 23 labs done** (114 of 319 chapters).
 | 3 | langchain4j | LangChain4j | 30 | done (30 of 30) | 26 Nov |
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
-| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (26 of 31) | |
+| 6 | spring-boot-first-api | Spring Boot | 31 | in progress (27 of 31) | |
 | 7 | python-basics | Python from zero | 19 | not started | |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Spring Boot ch 26 done: data test run; slice start 1.563 s; AssertJ's real failure quoted; slips; sketchnote (redrawn once).
 - 28 Nov: Spring Boot ch 25 done: starter/solution tests run; slice start 1.282 s; the real failure output quoted; slips; sketchnote.
 - 28 Nov: Spring Boot ch 24 done: Flyway lines quoted; one-underscore file tried (silently skipped, V3 fails); stale target/ copy found and taught (clean after rename); sketchnote (redrawn once). Part 3 complete.
 - 28 Nov: Spring Boot ch 23 done: half-done order and declined card re-run before and after; key order said; proxy explained; slips; sketchnote (redrawn once).

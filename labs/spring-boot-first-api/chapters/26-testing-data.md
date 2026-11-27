@@ -33,7 +33,8 @@ class CustomerRepositoryTest {
 }
 ```
 
-It starts in a second or two, and each test runs in milliseconds.
+It starts in a second or two (this chapter's took 1.563 seconds on our lab machine), and each test runs in
+milliseconds.
 :::
 
 :::step{type=concept title="Arrange data that can prove something"}
@@ -144,7 +145,24 @@ Write a test in `ProductRepositoryTest` that:
 3. asserts the **exact** names, in order.
 
 Run `mvn -q -o test` until it passes. Then break it on purpose (expect "Samosa" first), read AssertJ's message,
-and put it back. Press **Check**.
+and put it back. On our lab machine, the broken version said:
+
+```text
+[ERROR]   ProductRepositoryTest.findsOneCategorySortedByName:26
+Expecting actual:
+  ["Bhel puri", "Kachori", "Samosa"]
+to contain exactly (and in same order):
+  ["Samosa", "Bhel puri", "Kachori"]
+but there were differences at these indexes:
+  - element at index 0: expected "Samosa" but was "Bhel puri"
+```
+
+(and a line for each of the other two positions). It shows what came back, what you expected, and exactly where
+they differ. Press **Check**.
+
+Usual slips: saving the snacks already in A to Z order (then a query that forgot to sort still passes), using
+`contains` or `hasSize` (they ignore the order), or `assertThat` imported from JUnit instead of AssertJ (it must be
+`org.assertj.core.api.Assertions.assertThat`).
 :::
 
 :::step{type=task task=catches_query_bug title="Your turn: catch the wrong order"}
@@ -213,7 +231,7 @@ You can now test queries properly:
 - **AssertJ**: `assertThat(list).containsExactly(...)` checks elements *and* order; `contains` and `hasSize` do not.
 - A test's value is the bug it can catch. Ask "if someone breaks this, will my test notice?"
 
-:::photo{src="/lesson-images/spring/spring-26-notes.webp" alt="Handwritten notes about Testing data: @DataJpaTest + embedded database, each test rolls back, rows that should NOT be found too, containsExactly checks order, would it catch the bug?" ai="true"}
+:::photo{src="/lesson-images/spring/spring-26-notes.webp" alt="Sketchnote: Testing the data layer. A query is only tested when it runs against a real database. Flow: save rows out of order, run the query, map to names, containsExactly. Remember: @DataJpaTest starts an embedded database; each test is rolled back; save rows that must not be found too; containsExactly checks the items and their order." ai="true"}
 One page of notes for this chapter.
 :::
 
