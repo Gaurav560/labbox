@@ -657,6 +657,7 @@ function LabWorkspace() {
       await saveAll();
       const res = await api.check(labId, chapterId);
       setResult(res);
+      window.dispatchEvent(new CustomEvent("labbox:check-done")); // Jarvis looks again: stuck on this task? (step 2)
       celebrate(res.xp_awarded);
       if (res.certificate) setCertNote(res.certificate);
       if (res.xp_awarded?.length) {
@@ -692,6 +693,12 @@ function LabWorkspace() {
   const activeTask = tasks.find((t) => t.id === current?.task) ?? tasks.find((t) => !t.passed);
   const activeHintsLeft = activeTask ? activeTask.hint_count - (hints[activeTask.id]?.length ?? 0) : 0;
   const [tutorOpen, setTutorOpen] = useState(false);
+  // Jarvis's offer of typed help (free learners after their voice trial) opens the tutor under the task.
+  useEffect(() => {
+    const open = () => setTutorOpen(true);
+    window.addEventListener("labbox:open-tutor", open);
+    return () => window.removeEventListener("labbox:open-tutor", open);
+  }, []);
   const brand = labBrand(lab?.cover_credit);
 
   const stepOfTask = (taskId: string) => steps?.findIndex((s) => s.task === taskId) ?? -1;

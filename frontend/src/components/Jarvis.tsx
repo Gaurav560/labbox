@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ApiError, jarvisApi, type JarvisStatus } from "../api";
+import { ApiError, jarvisApi, type JarvisNudge, type JarvisStatus } from "../api";
 
 /*
  * Jarvis, the learner's realtime voice assistant (owner, 28 November). The browser talks straight to OpenAI's realtime
@@ -17,6 +17,29 @@ type Mood = "listening" | "thinking" | "speaking";
 const CALLS_URL = "https://api.openai.com/v1/realtime/calls";
 const BEAT_MS = 15_000;
 
+const POLL_MS = 60_000; // how often to ask "stuck?" while the learner sits on a task step
+const OFFER_KEY = "labbox.jarvis.offered"; // task ids Jarvis already offered help on, with when (never nag)
+const OFFER_AGAIN_MS = 6 * 3600 * 1000;
+
+function offeredRecently(taskId: string): boolean {
+  try {
+    const at = (JSON.parse(localStorage.getItem(OFFER_KEY) || "{}") as Record<string, number>)[taskId];
+    return !!at && Date.now() - at < OFFER_AGAIN_MS;
+  } catch {
+    return false;
+  }
+}
+
+function markOffered(taskId: string): void {
+  try {
+    const all = JSON.parse(localStorage.getItem(OFFER_KEY) || "{}") as Record<string, number>;
+    all[taskId] = Date.now();
+    localStorage.setItem(OFFER_KEY, JSON.stringify(all));
+  } catch {
+    /* private mode: offers may repeat, which is fine */
+  }
+}
+
 const mmss = (s: number) => `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, "0")}`;
 
 export default function Jarvis({ labId, chapterId, step }: { labId?: string; chapterId?: string; step?: number }) {
@@ -27,6 +50,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const [caption, setCaption] = useState("");
   const [note, setNote] = useState("");
   const [left, setLeft] = useState(0);
+  const [offer, setOffer] = useState<JarvisNudge | null>(null);
 
   const pc = useRef<RTCPeerConnection | null>(null);
   const dc = useRef<RTCDataChannel | null>(null);
@@ -39,9 +63,31 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const timers = useRef<number[]>([]);
   const stepRef = useRef(step);
   stepRef.current = step;
+  const reasonRef = useRef("");
+  const onStepSince = useRef(Date.now());
 
   const refresh = useCallback(() => { jarvisApi.status().then(setStatus).catch(() => setStatus(null)); }, []);
   useEffect(refresh, [refresh]);
+
+  // Step 2: notice when the learner is stuck. Rules on the backend, no model, so asking costs nothing.
+  useEffect(() => { onStepSince.current = Date.now(); setOffer(null); }, [labId, chapterId, step]);
+  useEffect(() => {
+    if (!labId || !chapterId || step == null || !status?.enabled) return;
+    let live = true;
+    const ask = (idle: number) => {
+      if (sid.current != null) return; // already talking
+      jarvisApi.nudge(labId, chapterId, step, idle).then((n) => {
+        if (!live || !n.nudge || !n.task_id || offeredRecently(n.task_id)) return;
+        markOffered(n.task_id);
+        setOffer(n);
+        setOpen(true);
+      }).catch(() => {});
+    };
+    const onCheck = () => { onStepSince.current = Date.now(); ask(0); };
+    window.addEventListener("labbox:check-done", onCheck);
+    const t = window.setInterval(() => ask((Date.now() - onStepSince.current) / 1000), POLL_MS);
+    return () => { live = false; window.removeEventListener("labbox:check-done", onCheck); window.clearInterval(t); };
+  }, [labId, chapterId, step, status?.enabled]);
 
   const seconds = () => Math.round((Date.now() - startedAt.current) / 1000);
 
@@ -120,14 +166,16 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
     }
   }, []);
 
-  const begin = useCallback(async () => {
+  const begin = useCallback(async (reason = "") => {
+    reasonRef.current = reason;
+    setOffer(null);
     setNote("");
     setCaption("");
     setPhase("connecting");
     try {
       const media = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
       mic.current = media;
-      const s = await jarvisApi.start(labId, chapterId, stepRef.current);
+      const s = await jarvisApi.start(labId, chapterId, stepRef.current, reason);
       sid.current = s.session_id;
       setLeft(s.max_seconds);
       const conn = new RTCPeerConnection();
@@ -140,7 +188,9 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
       // Jarvis speaks first: a short greeting by name, from what he knows.
       channel.onopen = () => {
         send({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text",
-          text: "The learner has just opened the conversation. Greet them by their first name in one or two short sentences, mention where they are or what they did last, and ask how you can help. Do not call any tool yet." }] } });
+          text: reasonRef.current
+            ? "The learner just accepted your offer of help with the task in front of them. In one short, kind sentence, say what you noticed, then ask what they have tried so far. You may use your tools to look at the task and their code."
+            : "The learner has just opened the conversation. Greet them by their first name in one or two short sentences, mention where they are or what they did last, and ask how you can help. Do not call any tool yet." }] } });
         send({ type: "response.create" });
       };
       conn.onconnectionstatechange = () => { if (["failed", "closed"].includes(conn.connectionState) && sid.current != null) stop("The connection dropped."); };
@@ -173,7 +223,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
   const label = live ? (mood === "speaking" ? "Jarvis is speaking" : mood === "thinking" ? "Jarvis is thinking" : "Jarvis is listening") : "Talk to Jarvis";
 
   return (
-    <div className={`jv ${open ? "is-open" : ""}`} data-phase={phase} data-mood={live ? mood : "idle"}>
+    <div className={`jv ${open ? "is-open" : ""} ${offer && !live ? "has-offer" : ""}`} data-phase={phase} data-mood={live ? mood : "idle"}>
       <audio ref={audio} autoPlay />
       {open && (
         <section className="jv-panel" aria-label="Jarvis" aria-live="polite">
@@ -182,7 +232,26 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
             <span className="jv-plan">{status.plan === "pro" ? "Pro" : status.kind === "trial" ? "Free trial" : "Pro feature"}</span>
             <button type="button" className="jv-x" aria-label="Close Jarvis" onClick={() => { if (live) stop(); setOpen(false); }}>✕</button>
           </header>
-          {live ? (
+          {offer && !live && phase !== "connecting" ? (
+            <>
+              <p className="jv-caption">{offer.line}</p>
+              <div className="jv-row jv-offer">
+                {status.kind !== "locked" ? (
+                  <button type="button" className="btn btn-small btn-primary" onClick={() => begin(offer.reason)}>
+                    {status.kind === "trial" ? "Talk it through (free trial)" : "Talk it through"}
+                  </button>
+                ) : (
+                  <button type="button" className="btn btn-small btn-primary" onClick={() => { window.dispatchEvent(new CustomEvent("labbox:open-tutor")); setOffer(null); setOpen(false); }}>
+                    ✦ Ask AI (typed)
+                  </button>
+                )}
+                <button type="button" className="btn btn-small" onClick={() => { setOffer(null); setOpen(false); }}>Not now</button>
+              </div>
+              {status.kind === "locked" && status.plan !== "pro" && (
+                <p className="jv-small">With Pro, Jarvis talks it through with you, out loud. <Link to="/pricing">See Pro</Link></p>
+              )}
+            </>
+          ) : live ? (
             <>
               <p className="jv-caption">{caption || (mood === "speaking" ? "..." : label + ".")}</p>
               <div className="jv-row">
@@ -208,7 +277,7 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
                   ? `Meet Jarvis, your personal guide. Your free trial is ${Math.round(status.seconds_left / 60)} minutes, once.`
                   : "Jarvis knows your labs, your code and where you are. Ask him anything, out loud."}
               </p>
-              <button type="button" className="btn btn-small btn-primary" onClick={begin}>Start talking</button>
+              <button type="button" className="btn btn-small btn-primary" onClick={() => begin()}>Start talking</button>
             </>
           )}
           {phase === "ended" && note && <p className="jv-note" role="status">{note}</p>}

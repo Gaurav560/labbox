@@ -264,8 +264,12 @@ def learner_context(session: Session, user: User, lab_id: str | None, chapter_id
     return "\n".join(lines)
 
 
-def instructions(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None) -> str:
-    return PERSONA + "\n\nWhat you know about this learner right now:\n" + learner_context(session, user, lab_id, chapter_id, step)
+def instructions(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None, help_reason: str = "") -> str:
+    text = PERSONA + "\n\nWhat you know about this learner right now:\n" + learner_context(session, user, lab_id, chapter_id, step)
+    if help_reason:
+        text += ("\n\nWhy this conversation started: you noticed they might be stuck and offered help, and they accepted. "
+                 + help_reason + " Open by acknowledging it in one short, kind sentence, then ask what they have tried.")
+    return text
 
 
 # ---------- tools ----------
@@ -327,6 +331,70 @@ def run_tool(session: Session, user: User, js: JarvisSession, name: str, step: i
     return f"Unknown tool {name}."
 
 
+# ---------- noticing when a learner is stuck (step 2) ----------
+
+FAILS_TO_NUDGE = 3  # the same task failing this many checks in a row, without a pass
+IDLE_TO_NUDGE = 8 * 60  # seconds on one task step without pressing Check
+
+
+class Nudge(BaseModel):
+    nudge: bool
+    reason: str = ""  # "fails", "hints" or "idle": why Jarvis offers help
+    task_id: str | None = None
+    line: str = ""  # what the orb says, in a sentence
+    detail: str = ""  # what Jarvis is told when the learner accepts (added to his instructions)
+
+
+def _fail_streak(session: Session, user_id: int, lab_id: str, chapter_id: str, task_id: str) -> tuple[int, str]:
+    """How many of the latest checks of this chapter failed this task in a row, and the last failure message."""
+    n, message = 0, ""
+    runs = session.exec(select(CheckRun).where(CheckRun.user_id == user_id, CheckRun.lab_id == lab_id, CheckRun.chapter_id == chapter_id)
+                        .order_by(col(CheckRun.id).desc()).limit(10)).all()
+    for run in runs:
+        r = next((x for x in json.loads(run.results_json or "[]") if x.get("task") == task_id), None)
+        if r is None:
+            continue
+        if r.get("passed"):
+            break
+        n += 1
+        message = message or str(r.get("message") or "")
+    return n, message
+
+
+def nudge(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None, idle_seconds: int = 0) -> Nudge:
+    """Rules, not a model (so it costs nothing): the same check failing again and again, every hint used, or a long
+    pause on a task. Only on a task step whose task is not passed yet."""
+    lab = _safe_lab(lab_id)
+    if not lab or not chapter_id or step is None or not any(c.id == chapter_id for c in lab.chapters):
+        return Nudge(nudge=False)
+    steps = lab.chapter_steps(chapter_id)
+    st = steps[step] if 0 <= step < len(steps) else None
+    if not st or not st.task:
+        return Nudge(nudge=False)
+    tp = session.get(TaskProgress, (user.id, lab.id, st.task))  # read only: asking never creates a row
+    if tp is not None and tp.passed:
+        return Nudge(nudge=False)
+    hints_used = tp.hints_used if tp else 0
+    task = lab.task(chapter_id, st.task)
+    first = (engagement.get_profile(session, user.id).display_name or user.username).split()[0]
+    fails, message = _fail_streak(session, user.id, lab.id, chapter_id, st.task)
+    if fails >= FAILS_TO_NUDGE:
+        return Nudge(nudge=True, reason="fails", task_id=st.task,
+                     line=f"{first}, \"{task.title}\" has failed {fails} checks in a row. Want to go through it together?",
+                     detail=f"They asked for help because the task \"{task.title}\" failed {fails} checks in a row. "
+                            f"The last check said: {message[:300]}")
+    if task.hints and hints_used >= len(task.hints):
+        return Nudge(nudge=True, reason="hints", task_id=st.task,
+                     line=f"You have used every hint on \"{task.title}\". Shall we look at it together?",
+                     detail=f"They asked for help after using all {len(task.hints)} hints on the task \"{task.title}\".")
+    if idle_seconds >= IDLE_TO_NUDGE and fails == 0:
+        mins = idle_seconds // 60
+        return Nudge(nudge=True, reason="idle", task_id=st.task,
+                     line=f"You have been on \"{task.title}\" for {mins} minutes. Need a hand getting started?",
+                     detail=f"They asked for help after {mins} minutes on the task \"{task.title}\" without pressing Check yet.")
+    return Nudge(nudge=False)
+
+
 # ---------- sessions ----------
 
 class SessionOut(BaseModel):
@@ -371,13 +439,17 @@ async def mint_secret(instructions_text: str) -> tuple[str, int]:
     return data["value"], int(data.get("expires_at") or 0)
 
 
-async def start(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None) -> SessionOut:
+async def start(session: Session, user: User, lab_id: str | None, chapter_id: str | None, step: int | None, reason: str | None = None) -> SessionOut:
     st = status(session, user)
     if st.kind == "locked":
         raise HTTPException(403, st.reason)
     lab = _safe_lab(lab_id)
     chapter = chapter_id if lab and any(c.id == chapter_id for c in lab.chapters) else None
-    secret, expires = await mint_secret(instructions(session, user, lab.id if lab else None, chapter, step))
+    help_reason = ""
+    if reason and lab and chapter:
+        n = nudge(session, user, lab.id, chapter, step, idle_seconds=IDLE_TO_NUDGE if reason == "idle" else 0)
+        help_reason = n.detail if n.nudge else ""
+    secret, expires = await mint_secret(instructions(session, user, lab.id if lab else None, chapter, step, help_reason))
     js = JarvisSession(user_id=user.id, kind=st.kind, lab_id=lab.id if lab else None, chapter_id=chapter, max_seconds=st.seconds_left)
     session.add(js)
     session.commit()
