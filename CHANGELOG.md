@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 27 rewritten (easy, a little detailed, checked)
+
+- Chapter 27, "Logging and health", to the lesson rules: UTC and the process id explained; both photo leads say why
+  they belong; both tasks list their slips (another `Logger` package, `info` instead of `warn`, `+` instead of
+  `{}`, the env info contributor forgotten, quotes around the name).
+- Checked on a lab machine with the starter and the solution. Quoted as they came: the starter's 409 and its bare
+  `out of stock SAM-1` line and "Exposing 1 endpoint"; the solution's WARN line, "Exposing 2 endpoints", and the
+  health, info and `/actuator` answers (the links include `health-path`, now explained).
+- Corrected: the sample log line came from port 8082, which this lab never uses; it is now the real line from the
+  finished project on port 8080.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 26 rewritten (easy, a little detailed, checked)
 
 - Chapter 26, "Testing the data layer", to the lesson rules: the first task lists its slips (snacks saved already

@@ -23,21 +23,24 @@ rope, and wrote the result, with the time, in the ship's **log book**. Every app
 and when.
 
 :::photo{src="/lesson-images/spring/ships-log.webp" alt="The cloth-bound log book of the ship Belgica from the Belgian Antarctic Expedition of 1897, with a label on the cover" credit="Till.niermann" license="CC BY 3.0" source="https://commons.wikimedia.org/wiki/File:Belgica_Ship%27s_log.jpg"}
-The log book of the Belgica, Antarctic expedition, 1897.
+The log book of the Belgica, Antarctic expedition, 1897: a record of what happened, and when, which is what an
+app's log is too.
 :::
 
 `System.out.println("out of stock " + sku)` writes one bare line. Compare it with a line from a **logger**:
 
 ```text
-2026-11-21T12:20:36.011Z  WARN 142 --- [shop-api] [nio-8082-exec-2] com.shop.stock.StockService : Out of stock: SAM-1
+2026-11-27T21:40:42.219Z  WARN 5356 --- [shop-api] [nio-8080-exec-1] com.shop.stock.StockService : Out of stock: SAM-1
 ```
 
-Every part of it is useful:
+(That is the line this chapter's finished project wrote on our lab machine.) Every part of it is useful:
 
-- **When**: an exact timestamp, so you can match it with the customer's "at 14:02".
+- **When**: an exact timestamp, so you can match it with the customer's "at 14:02". (The `Z` means the time is
+  in UTC, the world's reference time zone.)
 - **How serious**: the **level**, `WARN`.
-- **Which app** (`[shop-api]`, your `spring.application.name` from chapter 0), and which process (`142`).
-- **Which thread**: `nio-8082-exec-2`, a Tomcat request thread (chapter 10). All lines of one request share it.
+- **Which app** (`[shop-api]`, your `spring.application.name` from chapter 0), and which process (`5356`, the
+  process id the operating system gave the app).
+- **Which thread**: `nio-8080-exec-1`, a Tomcat request thread (chapter 10). All lines of one request share it.
 - **Which class** wrote it: `com.shop.stock.StockService`.
 - **The message**.
 
@@ -114,7 +117,8 @@ Look at Terminal 1. Between the neat log lines, there is a bare one:
 out of stock SAM-1
 ```
 
-No time, no level, no class. On a server producing thousands of lines a minute, nobody would ever find it, and no
+(On our lab machine the `curl` answered `409`, and that bare line appeared in the log.) No time, no level, no
+class. On a server producing thousands of lines a minute, nobody would ever find it, and no
 alert could ever be set on it.
 :::
 
@@ -128,10 +132,14 @@ In `StockService`:
 Rebuild, run, take a samosa again, and look at the log:
 
 ```text
-WARN 142 --- [shop-api] [nio-8080-exec-2] com.shop.stock.StockService : Out of stock: SAM-1
+WARN 5356 --- [shop-api] [nio-8080-exec-1] com.shop.stock.StockService : Out of stock: SAM-1
 ```
 
-Press **Check**.
+(Your process number and thread number will differ.) Press **Check**.
+
+Usual slips: `Logger` imported from `java.util.logging` or `org.apache.logging.log4j` instead of `org.slf4j`,
+`log.info` instead of `log.warn`, or `"Out of stock: " + sku` instead of the `{}` placeholder (it works, but builds
+the text even when the line is not written).
 :::
 
 :::step{type=concept title="Actuator: is the app healthy?"}
@@ -198,11 +206,15 @@ curl localhost:8080/actuator/health; echo; curl localhost:8080/actuator/info; ec
 ```text
 {"status":"UP"}
 {"app":{"name":"Shop API"}}
-{"_links":{"self":...,"health":...,"info":...}}
+{"_links":{"self":...,"health":...,"health-path":...,"info":...}}
 ```
 
-`/actuator` on its own lists every exposed endpoint, and the start-up log now says `Exposing 2 endpoints`. Press
-**Check**.
+`/actuator` on its own lists every exposed endpoint (`health-path` is health's address for its parts, like
+`/actuator/health/db` when there is a database), and the start-up log now says `Exposing 2 endpoints beneath base
+path '/actuator'`. Those are our lab machine's answers. Press **Check**.
+
+Usual slips: `management.info.env.enabled` forgotten
+(then `/actuator/info` answers `{}`), or `info.app.name` written with quotes (they become part of the name).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -271,7 +283,7 @@ You can now see what a running app is doing:
   `/actuator/metrics`. Expose them on purpose with `management.endpoints.web.exposure.include`.
 - `management.info.env.enabled=true` + `info.*` properties fill the info endpoint.
 
-:::photo{src="/lesson-images/spring/spring-27-notes.webp" alt="Handwritten notes about Logging and health: Logger, never System.out, TRACE DEBUG INFO WARN ERROR, curly-brace placeholders, /actuator/health: UP or DOWN, /actuator/info" ai="true"}
+:::photo{src="/lesson-images/spring/spring-27-notes.webp" alt="Sketchnote: Logging and health. Logs tell you what happened; health tells you if the app works now. Flow: a logger per class, a level for each line, a threshold per package, Actuator health and info. Remember: never System.out.println; TRACE, DEBUG, INFO, WARN, ERROR; use curly-brace placeholders; health answers UP with 200 or DOWN with 503." ai="true"}
 One page of notes for this chapter.
 :::
 
