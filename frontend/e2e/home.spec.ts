@@ -21,16 +21,16 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   // The catalog comes from the server: both labs sit in the languages track, the rest are coming soon.
   await expect(page.locator(".track-chip", { hasText: "Programming languages" })).toContainText(/\d+ labs?/);
   // The AI labs come first, right under the hero, with the Forward Deployed Engineer course in the spotlight
-  // (owner, 27 November); its demo plays a real run: the model obeys the email, the limit in code refers the claim.
+  // (owner, 27 November).
   const ai = page.locator("#ai");
   await expect(ai.locator(".ai-spot h3")).toHaveText("Forward Deployed Engineer");
   await expect(ai.locator(".ai-spot-go")).toHaveAttribute("href", "/courses/forward-deployed-engineer"); // not straight to sign-up
   await expect(ai.locator(".ai-rows li")).toHaveCount(5);
   await expect(ai.locator(".ai-rows img")).toHaveCount(5); // small logos, like the dashboard's list
   await expect(ai.locator(".ai-rows a").first()).toHaveAttribute("href", /^\/courses\//);
-  await ai.locator(".ai-demo").scrollIntoViewIfNeeded();
-  await expect(ai.locator(".ai-demo-stamp")).toHaveClass(/is-on/, { timeout: 20_000 });
-  await expect(ai.locator(".ai-demo-fields li.is-bad")).toContainText("100000");
+  await expect(ai.locator(".ai-spot-art img")).toBeVisible(); // its big picture (the email demo is off for now)
+  await expect(ai.locator(".ai-demo")).toHaveCount(0);
+  await expect(ai.locator(".ai-spot-tag")).toContainText("Learn the hottest job in the tech market");
   expect(await page.evaluate(() => {
     const hero = document.querySelector("main")!.firstElementChild!;
     return !!hero.nextElementSibling?.matches("#ai, :has(> #ai)");

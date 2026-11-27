@@ -131,7 +131,6 @@ export default function HomePage() {
           signedIn={!!user}
           spotArt={<>
             <img src="/home/fde-spotlight.webp" alt="A miniature insurance office at night: an engineer at a laptop sends claim forms and emails from filing cabinets through a glowing AI core to a dashboard of checks, with one red stop barrier" />
-            <span className="ai-spot-credit">Illustration made for LabBox (AI)</span>
           </>}
           title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
           lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}

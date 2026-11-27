@@ -52,7 +52,8 @@ const TEXT = EMAIL + ATTACK;
 // Steps after the typing: one per field, then the rule, then the stamp, then a pause before it plays again.
 const AFTER = FIELDS.length + 2;
 
-/** One claim email through Claimdesk: it types in, the model fills the fields, code checks the limit and refers it. */
+/** One claim email through Claimdesk: it types in, the model fills the fields, code checks the limit and refers it.
+ *  Not shown at the moment (owner, 27 November); kept for when the owner wants it back. */
 export function ClaimDemo() {
   const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const [ref, , onScreen] = useOnScreen<HTMLDivElement>();
@@ -105,21 +106,16 @@ export function ClaimDemo() {
 
 const hours = (min?: number | null) => (min ? `${Math.round(min / 60)} hours` : "");
 
-/** A course's parts in order, as a short path (its syllabus at a glance). */
-function Parts({ parts }: { parts?: string[] }) {
-  if (!parts?.length) return null;
-  return (
-    <ol className="ai-parts" aria-label="The course's parts">
-      {parts.map((p) => <li key={p}>{p}</li>)}
-    </ol>
-  );
-}
+// A short course is marked "Micro" on the home page (owner, 27 November: "write micro in front of small courses").
+export const MICRO_CHAPTERS = 15;
+export const isMicro = (lab: CatalogLab) => lab.chapter_count <= MICRO_CHAPTERS;
 
 /** The AI section: the Forward Deployed Engineer spotlight with its demo, then the other AI labs. */
-export default function HomeAiLabs({ labs, signedIn, spotArt, title, lead }: {
+export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead }: {
   labs: CatalogLab[];
   signedIn: boolean;
   spotArt?: ReactNode; // the spotlight's big picture
+  thumb?: (lab: CatalogLab) => ReactNode; // a row's small picture; the lab's logo when not given (Ukiyo: its print)
   title: ReactNode;
   lead: ReactNode;
 }) {
@@ -141,11 +137,9 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, title, lead }: {
         {spot && (
           <article className="ai-spot" aria-labelledby="ai-spot-title">
             <div className="ai-spot-text">
-              {spotArt && <div className="ai-spot-art">{spotArt}</div>}
-              <p className="ai-spot-tag"><span className="ai-dot" aria-hidden="true" />New · where a model meets a real customer</p>
+              <p className="ai-spot-tag"><span className="ai-dot" aria-hidden="true" />New · Learn the hottest job in the tech market</p>
               <h3 id="ai-spot-title">{spot.title}</h3>
               <p className="ai-spot-sub">Join a motor insurer for one engagement and build Claimdesk, its AI claims assistant: discovery, messy data, model calls, evals, privacy, shadow mode, monitoring and the handover.</p>
-              <Parts parts={spot.parts} />
               <p className="ai-spot-facts">
                 <span><strong>{spot.chapter_count}</strong> chapters</span>
                 <span><strong>44</strong> tasks</span>
@@ -153,7 +147,9 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, title, lead }: {
               </p>
               <Link className="h-btn h-btn-primary ai-spot-go" to={course(spot)}>{signedIn ? "Open the course →" : "See the course →"}</Link>
             </div>
-            <ClaimDemo />
+            {/* The claim demo is off for now (owner, 27 November: "remove this email animation for now"); the picture
+                takes its place. ClaimDemo stays below, ready to come back. */}
+            {spotArt && <div className="ai-spot-art">{spotArt}</div>}
           </article>
         )}
         {others.length > 0 && (
@@ -161,10 +157,10 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, title, lead }: {
             {others.map((o, i) => (
               <li key={o.id} style={{ "--i": i } as CSSProperties}>
                 <Link className="ai-row" to={course(o.lab!)}>
-                  <span className="ai-logo" aria-hidden="true">
-                    {labBrand(o.lab!.cover_credit) ? <img src={labBrand(o.lab!.cover_credit)!.logo} alt="" /> : <b>{o.lab!.title.slice(0, 1)}</b>}
+                  <span className={thumb ? "ai-thumb" : "ai-logo"} aria-hidden="true">
+                    {thumb ? thumb(o.lab!) : labBrand(o.lab!.cover_credit) ? <img src={labBrand(o.lab!.cover_credit)!.logo} alt="" /> : <b>{o.lab!.title.slice(0, 1)}</b>}
                   </span>
-                  <strong>{o.lab!.title}</strong>
+                  <strong>{isMicro(o.lab!) && <span className="ai-micro">Micro</span>}{o.lab!.title}</strong>
                   <span className="ai-row-line">{o.line}</span>
                   <small>{o.lab!.chapter_count} chapters{o.lab!.estimated_minutes ? ` · ${hours(o.lab!.estimated_minutes)}` : ""}</small>
                   <span className="ai-row-go" aria-hidden="true">→</span>
