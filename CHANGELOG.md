@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Ukiyo's "AI labs" menu link jumps to the home page's AI section (smooth scroll, below the sticky header) instead of
+  the AI labs list (owner, 27 November).
 - Pricing: the Teams plan is greyed out, and Pro's button reads "Join the waitlist" (owner, 27 November).
 - The certificate's share picture (LinkedIn, X, WhatsApp) has the same round stamp as the page, drawn in Pillow, between
   the date and the QR code, which moved to the corner; the lab's name on it is upright (owner: "yes, update the stamp").

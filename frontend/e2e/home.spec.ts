@@ -69,8 +69,8 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
     const hero = document.querySelector("main")!.firstElementChild!;
     return !!hero.nextElementSibling?.matches("#ai, :has(> #ai)");
   })).toBe(true);
-  // "AI labs" in the menu still opens the AI labs (owner, 25 November).
-  await expect(page.locator(".home-nav").getByRole("link", { name: "AI labs" })).toHaveAttribute("href", "/labs?category=ai");
+  // "AI labs" in the menu jumps to the AI section (owner, 27 November).
+  await expect(page.locator(".home-nav").getByRole("link", { name: "AI labs" })).toHaveAttribute("href", "#ai");
   await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
   await expect(page.locator("#labs .uh-panel", { hasText: "DevOps" })).toContainText(/\d+ labs?/);
   // The closing panel has no "first win" line.

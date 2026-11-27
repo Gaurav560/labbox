@@ -44,7 +44,7 @@ export default function HomePage() {
       <header className="home-header">
         <Logo to="/" />
         <nav aria-label="Main" className="home-nav">
-          <Link to="/labs?category=ai">AI labs</Link>
+          <a href="#ai">AI labs</a>{/* jumps to the AI section (owner, 27 November) */}
           <Link to="/library">Premium Reads</Link>
           <Link to="/pricing">Pricing</Link>
           <a href="#faq">FAQs</a>

@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-// Owner, 25 November: "AI labs" in the home page menu opens the AI labs when logged in; when not, it asks to log in
-// first and then lands on the AI labs.
-test("AI labs in the menu: log in first, then the AI labs", async ({ page, request }) => {
+// Owner, 27 November: "AI labs" in the home page menu jumps to the home page's AI section. The AI labs list
+// (/labs?category=ai) still asks a visitor to log in first and then lands there (owner, 25 November).
+test("AI labs in the menu jumps to the AI section; the AI labs list asks to log in first", async ({ page, request }) => {
   const username = `ailink${Date.now() % 1e9}`;
   const signup = await request.post("/api/auth/signup", { data: { username, password: "secret123" } });
   const made = await signup.json();
@@ -10,6 +10,9 @@ test("AI labs in the menu: log in first, then the AI labs", async ({ page, reque
 
   await page.goto("/");
   await page.locator(".home-nav").getByRole("link", { name: "AI labs" }).click();
+  await expect(page).toHaveURL(/\/#ai$/);
+  await expect(page.locator("#ai .ai-spot h3")).toBeInViewport();
+  await page.goto("/labs?category=ai");
   await expect(page).toHaveURL(/\/login\?next=%2Flabs%3Fcategory%3Dai$/);
   // Google and GitHub only (owner, 27 November): the buttons carry next= on; coming back signed in lands there.
   await expect(page.getByRole("link", { name: "Continue with Google" })).toHaveAttribute("href", /next=%2Flabs%3Fcategory%3Dai$/);
@@ -20,10 +23,7 @@ test("AI labs in the menu: log in first, then the AI labs", async ({ page, reque
   await expect(page.locator(".u-group")).toHaveCount(1); // only the AI category is shown
   await expect(page.locator(".u-cat", { hasText: "AI" }).first()).toHaveAttribute("aria-pressed", "true");
 
-  // Logged in, the same link goes straight there; a next= to another site is ignored.
-  await page.goto("/?home");
-  await page.locator(".home-nav").getByRole("link", { name: "AI labs" }).click();
-  await expect(page).toHaveURL(/\/labs\?category=ai$/);
+  // A next= to another site is ignored.
   await page.evaluate(() => localStorage.removeItem("labbox.token"));
   await page.goto("/login?oauth=one-time-code&next=//evil.example.com");
   await expect(page).toHaveURL(/localhost:\d+\/labs$/);
