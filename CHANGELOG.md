@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 15 rewritten (easy, a little detailed, checked)
+
+- Chapter 15, "Updating and deleting", to the lesson rules: both tasks list their slips (the id from the body, 200
+  for an unknown id, `!= 0` for a missing `Integer`, the `? :` the wrong way round).
+- Checked on a lab machine with the solution: the full PUT answer, the PUT without `stock` (stock 0), the PATCH of
+  the kulfi's price (stock stays 40), and 404 for `PUT` and `PATCH` on product 99, now quoted.
+- Corrected: the lesson promised that chapter 21 shows why soft deletes matter; chapter 21 does not, so the reason
+  is now given in place (old orders would point at nothing).
+- A new sketchnote page, redrawn once (DELETE's 404 case had dropped out).
+
 ## 28 November: Spring Boot chapter 14 rewritten (easy, a little detailed, checked)
 
 - Chapter 14, "Layers", to the lesson rules: both tasks list their slips (`average()` gives an `OptionalDouble`,
