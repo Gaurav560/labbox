@@ -62,6 +62,14 @@ a data analysis company founded in 2003, which put engineers at the sites of the
 worked for and gave them this title. The phrase **forward deployed** comes from military vocabulary: forces stationed
 close to where they are needed, rather than at a home base.
 
+Palantir still works this way today. Ecuador's national customs service, for example, uses its platform to bring
+customs records together and spot risky shipments, smuggling networks and tax fraud. In January 2026 Ecuador's
+president met Palantir's chief executive, Alex Karp, in Davos to talk about that work.
+
+:::photo{src="/lesson-images/forward-deployed-engineer/fde-palantir.webp" alt="Three men in dark suits in a dim meeting room; in the centre, a man with grey curly hair and glasses, Alex Karp, shakes hands with a man on the right, beside a table with red flowers." credit="Isaac Castillo, Presidencia de la República del Ecuador" license="Public domain" source="https://commons.wikimedia.org/wiki/File:REUNI%C3%93N_CON_ALEX_KARP,_CEO_DE_PALANTIR_TECHNOLOGIES._DAVOS,_21_DE_ENERO_2026._(55053421059).jpg"}
+Alex Karp (centre), chief executive of Palantir Technologies, at a working meeting with Ecuador's government in Davos, 21 January 2026.
+:::
+
 The US Navy, for example, keeps some ships permanently based far from home, so they are already in the region when
 they are needed. This ship, the USS Blue Ridge, is arriving at what the Navy calls its "forward deployed operating base"
 in Yokosuka, Japan: not visiting, but living where the work is. That is exactly the idea behind the engineer's title.

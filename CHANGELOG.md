@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- FDE chapter 1's history has a Palantir photo (owner: "without copyrighted"): Alex Karp, Palantir's chief executive, at a
+  working meeting with Ecuador's government in Davos, 21 January 2026 (public domain, Presidencia de la República del
+  Ecuador), with a line on how Ecuador's customs service uses Palantir's platform.
 - The home page's lab picker is a knob: each lab's logo around a dial, the knob points at the picked one, its name and
   "1 of 9 labs" beside it; click the knob to turn, click a logo to jump, or use the arrow keys. The "spin up another"
   buttons never offer the lab that is already running.
