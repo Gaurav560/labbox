@@ -20,12 +20,12 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
   await expect(page.locator(".uh-hero-pic img")).toBeVisible();
-  await expect(page.locator(".uh-term")).toContainText("python evals.py"); // the FDE course's eval gate (27 November)
   await expect(page.locator(".uh-promise")).toHaveText("No videos to sit through. You learn by building.");
-  await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
+  await expect(page.locator(".uh-hero-pic img")).toHaveAttribute("src", "/ukiyo/heroes/wave.webp"); // the wave (owner, 27 November)
+  await expect(page.locator(".uh-term")).toHaveCount(0);
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
   const machine = page.locator("#machine");
-  await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click, and a container spins up for you with everything the lab needs.");
+  await expect(machine.getByRole("heading", { level: 2 })).toHaveText("One click. Your lab is ready.");
   await machine.scrollIntoViewIfNeeded();
   // The first run starts by itself when the section comes into view (owner, 25 November).
   await expect(machine.locator(".ua-container")).toBeVisible(); // the Docker-style shipping container

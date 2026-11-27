@@ -326,7 +326,7 @@ export default function UkiyoMachine({ signedIn }: { signedIn: boolean }) {
     <div className="ua" ref={rootRef}>
       <div className="ua-text">
         <Picker lab={lab} onPick={(l) => { setLab(l); setRun(0); }} />
-        <h2 id="machine-title">One click, and a container spins up for you <em>with everything the lab needs.</em></h2>
+        <h2 id="machine-title">One click. <em>Your lab is ready.</em></h2>{/* short, one or two lines (owner, 27 November) */}
         <p>Nothing to install. You go straight to the challenge.</p>{/* owner, 27 November: "keep it just" this */}
         {/* the call to action sits with the words, so the box shows only the machine (owner, 25 November) */}
         {/* the command that starts the machine (owner picked the terminal design); it types itself, and a green Run key

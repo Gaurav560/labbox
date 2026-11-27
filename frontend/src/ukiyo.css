@@ -1023,3 +1023,39 @@ html { scroll-behavior: smooth; }
 .hc-platforms li.hc-logo, .hc-platforms li.hc-logo:not(:nth-child(3n)) { border: 0; }
 /* the FDE tag line in red (owner, 27 November: "this whole line in red") */
 .uh-ai .ai-spot-tag, .uh-ai .ai-tag-a { color: var(--vermilion); }
+/* the hero's wave (owner, 27 November): a wider picture column, cropped square to keep the rider and the mountain,
+   in a paper frame; it drifts very slowly toward the city */
+.uh-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.uh-hero-art.is-wave .uh-hero-pic { aspect-ratio: 1 / 1; padding: 10px; background: #fffdf8; }
+.uh-hero-art.is-wave .uh-hero-pic img { object-position: 58% 50%; filter: none; animation: uh-wave-drift 22s ease-in-out infinite alternate; }
+:root:not([data-theme="light"]) .uh-hero-art.is-wave .uh-hero-pic img { filter: brightness(.92); }
+@keyframes uh-wave-drift { from { object-position: 52% 50%; transform: scale(1.02); } to { object-position: 64% 50%; transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .uh-hero-art.is-wave .uh-hero-pic img { animation: none; } }
+@media (max-width: 900px) { .uh-hero { grid-template-columns: 1fr; } .uh-hero-art.is-wave .uh-hero-pic { aspect-ratio: 3 / 2; } }
+/* a bigger, wider hero picture (owner, 27 November: "large a little bit, and more rectangle") */
+.uh-hero { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.uh-hero-art.is-wave .uh-hero-pic { aspect-ratio: 4 / 3; }
+/* the start-a-lab heading a size smaller (owner: "maybe this font size is too big") */
+.uh-machine .ua-text h2 { font-size: clamp(24px, 2.5vw, 34px); line-height: 1.15; }
+.uh-hero-art.is-wave { width: 100%; max-width: 760px; }
+.uh-hero { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+/* a short machine heading that stays one or two lines (owner: long multi-line headings "look odd") */
+.uh-machine .ua-text h2 { font-size: clamp(26px, 2.8vw, 38px); max-width: 16em; }
+/* text and picture never touch (owner, 27 November: "text touching image, too close") */
+.uh-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); }
+.uh-hero h1 { font-size: clamp(32px, 3.6vw, 56px); }
+.uh-hero .uh-line { white-space: normal; }
+/* the wave blends into the page (owner, 27 November: no white border, "it should assimilate with the background"):
+   no frame, no box, no shadow; its edges fade softly into the paper */
+.uh-hero-art.is-wave .uh-hero-pic { padding: 0; background: none; border: 0; box-shadow: none;
+  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 55% 50%, #000 58%, transparent 100%);
+          mask-image: radial-gradient(ellipse 72% 70% at 55% 50%, #000 58%, transparent 100%); }
+.uh-hero-art.is-wave .uh-hero-pic {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-composite: intersect; }
+/* light theme: a shorter fade, so the picture keeps its edges (owner, 27 November: "too much" blending in light) */
+:root[data-theme="light"] .uh-hero-art.is-wave .uh-hero-pic {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%); }

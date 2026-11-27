@@ -2,6 +2,11 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Ukiyo's hero shows the wave (owner: "yes, build on Ukiyo"): "The AI wave is here. Learn to ride it." beside the engineer
+  riding a wave of light, large and wide, with no frame; its edges fade into the page (a short fade in the light
+  theme). The typing terminal is gone. The FDE spotlight now shows "Summit" (an engineer on a peak at dawn, lines of
+  light to the city). The start-a-lab heading is short: "One click. Your lab is ready." The note under the share
+  options is gone (both designs).
 - "Explore more AI labs" heads the rows under the FDE spotlight; the FDE tag line "The hottest job in AI." is red;
   the share options are one quiet line of coloured marks and names (owner: "try something else"); a little more space
   between the certificate's date, stamp and QR code.

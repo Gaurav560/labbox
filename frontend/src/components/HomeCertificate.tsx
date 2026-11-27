@@ -52,7 +52,6 @@ export default function HomeCertificate() {
             <li key={p.key} className={`hc-logo is-${p.key}`}><span className="hc-logo-mark"><ShareIcon name={p.key} /></span>{p.label}</li>
           ))}
         </ul>
-        <p className="hc-note">Paste it in your CV too. On LinkedIn, X and WhatsApp the link opens as a card with the certificate's picture.</p>
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import HomeAiLabs from "../components/HomeAiLabs";
 import { HomeFaq } from "../components/HomeSections";
 import HomeCertificate from "../components/HomeCertificate";
 import UkiyoMachine from "../components/UkiyoMachine";
-import { useTyped } from "../components/useTyped";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
 import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
@@ -61,9 +60,8 @@ export default function HomePage() {
       </header>
 
       <main>
-        {/* The hero (owner, 25 November, from the eight options): two short lines, what you get, and Hiroshige's snowy
-            Kinryuzan temple, with a see-through lab terminal typing over it (owner, 27 November: "very shallow", the print
-            shows behind it). */}
+        {/* The hero (owner, 27 November): "The AI wave is here. Learn to ride it." beside the picture that says it, an
+            engineer riding a wave of light toward the city (made for LabBox in woodblock style); no terminal over it. */}
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
             {/* Owner, 27 November: "fix this way of writing"; picked "ride the wave" (an invitation, not a threat; it matches
@@ -73,12 +71,10 @@ export default function HomePage() {
             <p className="uh-promise"><span>No videos to sit through.</span> <em>You learn by building.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
-          <figure className="uh-hero-art">
+          <figure className="uh-hero-art is-wave">
             <div className="uh-hero-pic">
-              <img src="/ukiyo/heroes/kinryuzan.webp" width={1000} height={1526} alt="Woodblock print: Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856" />
-              <HeroTerm />
+              <img src="/ukiyo/heroes/wave.webp" width={1200} height={800} alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
             </div>
-            <figcaption className="u-print-credit">Utagawa Hiroshige, Kinryuzan Temple at Asakusa, 1856</figcaption>
           </figure>
         </section>
 
@@ -89,7 +85,7 @@ export default function HomePage() {
             signedIn={!!user}
             thumb={(lab) => <img src={`/home/ai/${lab.id}.webp`} alt="" loading="lazy" />}
             spotArt={<>
-              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer with a laptop bag at the prow of a small boat rides a great wave made of points of light toward a modern city below a snow-capped mountain" />
+              <img src="/home/fde-spotlight.webp" alt="In woodblock-print style: an engineer stands on a rocky summit above a sea of clouds at dawn, laptop open on a rock, lines of light running down to a city below, a great red sun behind" />
             </>}
             title={<>Build with real models. <em>Start with the job itself.</em></>}
             lead="Each AI lab is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
@@ -179,33 +175,6 @@ export default function HomePage() {
         <SiteLinks faq={false} />
         <Copyright />
       </footer>
-    </div>
-  );
-}
-
-
-/** The hero's lab session, typed over the print on a loop (still with reduced motion). */
-// Real output from the Forward Deployed Engineer course: chapter 15's eval gate, then chapter 21's smoke test.
-const HERO_SESSION = [
-  "$ python evals.py",
-  "  all fields     73.3% → 80.0%",
-  "  incident_date  83.3% → 80.0%",
-  "✗ gate: FAIL, incident_date fell",
-  "$ python smoke.py",
-  "✓ smoke: 3 of 3 passed",
-];
-
-function HeroTerm() {
-  const { shown, typing } = useTyped(HERO_SESSION, 5000);
-  const line = (text: string, i: number | string) =>
-    text.startsWith("$ ")
-      ? <div key={i}><span className="uh-term-prompt">learner:~$</span> {text.slice(2)}</div>
-      : <div key={i} className={text.startsWith("✓") ? "uh-term-ok" : text.startsWith("✗") ? "uh-term-bad" : "uh-term-out"}>{text}</div>;
-  return (
-    <div className="uh-term" aria-label="A lab terminal" role="img">
-      {shown.map((t, i) => line(t, i))}
-      {typing && line(typing, "typing")}
-      <span className="uh-term-cursor" aria-hidden="true" />
     </div>
   );
 }
