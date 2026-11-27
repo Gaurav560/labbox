@@ -2404,6 +2404,32 @@ function HttpConversation() {
   );
 }
 
+function FatJar() {
+  // Still (owner's lesson rules, 28 November): chapter 2's demo.jar, listed with jar tf on a lab machine.
+  const rows: [string, string, BoxTone][] = [
+    ["BOOT-INF/classes/", "your code: ShopApiApplication.class, application.properties", "accent"],
+    ["BOOT-INF/lib/", "30 libraries: spring-boot, tomcat-embed-core ...", "copy"],
+    ["org/springframework/boot/loader/", "Spring Boot's launcher: 98 files that start the app", "plain"],
+    ["META-INF/MANIFEST.MF", "tells java -jar which class to start first", "plain"],
+  ];
+  return (
+    <Svg viewBox="0 0 440 330" label="demo.jar, about 20 MB, holds BOOT-INF/classes with your code, BOOT-INF/lib with 30 libraries, Spring Boot's launcher of 98 files, and META-INF/MANIFEST.MF which tells java -jar what to start">
+      <Box x={6} y={6} w={428} h={318} label="" tone="plain" />
+      <text className="dg-label" x={22} y={32}>demo.jar (20,671,846 bytes, about 20 MB)</text>
+      {rows.map(([title, detail, tone], i) => {
+        const y = 48 + i * 68;
+        return (
+          <g key={i}>
+            <Box x={22} y={y} w={396} h={56} label="" tone={tone} />
+            <text className="dg-label dg-code" x={36} y={y + 22}>{title}</text>
+            <text className="dg-note" x={36} y={y + 43}>{detail}</text>
+          </g>
+        );
+      })}
+    </Svg>
+  );
+}
+
 function L4jHttpCall() {
   // Still (owner, 26 November): chapter 7's real call, from the program and the gateway's log.
   const rows: [string, string, BoxTone][] = [
@@ -5178,6 +5204,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "library-vs-framework": LibraryVsFramework,
   "backend-stack": BackendStack,
   "http-conversation": HttpConversation,
+  "fat-jar": FatJar,
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
   "bean-lifecycle": BeanLifecycle,
