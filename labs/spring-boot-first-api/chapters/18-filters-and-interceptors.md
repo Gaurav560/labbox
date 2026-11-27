@@ -81,7 +81,7 @@ The common header name is **`X-Request-Id`**. The rule is: if the request alread
 service in front of you assigned it), keep it; otherwise make a new one. That way the id stays the same
 along the whole path.
 
-A good unique id is a **UUID**, a 128-bit random value written like
+A good unique id is a **UUID** (Universally Unique Identifier), a 128-bit random value written like
 `d394ce8a-1b66-43e5-b9ac-338c6f61910f`. Java makes one with `UUID.randomUUID().toString()`. The chance of
 two being equal is so small it can be ignored.
 :::
@@ -103,8 +103,13 @@ cd 18-filters-and-interceptors && mvn -q -o package -DskipTests && java -jar tar
 curl -i localhost:8080/api/products; echo; curl -i localhost:8080/ping; echo; curl -i -H "X-Request-Id: order-42" localhost:8080/api/products
 ```
 
-Each response has an `X-Request-Id`: a fresh UUID for the first two (even `/ping`: filters see every
-request), and `order-42` for the third, which sent its own. Press **Check**.
+Each response has an `X-Request-Id`: a fresh UUID for the first two (even `/ping`: filters see every request), and
+`order-42` for the third, which sent its own. That is what our lab machine answered. Press **Check**.
+
+Usual slips: setting the header *after* `chain.doFilter` (by then the controller may already have sent the
+response, so the header can come too late), testing only for `null` and not for blank (a header sent as
+`X-Request-Id:` with nothing after it is blank), or removing the `chain.doFilter` line (then every request stops in
+the filter).
 :::
 
 :::step{type=concept title="An interceptor" file="18-filters-and-interceptors/src/main/java/com/shop/web/HandledByInterceptor.java" line="9-20"}
@@ -169,28 +174,43 @@ Rebuild, run, and compare:
 curl -i localhost:8080/api/products; echo; curl -i localhost:8080/ping
 ```
 
+On our lab machine:
+
 ```text
 HTTP/1.1 200
-X-Request-Id: d394ce8a-1b66-43e5-b9ac-338c6f61910f
+X-Request-Id: aea03228-7934-4a3c-9b46-da94bbe09db4
 X-Handled-By: ProductController#all
-...
+Content-Type: application/json
+
+["Mango kulfi","Samosa","Fruit custard"]
+
 HTTP/1.1 200
-X-Request-Id: 71343c16-daaf-4429-8a6e-df5e2441ca15
+X-Request-Id: 7418b4f0-cb5f-455f-9aac-0aaf26d43abb
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 4
+
+pong
 ```
 
-The API response has both headers; `/ping` only has the filter's. Press **Check**.
+The API response has both headers; `/ping` only has the filter's. (Your UUIDs will differ: they are random.) Press
+**Check**.
+
+Usual slips: the pattern `/api/*` (one `*` matches only one level, so `/api/products/7` would be left out), or
+forgetting `@Override` and misspelling the method name (then Spring never calls it, and nothing is registered).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
 :::question
-A request comes in for `/nothing-here`, which no controller handles. Which of these runs?
+In this chapter's app (the interceptor registered for `/api/**`), a request comes in for `/nothing-here`. Which runs?
 :::
 - [ ] The filter and the interceptor
-- [x] Only the filter: the interceptor needs a handler, and there is none
+- [x] Only the filter: `/nothing-here` is outside the interceptor's paths
 - [ ] Neither
 :::explain
-Filters run before Spring MVC for every request, mapped or not. Interceptors run only once the handler
-mapping has found a method (here, the 404 is produced without one).
+Filters run for every request, mapped or not. The interceptor only runs for the paths it was registered for. (On
+our lab machine, `/nothing-here` answered 404 with an `X-Request-Id` and no `X-Handled-By`. We also tried the
+interceptor registered for every path, `/**`: then it *did* run, and named `BasicErrorController#error`, because
+Spring Boot answers a 404 by passing the request on to its own error controller, which is a handler too.)
 :::
 :::
 
@@ -247,7 +267,7 @@ You can now run code around every request:
 - A **request id** (`X-Request-Id`, a UUID, or the caller's own) lets you follow one request through
   every log and service.
 
-:::photo{src="/lesson-images/spring/spring-18-notes.webp" alt="Handwritten notes about Filters and interceptors: filter: every request, before Spring, interceptor: around the controller, register in WebMvcConfigurer, X-Request-Id follows one request, pick the right hook" ai="true"}
+:::photo{src="/lesson-images/spring/spring-18-notes.webp" alt="Sketchnote: Filters and interceptors. Code that runs around requests, without copying it into every endpoint. Flow: filter, DispatcherServlet, interceptor preHandle, your method, interceptor afterCompletion. Remember: a filter sees every request, before Spring MVC; chain.doFilter passes the request on; an interceptor knows the controller method and only runs on its registered paths; X-Request-Id gives one id to find one request's logs." ai="true"}
 One page of notes for this chapter.
 :::
 
