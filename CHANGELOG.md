@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 29 rewritten (easy, a little detailed, checked)
+
+- Chapter 29, "Calling other services", to the lesson rules: both tasks list their slips (gluing the URI, a missing
+  `.retrieve()`, mismatched field names, a timeout factory never passed to the builder, catching the wrong exception
+  type, returning 0 for every error).
+- Checked on a lab machine with the fake supplier, the starter and the solution. Quoted as they came: the supplier's
+  start line and its "someone asked for" lines, the starter's `-1`, the solution's 120, `MISSING` as 0, `SLOW` as 503
+  after 1.004898 seconds, and the calm 503 with the supplier stopped. The supplier's 3-second delay confirmed in its
+  code.
+- Corrected: Tomcat's pool is at most 200 threads by default, not "about 200".
+- A new sketchnote page, redrawn once (its flow showed alternatives in sequence and a supplier-specific rule as a
+  general one).
+
 ## 28 November: Spring Boot chapter 28 rewritten (easy, a little detailed, checked)
 
 - Chapter 28, "Security", to the lesson rules: the protective headers and the session cookie explained; both tasks
