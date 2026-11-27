@@ -999,7 +999,23 @@ html { scroll-behavior: smooth; }
 .uh-ai .ai-tag-new { background: var(--vermilion); color: #fff; }
 /* "Before you start" stays red (owner, 27 November: tried blue, then "revert back to red only") */
 .hc-platforms { border-top-color: var(--rule); } .hc-platforms li.hc-logo { border-color: var(--rule); font: 600 15px var(--font-serif); }
-/* sign-in buttons: back to the plain boxes (owner, 27 November: tried ruled rows, then "earlier one was good") */
+/* sign-in as ruled rows, not boxes (restored: the owner preferred these, "it was more good looking") (owner, 27 November: "apart from rectangular boxes for Google and GitHub, can you do
+   something"): the mark on a small paper square, the words in the serif, an arrow that slides in, a vermilion rule that
+   draws under the row on hover */
+.auth-oauth { gap: 0; border-top: 1px solid var(--rule); }
+.auth-oauth-btn { position: relative; justify-content: flex-start; gap: 14px; height: auto; padding: 16px 40px 16px 6px; border: 0;
+  border-bottom: 1px solid var(--rule); border-radius: 0; background: none; color: var(--text); font: 600 17px var(--font-serif);
+  text-decoration: none; transition: padding var(--t-soft), background var(--t-soft); }
+.auth-oauth-btn:hover { text-decoration: none; background: none; padding-left: 12px; }
+.auth-oauth-btn svg { box-sizing: content-box; width: 20px; height: 20px; padding: 8px; flex: none; border: 1px solid var(--rule); background: #fffdf8; }
+:root:not([data-theme="light"]) .auth-oauth-btn svg { color: #1c1a17; }
+.auth-oauth-btn::after { content: "→"; position: absolute; right: 8px; top: 50%; transform: translate(-6px, -50%); opacity: .45;
+  font: 400 18px var(--font-text); transition: transform var(--t-soft), opacity var(--t-soft), color var(--t-soft); }
+.auth-oauth-btn:hover::after { transform: translate(0, -50%); opacity: 1; color: var(--vermilion); }
+.auth-oauth-btn::before { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--vermilion);
+  transform: scaleX(0); transform-origin: left; transition: transform 380ms cubic-bezier(.2, .7, .2, 1); }
+.auth-oauth-btn:hover::before { transform: scaleX(1); }
+.auth-oauth-btn:focus-visible { outline: 2px solid var(--vermilion); outline-offset: 2px; }
 
 /* the heading between the FDE spotlight and the other AI labs (owner, 27 November) */
 .uh-ai .ai-more-title { margin: 44px 0 0; font: 600 clamp(22px, 2.2vw, 28px)/1.2 var(--font-serif); letter-spacing: -.015em; }
@@ -1099,3 +1115,6 @@ html { scroll-behavior: smooth; }
 .course-need-check { background: color-mix(in srgb, var(--vermilion) 14%, transparent); color: var(--vermilion);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--vermilion) 40%, transparent); }
 .course-need-link { color: color-mix(in srgb, var(--vermilion) 80%, var(--text)); }
+/* the "Learn it in ..." links inside Before you start in blue (owner, 27 November); the box stays two soft reds */
+.course-need-link { color: var(--indigo); }
+.course-need-link:hover { color: var(--indigo); text-decoration: underline; }
