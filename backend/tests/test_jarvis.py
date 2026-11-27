@@ -177,3 +177,69 @@ def test_usage_from_event_bills_cached_tokens_apart():
                                                          "cached_tokens_details": {"audio_tokens": 40, "text_tokens": 20}},
                                  "output_token_details": {"audio_tokens": 70, "text_tokens": 5}})
     assert (u.audio_in, u.audio_cached, u.text_in, u.text_cached, u.audio_out, u.text_out) == (60, 40, 30, 20, 70, 5)
+
+
+# ---------- step 2: noticing when a learner is stuck ----------
+
+TASK_STEP = 7  # python-basics, chapter first-program: the "Pocket says hello" task (hello_pocket)
+
+
+def _fail(uid: int, task: str = "hello_pocket", passed: bool = False) -> None:
+    with Session(engine) as s:
+        s.add(CheckRun(user_id=uid, lab_id=LAB, chapter_id="first-program", passed_count=int(passed), total_count=2, output_tail="",
+                       duration_ms=10, results_json=f'[{{"task": "{task}", "passed": {str(passed).lower()}, "message": "Expected two lines"}}]'))
+        s.commit()
+
+
+def nudge(api, h, step=TASK_STEP, idle=0):
+    return api.get("/api/jarvis/nudge", params={"lab_id": LAB, "chapter_id": "first-program", "step": step, "idle": idle}, headers=h).json()
+
+
+def test_three_failed_checks_in_a_row_bring_an_offer_of_help(api):
+    h, uid = signup(api)
+    _fail(uid); _fail(uid)
+    assert nudge(api, h)["nudge"] is False  # two is not yet stuck
+    _fail(uid)
+    n = nudge(api, h)
+    assert n["nudge"] and n["reason"] == "fails" and n["task_id"] == "hello_pocket" and "3 checks" in n["line"]
+    # A pass ends the streak: no more offers on that task.
+    _fail(uid, passed=True)
+    assert nudge(api, h)["nudge"] is False
+
+
+def test_every_hint_used_or_a_long_pause_bring_an_offer(api):
+    from app.models import TaskProgress
+
+    h, uid = signup(api)
+    assert nudge(api, h, idle=60)["nudge"] is False
+    n = nudge(api, h, idle=9 * 60)
+    assert n["nudge"] and n["reason"] == "idle" and "9 minutes" in n["line"]
+    with Session(engine) as s:
+        from app.labs import get_lab
+        hints = len(get_lab(LAB).task("first-program", "hello_pocket").hints)
+        s.add(TaskProgress(user_id=uid, lab_id=LAB, task_id="hello_pocket", chapter_id="first-program", hints_used=hints))
+        s.commit()
+    assert nudge(api, h)["reason"] == "hints"
+
+
+def test_no_offer_off_a_task_step_or_for_a_passed_task(api):
+    h, uid = signup(api)
+    _fail(uid); _fail(uid); _fail(uid)
+    assert nudge(api, h, step=0)["nudge"] is False  # the story step has no task
+    with Session(engine) as s:
+        from app.models import TaskProgress
+        s.add(TaskProgress(user_id=uid, lab_id=LAB, task_id="hello_pocket", chapter_id="first-program", passed=True))
+        s.commit()
+    assert nudge(api, h)["nudge"] is False
+
+
+def test_accepting_the_offer_tells_jarvis_why(api):
+    h, uid = signup(api, plan="pro")
+    _fail(uid); _fail(uid); _fail(uid)
+    with Session(engine) as s:
+        user = s.get(User, uid)
+        n = jarvis.nudge(s, user, LAB, "first-program", TASK_STEP)
+        text = jarvis.instructions(s, user, LAB, "first-program", TASK_STEP, n.detail)
+    assert "Why this conversation started" in text and "failed 3 checks" in text and "Expected two lines" in text
+    r = api.post("/api/jarvis/session", json={"lab_id": LAB, "chapter_id": "first-program", "step": TASK_STEP, "reason": "fails"}, headers=h)
+    assert r.status_code == 200, r.text

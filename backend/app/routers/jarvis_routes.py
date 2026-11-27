@@ -24,11 +24,20 @@ class StartIn(BaseModel):
     lab_id: str | None = None
     chapter_id: str | None = None
     step: int | None = Field(None, ge=0, le=500)
+    reason: Literal["fails", "hints", "idle"] | None = None  # set when the learner accepted Jarvis's offer of help
+
+
+@router.get("/nudge", response_model=jarvis.Nudge)
+def nudge(lab_id: str, chapter_id: str, step: int, idle: int = 0, user: User = Depends(get_current_user),
+          session: Session = Depends(get_session)) -> jarvis.Nudge:
+    """Is this learner stuck on the task in front of them? Rules only, no model: the lab page asks after every check
+    and now and then while they work."""
+    return jarvis.nudge(session, user, lab_id, chapter_id, step, max(0, min(idle, 24 * 3600)))
 
 
 @router.post("/session", response_model=jarvis.SessionOut)
 async def start(body: StartIn, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> jarvis.SessionOut:
-    return await jarvis.start(session, user, body.lab_id, body.chapter_id, body.step)
+    return await jarvis.start(session, user, body.lab_id, body.chapter_id, body.step, body.reason)
 
 
 @router.post("/session/{session_id}/heartbeat", response_model=jarvis.HeartbeatOut)

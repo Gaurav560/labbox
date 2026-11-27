@@ -348,9 +348,11 @@ changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until paymen
   started, certificates, where they struggled this week, the exact lab, chapter, step and task on screen) and calls
   read-only tools (the step, the task and the hints seen, the learner's code, the last check, progress). Limits, cost
   from OpenAI's reported usage, server-side hangup at a limit, Admin tab, Pro switch, pricing page lines.
-- [ ] Step 2: notice "stuck" (the same check failing three or more times, every hint used, a long pause on one step,
-  code undone again and again) with backend rules, and offer help through the orb (a line of text and one tap; a
-  browser cannot start sound by itself).
+- [x] Step 2: notice "stuck" with backend rules (no model, no cost): the same task failing 3 checks in a row, every
+  hint used, or 8 minutes on a task step without a check. The orb glows and offers help in a line of text: Pro and
+  trial learners tap "Talk it through" (Jarvis is told why and opens with it); a free learner after the trial gets
+  "Ask AI (typed)", which opens the tutor. Once per task per 6 hours, never on a passed task. Not done: "code undone
+  again and again" (file edits are not recorded on the server yet).
 - [ ] Step 3: welcome on sign-up and on return (Pro: by voice after one tap), and memory across visits: a short text
   summary saved after each conversation and given to the next one.
 - [ ] Step 4: celebrations, learner settings (talk to me first, off switch), a consent note on what Jarvis can see.

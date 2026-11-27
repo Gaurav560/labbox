@@ -1,5 +1,20 @@
 # Changelog
 
+## 28 November: Jarvis notices when a learner is stuck (step 2)
+
+- **Jarvis offers help when a learner looks stuck**, from rules on data LabBox already has (no model, so it costs
+  nothing): the same task failing 3 checks in a row, every hint used on it, or 8 minutes on a task step without
+  pressing Check. The lab page asks after every check and once a minute (`GET /api/jarvis/nudge`, read only).
+- The orb glows and says it in one line ("Meera, "hello.py: Pocket says hello" has failed 3 checks in a row. Want to
+  go through it together?"), because a browser cannot start sound by itself. Pro and trial learners tap **Talk it
+  through**: Jarvis is told why (the task, how many checks failed, the last check message) and opens with it. A free
+  learner after the trial gets **Ask AI (typed)**, which opens the tutor under the task, with a line about Pro.
+- Never nags: once per task per 6 hours (remembered in the browser), never on a passed task or a step without a task.
+- Owner's feedback on step 1 noted for later: the voice and tone need work ("the most absurd tone"); left as it is
+  for now, as asked.
+- Tests: 4 new (three fails, every hint, a long pause, no offer off-task or once passed, the reason reaching Jarvis);
+  290 fast backend tests pass. Checked in a browser on Ukiyo for a Pro learner and a free learner after the trial.
+
 ## 28 November: Jarvis, each learner's realtime voice assistant (step 1)
 
 - **Jarvis talks with learners out loud, in real time** (owner: "build the ultimate context abled jarvis"). A glowing

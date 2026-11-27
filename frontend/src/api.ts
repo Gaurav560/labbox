@@ -354,6 +354,7 @@ export const library = {
 // ---------- Jarvis, the learner's realtime voice assistant (owner, 28 November) ----------
 export interface JarvisStatus { enabled: boolean; plan: "free" | "pro"; kind: "pro" | "trial" | "locked"; reason: string; seconds_left: number; trial_used: boolean }
 export interface JarvisSession { session_id: number; client_secret: string; expires_at: number; model: string; kind: "pro" | "trial"; max_seconds: number }
+export interface JarvisNudge { nudge: boolean; reason: "" | "fails" | "hints" | "idle"; task_id: string | null; line: string; detail: string }
 export interface JarvisBeat { stop: boolean; reason: string; seconds_left: number; cost_usd: number }
 export interface JarvisAdmin {
   today_usd: number; month_usd: number; today_sessions: number; today_minutes: number; trials_today: number; pro_learners: number;
@@ -362,8 +363,10 @@ export interface JarvisAdmin {
 }
 export const jarvisApi = {
   status: () => request<JarvisStatus>("GET", "/api/jarvis/status"),
-  start: (labId?: string, chapterId?: string, step?: number) =>
-    request<JarvisSession>("POST", "/api/jarvis/session", { lab_id: labId ?? null, chapter_id: chapterId ?? null, step: step ?? null }),
+  start: (labId?: string, chapterId?: string, step?: number, reason?: string) =>
+    request<JarvisSession>("POST", "/api/jarvis/session", { lab_id: labId ?? null, chapter_id: chapterId ?? null, step: step ?? null, reason: reason || null }),
+  nudge: (labId: string, chapterId: string, step: number, idle: number) =>
+    request<JarvisNudge>("GET", `/api/jarvis/nudge?lab_id=${encodeURIComponent(labId)}&chapter_id=${encodeURIComponent(chapterId)}&step=${step}&idle=${Math.round(idle)}`),
   heartbeat: (id: number, body: { seconds: number; usage: unknown[]; call_id?: string | null; ended?: boolean }) =>
     request<JarvisBeat>("POST", `/api/jarvis/session/${id}/heartbeat`, body),
   tool: (id: number, name: string, step?: number) =>
