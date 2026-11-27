@@ -55,7 +55,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
 - **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
-### Labs: 23, fifteen at the full standard
+### Labs: 24, sixteen at the full standard
 
 "Full" means every item of the full standard (`CONTENT_STANDARD.md`, the list at the top): a running
 project, history, real photos, notes on every recap, playing diagrams, real captured output, two real
@@ -68,6 +68,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | langchain | LangChain | ai | 27 | 54 | 19.4 | Navin, a farmers' co-op help desk (LangChain 1.5) | 13 | full (23 Nov) |
 | langgraph | LangGraph | ai | 24 | 48 | 17.3 | Harsh, a water board's complaint-to-repair desk (LangGraph 1.2) | 18 | full (24 Nov) |
 | rag-vector-databases | RAG and vector databases | ai | 13 | 26 | 9.3 | Fieldbook, a wildlife sanctuary's rangers' assistant (fastembed, FAISS, Qdrant) | 14 | full (24 Nov); rewritten and fact-checked 25 Nov |
+| forward-deployed-engineer | Forward Deployed Engineer | ai | 22 | 44 | 17 | Claimdesk, a motor insurer's claims assistant (Python, FastAPI, MCP; real model outputs through the gateway) | 20 | full (27 Nov, new course) |
 | rust-basics | Rust from zero | languages | 28 | 56 | 21.7 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 21 | full (24 Nov) |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov) |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
