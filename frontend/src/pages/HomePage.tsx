@@ -6,7 +6,8 @@ import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
 import HeroTour from "../components/HeroTour";
 import HomeCertificate from "../components/HomeCertificate";
-import { AiTrack, HomeFaq, InsideLab } from "../components/HomeSections";
+import HomeAiLabs from "../components/HomeAiLabs";
+import { HomeFaq, InsideLab } from "../components/HomeSections";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
 
@@ -81,6 +82,7 @@ export default function HomePage() {
   );
   const live = catalog ?? [];
   const labLink = (lab: CatalogLab) => (user ? `/courses/${lab.id}` : "/login?signup=1");
+  const aiCount = live.filter((l) => l.track === "ai").length;
 
   return (
     <div className="home">
@@ -106,10 +108,10 @@ export default function HomePage() {
         <section className="hero" aria-labelledby="hero-title">
           <div className="h-hero-bg" aria-hidden="true" />
           <div className="hero-text">
-            <p className="h-pill">
+            <a className="h-pill h-pill-link" href="#ai">
               <span className="h-pulse" aria-hidden="true" />
-              {catalog === null ? "Labs are live" : `AI track launching · ${live.length} lab${live.length === 1 ? "" : "s"} live now`}
-            </p>
+              New: the Forward Deployed Engineer course →
+            </a>
             <h1 id="hero-title">
               Learn AI by <span className="h-red-word">building<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span> it, not <span className="h-strike">watching</span>.
             </h1>
@@ -121,6 +123,19 @@ export default function HomePage() {
           </div>
           <HeroTour />
         </section>
+
+        {/* AI labs first, with the Forward Deployed Engineer course in the spotlight (owner, 27 November) */}
+        <HomeAiLabs
+          labs={live}
+          labLink={labLink}
+          art={(lab) => (lab.cover_url ? <img src={lab.cover_url} alt="" loading="lazy" /> : null)}
+          spotArt={<>
+            <img src="/lesson-images/forward-deployed-engineer/fde-blue-ridge.webp" alt="The command ship USS Blue Ridge being guided into its forward deployed base by a tug" loading="lazy" />
+            <span className="ai-spot-credit">U.S. Navy photo, public domain</span>
+          </>}
+          title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
+          lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}
+        />
 
         <section className="h-strip" aria-label="Technologies you practise on">
           <div className="h-strip-track">
@@ -136,20 +151,13 @@ export default function HomePage() {
           <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
           <div><strong>~60 s</strong><span>to a real machine</span></div>
           <div><strong>0</strong><span>videos to sit through</span></div>
-          <div><strong>24</strong><span>AI labs on the way</span></div>
+          <div><strong>{catalog === null ? "…" : aiCount}</strong><span>AI courses live</span></div>
         </section>
 
         <section id="inside" className="h-section" aria-labelledby="inside-title">
           <p className="h-kicker">Inside a lab</p>
           <h2 id="inside-title">Not exercises. <span className="h-yellow">Real systems.</span></h2>
           <InsideLab />
-        </section>
-
-        <section id="ai" className="h-section h-ai-section" aria-labelledby="ai-title">
-          <p className="h-kicker">AI labs <span className="h-launch">Launching</span></p>
-          <h2 id="ai-title">24 labs, from your first model call to <span className="h-yellow">your own GPT.</span></h2>
-          <p className="h-section-lead">Four stages, each lab a real build on your own machine with real models. The AI track is being crafted now; these are the labs it launches with.</p>
-          <AiTrack />
         </section>
 
         {live.length > 0 && (
