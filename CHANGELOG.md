@@ -2,6 +2,10 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- The Forward Deployed Engineer lab's description opens with the market (owner: "write Palantir, OpenAI and other AI
+  companies paying ... the hype"): Palantir invented the job, OpenAI and Anthropic are racing to fill it, total pay
+  estimated at $350,000 to $550,000 a year (published estimates of salary plus equity; posted base bands are about
+  $180,000 to $320,000), then what you build.
 - "Explore more AI labs" heads the rows under the FDE spotlight; the FDE tag line "The hottest job in AI." is red;
   the share options are one quiet line of coloured marks and names (owner: "try something else"); a little more space
   between the certificate's date, stamp and QR code.
