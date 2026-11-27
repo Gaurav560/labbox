@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 9 rewritten (easy, a little detailed, checked)
+
+- Chapter 9, "The life of a bean", to the lesson rules: Jakarta EE, thread names in the shutdown log and why the
+  lifecycle picture plays (a sequence in time) explained; both tasks list their slips.
+- Checked on a lab machine with the starter, the solution and two altered copies. Quoted as they came: the
+  starter's 404 and count 0; `Loaded 3 prices`; the receipts `["1 x kulfi"]` then `["1 x kulfi","1 x samosa"]`
+  before the fix and `["1 x samosa"]` after; the three shutdown lines after an interrupt signal (Ctrl+C).
+  New slip, checked: `@Scope("Prototype")` with a capital P starts but answers 500 with `No Scope registered for
+  scope name 'Prototype'`.
+- Corrected: an `ApplicationRunner` runs once the app has started, right after the `Started` line (the lesson said
+  "right before"; tried with a runner that prints).
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 8 rewritten (easy, a little detailed, checked)
 
 - Chapter 8, "Auto-configuration", to the lesson rules: the report's bracketed condition names and `SearchStrategy`

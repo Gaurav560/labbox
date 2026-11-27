@@ -14,8 +14,9 @@ Load the price catalogue once at start-up, and give every customer their own fre
 :::
 
 :::step{type=concept title="The life of a singleton bean"}
-Most beans you write are **singletons**: Spring creates exactly one, at start-up, and keeps it until the
-app shuts down. Press **▶ Play** to follow one bean, the shop's `PriceCatalog`, through its whole life.
+Most beans you write are **singletons**: Spring creates exactly one, at start-up, and keeps it until the app shuts
+down. A bean's life is a sequence in time, so this picture plays: press **▶ Play** to follow one bean, the shop's
+`PriceCatalog`, through its whole life.
 
 :::diagram{name="bean-lifecycle"}
 Created once at start-up, prepared, used by every request, cleaned up at shutdown.
@@ -29,7 +30,8 @@ Two moments are yours to hook into:
 - **Right before destruction** (step 5): a method marked **`@PreDestroy`** runs once, when the application
   shuts down. It is the place to *clean up*: close files, finish writing, say goodbye to other systems.
 
-Both annotations come from `jakarta.annotation`, a standard Java package that Spring understands.
+Both annotations come from the package `jakarta.annotation`, part of Jakarta EE (the standard set of enterprise
+Java APIs, the successor of the J2EE you met in chapter 0). Spring understands them.
 :::
 
 :::step{type=concept title="The catalogue that is never loaded" file="09-bean-lifecycle/src/main/java/com/shop/prices/PriceCatalog.java" line="22-36"}
@@ -70,8 +72,8 @@ In a second terminal:
 curl -i localhost:8080/prices/KUL-1; echo; curl localhost:8080/prices/count
 ```
 
-`404`, and a count of `0`. Look at the start-up log in Terminal 1 too: there is no `Loaded ... prices`
-line, because `load()` never ran. Stop the app with Ctrl+C.
+`404`, and a count of `0` (that is what we got on our lab machine). Look at the start-up log in Terminal 1 too:
+there is no `Loaded ... prices` line, because `load()` never ran. Stop the app with Ctrl+C.
 :::
 
 :::step{type=task task=post_construct title="Your turn: load the prices at start-up"}
@@ -85,6 +87,10 @@ INFO ... com.shop.prices.PriceCatalog : Loaded 3 prices
 ```
 
 Then `curl localhost:8080/prices/KUL-1` answers `2000`. Press **Check**.
+
+Usual slips: the import from a different package (it must be `jakarta.annotation.PostConstruct`; the old
+`javax.annotation` one is not on this project's classpath), or the annotation on the constructor instead of on
+`load()`.
 :::
 
 :::step{type=concept title="Scopes: how many copies?"}
@@ -147,14 +153,20 @@ mvn -q -o package -DskipTests && java -jar target/bean-lifecycle.jar
 curl localhost:8080/receipt/kulfi; echo; curl localhost:8080/receipt/samosa; echo
 ```
 
-The second answer contains the kulfi. Stop the app.
+On our lab machine the answers were `["1 x kulfi"]` and then `["1 x kulfi","1 x samosa"]`: the second customer's
+receipt contains the first customer's kulfi. Stop the app.
 :::
 
 :::step{type=task task=prototype_scope title="Your turn: a fresh receipt for every customer"}
 In `ReceiptPrinter.java`, change the bean's scope so Spring creates a **new** `ReceiptPrinter` every time
 one is asked for. The annotation is `@Scope("prototype")`, from `org.springframework.context.annotation.Scope`.
 
-Rebuild, run, and play the two customers again: the second receipt now holds only the samosa. Press **Check**.
+Rebuild, run, and play the two customers again: the second receipt now holds only the samosa (`["1 x samosa"]`).
+Press **Check**.
+
+Usual slip: `@Scope("Prototype")` with a capital P. The app still starts, but we tried it on our lab machine: the
+first receipt request answered `500`, and the log said `No Scope registered for scope name 'Prototype'`. The scope
+name must be all lower case.
 :::
 
 :::step{type=concept title="A trap: a prototype inside a singleton"}
@@ -189,13 +201,17 @@ public void goodbye() {
 }
 ```
 
-Run the app, then stop it with **Ctrl+C**, and read the last lines of the log:
+Run the app, then stop it with **Ctrl+C**, and read the last lines of the log. On our lab machine they were (with
+the start of each line cut):
 
 ```text
-INFO ... o.s.b.w.e.tomcat.GracefulShutdown : Commencing graceful shutdown. Waiting for active requests to complete
-INFO ... o.s.b.w.e.tomcat.GracefulShutdown : Graceful shutdown complete
-INFO ... com.shop.ShutdownNotice           : Shop API is shutting down: closing the till for today
+[ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown : Commencing graceful shutdown. Waiting for active requests to complete
+[tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown : Graceful shutdown complete
+[ionShutdownHook] com.shop.ShutdownNotice           : Shop API is shutting down: closing the till for today
 ```
+
+The names in square brackets are threads: `ionShutdownHook` is the end of `SpringApplicationShutdownHook`, the
+thread Spring Boot uses for shutting down, cut to fit.
 
 First, Spring Boot stops accepting new requests and lets the ones in progress finish (**graceful
 shutdown**). Then it closes the application context, calling every `@PreDestroy` method. Here we only log
@@ -254,8 +270,8 @@ often a sign the design could be simpler.
 
 **Running code after start-up.** `@PostConstruct` prepares *one bean*. To run something once the *whole*
 app is ready (for example, print a summary, or load demo data that needs several beans), implement
-`ApplicationRunner` (or `CommandLineRunner`) in a bean: its `run` method is called right before
-`Started ShopApiApplication`.
+`ApplicationRunner` (or `CommandLineRunner`) in a bean: its `run` method is called once the app has started.
+(We tried it on our lab machine: a runner's message came on the line right after `Started ShopApiApplication`.)
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -272,7 +288,7 @@ You now know a bean's whole life:
 - A prototype injected through a singleton's constructor is created **once**; ask each time with
   `ObjectProvider`, or use plain objects for per-request data.
 
-:::photo{src="/lesson-images/spring/spring-09-notes.webp" alt="Handwritten notes about Bean lifecycle: created once at start-up, @PostConstruct: get ready, @PreDestroy: clean up, singleton is shared by everyone, no per-request data in fields" ai="true"}
+:::photo{src="/lesson-images/spring/spring-09-notes.webp" alt="Sketchnote: The life of a bean. A singleton bean is created once and shared by every request. Flow: constructor, @PostConstruct, serves requests, @PreDestroy. Remember: prepare in @PostConstruct; clean up in @PreDestroy but never rely on it; no per-request data in a singleton's fields; prototype gives a new object each time it is asked for." ai="true"}
 One page of notes for this chapter.
 :::
 
