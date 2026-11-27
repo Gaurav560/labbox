@@ -323,6 +323,19 @@ What it takes, per course:
 - Rust from zero already works close to this (one Cargo workspace, a crate per chapter); Spring Boot is also one app
   per chapter. Look at both first.
 
+### 2c. Later: custom labs (owner, 28 November: "custom labs", a future plan)
+
+- Labs made to order, beyond the catalogue. The owner named the idea only; the details (who orders one, for
+  example a company that wants a lab on its own stack or data, or a learner who picks a topic; how one is built and
+  priced) are to be decided with the owner before any work. Nothing is built yet.
+
+### 2d. Later: short videos for the hard lessons (owner, 28 November: "60 sec to 4 min videos", "not topics but lessons")
+
+- A video of 60 seconds to 4 minutes for each lesson learners find hard to understand, shown inside that lesson; not
+  one per topic, and not for every lesson. Which lessons qualify can come from the data we already have (steps where
+  learners stop, tasks with many failed checks or hints). How the videos are made (recorded by a person, or made from
+  the lesson's own diagrams and animations) is the owner's call. Nothing is built yet.
+
 ### 3. More labs in the other tracks (after the AI track)
 
 **Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.

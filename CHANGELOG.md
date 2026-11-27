@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: top bars fit every screen, the light-theme hero on an ink band
+
+- Responsive check of every page (home, sign-in, FAQ, pricing, privacy, terms, a course page, verify; signed in: the
+  dashboard, library, certificates, a course page and two lab pages) at 360, 390, 768, 1024, 1280, 1440 and 1920 px in
+  both themes, on both designs. Found: the course page's top bar ran 20 to 87 px off the right edge on phones, and the
+  lab page's top bar 92 to 196 px on tablets (768 px). Fixed in `styles.css`: the back link stays on one line, the
+  title shortens with "...", top bar buttons keep their size, and up to 1180 px the lab page drops the lab title, the
+  progress bar and the machine's label (the chapter menu shrinks). Rechecked at 320 to 1440 px: nothing runs off.
+- Ukiyo: in the light theme the hero sits on the dark theme's ink band (owner: "dark theme looks supercool"; on cream
+  the picture faded into a pale haze); the rest of the page stays paper.
+- ROADMAP B 2c and 2d: two future plans from the owner, custom labs and short videos for hard lessons.
+
 ## 27 November: chapter 1 shows chapter 1's folder, in both editors and for old workspaces
 
 - The owner opened chapter 1 of FDE and still saw all 22 folders: their workspace was made before plan A, and plan A
