@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 23 rewritten (easy, a little detailed, checked)
+
+- Chapter 23, "Transactions", to the lesson rules: proxy explained where it first appears; the photo lead says why
+  it belongs; both tasks list their slips (the `jakarta.transaction` annotation, the annotation on the controller,
+  `rollbackFor` given as text, a second `@Transactional`).
+- Checked on a lab machine with the starter and the solution. Quoted as they came: the starter's 409 with the kulfi
+  left at 8, the declined card (402) with the custard at 4; the solution's kulfi at 10 and custard at 5. The stock
+  answer's keys came in different orders on different runs (a `Map.of`), now said. The transaction picture's text
+  checked.
+- A new sketchnote page, redrawn once (its flow had shown commit and roll back in sequence; they are alternatives).
+
 ## 28 November: Spring Boot chapter 22 rewritten (easy, a little detailed, checked)
 
 - Chapter 22, "Paging and JPQL", to the lesson rules: the photo lead says why it belongs; both tasks list their slips

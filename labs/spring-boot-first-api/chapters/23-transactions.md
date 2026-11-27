@@ -27,7 +27,8 @@ this branch in Enfield, London. Taking money out is two changes, the cash and th
 together or not at all.
 
 :::photo{src="/lesson-images/spring/first-cash-machine-bank.webp" alt="The front of Barclays Bank in Enfield Town, London, where the world's first cash machine was installed in 1967" credit="Christine Matthews" license="CC BY-SA 2.0" source="https://commons.wikimedia.org/wiki/File:Barclays_Bank,_Enfield_Town_-_geograph.org.uk_-_271511.jpg"}
-Barclays, Enfield Town: home of the first cash machine, 1967.
+Barclays, Enfield Town: home of the first cash machine, 1967, where "both changes or neither" first mattered to
+customers at a machine.
 :::
 
 Atomic is the one this chapter is about. Without a transaction, **each statement is saved on its own**, the
@@ -58,7 +59,8 @@ Not enough stock for SAM-1
 {"quantity":8,"sku":"KUL-1"}
 ```
 
-The order failed with 409, correctly. But the kulfi stock is **8**. Two kulfis left the shelf for an order that
+That is what our lab machine answered. (The stock's two keys may come in either order: we saw `sku` first on
+another run.) The order failed with 409, correctly. But the kulfi stock is **8**. Two kulfis left the shelf for an order that
 never happened. Follow it step by step:
 
 :::trace{title="placeOrder(kulfi x2, samosa x5) without a transaction"}
@@ -111,8 +113,12 @@ Rebuild, run (the stock resets at every start), and repeat the order:
 curl -i -X POST localhost:8080/orders -H "Content-Type: application/json" -d '{"KUL-1": 2, "SAM-1": 5}'; echo; curl localhost:8080/stock/KUL-1
 ```
 
-Still `409`, and now the kulfi stays at **10**. The kulfi change was made, inside the transaction, then undone when
-the samosas ran out. Press **Check**.
+Still `409`, and now the kulfi stays at **10** (on our lab machine: `{"sku":"KUL-1","quantity":10}`). The kulfi
+change was made, inside the transaction, then undone when the samosas ran out. Press **Check**.
+
+Usual slips: `@Transactional` from `jakarta.transaction` instead of Spring's
+`org.springframework.transaction.annotation` (prefer Spring's: it is the one with `rollbackFor`), or putting it on
+the controller method instead of the service method.
 :::
 
 :::step{type=concept title="The surprise: checked exceptions commit"}
@@ -149,8 +155,8 @@ Card DECLINE-4242 was declined
 {"quantity":4,"sku":"CUS-1"}
 ```
 
-(`402 Payment Required` is the HTTP status for exactly this.) The card was declined, the customer pays nothing,
-and yet the custard stock went from 5 to 4. The transaction **committed**, because the exception was checked.
+(`402 Payment Required` is the HTTP status for exactly this.) Those are our lab machine's answers. The card was
+declined, the customer pays nothing, and yet the custard stock went from 5 to 4. The transaction **committed**, because the exception was checked.
 That is a real, common bug: in production it shows up as stock that slowly drifts away from reality.
 :::
 
@@ -158,12 +164,17 @@ That is a real, common bug: in production it shows up as stock that slowly drift
 In `OrderService`, change the `@Transactional` on `placePaidOrder` so that **`PaymentDeclinedException` rolls the
 transaction back** too.
 
-Rebuild, run, and decline the card again: the custard now stays at **5**. Press **Check**.
+Rebuild, run, and decline the card again: the custard now stays at **5** (ours: `{"sku":"CUS-1","quantity":5}`).
+Press **Check**.
+
+Usual slips: `rollbackFor = "PaymentDeclinedException"` as text (it takes the class: `PaymentDeclinedException.class`),
+or adding a second `@Transactional` instead of changing the existing one.
 :::
 
 :::step{type=concept title="The other surprise: calls inside the same class"}
-The second rule. `@Transactional` works through a **proxy**: when Spring creates your `OrderService` bean, it
-actually hands out a wrapper around it. When another bean calls `orders.placeOrder(...)`, the call goes through
+The second rule. `@Transactional` works through a **proxy**: an object that stands in front of another and passes
+calls on to it, doing a little extra work around each call. When Spring creates your `OrderService` bean, it
+actually hands out such a wrapper around it. When another bean calls `orders.placeOrder(...)`, the call goes through
 the wrapper, which starts the transaction, calls your real method, then commits or rolls back.
 
 But a call **from inside the same object** (`this.placeOrder(...)`, or just `placeOrder(...)` from another
@@ -248,7 +259,7 @@ Your multi-step changes are now safe:
 - **Checked exceptions commit** by default: add `rollbackFor = SomeException.class`.
 - It works through a **proxy**: public methods, called from **another bean**; calls on `this` skip it.
 
-:::photo{src="/lesson-images/spring/spring-23-notes.webp" alt="Handwritten notes about Transactions: all or nothing (ACID), @Transactional, exception: roll back, checked exceptions commit!, calls on this skip the proxy" ai="true"}
+:::photo{src="/lesson-images/spring/spring-23-notes.webp" alt="Sketchnote: Transactions. A transaction saves changes together, or not at all. Flow: start, change rows, then return or throw, then commit all or roll back all. Remember: a RuntimeException rolls back; a checked exception commits unless listed in rollbackFor; calls on this skip the proxy; keep transactions short." ai="true"}
 One page of notes for this chapter.
 :::
 
