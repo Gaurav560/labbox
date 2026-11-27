@@ -1,5 +1,9 @@
 :::step{type=story title="Live, and quiet"}
-Claimdesk went live on Monday 2 November: drafts on the adjusters' screens, an adjuster accepting or changing each one.
+Claimdesk went live in Pune at the start of November: drafts on the adjusters' screens, an adjuster accepting or
+changing each one. After a calm month, Deccan Shield rolled it out on Monday 7 December to the same kind of claim
+(two-wheelers, by email, up to Rs 50,000) from all its claims offices: about 40 claims a day instead of a handful a
+week.
+
 The first days are quiet. Nobody complains. That is not the same as everything being fine.
 
 Software that calls a model can get worse without any error message. The model provider can slow down. The emails can
@@ -23,7 +27,7 @@ normal.
 One line of the log:
 
 ```json
-{"day": "2026-11-02", "ms": 1311, "in": 343, "out": 48, "error": null, "draft": "refer", "amount_found": false}
+{"day": "2026-12-07", "ms": 1311, "in": 343, "out": 48, "error": null, "draft": "refer", "amount_found": false}
 ```
 
 From lines like this, five daily numbers answer the questions people will actually ask:
@@ -114,7 +118,7 @@ only when something is unusual.
 ```text
 refer_pct baseline 32.3    -> alert above 48.45
 a day at 47.5               -> no alert
-a day at 62.2               -> alert: ("2026-11-11", "refer_pct", 32.3, 62.2)
+a day at 62.2               -> alert: ("2026-12-16", "refer_pct", 32.3, 62.2)
 ```
 
 The factor is a trade-off. Too low (1.1), and normal day-to-day wobble raises alerts until people ignore them. Too high
@@ -135,36 +139,36 @@ Press **Check**.
 ```text
 $ python monitor.py
 day           n  p50 ms  p95 ms  err %  refer %  no amt %  cost Rs
-2026-11-02   35    1311    1759    0.0     34.3      22.9     0.26
-2026-11-03   39    1361    1910    5.1     30.8      20.5     0.28
-2026-11-04   36    1400    1959    0.0     19.4      11.1     0.27
-2026-11-05   42    1312    1612    2.4     19.0       9.5      0.3
-2026-11-06   34    1301    1752    5.9     41.2      17.6     0.23
-2026-11-07   34    1382    1700    5.9     38.2      29.4     0.23
-2026-11-08   42    1298    1700    2.4     42.9      21.4      0.3
-2026-11-09   39    1312    1759    2.6     38.5      17.9     0.29
-2026-11-10   38    1519   10000    5.3     34.2      10.5     0.26
-2026-11-11   45    1381    1759    0.0     62.2      51.1     0.33
-2026-11-12   46    1304    1602    0.0     58.7      47.8     0.33
-2026-11-13   46    1301    1759    0.0     65.2      56.5     0.34
-2026-11-14   35    1304    1910    0.0     57.1      45.7     0.25
-2026-11-15   35    1345    1729    0.0     68.6      54.3     0.26
+2026-12-07   35    1311    1759    0.0     34.3      22.9     0.26
+2026-12-08   39    1361    1910    5.1     30.8      20.5     0.28
+2026-12-09   36    1400    1959    0.0     19.4      11.1     0.27
+2026-12-10   42    1312    1612    2.4     19.0       9.5      0.3
+2026-12-11   34    1301    1752    5.9     41.2      17.6     0.23
+2026-12-12   34    1382    1700    5.9     38.2      29.4     0.23
+2026-12-13   42    1298    1700    2.4     42.9      21.4      0.3
+2026-12-14   39    1312    1759    2.6     38.5      17.9     0.29
+2026-12-15   38    1519   10000    5.3     34.2      10.5     0.26
+2026-12-16   45    1381    1759    0.0     62.2      51.1     0.33
+2026-12-17   46    1304    1602    0.0     58.7      47.8     0.33
+2026-12-18   46    1301    1759    0.0     65.2      56.5     0.34
+2026-12-19   35    1304    1910    0.0     57.1      45.7     0.25
+2026-12-20   35    1345    1729    0.0     68.6      54.3     0.26
 alerts:
-   2026-11-10 p95_ms: 10000 (usual 1770.3)
-   2026-11-10 error_pct: 5.3 (usual 3.1)
-   2026-11-11 refer_pct: 62.2 (usual 32.3)
-   2026-11-11 no_amount_pct: 51.1 (usual 18.9)
+   2026-12-15 p95_ms: 10000 (usual 1770.3)
+   2026-12-15 error_pct: 5.3 (usual 3.1)
+   2026-12-16 refer_pct: 62.2 (usual 32.3)
+   2026-12-16 no_amount_pct: 51.1 (usual 18.9)
    ...
 ```
 
 Two different stories.
 
-**10 November: the provider was slow.** The median barely moved (1,519 ms), but p95 hit **10,000 ms**, the timeout:
+**15 December: the provider was slow.** The median barely moved (1,519 ms), but p95 hit **10,000 ms**, the timeout:
 some calls never answered. The average would have hidden it; p95 did not. Those emails were referred to adjusters by
 chapter 13's fallback, so nothing was lost, and the next day was normal. Action: note it, check the provider's status
 page, and see whether it repeats.
 
-**From 11 November: the emails changed.** Every day since, about half the emails have **no amount** (from 18.9% to
+**From 16 December: the emails changed.** Every day since, about half the emails have **no amount** (from 18.9% to
 around 50%), and refers doubled. Speed and errors are perfectly normal; the system is "healthy". Reading a sample of the
 emails shows why: one large garage network now sends its estimates as **PDF attachments**, and the emails just say
 "estimate attached". Claimdesk reads email text, so it finds no amount, and correctly refers.
@@ -217,7 +221,7 @@ Shewhart and called him the master.
 
 :::step{type=predict title="Quick check (1 of 2)"}
 :::question
-On 10 November the median latency barely moved but p95 jumped to 10,000 ms. What does that tell you?
+On 15 December the median latency barely moved but p95 jumped to 10,000 ms. What does that tell you?
 :::
 - [ ] Every request became slow
 - [x] Most requests were normal, but a share of them were very slow or timed out
@@ -230,7 +234,7 @@ the tail first.
 
 :::step{type=predict title="Quick check (2 of 2)"}
 :::question
-From 11 November, no errors, normal speed, and the refer rate doubled. Is Claimdesk broken?
+From 16 December, no errors, normal speed, and the refer rate doubled. Is Claimdesk broken?
 :::
 - [ ] Yes, the model got worse
 - [x] No: the inputs changed (amounts moved into PDF attachments); Claimdesk correctly refers, and the business value drops
