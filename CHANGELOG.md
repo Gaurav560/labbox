@@ -16,7 +16,9 @@
   emphasised half of every heading is upright, in indigo; the hero and the section headings are a size smaller.
 - The "start a lab" section: one line under its heading, "Nothing to install. You go straight to the challenge."
   (owner: "keep it just" that), and the lab picker is a row of words, the picked one in ink with a vermilion
-  underline, instead of boxes (owner: "do something with these rectangle boxes", "keep red some parts"). `ClaimDemo` stays in `HomeAiLabs.tsx`.
+  underline, instead of boxes (owner: "do something with these rectangle boxes", "keep red some parts").
+- Every main red button on Ukiyo (Start free, See the course and the rest) is a seal: a thin paper-white line just
+  inside its edge, like the machine's Open button (owner: "start free. white lines", "whichever suits best"). `ClaimDemo` stays in `HomeAiLabs.tsx`.
 - The AI rows are compact (smaller pictures, type and spacing), and a course of 15 chapters or fewer is marked
   "Micro" (owner: "write micro in front of small courses"); today that is RAG and vector databases.
 - Ukiyo's art, made with OpenAI image generation in a woodblock style (four concepts for the spotlight, five row

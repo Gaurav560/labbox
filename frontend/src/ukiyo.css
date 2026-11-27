@@ -946,3 +946,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .um-picker button[aria-selected="true"]::after { transform: scaleX(1); }
 .uh-machine .ua-text h2 + p { font-size: 18px; color: var(--text); }
 .um-picker { border-bottom: 0; margin-bottom: 6px; }
+/* every main red button as a seal: a thin paper-white line just inside its edge, like the machine's Open button
+   (owner, 27 November: "start free. white lines"; straight, never tilted) */
+.h-btn-primary, :root[data-theme="light"] .h-btn-primary { border-color: transparent; box-shadow: inset 0 0 0 4px var(--vermilion), inset 0 0 0 5.5px #fffdf8cc; }
+.h-btn-primary:hover, :root[data-theme="light"] .h-btn-primary:hover { box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--vermilion) 85%, #000), inset 0 0 0 5.5px #fffdf8; }
