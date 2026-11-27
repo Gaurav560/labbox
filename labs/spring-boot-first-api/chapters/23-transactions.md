@@ -243,7 +243,7 @@ transaction, useful for an audit log entry that must be saved even if the main w
 
 **Isolation.** How much concurrent transactions see of each other. The database's default is usually right; two
 customers buying the last samosa at the same moment is a concurrency problem solved with locking (`@Version`,
-optimistic locking), covered in the production course.
+optimistic locking), a topic for after this course.
 
 **Keep them short.** A transaction holds database locks until it ends. Never call a slow external service
 (payment provider, email) *inside* one; do the database work, commit, then call out.

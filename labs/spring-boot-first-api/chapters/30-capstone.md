@@ -151,8 +151,13 @@ Location: /orders/1
 {"id":1,"customerEmail":"asha@shop.in","totalPaise":7000}
 ```
 
-2 kulfis (Rs 40) + 1 custard (Rs 30) = Rs 70. Then `curl localhost:8080/orders/1` returns the saved order. The check also
-confirms the stock went down. Press **Check**.
+2 kulfis (Rs 40) + 1 custard (Rs 30) = Rs 70, so 7000 paise. Then `curl localhost:8080/orders/1` returns the saved
+order. (Both are the answers our lab machine gave.) The check also confirms the stock went down. Press **Check**.
+
+Usual slips: no `@Transactional` on `checkout` (the first task still passes, but the second will find the kulfi
+missing), adding up prices from the request instead of from `StockItem`, a missing `@Valid` on the request body (the
+bad requests below are then accepted), or `ResponseEntity.ok(...)` instead of `created(...)` (200 instead of 201,
+and no `Location`).
 :::
 
 :::step{type=task task=checkout_errors title="Your turn: clear errors, nothing half-done"}
@@ -176,7 +181,14 @@ HTTP/1.1 400
 {"type":"about:blank","title":"Invalid request","status":400,"instance":"/checkout","errors":{"items":"must not be empty","customerEmail":"must be a well-formed email address"}}
 ```
 
+Those are our lab machine's answers. (As in chapter 17, the two `errors` fields come in no fixed order: our three runs
+gave `items` first once and `customerEmail` first twice.) An unknown sku is out of stock too: `NOPE` answered `409`
+with `"detail":"Not enough stock for NOPE"`.
+
 The check also makes sure the kulfi taken before the samosas ran out was **put back**. Press **Check**.
+
+Usual slips: the `sku` property forgotten on the 409 problem, `forStatus` without the detail, or the handlers written
+in `CheckoutController` (they only work for every controller in the `@RestControllerAdvice` class).
 :::
 
 :::step{type=predict title="Quick check (1 of 2)"}
@@ -189,8 +201,8 @@ Two customers check out the last samosa at exactly the same moment. Can both suc
 :::explain
 Transactions make each checkout all-or-nothing, but two of them can still read the same old value. Real shops add
 **optimistic locking** (a `@Version` field: the second commit fails and can be retried) or an atomic
-`UPDATE ... SET quantity = quantity - ? WHERE sku = ? AND quantity >= ?`. That is one of the first topics of the
-production course.
+`UPDATE ... SET quantity = quantity - ? WHERE sku = ? AND quantity >= ?`. Both are worth learning next, after this
+course.
 :::
 :::
 
@@ -218,7 +230,7 @@ What you built is correct for one server and honest traffic. A production checko
   send them for an order that rolled back.
 - **Metrics and alerts** on checkout successes, failures and latency (chapter 27).
 
-The **Spring Boot in production** course builds each of these, one real incident at a time.
+Each of these is a good next step to study once this course is done.
 :::
 
 :::step{type=recap title="You have built a Spring Boot API"}
@@ -233,7 +245,7 @@ Look back at what you have learned, from "what is a framework" to a working chec
 - **Production basics**: tests for controllers and queries, logs and health checks, security, calling other services
   with timeouts.
 
-:::photo{src="/lesson-images/spring/spring-30-notes.webp" alt="Handwritten notes about Capstone: foundations: HTTP, Maven, beans, REST: requests, DTOs, status codes, data: JPA, paging, transactions, production: tests, logs, security, Spring Boot: done!" ai="true"}
+:::photo{src="/lesson-images/spring/spring-30-notes.webp" alt="Sketchnote: The checkout capstone. One endpoint that uses the whole course, all or nothing. Flow: validate the request, take the stock, price it on the server, save the order, 201 with Location. Remember: never trust prices from the request; one transaction for the whole checkout; out of stock gives 409 and nothing changes; invalid input gives 400 with every field." ai="true"}
 One page of notes for this chapter.
 :::
 

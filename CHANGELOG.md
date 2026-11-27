@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 30 rewritten; the Spring Boot lab is done (31 of 31)
+
+- Chapter 30, "The checkout capstone", to the lesson rules: both tasks list their slips (no `@Transactional`,
+  request prices, no `@Valid`, `ok` instead of `created`, the `sku` property, handlers in the controller).
+- Checked on a lab machine with the solution: the 201 with `Location: /orders/1` and 7000 paise, `GET /orders/1`,
+  the out-of-stock 409 problem, the 400 problem with its `errors` map, and an unknown sku as 409, all quoted as they
+  came. The `errors` fields came in different orders across three runs, now said.
+- Corrected across the course: five chapters (15, 22, 23, 28, 30) promised a "Spring Boot in production" course,
+  which does not exist (it is an idea in ROADMAP). Each now names the topic as a next step after this course instead.
+- A new sketchnote page, checked. The Spring Boot lab is rewritten: all 31 chapters, one commit each.
+
 ## 28 November: Spring Boot chapter 29 rewritten (easy, a little detailed, checked)
 
 - Chapter 29, "Calling other services", to the lesson rules: both tasks list their slips (gluing the URI, a missing

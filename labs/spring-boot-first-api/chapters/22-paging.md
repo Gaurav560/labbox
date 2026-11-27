@@ -216,7 +216,7 @@ page. Good for infinite scrolling.
 
 **Deep pages are slow.** `offset 100000` still makes the database walk past 100,000 rows. For huge tables, APIs
 use **keyset paging**: "the next 20 after id 4711" (`where id > :last order by id`), which stays fast at any
-depth. You will meet it in the production course.
+depth. It is worth learning once you work with big tables.
 
 **Pageable with your own queries.** A `@Query` method can also take a `Pageable` and return a `Page`; Spring Data
 adds the sorting, offset and limit to your JPQL.

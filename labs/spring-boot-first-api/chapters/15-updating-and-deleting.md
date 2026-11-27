@@ -271,7 +271,7 @@ product. (PATCH can go either way: "set price to 2200" is idempotent, "add 5 to 
 silently overwrites the first change: a **lost update**. The standard fix is **optimistic locking**: the
 product carries a version number, the client sends it back, and the server refuses (409 Conflict) if the
 version has changed meanwhile. HTTP has headers for exactly this (`ETag` and `If-Match`), and JPA has
-`@Version` (Part 3 and the production course).
+`@Version` (chapter 23's deep dive mentions it again).
 
 **Standards for PATCH bodies.** What we built is close to **JSON Merge Patch** (RFC 7396): send the fields to
 change. There is also **JSON Patch** (RFC 6902), a list of operations like

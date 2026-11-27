@@ -299,8 +299,7 @@ Spring hashes what the user typed and compares.
 who is calling, for example to show "my orders".
 
 **Tokens.** For public APIs, `spring-boot-starter-oauth2-resource-server` checks **JWT** access tokens issued by an
-identity provider (Keycloak, Auth0, Google, Azure AD). Your API never sees passwords at all. The production course
-builds this.
+identity provider (Keycloak, Auth0, Google, Azure AD). Your API never sees passwords at all.
 :::
 
 :::step{type=recap title="What you can do now"}
