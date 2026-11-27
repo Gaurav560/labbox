@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- The certificate section's share options are a ruled grid of three columns, each the platform's mark in its own
+  colour and its name, instead of round buttons (owner: "some other design, not circular").
 - The FDE tag line is now just "New · The hottest job in AI." (owner: "remove learn it by doing it").
 - Premium Reads: Tech blogs first, then Research papers, then Books; Tech blogs open by default (owner).
 - "Lab", not "course", in visitor-facing text (owner): the Premium Reads page ("behind every LabBox lab", "the books
