@@ -21,6 +21,9 @@ policy-lookup|10-policy-lookup|find_clauses cited_answer
 tools|11-tools|policy_tool tool_loop
 mcp-server|12-mcp-server|mcp_tools tool_errors
 day-five-demo|13-day-five-demo|triage_endpoint input_guard
+golden-set|14-golden-set|field_match stratified
+evals|15-evals|eval_report regression_gate
+failure-analysis|16-failure-analysis|classify_failure fix_fields
 "
 
 fail_all() { # tasks message

@@ -477,3 +477,93 @@ chapters:
       note: no model call
     - call: an email of 8,000 characters
       gives: '200'
+- id: golden-set
+  title: A golden set to measure against
+  file: chapters/14-golden-set.md
+  minutes: 45
+  folder: 14-golden-set
+  part: Proving it works
+  tasks:
+  - id: field_match
+    title: when a field is right
+    xp: 15
+    hints:
+    - The starter compares with ==, and in Python 1 == True.
+    - Handle the None cases first, then a bool truth with is, then text, then numbers.
+    - 'For numbers, refuse bools: isinstance(got, bool) is True for True and False.'
+    examples:
+    - call: field_match('policy_no', 'ds-pol-40592', 'DS-POL-40592')
+      gives: 'False'
+      note: the SQL lookup is exact
+    - call: field_match('photos_attached', 1, True)
+      gives: 'False'
+  - id: stratified
+    title: two of each kind
+    xp: 10
+    hints:
+    - 'The starter returns the first per_kind cases overall: all accidents.'
+    - Keep a dict from incident_type to how many of that kind you kept so far.
+    - Keep a case only while its kind's count is below per_kind, and go through the set in order.
+    examples:
+    - call: stratified(load_golden(), 2)
+      gives: '12 cases: 2 of each of the 6 kinds'
+- id: evals
+  title: Evals and a regression gate
+  file: chapters/15-evals.md
+  minutes: 45
+  folder: 15-evals
+  tasks:
+  - id: eval_report
+    title: the eval report
+    xp: 15
+    hints:
+    - eval_report returns an empty dict, so evals.py cannot print the table.
+    - For every case, compare each of FIELDS with field_match; an email with no fields is wrong on all of them.
+    - Divide by the number of cases, multiply by 100 and round to 1 place; all_fields counts emails where every field is right.
+    examples:
+    - call: eval_report(golden, run_v1)['all_fields']
+      gives: '73.3'
+    - call: eval_report(golden, run_v2)['incident_date']
+      gives: '80.0'
+  - id: regression_gate
+    title: the regression gate
+    xp: 15
+    hints:
+    - The starter always passes.
+    - Go through FIELDS and then all_fields, in that order, and note every field whose percent fell.
+    - A field fell when the new value is below the old value minus tolerance; ok is True only when nothing fell.
+    examples:
+    - call: regression_gate(v1, v2)
+      gives: (False, [('incident_date', 83.3, 80.0)])
+- id: failure-analysis
+  title: 'Failure analysis: fix causes, not cases'
+  file: chapters/16-failure-analysis.md
+  minutes: 50
+  folder: 16-failure-analysis
+  tasks:
+  - id: classify_failure
+    title: name the kind
+    xp: 15
+    hints:
+    - Every failure is called wrong, so a typing difference looks like a made-up date.
+    - 'Ask four questions in order: nothing read, nothing to read, same once squashed, otherwise wrong.'
+    - 'squash is already written: compare squash(got) with squash(truth) for the format case.'
+    examples:
+    - call: classify_failure('policy_no', 'null', None)
+      gives: '''invented'''
+    - call: classify_failure('incident_date', '2023-10-06', '2026-10-06')
+      gives: '''wrong'''
+  - id: fix_fields
+    title: fix the kinds that code can fix
+    xp: 20
+    hints:
+    - fix_fields returns the fields unchanged.
+    - 'Three rules on a copy: the word null becomes None, a policy number is rebuilt from its five digits, an old year becomes
+      this year.'
+    - For the date, replace the year with today's; if that lands after today, use the year before.
+    examples:
+    - call: 'fix_fields({... ''incident_date'': ''2023-12-20''})'
+      gives: '''2025-12-20'''
+      note: today is 2026-10-31
+    - call: eval_report on run v1 after the fixes
+      gives: all_fields 93.3
