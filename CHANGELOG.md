@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 14 rewritten (easy, a little detailed, checked)
+
+- Chapter 14, "Layers", to the lesson rules: both tasks list their slips (`average()` gives an `OptionalDouble`,
+  dividing by zero, `<=` for "below", filtering in the service instead of the repository, which the check looks
+  for).
+- Checked on a lab machine with the starter and the solution: the average 3950 (15800 / 4) from both, the
+  starter's budget list `[]`, the solution's three budget products (`BUDGET_PAISE` is 5000). The layers picture's
+  text checked.
+- A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 13 rewritten (easy, a little detailed, checked)
 
 - Chapter 13, "Status codes with ResponseEntity", to the lesson rules: builder explained; both tasks list their
