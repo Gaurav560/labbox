@@ -2,10 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
-- The hero wave is animated (owner: "make the image a little animated, the boy sailing in the AI wave"). The OpenAI key
-  has no video model, so it is two layers of the same picture made with image edits (about $0.08): the scene without
-  the rider, and the rider and his boat cut out. In the browser the boat rises and falls with the swell, points of
-  light twinkle along the wave and spray lifts off the bow; it holds still with reduced motion.
+- The hero wave is the plain picture in both themes: no animation, no fade, no border (owner: "only the normal image").
+  (A two-layer animation was tried the same day and removed.)
 - Ukiyo's hero shows the wave (owner: "yes, build on Ukiyo"): "The AI wave is here. Learn to ride it." beside the engineer
   riding a wave of light, large and wide, with no frame; its edges fade into the page (a short fade in the light
   theme). The typing terminal is gone. The FDE spotlight now shows "Summit" (an engineer on a peak at dawn, lines of

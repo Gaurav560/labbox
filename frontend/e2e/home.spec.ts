@@ -19,10 +19,9 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(page.locator(".home-header").getByRole("link", { name: "LabBox by Telusko home" })).toBeVisible();
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
-  await expect(page.locator(".uh-hero-pic .uh-wave-plate")).toBeVisible();
+  await expect(page.locator(".uh-hero-pic img")).toBeVisible();
   await expect(page.locator(".uh-promise")).toHaveText("No videos to sit through. You learn by building.");
-  // the wave, animated: the plate and the rider on it (owner, 27 November)
-  await expect(page.locator(".uh-hero-pic .uh-wave-rider")).toHaveAttribute("src", "/ukiyo/heroes/wave-rider.webp");
+  await expect(page.locator(".uh-hero-pic img")).toHaveAttribute("src", "/ukiyo/heroes/wave.webp"); // the wave, still (owner, 27 November)
   await expect(page.locator(".uh-term")).toHaveCount(0);
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
   const machine = page.locator("#machine");
