@@ -129,7 +129,7 @@ export default function HomeAiLabs({ labs, signedIn, spotArt, thumb, title, lead
   return (
     <section id="ai" className="ai-section" aria-labelledby="ai-title">
       <header className="ai-head">
-        <p className="ai-kicker">AI labs <span className="ai-new">New course</span></p>
+        <p className="ai-kicker">AI labs <span className="ai-new">New lab</span></p>
         <h2 id="ai-title">{title}</h2>
         <p className="ai-lead">{lead}</p>
       </header>

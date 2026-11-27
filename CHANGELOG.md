@@ -2,6 +2,8 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- "Lab", not "course", in visitor-facing text (owner): the Premium Reads page ("behind every LabBox lab", "the books
+  our labs are built on"), the home page's AI section ("Each AI lab", "New lab", "AI labs live") and master's hero pill.
 - Pricing: the Teams plan is greyed out, and Pro's button reads "Join the waitlist" (owner, 27 November).
 - The certificate's share picture (LinkedIn, X, WhatsApp) has the same round stamp as the page, drawn in Pillow, between
   the date and the QR code, which moved to the corner; the lab's name on it is upright (owner: "yes, update the stamp").

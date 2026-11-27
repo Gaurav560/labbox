@@ -13,7 +13,7 @@ import { labTone } from "../brand";
 // Admins keep the list current from Admin > Library.
 
 export const LIBRARY_TABS: [LibraryKind, string, string][] = [
-  ["book", "Books", "The books our courses are built on: from first principles to how real systems work."],
+  ["book", "Books", "The books our labs are built on: from first principles to how real systems work."],
   ["paper", "Research papers", "The papers behind the ideas you build in the labs, most of them free to read."],
   ["blog", "Tech blogs", "Engineers and companies who explain how real systems are built, updated every week."],
 ];
@@ -266,8 +266,8 @@ export default function LibraryPage() {
           <span className="lib-kicker">Hand-picked by the LabBox team</span>
           <h1 id="lib-title">Premium reads.</h1>
           <p className="lib-sub">
-            The books, research papers and engineering blogs behind every LabBox course, hand-picked, with the lab
-            that lets you build each idea yourself.
+            The books, research papers and engineering blogs behind every LabBox lab, hand-picked, each linked to the
+            lab where you build the idea yourself.
           </p>
           </div>
           {items && items.length > 0 && <p className="lib-updated">Last updated {lastUpdated(items, true)}</p>}

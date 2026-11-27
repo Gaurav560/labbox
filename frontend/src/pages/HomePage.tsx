@@ -111,7 +111,7 @@ export default function HomePage() {
           <div className="hero-text">
             <a className="h-pill h-pill-link" href="#ai">
               <span className="h-pulse" aria-hidden="true" />
-              New: the Forward Deployed Engineer course →
+              New: the Forward Deployed Engineer lab →
             </a>
             <h1 id="hero-title">
               Learn AI by <span className="h-red-word">building<svg viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 11 C 50 3, 120 3, 197 9" /></svg></span> it, not <span className="h-strike">watching</span>.
@@ -133,7 +133,7 @@ export default function HomePage() {
             <img src="/home/fde-spotlight.webp" alt="A miniature insurance office at night: an engineer at a laptop sends claim forms and emails from filing cabinets through a glowing AI core to a dashboard of checks, with one red stop barrier" />
           </>}
           title={<>Build with real models. <span className="h-yellow">Start with the job itself.</span></>}
-          lead="Each AI course is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
+          lead="Each AI lab is a real build on a lab machine in your browser: model calls, RAG search, agents and evals, through the LabBox gateway."
         />
 
         <section className="h-strip" aria-label="Technologies you practise on">
@@ -150,7 +150,7 @@ export default function HomePage() {
           <div><strong>{catalog === null ? "…" : live.length}</strong><span>hands-on labs</span></div>
           <div><strong>~60 s</strong><span>to a real machine</span></div>
           <div><strong>0</strong><span>videos to sit through</span></div>
-          <div><strong>{catalog === null ? "…" : aiCount}</strong><span>AI courses live</span></div>
+          <div><strong>{catalog === null ? "…" : aiCount}</strong><span>AI labs live</span></div>
         </section>
 
         <section id="inside" className="h-section" aria-labelledby="inside-title">
