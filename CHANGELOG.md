@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- FDE chapter 1's history has a Palantir photo (owner: "without copyrighted"): Alex Karp, Palantir's chief executive, at a
+  working meeting with Ecuador's government in Davos, 21 January 2026 (public domain, Presidencia de la República del
+  Ecuador), with a line on how Ecuador's customs service uses Palantir's platform.
 - The Forward Deployed Engineer lab's description opens with the market (owner: "write Palantir, OpenAI and other AI
   companies paying ... the hype"): Palantir invented the job, OpenAI and Anthropic are racing to fill it, total pay
   estimated at $350,000 to $550,000 a year (published estimates of salary plus equity; posted base bands are about
