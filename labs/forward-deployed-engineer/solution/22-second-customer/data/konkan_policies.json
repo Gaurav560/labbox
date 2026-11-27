@@ -1,0 +1,10 @@
+{
+ "KM/26/004512": {"vehicle_reg": "MH04AB1234", "start_date": "2026-04-01", "end_date": "2027-03-31"},
+ "KM/26/004519": {"vehicle_reg": "MH04CD5678", "start_date": "2026-04-01", "end_date": "2027-03-31"},
+ "KM/26/004533": {"vehicle_reg": "MH04EF9012", "start_date": "2026-06-15", "end_date": "2027-06-14"},
+ "KM/26/004540": {"vehicle_reg": "MH04GH3456", "start_date": "2026-04-01", "end_date": "2027-03-31"},
+ "KM/26/004551": {"vehicle_reg": "MH04JK7890", "start_date": "2026-05-10", "end_date": "2027-05-09"},
+ "KM/26/004566": {"vehicle_reg": "MH04LM2468", "start_date": "2026-04-01", "end_date": "2027-03-31"},
+ "KM/26/004588": {"vehicle_reg": "MH04ST1133", "start_date": "2026-04-01", "end_date": "2027-03-31"},
+ "KM/26/004599": {"vehicle_reg": "MH04UV3344", "start_date": "2026-04-01", "end_date": "2027-03-31"}
+}

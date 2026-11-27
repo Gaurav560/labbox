@@ -28,6 +28,8 @@ privacy|17-privacy|redact_pii instruction_guard
 reliability|18-reliability|pacer cache
 human-review|19-human-review|shadow_report go_live_check
 monitoring|20-monitoring|daily_metrics drift_alerts
+handover|21-handover|settings_from_env smoke_test
+second-customer|22-second-customer|from_konkan customer_rules
 "
 
 fail_all() { # tasks message

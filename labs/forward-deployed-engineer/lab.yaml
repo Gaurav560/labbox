@@ -19,7 +19,7 @@ tags:
 - llm
 - evals
 level: intermediate
-estimated_minutes: 1100
+estimated_minutes: 1020
 cover_scene: An engineer at a desk in an insurer's claims office in Pune, claim files and a laptop with a dashboard.
 before_you_start:
   summary: Python, and a little about how a language model is called. This course is about the job of a forward deployed engineer,
@@ -684,3 +684,62 @@ chapters:
     examples:
     - call: drift_alerts(days)[0]
       gives: ('2026-12-15', 'p95_ms', 1770.3, 10000)
+- id: handover
+  title: 'Handing over: settings, a smoke test, a runbook'
+  file: chapters/21-handover.md
+  minutes: 45
+  folder: 21-handover
+  part: Leaving well
+  tasks:
+  - id: settings_from_env
+    title: settings from the environment
+    xp: 15
+    hints:
+    - An empty key and a limit of 50k both start without complaint.
+    - 'Collect every problem in a list first: each missing required name, then a limit that is not a positive whole number.'
+    - Raise ConfigError once with the problems joined by '; ', otherwise build Settings with int() for the limit.
+    examples:
+    - call: settings_from_env({})
+      gives: 'ConfigError: OPENAI_BASE_URL is not set; OPENAI_API_KEY is not set'
+    - call: print(settings)
+      gives: every setting except the key
+  - id: smoke_test
+    title: the smoke test
+    xp: 15
+    hints:
+    - The smoke test runs nothing, so it always passes.
+    - Call run for every case inside try/except, and keep going after a crash.
+    - 'At most one failure per case: crashed, then no reasons list, then a wrong draft.'
+    examples:
+    - call: PILOT_LIMIT_RS=10000 python smoke.py
+      gives: '[''E-01: expected pay, got refer''], exit code 1'
+- id: second-customer
+  title: 'A second customer: from project to product'
+  file: chapters/22-second-customer.md
+  minutes: 45
+  folder: 22-second-customer
+  tasks:
+  - id: from_konkan
+    title: Konkan's adapter
+    xp: 15
+    hints:
+    - The adapter passes the raw columns through.
+    - 'Normalise each column to the form the core compares: capitals, no separators in registrations, ISO dates.'
+    - Empty columns become None; the estimate loses its commas and becomes whole rupees; only Y means photos.
+    examples:
+    - call: from_konkan(KC-1002)['vehicle_reg']
+      gives: '''MH04CD5678'''
+    - call: from_konkan(a row with Estimate '4,999.60')['amount_rs']
+      gives: '5000'
+  - id: customer_rules
+    title: one set of rules for every customer
+    xp: 20
+    hints:
+    - rules returns no reasons, so every claim is paid.
+    - Chapter 13's checks, in the same order, plus a format check on the policy number before looking it up.
+    - The limit, the pattern and the always-refer kinds all come from config; never write 50000 or theft in rules.
+    examples:
+    - call: rules(KC-1005, policy, KONKAN)
+      gives: '[''fire: always referred'']'
+    - call: rules(KC-1008, None, KONKAN)
+      gives: '[''policy number not in the expected format'']'
