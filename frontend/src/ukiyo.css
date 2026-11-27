@@ -1159,3 +1159,5 @@ html { scroll-behavior: smooth; }
 }
 /* the wave rider (owner, 28 November): keep him and the crest in view, the city fades under the text */
 .uh-hero-print.is-rider img { object-position: 72% 40%; }
+/* "Learn to ride it." in red (owner, 28 November) */
+.uh-hero h1 em { color: var(--vermilion); }

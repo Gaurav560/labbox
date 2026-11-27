@@ -1,5 +1,9 @@
 # Changelog
 
+## 28 November: Ukiyo home, "Learn to ride it." in red
+
+- The hero's second line is red (the theme's vermilion) at the owner's request; the first line stays ink.
+
 ## 28 November: Ukiyo home, the wave rider with a real wave
 
 - The hero's wave is now real water (owner: the dotted wave was "not looking real, too much animated"): the same
