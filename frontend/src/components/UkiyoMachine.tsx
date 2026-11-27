@@ -61,7 +61,6 @@ function Picker({ lab, onPick }: { lab: Lab; onPick: (l: Lab) => void }) {
           <button key={l.id} type="button" role="tab" aria-selected={l.id === lab.id} onClick={() => onPick(l)}>
             <span className="um-pick-logo" aria-hidden="true">{PICK_LOGO[l.id] && <img src={`/logos/${PICK_LOGO[l.id]}.svg`} alt="" />}</span>
             <span className="um-pick-name">{l.label}</span>
-            <span className="um-pick-go" aria-hidden="true">→</span>
           </button>
         ))}
       </div>

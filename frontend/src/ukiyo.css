@@ -979,12 +979,12 @@ html { scroll-behavior: smooth; }
 .um-pick-logo { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--rule); background: #fffdf8; }
 .um-pick-logo img { width: 17px; height: 17px; object-fit: contain; }
 .um-pick-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.um-pick-go { color: var(--muted); font: 14px var(--font-text); opacity: 0; transform: translateX(-4px); transition: opacity var(--t-soft), transform var(--t-soft); }
+.um-pick-name::after { content: "→"; position: absolute; right: 8px; top: 50%; margin-top: -9px; color: var(--muted); font: 14px var(--font-text); opacity: 0; transform: translateX(-4px); transition: opacity var(--t-soft), transform var(--t-soft); }
 .um-picker button:hover { transform: none; background: var(--tint-accent); }
-.um-picker button:hover .um-pick-go { opacity: 1; transform: none; }
+.um-picker button:hover .um-pick-name::after { opacity: 1; transform: none; }
 .um-picker button[aria-selected="true"] { background: color-mix(in srgb, var(--vermilion) 8%, transparent); color: var(--text); box-shadow: none; }
 .um-picker button[aria-selected="true"]::before { transform: scaleY(1); }
-.um-picker button[aria-selected="true"] .um-pick-go { opacity: 1; transform: none; color: var(--vermilion); }
+.um-picker button[aria-selected="true"] .um-pick-name::after { opacity: 1; transform: none; color: var(--vermilion); }
 .um-picker button:focus-visible { outline: 2px solid var(--vermilion); outline-offset: -2px; }
 @media (max-width: 520px) { .um-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .um-picker button:not(:nth-child(3n)) { border-right: 0; } .um-picker button:nth-child(odd) { border-right: 1px solid var(--rule); } }
@@ -995,6 +995,9 @@ html { scroll-behavior: smooth; }
 .um-picker button { grid-template-columns: 26px minmax(0, 1fr); padding-right: 22px; font-size: 14.5px; }
 .um-pick-logo { width: 26px; height: 26px; }
 .um-pick-name { white-space: normal; }
-.um-pick-go { position: absolute; right: 8px; top: 50%; margin-top: -9px; }
 /* the FDE spotlight's "New" label in red (owner, 27 November: "keep it red") */
 .uh-ai .ai-tag-new { background: var(--vermilion); color: #fff; }
+/* "Before you start" on every course page in indigo, not red (owner, 27 November: "keep this blue") */
+.course-before::before { background: var(--indigo); }
+.course-need-check { background: var(--indigo); color: #fff; }
+.course-need-link:hover { color: var(--indigo); }

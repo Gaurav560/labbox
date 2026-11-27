@@ -4,7 +4,9 @@
 
 - The "start a lab" picker is a printed index under "Pick a lab to try": three ruled columns, each cell a logo on paper,
   the lab's serif name and an arrow on hover; the picked one has a vermilion bar and a soft tint (owner: "some learners
-  will miss that these are real buttons"; round buttons "look out of this page"). The FDE "New" label is red again. The red line under the machine's lid shows
+  will miss that these are real buttons"; round buttons "look out of this page"). The FDE "New" label is red again.
+- "Before you start" on every Ukiyo course page is indigo (its side bar and check boxes) instead of red (owner: "keep
+  this blue"). The red line under the machine's lid shows
   before Run too (owner: "keep it").
 - Ukiyo's "AI labs" menu link jumps to the home page's AI section (smooth scroll, below the sticky header) instead of
   the AI labs list (owner, 27 November).
