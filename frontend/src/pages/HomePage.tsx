@@ -67,9 +67,11 @@ export default function HomePage() {
             shows behind it). */}
         <section className="uh-hero" aria-labelledby="hero-title">
           <div className="uh-hero-text">
-            <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to build AI apps,</em> <span className="uh-line uh-sting">or get left behind.</span></h1>
-            <p className="uh-lead">Open a lab and a Linux machine starts for you in about a minute, with a code editor, a terminal and a model gateway.</p>
-            <p className="uh-promise"><span>No fluff.</span> <span>No tutorial hell.</span> <em>Only action.</em></p>
+            {/* Owner, 27 November: "fix this way of writing"; picked "ride the wave" (an invitation, not a threat; it matches
+                the Forward Deployed Engineer picture of an engineer riding a wave). Ink and indigo, no red but the button. */}
+            <h1 id="hero-title"><span className="uh-line">The AI wave is here.</span> <em className="uh-line">Learn to ride it.</em></h1>
+            <p className="uh-lead">Build real AI apps on your own machine: an editor, a terminal and real models, ready in about a minute.</p>
+            <p className="uh-promise"><span>No videos to sit through.</span> <em>You learn by building.</em></p>
             <div className="uh-cta">{cta}</div>
           </div>
           <figure className="uh-hero-art">

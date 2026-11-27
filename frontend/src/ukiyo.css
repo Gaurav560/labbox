@@ -920,3 +920,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--v
 .uh-ai .ai-row::after { background: var(--gold); }
 .uh-ai .ai-row:hover strong, .uh-ai .ai-row:hover .ai-row-go { color: var(--indigo); }
 .uh-ai .ai-spot::before { background: var(--gold); }
+/* the hero in ink and indigo (owner, 27 November: no red but the button) */
+.uh-hero h1 em { color: var(--indigo); }
+.uh-promise { font-weight: 500; gap: 6px 10px; }
+.uh-promise em { font-weight: 500; color: var(--indigo); }

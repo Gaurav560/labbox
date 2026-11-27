@@ -8,7 +8,10 @@
   reads "New · The hottest job in AI. Learn it by doing it." (picked by the owner), large and in the
   hero's voice, on two lines: the first in ink, the second in italic (Ukiyo: indigo; master: yellow), "New" as a gold
   label. Ukiyo's AI section uses gold and indigo instead of red (owner: "why do you always have to use red everywhere");
-  the one red button stays. `ClaimDemo` stays in `HomeAiLabs.tsx`.
+  the one red button stays.
+- Ukiyo's hero, rewritten (owner: "fix this way of writing"; picked "ride the wave"): "The AI wave is here. *Learn to
+  ride it.*", then "Build real AI apps on your own machine: an editor, a terminal and real models, ready in about a
+  minute." and "No videos to sit through. *You learn by building.*" Ink and indigo; red only on the Start button. `ClaimDemo` stays in `HomeAiLabs.tsx`.
 - The AI rows are compact (smaller pictures, type and spacing), and a course of 15 chapters or fewer is marked
   "Micro" (owner: "write micro in front of small courses"); today that is RAG and vector databases.
 - Ukiyo's art, made with OpenAI image generation in a woodblock style (four concepts for the spotlight, five row
