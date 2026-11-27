@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 3 rewritten (easy, a little detailed, checked)
+
+- Chapter 3, "Your first endpoints", to the lesson rules: endpoint, routing, UTF-8 and records' accessor methods
+  explained where they appear; both tasks list their steps and the usual slips (exact greeting text, a method
+  outside the class, returning the unsorted constant, `Collections.sort` on an unchangeable `List.of` list).
+- Checked on a lab machine (the solution plus the lesson's examples added to a copy). Corrected: "the path must
+  start with `/`" (Spring adds a missing slash: `@GetMapping("status")` answered `/status`; the lesson now says to
+  write the slash for clarity); "browsers can only easily send GET" (typing an address sends GET; forms and
+  JavaScript send the others); "the getters" (records have accessor methods named after the fields). Crockford's
+  dates made exact (2001 and 2002). Confirmed: `text/plain;charset=UTF-8` for a String, the featured product and
+  the merchants JSON, the 404 JSON, and the Whitelabel page for a browser's request (with why: its Accept header).
+- A new still picture, `first-endpoint`: GET /merchants from the request to the JSON, with the real values (and a
+  small shared `StepRows` drawing for such step columns). A new sketchnote page, checked.
+
 ## 28 November: Spring Boot chapter 2 rewritten (easy, a little detailed, checked)
 
 - Chapter 2, "Maven and the pom.xml", to the lesson rules: classpath, Maven Central and `~/.m2`, compiled classes,
