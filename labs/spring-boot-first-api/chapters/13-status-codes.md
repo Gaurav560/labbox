@@ -34,7 +34,8 @@ cd 13-status-codes && mvn -q -o package -DskipTests && java -jar target/status-c
 curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Poha", "pricePaise": 2200}'; echo; curl -i -X DELETE localhost:8080/products/99
 ```
 
-`200` and `200`. Both technically "work", and both mislead. Leave the app running.
+On our lab machine: `200` and `200` (the delete even with `Content-Length: 0`, an empty body). Both technically
+"work", and both mislead. Leave the app running.
 :::
 
 :::step{type=concept title="ResponseEntity: the whole response in one object"}
@@ -54,9 +55,18 @@ ResponseEntity.created(uri).body(product)         // 201, Location: uri, with a 
 Two shapes to notice:
 
 - Methods like `ok(...)` take the body directly.
-- Methods like `notFound()` and `noContent()` return a **builder**: you can add headers to it, and you
-  finish with **`.build()`** (no body) or **`.body(x)`** (with one). Forgetting `.build()` is a common
-  compile error; the message will say something like "cannot convert HeadersBuilder to ResponseEntity".
+- Methods like `notFound()` and `noContent()` return a **builder** (an object you add parts to, step by step): you
+  can add headers to it, and you finish with **`.build()`** (no body) or **`.body(x)`** (with one). Forgetting
+  `.build()` is a common compile error. We tried it on our lab machine; the build stopped with:
+
+  ```text
+  incompatible types: bad type in conditional expression
+      org.springframework.http.ResponseEntity.HeadersBuilder<capture#1 of ?> cannot be converted to org.springframework.http.ResponseEntity<java.lang.Void>
+  ```
+
+  The key words are "HeadersBuilder ... cannot be converted to ... ResponseEntity": a builder is not yet a
+  response. (The first line mentions a conditional expression only because our test used the one-line `? :` form
+  you will meet below.)
 
 The `<T>` is the type of the body: `ResponseEntity<Product>` for a product, and **`ResponseEntity<Void>`**
 when there is never a body (note the capital V: `Void` is the "no type" type for generics).
@@ -113,7 +123,10 @@ Content-Type: application/json
 {"id":4,"name":"Poha","pricePaise":2200,"costPaise":0}
 ```
 
-Press **Check**.
+That is the real answer from our lab machine. Press **Check**.
+
+Usual slips: leaving the return type as `Product` (then `ResponseEntity` does not fit it and the build fails), or
+`Location` built before saving (the id is only known after `repository.add`).
 :::
 
 :::step{type=concept title="Choosing the status at run time"}
@@ -152,7 +165,11 @@ Rebuild, run, and delete the samosa twice:
 curl -i -X DELETE localhost:8080/products/3; echo; curl -i -X DELETE localhost:8080/products/3
 ```
 
-The first answers `204` with no body; the second `404`, because it is already gone. Press **Check**.
+The first answers `204` with no body; the second `404` (with `Content-Length: 0`), because it is already gone.
+That is what our lab machine answered. Press **Check**.
+
+Usual slips: the return type `ResponseEntity<Product>` instead of `ResponseEntity<Void>` (nothing is ever sent
+back), or calling `repository.delete(id)` twice, once to test and once to delete (the second call finds nothing).
 :::
 
 :::step{type=concept title="Which status for what: a short guide"}
@@ -236,7 +253,7 @@ Your endpoints now tell the truth:
 - **Delete**: `204`, or `404` when there was nothing; the status can be chosen at run time.
 - An empty list is `200 []`, not 404.
 
-:::photo{src="/lesson-images/spring/spring-13-notes.webp" alt="Handwritten notes about Status codes: ResponseEntity = status + headers + body, create: 201 + Location, delete: 204 or 404, empty list is 200 [], .build() or .body(x)" ai="true"}
+:::photo{src="/lesson-images/spring/spring-13-notes.webp" alt="Sketchnote: Status codes with ResponseEntity. A ResponseEntity is the whole response: status, headers and body. Flow: your method decides, a builder, .build() or .body(x), the status the client sees. Remember: create gives 201 with Location; delete gives 204, or 404 if nothing was there; an empty list is 200 with []; a builder needs .build() or .body(x)." ai="true"}
 One page of notes for this chapter.
 :::
 
