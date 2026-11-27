@@ -34,7 +34,7 @@ cd 28-security && mvn -q -o package -DskipTests && java -jar target/security.jar
 Look in the start-up log:
 
 ```text
-Using generated security password: 38a8cb9a-e719-4d31-bb1f-6485bfc1adcd
+Using generated security password: 034ae6a9-d9c7-420d-8a1e-b069f334261d
 This generated password is for development use only. Your security configuration must be updated before running
 your application in production.
 ```
@@ -45,17 +45,27 @@ Then try the product list, which should be public:
 curl -i localhost:8080/products
 ```
 
+On our lab machine (your password above will be a different random one):
+
 ```text
 HTTP/1.1 401
+Set-Cookie: JSESSIONID=85F6EEBB2688B95EE0351C3FA1D50EFD; Path=/; HttpOnly
 WWW-Authenticate: Basic realm="Realm"
 X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
 Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 0
 ```
 
 **Everything** is locked. That is Spring Boot's secure default (auto-configuration again, chapter 8): add the
 security starter and every endpoint requires a login, with one user called `user` and a random password printed at
-start-up. Locked by default is the right default, but it is not what the shop wants. Notice the extra headers too:
-Spring Security also adds protective headers to every response, for free.
+start-up. Locked by default is the right default, but it is not what the shop wants. Notice the extra headers too: Spring
+Security also adds protective headers to every response, for free (`X-Frame-Options: DENY`, for example, stops other
+sites from showing your pages inside theirs). The `Set-Cookie: JSESSIONID` line is a **session cookie**: Spring
+Security's default set-up remembers logins in a server-side session. Keep it in mind for the CSRF step.
 
 `WWW-Authenticate: Basic` tells the client: "authenticate with HTTP Basic". Let's see what that is.
 :::
@@ -122,8 +132,9 @@ the request decides**:
 - `requestMatchers("/librarian/**").hasRole("LIBRARIAN")`: those paths need a logged-in user with that role.
 - `anyRequest().authenticated()`: everything else needs a login (any role).
 
-Because the first match wins, put **specific rules first** and `anyRequest()` **last**. (Spring Security even refuses
-to start if you put rules after `anyRequest()`, since they could never apply.)
+Because the first match wins, put **specific rules first** and `anyRequest()` **last**. (Spring Security even refuses to
+start if you put rules after `anyRequest()`, since they could never apply. We tried it on our lab machine: the app
+stopped with `Can't configure mvcMatchers after anyRequest`.)
 :::
 
 :::step{type=example title="Worked example: who gets in"}
@@ -158,9 +169,9 @@ Go deeper step).
 One more default, which trips up nearly everyone building an API: **CSRF protection**.
 
 **CSRF** (cross-site request forgery) is an attack on **browsers**: a malicious web page makes your browser send a
-request to a site where you are logged in, and the browser helpfully attaches your login cookie. To block it,
-Spring Security requires a secret **CSRF token** on every `POST`, `PUT`, `PATCH` and `DELETE`. A request without the
-token gets **403**, even with the right password.
+request to a site where you are logged in, and the browser helpfully attaches your login cookie. To block it, Spring
+Security requires a secret **CSRF token** on every `POST`, `PUT`, `PATCH` and `DELETE`. A request without the token
+is refused, even with the right password.
 
 That protection only makes sense when the login travels in a **cookie** that the browser attaches by itself. An API
 where every client sends its credentials explicitly in the `Authorization` header (like ours, with Basic, or with
@@ -170,7 +181,12 @@ tokens) is not exposed to that attack. So APIs like this switch it off:
 .csrf(csrf -> csrf.disable())
 ```
 
-If you forget, the symptom is confusing: GETs work, and every DELETE answers 403, even for an admin. Keep CSRF on for
+If you forget, the symptom is confusing: GETs work, and every DELETE is refused, even for an admin. We tried it on
+our lab machine (the finished project with the `csrf` line removed): staff could still read the report, and the
+admin's DELETE answered **401**, as if the password were wrong. The reason is the order of the filters: the CSRF
+filter runs *before* the login filter, so when it refuses the request, nobody is logged in yet, and Spring Security
+answers as it does for anyone not logged in. (With a form login, where the user logged in on an earlier request, the
+same refusal shows as 403.) Keep CSRF on for
 classic websites with login forms and session cookies.
 :::
 
@@ -188,8 +204,12 @@ Rebuild, run, and knock on every door:
 curl -i localhost:8080/products; echo; curl -i localhost:8080/admin/report; echo; curl -u staff:staff123 localhost:8080/admin/report; echo; curl -i -u staff:nope localhost:8080/admin/report
 ```
 
-You should see `200` with the products, `401`, `Sales today: 42 orders`, and `401` for the wrong password. The
-generated password is gone from the log. Press **Check**.
+You should see `200` with the products (ours: `["Mango kulfi","Samosa"]`), `401`, `Sales today: 42 orders`, and
+`401` for the wrong password. The generated password is gone from the log. Press **Check**.
+
+Usual slips: the passwords without `{noop}` (Spring Security then cannot tell how they are stored; we tried it on
+our lab machine, and the right password answered 401), `.roles("ROLE_ADMIN")` (`roles` adds the prefix itself; write `ADMIN`), or `anyRequest()` placed before the
+`permitAll` rule.
 :::
 
 :::step{type=concept title="Roles"}
@@ -220,8 +240,12 @@ Rebuild, run, and try both users:
 curl -i -X DELETE -u staff:staff123 localhost:8080/products/1; echo; curl -i -X DELETE -u admin:admin123 localhost:8080/products/1
 ```
 
-`403` for staff (known, but not allowed), `204` for admin. If admin also gets 403, check that CSRF is off. Press
-**Check**.
+`403` for staff (known, but not allowed), `204` for admin; that is what our lab machine answered. If the admin gets
+401 here, CSRF is probably still on (see the CSRF step). Press **Check**.
+
+Usual slips: the DELETE rule placed after `anyRequest()` (the app will not start), or after a broader rule that
+already matches DELETE requests (then that rule decides), or `hasRole("admin")` in lower case (roles are compared
+exactly).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -241,11 +265,11 @@ The caller could not be identified: authentication failed, so 401.
 CSRF is on (the default), and an admin sends `DELETE /products/1` with curl and correct Basic credentials. What happens?
 :::
 - [ ] 204: the admin is allowed
-- [x] 403: no CSRF token was sent
-- [ ] 401
+- [x] It is refused (our lab machine answered 401): no CSRF token was sent
+- [ ] It works for admins only
 :::explain
-With CSRF on, every state-changing request needs a CSRF token, whoever sends it. APIs that authenticate with headers
-switch CSRF off.
+With CSRF on, every state-changing request needs a CSRF token, whoever sends it. The CSRF filter runs before the
+Basic login is read, so here the refusal comes back as 401. APIs that authenticate with headers switch CSRF off.
 :::
 :::
 
@@ -287,10 +311,11 @@ You can now secure an API:
 - A **`SecurityFilterChain`** bean: `authorizeHttpRequests` rules, checked top to bottom, **first match wins**
   (`permitAll`, `authenticated`, `hasRole`, `hasAnyRole`); specific rules first, `anyRequest()` last.
 - **HTTP Basic** sends `username:password` in Base64 on every request: only over **HTTPS**.
-- **CSRF** protects cookie-based browser logins; header-authenticated APIs **disable** it.
+- **CSRF** protects cookie-based browser logins; header-authenticated APIs **disable** it (left on, every POST, PUT,
+  PATCH and DELETE is refused).
 - Users in memory for learning; hashed passwords (**BCrypt**) and tokens (**JWT**) in real systems.
 
-:::photo{src="/lesson-images/spring/spring-28-notes.webp" alt="Handwritten notes about Security: 401 = who are you?, 403 = not allowed, SecurityFilterChain: first match wins, HTTP Basic only over HTTPS, BCrypt for passwords" ai="true"}
+:::photo{src="/lesson-images/spring/spring-28-notes.webp" alt="Sketchnote: Security. Every request answers two questions: who are you, and may you do this? Flow: request, security filters, the first matching rule, the controller or 401 or 403. Remember: 401 means not logged in, 403 means not allowed; the first matching rule wins and anyRequest goes last; HTTP Basic only over HTTPS; turn CSRF off for header-authenticated APIs." ai="true"}
 One page of notes for this chapter.
 :::
 
