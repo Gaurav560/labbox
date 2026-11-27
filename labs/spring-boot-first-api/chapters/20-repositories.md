@@ -2,8 +2,9 @@
 `findAll` and `findById` are a start, but real screens ask more specific questions: "all the snacks, A to Z",
 "is this SKU already taken?", "customers who signed up this week". You could fetch everything with
 `findAll()` and filter in Java, but with a real catalogue of a hundred thousand products, that would drag every
-row over the network to keep twenty. The database is built to answer exactly these questions, quickly, with
-indexes. You just have to ask it.
+row over the network to keep twenty. The database is built to answer exactly these questions quickly, with
+**indexes** (sorted lookup lists, like the index at the back of a book, that let it find matching rows without
+reading every row). You just have to ask it.
 
 Spring Data has a trick that feels like magic the first time and is completely logical once you see it:
 you **name a method** in the repository interface, and Spring Data **writes the query from the name**. This
@@ -33,8 +34,9 @@ findByCity("Pune")   ->   select ... from customer where city = ?   (with ? = 'P
 
 It splits the name into parts: **`find`** (fetch entities) **`By`** (here come the conditions) **`City`** (a
 field of `Customer`, compared with the first parameter). The field must exist in the entity, with exactly that
-name (capitalised). A typo, like `findByCitty`, is caught **at start-up** with a clear error ("No property
-'citty' found for type 'Customer'"), not later when a customer clicks something.
+name (capitalised). A typo, like `findByCitty`, is caught **at start-up** with a clear error ("No property 'citty' found for type
+'Customer'"; we tried such a typo on our lab machine and got exactly that wording), not later when a customer
+clicks something.
 
 That is what **derived queries** are: the query is derived from the method name. You declare what you want;
 Spring Data writes the SQL.
@@ -81,7 +83,8 @@ cd 20-repositories && mvn -q -o package -DskipTests && java -jar target/reposito
 curl "localhost:8080/products?category=snacks"
 ```
 
-All five products come back, sweets included, and the log shows one plain `select ... from product`.
+All five products come back, sweets included (on our lab machine the answer started with the Mango kulfi), and the
+log shows one plain `select ... from product`.
 :::
 
 :::step{type=task task=find_by_category title="Your turn: products by category, A to Z"}
@@ -95,17 +98,23 @@ Rebuild, run, and ask again:
 curl "localhost:8080/products?category=snacks"
 ```
 
+On our lab machine:
+
 ```text
-[{"id":5,"name":"Bhel puri",...},{"id":4,"name":"Kachori",...},{"id":3,"name":"Samosa",...}]
+[{"id":5,"name":"Bhel puri","pricePaise":4000,"category":"snacks","sku":"BHE-1"},{"id":4,"name":"Kachori","pricePaise":2200,"category":"snacks","sku":"KAC-1"},{"id":3,"name":"Samosa","pricePaise":1800,"category":"snacks","sku":"SAM-1"}]
 ```
 
 And the log shows the database doing the work:
 
 ```text
-Hibernate: select ... from product p1_0 where p1_0.category=? order by p1_0.name
+Hibernate: select p1_0.id,p1_0.category,p1_0.name,p1_0.price_paise,p1_0.sku from product p1_0 where p1_0.category=? order by p1_0.name
 ```
 
-Only the snacks crossed from the database to Java. Press **Check**.
+(`p1_0` is a short name Hibernate gives the table inside the query; the `?` is filled with `snacks` when the query
+runs.) Only the snacks crossed from the database to Java. Press **Check**.
+
+Usual slips: `OrderBy` placed before `By` (the conditions come first), or calling the new method even when no
+category was given (then nothing matches `null`, and the list is empty).
 :::
 
 :::step{type=example title="Why duplicate SKUs cause a 500 now"}
@@ -124,8 +133,10 @@ HTTP/1.1 500
 And in the server log, deep in the stack trace:
 
 ```text
-Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU ...) VALUES ( /* 1 */ 'KUL-1' )"
+Unique index or primary key violation: "PUBLIC.CONSTRAINT_INDEX_1 ON PUBLIC.PRODUCT(SKU NULLS FIRST) VALUES ( /* 1 */ 'KUL-1' )"
 ```
+
+(That is H2's wording, from our lab machine. PostgreSQL or MySQL would say the same thing in their own words.)
 
 The good news: the database protected the data, as designed. Nothing was saved. The bad news: the **client**
 is told "the server broke" (500), when actually the client asked for something that conflicts with existing
@@ -149,10 +160,10 @@ public ResponseEntity<Customer> create(@RequestBody NewCustomer body) {
 }
 ```
 
-`existsByEmail` becomes a tiny query, something like:
+`existsByEmail` becomes a tiny query. For this chapter's `existsBySku`, our lab machine's log showed:
 
 ```text
-select c1_0.id from customer c1_0 where c1_0.email=? fetch first ? rows only
+select p1_0.id from product p1_0 where p1_0.sku=? fetch first ? rows only
 ```
 
 "Fetch first rows only": the database stops at the first match. It does not load the whole customer, only
@@ -177,7 +188,11 @@ curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '
 curl -i -X POST localhost:8080/products -H "Content-Type: application/json" -d '{"name": "Rasmalai", "pricePaise": 4500, "category": "sweets", "sku": "RAS-1"}'
 ```
 
-`409`, then `201`. Press **Check**.
+`409`, then `201` (that is what our lab machine answered). Press **Check**.
+
+Usual slips: `findBySku` returning a product and testing it for `null` (it works, but loads the whole row; `existsBy`
+asks only yes or no), or saving first and checking after (then the duplicate reaches the database and you are back
+to the 500).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -236,7 +251,7 @@ You can now ask the database real questions, without writing SQL:
 - Let the **database** filter and sort (`where`, `order by`), not Java after `findAll()`.
 - Check with `existsBy...` and answer **409 Conflict** for duplicates; keep the unique constraint as the net.
 
-:::photo{src="/lesson-images/spring/spring-20-notes.webp" alt="Handwritten notes about Repositories: findByNameContaining(...), the method name IS the query, names checked at start-up, let the database filter and sort, duplicate? 409 Conflict" ai="true"}
+:::photo{src="/lesson-images/spring/spring-20-notes.webp" alt="Sketchnote: Derived queries. Name a repository method, and Spring Data writes the query from the name. Flow: findByCategoryOrderByNameAsc, Spring Data reads the name, SQL with where and order by, only matching rows. Remember: the return type chooses the shape; a misspelled field stops the start-up; let the database filter and sort; a duplicate gets 409 Conflict and the constraint stays as the net." ai="true"}
 One page of notes for this chapter.
 :::
 
