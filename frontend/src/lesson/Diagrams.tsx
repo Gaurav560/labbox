@@ -2430,6 +2430,38 @@ function FatJar() {
   );
 }
 
+function StepRows({ rows, label }: { rows: [string, string, BoxTone][]; label: string }) {
+  // A still column of steps joined by arrows (owner's lesson rules: real values, drawn tall for the lesson panel).
+  return (
+    <Svg viewBox={`0 0 440 ${rows.length * 74 - 14}`} label={label}>
+      {rows.map(([title, detail, tone], i) => {
+        const y = 4 + i * 74;
+        return (
+          <g key={i}>
+            <Box x={8} y={y} w={424} h={56} label="" tone={tone} />
+            <text className="dg-label" x={22} y={y + 22}>{title}</text>
+            <text className="dg-note" x={22} y={y + 43}>{detail}</text>
+            {i < rows.length - 1 && <Arrow x1={220} y1={y + 58} x2={220} y2={y + 72} />}
+          </g>
+        );
+      })}
+    </Svg>
+  );
+}
+
+function FirstEndpoint() {
+  // Still: chapter 3's GET /merchants on a lab machine, from the request to the JSON that came back.
+  return (
+    <StepRows label="GET /merchants arrives; Spring finds the method mapped to it in MerchantController; merchants() returns a sorted list; Jackson writes it as a JSON array; the answer is 200 with Content-Type application/json" rows={[
+      ["GET /merchants arrives", "curl -i localhost:8080/merchants", "plain"],
+      ["Spring looks up the mapping", "@GetMapping(\"/merchants\") in MerchantController", "accent"],
+      ["merchants() runs", "returns the List: Annapurna Mess, Book Point, Kirana King", "accent"],
+      ["Jackson writes JSON", "[\"Annapurna Mess\",\"Book Point\",\"Kirana King\"]", "copy"],
+      ["HTTP/1.1 200", "Content-Type: application/json", "plain"],
+    ]} />
+  );
+}
+
 function L4jHttpCall() {
   // Still (owner, 26 November): chapter 7's real call, from the program and the gateway's log.
   const rows: [string, string, BoxTone][] = [
@@ -5205,6 +5237,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "backend-stack": BackendStack,
   "http-conversation": HttpConversation,
   "fat-jar": FatJar,
+  "first-endpoint": FirstEndpoint,
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
   "bean-lifecycle": BeanLifecycle,

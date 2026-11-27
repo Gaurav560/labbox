@@ -2,9 +2,10 @@
 In chapter 1 you were the client: you sent requests with curl and read the answers. In chapter 0 your own
 server answered every request with 404, because nothing in it handled any address.
 
-Today that changes. You will write the server side of an HTTP conversation: a method in your code that
-Spring calls when a request arrives, and whose return value becomes the response. In Spring that is
-called an **endpoint**, and once you have written one, you have the pattern for hundreds.
+Today that changes. You will write the server side of an HTTP conversation: a method in your code that Spring calls
+when a request arrives, and whose return value becomes the response. A method together with the address it
+answers (a method and a path, like `GET /hello`) is called an **endpoint**. Once you have written one, you have
+the pattern for hundreds.
 
 We will build the Shop API's first two endpoints: a greeting, and a list of the shops (merchants) that
 sell on our platform, as JSON.
@@ -21,8 +22,9 @@ two things:
 1. A class marked as a **controller**: "this class contains methods that handle web requests".
 2. On each method, a **mapping**: "this method handles *this method* (GET, POST...) on *this path*".
 
-A controller is just a normal Java class. Spring finds it at start-up (because of its annotation),
-creates one object of it, and from then on, every matching request is routed to one of its methods. You
+A controller is just a normal Java class. Spring finds it at start-up (because of its annotation), creates one
+object of it, and from then on every matching request is routed to one of its methods. ("Routed" means sent to the
+right place, like a letter sorted to the right house.) You
 never create the controller and you never call its methods. Spring does both. (Remember inversion of
 control from chapter 0? This is it, in practice.)
 
@@ -57,9 +59,10 @@ this class at start-up and route requests to it; and *whatever its methods retur
     @GetMapping("/status")
 ```
 
-**`@GetMapping("/status")`** connects this method to **GET requests for the path `/status`**. There is
-one of these for every HTTP method: `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`,
-`@DeleteMapping`. The path must start with `/`.
+**`@GetMapping("/status")`** connects this method to **GET requests for the path `/status`**. There is one of these
+for each common HTTP method: `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping`.
+Write the path starting with `/`, as all Spring code does. (If you forget the slash, Spring adds it: on our lab
+machine `@GetMapping("status")` still answered `/status`. But the slash makes the path clear to every reader.)
 
 ```java
     public String status() {
@@ -67,9 +70,10 @@ one of these for every HTTP method: `@GetMapping`, `@PostMapping`, `@PutMapping`
     }
 ```
 
-A normal Java method. Its **name does not matter** to Spring (call it anything clear); the mapping is what
-connects it to the URL. Whatever it **returns** is sent back to the client as the response body, with
-status `200`. A `String` is sent as plain text: the client receives exactly `ok`.
+A normal Java method. Its **name does not matter** to Spring (call it anything clear); the mapping is what connects
+it to the URL. Whatever it **returns** is sent back to the client as the response body, with status `200`. A
+`String` is sent as plain text: on our lab machine the answer had `Content-Type: text/plain;charset=UTF-8`
+(UTF-8 is the usual way of writing text as bytes) and the body was exactly `ok`.
 
 So the whole conversation looks like this:
 
@@ -82,11 +86,11 @@ GET /status            ->  Spring finds status()  ->  it returns "ok"  ->  HTTP/
 Returning text is nice, but APIs mostly return **data**. Here is the part that feels like magic the first
 time: if your method returns a Java object or a list, **Spring turns it into JSON for you**.
 
-The format itself was named and written down in the early 2000s by **Douglas Crockford**, who noticed that
-JavaScript's way of writing objects made a perfect way to send data between any two programs.
+The format itself was named and written down in 2001 and 2002 by **Douglas Crockford**, an American programmer who
+noticed that JavaScript's way of writing objects made a good way to send data between any two programs.
 
 :::photo{src="/lesson-images/spring/crockford.webp" alt="Douglas Crockford, a smiling man with grey hair, a beard and glasses, in a dark jacket" credit="Robert Claypool" license="CC0" source="https://commons.wikimedia.org/wiki/File:Douglas_Crockford,_February_2013.jpg"}
-Douglas Crockford, who specified JSON.
+Douglas Crockford, who wrote down the JSON format that Spring produces for you in this step.
 :::
 
 ```java
@@ -107,10 +111,11 @@ public class ProductController {
 }
 ```
 
-(A **record** is a short way to write a Java class that just holds data: the fields go in the brackets,
-and Java writes the constructor and the getters for you. You will use them a lot.)
+(A **record** is a short way to write a Java class that just holds data. The fields go in the brackets, and Java
+writes the constructor and a method to read each field for you, named after the field: `id()`, `name()`,
+`pricePaise()`. You will use records a lot.)
 
-The responses:
+The responses (we ran this example on our lab machine):
 
 ```text
 GET /products/featured  ->  {"id":1,"name":"Mango kulfi","pricePaise":2000}
@@ -170,7 +175,7 @@ Open a second terminal with **+**, and ask for the greeting:
 curl -i localhost:8080/hello
 ```
 
-`404`, with a JSON error body. Now stop the server (Ctrl+C in Terminal 1).
+`404`, with a JSON error body like the one you saw in chapter 0. Now stop the server (Ctrl+C in Terminal 1).
 
 One thing to know before you change code: **the running app does not see your edits**. Java compiled your
 code when you built the jar. Every time you change a `.java` file, you build and start the app again. It
@@ -182,13 +187,22 @@ In `MerchantController.java`, at the first TODO, add a method that handles **GET
 and returns the text `Hello from the Shop API!` (exactly that: capital H, capital S, capital A, and the
 exclamation mark).
 
+The steps:
+
+1. Above a new method, write `@GetMapping("/hello")`.
+2. Write a `public` method that returns a `String` (name it `hello`, for example).
+3. In it, return the greeting text.
+
 Use the `StatusController` example from earlier as your pattern. Then rebuild, run, and try:
 
 ```bash run
 curl -i localhost:8080/hello
 ```
 
-You should get `200` and your greeting. Press **Check**.
+You should get `200`, `Content-Type: text/plain;charset=UTF-8` and your greeting. Press **Check**.
+
+Usual slips: the greeting text not exactly the same (a missing `!`, a lower-case letter), the method placed
+outside the class's `{ }`, or a missing import for `GetMapping` (the editor offers to add it).
 :::
 
 :::step{type=try title="See it in the Preview tab"}
@@ -196,11 +210,13 @@ curl is not the only client. Your lab has a small built-in browser: the **Previe
 Terminal. With the app running, click **Preview**. It opens `localhost:8080/hello` from your lab machine,
 and shows your greeting.
 
-You can type another path in its address box, like `/merchants` (not written yet, so for now you will see
-Spring's "Whitelabel Error Page": that is the 404 page Spring shows to browsers).
+You can type another path in its address box, like `/merchants`. It is not written yet, so you will see Spring's
+**Whitelabel Error Page**: the 404 page Spring shows to browsers. Spring sends a small HTML page instead of JSON
+because a browser's request says it prefers HTML (in its `Accept` header).
 
-This is the same thing a real browser would do: send a GET request and display the body. Browsers can
-only easily send GET, though, which is why curl stays our main tool for testing APIs.
+This is what a real browser does: send a GET request and display the body. Typing an address in a browser always
+sends a GET; sending POST, PUT or DELETE needs a form or some JavaScript. That is why curl stays our main tool for
+testing APIs.
 :::
 
 :::step{type=example title="Working with the list before returning it"}
@@ -223,11 +239,20 @@ List<Integer> ranked = scores.stream()                       // take the items o
 `.sorted()` with nothing in the brackets sorts in **natural order**: numbers smallest first, and `String`s
 alphabetically, A to Z. That is exactly what you need. And the original list is never touched: the stream
 builds a brand new one.
+
+Here is where your next method fits, traced on our lab machine once it was written:
+
+:::diagram{name="first-endpoint"}
+GET /merchants on our lab machine, from the request to the JSON answer.
+:::
 :::
 
 :::step{type=task task=merchants title="Your turn: GET /merchants, A to Z"}
 At the second TODO, add a method for **GET `/merchants`** that returns the merchant names **sorted A to Z**,
 as a `List<String>`.
+
+The steps: a `@GetMapping("/merchants")` method that returns `List<String>`; inside it, `MERCHANTS.stream()`,
+then `.sorted()`, then `.toList()`.
 
 Rebuild, run, and try it:
 
@@ -237,6 +262,10 @@ curl -i localhost:8080/merchants
 
 You should see `Content-Type: application/json` and the array
 `["Annapurna Mess","Book Point","Kirana King"]`. Spring and Jackson turned your list into JSON. Press **Check**.
+
+Usual slips: returning `MERCHANTS` itself (then the order is the list's own order, not A to Z), or trying to sort
+`MERCHANTS` in place with `Collections.sort` (a list made with `List.of` cannot be changed, so that throws an
+error).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -301,7 +330,7 @@ You wrote your first two endpoints. You now know:
 - After changing code: stop, build and run again.
 - You can test with curl, and see GET responses in the **Preview** tab.
 
-:::photo{src="/lesson-images/spring/spring-03-notes.webp" alt="Handwritten notes about First endpoints: @RestController, @GetMapping('/hello'), return value = response body, records become JSON, change code: rebuild, rerun" ai="true"}
+:::photo{src="/lesson-images/spring/spring-03-notes.webp" alt="Sketchnote: First endpoints. A controller method plus a mapping becomes an endpoint. Flow: GET /hello arrives, Spring finds the mapping, your method runs, its return value is the body. Remember: @RestController on the class; a String goes out as plain text; records and lists go out as JSON; after a change, rebuild and restart." ai="true"}
 One page of notes for this chapter.
 :::
 
