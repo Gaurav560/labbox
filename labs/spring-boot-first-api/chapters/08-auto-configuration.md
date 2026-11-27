@@ -67,9 +67,10 @@ It is a configuration class with `@Bean` methods. The only new thing is `@AutoCo
 `@Configuration`. That is all an auto-configuration is.
 
 **Every one of Spring Boot's own auto-configurations is written like this.** Somewhere inside the
-`spring-boot-autoconfigure` jar there is a `JacksonAutoConfiguration` class with a `@Bean` method that
-creates the JSON `ObjectMapper`, a `DispatcherServletAutoConfiguration` that creates the part that routes
-your requests, and about 150 more. They are ordinary Java code. You could read them.
+`spring-boot-autoconfigure` jar there is a `JacksonAutoConfiguration` class with a `@Bean` method that creates the
+JSON `ObjectMapper`, a `DispatcherServletAutoConfiguration` that creates the part that routes your requests, and
+many more: the 3.4.1 jar in this lab lists 153 auto-configuration classes (we counted the lines of its list, the
+file described in the next step). They are ordinary Java code. You could read them.
 
 Two questions remain: how does Spring find them, and how do they decide whether to apply? The next two
 steps answer both.
@@ -132,13 +133,17 @@ and run:
 cd 08-auto-configuration && mvn -q -o package -DskipTests && java -jar target/auto-configuration.jar
 ```
 
-The app fails to start, with an error you know from chapter 6:
+The app fails to start, with an error you know from chapter 6. On our lab machine:
 
 ```text
 Parameter 0 of constructor in com.shop.GreetingController required a single bean, but 2 were found:
 	- shopGreeter: defined by method 'shopGreeter' in class path resource [com/shop/ShopConfig.class]
 	- defaultGreeter: defined by method 'defaultGreeter' in class path resource [com/shopkit/greeting/GreetingAutoConfiguration.class]
+
+This may be due to missing parameter name information
 ```
+
+(The last line is the general hint you met in chapter 6; it does not apply here.)
 
 Two `Greeter` beans: the shop's and ShopKit's. In chapter 6 you would have reached for `@Primary`. But think
 about whose problem this really is. The shop did nothing wrong: it just wanted its own greeter. It is the
@@ -159,8 +164,11 @@ Rebuild and run. The app starts. Then:
 curl localhost:8080/greeting
 ```
 
-It should answer `Welcome to the Shop API`: the shop's own greeter. The check also confirms that in an
-app *without* its own greeter, ShopKit still provides `Hello from ShopKit`. Press **Check**.
+It should answer `Welcome to the Shop API`: the shop's own greeter. The check also confirms that in an app
+*without* its own greeter, ShopKit still provides `Hello from ShopKit`. Press **Check**.
+
+Usual slips: the annotation placed on the class or on `shopGreeter` in `ShopConfig` instead of on the
+`defaultGreeter` method. It belongs on the library's default, the bean that should step aside.
 :::
 
 :::step{type=example title="Reading Spring Boot's own decisions"}
@@ -171,22 +179,26 @@ java -jar target/auto-configuration.jar --debug
 ```
 
 A long **CONDITIONS EVALUATION REPORT** scrolls past, before `Started`. It has two big sections:
-**Positive matches** (applied) and **Negative matches** (not applied), each with the reason. Scroll up and
-find these entries (here from the finished project):
+**Positive matches** (applied) and **Negative matches** (not applied), each with the reason. Scroll up and find
+these entries. Here they are from the finished project on our lab machine, picked out of a report of about 1,000
+lines, with long lines wrapped:
 
 ```text
 Positive matches:
    DispatcherServletAutoConfiguration matched:
-      - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet'
+      - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet' (OnClassCondition)
    JacksonAutoConfiguration matched:
-      - @ConditionalOnClass found required class 'com.fasterxml.jackson.databind.ObjectMapper'
+      - @ConditionalOnClass found required class 'com.fasterxml.jackson.databind.ObjectMapper' (OnClassCondition)
 
 Negative matches:
    GreetingAutoConfiguration#defaultGreeter:
       Did not match:
-         - @ConditionalOnMissingBean (types: com.shopkit.greeting.Greeter) found beans of type
-           'com.shopkit.greeting.Greeter' shopGreeter
+         - @ConditionalOnMissingBean (types: com.shopkit.greeting.Greeter; SearchStrategy: all) found beans of
+           type 'com.shopkit.greeting.Greeter' shopGreeter (OnBeanCondition)
 ```
+
+(The name in brackets at the end, like `OnClassCondition`, is the Spring class that checked the condition.
+`SearchStrategy: all` means it looked at every bean in the application context.)
 
 Read them like sentences:
 
@@ -228,8 +240,8 @@ an `ObjectProvider<FestivalBanner>` instead of a `FestivalBanner`. An **ObjectPr
 bean": `getIfAvailable()` returns the bean, or `null` if there is none. So `/banner` answers either the
 banner text or `No festival today`.
 
-Spring Boot uses this constantly. For example, `management.endpoints.web.exposure.include` (chapter 27)
-decides which Actuator endpoints exist, through conditions just like this one.
+Spring Boot uses this constantly. For example, `management.endpoints.web.exposure.include` (chapter 27) decides
+which Actuator endpoints can be reached over the web, through conditions like this one.
 :::
 
 :::step{type=task task=on_property title="Your turn: a festival switch"}
@@ -253,8 +265,12 @@ command line (remember chapter 7: the command line beats the file):
 java -jar target/auto-configuration.jar --shop.festival.enabled=false
 ```
 
-`curl localhost:8080/banner` now answers `No festival today`. One setting, and a bean exists or does not.
-Press **Check**.
+`curl localhost:8080/banner` now answers `No festival today`. One setting, and a bean exists or does not. (With the
+festival on, the debug report lists it under Positive matches: `GreetingAutoConfiguration#festivalBanner matched:
+@ConditionalOnProperty (shop.festival.enabled=true) matched`.) Press **Check**.
+
+Usual slips: `havingValue = true` without quotes (it must be the text `"true"`; without quotes the code does not
+compile), or a different property name in the annotation and in `application.properties`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -318,14 +334,15 @@ Auto-configuration is no longer magic. You know:
 - **`@Bean`** methods in a **`@Configuration`** class create beans for objects you cannot (or do not want
   to) mark with `@Component`. The method name is the bean name.
 - An **auto-configuration** is a configuration class (`@AutoConfiguration`) with `@Bean` methods, listed in
-  `META-INF/spring/...AutoConfiguration.imports` in its jar. Spring Boot's own work exactly like that.
+  `META-INF/spring/...AutoConfiguration.imports` in its jar. Spring Boot's own (153 of them in 3.4.1) work exactly
+  like that.
 - Auto-configurations run **after** your configuration, and are guarded by **conditions**:
   `@ConditionalOnClass` (a library is present), `@ConditionalOnMissingBean` (you did not define your own:
   the default **backs off**), `@ConditionalOnProperty` (a setting switches it).
 - **`ObjectProvider<T>`** injects a bean that may not exist.
 - `--debug` prints the **conditions evaluation report**: every decision, with its reason.
 
-:::photo{src="/lesson-images/spring/spring-08-notes.webp" alt="Handwritten notes about Auto-configuration: @Bean in a @Configuration class, yours first, auto-config after, @ConditionalOnMissingBean, ObjectProvider: maybe a bean, --debug shows every decision" ai="true"}
+:::photo{src="/lesson-images/spring/spring-08-notes.webp" alt="Sketchnote: Auto-configuration. An auto-configuration is ordinary @Bean methods guarded by conditions. Flow: your beans are registered, the .imports lists are read, conditions are checked, defaults are created or skipped. Remember: @ConditionalOnClass, a library is present; @ConditionalOnMissingBean, yours wins and the default backs off; @ConditionalOnProperty, a setting switches it; --debug shows every decision." ai="true"}
 One page of notes for this chapter.
 :::
 
