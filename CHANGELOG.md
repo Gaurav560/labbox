@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 11 rewritten (easy, a little detailed, checked)
+
+- Chapter 11, "Reading the request", to the lesson rules: both tasks list their steps' slips (returning null, a
+  mismatched placeholder name, `<` for `<=`, `==` on text).
+- Checked on a lab machine with the solution and two altered copies. Quoted as they came: product 2, the 404 and
+  400 JSON bodies, `maxPrice=2500`, `sort=price`, `maxPrice=cheap`, and a search with no parameters. Tried and now
+  quoted: a method returning `null` answers `200` with `Content-Length: 0`; `int maxPrice` with `required = false`
+  answers `500` with "Optional int parameter 'maxPrice' is present but cannot be translated into a null value".
+- Added: the `ResponseStatusException` message does not appear in the 404 body (Spring Boot leaves messages out by
+  default; chapter 17).
+- A new sketchnote page, redrawn once (its flow had shown the three annotations as a sequence; they are
+  alternatives).
+
 ## 28 November: Spring Boot chapter 10 rewritten (easy, a little detailed, checked)
 
 - Chapter 10, "How Spring handles a request", to the lesson rules: REST spelled out, why the journey picture plays
