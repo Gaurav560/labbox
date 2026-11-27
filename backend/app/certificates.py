@@ -342,7 +342,7 @@ def image(cert: Certificate, base: str) -> bytes:
 
 @lru_cache(maxsize=128)
 def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters: int, date: str, verify: str = "") -> bytes:
-    """The 1200 x 627 card: cream paper, the lab's woodblock print on the left (Ukiyo), the text, a red seal."""
+    """The 1200 x 627 card: cream paper, the lab's woodblock print on the left (Ukiyo), the text, a round stamp."""
     from PIL import Image, ImageDraw, ImageFont
 
     W, H = 1200, 627
@@ -389,35 +389,87 @@ def _render(cid: str, name: str, lab_id: str, passed: int, total: int, chapters:
     d.text((x, top + 82), name, font=f_name, fill=ink)
     d.text((x, top + 182), "completed the hands-on lab", font=font("inter-latin-400-normal.woff", 22), fill=muted)
     lab = get_lab(lab_id).title
-    d.text((x, top + 218), lab, font=fit(lab, "fraunces-latin-400-italic.woff", 46, usable), fill=ink)
+    d.text((x, top + 218), lab, font=fit(lab, "fraunces-latin-600-normal.woff", 44, usable), fill=ink)  # upright (owner: no cursive)
     facts = f"{passed} of {total} tasks passed on a real machine  ·  {chapters} chapters"
     d.text((x, top + 298), facts, font=font("inter-latin-400-normal.woff", 21), fill=muted)
 
-    d.line((x, H - 150, W - 72 - (112 + 46 + 40 if verify else 0), H - 150), fill=(210, 198, 176), width=1)
+    d.line((x, H - 150, W - 72, H - 150), fill=(210, 198, 176), width=1)
     d.text((x, H - 128), date, font=font("inter-latin-600-normal.woff", 21), fill=ink)
     d.text((x, H - 98), f"Certificate {cid}", font=font("inter-latin-400-normal.woff", 19), fill=muted)
     d.text((x, H - 72), ISSUER, font=font("fraunces-latin-600-normal.woff", 24), fill=ink)
 
-    # The red seal: a small square stamp with the product's name, in the corner (owner: "very small").
-    s = 46
-    sx, sy = W - 72 - s, H - 72 - s
-    d.rounded_rectangle((sx, sy, sx + s, sy + s), radius=5, fill=red)
-    d.rounded_rectangle((sx + 3, sy + 3, sx + s - 3, sy + s - 3), radius=3, outline=(240, 214, 200), width=1)
-    for i, word in enumerate(("Lab", "Box")):
-        f = font("fraunces-latin-600-normal.woff", 14)
-        tw = d.textlength(word, font=f)
-        d.text((sx + (s - tw) / 2, sy + 7 + i * 15), word, font=f, fill=(250, 240, 230))
-
-    # The QR code, left of the seal: it opens /verify/<id>, the server's own record of this certificate.
+    # The QR code in the corner: it opens /verify/<id>, the server's own record of this certificate.
+    qs = 112
+    qx, qy = W - 72 - qs, H - 72 - qs
     if verify:
-        qs = 112
         q = _qr_image(verify, qs).resize((qs, qs), Image.NEAREST)
-        qx, qy = sx - 18 - qs, H - 72 - qs
         img.paste(q, (qx, qy))
         cap = "Scan to verify"
         f = font("inter-latin-400-normal.woff", 15)
         d.text((qx + (qs - d.textlength(cap, font=f)) / 2, qy - 22), cap, font=f, fill=muted)
 
+    # The round rubber stamp, as on the page (owner, 27 November: "this style", "update the stamp"), between the date
+    # and the QR code; upright, in slightly worn red ink.
+    stamp = _stamp(int(date[-4:]) if date[-4:].isdigit() else 0, red, font)
+    sx = (x + 330 + qx - stamp.width) // 2
+    sy = H - 146  # just under the footer rule
+    img.paste(stamp, (sx, sy), stamp)
+
     out = io.BytesIO()
     img.save(out, "JPEG", quality=88, optimize=True, progressive=True)  # a quarter of a PNG's size, for a photo-like print
     return out.getvalue()
+
+def _stamp(year: int, red: tuple[int, int, int], font):
+    """The round stamp: two outer rings, LABBOX BY TELUSKO over the top and HANDS-ON LAB under the bottom (each letter
+    turned to follow the circle), stars at the sides, COMPLETED between two rules and the year. Drawn at twice the
+    size and scaled down for smooth edges; a little speckle wears the ink like a real stamp."""
+    import random
+
+    from PIL import Image, ImageDraw
+
+    S = 2
+    size = 128 * S
+    c = size / 2
+    im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    ink = red + (235,)
+
+    def ring(r: float, w: float):
+        d.ellipse((c - r, c - r, c + r, c + r), outline=ink, width=round(w * S))
+
+    ring(60 * S, 3.6)
+    ring(55 * S, 1.1)
+    ring(36 * S, 1.1)
+
+    def arc_text(text: str, r: float, top: bool, size_px: int, spread: float):
+        f = font("inter-latin-600-normal.woff", size_px * S)
+        n = len(text)
+        for i, ch in enumerate(text):
+            t = (i - (n - 1) / 2) * spread            # degrees from the top (or bottom) centre
+            ang = math.radians(-90 + t if top else 90 - t)
+            gx, gy = c + r * math.cos(ang), c + r * math.sin(ang)
+            g = Image.new("RGBA", (size_px * S * 2, size_px * S * 2), (0, 0, 0, 0))
+            gd = ImageDraw.Draw(g)
+            gd.text((g.width / 2, g.height / 2), ch, font=f, fill=ink, anchor="mm")
+            g = g.rotate(-t if top else t, resample=Image.BICUBIC)
+            im.alpha_composite(g, (round(gx - g.width / 2), round(gy - g.height / 2)))
+
+    arc_text("LABBOX BY TELUSKO", 46.5 * S, True, 10, 9.6)
+    arc_text("HANDS-ON LAB", 46.5 * S, False, 10, 10.4)
+    star = font("inter-latin-600-normal.woff", 9 * S)
+    for sx in (c - 46.5 * S, c + 46.5 * S):
+        d.text((sx, c + 1 * S), "*", font=star, fill=ink, anchor="mm")
+    d.line((c - 40 * S, c - 11 * S, c + 40 * S, c - 11 * S), fill=ink, width=round(1.4 * S))
+    d.line((c - 40 * S, c + 11 * S, c + 40 * S, c + 11 * S), fill=ink, width=round(1.4 * S))
+    d.text((c, c), "COMPLETED", font=font("inter-latin-600-normal.woff", 12 * S), fill=ink, anchor="mm")
+    if year:
+        d.text((c, c + 22 * S), str(year), font=font("inter-latin-600-normal.woff", 9 * S), fill=ink, anchor="mm")
+
+    # wear: clear a few hundred small specks of the ink, the same pattern every time
+    rnd = random.Random(7)
+    px = im.load()
+    for _ in range(2600):
+        x, y = rnd.randrange(size), rnd.randrange(size)
+        if px[x, y][3]:
+            px[x, y] = (0, 0, 0, 0)
+    return im.resize((110, 110), Image.LANCZOS)

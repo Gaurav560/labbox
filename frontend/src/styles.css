@@ -2365,3 +2365,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
    date and the QR as its own item in the footer, covering nothing; upright */
 .cert-foot .cert-stamp { flex: none; align-self: center; width: 100px; height: 100px; color: #c2362c; opacity: .95; pointer-events: none; }
 @media (max-width: 520px) { .cert-foot .cert-stamp { width: 70px; height: 70px; } }
+/* Teams greyed out (owner, 27 November): later than Pro */
+.plan.is-off { opacity: .5; filter: grayscale(1); background: transparent; }
+.plan.is-off:hover { opacity: .7; }

@@ -2,6 +2,9 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- Pricing: the Teams plan is greyed out (owner, 27 November).
+- The certificate's share picture (LinkedIn, X, WhatsApp) has the same round stamp as the page, drawn in Pillow, between
+  the date and the QR code, which moved to the corner; the lab's name on it is upright (owner: "yes, update the stamp").
 - Wording: nothing says "on your own machine" any more (owner: "this is wrong wording"; the machine runs on LabBox and
   opens in the browser). Ukiyo's hero line: "Build real AI apps in your browser. A lab machine with an editor, a
   terminal and real models is ready in about a minute."; the AI lead, course pages, pricing and FAQ say "a lab machine
