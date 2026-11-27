@@ -1,5 +1,20 @@
 # Changelog
 
+## 28 November: Spring Boot chapter 21 rewritten (easy, a little detailed, checked)
+
+- Chapter 21, "Relationships and N+1", to the lesson rules: "basic type" explained; both tasks list their slips
+  (`@JoinColumn` on the wrong side, a wrong `mappedBy` name, `join` without `fetch`, table names in JPQL).
+- Checked on a lab machine with the starter, the solution and two altered copies. Quoted as they came: the
+  starter's `MappingException` (with Hibernate's hint listing the right annotations), Asha's order, the six queries
+  of the `findAll` version, and the single `join fetch` query in full.
+- Corrected: "a post with three comments would appear three times without `distinct`". That was Hibernate 5;
+  Hibernate 6 (this lab) removes the duplicates itself. Tried: without `distinct`, each of the five orders came back
+  once. The lesson now says so and keeps `distinct` as harmless and common. Also: a database round trip "takes a
+  millisecond or more" is now said of a real server (H2 here runs inside the app); "collections are lazy" now says
+  `@OneToMany` lists are lazy by default.
+- A new still picture, `n-plus-one`: the six queries before and the one after, with the real counts. A new
+  sketchnote page, redrawn once (the laziness bullet had lost "by default").
+
 ## 28 November: Spring Boot chapter 20 rewritten (easy, a little detailed, checked)
 
 - Chapter 20, "Derived queries", to the lesson rules: index and Hibernate's `p1_0` alias explained; both tasks list

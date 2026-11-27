@@ -2462,6 +2462,28 @@ function FirstEndpoint() {
   );
 }
 
+function NPlusOne() {
+  // Still (owner's lesson rules): chapter 21's GET /orders on a lab machine, the SQL log before and after join fetch.
+  const before = ["select ... from orders", "items where order_id = 1", "items where order_id = 2", "items where order_id = 3",
+    "items where order_id = 4", "items where order_id = 5"];
+  return (
+    <Svg viewBox="0 0 440 352" label="Before: findAll and lazy items ran 6 queries for 5 orders, one for the orders and one per order. After: join fetch ran 1 query for the same answer">
+      <text className="dg-label" x={8} y={16}>findAll() + lazy items: 6 queries</text>
+      {before.map((q, i) => (
+        <g key={i}>
+          <Box x={8} y={26 + i * 34} w={424} h={28} label="" tone={i === 0 ? "accent" : "plain"} />
+          <text className="dg-note dg-code" x={20} y={45 + i * 34}>{`${i + 1}. ${q}`}</text>
+        </g>
+      ))}
+      <text className="dg-label" x={8} y={256}>join fetch: 1 query, the same answer</text>
+      <Box x={8} y={266} w={424} h={44} label="" tone="copy" />
+      <text className="dg-note dg-code" x={20} y={285}>1. select distinct ... from orders</text>
+      <text className="dg-note dg-code" x={20} y={302}>   join order_item on orders.id = order_id</text>
+      <text className="dg-note" x={8} y={338}>5 orders: N + 1 = 6 round trips before, 1 after.</text>
+    </Svg>
+  );
+}
+
 function L4jHttpCall() {
   // Still (owner, 26 November): chapter 7's real call, from the program and the gateway's log.
   const rows: [string, string, BoxTone][] = [
@@ -5238,6 +5260,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "http-conversation": HttpConversation,
   "fat-jar": FatJar,
   "first-endpoint": FirstEndpoint,
+  "n-plus-one": NPlusOne,
   "spring-timeline": SpringTimeline,
   "startup-sequence": StartupSequence,
   "bean-lifecycle": BeanLifecycle,

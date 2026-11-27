@@ -94,11 +94,14 @@ mapping. Run the app:
 cd 21-relationships && mvn -q -o package -DskipTests && java -jar target/relationships.jar
 ```
 
-It fails at start-up. Among the error lines:
+It fails at start-up. Among the error lines, on our lab machine:
 
 ```text
-Caused by: org.hibernate.MappingException: Basic collection has element type 'com.shop.order.OrderItem' which is not a known basic type
+Caused by: org.hibernate.MappingException: Basic collection has element type 'com.shop.order.OrderItem' which is not a known basic type (attribute is not annotated '@ElementCollection', '@OneToMany', or '@ManyToMany')
 ```
+
+(A "basic type" is a simple value that fits in one column, like a number or a text. Hibernate even lists the
+annotations that would make the list valid.)
 
 Hibernate looked at `CustomerOrder.items`, a list of `OrderItem`s, and tried to store it like a plain value in
 a column, which is impossible. The same goes for `OrderItem.order`: a whole `CustomerOrder` cannot fit in one
@@ -122,7 +125,11 @@ curl localhost:8080/orders/1
 {"id":1,"customer":"Asha","items":2,"totalPaise":9400}
 ```
 
-Two items: 2 x Rs 20 + 3 x Rs 18 = Rs 94. Press **Check**.
+Two items: 2 x Rs 20 + 3 x Rs 18 = Rs 94 (9400 paise). That is the answer our lab machine gave. Press **Check**.
+
+Usual slips: `@JoinColumn` on `CustomerOrder.items` instead of on `OrderItem.order` (the column lives in
+`order_item`), `mappedBy = "orders"` or `"customerOrder"` (it must be the *field's* name in `OrderItem`: `order`),
+or annotations imported from a package other than `jakarta.persistence`.
 :::
 
 :::step{type=concept title="Lazy loading: items arrive when you touch them"}
@@ -158,7 +165,7 @@ java -jar target/relationships.jar --spring.jpa.show-sql=true
 curl localhost:8080/orders
 ```
 
-Count the queries in the log:
+Count the queries in the log. On our lab machine (the item columns shortened to `...`):
 
 ```text
 Hibernate: select co1_0.id,co1_0.customer from orders co1_0
@@ -172,8 +179,8 @@ Hibernate: select ... from order_item i1_0 where i1_0.order_id=?
 **One** query for the orders, then **one more per order**, as each order's lazy list is touched. Five orders,
 six queries. That is **N+1**: N orders, plus 1.
 
-Six queries sounds harmless. But each one is a round trip to the database server, typically a millisecond or
-more over the network. With 500 orders on an admin page, it is 501 round trips, and the page takes seconds. The
+Six queries sounds harmless. But on a real server each one is a round trip to the database server over the network,
+which typically takes a millisecond or more. (Here, H2 runs inside the app, so a round trip is much cheaper.) With 500 orders on an admin page, it is 501 round trips, and the page takes seconds. The
 Java code looks the same either way, which is why this problem hides so well. The SQL log is how you see it.
 :::
 
@@ -191,11 +198,20 @@ List<Post> findAllWithComments();
 
 - `select p from Post p`: "posts" (the entity `Post`, called `p`).
 - `join fetch p.comments`: "and fetch each post's `comments` in the same query".
-- `distinct`: a join returns one row per comment, so a post with three comments would appear three times;
-  `distinct` removes the duplicates from the result list.
+- `distinct`: in SQL, a join returns one row per comment, so a post with three comments comes back as three rows.
+  Older Hibernate (version 5) then put that post three times in your list, and `distinct` removed the copies.
+  Hibernate 6, the version in this lab, removes them by itself: we tried the query without `distinct` on our lab
+  machine, and each order still came back once. You will see `distinct` in a great deal of existing code, and it
+  does no harm, so this chapter keeps it.
 
 Hibernate turns it into one SQL `select ... from post join comment on ...`, and every post comes back with its
 comments already loaded. No lazy loading, no extra queries.
+
+Here is what this does for our shop, measured on our lab machine once the task below was done:
+
+:::diagram{name="n-plus-one"}
+GET /orders on our lab machine: six queries before the fix, one after, for the same five orders.
+:::
 :::
 
 :::step{type=task task=fix_n_plus_one title="Your turn: one query for the order list"}
@@ -209,7 +225,13 @@ Rebuild, run with `--spring.jpa.show-sql=true`, and request `/orders` again. Now
 Hibernate: select distinct co1_0.id,co1_0.customer,i1_0.order_id,i1_0.id,... from orders co1_0 join order_item i1_0 on co1_0.id=i1_0.order_id
 ```
 
-Same JSON answer, one round trip instead of six. The check counts the SQL statements. Press **Check**.
+That is the query our lab machine logged, in full: `select distinct co1_0.id,co1_0.customer,i1_0.order_id,i1_0.id,
+i1_0.price_paise,i1_0.product,i1_0.quantity from orders co1_0 join order_item i1_0 on co1_0.id=i1_0.order_id`. Same
+JSON answer, one round trip instead of six. The check counts the SQL statements. Press **Check**.
+
+Usual slips: `join` without `fetch` (that joins in the query but still leaves the lists lazy, so the extra queries
+come back), or writing table names (`orders`, `order_item`) in JPQL instead of the entity and field names
+(`CustomerOrder`, `o.items`).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -269,12 +291,13 @@ You can now map and load related data, efficiently:
 - A **foreign key** column on the "many" side links rows: one order, many items.
 - **`@ManyToOne` + `@JoinColumn(name = "...")`** on the owning (many) side; **`@OneToMany(mappedBy = "...")`** on
   the other; **`cascade = CascadeType.ALL`** to save and delete them together.
-- Collections are **lazy**: loaded when first touched, inside an open session (`@Transactional`).
+- `@OneToMany` collections are **lazy** by default: loaded when first touched, inside an open session
+  (`@Transactional`).
 - **N+1**: a list of N entities plus one query per entity for a lazy relationship. Spot it in the SQL log.
 - Fix it with **`@Query("select distinct o from Order o join fetch o.items")`** (JPQL talks about entities and fields).
 - Return **DTOs**, not entities with relationships.
 
-:::photo{src="/lesson-images/spring/spring-21-notes.webp" alt="Handwritten notes about Relationships: @ManyToOne + @JoinColumn, @OneToMany(mappedBy = ...), lazy: loaded when touched, N+1: one query per row!, fix with join fetch" ai="true"}
+:::photo{src="/lesson-images/spring/spring-21-notes.webp" alt="Sketchnote: Relationships and N+1. A foreign key on the many side links rows; JPA maps it to Java references. Flow: @ManyToOne with @JoinColumn, @OneToMany with mappedBy, lazy list, join fetch. Remember: @OneToMany lists are lazy by default and load when touched; N+1 means one query per row; read the SQL log; join fetch loads them in one query." ai="true"}
 One page of notes for this chapter.
 :::
 
