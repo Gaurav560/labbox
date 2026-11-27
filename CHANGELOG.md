@@ -2,6 +2,11 @@
 
 ## 27 November: the FDE spotlight, picture first; compact AI rows with a Micro tag
 
+- "Explore more AI labs" heads the rows under the FDE spotlight; the FDE tag line "The hottest job in AI." is red;
+  the share options are one quiet line of coloured marks and names (owner: "try something else"); a little more space
+  between the certificate's date, stamp and QR code.
+- Ukiyo's sign-in: Google and GitHub as ruled rows (the mark on a paper square, a serif name, an arrow and a
+  vermilion rule on hover) instead of boxes (owner: "apart from rectangular boxes ... can you do something").
 - The certificate section's share options are a ruled grid of three columns, each the platform's mark in its own
   colour and its name, instead of round buttons (owner: "some other design, not circular").
 - The FDE tag line is now just "New · The hottest job in AI." (owner: "remove learn it by doing it").
