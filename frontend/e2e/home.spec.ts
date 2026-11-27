@@ -20,7 +20,7 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   expect((await page.request.get("/favicon.svg")).headers()["content-type"]).toContain("svg");
   // The hero shows a framed print with its credit (Ukiyo, owner 25 November).
   await expect(page.locator(".uh-hero-pic img")).toBeVisible();
-  await expect(page.locator(".uh-term")).toContainText("labbox start");
+  await expect(page.locator(".uh-term")).toContainText("python evals.py"); // the FDE course's eval gate (27 November)
   await expect(page.locator(".uh-promise")).toHaveText("No fluff. No tutorial hell. Only action.");
   await expect(page.locator(".uh-hero-art figcaption")).toContainText("Hiroshige");
   // Start a lab: the lab's real stack packs itself into one container, line by line, then a tick and Start.
@@ -54,8 +54,20 @@ test("home page for visitors leads to sign up and onboarding", async ({ page }) 
   await expect(languages).toHaveAttribute("href", "/login?signup=1");
   await expect(page.locator("#labs .u-row")).toHaveCount(0);
   await expect(page.locator("#labs .uh-all a")).toHaveText(/^See all \d+ labs →$/);
-  // The AI section (pagoda, "24 labs ... your own GPT") is off for now (owner, 25 November); "AI labs" opens the AI labs.
-  await expect(page.locator("#ai")).toHaveCount(0);
+  // The AI labs come first, right under the hero, with the Forward Deployed Engineer course in the spotlight
+  // (owner, 27 November); its demo plays a real run: the model obeys the email, the limit in code refers the claim.
+  const ai = page.locator("#ai");
+  await expect(ai.locator(".ai-spot h3")).toHaveText("Forward Deployed Engineer");
+  await expect(ai.locator(".ai-spot-go")).toHaveAttribute("href", "/login?signup=1");
+  await expect(ai.locator(".ai-cards li")).toHaveCount(5);
+  await ai.locator(".ai-demo").scrollIntoViewIfNeeded();
+  await expect(ai.locator(".ai-demo-stamp")).toHaveClass(/is-on/, { timeout: 20_000 });
+  await expect(ai.locator(".ai-demo-fields li.is-bad")).toContainText("100000");
+  expect(await page.evaluate(() => {
+    const hero = document.querySelector("main")!.firstElementChild!;
+    return !!hero.nextElementSibling?.matches("#ai, :has(> #ai)");
+  })).toBe(true);
+  // "AI labs" in the menu still opens the AI labs (owner, 25 November).
   await expect(page.locator(".home-nav").getByRole("link", { name: "AI labs" })).toHaveAttribute("href", "/labs?category=ai");
   await expect(page.locator("#inside")).toHaveCount(0); // the Inside a lab section is gone (owner, 25 November)
   await expect(page.locator("#labs .uh-panel", { hasText: "DevOps" })).toContainText(/\d+ labs?/);

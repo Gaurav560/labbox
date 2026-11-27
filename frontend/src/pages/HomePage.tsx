@@ -4,12 +4,13 @@ import { api, type CatalogLab } from "../api";
 import { useAuth } from "../auth";
 import Logo from "../components/Logo";
 import { Copyright, SiteLinks } from "../components/SiteFooter";
+import HomeAiLabs from "../components/HomeAiLabs";
 import { HomeFaq } from "../components/HomeSections";
 import HomeCertificate from "../components/HomeCertificate";
 import UkiyoMachine from "../components/UkiyoMachine";
 import { useTyped } from "../components/useTyped";
 import { byCategory, TRACK_LABEL } from "../components/UkiyoDirectory";
-import { TRACK_INK, TrackArt } from "../components/UkiyoArt";
+import { printCredit, TRACK_INK, TrackArt } from "../components/UkiyoArt";
 import { SITE } from "../site";
 import { useTheme } from "../theme";
 
@@ -37,6 +38,9 @@ export default function HomePage() {
     <Link className="h-btn h-btn-primary" to="/login?signup=1">Start free →</Link>
   );
   const allLabs = user ? "/labs" : "/login?signup=1";
+  const labLink = (lab: CatalogLab) => (user ? `/courses/${lab.id}` : "/login?signup=1");
+  const aiCount = live.filter((l) => l.track === "ai").length;
+  const fdeCredit = printCredit("forward-deployed-engineer");
 
   return (
     <div className="home u-home">
@@ -78,7 +82,20 @@ export default function HomePage() {
           </figure>
         </section>
 
-
+        {/* AI labs first, with the Forward Deployed Engineer course in the spotlight (owner, 27 November) */}
+        <div className="uh-ai">
+          <HomeAiLabs
+            labs={live}
+            labLink={labLink}
+            art={(lab) => <img src={`/ukiyo/labs/${lab.id}.webp`} alt="" loading="lazy" />}
+            spotArt={<>
+              <img src="/ukiyo/labs/forward-deployed-engineer.webp" alt={fdeCredit ? `Woodblock print: ${fdeCredit}` : ""} loading="lazy" />
+              {fdeCredit && <span className="ai-spot-credit">{fdeCredit}</span>}
+            </>}
+            title={<>Build with real models. <em>Start with the job itself.</em></>}
+            lead={`${aiCount} AI courses, each a real build on your own machine: model calls, RAG search, agents and evals, through the LabBox gateway.`}
+          />
+        </div>
 
         <section id="machine" className="uh-section uh-machine" aria-labelledby="machine-title">
           <UkiyoMachine signedIn={!!user} />
@@ -169,13 +186,14 @@ export default function HomePage() {
 
 
 /** The hero's lab session, typed over the print on a loop (still with reduced motion). */
+// Real output from the Forward Deployed Engineer course: chapter 15's eval gate, then chapter 21's smoke test.
 const HERO_SESSION = [
-  "$ labbox start langchain",
-  "✓ machine ready in 58 s",
-  "$ python agent.py",
-  "> Which train leaves first?",
-  "  The 7:40 to Ooty, platform 2.",
-  "✓ task passed  +20 XP",
+  "$ python evals.py",
+  "  all fields     73.3% → 80.0%",
+  "  incident_date  83.3% → 80.0%",
+  "✗ gate: FAIL, incident_date fell",
+  "$ python smoke.py",
+  "✓ smoke: 3 of 3 passed",
 ];
 
 function HeroTerm() {
@@ -183,7 +201,7 @@ function HeroTerm() {
   const line = (text: string, i: number | string) =>
     text.startsWith("$ ")
       ? <div key={i}><span className="uh-term-prompt">learner:~$</span> {text.slice(2)}</div>
-      : <div key={i} className={text.startsWith("✓") ? "uh-term-ok" : "uh-term-out"}>{text}</div>;
+      : <div key={i} className={text.startsWith("✓") ? "uh-term-ok" : text.startsWith("✗") ? "uh-term-bad" : "uh-term-out"}>{text}</div>;
   return (
     <div className="uh-term" aria-label="A lab terminal" role="img">
       {shown.map((t, i) => line(t, i))}

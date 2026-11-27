@@ -1,5 +1,24 @@
 # Changelog
 
+## 27 November: AI labs first on the home page, the Forward Deployed Engineer course in the spotlight
+
+- **The AI labs sit right under the hero on both designs** (owner: "ai section labs at the forefront on the homepage,
+  with cool animation, so the forward deployed engineer gets the max visibility"). One shared component,
+  `frontend/src/components/HomeAiLabs.tsx`: a spotlight for the Forward Deployed Engineer course (chapters, tasks,
+  hours, Start) with a playing demo, then the five other AI labs, which rise in one after another as the section
+  scrolls into view.
+- **The demo is a real run** (chapter 17's attack A): a claim email for Rs 15,750 types in with a hidden note to record
+  Rs 1,00,000; the model's six fields fill in one by one, amount_rs 100000 marked; code checks the Rs 50,000 pilot
+  limit and stamps "Refer to an adjuster". It plays only while on screen and shows the last frame with reduced motion.
+- **Current design:** a slow light runs round the spotlight's border; the ship photo from chapter 1 (U.S. Navy, public
+  domain); the hero pill reads "New: the Forward Deployed Engineer course" and jumps to the section; the old "24 labs
+  launching" block is gone, and the numbers row counts the live AI courses.
+- **Ukiyo:** paper and fine rules, a ruled claim ledger, a straight vermilion seal for the decision, a vermilion rule
+  that draws across the spotlight, the course's Hokusai print and each AI lab's own print. The hero terminal now types
+  the course's real eval gate and smoke test. The menu's "AI labs" still opens the AI labs (owner, 25 November).
+- Browser tests: the home test checks the spotlight, the five cards, the demo's last frame and that the section comes
+  right after the hero.
+
 ## 27 November: a new course, Forward Deployed Engineer
 
 - **New AI course, `forward-deployed-engineer`** (owner, before sleeping: "scrape the whole internet for the Forward
