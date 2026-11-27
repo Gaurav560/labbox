@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 27 Nov, morning: FDE Part 3 (chapters 8 to 13: gateway and cost, extraction, cited answers, tools, MCP server, day-five demo) built and captured against the real model through the gateway (author account). Real findings now taught: dates without a year came back as 2023; the model said a policy was not in force on a date inside its period; 15 of 30 calls hit the gateway's rate limit. 4 photos, 6 notes; test-lab green.
 - 27 Nov, 05:30 IST: live site deployed (aec912d: Google and GitHub only, certificates); the owner's live account linked to their email. FDE Part 2 (chapters 4 to 7: messy data, database and SQL injection, legacy XML with backoff, data contract) built with 4 photos and 4 notes; test-lab green.
 - 27 Nov, night: NEW COURSE Forward Deployed Engineer (owner asleep, approved unattended): research done (Wikipedia, a16z, OpenAI and Anthropic postings, Udemy/fde.academy/FDE Masters syllabi); 22 chapters planned; Part 1 (chapters 1 to 3) built: code, checks, lessons, 3 photos, 3 notes pages; test-lab green.
 - 26 Nov, 04:20 IST: LangGraph done (24 of 24), unattended (owner asleep); test-lab green; test machines removed; no

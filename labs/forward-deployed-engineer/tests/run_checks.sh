@@ -15,6 +15,12 @@ messy-data|04-messy-data|parse_amount clean_export
 customer-database|05-customer-database|policy_for_claim lapsed_claims
 legacy-system|06-legacy-system|fetch_policy retry_busy
 data-contract|07-data-contract|claim_model contract_report
+first-call|08-first-call|ask_model call_cost
+extraction|09-extraction|extract_claim safe_extract
+policy-lookup|10-policy-lookup|find_clauses cited_answer
+tools|11-tools|policy_tool tool_loop
+mcp-server|12-mcp-server|mcp_tools tool_errors
+day-five-demo|13-day-five-demo|triage_endpoint input_guard
 "
 
 fail_all() { # tasks message
