@@ -129,7 +129,7 @@ export function FaqPage() {
  * Pricing (owner, 27 November: "plans, no prices yet"; UI only). Free is what every account has today; Pro and Teams
  * are planned, so they carry no price and no buy button. Every line on Free must stay true of the app as it is.
  */
-type Plan = { id: string; name: string; price: string; note: string; lines: string[]; cta: ReactNode; soon?: boolean };
+type Plan = { id: string; name: string; price: string; note: string; lines: string[]; cta: ReactNode; soon?: boolean; off?: boolean };
 
 export function PricingPage() {
   const { user } = useAuth();
@@ -156,7 +156,7 @@ export function PricingPage() {
       cta: <a className="btn" href={`mailto:${SITE.contactEmail}?subject=${encodeURIComponent("LabBox Pro")}`}>Tell me when it launches</a>,
     },
     {
-      id: "teams", name: "Teams", price: "Coming soon", note: "For colleges and companies", soon: true,
+      id: "teams", name: "Teams", price: "Coming soon", note: "For colleges and companies", soon: true, off: true, // greyed out (owner, 27 November)
       lines: [
         "Everything in Pro, for each member",
         "Invite a class or a team to the same labs",
@@ -170,7 +170,7 @@ export function PricingPage() {
     <InfoLayout wide title="Pricing" intro={<p>{SITE.product} is free while Pro and Teams are being built. Prices are not set yet; nothing here asks for payment.</p>}>
       <div className="pricing">
         {plans.map((p) => (
-          <section key={p.id} className={`plan ${p.soon ? "is-soon" : "is-now"}`} aria-labelledby={`plan-${p.id}`}>
+          <section key={p.id} className={`plan ${p.soon ? "is-soon" : "is-now"} ${p.off ? "is-off" : ""}`} aria-labelledby={`plan-${p.id}`}>
             <header>
               <h2 id={`plan-${p.id}`}>{p.name}</h2>
               <p className="plan-price">{p.price}</p>

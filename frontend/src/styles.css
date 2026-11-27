@@ -2523,3 +2523,6 @@ a.metro-topic:hover { text-decoration: none; color: var(--text); background: col
 @media (max-width: 520px) { .cert-foot .cert-stamp { width: 70px; height: 70px; } }
 .cert-sheet .cert-foot .cert-stamp { color: #e0655c; }
 :root[data-theme="light"] .cert-sheet .cert-foot .cert-stamp { color: #c2362c; }
+/* Teams greyed out (owner, 27 November): later than Pro */
+.plan.is-off { opacity: .5; filter: grayscale(1); background: transparent; }
+.plan.is-off:hover { opacity: .7; }
