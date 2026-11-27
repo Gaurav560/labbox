@@ -1,0 +1,362 @@
+[
+ {
+  "email_id": "E-01",
+  "fields": {
+   "policy_no": "DS-POL-40000",
+   "vehicle_reg": "MH12AB1234",
+   "incident_date": "2026-10-03",
+   "incident_type": "accident",
+   "amount_rs": 12500,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-02",
+  "fields": {
+   "policy_no": "DS-POL-40111",
+   "vehicle_reg": "MH14CD4321",
+   "incident_date": "2026-10-05",
+   "incident_type": "theft",
+   "amount_rs": 45000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-03",
+  "fields": {
+   "policy_no": "DS-POL-40148",
+   "vehicle_reg": "MH12EF5678",
+   "incident_date": "2023-10-06",
+   "incident_type": "flood",
+   "amount_rs": null,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-04",
+  "fields": {
+   "policy_no": "DS-POL-40185",
+   "vehicle_reg": "MH12GH9012",
+   "incident_date": "2026-10-04",
+   "incident_type": "glass",
+   "amount_rs": 8900,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-05",
+  "fields": {
+   "policy_no": null,
+   "vehicle_reg": "MH12JK3456",
+   "incident_date": "2023-10-07",
+   "incident_type": "accident",
+   "amount_rs": 18000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-06",
+  "fields": {
+   "policy_no": "DS-POL-40222",
+   "vehicle_reg": "MH14AB7788",
+   "incident_date": "2026-10-08",
+   "incident_type": "fire",
+   "amount_rs": 420000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-07",
+  "fields": {
+   "policy_no": "DS-POL-40259",
+   "vehicle_reg": "MH12CD1122",
+   "incident_date": "2026-10-01",
+   "incident_type": "accident",
+   "amount_rs": 6200,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-08",
+  "fields": {
+   "policy_no": "DS-POL-40296",
+   "vehicle_reg": "MH12KL4455",
+   "incident_date": "2026-10-09",
+   "incident_type": "other",
+   "amount_rs": 32000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-09",
+  "fields": {
+   "policy_no": "DS-POL-40333",
+   "vehicle_reg": "MH12MN6677",
+   "incident_date": "2026-10-10",
+   "incident_type": "accident",
+   "amount_rs": 4500,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-10",
+  "fields": {
+   "policy_no": "DS-POL-40370",
+   "vehicle_reg": "MH14PQ8899",
+   "incident_date": "2026-10-11",
+   "incident_type": "theft",
+   "amount_rs": 560000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-11",
+  "fields": {
+   "policy_no": "DS-POL-40407",
+   "vehicle_reg": "MH12RS1010",
+   "incident_date": "2023-10-12",
+   "incident_type": "accident",
+   "amount_rs": 3800,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-12",
+  "fields": {
+   "policy_no": "DS-POL-40444",
+   "vehicle_reg": "MH12TU2020",
+   "incident_date": "2023-10-02",
+   "incident_type": "accident",
+   "amount_rs": null,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-13",
+  "fields": {
+   "policy_no": "DS-POL-40481",
+   "vehicle_reg": "MH14VW3030",
+   "incident_date": "2026-10-13",
+   "incident_type": "flood",
+   "amount_rs": 9750,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-14",
+  "fields": {
+   "policy_no": "DS-POL-40518",
+   "vehicle_reg": "MH12XY4040",
+   "incident_date": "2026-10-14",
+   "incident_type": "glass",
+   "amount_rs": 11200,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-15",
+  "fields": {
+   "policy_no": "DS-POL-40555",
+   "vehicle_reg": "MH14AA5050",
+   "incident_date": "2026-10-15",
+   "incident_type": "accident",
+   "amount_rs": 68000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-16",
+  "fields": {
+   "policy_no": "ds-pol-40592",
+   "vehicle_reg": "MH12BB6060",
+   "incident_date": "2026-10-16",
+   "incident_type": "accident",
+   "amount_rs": 7000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-17",
+  "fields": {
+   "policy_no": "DS-POL-40629",
+   "vehicle_reg": "MH12CC7070",
+   "incident_date": "2023-10-17",
+   "incident_type": "theft",
+   "amount_rs": null,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-18",
+  "fields": {
+   "policy_no": "DS-POL-40666",
+   "vehicle_reg": "MH12DD8080",
+   "incident_date": "2026-10-18",
+   "incident_type": "accident",
+   "amount_rs": 24600,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-19",
+  "fields": {
+   "policy_no": "DS-POL-40703",
+   "vehicle_reg": "MH14EE9090",
+   "incident_date": "2026-10-19",
+   "incident_type": "flood",
+   "amount_rs": 145000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-20",
+  "fields": {
+   "policy_no": "DS-POL-40740",
+   "vehicle_reg": "MH12FF1212",
+   "incident_date": "2026-10-20",
+   "incident_type": "accident",
+   "amount_rs": 1900,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-21",
+  "fields": {
+   "policy_no": "DS-POL-40777",
+   "vehicle_reg": "MH12GG2323",
+   "incident_date": "2026-10-21",
+   "incident_type": "fire",
+   "amount_rs": 52000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-22",
+  "fields": {
+   "policy_no": "DS-POL-40814",
+   "vehicle_reg": "MH12HH3434",
+   "incident_date": "2026-10-22",
+   "incident_type": "glass",
+   "amount_rs": 14350,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-23",
+  "fields": {
+   "policy_no": "DS-POL-40851",
+   "vehicle_reg": "MH12JJ4545",
+   "incident_date": "2026-10-23",
+   "incident_type": "accident",
+   "amount_rs": 9300,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-24",
+  "fields": {
+   "policy_no": "DS-POL-40370",
+   "vehicle_reg": "MH14HJ5656",
+   "incident_date": null,
+   "incident_type": "other",
+   "amount_rs": 61000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-25",
+  "fields": {
+   "policy_no": "DS-POL-40888",
+   "vehicle_reg": "MH14KK5656",
+   "incident_date": "2026-10-25",
+   "incident_type": "theft",
+   "amount_rs": 38000,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-26",
+  "fields": {
+   "policy_no": "DS-POL-40925",
+   "vehicle_reg": "MH12LL6767",
+   "incident_date": "2026-10-26",
+   "incident_type": "accident",
+   "amount_rs": 6800,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-27",
+  "fields": {
+   "policy_no": "DS-POL-40962",
+   "vehicle_reg": "MH12MM7878",
+   "incident_date": "2026-10-27",
+   "incident_type": "other",
+   "amount_rs": 27400,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-28",
+  "fields": {
+   "policy_no": "DS POL 40999",
+   "vehicle_reg": "MH12NN8989",
+   "incident_date": "2026-10-28",
+   "incident_type": "accident",
+   "amount_rs": 11000,
+   "photos_attached": false
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-29",
+  "fields": {
+   "policy_no": "DS-POL-41036",
+   "vehicle_reg": "MH12PP9090",
+   "incident_date": "2026-10-29",
+   "incident_type": "glass",
+   "amount_rs": 5600,
+   "photos_attached": true
+  },
+  "problem": null
+ },
+ {
+  "email_id": "E-30",
+  "fields": {
+   "policy_no": "DS-POL-41073",
+   "vehicle_reg": "MH12QQ1313",
+   "incident_date": "2026-10-30",
+   "incident_type": "accident",
+   "amount_rs": 15750,
+   "photos_attached": true
+  },
+  "problem": null
+ }
+]
