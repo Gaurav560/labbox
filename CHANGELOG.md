@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Java chapter 12 rewritten (easy, a little detailed, checked)
+
+- Java chapter 12, "Generics, records and enums": unboxing named where `int number = shelf.second()` needs it; the
+  "javac refuses" claims now quote the real errors (`Integer cannot be converted to String`, and "the switch
+  expression does not cover all possible input values" for both the enum switch and the sealed switch, each tried
+  by removing an arm); what the starters print now said (`Loan[title=  Dune , days=14]`, `0 days was accepted`,
+  `null`).
+- Checked on a lab machine: `Pair.java`, `Days.java` with its stack trace, `Kinds.java`, and both tasks. Slips
+  added and tried: `title.strip()` not stored, the 60-day edge, `.replace(" ", "_")` (gives `SCIENCE___FICTION`,
+  refused by `valueOf`). New sketchnote page (redrawn once: "a switch over an enum must cover every value" is true
+  of switch expressions, not every switch). Part 2 complete.
+
 ## 28 November: Java chapter 11 rewritten (easy, a little detailed, checked)
 
 - Java chapter 11, "Collections": two claims tested and corrected. "`get` takes about the same time with 10 books
