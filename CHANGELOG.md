@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: JavaScript chapter 9 rewritten (easy, a little detailed, checked)
+
+- Chapter 9, "Objects": every output re-run on a lab machine. The deep dive said the array form of destructuring was
+  shown in chapter 8; chapter 8 showed the spread, which is something else. The array form is now shown
+  (`const [first, second] = playlist;`). Strict mode explained where `Object.freeze` mentions it, with both behaviours
+  tried and the real error quoted; the shallow-copy claim tried (`copy.album.name` changed the original).
+- Braces and `song[key]` explained; the cart loop's output shown; the quick check's `TypeError: Assignment to constant
+  variable.` quoted. How to lower a price by a percent and round to two decimals is now in the lesson (17.991 to 17.99).
+- Slips added and tried: forgetting `qty` (35), changing the item in place, a new object without `...item`, and
+  `price - percent` (10 and 949). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 8 rewritten (easy, a little detailed, checked)
 
 - Chapter 8, "Arrays": every output re-run on a lab machine. "Plain sort() sorts it like a dictionary" was not true (a

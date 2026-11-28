@@ -6,7 +6,7 @@ const song = { title: "Monsoon Drive", liked: false };
 song.liked = true;
 ```
 
-No error. The song is now liked. A `const` that changed? By the end of this chapter you will see that nothing broke
+No error. The song is now liked. A `const` that changed? (We ran it: no error at all.) By the end of this chapter you will see that nothing broke
 the rule, and you will understand the single most important idea in JavaScript data: names point at things.
 
 A song is more than a title. It has a length, a like, a count of plays. An **object** keeps all of that together,
@@ -29,7 +29,9 @@ song.liked = true;  // change a property
 song.plays = 1;     // add a new one
 ```
 
-Use the dot when you know the name while writing the code; use `["..."]` when the name is in a variable.
+The braces `{ }` hold the properties, each written `name: value`, with commas between them. Use the dot when you
+know the name while writing the code; use `["..."]` when the name is in a variable: with `const key = "seconds";`,
+`song[key]` is `245`.
 
 :::picture{name="form-card" concept="An object is a record with labels"}
 An object is a filled-in form: every value sits next to its label.
@@ -94,7 +96,8 @@ for (const line of cart) {
 }
 ```
 
-Every shopping cart, playlist and invoice you will ever build looks like this.
+It prints `earphones 799` and `cable 300` (we ran it). Every shopping cart, playlist and invoice you will ever build
+looks like this.
 
 :::picture{name="cart-shelves" concept="Arrays of objects"}
 Each shelf in the cart holds one record with the same labels.
@@ -130,7 +133,10 @@ Open `cart.js` and make `cartTotal(cart)` add up `price * qty` for every line of
 cd /workspace/09-objects && node cart.js
 ```
 
-Then press **Check**.
+Before you start it prints `0` and the item unchanged. Then press **Check**.
+
+The usual slip: adding the prices and forgetting `qty`. That gives `35` for the cart above, and the check notices
+that exact number and tells you to multiply first. The check also tries a decimal price, 12.5 times 4.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -150,12 +156,24 @@ In `cart.js`, make `withDiscount(item, percent)` give back a **new** item with t
 to two decimals. The item it was given must not change.
 
 `withDiscount({ name: "jelly", price: 20 }, 10)` gives `{ name: "jelly", price: 18 }`, and the original still costs 20.
+Lowering by 10 percent means keeping 90 percent: `price * (1 - percent / 100)`. Round to two decimals the way chapter
+3 rounded to one, with 100 in place of 10: 19.99 with 10 percent off is `17.991` before rounding, `17.99` after (we
+tried it).
 
 ```bash run
 cd /workspace/09-objects && node cart.js
 ```
 
 Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- Changing the item and returning it: `item.price = ...; return item;` gives the right answer, `{ name: 'jelly',
+  price: 18 }`, but the original now says 18 too. The check looks at the original afterwards.
+- A new object without `...item`: `{ price: 18 }` has lost its name, and the check tells you to keep every other
+  field.
+- Subtracting the percent as if it were rupees: `price - percent` gives 10 for the jelly and 949 for a 999 bag at 50
+  percent off. Percent means "out of each hundred".
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -189,19 +207,23 @@ The spread builds a new object. Plain `=` copies only the address.
 - [x] `p = { x: 2 };`
 - [ ] `p.y = 3;`
 :::explain
-`const` stops the name pointing at a different object. Changing the object's own properties is allowed.
+`const` stops the name pointing at a different object: `p = { x: 2 }` fails with `TypeError: Assignment to constant
+variable.` (we tried it). Changing the object's own properties is allowed.
 :::
 :::
 
 :::step{type=deep-dive title="Go deeper: shallow copies, Object.freeze and destructuring"}
 **Shallow copies.** `{ ...song }` copies one level. If a property is itself an object (say `song.album`), the copy
-and the original still share that inner object. `structuredClone(song)` copies everything, all the way down.
+and the original still share that inner object: changing `copy.album.name` changed `song.album.name` too (we tried
+it). `structuredClone(song)` copies everything, all the way down.
 
-**Object.freeze.** `Object.freeze(song)` really does stop changes: assignments are silently ignored (or an error, in
-strict mode).
+**Object.freeze.** `Object.freeze(song)` really does stop changes. Normally an assignment to a frozen object is
+silently ignored. In **strict mode** (a stricter set of rules a file turns on with the line `"use strict";` at its
+top), it is an error instead: `TypeError: Cannot assign to read only property 'x' of object '#<Object>'` (we tried
+both).
 
-**Destructuring.** `const { title, seconds } = song;` makes two variables from two properties in one line. You saw the
-array version, `[...]`, in chapter 8.
+**Destructuring.** `const { title, seconds } = song;` makes two variables from two properties in one line. The array
+version takes items by position: `const [first, second] = playlist;`.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -212,7 +234,7 @@ You can now:
 - Explain that variables point at objects, so `const` does not freeze an object.
 - Copy with `{ ...item }` before changing something that belongs to someone else.
 
-:::photo{src="/lesson-images/javascript/js-09-notes.webp" alt="Handwritten notes about JavaScript objects: properties with labels, dot or brackets, a missing property is undefined, variables point at objects, const fixes the address not the furniture, spread to copy" ai="true"}
+:::photo{src="/lesson-images/javascript/js-09-sketch.webp" alt="Sketchnote: Objects. An object keeps named values, called properties, together; a variable does not hold the object, it points at it. Flow: read with a dot or square brackets, change or add a property, loop over an array of objects, copy with spread, change only the copy. Remember: a missing property is undefined, not an error; const fixes where the name points, not what is inside; equals gives a second name to the same object; spread copies one level deep, structuredClone copies all." ai="true"}
 One page of notes for this chapter.
 :::
 
