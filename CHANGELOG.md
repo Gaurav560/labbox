@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Java chapter 13 rewritten (easy, a little detailed, checked)
+
+- Java chapter 13, "Exceptions": Ariane 5 told plainly (a decimal copied into a slot for small whole numbers, too
+  big, an exception nobody handled, about 37 seconds) with a photo lead tying it to the chapter; "every language
+  designed since has left checked exceptions out" was too strong (Swift makes callers handle `throws`); now "most
+  popular languages designed since, like C# and Kotlin".
+- Checked on a lab machine: `Catch.java`, the `Caused by:` trace (rebuilt as `Cause.java` and run: lines 7 and 20
+  as quoted, with the further `java.base` lines now mentioned), the unreported-exception compile error,
+  `Finally.java`, and the starter and solution of `Ages` (both outputs now in the lesson). Slips added: no cause,
+  range before parsing, `catch (Exception e)`, `Integer.parseInt` for `2.5`, and the empty string's real message.
+  New sketchnote page.
+
 ## 28 November: Java chapter 12 rewritten (easy, a little detailed, checked)
 
 - Java chapter 12, "Generics, records and enums": unboxing named where `int number = shelf.second()` needs it; the
