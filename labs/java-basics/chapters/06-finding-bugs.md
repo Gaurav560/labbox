@@ -1,10 +1,11 @@
 :::step{type=story title="A program that runs is not a program that is right"}
-In 1947, the team running the Harvard Mark II computer found it giving wrong answers. Inside one of its relays
-they found the cause: a real moth. They taped it into the logbook with the note "First actual case of bug being
+In 1947, the team running the Harvard Mark II computer found it giving wrong answers. The Mark II did its sums
+with thousands of **relays**, small electrical switches that click open and shut, and inside one of them they
+found the cause: a real moth, stuck between the contacts. They taped it into the logbook with the note "First actual case of bug being
 found." That page is now in the Smithsonian museum.
 
 :::photo{src="/lesson-images/python/first-computer-bug-1947.webp" alt="A page of the Harvard Mark II logbook from 9 September 1947, with a moth taped to it and the note First actual case of bug being found" credit="U.S. Naval History and Heritage Command" license="Public domain" source="https://commons.wikimedia.org/wiki/File:First_Computer_Bug,_1947.jpg"}
-The real page, 9 September 1947: the moth is still taped to it.
+The real logbook page, 9 September 1947: the moth is still taped to it. It was found the way you will find your bugs today: by looking closely at where the wrong answer came from.
 :::
 
 Java catches many mistakes before your program even starts (chapter 2 showed how). But no compiler can catch
@@ -140,7 +141,8 @@ Fix `totalFines` in `Fines.java`, so `totalFines(new int[] {10, 20, 30})` gives 
 2. Find what decides where the loop starts, and fix it.
 3. Remove your `println` and run it again: `60`.
 
-An empty array must still give `0`. Then press **Check**.
+An empty array must still give `0`. Then press **Check**. The usual slip: also changing `<` to `<=` "to be safe",
+which reaches position 3 and crashes with chapter 5's `ArrayIndexOutOfBoundsException`.
 :::
 
 :::step{type=concept title="jshell: call one method by hand"}
@@ -164,7 +166,8 @@ jshell> /exit
 
 Look at the second question: a single fine of 10 gives **0**. That is the kind of small, sharp test that makes a
 bug obvious, and in jshell it takes two seconds. `$3 ==> 0` means "the answer, which jshell saved in a variable
-called `$3`, is 0".
+called `$3`, is 0". (Why does the first answer get `$2`, not `$1`? jshell counts everything you give it, and the
+class you loaded with `/open` was number 1. We ran this exact session on the lab machine.)
 
 The very first time you start jshell it may print a short `INFO: Created user preferences directory.` line: Java
 setting up its settings folder. It is harmless.
@@ -182,7 +185,8 @@ no more:
 2. What is `room` exactly at the limit? Is that enough room to borrow?
 3. Fix the comparison, remove your debugging line, and run `java Fines.java`: `60`, then `false`.
 
-Then press **Check**.
+Then press **Check**. The usual slip: `borrowed <= limit`, which is the same bug written another way (5 <= 5 is
+true). Having room means `room > 0`, or `borrowed < limit`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -228,7 +232,9 @@ line to set a **breakpoint**, run the program, and pause there to look at every 
 editing the file. Java's own command-line debugger is called `jdb`.
 
 **Assertions.** `assert total >= 0 : "total can never be negative";` stops the program when something impossible
-happens. Java ignores assertions unless you run with `java -ea`, so teams mostly use them in tests (chapter 17).
+happens. Java ignores assertions unless you run with `java -ea` (we tried both: without `-ea` the program ran on;
+with it, it stopped with `java.lang.AssertionError: total can never be negative`), so teams mostly use them in
+tests (chapter 17).
 
 **Reproduce it small.** The jshell session above is the professional habit: find the smallest input that shows
 the bug (`{10}` instead of a whole month), and the cause is usually obvious.
@@ -245,7 +251,7 @@ You can now:
 - Make hidden values visible with labelled `println`s.
 - Ask a method questions directly in jshell with `/open` and a call.
 
-:::photo{src="/lesson-images/java/java-06-notes.webp" alt="Handwritten notes about finding bugs in Java: stack traces read from the top, find your own class, println with labels, jshell /open, off by one" ai="true"}
+:::photo{src="/lesson-images/java/java-06-sketch.webp" alt="Sketchnote: Finding bugs. An exception stops the program with a stack trace; a logic bug runs to the end and gives a wrong answer. Flow: know the right answer, run it and get 50 not 60, println with the label i=, find the first wrong lap, fix that line. Remember: a Java stack trace lists the newest call at the top; look for the first line that names your own class; in jshell, /open the file, then call one method; test with tiny inputs whose answer you know." ai="true"}
 One page of notes for this chapter.
 :::
 
