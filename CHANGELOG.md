@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Python chapter 4 rewritten (easy, a little detailed, checked)
+
+- Chapter 4, "Making decisions": Unicode named and the numbers given (`Z` is 90, `a` is 97) for why capitals sort
+  first; the precedence rule shown on a real line (`True or True and False` is `True`); the photo lead says the
+  1582 rule is today's task; the leap rule written as "divisible by 4 and not by 100, or by 400"; the
+  3,000-year line made exact (365.2425 days, 146,097 days in 400 years, about a day of drift in roughly 3,000
+  years).
+- Checked on a lab machine: every comparison, both `budget.py` runs and the 500 case, the `IndentationError` and
+  `=`-for-`==` messages, the reversed `spend_level`, `free_delivery`, and both tasks. Slips added and tried: `>`
+  for `>=`, the invalid check last (101 becomes "A"), `% 4` alone (1900 and 2100), the rule without the 4 (2023).
+  New sketchnote page.
+
 ## 28 November: Python chapter 3 rewritten (easy, a little detailed, checked)
 
 - Chapter 3, "Numbers and text": value, the name "floating-point", IEEE 754, "literal" and "base 10" explained

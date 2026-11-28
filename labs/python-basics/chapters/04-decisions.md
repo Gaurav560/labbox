@@ -6,7 +6,7 @@ year. The calendar has rules inside rules, and a computer gets them right every 
 writes the rules down exactly.
 
 :::photo{src="/lesson-images/python/pope-gregory-xiii.webp" alt="A portrait of Pope Gregory XIII in red robes" credit="Unknown artist" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Pope_Gregory_XIII_portrait.jpg"}
-Pope Gregory XIII. His calendar reform of 1582 added the rule about years divisible by 100 and 400, and most of the world still uses it.
+Pope Gregory XIII. His calendar reform of 1582 added the rule about years divisible by 100 and 400, the exact rule you will write in Python today, and most of the world still uses his calendar for everyday dates.
 :::
 
 Rules like these are everywhere in programs: *if* you spent more than your budget, warn me; *if* the password
@@ -45,7 +45,8 @@ True False
 ```
 
 `"Zebra"` comes before `"apple"`, because every capital letter is "smaller" than every lowercase letter in the
-computer's alphabet. And `"2" < "10"` is `False`, because as text Python compares the first characters, `"2"`
+computer's alphabet. That alphabet is **Unicode**, a numbered list of every character: `Z` is number 90 and `a`
+is number 97, and Python compares those numbers. And `"2" < "10"` is `False`, because as text Python compares the first characters, `"2"`
 and `"1"`, and `"1"` comes first. Numbers compare as numbers; text compares as text. Keep that in mind when
 data arrives as text.
 :::
@@ -163,13 +164,17 @@ Open `decisions.py` and make `grade(marks)` give back a grade:
 
 1. Deal with the invalid marks first.
 2. Then test from the highest grade down, with `if`, `elif` and `else`.
-3. Watch the edges: 80 is an `"A"`, 79 is a `"B"`.
+3. Watch the edges: 80 is an `"A"`, 79 is a `"B"`, 100 is an `"A"` and 0 is an `"F"` (both are real marks).
 
 ```bash run
 cd /workspace/04-decisions && python3 -c "from decisions import grade; print(grade(80))"
 ```
 
 Try 79, 40, 39, 101 and -1 too, then press **Check**.
+
+The usual slips: `>` instead of `>=`, so exactly 80 becomes a `"B"` (the check points at the boundary); testing
+the invalid marks *last*, so 101 is caught by `marks >= 80` first and becomes an `"A"`; or the grades in the
+wrong order, low to high.
 :::
 
 :::step{type=concept title="and, or, not: combining questions"}
@@ -186,7 +191,8 @@ marks < 0 or marks > 100       # False: neither part is true
 not (marks > 100)              # True
 ```
 
-When you mix them, `not` is worked out first, then `and`, then `or`, just as `*` comes before `+`. When in
+When you mix them, `not` is worked out first, then `and`, then `or`, just as `*` comes before `+`. So
+`True or True and False` is `True`: the `and` part is worked out first (`False`), then `True or False`. When in
 doubt, add brackets: they make the order obvious to the next person who reads your code.
 
 One mistake everybody makes once: writing `=` (store) instead of `==` (compare) in a condition. Python catches
@@ -224,13 +230,18 @@ In `decisions.py`, make `is_leap_year(year)` give back `True` for leap years and
 - **unless** they are also divisible by 400, which are.
 
 So 2024 is `True`, 2023 is `False`, 1900 is `False`, 2000 is `True`, and 2100 is `False`. "Divisible by 4"
-means `year % 4 == 0`.
+means `year % 4 == 0`, and "not divisible by 100" means `year % 100 != 0`.
+
+Think of it as two ways to be a leap year: divisible by 4 **and** not by 100, **or** divisible by 400.
 
 ```bash run
 cd /workspace/04-decisions && python3 -c "from decisions import is_leap_year; print(is_leap_year(2100))"
 ```
 
-Then press **Check**.
+Then press **Check**. It also tries 1600 (a leap year) and 2019 (not one).
+
+The usual slips (we tried them): only `year % 4 == 0`, which says 1900 and 2100 are leap years; or only
+`year % 100 != 0 or year % 400 == 0`, which forgets the 4 and says 2023 is a leap year.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -285,7 +296,8 @@ shines with complicated data; for simple thresholds like grades, `if` and `elif`
 
 **Why 2100 is not a leap year.** A year is really about 365.2422 days. Adding a day every 4 years gives
 365.25: slightly too much. Skipping 3 leap days every 400 years (1700, 1800, 1900, but not 2000) brings the
-average to 365.2425, close enough for about 3,000 years.
+average to 365.2425 days (400 years hold 146,097 days). That is still a tiny bit long, so the calendar drifts by
+about one day in roughly 3,000 years.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -296,7 +308,7 @@ You can now:
 - Combine conditions with `and`, `or` and `not`, with brackets to keep the meaning clear.
 - Return a whole rule as `True` or `False` in one line.
 
-:::photo{src="/lesson-images/python/py-04-notes.webp" alt="Handwritten notes: if, elif and else, the first true condition wins, = stores and == compares, 2100 is not a leap year" ai="true"}
+:::photo{src="/lesson-images/python/py-04-sketch.webp" alt="Sketchnote: Making decisions. A condition is a question with the answer True or False; if runs its block only when the answer is True. Flow: if spent > budget, True runs the if block, False tries the elif, nothing matched goes to else, then carry on below. Remember: Python stops at the first condition that is True; = stores a value, == compares two values; as text 10 < 9 is True, so compare numbers as numbers; 2100 is not a leap year, 2000 was." ai="true"}
 One page of notes for this chapter.
 :::
 
