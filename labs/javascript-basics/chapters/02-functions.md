@@ -33,13 +33,20 @@ function minutesOf(seconds) {
 
 - `function` says "here comes a function", and `minutesOf` is its **name**.
 - `(seconds)` is its **parameter**: inside the function, the value it was given is called `seconds`.
-- `return` sends the answer back to whoever **called** it. `Math.floor` rounds down to a whole number.
+- The part between `{` and `}` is the function's **body**: the steps it runs.
+- `return` sends the answer back to whoever **called** it.
+- `Math` is JavaScript's built-in toolbox for maths, and `Math.floor` rounds a number **down** to a whole number.
 
-Calling `minutesOf(245)` runs the steps with `seconds` set to `245`, and gives back `4`.
+Writing the function only teaches JavaScript the word; nothing runs yet. It runs when you **call** it: its name and
+brackets with a value inside, `minutesOf(245)`. The value you pass in is called an **argument**; inside the function
+it arrives as the parameter `seconds`. Here is that call, step by step (we ran each line):
 
-:::picture{name="square-tiles" concept="A function, part by part"}
-Four rows of four tiles make the value that comes back to the caller.
-:::
+| Step | What happens | Value |
+|---|---|---|
+| 1 | the call `minutesOf(245)` starts the body | `seconds` is `245` |
+| 2 | `seconds / 60` divides | `4.083333333333333` |
+| 3 | `Math.floor(...)` rounds down | `4` |
+| 4 | `return` hands it back to the caller | the call is worth `4` |
 :::
 
 :::step{type=try title="Run it, and forget an argument" file="02-functions/duration.js" line="6-12"}
@@ -65,8 +72,11 @@ Monsoon Drive (4 min)
 Neon Lanes (NaN min)
 ```
 
-Look at the last line. `describe` wants two values and got only one. Java would refuse to even start; JavaScript just
-shrugs, sets the missing `seconds` to `undefined`, and carries on. `undefined / 60` is `NaN`: **Not a Number**. No
+The second line is `0` because 59 seconds is less than a minute: `59 / 60` is `0.9833...`, and `Math.floor` rounds it
+down to `0`.
+
+Now look at the last line. `describe` wants two arguments and got only one. Many languages, Java among them, would
+refuse to run this at all; JavaScript just shrugs, sets the missing `seconds` to `undefined`, and carries on. `undefined / 60` is `NaN`: **Not a Number**. No
 error, just a strange answer. That is JavaScript's personality: it tries hard to keep going, so **you** have to watch
 what goes in.
 :::
@@ -97,7 +107,19 @@ the space and the exclamation mark: the check compares the text exactly.
 cd /workspace/02-functions && node hello.js
 ```
 
+Before you change anything, it prints an empty line and `0`: `greet` gives back empty text and `totalMinutes` gives
+back `0`, the placeholders in the file. The last lines of `hello.js` (`if (require.main === module)` and
+`module.exports`) let you run the file yourself and let the **Check** button load your two functions; leave them as
+they are. Chapter 12 explains them.
+
 Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- Ordinary quotes instead of backticks: `return "Hello, ${name}!";` gives back the text `Hello, ${name}!`, dollar sign
+  and all. Only backticks fill in `${...}`.
+- Forgetting `return`: the function builds the text and throws it away, so the call gives `undefined`, and the check
+  says the function has no return.
 :::
 
 :::step{type=try title="The function that forgot to answer" file="02-functions/noreturn.js" line="2-6"}
@@ -164,6 +186,10 @@ cd /workspace/02-functions && node hello.js
 ```
 
 Then press **Check**.
+
+The usual slip: multiplying the wrong one. `hours + minutes * 60` is valid JavaScript, so nothing complains, but
+`totalMinutes(2, 15)` gives `902` (we tried it): 15 minutes became 900, and 2 hours stayed 2. Hours are the ones that
+need `* 60`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -221,7 +247,7 @@ You can now:
 - Explain why a missing argument gives `undefined` (and `NaN` in maths), not an error.
 - Spot the missing-`return` bug: the function works, and gives back `undefined`.
 
-:::photo{src="/lesson-images/javascript/js-02-notes.webp" alt="Handwritten notes about JavaScript functions: function name, parameters, return sends the answer back, backticks with dollar braces, missing argument is undefined, no return gives undefined" ai="true"}
+:::photo{src="/lesson-images/javascript/js-02-sketch.webp" alt="Sketchnote: Functions. A function is steps written once and given a name; call it with arguments, return hands the answer back. Flow: call it with arguments, parameters get the values, the body runs, return gives the answer, the caller uses it. Remember: no return means the call gives undefined; a missing argument is undefined, not an error; backticks with a dollar sign and braces put values into text; times and divide go before plus and minus, brackets first." ai="true"}
 One page of notes for this chapter.
 :::
 
