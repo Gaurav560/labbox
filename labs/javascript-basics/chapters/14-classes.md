@@ -29,6 +29,8 @@ const a = new Song("Neon Lanes", 198);
 
 - `constructor` runs once for each new object; `this` is the brand-new object being built.
 - `new Song(...)` makes an object from the blueprint. Its `title` and `seconds` are its own.
+- A function that belongs to a class, like `play()` below, is called a **method**, the same word as chapter 7's
+  string methods: a function that belongs to a value, called with a dot.
 
 :::picture{name="blueprint-houses" concept="A class is a blueprint"}
 One blueprint, many houses, each with its own furniture.
@@ -66,8 +68,10 @@ undefined function
 ```
 
 Each song counts its own plays: two for Neon Lanes, one for Slow Sunday. `#plays` starts with `#`, which makes it
-**private**: only code inside the class can touch it, so nobody can set a song's plays to -40. The getter `plays` lets
-the outside **read** it, as if it were a property. And the last line: `typeof Song` is `"function"`. Underneath, a
+**private**: only code inside the class can touch it, so nobody can set a song's plays to -40. A **getter** is a method
+written with `get` in front: the outside reads `a.plays` with no brackets, as if it were a property, and the method
+runs. There is no matching way to **set** it, so `#plays` can only change through `play()`. `a.secret` was never set,
+so it is `undefined`. And the last line: `typeof Song` is `"function"`. Underneath, a
 class is a special kind of function.
 :::
 
@@ -89,8 +93,9 @@ class BankAccount {
 }
 ```
 
-From outside, `account.#balance = 1000000` is a SyntaxError. The only door is `deposit`, and `deposit` decides who
-gets in.
+From outside, `account.#balance = 1000000` is a SyntaxError before anything runs: `SyntaxError: Private field
+'#balance' must be declared in an enclosing class` (we tried it with a small class). The only door is `deposit`, and
+`deposit` decides who gets in.
 
 :::picture{name="bank-counter" concept="Methods, and a private balance"}
 You cannot reach into the vault; the clerk at the counter checks every request.
@@ -135,7 +140,14 @@ After `deposit(500)` and `withdraw(200)`, `balance` is `300`.
 cd /workspace/14-classes && node bank.js
 ```
 
-Then press **Check**.
+Before you start it prints `Riya 0` and `0`: the empty methods do nothing yet. Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- `throw new Error(...)` instead of `throw new RangeError(...)`: the check says `deposit(0) should throw a
+  RangeError, not a Error`. The kind of error is part of the answer.
+- Changing first and checking after: `this.#balance -= amount;` and then "if it went below 0, throw". The error is
+  thrown, but too late: the balance is already `-700`, and the check says so. Check first, as the volume knob did.
 :::
 
 :::step{type=try title="The method that forgot its object" file="14-classes/lostthis.js" line="13-22"}
@@ -161,7 +173,10 @@ Mixtape says hello
 
 `p.hello()` worked. But `const later = p.hello` copied **just the function**, without its object. In JavaScript,
 `this` is decided by **how a function is called**, not where it was written: `p.hello()` has `p` before the dot, so
-`this` is `p`. `later()` has nothing before the dot, so `this` is `undefined`, and `undefined.name` crashes.
+`this` is `p`. `later()` has nothing before the dot, so `this` is `undefined`, and `undefined.name` crashes. (The file
+wraps that call in `try`/`catch`, chapter 13, so the crash is printed as one line and the program goes on.) Code
+inside a class always follows strict mode (chapter 9), which is why `this` is `undefined` here rather than something
+stranger.
 
 This bites when you pass a method to something else, like a timer or a button. The fix on the last line,
 `p.hello.bind(p)`, makes a copy of the function with `this` tied to `p` forever. (An arrow function
@@ -194,7 +209,8 @@ for (const s of [new Square(2), new Rect(3, 4)]) {
 }
 ```
 
-The loop never asks which shape it has: it just calls `area()`. Like a wall socket, anything with the right plug fits.
+`**` means "to the power of": `2 ** 2` is 4, `2 ** 3` is 8. The loop never asks which shape it has: it just calls
+`area()`. Like a wall socket, anything with the right plug fits.
 That idea is called **polymorphism**.
 
 :::picture{name="plug-socket" code='area()' concept="Same method name, different classes"}
@@ -213,6 +229,10 @@ cd /workspace/14-classes && node bank.js
 ```
 
 Then press **Check**.
+
+The usual slips, each one tried on a lab machine: rounding with `toFixed(2)`, which gives the text `"15.14"`, not the
+number (chapter 3's trap again; use `Math.round(x * 100) / 100`); and `Math.PI * radius * 2`, which is the distance
+**around** the circle, not its area, and makes the total `18.28`. Area is the radius times itself: `radius ** 2`.
 :::
 
 :::step{type=try title="A podcast is a kind of track" file="14-classes/podcast.js" line="2-30"}
@@ -288,7 +308,7 @@ You can now:
 - Explain why `this` gets lost when a method is passed around, and fix it with `bind` or an arrow.
 - Use the same method name across classes, and share code with `extends` and `super`.
 
-:::photo{src="/lesson-images/javascript/js-14-notes.webp" alt="Handwritten notes about JavaScript classes: class is a blueprint, new makes an object, hash makes a field private, this depends on how it is called, bind keeps this, extends and super" ai="true"}
+:::photo{src="/lesson-images/javascript/js-14-sketch.webp" alt="Sketchnote: Classes. A class is a blueprint; new builds an object from it, the constructor fills in that object's own data. Flow: class with a constructor, new makes an object, methods use this, private hash fields protect it, extends shares the rest. Remember: check first, then change, a refused call leaves the data as it was; this depends on how a method is called; bind or an arrow keeps this when you pass a method on; the same method name in different classes is polymorphism." ai="true"}
 One page of notes for this chapter.
 :::
 
