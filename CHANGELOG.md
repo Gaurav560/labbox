@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: JavaScript chapter 2 rewritten (easy, a little detailed, checked)
+
+- Chapter 2, "Functions": every output re-run on a lab machine. The "square tiles" picture on the step about
+  `minutesOf` showed 4 x 4 = 16, which has nothing to do with that function; it is replaced by a table that walks
+  through the call `minutesOf(245)` with the real values (`4.083333333333333`, then `4`). Body, argument, calling and
+  `Math` explained where they first appear; why `minutesOf(59)` is `0` explained.
+- "Java would refuse to even start" made exact ("many languages, Java among them, would refuse to run this"). The
+  starter's empty line and `0`, and the `require.main` and `module.exports` lines, are now explained before the first
+  task.
+- Slips added and tried: ordinary quotes instead of backticks (prints `Hello, ${name}!`), a missing `return`, and
+  `hours + minutes * 60` (902 for 2 hours 15 minutes). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 1 rewritten (easy, a little detailed, checked)
 
 - Chapter 1, "Your first JavaScript program": every output re-run on a lab machine (Node 22.23.5). The lesson said
