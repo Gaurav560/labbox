@@ -211,12 +211,14 @@ const CHAPTERS = {
   }],
   "10-errors": ["13-errors/ages.js", (m) => {
     let ok = cases("parse_age", m, "parseAge", [[["17"], 17], [[" 42 "], 42], [["0"], 0], [["150"], 150]]);
-    for (const [bad, kind] of ok ? [["abc", TypeError], ["12.5", TypeError], ["", TypeError], ["-1", TypeError], ["151", RangeError]] : []) {
+    for (const [bad, kind] of ok ? [["abc", TypeError], ["12.5", TypeError], ["", TypeError], ["-1", [TypeError, RangeError]], ["151", RangeError]] : []) {
       try {
         const got = m.parseAge(bad);
-        fail("parse_age", `parseAge(${show(bad)}) returned ${show(got)}; it should throw a ${kind.name}.`); ok = false; break;
+        fail("parse_age", `parseAge(${show(bad)}) returned ${show(got)}; it should throw a ${[].concat(kind).map((k) => k.name).join(" or ")}.`); ok = false; break;
       } catch (e) {
-        if (!(e instanceof kind)) { fail("parse_age", `parseAge(${show(bad)}) threw a ${e.name}; it should be a ${kind.name}.`, kind.name, e.name); ok = false; break; }
+        // "-1" may be read as "not digits only" (TypeError) or "a number out of range" (RangeError): both pass (28 November).
+        const kinds = [].concat(kind);
+        if (!kinds.some((k) => e instanceof k)) { fail("parse_age", `parseAge(${show(bad)}) threw a ${e.name}; it should be a ${kinds.map((k) => k.name).join(" or ")}.`, kinds.map((k) => k.name).join(" or "), e.name); ok = false; break; }
         if (!String(e.message).includes(bad.trim() || "\"\"") && bad !== "") { fail("parse_age", `The message for ${show(bad)} should name the value, so people know which one was wrong.`); ok = false; break; }
       }
     }

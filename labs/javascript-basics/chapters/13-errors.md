@@ -22,7 +22,7 @@ When JavaScript cannot carry on, it **throws** an error: the current function st
 that will **catch** it. If nobody does, the program ends with a stack trace (chapter 6).
 
 ```js
-null.length           // TypeError: Cannot read properties of null
+null.length           // TypeError: Cannot read properties of null (reading 'length')
 JSON.parse("{oops")   // SyntaxError
 ```
 
@@ -57,7 +57,8 @@ loaded Road trip
 all done
 ```
 
-The broken one was skipped; the other two loaded, and `all done` still printed.
+The broken one was skipped; the other two loaded, and `all done` still printed. The second saved text,
+`{name: oops}`, is the same mistake as chapter 12's: a key without double quotes.
 :::
 
 :::step{type=concept title="try and catch"}
@@ -95,6 +96,9 @@ function parseQuantity(text) {
 2. The message names the bad value, so whoever reads it knows exactly which input was wrong.
 3. `Number.isInteger` refuses `NaN`, decimals and Infinity in one test. And watch out: `Number("")` is `0`, so empty
    text needs its own check.
+
+We ran it on six inputs: `"3"` gives 3 and `" 7 "` gives 7; `"2.5"`, `""` and `"abc"` throw `TypeError: not a whole
+number: "..."` with the text inside the quotes; `"0"` throws `RangeError: quantity must be at least 1: 0`.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -122,16 +126,23 @@ console.log("done");
 :::step{type=task task=parse_age title="Your turn: read an age, or refuse it"}
 Open `ages.js` and finish `parseAge(text)`:
 
-- spaces around the number are fine: `parseAge(" 42 ")` gives `42`;
-- text that is not a whole number (`"abc"`, `"12.5"`, `""`, `"-1"`) throws a **TypeError**;
+- spaces around the number are fine: `parseAge(" 42 ")` gives `42`, and 0 to 150 are all allowed;
+- text that is not a whole number (`"abc"`, `"12.5"`, `""`) throws a **TypeError**;
 - a number above 150 throws a **RangeError**;
-- both messages name the bad value.
+- `"-1"` must be refused too. You can see it two ways: "a minus sign, so not written with digits only" (a TypeError)
+  or "a number, but below 0" (a RangeError, like the worked example's quantity). The check accepts either;
+- the messages name the bad value.
 
 ```bash run
 cd /workspace/13-errors && node ages.js
 ```
 
-Then press **Check**.
+Before you start it prints `42` and the empty `{ total: 0, bad: [] }`: the starter's `parseAge` is plain `Number(text)`,
+which never throws, so the `try` block in the file has nothing to catch. Then press **Check**.
+
+The usual slip, tried on a lab machine: testing only `Number.isInteger(Number(text.trim()))`. That lets `""` through
+as `0` and `"-1"` through as `-1`, and the check reports `parseAge("") returned 0; it should throw a TypeError.`
+Check for empty text, and for numbers below 0.
 :::
 
 :::step{type=try title="The quiet failures" file="13-errors/quiet.js" line="2-6"}
@@ -184,6 +195,9 @@ cd /workspace/13-errors && node ages.js
 ```
 
 Then press **Check**.
+
+The usual slip: testing only `Number.isNaN`. It gives `{ total: 12.5, bad: [ 'x' ] }` (we tried it): the total is even
+right, because the empty text added 0, but `""` is missing from `bad`. The check spots exactly that.
 :::
 
 :::step{type=concept title="finally: the clean-up that always runs" file="13-errors/finally.js" line="2-19"}
@@ -245,7 +259,7 @@ Optional chaining stops at `undefined` and gives `undefined` instead of throwing
 :::step{type=deep-dive title="Go deeper: error.cause, your own error classes, and catching too much"}
 **error.cause.** When you catch one error and throw a clearer one, keep the original:
 `throw new Error("could not load the playlist", { cause: error })`. Node then prints both, the cause under
-`[cause]:`, so nothing is lost.
+`[cause]:`, each with its own stack trace, so nothing is lost (we tried it).
 
 **Your own error classes.** `class PlaylistError extends Error {}` (classes are next chapter) lets callers catch
 exactly your errors: `if (error instanceof PlaylistError)`.
@@ -262,7 +276,7 @@ You can now:
 - Spot the quiet failures (`NaN`, `undefined`), test with `Number.isNaN`, and read safely with `?.`.
 - Use `finally` for clean-up that must always run.
 
-:::photo{src="/lesson-images/javascript/js-13-notes.webp" alt="Handwritten notes about JavaScript errors: try and catch then carry on, throw new TypeError or RangeError, name the bad value, NaN spreads quietly, Number of empty text is 0, optional chaining, finally always runs" ai="true"}
+:::photo{src="/lesson-images/javascript/js-13-sketch.webp" alt="Sketchnote: Errors. throw stops the function and looks for a catch; try and catch handle the problem, and the program carries on. Flow: risky code in try, something throws, the rest of try is skipped, catch runs, finally always runs. Remember: TypeError is the wrong kind of value, RangeError is out of bounds; a good message names the bad value; getting NaN or undefined is silent, test for them yourself; Number of empty text is 0, empty text needs its own check." ai="true"}
 One page of notes for this chapter.
 :::
 

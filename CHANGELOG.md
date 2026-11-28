@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: JavaScript chapter 13 rewritten (easy, a little detailed, checked)
+
+- Chapter 13, "Errors": every output re-run on a lab machine. The `parse_age` check demanded a TypeError for `"-1"`,
+  while the same chapter teaches RangeError for "a number, but out of bounds" (the worked example throws RangeError
+  for a quantity below 1). A learner who followed the lesson was told they were wrong. The check now accepts either
+  for `"-1"` (`tests/check.js`; both readings tried and passing), and the task says so.
+- The worked example run on six inputs, the results shown; `null.length`'s full message; the starter's quiet output
+  explained (plain `Number` never throws, so the file's `try` catches nothing); `error.cause` tried.
+- Slips added and tried: `Number.isInteger` alone (`parseAge("")` returns 0) and `Number.isNaN` alone in `safeSum`
+  (`bad: [ 'x' ]`). New sketchnote page, a general summary of the chapter (redrawn once: "NaN and undefined never
+  throw" overstated it, since using `undefined` does throw).
+
 ## 28 November: JavaScript chapter 12 rewritten (easy, a little detailed, checked)
 
 - Chapter 12, "Modules and JSON": every output re-run on a lab machine. Chapter 2 promised that chapter 12 explains
