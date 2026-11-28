@@ -3,11 +3,11 @@ Everything Shelf has learned so far vanishes the moment the program ends. Every 
 object lives in memory, and memory is wiped when `main` returns. Run it again, and Shelf remembers nothing.
 
 Before disks were cheap, data lived on punched cards, one record per card. This is how the US government kept its
-records in 1959: a warehouse of boxes, a few hundred thousand cards per aisle. A CSV file is the same idea, one
-record per line, on a disk the size of a fingernail.
+records in 1959: a warehouse of boxes of cards. A CSV file is the same idea, one record per line, on a storage chip
+the size of a fingernail.
 
 :::photo{src="/lesson-images/java/punched-cards.webp" alt="A black and white photo of a huge warehouse filled with rows of stacked boxes of IBM punched cards" credit="U.S. National Archives and Records Administration" license="Public domain" source="https://commons.wikimedia.org/wiki/File:IBM_card_storage.NARA.jpg"}
-IBM punched cards in storage at a US federal records centre, 1959.
+IBM punched cards in storage at a US federal records centre, 1959. Each card held one record, the way each line of a CSV file holds one record today.
 :::
 
 Real programs keep their data in **files**, and the most popular kind of data file in the world is the humble
@@ -150,7 +150,12 @@ On `expenses.csv`, `rent` is `18000.0`.
 cd /workspace/15-files-and-cli && javac -d out *.java && java -cp out Expenses
 ```
 
-Then press **Check**.
+Right now it prints `0 categories, rent null`; when it works, `6 categories, rent 18000.0` (the row with no
+category, `2026-03-15,,350`, is skipped, so there is no seventh, empty category). Then press **Check**.
+
+The usual slip: `split(",")` without `-1`. The row `2026-03-07,food,` then has only two pieces, and reading
+`parts[2]` crashes with `ArrayIndexOutOfBoundsException`, unless you check the length first, as the worked example
+does.
 :::
 
 :::step{type=concept title="A program people can run" file="15-files-and-cli/Args.java" line="3-12"}
@@ -206,7 +211,12 @@ rent: 18000.00
 shopping: 4095.00
 ```
 
-Then try `java -cp out Summary missing.csv; echo "exit $?"`, and press **Check**.
+Then try `java -cp out Summary missing.csv; echo "exit $?"`: it should print `File not found: missing.csv` and
+`exit 1`. Press **Check**.
+
+The usual slips: printing the error with `System.out` (it works on screen, but it is the wrong channel, and the
+check looks at `System.err`); printing the message but forgetting `System.exit(1)`, so the exit code stays 0; or
+reading `args[2]` without checking that `--top` was given at all (no `--top` must mean 3, not a crash).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -268,7 +278,7 @@ You can now:
 - Count and add per key with `merge`.
 - Write a command-line program: read `args`, send errors to `System.err`, and end with a meaningful exit code.
 
-:::photo{src="/lesson-images/java/java-15-notes.webp" alt="Handwritten notes about files and command-line programs: Files.readAllLines, skip the header, split with -1 keeps empty values, merge to add per key, args holds the words, errors to System.err, exit code 0 means OK" ai="true"}
+:::photo{src="/lesson-images/java/java-15-sketch.webp" alt="Sketchnote: Files and the command line. A file keeps data after the program ends; a command-line program reads the words typed after its name. Flow: java Summary expenses.csv, Files.readAllLines, skip the header and bad rows, add up per category, rent: 18000.00. Remember: split with a comma and -1 keeps empty values at the end; every word in args is a String; errors go to System.err, in one clear line; exit code 0 means success, other numbers mean trouble." ai="true"}
 One page of notes for this chapter.
 :::
 
