@@ -5072,7 +5072,83 @@ function FdeAlert() {
   );
 }
 
+function FastapiRequest() {
+  return (
+    <SketchSteps
+      title="GET /items/3, start to finish"
+      intro="Press Play to follow one request through Lostdesk."
+      label="A request reaches Uvicorn, FastAPI finds the route, converts and checks item_id, calls get_item, turns the dictionary into JSON, and Uvicorn sends status 200 with the body"
+      steps={[
+        { label: "1. the request arrives", says: "The Preview sends GET /items/3. Uvicorn, listening on port 8000, reads it." },
+        { label: "2. find the route", says: 'FastAPI compares the path with every route, in order. /items/{item_id} matches, with item_id = "3".' },
+        { label: "3. convert and check", says: 'The type hint says int, so "3" becomes the number 3. A word like umbrella would stop here with 422.' },
+        { label: "4. your function runs", says: "get_item(3) looks in FOUND and gives back a dictionary. This is the only part you wrote." },
+        { label: "5. dictionary to JSON", says: "FastAPI turns the dictionary into JSON text and sets content-type: application/json." },
+        { label: "6. the response", says: "Uvicorn sends 200 OK, the headers and the body. The Preview shows the silver phone." },
+      ]}
+    />
+  );
+}
+
+function FastapiHttp() {
+  return (
+    <SketchSteps
+      title="One HTTP exchange"
+      intro="Press Play to read a request and its response, line by line."
+      label="The client sends a request line, headers, an empty line and maybe a body; the server answers with a status line, headers, an empty line and the body"
+      steps={[
+        { label: "request line", says: "GET /items/3 HTTP/1.1: the method, the path and the version." },
+        { label: "request headers", says: "Host, User-Agent, Accept: one per line, Name: value." },
+        { label: "empty line, maybe a body", says: "A GET has no body. A POST carries its JSON here." },
+        { label: "status line", says: "HTTP/1.1 200 OK: the version, the code and its name." },
+        { label: "response headers", says: "content-type says the body is JSON; content-length says how many bytes it has." },
+        { label: "the body", says: "After an empty line: the JSON your function gave back." },
+      ]}
+    />
+  );
+}
+
+function FastapiValidation() {
+  return (
+    <SketchSteps
+      title="Checking the inputs"
+      intro="Press Play to watch FastAPI check /items?q=ab&limit=0 before your function runs."
+      label="FastAPI reads each parameter, converts it to its type, checks its rules, collects every problem, and answers 422 with all of them; only when everything passes does your function run"
+      steps={[
+        { label: "1. read each parameter", says: 'q = "ab" and limit = "0" come from the query string, as text.' },
+        { label: "2. convert the types", says: 'limit should be an int: "0" becomes 0. That works.' },
+        { label: "3. check the rules", says: "q needs at least 3 characters: fails. limit needs ge=1: fails." },
+        { label: "4. collect every problem", says: "FastAPI does not stop at the first one. Both problems go into one list." },
+        { label: "5. answer 422", says: "The response lists both, each with loc, msg and input. Your function never ran." },
+        { label: "6. or call the function", says: "When every check passes, list_items runs with values it can trust." },
+      ]}
+    />
+  );
+}
+
+function FastapiBody() {
+  return (
+    <SketchSteps
+      title="A JSON body becomes an object"
+      intro="Press Play to follow POST /reports from JSON text to a stored report."
+      label="The client sends JSON in the body; FastAPI parses it, Pydantic checks every field against the model, your function receives a ready object, and model_dump turns it back into a dictionary to store"
+      steps={[
+        { label: "1. the body arrives", says: "POST /reports with content-type: application/json and the report as JSON text." },
+        { label: "2. parse the JSON", says: "The text becomes a dictionary. Text that is not JSON at all gives 422 here." },
+        { label: "3. check against the model", says: "Pydantic checks LostReport field by field: present, right type, line red, blue or green." },
+        { label: "4. defaults fill the gaps", says: "details was not sent, so it gets its default, None." },
+        { label: "5. your function gets an object", says: "report.title, report.line: checked values, with no checking left to write." },
+        { label: "6. store and answer", says: "model_dump turns it back into a dictionary; the stored report goes back as JSON." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "fastapi-request": FastapiRequest,
+  "fastapi-http": FastapiHttp,
+  "fastapi-validation": FastapiValidation,
+  "fastapi-body": FastapiBody,
   "fde-engagement": FdeEngagement,
   "fde-tool-loop": FdeToolLoop,
   "fde-mcp": FdeMcp,

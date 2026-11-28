@@ -45,15 +45,15 @@ test("FastAPI app in the Preview tab", async ({ page }) => {
   await page.goto("/labs/fastapi-first-api");
   await expect(page.locator(".status-label")).toHaveText("Running", { timeout: 60_000 });
   await expect(term(page)).toContainText("learner", { timeout: 20_000 });
-  await runInTerminal(page, /Scene 4: Run it and look/, "uvicorn main:app");
+  await runInTerminal(page, /Scene 4: Run it and look/, "fastapi dev main.py");
   await expect(term(page)).toContainText("Uvicorn running on http://0.0.0.0:8000", { timeout: 20_000 });
 
   await page.getByRole("tab", { name: "Preview" }).click();
   const frame = page.frameLocator("iframe.preview-frame");
-  await expect(frame.locator("body")).toContainText("Welcome to Ravi's Snack Corner", { timeout: 20_000 });
-  await page.getByLabel("Path").fill("/menu");
+  await expect(frame.locator("body")).toContainText("Lostdesk is open", { timeout: 20_000 });
+  await page.getByLabel("Path").fill("/items");
   await page.getByRole("button", { name: "Go" }).click();
-  await expect(frame.locator("body")).toContainText("Not Found"); // starter: no /menu yet
+  await expect(frame.locator("body")).toContainText("Not Found"); // starter: no /items yet (FastAPI course, 28 November)
 });
 
 test("Spring Boot app in the Preview tab", async ({ page }) => {
