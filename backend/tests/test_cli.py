@@ -166,7 +166,7 @@ def test_generate_and_pick_cover(labs_dir: Path, tmp_path: Path, monkeypatch, ca
 
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--generate", "--count", "2"]) == 0
     prompt = seen["body"]["input"][0]["text"]
-    assert "isometric 3D diorama" in prompt and "teal and cyan" in prompt and "snack counter" in prompt
+    assert "isometric 3D diorama" in prompt and "teal and cyan" in prompt and "lost-property counter" in prompt  # the FastAPI course's cover scene (28 November)
     assert seen["headers"]["x-goog-api-key"] == "test-key" and seen["body"]["response_format"]["aspect_ratio"] == "16:9"
 
     assert cli.main(["--labs-dir", str(labs_dir), "cover", "fastapi-first-api", "--pick", "2"]) == 0

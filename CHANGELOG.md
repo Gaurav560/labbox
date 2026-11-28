@@ -1,5 +1,26 @@
 # Changelog
 
+## 28 November: FastAPI course, Part 4, "Production" (chapters 16 to 21); the FastAPI course is complete
+
+- 16 Passwords and tokens (pwdlib's Argon2 hashes with their salts shown, a dummy hash for unknown users, an OAuth2
+  password-flow `POST /token`, a JWT taken apart), 17 Protecting routes (`OAuth2PasswordBearer`, `jwt.decode` and
+  the three errors it raised for an expired, broken and forged token, 401 vs 403), 18 Async and background tasks,
+  19 Middleware, CORS and settings (`X-Process-Time`, a real CORS preflight allowed and refused, `pydantic-settings`
+  refusing `LOSTDESK_MAX_PHOTO_MB=lots` at start-up), 20 Live updates with Server-Sent Events (`fastapi.sse`, event
+  names, ids and `Last-Event-ID`), 21 Capstone (claims in one transaction, then going live).
+- Measured in the course image: an Argon2 hash takes about 46 ms; a background task took the match route from 1.51 s
+  to 0.012 s; `asyncio.gather` took a search from 0.80 s to 0.40 s; five simultaneous requests to an `async def` with
+  `time.sleep(1)` took 5.01 s, against 1.01 s with `await asyncio.sleep(1)` or a plain `def`. FastAPI 0.165 sends `:
+  ping` after 15 silent seconds on an SSE stream (read in its source). Found on the way, and taught in chapter 21:
+  `fastapi run --workers 2` on a fresh SQLite file made both workers run `create_all` at once, one failed with
+  "table item already exists", and the parent stopped the whole server.
+- Three photos (Edmondson railway tickets, a Wellington platform clock, a split-flap board caught mid-change), five
+  playing diagrams (`fastapi-login-token`, `fastapi-auth-check`, `fastapi-event-loop`, `fastapi-middleware`,
+  `fastapi-sse`), six sketchnotes.
+- The course: 21 chapters in 4 parts, 42 tasks, 1,050 minutes, 14 photos, 15 playing diagrams, 21 sketchnotes; lab
+  valid, test-lab green (every starter fails, every solution passes). Track data in `tracks/frameworks.yaml` now has
+  the four parts; the cover test now expects the new cover scene. 296 fast backend tests pass.
+
 ## 28 November: FastAPI course, Part 3, "Structure and data" (chapters 11 to 15)
 
 - 11 Dependencies (`paginate` and the `require_desk` guard; Fowler's 2004 naming), 12 A real database (SQLite through

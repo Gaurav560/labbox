@@ -55,7 +55,7 @@ the additional tracks. Every lab is built to the Redis course's standard (see "C
 - **Text size per area** (lab top bar, Aa): presets and sliders for lesson, tasks, editor and terminal.
 - **Task stepper** in the lesson footer, and **each chapter opens its own code** (Lite and VS Code).
 
-### Labs: 24, sixteen at the full standard
+### Labs: 24, seventeen at the full standard
 
 "Full" means every item of the full standard (`CONTENT_STANDARD.md`, the list at the top): a running
 project, history, real photos, notes on every recap, playing diagrams, real captured output, two real
@@ -73,7 +73,7 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov); rewritten and fact-checked 28 Nov |
 | python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov); rewritten and fact-checked 28 Nov |
 | java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov); rewritten and fact-checked 28 Nov |
-| javascript-basics | JavaScript from zero | languages | 18 | 36 | 13 | Mixtape, a playlist app | 10 | full (22 Nov) |
+| javascript-basics | JavaScript from zero | languages | 18 | 36 | 13 | Mixtape, a playlist app | 10 | full (22 Nov); rewritten and fact-checked 28 Nov |
 | go-basics | Go from zero | languages | 18 | 36 | 13.5 | Parcel, a parcel tracker | 11 | full (22 Nov) |
 | redis-in-practice | Redis in practice | databases | 17 | 39 | 13 | Basket, 10-minute grocery delivery in Pune | 15 | full (22 Nov) |
 | sql-from-zero | SQL from zero | databases | 14 | 28 | 10.5 | Safar, bus ticket booking | 9 | full (22 Nov) |
@@ -82,14 +82,14 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | python-collections | Python collections | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
 | java-collections | Java collections | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
 | javascript-inside-out | JavaScript inside out | languages | 2 | 4 | 0.5 | | 0 | short, to rewrite |
-| fastapi-first-api | FastAPI: your first API | frameworks | 1 | 2 | 0.25 | | 0 | short, to rewrite |
+| fastapi-first-api | FastAPI | frameworks | 21 | 42 | 17.5 | Lostdesk, the lost-property API of a city metro (FastAPI 0.165.0, SQLModel, image v2) | 17 | full (28 Nov, rebuilt from the one-chapter lab) |
 | express-api | Express: an order tracking API | frameworks | 1 | 2 | 0.3 | | 0 | short, to rewrite |
 | postgres-indexing-incident | Postgres: the slow checkout | databases | 1 | 1 | 0.3 | | 0 | short, to rewrite |
 | postgres-transactions-and-locks | Postgres: transactions and locks | databases | 2 | 4 | 0.7 | | 0 | short, to rewrite |
 | rate-limiter | System design: a rate limiter | system-design | 2 | 2 | 0.7 | | 0 | short, to rewrite (not on the home grid) |
 
 **Left in the content, by lab:**
-- The eight short labs: each needs a syllabus (`COURSE_PRODUCTION.md` step 1), the owner's OK, then the full
+- The seven short labs: each needs a syllabus (`COURSE_PRODUCTION.md` step 1), the owner's OK, then the full
   rebuild.
 - Drink examples: none left (owner, 23 November: rewritten in every lab, the app, drills, templates and specs).
   One internal task id stays, `q_paid_coffee` in sql-from-zero (learner progress is stored under it; it shows only

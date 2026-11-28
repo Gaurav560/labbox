@@ -66,8 +66,8 @@ starter, solution and tests -> `scripts/labbox validate <lab> --strict` -> `scri
 (real logo on brand colours; add a missing logo to `tools/logos/` and `BRANDS` in `tools/logo_cover.py`) -> write `before_you_start` in `lab.yaml` (CONTENT_STANDARD section 7) -> name each course part on its first chapter (`part: ...`, the lines of the lab's skill map) -> add the lab's
 chapters to a track in `tracks/` (data only since 22 November; the app no longer shows track maps) -> add the lab to the `test_test_lab`
 parametrize list in `backend/tests/test_cli.py`. Templates: python, java, node, go, rust (labs/rust-basics: one Cargo workspace, a crate per chapter),
-service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 24 (sixteen at the full
-standard, eight short; see the table in `ROADMAP.md`).
+service-incident, preview-app, ai, system-design. Labs are written one at a time in chat. There are 24 (seventeen at the full
+standard, seven short; see the table in `ROADMAP.md`).
 
 ## Where we are (keep this current)
 

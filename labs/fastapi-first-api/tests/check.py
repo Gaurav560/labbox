@@ -725,6 +725,275 @@ def ch15_write_tests():
             raise Fail(f"your tests all pass even when {what}. Add a test that would catch it.")
     return "Your tests caught three planted bugs: a wrong status, a wrong read-back and a filter that does nothing."
 
+
+# ---------------------------------------------------------------- Part 4: production
+
+def ch16_hash_passwords():
+    mod = load("16-security")
+    h = mod.hash_password("riverside-umbrella-42")
+    if h == "riverside-umbrella-42":
+        raise Fail("hash_password gives back the password itself. Anyone who reads STAFF would know every password: "
+                   "use password_hash.hash(password).", "a hash starting $argon2", h)
+    if not h.startswith("$argon2"):
+        raise Fail("hash_password should use password_hash (pwdlib with argon2).", "$argon2...", h[:30])
+    if mod.hash_password("riverside-umbrella-42") == h:
+        raise Fail("two hashes of the same password are the same: a good hash adds a random salt each time.")
+    if not mod.verify_password("riverside-umbrella-42", h) or mod.verify_password("riverside-umbrella-43", h):
+        raise Fail("verify_password should be True for the right password and False for any other: use password_hash.verify.")
+    if any(u["hashed_password"].startswith("$argon2") is False for u in mod.STAFF.values()):
+        raise Fail("STAFF still stores a password that is not a hash.")
+    if mod.authenticate("meera", "riverside-umbrella-42") is None:
+        raise Fail("authenticate(\"meera\", her right password) gave None; it should give back her staff record.")
+    if mod.authenticate("meera", "wrong") is not None or mod.authenticate("nobody", "x") is not None:
+        raise Fail("authenticate should give None for a wrong password and for an unknown username.")
+    return "Argon2 hashes with a fresh salt each time: even you cannot read the passwords you store."
+
+
+def ch16_login_token():
+    mod = load("16-security")
+    c = client_for(mod)
+    r = c.post("/token", data={"username": "meera", "password": "riverside-umbrella-42"})
+    if r.status_code in (404, 405):
+        raise Fail("there is no POST /token route yet.", "200", str(r.status_code))
+    if r.status_code == 401:
+        raise Fail("the right password was refused. Finish hash_passwords first: authenticate must accept Meera.", "200", "401")
+    expect(r, 200, "POST /token with Meera's password")
+    got = body(r)
+    if not isinstance(got, dict) or got.get("token_type") != "bearer" or not got.get("access_token"):
+        raise Fail("the answer should be a Token: access_token and token_type \"bearer\".", '{"access_token": "...", "token_type": "bearer"}', show(got))
+    import jwt
+    try:
+        claims = jwt.decode(got["access_token"], mod.SECRET_KEY, algorithms=[mod.ALGORITHM])
+    except Exception as e:
+        raise Fail(f"the access token could not be decoded with SECRET_KEY: {e}. Make it with create_access_token.")
+    if claims.get("sub") != "meera" or "exp" not in claims:
+        raise Fail("the token should name the user in sub and have an exp (expiry).", '{"sub": "meera", "exp": ...}', show(claims))
+    for form in ({"username": "meera", "password": "wrong"}, {"username": "nobody", "password": "x"}):
+        r = c.post("/token", data=form)
+        if r.status_code != 401:
+            raise Fail("a wrong username or password should give 401.", "401", f"{r.status_code} {show(body(r))}")
+        if r.headers.get("www-authenticate") != "Bearer":
+            raise Fail("the 401 should carry the header WWW-Authenticate: Bearer.", "Bearer", str(r.headers.get("www-authenticate")))
+    return "A login that gives a signed, expiring token: the server never has to remember who is signed in."
+
+
+def _token(mod, user, minutes=None):
+    return mod.create_access_token(user) if minutes is None else mod.create_access_token(user, minutes)
+
+
+def ch17_current_user():
+    mod = load("17-current-user")
+    c = client_for(mod)
+    r = c.get("/me", headers={"Authorization": f"Bearer {_token(mod, 'arjun')}"})
+    expect(r, 200, "GET /me with Arjun's token")
+    want = {"username": "arjun", "full_name": "Arjun Rao", "desk": "Airport", "role": "supervisor"}
+    if body(r) != want:
+        raise Fail("GET /me should give back the user the token names, without the password hash.", show(want), show(body(r)))
+    import jwt
+    forged = jwt.encode({"sub": "arjun"}, "someone-elses-secret", algorithm="HS256")
+    for token, why in ((forged, "a token signed with another secret"), (_token(mod, "arjun", -5), "a token that expired"),
+                       (_token(mod, "ghost"), "a token for a user who does not exist"), ("not-a-token", "a broken token")):
+        r = c.get("/me", headers={"Authorization": f"Bearer {token}"})
+        if r.status_code != 401:
+            raise Fail(f"GET /me with {why} gave {r.status_code}; it should be 401. Decode the token with jwt.decode and "
+                       "refuse it when that fails.", "401", f"{r.status_code} {show(body(r))}")
+        if r.headers.get("www-authenticate") != "Bearer":
+            raise Fail("the 401 should carry the header WWW-Authenticate: Bearer.")
+    expect(c.get("/me"), 401, "GET /me with no token")
+    return "The token checked on every request: a forged, expired or broken token gets nowhere."
+
+
+def ch17_supervisor_only():
+    mod = load("17-current-user")
+    c = client_for(mod)
+    r = c.delete("/items/1", headers={"Authorization": f"Bearer {_token(mod, 'meera')}"})
+    if r.status_code == 204:
+        raise Fail("Meera, a clerk, deleted item 1. Only a supervisor may: answer 403.", "403", "204")
+    expect(r, 403, "DELETE /items/1 by a clerk")
+    expect(c.delete("/items/1"), 401, "DELETE /items/1 with no token")
+    expect(c.delete("/items/1", headers={"Authorization": f"Bearer {_token(mod, 'arjun')}"}), 204, "DELETE /items/1 by a supervisor")
+    return "401 for who are you, 403 for you may not: authentication and authorisation, kept apart."
+
+
+def ch18_notify_background():
+    mod = load("18-background")
+    c = client_for(mod)
+    route = next((r for r in mod.app.routes if getattr(r, "path", "") == "/items/{item_id}/match/{report_id}"), None)
+    if route is None:
+        raise Fail("the route POST /items/{item_id}/match/{report_id} is missing.")
+    if not getattr(route.dependant, "background_tasks_param_name", None):
+        raise Fail("match still sends the text message before answering: the passenger waits 1.5 seconds. Take a "
+                   "BackgroundTasks parameter and add send_text_message to it.")
+    r = c.post("/items/1/match/1")
+    expect(r, 200, "POST /items/1/match/1")
+    if not os.path.exists("outbox.log") or "98200 11111" not in open("outbox.log").read():
+        raise Fail("after the answer, outbox.log should hold the message to the passenger: add_task(send_text_message, "
+                   "contact, message).")
+    expect(c.post("/items/1/match/9"), 404, "POST /items/1/match/9")
+    return "The answer goes out at once; the slow text message follows in the background."
+
+
+def ch18_parallel_search():
+    import time as _t
+    mod = load("18-background")
+    c = client_for(mod)
+    start = _t.perf_counter()
+    r = c.get("/search", params={"q": "laptop"})
+    took = _t.perf_counter() - start
+    expect(r, 200, "GET /search?q=laptop")
+    want = {"reports": ["grey laptop bag"], "logs": ["grey laptop bag seen at Tech Park"]}
+    if body(r) != want:
+        raise Fail("GET /search should give back both searches' results.", show(want), show(body(r)))
+    if took > 0.65:
+        raise Fail(f"GET /search took {took:.2f} s: the two searches still run one after the other. "
+                   "asyncio.gather runs them at the same time.", "about 0.4 s", f"{took:.2f} s")
+    return f"Two waits at once with asyncio.gather: {took:.2f} s instead of about 0.8."
+
+
+def ch19_timing_header():
+    mod = load("19-settings")
+    c = client_for(mod)
+    for path in ("/items", "/info", "/no-such-page"):
+        r = c.get(path)
+        v = r.headers.get("x-process-time")
+        if not v:
+            raise Fail(f"GET {path} has no X-Process-Time header. A middleware (@app.middleware(\"http\")) can add it to "
+                       "every response, even a 404.", "X-Process-Time: ... ms", "none")
+        if "ms" not in v or not any(ch.isdigit() for ch in v):
+            raise Fail("X-Process-Time should be a number of milliseconds, like 0.42 ms.", "0.42 ms", v)
+    return "One middleware, every response timed: the first thing to look at when an API feels slow."
+
+
+def ch19_settings_env():
+    os.environ["LOSTDESK_APP_NAME"] = "Lostdesk Airport"
+    os.environ["LOSTDESK_MAX_PHOTO_MB"] = "5"
+    try:
+        mod = load("19-settings")
+        c = client_for(mod)
+        r = c.get("/info")
+        want = {"app_name": "Lostdesk Airport", "max_photo_mb": 5}
+        if body(r) != want:
+            raise Fail("with LOSTDESK_APP_NAME and LOSTDESK_MAX_PHOTO_MB set, /info should show those values. Read them "
+                       "with a BaseSettings class whose env_prefix is LOSTDESK_.", show(want), show(body(r)))
+        if not hasattr(mod, "settings"):
+            raise Fail("there is no settings object: create it with settings = Settings().")
+        if c.get("/openapi.json").json()["info"]["title"] != "Lostdesk Airport":
+            raise Fail("the app's title should come from settings.app_name too.")
+    finally:
+        del os.environ["LOSTDESK_APP_NAME"], os.environ["LOSTDESK_MAX_PHOTO_MB"]
+    mod = load("19-settings")
+    if body(client_for(mod).get("/info")) != {"app_name": "Lostdesk", "max_photo_mb": 2}:
+        raise Fail("without the environment variables, the defaults should apply: Lostdesk and 2.")
+    return "Settings from the environment, checked by Pydantic: the same code runs on a laptop and in production."
+
+
+def _events(c, path, headers=None):
+    with c.stream("GET", path, headers=headers or {}) as r:
+        if r.status_code == 404:
+            raise Fail("there is no GET /items/feed route yet: that is the task sse_feed.", "200", "404")
+        if r.status_code != 200:
+            raise Fail(f"GET {path} gave {r.status_code}.", "200", str(r.status_code))
+        ctype = r.headers.get("content-type", "")
+        text = "".join(r.iter_text())
+    if not ctype.startswith("text/event-stream"):
+        raise Fail(f"GET {path} should be a Server-Sent Events stream (content-type text/event-stream); it is {ctype}. "
+                   "Use response_class=EventSourceResponse and yield the items.", "text/event-stream", ctype)
+    events = []
+    for block in text.strip().split("\n\n"):
+        ev = {}
+        for line in block.splitlines():
+            if ":" in line and not line.startswith(":"):
+                k, v = line.split(":", 1)
+                ev[k.strip()] = v.strip()
+        if "data" in ev:
+            events.append(ev)
+    return events
+
+
+def ch20_sse_feed():
+    mod = load("20-live")
+    c = client_for(mod)
+    if not any(getattr(r, "path", "") == "/items/feed" for r in mod.app.routes):
+        raise Fail("there is no GET /items/feed route yet.")
+    evs = _events(c, "/items/feed")
+    got = [json.loads(e["data"]).get("id") for e in evs]
+    if got != [1, 2, 3]:
+        raise Fail("GET /items/feed should send one event per item, its data the item as JSON.", "[1, 2, 3]", show(got))
+    evs = _events(c, "/items/feed?since=2")
+    if [json.loads(e["data"]).get("id") for e in evs] != [3]:
+        raise Fail("GET /items/feed?since=2 should send only the items after id 2.", "[3]", show([e["data"] for e in evs]))
+    c.post("/items", json={"title": "red scarf", "station": "University"})
+    if [json.loads(e["data"]).get("title") for e in _events(c, "/items/feed?since=3")] != ["red scarf"]:
+        raise Fail("a newly logged item should appear in the feed.")
+    return "A Server-Sent Events stream: text/event-stream, one data line per item, readable by any browser."
+
+
+def ch20_sse_resume():
+    mod = load("20-live")
+    c = client_for(mod)
+    evs = _events(c, "/items/feed")
+    if not evs or evs[0].get("event") != "found" or evs[0].get("id") != "1":
+        raise Fail("each event should be named found and carry the item's id: ServerSentEvent(data=..., event=\"found\", id=...).",
+                   "event: found, id: 1", show(evs[:1]))
+    evs = _events(c, "/items/feed", headers={"Last-Event-ID": "2"})
+    if [e.get("id") for e in evs] != ["3"]:
+        raise Fail("with the header Last-Event-ID: 2 and no since, the feed should start after item 2, as a browser "
+                   "expects when it reconnects.", '["3"]', show([e.get("id") for e in evs]))
+    return "Named events with ids: a screen that loses its connection picks up exactly where it left off."
+
+
+DESK = {"X-Desk-Key": "riverside-desk-7"}
+
+
+def _capstone():
+    mod = load("21-capstone")
+    c = client_for(mod)
+    item = body(c.post("/items", json={"title": "grey laptop bag", "station": "Tech Park"}, headers=DESK))
+    report = body(c.post("/reports", json={"title": "grey laptop bag", "contact": "98200 11111"}, headers=DESK))
+    return mod, c, item, report
+
+
+def ch21_claim_flow():
+    mod, c, item, report = _capstone()
+    r = c.post("/claims", json={"item_id": item["id"], "report_id": report["id"]}, headers=DESK)
+    if r.status_code in (404, 405) and isinstance(body(r), dict) and body(r).get("detail") in ("Not Found", "Method Not Allowed"):
+        raise Fail("there is no POST /claims route yet.", "201", str(r.status_code))
+    expect(r, 201, "POST /claims")
+    claim = body(r)
+    if claim.get("item_id") != item["id"] or claim.get("report_id") != report["id"] or not isinstance(claim.get("id"), int):
+        raise Fail("POST /claims should give back the saved claim with its id.", "a claim with id, item_id, report_id", show(claim))
+    with mod.Session(mod.engine) as s:
+        it, rp = s.get(mod.Item, item["id"]), s.get(mod.Report, report["id"])
+        if (it.status, rp.status) != ("claimed", "matched"):
+            raise Fail("after a claim the item should be claimed and the report matched, saved in the database.",
+                       "claimed, matched", f"{it.status}, {rp.status}")
+    r = c.post("/claims", json={"item_id": item["id"], "report_id": report["id"]}, headers=DESK)
+    expect(r, 409, "a second claim on the same item")
+    expect(c.post("/claims", json={"item_id": 999, "report_id": report["id"]}, headers=DESK), 404, "a claim on item 999")
+    expect(c.post("/claims", json={"item_id": item["id"], "report_id": report["id"]}), 401, "a claim without the desk key")
+    return "A claim that changes three rows in one commit, and refuses double claims with 409."
+
+
+def ch21_collect_item():
+    mod, c, item, report = _capstone()
+    r = c.post("/claims", json={"item_id": item["id"], "report_id": report["id"]}, headers=DESK)
+    if r.status_code != 201:
+        raise Fail("POST /claims does not work yet: finish claim_flow first.")
+    cid = body(r)["id"]
+    r = c.post(f"/claims/{cid}/collect", headers=DESK)
+    if r.status_code in (404, 405) and body(r).get("detail") in ("Not Found", "Method Not Allowed"):
+        raise Fail("there is no POST /claims/{claim_id}/collect route yet.", "200", str(r.status_code))
+    expect(r, 200, f"POST /claims/{cid}/collect")
+    from datetime import date as _d
+    if body(r).get("collected_on") != _d.today().isoformat():
+        raise Fail("collected_on should be today's date.", _d.today().isoformat(), show(body(r).get("collected_on")))
+    with mod.Session(mod.engine) as s:
+        if s.get(mod.Item, item["id"]).status != "returned":
+            raise Fail("after collecting, the item's status should be returned, saved in the database.")
+    expect(c.post(f"/claims/{cid}/collect", headers=DESK), 409, "collecting the same claim twice")
+    expect(c.post("/claims/999/collect", headers=DESK), 404, "collecting claim 999")
+    return "The umbrella went home: Lostdesk followed it from the shelf to its owner. Course complete."
+
 # ---------------------------------------------------------------- the table
 
 CHAPTERS = {
@@ -743,6 +1012,12 @@ CHAPTERS = {
     "crud": [("filter_db", ch13_filter_db), ("update_db", ch13_update_db)],
     "bigger-apps": [("reports_router", ch14_reports_router), ("app_metadata", ch14_app_metadata)],
     "testing": [("override_db", ch15_override_db), ("write_tests", ch15_write_tests)],
+    "security": [("hash_passwords", ch16_hash_passwords), ("login_token", ch16_login_token)],
+    "current-user": [("current_user", ch17_current_user), ("supervisor_only", ch17_supervisor_only)],
+    "async-and-background": [("notify_background", ch18_notify_background), ("parallel_search", ch18_parallel_search)],
+    "middleware-and-settings": [("timing_header", ch19_timing_header), ("settings_env", ch19_settings_env)],
+    "live-updates": [("sse_feed", ch20_sse_feed), ("sse_resume", ch20_sse_resume)],
+    "capstone": [("claim_flow", ch21_claim_flow), ("collect_item", ch21_collect_item)],
 }
 
 

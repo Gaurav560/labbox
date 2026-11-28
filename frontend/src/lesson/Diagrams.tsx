@@ -5249,7 +5249,102 @@ function FastapiTestOverride() {
   );
 }
 
+function FastapiLoginToken() {
+  return (
+    <SketchSteps
+      title="Signing in, and the token that follows"
+      intro="Press Play to follow Meera from her password to her token."
+      label="Meera sends her username and password as a form to POST /token; Lostdesk verifies the password against the stored hash, signs a token naming her with an expiry time, and sends it back; from then on her app sends the token instead of the password"
+      steps={[
+        { label: "1. the login form", says: "POST /token with username=meera and her password, as form fields." },
+        { label: "2. find and verify", says: "authenticate finds Meera and checks the password against her argon2 hash. The password itself is never stored." },
+        { label: "3. sign a token", says: "create_access_token writes sub = meera and exp = 30 minutes from now, and signs it with SECRET_KEY." },
+        { label: "4. the answer", says: "access_token: eyJ... and token_type: bearer. The app keeps the token." },
+        { label: "5. every request after", says: "The app sends Authorization: Bearer eyJ... and never the password again." },
+        { label: "6. no memory needed", says: "Lostdesk keeps no list of who is signed in: the signature proves the token is its own." },
+      ]}
+    />
+  );
+}
+
+function FastapiAuthCheck() {
+  return (
+    <SketchSteps
+      title="DELETE /items/1 with a token"
+      intro="Press Play to watch three dependencies decide."
+      label="OAuth2PasswordBearer takes the token from the Authorization header, get_current_user decodes and checks it and finds the user, require_supervisor checks the role, and only then does the route run"
+      steps={[
+        { label: "1. the header", says: "Authorization: Bearer eyJ... arrives. No header at all: 401 Not authenticated." },
+        { label: "2. oauth2_scheme", says: "OAuth2PasswordBearer takes the text after Bearer and hands it on as token." },
+        { label: "3. decode", says: "jwt.decode checks the signature and the expiry. Changed, forged or expired: 401." },
+        { label: "4. who is it?", says: "get_current_user looks up the sub. Nobody by that name: 401." },
+        { label: "5. may they?", says: "require_supervisor checks the role. A clerk: 403 Forbidden." },
+        { label: "6. the route", says: "Only now does delete_item run, and answer 204." },
+      ]}
+    />
+  );
+}
+
+function FastapiEventLoop() {
+  return (
+    <SketchSteps
+      title="One worker, many waiting requests"
+      intro="Press Play to see why await matters."
+      label="Async routes share one event loop; await asyncio.sleep lets the loop serve other requests while one waits; time.sleep inside async def blocks the whole loop; plain def routes run in a pool of threads instead"
+      steps={[
+        { label: "1. one event loop", says: "async def routes all run on one loop, which switches between them at every await." },
+        { label: "2. await asyncio.sleep(1)", says: "This request pauses and gives the loop back. Four other requests are served meanwhile." },
+        { label: "3. five at once: 1.01 s", says: "All five waits overlap. The loop was never stuck." },
+        { label: "4. time.sleep(1) in async def", says: "This sleep does not give the loop back. Nothing else runs for a whole second." },
+        { label: "5. five at once: 5.01 s", says: "The requests queue behind each other, one second each." },
+        { label: "6. plain def", says: "FastAPI runs def routes in a pool of threads, so time.sleep there blocks only its own thread: 1.01 s." },
+      ]}
+    />
+  );
+}
+
+function FastapiMiddleware() {
+  return (
+    <SketchSteps
+      title="A request through the middleware"
+      intro="Press Play to follow GET /info in and out."
+      label="Middleware wraps the whole app: each request passes through the middleware on its way in, reaches the route, and passes back through on its way out, where headers can be added"
+      steps={[
+        { label: "1. in through CORS", says: "CORSMiddleware looks at the Origin header. A browser on another site gets an answer only if its origin is allowed." },
+        { label: "2. into the timer", says: "add_process_time notes the time, then calls call_next(request)." },
+        { label: "3. the route", says: "info() runs, with dependencies, validation and all, exactly as before." },
+        { label: "4. back out through the timer", says: "call_next gives back the response. The middleware adds X-Process-Time." },
+        { label: "5. back out through CORS", says: "Access-Control headers are added for allowed origins." },
+        { label: "6. the client", says: "The answer arrives with every header, for every route, without touching a single route." },
+      ]}
+    />
+  );
+}
+
+function FastapiSse() {
+  return (
+    <SketchSteps
+      title="A station screen follows new finds"
+      intro="Press Play to follow a Server-Sent Events stream."
+      label="The screen opens one long HTTP request; the server keeps it open and writes one event per item, each with a name and an id; if the connection drops, the browser reconnects and sends Last-Event-ID so the stream continues after the last event it saw"
+      steps={[
+        { label: "1. one long request", says: "The screen asks GET /items/feed and the server answers text/event-stream, then keeps the connection open." },
+        { label: "2. an event", says: "event: found, then data: the item as JSON, then id: 3, then an empty line." },
+        { label: "3. more events", says: "Each new item is one more event on the same connection. No new request is needed." },
+        { label: "4. the connection drops", says: "A tunnel, a sleeping laptop: the stream breaks." },
+        { label: "5. reconnect", says: "The browser's EventSource reconnects by itself and sends Last-Event-ID: 3." },
+        { label: "6. carry on", says: "The feed starts after item 3. Nothing is missed and nothing is repeated." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "fastapi-login-token": FastapiLoginToken,
+  "fastapi-auth-check": FastapiAuthCheck,
+  "fastapi-event-loop": FastapiEventLoop,
+  "fastapi-middleware": FastapiMiddleware,
+  "fastapi-sse": FastapiSse,
   "fastapi-dependency": FastapiDependency,
   "fastapi-session": FastapiSession,
   "fastapi-test-override": FastapiTestOverride,
