@@ -33,6 +33,10 @@ const double = (n) => n * 2;           // the same function, as an arrow
 Read it as "n goes to n times 2". With one parameter, the brackets are optional: `n => n * 2`. With a single
 expression after the arrow, it is returned automatically: no `return`, no braces.
 
+The trap is the braces. Add them, and the automatic return is gone: `const f = (n) => { n + 1 };` works out 5 for
+`f(4)` and gives back `undefined` (we tried it), chapter 2's missing-`return` bug in a new costume. With braces, write
+`return` yourself: `(n) => { return n + 1; }`.
+
 :::picture{name="rule-gate" concept="Arrow functions: small functions, written short"}
 A small rule at a gate: each value walks in, an answer walks out.
 :::
@@ -60,8 +64,9 @@ cd /workspace/11-array-methods && node songs.js
 3
 ```
 
-Each method takes a small arrow function and calls it **for every item**. And the last line matters most: `songs`
-still has 3 songs. These methods never change the array they are called on; they build something **new**.
+Each method takes a small arrow function and calls it **for every item**. `s` is just the name chosen for "the song
+being looked at"; any name works. `startsWith("N")` asks whether the text begins with N. And the last line matters
+most: `songs` still has 3 songs. These methods never change the array they are called on; they build something **new**.
 :::
 
 :::step{type=concept title="filter and map: a conveyor belt"}
@@ -113,7 +118,11 @@ Open `marks.js` and make `passing(marks)` give back the marks of **40 or more**,
 cd /workspace/11-array-methods && node marks.js
 ```
 
-Then press **Check**.
+Before you start it prints both lists unchanged: the placeholders give back what they were given. Then press
+**Check**.
+
+The usual slip: `> 40` instead of `>= 40`. That gives `[72, 90]` (we tried it): 40 itself is a pass and went missing.
+The check notices and says so.
 :::
 
 :::step{type=try title="The puzzle, solved" file="11-array-methods/puzzle.js" line="2-4"}
@@ -140,7 +149,8 @@ cd /workspace/11-array-methods && node puzzle.js
 ```
 
 Wrapping it in an arrow, `(s) => parseInt(s)`, passes only the item. `Number` takes just one parameter, so it is safe
-too. The lesson: when you hand `map` a function written by someone else, check what its extra parameters mean.
+too. (The three calls in the list above were each tried on their own: `10`, `NaN`, `2`. For fun, `parseInt("10", 36)`
+is `36`: in base 36 the digits run 0 to 9 and then a to z.) The lesson: when you hand `map` a function written by someone else, check what its extra parameters mean.
 :::
 
 :::step{type=concept title="Sorting by your own rule"}
@@ -182,6 +192,14 @@ cd /workspace/11-array-methods && node marks.js
 ```
 
 Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- No tie-break: sorting by length alone gives `['fig', 'kiwi', 'date', 'apple', 'banana']`. Kiwi and date are both
+  4 letters long, and JavaScript's `sort` keeps equal items in the order they came in (it is **stable**, a promise
+  since 2019), so kiwi stays first. Add `|| a.localeCompare(b)`.
+- Sorting `words` itself instead of a copy: the right answer, and the caller's array is now sorted too. The check
+  looks.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -225,8 +243,9 @@ What does `find` give when nothing matches?
 **flatMap.** Like `map`, but each item may become several: `albums.flatMap((a) => a.songs)` gives one long list of
 songs.
 
-**Object.groupBy.** New in recent JavaScript: `Object.groupBy(songs, (s) => (s.seconds > 240 ? "long" : "short"))`
-sorts songs into named groups in one line. Chapter 10's tally, built in.
+**Object.groupBy.** New in 2024: `Object.groupBy(songs, (s) => (s.seconds > 240 ? "long" : "short"))` sorts songs
+into named groups in one line: `long` holds Monsoon Drive and Slow Sunday, `short` holds Neon Lanes (we tried it on
+Node 22; Node prints the result as `[Object: null prototype]`, an object made without the usual built-in extras).
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -237,7 +256,7 @@ You can now:
 - Sort by your own rule with a compare function and a tie-break, on a copy.
 - Explain why `map(parseInt)` gives `[10, NaN, 2]`, and fix it.
 
-:::photo{src="/lesson-images/javascript/js-11-notes.webp" alt="Handwritten notes about JavaScript array methods: arrow functions, filter keeps, map turns, find gives the first, reduce makes one value, the array never changes, map passes item, position and array, sort a copy" ai="true"}
+:::photo{src="/lesson-images/javascript/js-11-sketch.webp" alt="Sketchnote: Array methods and arrows. filter, map, find and reduce call a small arrow function for every item and build something new; they leave the original array as it was. Flow: the array, filter keeps this one, map says what it becomes, reduce makes one value, the result. Remember: an arrow like n goes to n times 2 returns by itself, with braces you need return; find gives the first match or undefined; map passes item, position and array to your function; sort changes the array, sort a copy and add a tie-break." ai="true"}
 One page of notes for this chapter.
 :::
 
