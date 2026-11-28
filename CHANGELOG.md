@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Java chapter 17 rewritten (easy, a little detailed, checked)
+
+- Java chapter 17, "Testing with JUnit": "almost every Java project on Earth uses it" made "the most used testing
+  library in Java", and the plane story marked as a story; Hubble's error given in micrometres (about 2) with the
+  1.3 mm lens; the photo lead ties a wrong test to "check that your tests can fail"; a hint for "at most twice".
+- Checked on a lab machine: the red run line by line (times vary, now said), the green run after the fix, the
+  backwards report from `assertEquals(Fines.lateFee(8), 18)` (`expected: <19> but was: <18>`, now taught), and the
+  late-fee numbers (7, 8, 10 and the cap). Slips added (small numbers only, no very-late test, no negative test).
+  Found, not changed: `mvn -o package` fails in this chapter's folder because its jar plugin is not stored offline;
+  no task needs it. New sketchnote page. Part 3 complete.
+
 ## 28 November: Java chapter 16 rewritten (easy, a little detailed, checked)
 
 - Java chapter 16, "Packages, jars and Maven": "`-o` means offline: LabBox machines have no internet" was wrong (the
