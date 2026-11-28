@@ -366,6 +366,30 @@ changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until paymen
   (Pro: he starts by himself when the browser allows the microphone and sound), or off (no offers, no orb; the profile
   menu turns him back on). Before the first conversation the learner reads "What Jarvis can see" once
   (`user.jarvis_note_seen`). Pro learners can make him forget his notes (`DELETE /api/jarvis/memory`).
+- [ ] **Next (owner, 28 November, late; plan proposed, waiting for the owner's answers; do not build before):**
+  - Owner's brief: Jarvis on every page of the app, every lab; he switches himself on and off and leads most
+    conversations (the learner should not have to start him); 20 minutes of talk a day is too much. Tone: ignore for now.
+  - Proposal: replace the realtime session with a chain: the browser hears the learner, speech to text, `gpt-4o-mini`
+    writes the reply (with the same tools), a TTS service speaks it. About 1 to 1.5 s before he answers (realtime: 0.5 s),
+    but a line he starts himself is one short clip (about $0.002 on Fish Audio, $0.006 on ElevenLabs) instead of a live
+    session (realtime measured about $0.08 a minute). Keep the realtime code behind a switch until the chain has proved itself.
+  - Voice: Fish Audio recommended (about $15 per million characters, about 300 ms streaming, voice design $0.01 a try);
+    ElevenLabs costs about 3 times more per character (Black Friday: up to 55% off annual plans until 1 December 2026).
+    His voice is made with voice design ("calm, low, British male AI assistant, precise, dry"), never a community
+    "Jarvis" clone: those copy Paul Bettany's voice, and India's courts protect voices against AI cloning.
+  - Look: an original animated amber particle sphere with turning arcs, brighter while he speaks; no Marvel artwork and
+    no J.A.R.V.I.S. lettering.
+  - Behaviour: mounted in the app layout (every signed-in page); speaks on welcome, stuck, cheers, a new lab, a streak at
+    risk; sound only after the learner's first click on a page (browser rule), text and glow before that; after a
+    question he listens about 8 seconds, then closes the microphone (allowed once); at most one line every few minutes.
+    Keep the learner's off switch unless the owner says otherwise.
+  - Proposed limits: Pro up to 30 lines a day plus 5 minutes of two-way talk; free a few spoken lines a day (welcome,
+    first task), no two-way talk; the budgets ($1.50 a day, $40 a month) stay; all changeable in Admin.
+  - Files: new `backend/app/jarvis_voice.py` (fish, elevenlabs, fake), `jarvis.py` and routes (`say`, `reply`), new
+    `JarvisOrb.tsx`, `Jarvis.tsx` and the layout on both branches, Admin limits, tests, docs.
+  - Owner to answer: (1) OK to move to the chain; (2) Fish Audio, ElevenLabs or both (the owner adds
+    `FISH_AUDIO_API_KEY` / `ELEVENLABS_API_KEY` to `backend/.env`; a voice-design audition of a few cents each comes first);
+    (3) the limits above.
 - Known limits: a spoken reply cannot be filtered before it is heard (the rules and the tools keep solutions out);
   the browser reports usage, and the server caps the counted seconds by the wall clock and hangs up at a limit.
 
