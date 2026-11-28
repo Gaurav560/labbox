@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 15 rewritten (easy, a little detailed, checked)
+
+- Java chapter 15, "Files and a command-line program": the punched-card photo's "a few hundred thousand cards per
+  aisle" could not be checked and is gone; the lead now ties one card per record to one line per record.
+- Checked on a lab machine: `Members.java` (4 lines, the blank one skipped), the `NoSuchFileException` trace,
+  both `split` results, `Args.java` with words and without (exit 2), the starter's `0 categories, rent null`, the
+  solution's `6 categories, rent 18000.0` (the no-category row skipped, now said), `Summary` with `--top 2`, the
+  default 3, `--top 10`, and the missing file (`exit 1`). Slips added: no `-1` (the out-of-bounds crash), errors on
+  `System.out`, no `System.exit(1)`, `args[2]` without `--top`. New sketchnote page.
+
 ## 28 November: Java chapter 14 rewritten (easy, a little detailed, checked)
 
 - Java chapter 14, "Lambdas and streams": "the biggest change since it was born" is now "often called" it, with
