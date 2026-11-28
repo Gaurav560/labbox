@@ -352,7 +352,7 @@ def test_photos_need_a_file_alt_text_and_a_credit(labs_dir: Path):
     assert any("is not in frontend/public" in e for e in errors(labs_dir / "python-basics"))
     # Never on a task step: the task, its card and Check stay in view.
     task = ':::step{type=task task=hello_pocket title="Your turn: Pocket says hello"}\n'
-    ch.write_text(good.replace(task, task + ':::photo{src="/lesson-images/python/py-01-notes.webp" alt="notes" ai="true"}\nx\n:::\n'))
+    ch.write_text(good.replace(task, task + ':::photo{src="/lesson-images/python/py-01-sketch.webp" alt="notes" ai="true"}\nx\n:::\n'))
     assert any("(task) has a photo" in e for e in errors(labs_dir / "python-basics"))
 
 
