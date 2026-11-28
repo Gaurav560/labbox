@@ -16,7 +16,7 @@ Status: **6 of 23 labs done** (145 of 319 chapters).
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
-| 7 | python-basics | Python from zero | 19 | not started | |
+| 7 | python-basics | Python from zero | 19 | in progress (1 of 19) | |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
 | 10 | go-basics | Go from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Python ch 1 done: every output re-run on a lab machine; terms explained at first use; timeline made exact; slips with real messages; diagram step 2 qualified; sketchnote.
 - 28 Nov: Spring Boot lab DONE: 31 of 31; validate passes; test-lab green; ROADMAP and HANDOFF updated.
 - 28 Nov: Spring Boot ch 30 done: checkout answers quoted; five promises of a non-existent 'production course' (ch 15, 22, 23, 28, 30) reworded; sketchnote. SPRING BOOT LAB DONE (31 of 31).
 - 28 Nov: Spring Boot ch 29 done: supplier calls re-run (120, 0, 503 in 1.005 s, 503 when down); 200 threads made exact; slips; sketchnote (redrawn once).

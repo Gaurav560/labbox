@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: Python chapter 1 rewritten (easy, a little detailed, checked)
+
+- Chapter 1, "Your first program", to the lesson rules: folder, `&&`, function, interpreter, core developers,
+  steering council, virtual machine and the REPL's name explained where they first appear; C and shell scripts
+  said plainly; the 2000 and 2020 timeline lines made exact (Python 2 ended on 1 January 2020); Guido stepped down
+  in July 2018 and the council decides since 2019.
+- Checked on a lab machine (Python 3.12.3) with the starter and the solution: `first.py`'s four lines, the Zen's
+  first 9 lines (now shown; 19 rules counted), both error messages, `print("Hello" , 7)`, `20 * 3`. Both tasks now
+  list their slips with Python's real messages (capital `Print`, a leading space, curly quotes, a missing bracket,
+  both quotes deleted).
+- The diagram's step 2 no longer says Python checks that "every line is written correctly": it checks the grammar;
+  a misspelt name is only found while running. New sketchnote page.
+
 ## 28 November: Jarvis's tone rewritten, and a voice audition
 
 - **Tone** (owner: the first one was "the most absurd tone"). His instructions now ask for an unflappable,

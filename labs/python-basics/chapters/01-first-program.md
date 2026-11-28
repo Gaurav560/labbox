@@ -23,9 +23,10 @@ Python is one of the most used programming languages in the world. It started as
 project.
 
 :::before{title="Before Python"}
-In the late 1980s, programmers mostly chose between **C**, which is fast but needs long, careful code where
-one memory mistake crashes the program, and **shell scripts**, which are quick to write but turn messy beyond
-a few lines. Guido van Rossum, a programmer at the CWI research institute in Amsterdam, kept hitting jobs that
+In the late 1980s, programmers mostly chose between two kinds of tools. **C** is a language that runs very
+fast, but you write long, careful code and manage the computer's memory by hand, so one small memory mistake
+can crash the whole program. **Shell scripts** are short lists of terminal commands saved in a file: quick to
+write, but they turn messy beyond a few lines. Guido van Rossum, a programmer at the CWI research institute in Amsterdam, kept hitting jobs that
 were too awkward for a shell script and too slow to write in C.
 :::
 
@@ -38,14 +39,19 @@ English, and its indentation is part of the language.
 :::timeline
 - **1989** Guido starts Python as a hobby project over the Christmas holidays.
 - **1991** The first public release, version 0.9.0.
-- **2000** Python 2.0 adds list comprehensions and a new garbage collector.
-- **2008** Python 3.0 cleans up old design mistakes, even though old code needs changes to run.
-- **2020** Python 2 reaches end of life; Python 3 is the only Python.
+- **2000** Python 2.0 adds list comprehensions (a short way to build a list, chapter 11) and better automatic
+  clean-up of memory the program no longer uses.
+- **2008** Python 3.0 cleans up old design mistakes, on purpose breaking some old code, which needed changes
+  to run on it.
+- **2020** Python 2 reaches its end of life on 1 January: no more fixes, not even for security problems. Python
+  3 is the Python everyone uses today, and the one in this course.
 :::
 
-Today Python is maintained by the **Python Software Foundation**, a non-profit, and a worldwide team of
-volunteer core developers led by an elected **steering council**. Guido led the language for almost 30 years
-as its "Benevolent Dictator For Life" and stepped down from that role in 2018.
+Today Python is looked after by the **Python Software Foundation**, a non-profit, and a worldwide team of
+mostly volunteer **core developers**, the people allowed to change Python itself. Since 2019 a five-person
+**steering council**, elected by those core developers, makes the final decisions. Before that, Guido had the
+last word for almost 30 years, with the joke title "Benevolent Dictator For Life", and he stepped down from that
+role in July 2018.
 
 :::photo{src="/lesson-images/python/guido-van-rossum.webp" alt="Guido van Rossum, the creator of Python, in 2014" credit="Daniel Stroud" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Guido-portrait-2014-drc.jpg"}
 Guido van Rossum, who created Python, in 2014.
@@ -70,14 +76,30 @@ Guido van Rossum, who created Python, in 2014.
 :::
 
 :::funfact
-Python is named after the British comedy show *Monty Python's Flying Circus*, not the snake. Type
-`import this` in Python to read "The Zen of Python", the short poem of design rules the language follows.
+Python is named after the British comedy show *Monty Python's Flying Circus*, not the snake. And Python
+has a hidden poem inside it: "The Zen of Python", 19 short design rules written by Tim Peters, an early core
+developer. Press **Run** on the line below, then **Enter** in the terminal, to see its first lines:
 :::
-
 
 ```bash run
 python3 -c "import this" | head -9
 ```
+
+```text
+The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+```
+
+The last line, "Readability counts", is the one this whole course leans on: code is for people to read first.
+(Do not worry about what `-c` and `| head -9` mean yet. In short: run this one line of Python, and show only the
+first 9 lines of what it prints.)
 :::
 
 :::step{type=concept title="Meet the terminal"}
@@ -92,7 +114,8 @@ learner@python-basics:/workspace$
 ```
 
 Read it from left to right: you are the user `learner`, on a machine called `python-basics`, in the folder
-`/workspace`. The `$` means "your turn, type something".
+`/workspace`. A **folder** (also called a directory) is a box that holds files, exactly like the folders on your
+own computer. The `$` means "your turn, type something".
 
 :::photo{src="/lesson-images/python/vt100-terminal.webp" alt="A DEC VT100 computer terminal from 1978: a beige screen and keyboard" credit="Jason Scott" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg"}
 A DEC VT100 from 1978: a screen and a keyboard wired to one big shared computer. Your terminal window is named after machines like this, and still behaves like one.
@@ -102,7 +125,7 @@ Three commands are enough to find your way around:
 
 - `pwd` prints the folder you are in ("print working directory").
 - `ls` lists what is in it.
-- `cd 01-first-program` moves into that folder ("change directory").
+- `cd 01-first-program` moves into that folder ("change directory"). `cd ..` goes back up one level.
 
 Every chapter of this course has its own folder in `/workspace`, numbered like the chapter. Let's look. Press
 **Run** on the line below (it types the command for you), then press **Enter** in the terminal:
@@ -111,8 +134,15 @@ Every chapter of this course has its own folder in `/workspace`, numbered like t
 cd /workspace/01-first-program && ls
 ```
 
-You should see three files: `first.py`, `fix_me.py` and `hello.py`. The `.py` at the end says "this is a
-Python file". They are also in the file list next to the editor; open one with a click.
+The `&&` between the two commands means "do the first one, and if it worked, do the second". You should see
+three files:
+
+```text
+first.py  fix_me.py  hello.py
+```
+
+The `.py` at the end of a name says "this is a Python file". It is still plain text: you could open it in any
+text editor. The same files are in the file list next to the editor; open one with a click.
 :::
 
 :::step{type=concept title="A program is a list of instructions" file="01-first-program/first.py" line="2-5"}
@@ -131,7 +161,8 @@ Let's read it like Python does, one line at a time.
 1. The first line starts with `#`. That makes it a **comment**: a note for people. Python skips it
    completely. You can write anything after a `#`.
 2. `print("Python is reading this file, line by line.")` is an **instruction**. `print` is the name of a
-   built-in tool, and the round brackets hold what you give it. Its job: show that on the screen.
+   tool that comes built into Python (a **function**, chapter 2 explains the word), and the round brackets hold
+   what you give it. Its job: show that on the screen.
 3. The text inside the quotes, `"Python is reading..."`, is called a **string**: a piece of text. The
    quotes are not part of the text; they only show Python where the text starts and stops.
 
@@ -164,8 +195,9 @@ Time to see it with your own eyes. Run the file:
 cd /workspace/01-first-program && python3 first.py
 ```
 
-`python3` is the name of the program that understands Python (the **interpreter**), and `first.py` is the file
-you want it to run. Here is what appears:
+`python3` is the name of the program that understands Python. It is called the **interpreter**: a program that
+reads your code and carries it out straight away, with no separate preparing step for you to do. `first.py` is
+the file you want it to run. Here is what appears:
 
 ```text
 Python is reading this file, line by line.
@@ -183,8 +215,9 @@ So what actually happened in that split second after you pressed Enter? Press Pl
 Python checks the whole file first, then runs it from the top, one line at a time.
 :::
 
-Now try something brave: change `print(2 + 3)` to `print(20 * 3)` in the editor, save, and run the file again.
-`*` means multiply. You just changed what a program does. That is programming.
+Now try something brave: change `print(2 + 3)` to `print(20 * 3)` in the editor, save (Ctrl+S, or Cmd+S on a
+Mac), and run the file again. `*` means multiply, so the third line now says `60`. You just changed what a
+program does. That is programming.
 :::
 
 :::step{type=example title="Worked example: a program that introduces itself"}
@@ -230,6 +263,16 @@ cd /workspace/01-first-program && python3 hello.py
 ```
 
 When the two lines look right, press **Check**.
+
+The usual slips, with what Python says (we tried each one):
+
+- `Print(...)` with a capital P: `NameError: name 'Print' is not defined. Did you mean: 'print'?` Python cares
+  about capital letters.
+- A space before `print`: `IndentationError: unexpected indent`. A line must start at the very left unless it
+  belongs inside something (chapter 4 explains when).
+- Curly quotes `“…”` pasted from a document: `SyntaxError: invalid character '“' (U+201C)`. Type plain quotes
+  `"` in the editor.
+- A missing `)` at the end: `SyntaxError: '(' was never closed`.
 :::
 
 :::step{type=concept title="When Python does not understand you" file="01-first-program/fix_me.py" line="2-4"}
@@ -249,7 +292,8 @@ There are two mistakes in it. Can you spot them before running it? Don't worry i
 next step is for.
 
 Notice the last line. `print` can take several things separated by commas: a string, a number, another
-string. It shows them all on one line, with a space between each.
+string. It shows them all on one line, with one space between each: `Today's budget is 500 rupees.` The
+apostrophe in `Today's` is fine, because the string is wrapped in double quotes.
 :::
 
 :::step{type=try title="Read Python's first message" file="01-first-program/fix_me.py" line="2"}
@@ -273,11 +317,15 @@ This is an error message, and it is friendlier than it looks. Read it from the *
 - `unterminated string literal` means "a piece of text that never ends". The string opened with a quote and
   never closed.
 - The line above shows the code, and the `^` points at where the trouble starts: the opening quote.
-- The first line says which file and which line: line 2.
+- The first line says which file and which line: line 2. (Python counts lines from 1, and the comment at the top
+  is line 1.)
 
 Here is the curious part. Look at what is *not* on the screen: `Pocket is starting...` was never printed, even
 though that line comes first. Remember the diagram? Python checks the grammar of the **whole file before
 running anything**. One grammar mistake, anywhere, and not a single line runs.
+
+And the second mistake, `prnt` on line 3? Python has not complained about it yet. That one is not a grammar
+mistake, so it can only be found while the program runs. The next step shows it.
 :::
 
 :::step{type=example title="Worked example: two kinds of mistakes"}
@@ -299,8 +347,8 @@ Something changed! The first line *did* print. So this mistake is a different ki
 3. On line 3 Python met the name `prnt`. It looked for a tool with that name, found none, and stopped:
    `NameError`. Python even guesses what you meant: `Did you mean: 'print'?`
 
-The word **Traceback** at the top means "here is where I was when it happened". You will learn to read long
-tracebacks in chapter 6.
+The word **Traceback** at the top means "here is where I was when it happened", and `in <module>` means "in the
+main part of the file, not inside a function". You will learn to read long tracebacks in chapter 6.
 
 So there are two moments a mistake can show up:
 
@@ -328,6 +376,10 @@ cd /workspace/01-first-program && python3 fix_me.py
 ```
 
 Then press **Check**.
+
+The usual slips: fixing the quote by deleting the opening one too (then Python sees `Pocket is starting...` as
+code and reports `SyntaxError: invalid syntax. Perhaps you forgot a comma?`); changing the words while fixing (the check compares every letter); or
+fixing only one mistake and stopping, so press Run again after every fix until all three lines appear.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -377,14 +429,16 @@ A line that starts with `#` is a comment, a note for people, so Python skips it,
 python3 --version
 ```
 
-It answers `Python 3.12.3`. The program you have been using is **CPython**, the main Python, written in C. When
-it "translates to bytecode" (step 3 of the diagram), it is preparing a simpler list of instructions for its own
-small virtual machine, which then runs them one by one. That is what people mean when they call Python an
-**interpreted** language: no separate build step, you just run the file.
+On this lab machine it answers `Python 3.12.3`; your own computer may have another version. The program you
+have been using is **CPython**, the standard Python, itself written in C. When it "translates to bytecode" (step 3
+of the diagram), it turns your lines into a simpler list of instructions for its own **virtual machine**: a small
+program inside CPython that works like a pretend computer and carries out those instructions one by one. That is
+what people mean when they call Python an **interpreted** language: no separate build step, you just run the
+file. (Languages like C and Java have a separate step first, called compiling. You will meet it in the Java course.)
 
 **The REPL.** Type `python3` alone and press Enter. The prompt changes to `>>>`. This is the **REPL** (read,
-evaluate, print, loop): type `2 + 3` and Python answers `5` right away, no `print` needed. It is perfect for
-quick experiments. Type `exit()` to leave.
+evaluate, print, loop: it reads one line, works it out, prints the answer, and waits for the next): type `2 + 3`
+and Python answers `5` right away, no `print` needed. It is perfect for quick experiments. Type `exit()` to leave.
 
 **Why `print` and not just the text?** In a file, a line like `"hello"` alone is allowed, but it shows nothing:
 Python works it out and throws it away. Only `print` sends things to the screen. In the REPL, values are shown
@@ -400,7 +454,7 @@ You can now:
 - Read an error from the bottom: a `SyntaxError` stops everything before it starts; a `NameError` stops the
   program at the line where it happens.
 
-:::photo{src="/lesson-images/python/py-01-notes.webp" alt="Handwritten notes: how Python runs a file, comments, strings versus sums, and reading errors from the bottom" ai="true"}
+:::photo{src="/lesson-images/python/py-01-sketch.webp" alt="Sketchnote: Your first program. A program is a list of instructions in a file; Python carries them out from the top, one line at a time. Flow: python3 hello.py, check the grammar, run line 1, line 2, print shows text, end of file: stop. Remember: 2 + 3 in quotes is text, without quotes a sum; a line starting with # is a note Python skips; SyntaxError means nothing runs at all; NameError means the lines before it already ran." ai="true"}
 One page of notes for this chapter.
 :::
 
