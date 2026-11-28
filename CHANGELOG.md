@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Python chapter 3 rewritten (easy, a little detailed, checked)
+
+- Chapter 3, "Numbers and text": value, the name "floating-point", IEEE 754, "literal" and "base 10" explained
+  where they appear; `//` "towards minus infinity" said plainly (-3.5 rounded down is -4); why the worked example
+  gives `31.0`; how `today.py`'s `55.17` comes about; 100 paise make a rupee.
+- Checked on a lab machine: every operator answer, `0.1 + 0.2`, every format, `round(2.675, 2)` (stored as
+  2.67499999999999982236), banker's rounding, `Decimal`, both error messages, and both tasks on the solution. New
+  and tried: `int(float("12.5"))` is `12`; the slips for `average` (no round, `//`, rounding too early) and
+  `format_price` (`:.2f,` and Python's exact `ValueError`, no comma, `Rs`), and how to type ₹. The Spring Boot
+  course's paise prices confirmed. New sketchnote page.
+
 ## 28 November: Python chapter 2 rewritten (easy, a little detailed, checked)
 
 - Chapter 2, "Your first functions": the story's "No." sat after the Ada Lovelace paragraph, away from its question;
