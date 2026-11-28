@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: Python chapter 8 rewritten (easy, a little detailed, checked)
+
+- Chapter 8, "Lists": the jukebox said correctly (records in numbered slots, a coin and a number put a song in the
+  line) and its photo lead ties the slots to list positions; both errors quoted exactly; `import copy` named.
+- Checked on a lab machine: `cart.py`'s five lines, `same_list.py`, `pop`, `.sort()` giving `None`, slices,
+  `sorted` both ways, lists in lists, and the shallow copy (`[[1, 9], [2]]`, now shown). Slips added and tried:
+  `if item in items`, `list(set(...))` losing the order, `.sort(reverse=True)` on the caller's list,
+  `sorted(...)[:n]`, and `sorted(...)[-n:]` (wrong order, and the whole list for `n = 0`). New sketchnote page.
+
 ## 28 November: Python chapter 7 rewritten (easy, a little detailed, checked)
 
 - Chapter 7, "Strings": the recap promised `upper` and `replace`, which the chapter never taught; both are now

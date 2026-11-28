@@ -2,11 +2,12 @@
 Your music app has a queue. Your chat app has a list of messages. A shop has a cart. A cricket scoreboard has
 the batting order. Different apps, the same idea underneath: **many things, kept in order, in one place**.
 
-Before music apps, there was the **jukebox**: a cabinet of records kept in order, waiting in a queue for the next
-coin. The queue of songs you chose was a list.
+Before music apps, there was the **jukebox**: a machine in a café or a hall, holding dozens of records in
+numbered slots. You put in a coin and pressed the number of a song, and it joined the line of songs waiting to
+play. Numbered slots, and a line of choices played in order: both are lists.
 
 :::photo{src="/lesson-images/python/jukebox.webp" alt="An old wooden jukebox cabinet with a glass window and chrome bars, standing in a wood-panelled room" credit="Ɱ" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Wurlitzer_jukebox.jpg"}
-A Wurlitzer jukebox: a list of songs, played in order.
+A Wurlitzer jukebox. Behind the glass sit its records, each in a numbered slot, the way each item in a Python list sits at a numbered position.
 :::
 
 In Python that idea is a **list**, and you have already met small ones: `[120, 80, 100]`. Today you see how
@@ -81,8 +82,9 @@ Here are the tools you will use every day. All of them change the list in place:
 
 Two things to know:
 
-- `remove` and `cart[5]` on an item or a position that does not exist both stop with an error (`ValueError`,
-  `IndexError`). Check with `in` or `len` first when you are not sure.
+- `remove` and `cart[5]` on an item or a position that does not exist both stop with an error:
+  `ValueError: list.remove(x): x not in list` and `IndexError: list index out of range`. Check with `in` or `len`
+  first when you are not sure.
 - These methods change the list and give back `None` (except `pop`, which gives back what it took). So
   `cart = cart.append("x")` is a classic bug: it stores `None` in `cart`.
 :::
@@ -137,6 +139,10 @@ cd /workspace/08-lists && python3 -c "from lists import remove_duplicates; print
 ```
 
 Then press **Check**.
+
+The usual slips: testing `if item in items` (every item is in the list it came from, so everything is kept);
+or, if you already know sets, `list(set(items))`. A set removes duplicates but does not promise any order: we got
+`[1, 2, 3]` for the numbers above, not `[3, 1, 2]`. Chapter 10 explains why.
 :::
 
 :::step{type=concept title="Sorting, and a list with two names" file="08-lists/same_list.py" line="2-5"}
@@ -203,6 +209,11 @@ cd /workspace/08-lists && python3 -c "from lists import top_n; m = [72, 45, 90, 
 ```
 
 The second thing printed must still be `[72, 45, 90, 66]`. Then press **Check**.
+
+The usual slips (we tried them): `numbers.sort(reverse=True)`, which gives the right answer but reorders the
+caller's list (the check notices); `sorted(numbers)[:n]`, which keeps the *smallest* `n`; and
+`sorted(numbers)[-n:]`, which looks clever but gives `[72, 90]` (smallest first) and, for `n = 0`, the whole
+list, because `[-0:]` is the same as `[0:]`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -258,7 +269,8 @@ Read `week[1][0]` left to right: the item at 1, then *its* item at 0. In chapter
 to store records like these, with names instead of positions.
 
 **Copies of copies.** `.copy()` makes a **shallow** copy: a new outer list, but the inner lists are still
-shared. For lists of lists, `copy.deepcopy(...)` copies everything. You will rarely need it; when a change
+shared. We tried it: after `a = [[1], [2]]`, `b = a.copy()` and `b[0].append(9)`, `a` is `[[1, 9], [2]]`. For
+lists of lists, `copy.deepcopy(...)` (from the `copy` module, `import copy` first) copies everything. You will rarely need it; when a change
 seems to appear in two places at once, remember this page.
 :::
 
@@ -271,7 +283,7 @@ You can now:
 - Sort with `sorted(...)` (new list) or `.sort()` (in place, gives back `None`), and copy before you change a
   list someone gave you, because `b = a` is one list with two names.
 
-:::photo{src="/lesson-images/python/py-08-notes.webp" alt="Handwritten notes about Python lists: append, sorted versus sort, and two names for one list" ai="true"}
+:::photo{src="/lesson-images/python/py-08-sketch.webp" alt="Sketchnote: Lists. A list keeps values in order, at positions from 0; unlike a string, a list can change in place. Flow: result = [], for item in items, test the item, result.append(item), return result. Remember: sorted(a) gives a new list, a.sort() gives back None; b = a is one list with two names; a.copy() makes a second, separate list; never change a list a caller gave you, copy it." ai="true"}
 One page of notes for this chapter.
 :::
 
