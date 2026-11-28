@@ -38,7 +38,9 @@ Asha nobody
 ```
 
 Look at line 15: `int number = shelf.second();` needs no cast. Java **knows** `second()` gives an `Integer` here,
-because the type was written in the brackets. Try `String s = shelf.second();` and `javac` refuses it.
+because the type was written in the brackets, and turns the `Integer` object into a plain `int` by itself (the
+reverse of chapter 11's boxing, called unboxing). Try `String number = shelf.second();` instead and `javac`
+refuses: `incompatible types: Integer cannot be converted to String` (we tried it).
 
 Methods can be generic too. `static <T> T firstOr(List<T> items, T fallback)` works for a list of anything, and
 promises to give back the same type it was given.
@@ -92,7 +94,11 @@ Open `Loan.java` and fill in the compact constructor:
 cd /workspace/12-generics-records-enums && java Loan.java
 ```
 
-When it works, it prints `Loan[title=Dune, days=14]`, then `refused:` and your message. Then press **Check**.
+Right now it prints `Loan[title=  Dune , days=14]` (spaces and all) and `0 days was accepted`. When it works, it
+prints `Loan[title=Dune, days=14]`, then `refused:` and your message. Then press **Check**.
+
+The usual slips: calling `title.strip();` without storing it (strings never change, chapter 7), so the spaces stay;
+or `days > 59` / `days >= 60`, which refuses the allowed 60. The rule is "from 1 to 60", both ends included.
 :::
 
 :::step{type=concept title="Enums: a type with a fixed list of values" file="12-generics-records-enums/Days.java" line="3-22"}
@@ -118,7 +124,8 @@ return switch (genre) {
 ```
 
 This is a **switch expression**: it gives back a value, and each `->` arm is one answer. Here is the best part:
-remove the `HISTORY` arm, and `javac` refuses, because the switch no longer covers every genre. Add a genre next
+remove `HISTORY` from the arms, and `javac` refuses, with `error: the switch expression does not cover all possible
+input values` (we tried it), because the switch no longer covers every genre. Add a genre next
 year, and the compiler points you at every switch that needs a new arm.
 :::
 
@@ -176,7 +183,11 @@ Chapter 7's `split("\\s+")` and `String.join` will help with the middle rule.
 cd /workspace/12-generics-records-enums && java Genre.java
 ```
 
-Then press **Check**.
+Right now both lines print `null`. Then press **Check**.
+
+The usual slip: `.replace(" ", "_")` instead of split and join. With one space it works, but `"  science   fiction "`
+becomes `SCIENCE___FICTION` (three underscores), and `valueOf` refuses it: `No enum constant ...SCIENCE___FICTION`
+(we tried it).
 :::
 
 :::step{type=concept title="Switch on the kind of thing" file="12-generics-records-enums/Kinds.java" line="3-17"}
@@ -214,8 +225,8 @@ an atlas of Goa
 ```
 
 `case Book b` means "if it is a Book, call it `b`". `when` adds a condition, and the arms are tried from the top, so
-the long-book arm must come first. As with enums, leave out `Atlas` and `javac` refuses: it knows every kind there
-is. This is Java 21, and it is the newest thing in this course.
+the long-book arm must come first. As with enums, leave out `Atlas` and `javac` refuses with the same "does not
+cover all possible input values" (we tried it): it knows every kind there is. This is Java 21, and it is the newest thing in this course.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -280,7 +291,7 @@ You can now:
 - Use an enum for a fixed list of values, with `values()`, `valueOf` and a switch expression.
 - Switch on the kind of a sealed family of records, with `case Book b when ...`.
 
-:::photo{src="/lesson-images/java/java-12-notes.webp" alt="Handwritten notes about generics, records and enums: angle brackets are blanks for a type, compact constructor checks values, enum has a fixed list, switch covers every case, sealed permits" ai="true"}
+:::photo{src="/lesson-images/java/java-12-sketch.webp" alt="Sketchnote: Generics, records, enums. Generics fill in a type, records check their values, and enums list every allowed value once. Flow: typed science fiction, strip and upper case, words joined by an underscore, Genre.valueOf, SCIENCE_FICTION. Remember: a compact constructor can tidy or refuse values; a typo in an enum name does not compile; valueOf needs the exact name, capitals included; a switch expression over an enum must cover every value." ai="true"}
 One page of notes for this chapter.
 :::
 
