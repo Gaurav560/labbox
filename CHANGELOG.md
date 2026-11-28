@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: Java chapter 6 rewritten (easy, a little detailed, checked)
+
+- Java chapter 6, "Finding bugs": relays explained and the photo lead tied to the method; why jshell's first answer
+  is `$2` (the loaded class was snippet 1); assertions with and without `-ea` shown from real runs.
+- Checked on a lab machine: `Report.java`'s stack trace line by line (8, 12, 17), `Fines.java` (50, true), the whole
+  jshell session (`$2 ==> 50`, `$3 ==> 0`, `$4 ==> true`), and the assertion message. Slips added: `<=` "to be safe"
+  (the out-of-bounds crash), `borrowed <= limit` (the same bug, written another way). New sketchnote page. Part 1
+  complete.
+
 ## 28 November: Java chapter 5 rewritten (easy, a little detailed, checked)
 
 - Java chapter 5, "Loops": "iteration" explained; an array's `length` without brackets set against a string's
