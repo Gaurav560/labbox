@@ -248,6 +248,47 @@ cd backend && .venv/bin/python ../tools/authoring/notes.py $SP/notes.json $SP/no
   ```
 
   The `alt` text repeats every line, so the page is readable without the image.
+
+### Sketchnote rules (owner, 28 November, verbatim)
+
+Since 25 November the recap picture is a tall sketchnote page (a `sketch` job in `tools/authoring/notes.py`:
+title, subtitle, box, flow, list title, bullets). Write its JSON by these rules. In practice: the box says what the
+whole chapter teaches; the flow is the chapter's main idea as a general process (`messy text -> strip -> split ->
+capitalise -> join`, never `riya SHARMA -> Riya Sharma`); the bullets are the key takeaways; no sample values, no
+names from the running project's data, no numbers that only belong to one example. A code name stays when it is
+the concept the chapter teaches (`equals`, `async`).
+
+**1. Focus on the chapter summary.**
+- Present only a **general, conceptual summary of the chapter**.
+- Capture the main ideas, fundamental concepts, important principles, and key takeaways.
+- The reader should understand what the entire chapter is about just by looking at the sketchnote.
+- Cover the chapter's core learning objectives without introducing unrelated information.
+
+**2. Do not include example-specific data.**
+- Do not include artificial example data, sample values, fictional scenarios, dummy datasets, or illustrative case studies.
+- Do not invent examples to fill empty space.
+- Do not introduce information that was not part of the chapter.
+- Focus on explaining concepts, not demonstrating them through unrelated examples.
+
+**3. Make it a meaningful learning reference.**
+- Every element should contribute to understanding the chapter.
+- Use concise explanations, keywords, conceptual relationships, and relevant visual representations.
+- Highlight how the different concepts connect to one another.
+- Avoid unnecessary decorative content or filler.
+
+**4. Content accuracy.**
+- Base the sketchnote entirely on the lesson or chapter content.
+- Do not hallucinate, expand into unrelated topics, or add external information.
+- Preserve the original meaning of the concepts.
+
+**5. Optimize for image generation cost.**
+- Image regeneration is expensive.
+- Make the first generation as accurate and complete as possible.
+- Prioritize content relevance, conceptual clarity, and information density over decorative creativity.
+
+**Golden rule.** The sketchnote must communicate what the entire chapter teaches, not showcase random examples or
+invented data. Someone who has never read the chapter should be able to look at the sketchnote and grasp its overall
+subject, major concepts, and key takeaways.
 - Cost: OpenAI, medium quality, about $0.04 a page; approved by the owner for covers and notes only.
 
 ## 10. Cover, colour, track

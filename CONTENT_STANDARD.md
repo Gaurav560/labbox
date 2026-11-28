@@ -22,7 +22,7 @@ images, handwritten images, animations, tables, and much more"). A course meets 
 | Real photos | freely licensed, credited photos, each on the step that teaches its idea, with a lead sentence that makes the link obvious; at least one for every chapter or two (a 28-chapter course needs well over 20) | section 3, section 7 |
 | Animations | playing diagrams for processes, traces with Play for changing state | section 3 |
 | Tables | comparisons, checklists and costs as tables | Spring AI 18 and 20 |
-| Handwritten notes | one checked notebook page at the end of every recap, in short plain sentences a beginner can read alone | section 3, section 7 |
+| Handwritten notes | one checked sketchnote page at the end of every recap, in short plain sentences a beginner can read alone; a general summary of the whole chapter, never example data (owner, 28 November) | section 3, section 7, `COURSE_PRODUCTION.md` section 9 "Sketchnote rules" |
 | Before you start | `before_you_start` in `lab.yaml`: who the lab is for, what to know first, why, and the LabBox lab and chapters that teach it (or "Nothing") | section 7 |
 | Full lessons, not summaries | every concept step explains like a teacher, at length; never a shorthand chapter | section 7 |
 | Two real tasks a chapter | checks that run the learner's code, kind failure messages, hints that climb | section 5 |
