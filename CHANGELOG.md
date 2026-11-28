@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: JavaScript chapter 11 rewritten (easy, a little detailed, checked)
+
+- Chapter 11, "Array methods": every output re-run on a lab machine, the three `parseInt` calls each tried on their
+  own (and `parseInt("10", 36)` is 36). New: the arrow-with-braces trap (`(n) => { n + 1 }` gives `undefined`, tried);
+  `s` and `startsWith` explained; `Object.groupBy` dated (2024) and its real output, `[Object: null prototype]`,
+  explained.
+- Why sorting by length alone keeps kiwi before date is now taught: `sort` is stable (a promise since 2019).
+- Slips added and tried: `> 40` (`[72, 90]`), no tie-break (`['fig', 'kiwi', 'date', 'apple', 'banana']`), and
+  sorting the caller's array. New sketchnote page, a general summary of the chapter (redrawn once: the first box said
+  every method leaves the array alone, which is not true of `sort`).
+
 ## 28 November: JavaScript chapter 10 rewritten (easy, a little detailed, checked)
 
 - Chapter 10, "Counting": every output re-run on a lab machine. Hollerith made exact (nearly 63 million people;
