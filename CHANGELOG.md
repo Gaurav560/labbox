@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: Python chapter 12 rewritten (easy, a little detailed, checked)
+
+- Chapter 12, "Functions in depth": both ordering rules now show Python's real messages (tried); "positional",
+  "keyword" and "mutable default" explained; the percent maths said plainly (multiply by `1 - discount / 100`).
+- Checked on a lab machine: every `greet`, `average_of`, `**kwargs`, `scope.py`, the buggy `add_item`, and the
+  solution. A curiosity found and taught: printing three buggy calls on one line shows the full list three times,
+  because all three answers are one list. Slips added and tried: subtracting the discount as rupees (`140`), and
+  `if not basket:`, which loses a caller's own empty basket. New sketchnote page. Part 2 complete.
+
 ## 28 November: Python chapter 11 rewritten (easy, a little detailed, checked)
 
 - Chapter 11, "Sorting and comprehensions": the card sorter said plainly (it read one chosen column and dropped the
