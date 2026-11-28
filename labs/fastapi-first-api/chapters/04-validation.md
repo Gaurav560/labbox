@@ -226,7 +226,7 @@ You can now:
 - Page through a list with `offset` and `limit`, slicing `items[offset : offset + limit]`.
 - Know that the rules are checked before your function runs, and published in `/docs` and `/openapi.json`.
 
-:::photo{src="/lesson-images/fastapi/fa-04-sketch.webp" alt="Sketchnote: Validating input. Rules go into the parameter's type with Annotated, and FastAPI checks them before your function runs. Flow: read each parameter, convert its type, check its rules, collect every problem, 422 or call the function. Remember: Query for query parameters, Path for path parameters; ge and le for numbers, min_length and max_length for text; a page is items from offset to offset plus limit; every rule is published in /docs." ai="true"}
+:::photo{src="/lesson-images/fastapi/fa-04-sketch.webp" alt="Sketchnote: Validating input. Rules go into the parameter's type with Annotated. FastAPI checks them all before your function runs. Flow: read each parameter, convert its type, check its rules, collect every problem, 422, or run the function. Remember: Query(...) for query parameters, Path(...) for path ones; ge and le for numbers; min_length, max_length for text; A page is items[offset : offset + limit]; Every rule is published in /docs." ai="true"}
 One page of notes for this chapter.
 :::
 

@@ -5144,7 +5144,61 @@ function FastapiBody() {
   );
 }
 
+function FastapiResponseFilter() {
+  return (
+    <SketchSteps
+      title="From stored report to public answer"
+      intro="Press Play to watch the return type filter a report."
+      label="The function gives back the stored dictionary with the contact; FastAPI checks it against the return type ReportPublic, drops every field the model does not have, and sends only the public fields as JSON"
+      steps={[
+        { label: "1. the function returns", says: "get_report gives back the stored dictionary: id, title, line, station, contact, details, status." },
+        { label: "2. read the return type", says: "The function says -> ReportPublic. FastAPI uses that model as the shape of the answer." },
+        { label: "3. check the fields", says: "Every field ReportPublic needs must be there with the right type, or the server answers 500." },
+        { label: "4. drop the rest", says: "contact is not in ReportPublic, so it is left out. It stays in your data." },
+        { label: "5. send JSON", says: "The client gets id, title, line, station, details and status. No phone number." },
+      ]}
+    />
+  );
+}
+
+function FastapiExceptionHandler() {
+  return (
+    <SketchSteps
+      title="raise AlreadyClaimed"
+      intro="Press Play to follow an exception from your code to the client."
+      label="Your function raises AlreadyClaimed; FastAPI stops the function, looks for a handler registered for that exception, calls it, and sends the JSONResponse it builds with status 409; with no handler the client gets 500"
+      steps={[
+        { label: "1. the second claim", says: "POST /items/1/claim: item 1 already has claimed_by = 12." },
+        { label: "2. raise", says: "claim_item raises AlreadyClaimed(1, 12). The function stops at that line; nothing after it runs." },
+        { label: "3. find a handler", says: "FastAPI looks for a function registered with @app.exception_handler(AlreadyClaimed)." },
+        { label: "4. the handler answers", says: "already_claimed_handler builds a JSONResponse: status 409, the detail and claimed_by_report." },
+        { label: "5. no handler?", says: "Without one, Uvicorn logs the traceback and the client gets 500 Internal Server Error." },
+      ]}
+    />
+  );
+}
+
+function FastapiPatchMerge() {
+  return (
+    <SketchSteps
+      title="PATCH /items/2 with only a shelf"
+      intro="Press Play to see how a partial update keeps everything else."
+      label="The body holds only shelf; Pydantic fills the other fields of ItemUpdate with None; model_dump with exclude_unset keeps only what was sent; the stored item is updated with that one field"
+      steps={[
+        { label: "1. the body", says: '{"shelf": "B-12"}: one field, nothing else.' },
+        { label: "2. the model", says: "ItemUpdate has four optional fields. title, line and station become None because they were not sent." },
+        { label: "3. exclude_unset", says: 'model_dump(exclude_unset=True) gives {"shelf": "B-12"}: only the fields the client set.' },
+        { label: "4. merge", says: "item.update(...) changes the shelf and leaves the title, line and station as they were." },
+        { label: "5. without exclude_unset", says: "The dump would hold title: None, line: None, station: None, and the update would wipe them." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "fastapi-response-filter": FastapiResponseFilter,
+  "fastapi-exception-handler": FastapiExceptionHandler,
+  "fastapi-patch-merge": FastapiPatchMerge,
   "fastapi-request": FastapiRequest,
   "fastapi-http": FastapiHttp,
   "fastapi-validation": FastapiValidation,

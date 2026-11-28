@@ -285,6 +285,219 @@ def ch5_report_lost():
     return "Two kinds of body, two models: required fields are enforced, optional ones get their default."
 
 
+
+# ---------------------------------------------------------------- Part 2: models and responses
+
+GOOD_ITEM = {"title": "red scarf", "category": "clothing", "location": {"line": "blue", "station": "University"},
+             "found_on": "2026-11-27", "tags": ["wool", "long"]}
+
+
+def ch6_nested_location():
+    mod = load("06-models")
+    c = client_for(mod)
+    if not hasattr(mod, "Location"):
+        raise Fail("there is no model called Location yet. Write it as a class with line and station.")
+    flat = {k: v for k, v in GOOD_ITEM.items() if k != "location"} | {"line": "blue", "station": "University"}
+    r = c.post("/items", json=GOOD_ITEM)
+    if r.status_code == 422 and "location" not in r.text and ("line" in r.text or "station" in r.text):
+        raise Fail("POST /items with a nested location was refused: FoundItemIn still wants line and station at the top. "
+                   "Replace them with location: Location.", "200", f"422 {show(body(r))}"[:300])
+    expect(r, (200, 201), "POST /items with a nested location")
+    got = body(r)
+    if got.get("location") != {"line": "blue", "station": "University"}:
+        raise Fail("the stored item should keep the location as a nested object.", show(GOOD_ITEM["location"]), show(got.get("location")))
+    r = c.post("/items", json=flat)
+    if r.status_code != 422:
+        raise Fail("POST /items with line and station at the top level should now be refused with 422: they belong "
+                   "inside location.", "422", f"{r.status_code} {show(body(r))}"[:300])
+    bad = GOOD_ITEM | {"location": {"line": "blue", "station": "U"}}
+    if c.post("/items", json=bad).status_code != 422:
+        raise Fail("a station of one letter should be refused: Location's station is 2 to 40 characters (Field).")
+    return "A model inside a model: the JSON nests, the checks nest, and /docs shows the shape."
+
+
+def ch6_item_fields():
+    mod = load("06-models")
+    c = client_for(mod)
+    good = GOOD_ITEM
+    fields = getattr(getattr(mod, "FoundItemIn", None), "model_fields", {})
+    if "location" not in fields:  # this task can be done before nested_location: send line and station flat
+        good = {k: v for k, v in GOOD_ITEM.items() if k != "location"} | {"line": "blue", "station": "University"}
+    r = c.post("/items", json=good)
+    if r.status_code == 422:
+        raise Fail("a good item was refused: " f"{show(body(r).get('detail'))}"[:300], "200", "422")
+    expect(r, (200, 201), "POST /items with a good item")
+    got = body(r)
+    if "found_on" not in got and "tags" not in got:
+        raise Fail("the stored item has no found_on and no tags: FoundItemIn does not have those fields yet, and "
+                   "Pydantic quietly drops fields a model does not know.", '"found_on" and "tags"', show(got))
+    if got.get("found_on") != "2026-11-27" or got.get("tags") != ["wool", "long"]:
+        raise Fail("the stored item should keep found_on (a date) and tags (a list).", '"2026-11-27" and ["wool", "long"]',
+                   f"{show(got.get('found_on'))} and {show(got.get('tags'))}")
+    no_tags = {k: v for k, v in good.items() if k != "tags"}
+    r = c.post("/items", json=no_tags)
+    expect(r, (200, 201), "POST /items without tags")
+    if body(r).get("tags") != []:
+        raise Fail("tags should be an empty list when they are not sent: give the field a default.", "[]", show(body(r).get("tags")))
+    for bad, why in ((good | {"title": "ab"}, "a title of 2 characters"), (good | {"title": "x" * 61}, "a title of 61 characters"),
+                     (good | {"found_on": "yesterday"}, "found_on that is not a date"),
+                     (good | {"tags": ["a", "b", "c", "d", "e", "f"]}, "six tags"), ({k: v for k, v in good.items() if k != "found_on"}, "no found_on")):
+        r = c.post("/items", json=bad)
+        if r.status_code != 422:
+            raise Fail(f"POST /items with {why} should be refused with 422. Field(min_length=..., max_length=...) sets the "
+                       "rules; found_on: date makes it required and checks it.", "422", f"{r.status_code} {show(body(r))}"[:300])
+    return "Field rules, a real date and a list with a limit: the model now refuses what a person would refuse."
+
+
+def ch7_public_report():
+    mod = load("07-responses")
+    c = client_for(mod)
+    r = c.get("/reports/1")
+    expect(r, 200, "GET /reports/1")
+    got = body(r)
+    if isinstance(got, dict) and "contact" in got:
+        raise Fail("GET /reports/1 shows the passenger's phone number to anyone. Declare the return type ReportPublic "
+                   "(-> ReportPublic) and FastAPI filters it out.", "no contact", show(got))
+    want = {k: v for k, v in mod.REPORTS[1].items() if k != "contact"}
+    if got != want:
+        raise Fail("GET /reports/1 should give back the report's public fields.", show(want), show(got))
+    r = c.get("/reports/99")
+    expect(r, 404, "GET /reports/99")
+    return "A response model as a filter: the contact stays in your data and never reaches the public."
+
+
+def ch7_report_list_public():
+    mod = load("07-responses")
+    c = client_for(mod)
+    r = c.get("/reports")
+    expect(r, 200, "GET /reports")
+    got = body(r)
+    if not isinstance(got, list):
+        raise Fail("GET /reports should give back a list of reports (-> list[ReportPublic]).", "a list", show(got)[:200])
+    if any("contact" in x for x in got if isinstance(x, dict)):
+        raise Fail("GET /reports still shows contacts. The return type list[ReportPublic] filters every report.",
+                   "no contact", show(got)[:300])
+    if len(got) != len(mod.REPORTS):
+        raise Fail("GET /reports should list every report.", str(len(mod.REPORTS)), str(len(got)))
+    return "A list of response models: every report filtered the same way, and /docs shows exactly what callers get."
+
+
+def ch8_created_201():
+    mod = load("08-errors")
+    c = client_for(mod)
+    r = c.post("/items", json={"title": "red scarf", "line": "blue", "station": "University"})
+    if r.status_code == 200:
+        raise Fail("POST /items worked, but answered 200. Something new was created: 201 Created says so. Add "
+                   "status_code=status.HTTP_201_CREATED to the decorator.", "201", "200")
+    expect(r, 201, "POST /items")
+    if body(r).get("id") != 4:
+        raise Fail("the new item should come back with its id, 4.", "4", show(body(r).get("id")))
+    return "201 Created: the status code itself tells the client that something new now exists."
+
+
+def ch8_claim_conflict():
+    mod = load("08-errors")
+    c = client_for(mod)
+    r = c.post("/items/1/claim", json={"report_id": 12})
+    expect(r, 200, "POST /items/1/claim (an unclaimed item)")
+    r = c.post("/items/1/claim", json={"report_id": 13})
+    if r.status_code == 200:
+        raise Fail("item 1 was claimed twice, by report 12 and then by report 13. A second claim should be refused "
+                   "with 409: raise AlreadyClaimed.", "409", f"200 {show(body(r))}")
+    if r.status_code == 500:
+        raise Fail("raising AlreadyClaimed gave 500: FastAPI does not know that exception yet. Register a handler "
+                   "with @app.exception_handler(AlreadyClaimed) that answers 409.", "409", "500")
+    expect(r, 409, "a second claim of item 1")
+    want = {"detail": "Item 1 is already claimed", "claimed_by_report": 12}
+    if body(r) != want:
+        raise Fail("the 409 should say which item, and which report already claimed it.", show(want), show(body(r)))
+    r = c.post("/items/3/claim", json={"report_id": 1})
+    if r.status_code != 409 or body(r).get("claimed_by_report") != 7:
+        raise Fail("item 3 was already claimed by report 7 when the app started; claiming it should give 409.",
+                   '409 {"claimed_by_report": 7, ...}', f"{r.status_code} {show(body(r))}")
+    expect(c.post("/items/99/claim", json={"report_id": 1}), 404, "POST /items/99/claim")
+    return "Your own exception and its handler: a clear 409 Conflict that says who got there first."
+
+
+def ch9_patch_item():
+    mod = load("09-updates")
+    c = client_for(mod)
+    before = dict(mod.FOUND[2])
+    r = c.patch("/items/2", json={"shelf": "B-12"})
+    expect(r, 200, "PATCH /items/2")
+    want = before | {"shelf": "B-12"}
+    if body(r) != want:
+        lost = [k for k in before if k not in ("shelf",) and body(r).get(k) != before[k]] if isinstance(body(r), dict) else []
+        hint = f" These fields changed too: {', '.join(lost)}. Use model_dump(exclude_unset=True)." if lost else ""
+        raise Fail("PATCH /items/2 with only a shelf should change only the shelf." + hint, show(want), show(body(r)))
+    if c.get("/items/2").json() != want:
+        raise Fail("after the PATCH, GET /items/2 should show the new shelf: change the stored item.")
+    r = c.patch("/items/2", json={"line": "purple"})
+    expect(r, 422, "PATCH /items/2 with line purple")
+    expect(c.patch("/items/99", json={"shelf": "x"}), 404, "PATCH /items/99")
+    return "A partial update with exclude_unset: only what was sent changes, and the rules still apply."
+
+
+def ch9_delete_item():
+    mod = load("09-updates")
+    c = client_for(mod)
+    r = c.delete("/items/1")
+    if r.status_code == 405:
+        raise Fail("DELETE /items/1 gave 405: there is no DELETE route yet.", "204", "405")
+    expect(r, 204, "DELETE /items/1")
+    if r.content:
+        raise Fail("a 204 answer must have no body.", "an empty body", r.text[:100])
+    expect(c.get("/items/1"), 404, "GET /items/1 after deleting it")
+    expect(c.delete("/items/1"), 404, "a second DELETE /items/1")
+    expect(c.get("/items/2"), 200, "GET /items/2 (another item)")
+    return "DELETE with 204 No Content, and 404 the second time: the item is really gone."
+
+
+def _png(size):
+    head = b"\x89PNG\r\n\x1a\n"
+    return head + b"0" * (size - len(head))
+
+
+def ch10_upload_photo():
+    mod = load("10-files")
+    c = client_for(mod)
+    r = c.post("/items/1/photo", files={"photo": ("umbrella.png", _png(1000), "image/png")})
+    if r.status_code == 404 and isinstance(body(r), dict) and body(r).get("detail") == "Not Found":
+        raise Fail("there is no POST /items/{item_id}/photo route yet.", "200", "404")
+    expect(r, (200, 201), "POST /items/1/photo with a small PNG")
+    want = {"item_id": 1, "filename": "umbrella.png", "saved_as": "photos/1.png", "size": 1000}
+    if body(r) != want:
+        raise Fail("the answer should say which item, the uploaded name, where it was saved and its size in bytes.",
+                   show(want), show(body(r)))
+    if not os.path.isfile("photos/1.png") or os.path.getsize("photos/1.png") != 1000:
+        raise Fail("photos/1.png was not saved with the uploaded bytes.")
+    for files, status, why in (({"photo": ("notes.txt", b"hello", "text/plain")}, 415, "a text file"),
+                               ({"photo": ("huge.png", _png(2 * 1024 * 1024 + 1), "image/png")}, 413, "a PNG over 2 MB")):
+        r = c.post("/items/1/photo", files=files)
+        if r.status_code != status:
+            raise Fail(f"uploading {why} should be refused with {status}.", str(status), f"{r.status_code} {show(body(r))}"[:200])
+    expect(c.post("/items/99/photo", files={"photo": ("a.png", _png(100), "image/png")}), 404, "a photo for item 99")
+    r = c.post("/items/1/photo", files={"picture": ("a.png", _png(100), "image/png")})
+    expect(r, 422, "an upload whose field is not called photo")
+    return "An UploadFile with its checks: type, size, and a predictable name on disk. Never trust the client's name."
+
+
+def ch10_desk_header():
+    mod = load("10-files")
+    c = client_for(mod)
+    form = {"title": "red scarf", "station": "University"}
+    r = c.post("/items", data=form)
+    if r.status_code in (200, 201):
+        raise Fail("POST /items without an X-Desk-Key header was accepted. Anyone could log items; answer 401.", "401",
+                   str(r.status_code))
+    expect(r, 401, "POST /items without X-Desk-Key")
+    expect(c.post("/items", data=form, headers={"X-Desk-Key": "guess"}), 401, "POST /items with a wrong key")
+    r = c.post("/items", data=form, headers={"X-Desk-Key": mod.DESK_KEY})
+    expect(r, (200, 201), "POST /items with the right key")
+    if body(r).get("title") != "red scarf":
+        raise Fail("with the right key, the item should be logged from the form fields.", "red scarf", show(body(r)))
+    return "A header parameter: x_desk_key in Python, X-Desk-Key on the wire. FastAPI translated the underscores."
+
 # ---------------------------------------------------------------- the table
 
 CHAPTERS = {
@@ -293,6 +506,11 @@ CHAPTERS = {
     "path-and-query": [("search", ch3_search), ("by_line", ch3_by_line)],
     "validation": [("limits", ch4_limits), ("search_rules", ch4_search_rules)],
     "request-body": [("found_item", ch5_found_item), ("report_lost", ch5_report_lost)],
+    "fields-and-nested": [("item_fields", ch6_item_fields), ("nested_location", ch6_nested_location)],
+    "response-models": [("public_report", ch7_public_report), ("report_list_public", ch7_report_list_public)],
+    "status-and-errors": [("created_201", ch8_created_201), ("claim_conflict", ch8_claim_conflict)],
+    "updates": [("patch_item", ch9_patch_item), ("delete_item", ch9_delete_item)],
+    "forms-and-files": [("desk_header", ch10_desk_header), ("upload_photo", ch10_upload_photo)],
 }
 
 
