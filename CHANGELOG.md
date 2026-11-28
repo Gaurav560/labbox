@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Python chapter 2 rewritten (easy, a little detailed, checked)
+
+- Chapter 2, "Your first functions": the story's "No." sat after the Ada Lovelace paragraph, away from its question;
+  reordered. The Analytical Engine is said to be designed but never finished, her program "often called" the first,
+  and the photo lead says why she is in a lesson about functions. Indentation "by 4 spaces" made "by custom";
+  f-string's f, `import`'s two names, `.upper()` and `a = ...` explained where they appear.
+- Checked on a lab machine: the starter's `None`, `shout.py`'s three lines, the `TypeError`, every `%` answer, and
+  new facts now taught: Python's `-7 % 2` is `1` (C and Java say `-1`), type hints are not checked when running
+  (`welcome(42)` runs), `help(double)` shows the docstring. Every task lists its slips (no `f`, print instead of
+  return, `"True"` in quotes, `== 1`). New sketchnote page.
+
 ## 28 November: Python chapter 1 rewritten (easy, a little detailed, checked)
 
 - Chapter 1, "Your first program", to the lesson rules: folder, `&&`, function, interpreter, core developers,
