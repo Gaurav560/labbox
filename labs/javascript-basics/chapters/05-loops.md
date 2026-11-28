@@ -37,8 +37,13 @@ Up next: Neon Lanes
 Up next: Slow Sunday
 ```
 
+Two small things from chapter 8 appear early here. `["Monsoon Drive", ...]` is a **list** (JavaScript calls it an
+array): values in square brackets, each in a numbered position starting at 0. `seconds[i]` is the item at position
+`i`, and `seconds.length` is how many items there are, 3.
+
 Three songs, one block of code, run three times. `total` grew each time round: 245, then 443, then 755. That pattern,
-start at 0 and add inside the loop, adds up prices, marks and minutes everywhere.
+start at 0 and add inside the loop, adds up prices, marks and minutes everywhere. (The three "Up next" lines come from
+a second loop at the bottom of the file; it gets its own step below.)
 :::
 
 :::step{type=concept title="Repeating with a counter"}
@@ -53,6 +58,8 @@ for (let i = 0; i < seconds.length; i++) {
 1. `let i = 0` runs once, at the start: positions begin at 0.
 2. `i < seconds.length` is checked **before every lap**; when it is false, the loop ends.
 3. `i++` (add 1 to `i`) runs **after every lap**.
+
+`let i` is used instead of `const i` because `i` changes on every lap; a `const` could not be added to.
 
 So `i` is 0, 1, 2, and then 3 fails the check. Three laps for three songs.
 
@@ -128,7 +135,18 @@ Open `loops.js` and make `sumTo(n)` give back 1 + 2 + ... + n. When `n` is 0 or 
 cd /workspace/05-loops && node loops.js
 ```
 
-Then press **Check**.
+Before you start, it prints `0 0 0` and `0 0`: the placeholders. Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- `i < n` instead of `i <= n`: the loop stops one lap early, and `sumTo(5)` gives `10` (1 + 2 + 3 + 4).
+- Setting the total to 0 **inside** the loop (`total = 0;` as the loop's first line): it is reset on every lap, so
+  `sumTo(5)` gives `5`, only the last number.
+- Creating it inside the loop, `let total = 0;` within the `{ }`: then `return total` after the loop fails with
+  `ReferenceError: total is not defined`. A `let` made inside a block exists only inside that block.
+
+A curious fact: a boy called Carl Friedrich Gauss is said to have added 1 to 100 in his head at school, by pairing
+1 + 100, 2 + 99 and so on: 50 pairs of 101 is 5050. Your loop does it the long way, and gets the same answer.
 :::
 
 :::step{type=concept title="Looking at text one character at a time"}
@@ -158,6 +176,9 @@ cd /workspace/05-loops && node loops.js
 ```
 
 Then press **Check**.
+
+The usual slip: forgetting `toLowerCase()`. `"Hello World"` still gives `3`, because its vowels are all small, so it
+looks finished; but `"AEIOU"` gives `0` (we tried it). That is why the check tries capitals too.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -179,7 +200,8 @@ Which loop is best for "print every song title"?
 - [x] `for (const title of titles)`
 - [ ] `for (let i = 0; i <= titles.length; i++)`
 :::explain
-`for...of` needs no counter. And the second loop has a bug: `<=` goes one step past the end, to `undefined`.
+`for...of` needs no counter. And the second loop has a bug: `<=` goes one step past the end. With two titles it
+prints position 2 as well, and `titles[2]` is `undefined` (we tried it).
 :::
 :::
 
@@ -198,7 +220,7 @@ Inside the loop, it would be reset to 0 on every lap, and only the last item wou
 **while.** Repeats while a condition is true, for when you do not know the count in advance:
 `while (queue.length > 0) { play(queue.shift()); }`.
 
-**break and continue.** `break` leaves the loop at once; `continue` skips to the next lap. Chapter 13 uses
+**break and continue.** `break` leaves the loop at once; `continue` skips to the next lap. Chapter 16 uses
 `continue` to skip bad lines in a file.
 
 **The loop that never ends.** Forget the `i++`, and `i` stays 0 forever: the program hangs. In the terminal, press
@@ -213,7 +235,7 @@ You can now:
 - Keep a running total or a count: start before the loop, add inside, return after.
 - Stop a runaway loop with Ctrl + C.
 
-:::photo{src="/lesson-images/javascript/js-05-notes.webp" alt="Handwritten notes about JavaScript loops: for with let i equals 0, check before every lap, i plus plus, for of gives each item, start the total before the loop, Ctrl C stops a stuck loop" ai="true"}
+:::photo{src="/lesson-images/javascript/js-05-sketch.webp" alt="Sketchnote: Loops. A loop repeats a block; for counts with a variable, for...of hands you each item, or each character, in turn. Flow: start the total before the loop, check the condition, run the block, add 1 to the counter, return after the loop. Remember: for with let i from 0 while i is less than n runs n laps; less-or-equal where less-than belongs goes one past the end; a variable made inside a block lives only there; Ctrl + C stops a loop that never ends." ai="true"}
 One page of notes for this chapter.
 :::
 
