@@ -6,8 +6,8 @@ And it matters more than you might think. Change one line of Shelf next month, a
 three files away may quietly break. Nobody would know until a member is charged the wrong fine. Unless there is a
 **test**: a small program that calls your code with known inputs and shouts the moment an answer changes.
 
-Java's testing library is **JUnit**. It is so central that Kent Beck and Erich Gamma wrote its first version on a
-plane, in 1997, and today almost every Java project on Earth, Spring Boot included, uses it. Today you write the
+Java's testing library is **JUnit**. Kent Beck and Erich Gamma, the story goes, wrote its first version on a
+plane, in 1997, and today it is the most used testing library in Java: Spring Boot uses it too. Today you write the
 tests yourself.
 
 :::mission
@@ -38,7 +38,8 @@ cd /workspace/17-testing && mvn -o -q test
 org.opentest4j.AssertionFailedError: two renewals already: a third is not allowed ==> expected: <false> but was: <true>
 ```
 
-Testers call a failing test **red**. Read the report like a sentence: in `RenewalsTest`, the test `noThirdRenewal`
+(Your times will differ, and Maven prints a summary and some advice below these lines.) Testers call a failing
+test **red**. Read the report like a sentence: in `RenewalsTest`, the test `noThirdRenewal`
 failed; its message says why; it **expected** `false`, but `canRenew(2, false)` **was** `true`. A good test does not
 just say "wrong": it says what it wanted and what it got.
 :::
@@ -52,6 +53,8 @@ cd /workspace/17-testing && mvn -o -q test
 ```
 
 With `-q`, success is silence: no `ERROR` lines at all. That is a **green** run. Then press **Check**.
+
+Hint: "at most twice" means 0 and 1 renewals so far may renew again, and 2 may not. Which comparison says that?
 :::
 
 :::step{type=concept title="Inside a test"}
@@ -70,7 +73,9 @@ class FinesTest {
   every class there whose name ends in `Test`, and never puts them in the jar.
 - `@Test` marks a method JUnit should run. Its name says the rule it checks: `onTimeIsFree`.
 - `assertEquals(expected, actual)` compares, and fails the test if they differ. **Expected first**: get the order
-  wrong and the report reads backwards.
+  wrong and the report reads backwards. We tried it: `assertEquals(Fines.lateFee(8), 18)`, a test with a wrong
+  expected number written second, reported `expected: <19> but was: <18>`, as if the code were wrong and the test
+  right.
 - `assertTrue`, `assertFalse` and `assertThrows` complete the everyday toolbox. They are imported with
   `import static`, so you can write them without `Assertions.` in front.
 
@@ -114,12 +119,13 @@ Not by itself. A test that checks `lateFee(0)` and nothing else passes on the co
 a hundred broken versions of it. So professionals test their tests: they break the code on purpose, one small
 change at a time, and check that some test goes red. This is called **mutation testing**.
 
-This happened to a telescope. The **Hubble Space Telescope**'s main mirror was polished to the wrong shape, by about
-one fiftieth of a hair's width, because the instrument used to test it had one lens 1.3 mm out of place. The test
+This happened to a telescope. The **Hubble Space Telescope**'s main mirror was polished to the wrong shape, off
+by about 2 micrometres (roughly one fiftieth of a hair's width), because the instrument used to test it had one
+lens 1.3 mm out of place. The test
 said "perfect", and Hubble's first pictures came back blurred. Astronauts had to fit corrective optics in 1993.
 
 :::photo{src="/lesson-images/java/hubble.webp" alt="The Hubble Space Telescope, wrapped in shiny silver foil, raised above the Space Shuttle with the Earth below" credit="NASA" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Hubble_Space_Telescope_(HST)_above_OV-103%27s_PLB_during_STS-31_deployment.jpg"}
-Hubble being released from the Space Shuttle Discovery, 1990.
+Hubble being released from the Space Shuttle Discovery, 1990. Its mirror had passed its test, and the test itself was wrong: the reason to check that your tests can fail.
 :::
 
 When you press **Check** for your next task, LabBox does exactly that. It runs your `FinesTest` on the real
@@ -163,6 +169,10 @@ cd /workspace/17-testing && mvn -o -q test
 ```
 
 All green on the real code? Then press **Check**, and LabBox will try your tests against the broken copies.
+
+The usual slips: testing only small numbers (0, 3, 5), which every broken copy still gets right; no test for a
+book that is very late; no test that a negative number is refused. If a planted bug slips through, the check tells
+you which rule your tests leave unguarded.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -223,7 +233,7 @@ You can now:
 - Choose test inputs at the edges of each rule, one rule per test.
 - Explain why passing tests are not enough, and how mutation testing checks the tests themselves.
 
-:::photo{src="/lesson-images/java/java-17-notes.webp" alt="Handwritten notes about JUnit: @Test, assertEquals expected first, red then green, test the edges, one rule per test, assertThrows with a lambda, break the code to test the tests" ai="true"}
+:::photo{src="/lesson-images/java/java-17-sketch.webp" alt="Sketchnote: Testing with JUnit. A test calls your code with known inputs and fails when an answer changes; a good test fails on broken code. Flow: @Test, assertEquals of 19 and lateFee(8), mvn -o -q test, red shows expected versus was, fix and run again to green. Remember: in assertEquals the expected value comes first; test the edges, day 7 and day 8; one rule per test, named after the rule; passing tests prove only what they check." ai="true"}
 One page of notes for this chapter.
 :::
 
