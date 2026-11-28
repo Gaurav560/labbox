@@ -5,15 +5,20 @@ Ask any person, and they say yes. Ask JavaScript:
 0.30000000000000004
 ```
 
-Does a tiny leftover like that ever matter? In 1991 a **Patriot** air-defence system counted time in tenths of a
-second, and a tenth cannot be stored exactly in binary. After 100 hours switched on, its clock had drifted by a
-third of a second, enough to miss an incoming missile. Small errors add up.
+Does a tiny leftover like that ever matter? On 25 February 1991, at Dhahran in Saudi Arabia, a **Patriot**
+air-defence system was protecting the area. It counted time in tenths of a second, and stored one tenth in a box of
+24 **binary** digits (binary: only 0s and 1s, the way computers store everything). A tenth cannot be written exactly
+in binary, so every tick lost a tiny sliver. After about 100 hours switched on, its clock was off by about a third of
+a second (0.34 s). For a missile moving that fast, a third of a second meant looking in the wrong part of the sky. It
+lost track of an incoming Scud missile, which hit an army barracks; 28 soldiers died. Small errors add up.
 
 :::photo{src="/lesson-images/javascript/patriot.webp" alt="A Patriot missile launcher, a large angled box of missile tubes on a vehicle, in the desert during the Gulf War" credit="U.S. Army" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Patriot_missile_launcher_during_the_Gulf_War.jpg"}
-A Patriot launcher, 1991: a decimal rounding error, after 100 hours, became a third of a second.
+A Patriot launcher, 1991: a tiny error in storing one tenth, after 100 hours, became a third of a second.
 :::
 
-That is not a bug in JavaScript. Your laptop's chip does it in Python and Java too. But JavaScript has a few more
+The Patriot's numbers were not the same kind as JavaScript's, but the root is the same: a tenth has no exact binary
+form. And `0.30000000000000004` is not a bug in JavaScript: Python and Java print exactly the same, because they all
+use the same standard way of storing decimals (called IEEE 754). But JavaScript has a few more
 surprises of its own, and they all come from one question: what **type** of value is this? A number? Text? Nothing at
 all? By the end of this chapter, five of the strangest lines in programming will make complete sense.
 
@@ -37,7 +42,8 @@ playing = false;                 // let can change later
 - `let` is for values that will change, like a counter or a running total.
 
 :::picture{name="labelled-jars" concept="Variables: names for values"}
-The labels name the values. Both 17 and 12.50 are numbers in JavaScript.
+The labels are the names. The picture sorts whole numbers and decimals into different jars; JavaScript calls both
+17 and 12.50 type `number`.
 :::
 :::
 
@@ -75,7 +81,8 @@ Now line 2. `+` does two jobs: it **adds** numbers and **joins** text. When one 
 number and gives `10`.
 
 Values typed into a form or read from a file always arrive as **text**. Turn them into numbers with `Number("5")`
-before doing sums.
+before doing sums: `Number("5") + 3` is `8`. Two things to know (we tried both): `Number("abc")` is `NaN`, and
+`Number("")`, empty text, is `0`, not `NaN`, so an empty form field quietly becomes zero.
 
 :::picture{name="glue-vs-add" concept="typeof, and the + trap"}
 Two number blocks add up, while two text tiles fit together end to end.
@@ -84,7 +91,8 @@ Two number blocks add up, while two text tiles fit together end to end.
 
 :::step{type=concept title="The other three surprises"}
 **`typeof null` is `"object"`.** `null` means "deliberately nothing". Calling it an object is a mistake from the very
-first version of JavaScript, in 1995. Fixing it would break millions of websites, so it stays, forever.
+first version of JavaScript, in 1995. A proposal to fix it was turned down, because existing websites depend on it,
+so it stays.
 
 **`5 == "5"` is `true`, `5 === "5"` is `false`.** The double `==` converts types before comparing, so text and a
 number can be "equal". The triple `===` compares type **and** value. Always use `===`; chapter 4 shows why.
@@ -139,7 +147,15 @@ decimal. When `total` is `0`, give back `0`.
 cd /workspace/03-values-and-types && node numbers.js
 ```
 
-Then press **Check**.
+Before you start, it prints `-1 -1 -1` and an empty line: the placeholders. Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- `Math.round(scored / total * 100)` rounds to a whole number: `percent(1, 3)` gives `33`, not `33.3`. Multiply by 10
+  before rounding and divide by 10 after, as in the worked example.
+- `(scored / total * 100).toFixed(1)` looks right, `33.3`, but `toFixed` gives back **text**, `"33.3"`, and the check
+  wants a number.
+- No check for `total === 0`: `percent(7, 0)` gives `Infinity`.
 :::
 
 :::step{type=concept title="Money: whole paise, shown as rupees"}
@@ -161,13 +177,17 @@ Keep 1,999 whole paise in the calculation and write ₹19.99 on the price label.
 
 :::step{type=task task=format_rupees title="Your turn: show an amount in rupees"}
 In `numbers.js`, make `formatRupees(paise)` return the amount as text with the ₹ sign and two decimals:
-`formatRupees(1250)` gives `"₹12.50"`, and `formatRupees(5)` gives `"₹0.05"`.
+`formatRupees(1250)` gives `"₹12.50"`, and `formatRupees(5)` gives `"₹0.05"`. (The ₹ sign can be typed straight into
+your code, inside the quotes.)
 
 ```bash run
 cd /workspace/03-values-and-types && node numbers.js
 ```
 
 Then press **Check**.
+
+The usual slip: `"₹" + paise / 100` with no `toFixed`. It gives `"₹12.5"` (we tried it): a plain number drops the
+last zero. `toFixed(2)` is what keeps it.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -213,8 +233,9 @@ JavaScript has seven simple ("primitive") types: `number`, `string`, `boolean`, 
 **undefined versus null.** `undefined` means "nobody set this yet", which is what JavaScript gives you. `null` means
 "deliberately empty", which is what people write.
 
-**BigInt.** Numbers are exact only up to 9,007,199,254,740,991. Beyond that, write `9007199254740993n` with an `n`, a
-BigInt, for exact huge whole numbers.
+**BigInt.** Whole numbers are exact only up to 9,007,199,254,740,991 (`Number.MAX_SAFE_INTEGER`). One step past it,
+things slip: `console.log(9007199254740993)` prints `9007199254740992` (we tried it). Write `9007199254740993n`, with
+an `n`, and you get a **BigInt**, which keeps huge whole numbers exact.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -225,7 +246,7 @@ You can now:
 - Explain `0.1 + 0.2`, `typeof null`, `NaN` and `Infinity`.
 - Round with `Math.round`, guard a division by zero, and show money with `toFixed(2)`.
 
-:::photo{src="/lesson-images/javascript/js-03-notes.webp" alt="Handwritten notes about JavaScript values and types: const and let, text plus number joins, 0.1 plus 0.2 is not 0.3, always use triple equals, NaN is not a number, money in whole paise" ai="true"}
+:::photo{src="/lesson-images/javascript/js-03-sketch.webp" alt="Sketchnote: Values and types. Every value has a type: number, string, boolean, undefined, null and more; the type decides what plus and triple equals do. Flow: text arrives, Number() turns it into a number, do the maths, round it, toFixed() shows it. Remember: with text on one side, plus joins instead of adding; triple equals checks type and value, double equals converts first; decimals are not exact, keep money in whole paise; bad maths gives NaN or Infinity, not an error." ai="true"}
 One page of notes for this chapter.
 :::
 
