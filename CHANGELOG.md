@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: Java chapter 5 rewritten (easy, a little detailed, checked)
+
+- Java chapter 5, "Loops": "iteration" explained; an array's `length` without brackets set against a string's
+  `length()`; `rangeClosed` said to include n.
+- Checked on a lab machine: `Week.java`, the lap loop, the `<=` crash (`Index 3 out of bounds for length 3`, line
+  5), `charAt`, `toCharArray`, `indexOf` (-1), the savings `while` (4 1200), `rangeClosed(1, 5).sum()` (15), and
+  both tasks. Slips added and tried: `i < n` (`sumTo(5)` gives 10), `c == "a"` (javac's `bad operand types` quoted),
+  no `toLowerCase`. New sketchnote page.
+
 ## 28 November: Java chapter 4 rewritten (easy, a little detailed, checked)
 
 - Java chapter 4, "Making decisions": the "predict a negative daysLate" question now has its tried answer (-2
