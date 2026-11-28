@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: JavaScript chapter 14 rewritten (easy, a little detailed, checked)
+
+- Chapter 14, "Classes": every output re-run on a lab machine. Method, getter (and why there is no setter for
+  `#plays`) and `**` explained at first use; the private-field SyntaxError tried and quoted; the `try`/`catch` around
+  `later()` in `lostthis.js` pointed out, and why `this` is `undefined` there (class code is always strict mode).
+- Slips added and tried: `new Error` instead of `new RangeError` (the check's real message), changing the balance
+  before checking (`-700`), `toFixed(2)` giving text, and `Math.PI * radius * 2` (the distance round the circle,
+  18.28). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 13 rewritten (easy, a little detailed, checked)
 
 - Chapter 13, "Errors": every output re-run on a lab machine. The `parse_age` check demanded a TypeError for `"-1"`,
