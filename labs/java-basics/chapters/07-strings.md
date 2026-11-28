@@ -31,7 +31,7 @@ A `String` is a sequence of `char` values, each with a position starting at **0*
 | `s.toUpperCase()` | all capitals | `"HOBBIT"` |
 
 Notice that `length()` needs brackets (it is a method), while an array's `length` in chapter 8 does not (it is a
-field). Everyone mixes them up once; the compiler will tell you.
+**field**: a value stored on the object, not a method). Everyone mixes them up once; the compiler will tell you.
 
 :::picture{name="beads-on-string"}
 A string is beads on a thread: each bead a character, each with its place in the row, starting at 0.
@@ -81,7 +81,9 @@ Because every method gives back a new string, you can **chain** them, left to ri
 :::
 
 :::step{type=example title="Worked example: split, and its trap"}
-`split` cuts a string into an array of pieces. It takes a **regular expression**, a small pattern language:
+`split` cuts a string into an array of pieces. It takes a **regular expression** (regex for short): a small
+pattern language for describing text, where some characters have special meanings. (The lists below are printed
+with `Arrays.toString`, which shows an array in square brackets.)
 
 ```java
 "a b  c".split(" ")                       // [a, b, , c]
@@ -128,7 +130,9 @@ spaces, tabs or new lines, sometimes several in a row; an empty or blank text ha
 cd /workspace/07-strings && java Words.java
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slips: `split(" ")` instead of `split("\\s+")`: on `"  lots   of   spaces  "`, even
+after `strip()`, it gives 7 pieces (we tried it), empty ones included; or forgetting the empty-text check, so `""`
+counts as 1 word.
 :::
 
 :::step{type=concept title="equals, not ==" file="07-strings/SameText.java" line="4-7"}
@@ -205,6 +209,10 @@ cd /workspace/07-strings && java Words.java
 ```
 
 Then press **Check**.
+
+The usual slip: skipping the empty check. A name of only spaces strips to `""`, splits into one empty piece, and
+`substring(0, 1)` on that empty piece crashes: `StringIndexOutOfBoundsException: Range [0, 1) out of bounds for
+length 0` (we tried it). `[0, 1)` is maths notation for "from 0, up to but not including 1".
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -267,7 +275,7 @@ You can now:
 - Split with `"\\s+"` and avoid the empty-string trap; join with `String.join` and `StringBuilder`.
 - Compare strings with `equals`, never `==`, and explain why.
 
-:::photo{src="/lesson-images/java/java-07-notes.webp" alt="Handwritten notes about Java strings: compare with equals not ==, strings never change, split on \\s+, the empty string gives one piece, StringBuilder" ai="true"}
+:::photo{src="/lesson-images/java/java-07-sketch.webp" alt="Sketchnote: Strings. A String is a row of characters, positions from 0; strings never change, every method gives back a new one. Flow: messy riya SHARMA, strip() and check empty, split on spaces, capitalise each word, join to Riya Sharma. Remember: compare text with equals, never with ==; s.toUpperCase() alone changes nothing, store it; an empty string splits into one empty piece; length() for a String, length for an array." ai="true"}
 One page of notes for this chapter.
 :::
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 7 rewritten (easy, a little detailed, checked)
+
+- Java chapter 7, "Strings": field, regular expression and `Arrays.toString` explained where they appear; `[0, 1)`
+  in an error message explained.
+- Checked on a lab machine: `Receipt.java`, `SameText.java` (false, true), every toolbox answer, both splits, the
+  empty-string trap (`"".split(...)` has length 1), the string pool (`"riya" == "riya"` is true), `join`,
+  `StringBuilder`, the capitalising recipe, `'A' + 1` (66, B), and both tasks. Slips added and tried: `split(" ")`
+  (7 pieces), no empty check (1 word for `""`), and the `StringIndexOutOfBoundsException` an empty name causes. New
+  sketchnote page (redrawn once: the flow skipped the capitalising step).
+
 ## 28 November: Java chapter 6 rewritten (easy, a little detailed, checked)
 
 - Java chapter 6, "Finding bugs": relays explained and the photo lead tied to the method; why jshell's first answer
