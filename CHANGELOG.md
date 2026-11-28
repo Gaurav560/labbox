@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 1 rewritten (easy, a little detailed, checked)
+
+- Java chapter 1, "Your first program": compile, bytecode, JVM, folder, `&&`, LTS and steward explained where they
+  first appear; why C programs were rebuilt per computer said plainly; Oracle's 2010 purchase "completed"; LTS made
+  exact (every two years; Java 21 from 2023); why the `system` error talks about a "package".
+- Checked on a lab machine (OpenJDK 21): `First.java`, both `FixMe` errors (the second's missing `error:
+  compilation failed` line restored), `Crash.java`, `javac` and the class file's bytes (`ca fe ba be ... 41`),
+  `jshell` (its harmless first-run notice now mentioned). Slips added with javac's real messages (`Println`, a
+  missing `;`, curly quotes, `println` outside main). New sketchnote page.
+
 ## 28 November: Python chapter 19 rewritten; the Python lab is done (19 of 19)
 
 - Chapter 19, "Capstone: the monthly report": the deep dive promised "Python in practice (the next course on

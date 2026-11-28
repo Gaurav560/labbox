@@ -25,14 +25,16 @@ a tree.
 
 :::before{title="Before Java"}
 In the early 1990s, most serious programs were written in **C** and **C++**. They were fast, but a program had to
-be rebuilt separately for every kind of computer, and one memory mistake could crash it. At Sun Microsystems in
+be rebuilt separately for every kind of computer (each kind of processor understands different instructions), and
+the programmer managed memory by hand, so one memory mistake could crash it. At Sun Microsystems in
 California, a small team led by **James Gosling** (the "Green Project", started in 1991) wanted to program all
 kinds of devices, from TV set-top boxes to handheld gadgets, and C++ made that painful.
 :::
 
 :::solved
-A language that is compiled once into a **neutral, portable form** (bytecode) and then run by a small program, the
-**Java Virtual Machine**, which exists for every kind of computer. Sun's slogan was **"Write once, run anywhere"**.
+A language that is **compiled** (translated, before running) once into a **neutral, portable form** called
+**bytecode**, and then run by a program called the **Java Virtual Machine** (JVM), which exists for every kind of
+computer. The bytecode is the same everywhere; only the JVM differs. Sun's slogan was **"Write once, run anywhere"**.
 Java also manages memory for you, so a whole family of crashes simply disappears.
 :::
 
@@ -45,13 +47,13 @@ James Gosling, who led the team that created Java, in 2008.
 - **1995** Renamed **Java** and announced to the world.
 - **1996** JDK 1.0, the first official release.
 - **2006** Sun begins releasing Java as open source (**OpenJDK**).
-- **2010** Oracle buys Sun and becomes Java's steward.
+- **2010** Oracle completes its purchase of Sun and becomes Java's steward (the company that leads it).
 - **2014** Java 8 adds lambdas and streams (you will use both in this course).
 :::
 
 Today Java is developed in the open by the **OpenJDK** community, led by Oracle with many other companies, and a
-new version comes out every six months. Every few years one becomes a long-term support release; your lab runs
-**Java 21**, one of those.
+new version comes out every six months. Every two years one becomes a **long-term support** (LTS) release, kept
+up to date with fixes for years; your lab runs **Java 21** (released in 2023), one of those.
 
 :::usedby{title="Industries"}
 - Banking and payments
@@ -94,7 +96,8 @@ learner@java-basics:/workspace$
 ```
 
 Read it from left to right: you are the user `learner`, on a machine called `java-basics`, in the folder
-`/workspace`. The `$` means "your turn".
+`/workspace`. A **folder** (also called a directory) is a box that holds files, like the folders on your own
+computer. The `$` means "your turn".
 
 Three commands are enough to find your way around:
 
@@ -109,7 +112,8 @@ line below, then **Enter** in the terminal:
 cd /workspace/01-first-program && ls
 ```
 
-You should see four files: `Crash.java`, `First.java`, `FixMe.java` and `Hello.java`. They are in the file list
+The `&&` means "do the first command, and if it worked, the second". You should see four files: `Crash.java`,
+`First.java`, `FixMe.java` and `Hello.java`. They are in the file list
 next to the editor too.
 
 :::photo{src="/lesson-images/python/vt100-terminal.webp" alt="A DEC VT100 computer terminal from 1978: a beige screen and keyboard" credit="Jason Scott" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:DEC_VT100_terminal.jpg"}
@@ -226,6 +230,15 @@ cd /workspace/01-first-program && java Hello.java
 ```
 
 When the two lines look right, press **Check**.
+
+The usual slips, with what Java says (we tried each):
+
+- `System.out.Println` with a capital P: `error: cannot find symbol`, then `symbol: method Println(String)`.
+  Java cares about every capital letter.
+- A missing `;`: `error: ';' expected`, with the `^` right after the line.
+- Curly quotes `“…”` pasted from a document: `error: illegal character: '\u201c'`. Type plain quotes `"`.
+- The `println` lines written below main's closing `}`: `error: <identifier> expected`. Instructions belong
+  inside main's braces.
 :::
 
 :::step{type=concept title="When Java does not understand you" file="01-first-program/FixMe.java" line="4-6"}
@@ -280,9 +293,12 @@ FixMe.java:5: error: package system does not exist
         system.out.println("Ready to look after your books.");
               ^
 1 error
+error: compilation failed
 ```
 
-Java is **case-sensitive**: `System` and `system` are two different names, and only `System` exists. Again, nothing
+Java is **case-sensitive**: `System` and `system` are two different names, and only `System` exists. (The message
+talks about a "package" because Java guesses that a lowercase name followed by a dot might be a package, a group of
+classes; you will meet packages in chapter 16. The real cause is the small `s`.) Again, nothing
 ran: this is still a **compile error**, found before the program starts.
 
 But some mistakes can only show up **while** the program runs. Open `Crash.java` and run it:
@@ -410,7 +426,8 @@ often, and compiles those into real machine code for this exact processor, while
 the **JIT** (just-in-time compiler). Long-running Java servers often end up very fast.
 
 **jshell.** Type `jshell` in the terminal and you get Java's interactive mode: type `2 + 3` and it answers
-`$1 ==> 5` right away, no class or `main` needed. Type `/exit` to leave. You will use it for quick experiments in
+`$1 ==> 5` right away, no class or `main` needed. Type `/exit` to leave. (The very first time, it may print a
+line ending in `Created user preferences directory`: that is a harmless note, not an error.) You will use it for quick experiments in
 chapter 6.
 
 **`java File.java` versus `javac` + `java`.** Since Java 11, `java File.java` compiles in memory and runs in one go,
@@ -425,7 +442,7 @@ You can now:
 - Tell a string (in quotes) from a calculation, and join text and numbers with `+`.
 - Read a compile error (line number, message, `^`) and an exception at run time, and fix both.
 
-:::photo{src="/lesson-images/java/java-01-notes.webp" alt="Handwritten notes: a Java program needs a class and main, end lines with a semicolon, javac makes a class file, the JVM runs it, CA FE BA BE" ai="true"}
+:::photo{src="/lesson-images/java/java-01-sketch.webp" alt="Sketchnote: Your first Java program. All Java code lives in a class; the program starts in main and runs its lines from the top, one at a time. Flow: Hello.java, javac checks and compiles, Hello.class bytecode, the JVM runs main, println shows a line. Remember: every instruction ends with a semicolon; the class Hello lives in the file Hello.java; a compile error means nothing runs at all; an exception means the lines before it already ran." ai="true"}
 One page of notes for this chapter.
 :::
 
