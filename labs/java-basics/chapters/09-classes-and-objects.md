@@ -6,7 +6,7 @@ Architects solved this problem long before programmers: draw the plan **once**, 
 as you like. A class is that plan; every `new` builds one more house.
 
 :::photo{src="/lesson-images/java/blueprint.webp" alt="A blue architectural blueprint drawing of a tall building, with white lines and a title block in the corner" credit="Warner, Burns, Toan and Lunde" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Original_Blueprint_of_United_States_National_Agricultural_Library.jpg"}
-A blueprint of the US National Agricultural Library: one plan, one building.
+A blueprint of the US National Agricultural Library. The plan describes the building once; builders then make the real thing from it. In Java the class is the plan, and each new Book is one real thing built from it.
 :::
 
 So you make your own type. In Java that is a **class**, and you have been writing one in every chapter without
@@ -77,13 +77,15 @@ Dune (1 on the shelf)
 true false
 ```
 
-Borrowing *The Hobbit* changed only the Hobbit: each object keeps its own `copies`. And Dune's second `borrow()`
-said `false`: the book protected itself, because the only way to change `copies` is through `borrow()`, and
+Borrowing *The Hobbit* changed only the Hobbit: each object keeps its own `copies`. The last line borrows Dune
+twice: the first `borrow()` says `true` (1 copy became 0), and the second says `false`: the book protected itself, because the only way to change `copies` is through `borrow()`, and
 `borrow()` refuses to go below zero. Try to reach the field from outside, and `javac` stops you:
 
 ```text
 P.java:1: error: copies has private access in Book
 ```
+
+(That is a tiny file `P.java` with the line `b.copies = 5;`; we compiled it next to `Book.java`.)
 
 That idea, objects guarding their own data behind methods, is called **encapsulation**. It is why a `Book` can never
 end up with -3 copies, however badly the rest of the program behaves.
@@ -154,7 +156,12 @@ After `deposit(500)` and `withdraw(200)`, `getBalance()` is `300`; `withdraw(100
 cd /workspace/09-classes-and-objects && java BankAccount.java
 ```
 
-Then press **Check**.
+Right now it prints `Asha has 0` and `1000 was taken out`: the empty methods accept everything and do nothing.
+When you are done, it prints `Asha has 300` and `refused, still 300`. Then press **Check**.
+
+The usual slips: subtracting first and checking afterwards, so a refused withdrawal still changed the balance
+(check, throw, and only then change); `amount >= balance`, which refuses taking out exactly everything (allowed:
+the balance may reach 0); or letting a deposit of 0 through.
 :::
 
 :::step{type=concept title="Records: classes for plain data" file="09-classes-and-objects/Point.java" line="3"}
@@ -174,8 +181,8 @@ Dune 3
 true
 ```
 
-(That is `System.out.println(w)`, `w.title() + " " + w.shelf()`, and
-`w.equals(new Where("Dune", 3))`.) A record's values can never change after it is made, which makes records safe to
+(That is `System.out.println(w)`, `w.title() + " " + w.shelf()`, and `w.equals(new Where("Dune", 3))`, from
+`Where.java` in this folder: run it with `java Where.java`.) A record's values can never change after it is made, which makes records safe to
 share. You can still add methods to a record, and that is your next task: open `Point.java`.
 :::
 
@@ -194,7 +201,8 @@ rounds.
 cd /workspace/09-classes-and-objects && java Point.java
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: `Math.round(d * 100) / 100` without the `.0`. `Math.round` gives back a whole
+number, so that is integer division again (chapter 3), and 1.41 becomes `1` (we tried it).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -242,7 +250,8 @@ you must also write `hashCode`, or `HashMap` and `HashSet` break in strange ways
 exactly like this for you to fix.
 
 **null.** A reference variable can hold `null`: no object at all. Calling a method on it throws a
-`NullPointerException`, the most famous exception in Java. Its inventor, Tony Hoare, later called the null reference
+`NullPointerException`, the most famous exception in Java. Modern Java explains it: we tried it and got
+`NullPointerException: Cannot invoke "Book.borrow()" because ... is null`. Its inventor, Tony Hoare, later called the null reference
 his "billion-dollar mistake".
 :::
 
@@ -254,7 +263,7 @@ You can now:
 - Protect an object's data with encapsulation: check, throw, and only then change.
 - Use records for plain values, with their free constructor, getters, toString and equals.
 
-:::photo{src="/lesson-images/java/java-09-notes.webp" alt="Handwritten notes about Java classes: a class is a blueprint, new makes an object, private fields, no static means each object, record for plain data" ai="true"}
+:::photo{src="/lesson-images/java/java-09-sketch.webp" alt="Sketchnote: Classes and objects. A class is a plan; each object made with new has its own fields, and guards them with its methods. Flow: new BankAccount for Asha, deposit(500), withdraw(1000), check first and refuse, balance unchanged. Remember: private fields change only through the class's methods; no static means the method works on one object; a variable holds a reference to an object; a record gives fields, getters, toString and equals." ai="true"}
 One page of notes for this chapter.
 :::
 
