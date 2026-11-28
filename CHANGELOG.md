@@ -1,5 +1,28 @@
 # Changelog
 
+## 28 November: FastAPI becomes a full course; Part 1, "First steps" (chapters 1 to 5)
+
+- The one-chapter "FastAPI: your first API" (Ravi's Snack Corner) is being rebuilt as a full course, at the owner's
+  request ("Fast API rewrite complete full standard"): **Lostdesk**, the lost-property API of a city metro, following
+  the official FastAPI tutorial at FastAPI 0.165.0 (the version the docs show, released 18 November 2026). Chapter id
+  `01-menu-api` and task ids `menu` and `price` are kept, so earlier progress counts.
+- New image `labbox/fastapi-first-api:v2` (v1 stays for the live site until it is deployed):
+  `fastapi[standard-no-fastapi-cloud-cli]` 0.165.0, SQLModel 0.0.50, PyJWT 2.15.1, pwdlib (argon2) 0.4.2,
+  pydantic-settings 2.16.3, pytest 9.2.0, every package pinned in `warm/requirements.txt`, so checks run offline.
+- Part 1: 1 Your first API (history from PyPI's real release dates), 2 How a request travels (HTTP, captured with
+  `curl -v`), 3 Path and query parameters, 4 Validating input, 5 Request bodies. Ten tasks; hidden checks in
+  `tests/check.py` call each chapter's app with TestClient from a fresh copy of its folder and recognise the usual
+  slips (a bare list, a missing `: int`, `{"error": ...}` with 200, `items[offset:limit]`, ...).
+- Found while capturing: `/docs` cannot load inside the Preview tab without `--root-path`, because Swagger UI asks the
+  site's root for `/openapi.json`; the run command now passes `--root-path /preview/fastapi-first-api/8000`
+  (FastAPI's "behind a proxy" option) and chapter 1 explains it. Every output in the lessons was captured in the new
+  image (the dev server's banner, every 422 body, 405 with its `allow` header, the real reason phrase "422
+  Unprocessable Entity").
+- Five photos (Helsinki's tagged lost umbrellas, Transport for London's Baker Street office, the first web server at
+  CERN, a Stockholm metro ticket gate, Berlin's lost-property office in 1973), four playing diagrams
+  (`fastapi-request`, `fastapi-http`, `fastapi-validation`, `fastapi-body`), five sketchnotes (general summaries, the
+  owner's new sketchnote rules). The Phase D backend and browser tests now start the app from `01-first-api/`.
+
 ## 28 November: JavaScript chapter 18 rewritten (easy, a little detailed, checked); the JavaScript lab is done
 
 - Chapter 18, "Capstone": every output re-run on a lab machine. The terminal pipeline (`cut -d, -f2`, `sort`,

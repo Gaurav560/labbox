@@ -30,7 +30,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 18 | javascript-inside-out | JavaScript inside out (short) | 2 | not started | |
 | 19 | postgres-transactions-and-locks | Postgres: transactions and locks (short) | 2 | not started | |
 | 20 | rate-limiter | System design: a rate limiter (short) | 2 | not started | |
-| 21 | fastapi-first-api | FastAPI: your first API (short) | 1 | not started | |
+| 21 | fastapi-first-api | FastAPI (full course: Lostdesk) | 21 | in progress (5 of 21) | |
 | 22 | express-api | Express: an order tracking API (short) | 1 | not started | |
 | 23 | postgres-indexing-incident | Postgres: the slow checkout (short) | 1 | not started | |
 
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: FastAPI Part 1 done (ch 1 to 5, 10 tasks): new course Lostdesk on FastAPI 0.165.0, image v2; /docs needs --root-path in the Preview (found, taught); test-lab green.
 - 28 Nov: JS ch 18 done: check now catches the empty-amount row (Number('') is 0); pipeline explained; 41 rows accounted for; slips tried; sketchnote. JAVASCRIPT LAB DONE (18 of 18).
 - 28 Nov: JS ch 17 done: real spec report shown (TAP when piped explained); slips tried (% precedence, assert.throws without arrow); sketchnote. Part 3 complete.
 - 28 Nov: JS ch 16 done: 'only in browsers' made exact; 9-of-8 lines explained; stderr tried; slips tried against the check; sketchnote.

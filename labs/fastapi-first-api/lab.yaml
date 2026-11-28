@@ -1,56 +1,185 @@
 id: fastapi-first-api
 version: 2
-title: "FastAPI: your first API"
-subtitle: Build a real menu API for a snack corner and watch it answer in the Preview tab.
-description: Build a real menu API for a snack corner and watch it answer in the Preview tab.
+title: "FastAPI"
+subtitle: Build Lostdesk, the lost-property API of a city metro, from your first route to a tested, secured service.
+description: 'Learn FastAPI from your first route, following the official tutorial at FastAPI 0.165: path and query
+  parameters, validation, Pydantic models, responses and errors, files, dependencies, a real database with SQLModel,
+  bigger applications, testing, passwords and tokens, background tasks, middleware, settings and live updates. One
+  running project, Lostdesk, the API behind the lost-property office of a city metro, grows chapter by chapter.'
 language: python
 track: frameworks
 tags: [python, fastapi]
 level: beginner
-estimated_minutes: 15
+estimated_minutes: 225
 story:
-  company: Ravi's Snack Corner
-  character: { name: Ravi, role: "Owner, Ravi's Snack Corner" }
-  pitch: "Ravi wants his WhatsApp bot to read the menu and prices from an API instead of a photo."
-cover_scene: "Ravi's Snack Corner: a small roadside snack counter at night, plates of vada pav and bun maska on the counter, glowing translucent menu cards floating above it connected by thin lines of light to a smartphone."
+  company: Lostdesk
+  character: { name: Lostdesk, role: "The lost-property API of a city metro" }
+  pitch: "Every day the metro's trains collect umbrellas, phones and school bags. Lostdesk is the API that finds them their owners again."
+cover_scene: "A metro station's lost-property counter at night, shelves of labelled umbrellas, bags and keys, a terminal screen showing JSON."
 cover: cover.svg
 cover_credit: { by: "Logos: fastapi,python", source: "devicon (MIT)" }
 # What a learner needs to know first (shown on the course page; owner, 24 November).
 before_you_start:
-  summary: Python basics. You build a small web API with FastAPI, so you should be comfortable with functions and dictionaries
-    in Python.
+  summary: Python basics. Every FastAPI route is a Python function that takes parameters and gives back dictionaries and
+    lists, so you should be comfortable writing small functions with them. The course explains everything about the web
+    (HTTP, JSON, status codes) from the start.
   needs:
   - know: Python functions, lists and dictionaries
-    why: Every endpoint in FastAPI is a Python function that returns data.
+    why: Every route is a function that returns a dictionary or a list, which FastAPI sends as JSON.
     lab: python-basics
-    where: chapters 1 to 12
-image: labbox/fastapi-first-api:v1
-resources: xs
+    where: chapters 2, 8 and 9 (Your first functions, Lists, Dictionaries)
+  - know: Classes, and type hints like name str
+    why: FastAPI reads your type hints to check the data, and request bodies are small classes (Pydantic models).
+    lab: python-basics
+    where: chapter 15 (Classes and objects) and chapter 12 (Functions in depth)
+image: labbox/fastapi-first-api:v2
+resources:
+  cpus: 0.5
+  memory: 512m
+  pids_limit: 256
 workspace:
   mount_path: /workspace
   shell: /bin/bash
   network: bridge
 preview:
-  - { name: "Menu API", port: 8000, path: "/" }
+  - { name: "Lostdesk API", port: 8000, path: "/" }
 check:
   command: ["bash", "/check/tests/run_checks.sh"]
-  timeout_seconds: 30
+  timeout_seconds: 60
   network: none
 chapters:
   - id: 01-menu-api
-    title: A menu that answers
-    file: chapters/01-menu-api.md
-    minutes: 15
+    title: Your first API
+    file: chapters/01-first-api.md
+    minutes: 45
+    folder: 01-first-api
+    part: First steps
     tasks:
       - id: menu
-        title: "GET /menu: list every item"
+        title: "GET /items: every found item"
         hints:
-          - "Look at the second TODO in main.py: there is no /menu route yet."
-          - "A route is a function with a decorator above it, just like home(), but for the /menu path. Return a dict."
-          - "sorted() on a dict gives a list of its keys, A to Z. Return that list under the key items."
+          - "Right now there is no /items route, so FastAPI answers 404 Not Found. Look at how home() is written."
+          - "A route is a function with @app.get(...) above it. The function gives back a dict, and FastAPI sends it as JSON."
+          - "FOUND.values() gives the items in id order; put them in a list under the key items."
+        examples:
+          - call: "GET /items"
+            gives: '{"items": [{"id": 1, ...}, ...]}'
+            note: "four items"
       - id: price
-        title: "GET /menu/{item}: one item's price"
+        title: "GET /items/{item_id}: one item, or 404"
         hints:
-          - "The item name comes from the URL path, like /menu/fried idli."
-          - "Put the item name in the path inside curly braces, and give the function a parameter with the same name."
-          - "If item is not in MENU, raise HTTPException(status_code=404). Otherwise return the item and MENU[item]."
+          - "Curly braces in the path, like {item_id}, become a parameter of the function with the same name."
+          - "Give the parameter the type int: FOUND's keys are numbers, and the URL is text until FastAPI converts it."
+          - "When the id is not in FOUND, raise HTTPException with status_code 404 instead of returning."
+        examples:
+          - call: "GET /items/3"
+            gives: '{"id": 3, "title": "silver phone", ...}'
+          - call: "GET /items/99"
+            gives: "404"
+            note: "not found"
+  - id: http-basics
+    title: How a request travels
+    file: chapters/02-http.md
+    minutes: 45
+    folder: 02-http
+    tasks:
+      - id: health
+        title: "GET /health: the status and the count"
+        hints:
+          - "There is no /health route yet. It is a GET route like the others in main.py."
+          - "Give back a dict with two keys: status, always the text ok, and items."
+          - "len(FOUND) counts the items, so the number stays right when items are added."
+        examples:
+          - call: "GET /health"
+            gives: '{"status": "ok", "items": 4}'
+      - id: stations
+        title: "GET /stations: each station once, A to Z"
+        hints:
+          - "Every item has a station. Riverside has two items but must appear once."
+          - "A set comprehension over FOUND.values() collects each station once."
+          - "sorted() turns the set into a list, A to Z; give it back under the key stations."
+        examples:
+          - call: "GET /stations"
+            gives: '{"stations": ["Old Market", "Riverside", "Tech Park"]}'
+  - id: path-and-query
+    title: Path and query parameters
+    file: chapters/03-path-and-query.md
+    minutes: 50
+    folder: 03-path-and-query
+    tasks:
+      - id: search
+        title: "GET /items?q=&category=&limit=: search"
+        hints:
+          - "Function parameters that are not in the path become query parameters: the part after ? in the URL."
+          - "Give q and category the type str | None with the default None, and limit the type int with the default 10."
+          - "Keep the items whose lower-cased title contains q.lower(), then those of the category, then slice to limit."
+        examples:
+          - call: "GET /items?q=UMBRELLA"
+            gives: "items 1 and 6"
+          - call: "GET /items?category=bag&limit=1"
+            gives: "item 2"
+      - id: by_line
+        title: "GET /lines/{line}/items: one line's items"
+        hints:
+          - "The path has a parameter, {line}, and the function needs a parameter with the same name."
+          - "Give it the type Line, the Enum at the top of the file, so purple is refused with 422."
+          - "line.value is the text red, blue or green; keep the items whose line equals it."
+        examples:
+          - call: "GET /lines/red/items"
+            gives: '{"line": "red", "items": [item 1, item 3]}'
+          - call: "GET /lines/purple/items"
+            gives: "422"
+  - id: validation
+    title: Validating input
+    file: chapters/04-validation.md
+    minutes: 45
+    folder: 04-validation
+    tasks:
+      - id: limits
+        title: "limit 1 to 20, and an offset"
+        hints:
+          - "Right now /items?limit=0 and limit=500 are both accepted. The rules go into the parameter's type."
+          - "Annotated[int, Query(ge=1, le=20)] = 10 says: a whole number from 1 to 20, 10 when not given."
+          - "Add offset the same way with ge=0, and slice the list from offset to offset + limit."
+        examples:
+          - call: "GET /items?limit=0"
+            gives: "422"
+          - call: "GET /items?offset=2&limit=2"
+            gives: "items 3 and 4"
+      - id: search_rules
+        title: "q 3 to 40 characters, item_id 1 or more"
+        hints:
+          - "/items?q=ab is accepted today. A search of two letters matches far too much."
+          - "Query(min_length=3, max_length=40) inside Annotated sets the rule for q."
+          - "For the path, use Path instead of Query, with ge=1."
+        examples:
+          - call: "GET /items?q=ab"
+            gives: "422"
+          - call: "GET /items/0"
+            gives: "422"
+  - id: request-body
+    title: Request bodies
+    file: chapters/05-request-body.md
+    minutes: 50
+    folder: 05-request-body
+    tasks:
+      - id: found_item
+        title: "POST /items: log a found item"
+        hints:
+          - "A POST route is written like a GET one, with @app.post. Its data arrives in the request body as JSON."
+          - "A parameter whose type is a Pydantic model, item: FoundItemIn, is read from the body and checked for you."
+          - "The new id is max(FOUND) + 1. Store the id and item.model_dump(mode=\"json\") together, then give it back."
+        examples:
+          - call: 'POST /items {"title": "red scarf", ...}'
+            gives: '{"id": 4, "title": "red scarf", ...}'
+          - call: 'POST /items {"line": "purple", ...}'
+            gives: "422"
+      - id: report_lost
+        title: "POST /reports: a passenger's report"
+        hints:
+          - "The model LostReport is ready at the top of the file; the route is not."
+          - "details has a default, None, so it is optional; every other field is required."
+          - "The id is len(REPORTS) + 1. Append the stored dict to REPORTS and give it back."
+        examples:
+          - call: 'POST /reports {"title": "grey laptop bag", ...}'
+            gives: '{"id": 1, ..., "details": null}'

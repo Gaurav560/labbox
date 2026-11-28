@@ -24,7 +24,7 @@ API_LAB = "fastapi-first-api"
 def _ready() -> bool:
     try:
         c = docker.from_env()
-        for image in ("labbox/postgres-indexing-incident:v1", "labbox/fastapi-first-api:v1", "labbox/checker:v1", "postgres:16"):
+        for image in ("labbox/postgres-indexing-incident:v1", "labbox/fastapi-first-api:v2", "labbox/checker:v1", "postgres:16"):
             c.images.get(image)
         return True
     except Exception:
@@ -239,13 +239,14 @@ def test_preview_proxy(client: TestClient):
     hb, _ = signup(client, "prevB")
     client.post(f"/api/labs/{API_LAB}/workspace/start", headers=ha)
     ws_a = f"lab-u{uid_a}-{API_LAB}"
-    sh("docker", "exec", "-d", "-u", "1000", "-w", "/workspace", ws_a, "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000")
+    # The FastAPI course keeps each chapter in its own folder (28 November); chapter 1's appears first.
+    sh("docker", "exec", "-d", "-u", "1000", "-w", "/workspace/01-first-api", ws_a, "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000")
     ca, cb = ticket(client, ha), ticket(client, hb)
 
     assert wait_http(client, ca) == 200
     r = client.get(f"/preview/{API_LAB}/8000/", headers={"cookie": f"labbox_preview={ca}"})
-    assert r.json() == {"message": "Welcome to Ravi's Snack Corner"}
-    assert client.get(f"/preview/{API_LAB}/8000/menu", headers={"cookie": f"labbox_preview={ca}"}).status_code == 404
+    assert r.json() == {"message": "Lostdesk is open. Try /items"}
+    assert client.get(f"/preview/{API_LAB}/8000/items", headers={"cookie": f"labbox_preview={ca}"}).status_code == 404
 
     # No cookie, a broken cookie, a login token instead of a preview ticket: all refused.
     assert client.get(f"/preview/{API_LAB}/8000/").status_code == 403
