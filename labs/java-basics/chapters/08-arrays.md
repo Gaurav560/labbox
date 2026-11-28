@@ -6,7 +6,8 @@ like this:
 [I@4e50df2e
 ```
 
-A bracket, an `I`, an `@` and a code that changes every time you run it. What is Java telling you? By the end of
+A bracket, an `I`, an `@` and a strange code. Print a second array and it gets a different code. What is Java
+telling you? By the end of
 this chapter you will read that line like a sentence, and you will know the one-word fix.
 
 Shelf's library has rows of shelves, and a row of numbered slots is exactly what an **array** is.
@@ -59,8 +60,10 @@ cd /workspace/08-arrays && java Shelves.java
 ```
 
 Now the mystery from the start: printing `books` directly gives `[I@` and a code, because an array does not know
-how to describe itself. `[I` is Java's internal name for "array of int", and the code after `@` identifies this
-particular object. `Arrays.toString(books)` is the fix: it prints the values. Remember `import java.util.Arrays;`
+how to describe itself. `[I` is Java's internal name for "array of int", and the code after `@` is a number, in
+hexadecimal, that identifies this particular object. We printed two arrays, three runs in a row: each array kept
+its own code on every run (`[I@f4168b8` and `[I@3bd94634`), and running the program another way gave other codes.
+So the code tells objects apart; it means nothing about the values inside. `Arrays.toString(books)` is the fix: it prints the values. Remember `import java.util.Arrays;`
 at the top of the file, which is how you use a class from Java's library (chapter 16 explains imports).
 :::
 
@@ -100,7 +103,8 @@ Open `ArrayTools.java` and make `max(numbers)` give back the biggest number. An 
 cd /workspace/08-arrays && java ArrayTools.java
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: starting `best` at `0`. It works for 3, 9, 2, but for -5, -2, -9 it answers
+`0`, a number that is not even in the array (we tried it). Start with `numbers[0]`, after the empty check.
 :::
 
 :::step{type=concept title="Two names, one array" file="08-arrays/SameArray.java" line="6-9"}
@@ -159,6 +163,11 @@ cd /workspace/08-arrays && java ArrayTools.java
 ```
 
 Then press **Check**.
+
+The usual slips: `numbers[numbers.length - i]`, one too far: on the first lap that is position 3 of a 3-item array,
+and Java stops with `ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3` (we tried it); the last
+position is `length - 1 - i`. Or swapping the values inside `numbers` itself, which gives the right answer but
+changes the caller's array, and the check notices.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -215,7 +224,7 @@ You can now:
 - Print values with `Arrays.toString`, and explain what `[I@...` means.
 - Avoid changing a caller's array: two names can share one array, so copy when you need your own.
 
-:::photo{src="/lesson-images/java/java-08-notes.webp" alt="Handwritten notes about Java arrays: int array with numbered slots from 0, fixed size, Arrays.toString to print, two names one array, copy before you change" ai="true"}
+:::photo{src="/lesson-images/java/java-08-sketch.webp" alt="Sketchnote: Arrays. An array holds values of one type in slots numbered from 0; its size is fixed when it is made. Flow: int array books = 12, 30, 7, 25; books[0] is 12; books[2] = 9; books.length is 4; Arrays.toString(books). Remember: the last slot is length - 1; println of an int array shows [I@ and a code, not the values; b = a gives one array two names; make a new array before you change someone else's." ai="true"}
 One page of notes for this chapter.
 :::
 

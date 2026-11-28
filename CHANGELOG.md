@@ -1,5 +1,14 @@
 # Changelog
 
+## 28 November: Java chapter 8 rewritten (easy, a little detailed, checked)
+
+- Java chapter 8, "Arrays": the opening said the code after `@` "changes every time you run it"; we ran it three
+  times and it did not (`[I@f4168b8` each time, a second array `[I@3bd94634`); it now says the code tells objects
+  apart, can differ between ways of running, and says nothing about the values.
+- Checked on a lab machine: `Shelves.java` (with the default `[0, 0, 0] [null, null]`), `SameArray.java`
+  (`[99, 2, 3]`), the starter's and solution's `ArrayTools`. Slips added and tried: `best = 0` (answers 0 for
+  -5, -2, -9), `numbers[length - i]` (the out-of-bounds message quoted), reversing in place. New sketchnote page.
+
 ## 28 November: Java chapter 7 rewritten (easy, a little detailed, checked)
 
 - Java chapter 7, "Strings": field, regular expression and `Arrays.toString` explained where they appear; `[0, 1)`
