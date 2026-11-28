@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: JavaScript chapter 7 rewritten (easy, a little detailed, checked)
+
+- Chapter 7, "Strings": every output re-run on a lab machine. The emoji step said the spread `[...text]` counts "real
+  characters" and should be used for "many scripts of the world"; tried, that is not true for a skin-tone emoji
+  (👍🏽 counts 2) or for Hindi (नमस्ते counts 6, a reader sees 3). The lesson now says what spread counts (whole Unicode
+  characters) and the deep dive shows `Intl.Segmenter` (3 and 1, tried). Unicode, the 1995 limit and 2010 for emoji
+  explained.
+- The deep dive said chapter 8 shows why plain sorting gets accents wrong; it does not. The tried fact is now here:
+  `"é" < "f"` is `false`, `"é".localeCompare("f")` is `-1`. Index, method, `at(-1)` and the regular expression's parts
+  explained at first use.
+- Slips added and tried: `split(" ")` (7 pieces), no empty-text check (1 word), and the empty piece in `cleanName`
+  (`TypeError ... reading 'toUpperCase'`). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 6 rewritten (easy, a little detailed, checked)
 
 - Chapter 6, "Finding bugs": every output re-run on a lab machine, the REPL session too (it opens with
