@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: JavaScript chapter 8 rewritten (easy, a little detailed, checked)
+
+- Chapter 8, "Arrays": every output re-run on a lab machine. "Plain sort() sorts it like a dictionary" was not true (a
+  dictionary would put apple before Zebra); it now says what really happens: text compared one character at a time by
+  Unicode number (`Z` is 90, `a` is 97). The arrow in `(a, b) => a - b` was used three chapters before arrows are
+  taught; it is now explained in one line. `push`/`pop` and the Java comparison made exact.
+- Deep dive made concrete with tried output: `toSorted` and `with` on Node 22, and the hole printed as
+  `[ <5 empty items>, 'x' ]`.
+- Slips added and tried: sorting without a copy (right answer, but the caller's array becomes `[90, 72, 66, 45]`, which
+  the check catches), and plain `sort()` with `reverse()` (`[9, 3]` for `[9, 10, 100, 3]`). The starter's output and
+  the check's number case for `unique` are now described. New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 7 rewritten (easy, a little detailed, checked)
 
 - Chapter 7, "Strings": every output re-run on a lab machine. The emoji step said the spread `[...text]` counts "real

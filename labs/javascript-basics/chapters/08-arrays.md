@@ -32,7 +32,9 @@ playlist.push("Slow Sunday");   // add to the end
 playlist.pop();                 // remove the last one, and give it back
 ```
 
-Unlike Java's arrays, a JavaScript array grows and shrinks whenever you like, and can hold any mix of values.
+`push` and `pop` are methods (chapter 7): `push` adds to the end, `pop` removes the last item and gives it back.
+Unlike arrays in some languages (Java's have a fixed size), a JavaScript array grows and shrinks whenever you like,
+and can hold any mix of values.
 
 :::picture{name="egg-box" concept="Numbered slots"}
 An array is a box of numbered slots, starting at 0.
@@ -99,14 +101,18 @@ cd /workspace/08-arrays && node sorting.js
 [ 'Neon', 'Zebra', 'apple' ]
 ```
 
-Plain `sort()` turns every value into **text** and sorts it like a dictionary. As text, `"10"` comes before `"9"`,
-because `"1"` comes before `"9"`, just as "apple" comes before "banana". That is what it was told.
+Plain `sort()` turns every value into **text** and compares the texts one character at a time, by each character's
+Unicode number (chapter 7). As text, `"10"` comes before `"9"`, because its first character, `"1"`, comes before
+`"9"`. The second character is never needed. That is what it was told.
 
-To sort numbers, give `sort` a **compare function**: `(a, b) => a - b`. A negative answer puts `a` first, a positive
-one puts `b` first. Line two is correct. (`b - a` sorts biggest first.)
+To sort numbers, give `sort` a **compare function**: `(a, b) => a - b`. That is a small function written with an
+arrow, `=>`, which takes two values and gives back `a - b` (chapter 11 explains arrows in full). `sort` calls it on
+pairs of items: a negative answer puts `a` first, a positive one puts `b` first. Line two is correct. (`b - a` sorts
+biggest first.)
 
-The last line is the same rule for text: capitals have smaller code numbers than small letters, so `"Zebra"` comes
-before `"apple"`. And watch out: `sort` **changes the array** it is called on.
+The last line is the same rule for text: capitals have smaller Unicode numbers than small letters (`Z` is 90, `a` is
+97), so `"Zebra"` comes before `"apple"`. A real dictionary would not do that. And watch out: `sort` **changes the
+array** it is called on.
 :::
 
 :::step{type=example title="Worked example: the n smallest, without damage"}
@@ -149,7 +155,14 @@ array it was given.
 cd /workspace/08-arrays && node arrays.js
 ```
 
-Then press **Check**.
+Before you start it prints `[]` and the list unchanged, `jelly` twice. Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- Sorting without a copy: `numbers.sort((a, b) => b - a).slice(0, n)` gives the right `[90, 72]`, but the caller's
+  array is now `[90, 72, 66, 45]`. The check looks at the array afterwards, and says so.
+- Plain `sort()` and then `reverse()`: fine for two-digit numbers, wrong for `[9, 10, 100, 3]`, where the top two
+  come out as `[9, 3]`. Text order again.
 :::
 
 :::step{type=concept title="Searching an array"}
@@ -177,7 +190,8 @@ In `arrays.js`, make `unique(items)` give back each item once, in the order it f
 cd /workspace/08-arrays && node arrays.js
 ```
 
-Then press **Check**.
+Then press **Check**. (The check also tries numbers, `[3, 1, 3, 2, 1]`, which should give `[3, 1, 2]`: first
+appearances, in order.)
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -216,14 +230,15 @@ With a compare function, numbers are compared as numbers.
 :::
 
 :::step{type=deep-dive title="Go deeper: toSorted, splice and holes"}
-**toSorted.** Newer JavaScript has `toSorted`, `toReversed` and `with`, which give back a new array and never touch
-the old one: `marks.toSorted((a, b) => a - b)`.
+**toSorted.** Newer JavaScript (2023) has `toSorted`, `toReversed` and `with`, which give back a new array and never
+touch the old one: `marks.toSorted((a, b) => a - b)` gave `[45, 66, 72, 90]` and left `marks` as it was (we tried it
+on Node 22).
 
 **splice.** `playlist.splice(1, 1)` removes one item at position 1, in place. `slice` (with no "p") copies; `splice`
 changes. Everyone mixes them up once.
 
-**Holes.** `const a = []; a[5] = "x";` makes an array of length 6 with five empty slots. Avoid it: keep arrays
-packed, and use `push`.
+**Holes.** `const a = []; a[5] = "x";` makes an array of length 6 with five empty slots; Node prints it as
+`[ <5 empty items>, 'x' ]`. Avoid it: keep arrays packed, and use `push`.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -234,7 +249,7 @@ You can now:
 - Copy an array with `[...array]` before changing it, because `=` only adds a second name.
 - Sort numbers correctly with `(a, b) => a - b`, and explain why plain `sort()` puts 10 before 9.
 
-:::photo{src="/lesson-images/javascript/js-08-notes.webp" alt="Handwritten notes about JavaScript arrays: slots start at 0, push and pop, at minus 1 is the last, equals gives a second name, spread makes a copy, sort compares as text unless you give a - b" ai="true"}
+:::photo{src="/lesson-images/javascript/js-08-sketch.webp" alt="Sketchnote: Arrays. An array keeps values in numbered slots from 0; assigning it to a new name does not copy it, both names share one array. Flow: copy with spread, sort the copy, compare as numbers with a minus b, slice what you need, the original is untouched. Remember: push adds to the end, pop removes the last; at(-1) is the last item, a missing slot is undefined; plain sort() compares items as text; sort changes the array it is called on." ai="true"}
 One page of notes for this chapter.
 :::
 
