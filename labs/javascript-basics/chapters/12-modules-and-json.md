@@ -46,6 +46,12 @@ undefined
 (`padStart(2, "0")` turned 2 seconds into `02`). But `library.secret` is `undefined`: it was never exported, so no
 other file can see it. That privacy is the whole point. Every task file in this course ends with `module.exports`,
 and that is how LabBox's checks reach your functions.
+
+And now the promise from chapter 2: the other line every task file has. `if (require.main === module) { ... }` asks
+"was this file started with `node`, or loaded by someone else's `require`?" `require.main` is the file Node was
+started with; `module` is this file. When you type `node playlist.js`, they are the same, so the block runs and prints
+the examples. When the Check button `require`s your file, they are different, so the block is skipped and nothing is
+printed in the middle of the check.
 :::
 
 :::step{type=concept title="require, import, and the node: modules"}
@@ -77,13 +83,22 @@ Monsoon Drive false
 {"when":"1970-01-01T00:00:00.000Z"}
 {
   "name": "Rainy day",
+  "songs": [
+    {
+      "title": "Monsoon Drive",
+      "seconds": 245
+    }
+  ],
+  "shuffle": false
+}
 ```
 
 - `JSON.stringify(playlist)` turned the object into **text**: 86 characters that can go anywhere text can go.
 - `JSON.parse(text)` built a **new** object from that text. Same data, but `back === playlist` is `false`: it is a
   different object, like a photocopy.
 - Line four is a warning. A `Date` became text, and `skip` (undefined) and `play` (a function) **vanished**. JSON
-  only knows text, numbers, true and false, null, arrays and plain objects.
+  only knows text, numbers, true and false, null, arrays and plain objects. (`new Date(0)` is the moment computers
+  count time from, midnight on 1 January 1970 in UTC, the world's reference time; the `Z` at the end stands for UTC.)
 - `JSON.stringify(playlist, null, 2)` indents it with 2 spaces, for people to read.
 :::
 
@@ -103,8 +118,9 @@ Break a rule, and `JSON.parse` refuses with a SyntaxError:
 SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
 ```
 
-That was `JSON.parse("{name: 1}")`: at position 1, JSON expected a quoted property name. Chapter 13 shows how to catch
-that error instead of crashing.
+That was `JSON.parse("{name: 1}")`: at position 1, JSON expected a quoted property name. A trailing comma,
+`JSON.parse('{"a": 1,}')`, gives `SyntaxError: Expected double-quoted property name in JSON at position 8 (line 1
+column 9)` (we tried both on Node 22). Chapter 13 shows how to catch that error instead of crashing.
 :::
 
 :::step{type=example title="Worked example: saving a song"}
@@ -134,7 +150,11 @@ Open `playlist.js` and make `savePlaylist(name, songs)` give back **JSON text** 
 cd /workspace/12-modules-and-json && node playlist.js
 ```
 
-Then press **Check**.
+Before you start it prints an empty line and `[]`. Then press **Check**.
+
+The usual slip: building the object and forgetting `JSON.stringify`. The function then gives back an object, not
+text (`typeof` says `"object"`), and the check says it should give back text. Also make `count` come from the songs
+(`songs.length`): the check tries a playlist of two songs and an empty one.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -162,6 +182,10 @@ cd /workspace/12-modules-and-json && node playlist.js
 ```
 
 Then press **Check**.
+
+The usual slip: no `??` for the missing songs. `JSON.parse(text).songs.map(...)` on `'{"name":"Old"}'` crashes with
+`TypeError: Cannot read properties of undefined (reading 'map')` (we tried it): there is no `songs`, so there is
+nothing to `map`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -204,8 +228,8 @@ JSON has no functions, so stringify leaves that property out (just like `undefin
 **package.json.** Every Node project has one: a JSON file with the project's name, its scripts, and the libraries it
 needs.
 
-**npm.** The Node package registry, the largest software library in the world: `npm install` downloads what
-`package.json` lists into a `node_modules` folder, and `require` finds it there.
+**npm.** The Node package registry, with millions of free packages, more than any other language's: `npm install`
+downloads what `package.json` lists into a `node_modules` folder, and `require` finds it there.
 
 **JSON everywhere.** Web APIs answer in JSON, settings files are JSON, and databases like MongoDB store documents that
 look just like it. Douglas Crockford named and described JSON in the early 2000s, taking the idea straight from
@@ -220,7 +244,7 @@ You can now:
 - Turn objects into JSON text with `JSON.stringify` and back with `JSON.parse`.
 - Follow JSON's strict rules, and know what it cannot carry: functions, `undefined`, real dates.
 
-:::photo{src="/lesson-images/javascript/js-12-notes.webp" alt="Handwritten notes about modules and JSON: module.exports shares, require loads, everything else stays private, JSON.stringify makes text, JSON.parse makes an object, double quotes on every key, functions vanish" ai="true"}
+:::photo{src="/lesson-images/javascript/js-12-sketch.webp" alt="Sketchnote: Modules and JSON. A module shares only what it puts in module.exports; JSON turns data into text that can go into a file or across a network. Flow: an object in memory, JSON.stringify(), JSON text, JSON.parse(), a new object. Remember: require() gives back only what was exported; JSON needs double quotes on every key and every text; functions and undefined vanish, a Date becomes text; bad JSON makes JSON.parse throw a SyntaxError." ai="true"}
 One page of notes for this chapter.
 :::
 

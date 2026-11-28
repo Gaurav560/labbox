@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: JavaScript chapter 12 rewritten (easy, a little detailed, checked)
+
+- Chapter 12, "Modules and JSON": every output re-run on a lab machine. Chapter 2 promised that chapter 12 explains
+  `if (require.main === module)`, and it never did; it does now, with why the Check button needs it. The pretty-printed
+  JSON was cut off mid-object; the whole output is shown. `new Date(0)` (1 January 1970, UTC, the `Z`) explained.
+- A second JSON error tried and quoted (the trailing comma). "npm, the largest software library in the world" made
+  exact ("millions of packages, more than any other language's").
+- Slips added and tried: forgetting `JSON.stringify` (an object, not text), `count` not from the songs, and no `??`
+  for missing songs (`TypeError ... reading 'map'`). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 11 rewritten (easy, a little detailed, checked)
 
 - Chapter 11, "Array methods": every output re-run on a lab machine, the three `parseInt` calls each tried on their
