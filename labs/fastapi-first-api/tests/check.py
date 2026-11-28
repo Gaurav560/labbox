@@ -15,6 +15,9 @@ import traceback
 W = os.environ.get("LABBOX_WORKSPACE", "/check/workspace")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.dont_write_bytecode = True
+import warnings  # noqa: E402
+
+warnings.filterwarnings("ignore", message="This declarative base already contains")  # each task re-imports its chapter
 
 
 def report(task, passed, message, expected=None, actual=None):
@@ -49,6 +52,11 @@ def load(folder, module="main"):
         sys.path.remove(_added_path)
     sys.path.insert(0, dst)
     _added_path = dst
+    try:  # SQLModel keeps every table in one shared registry; a fresh import of a chapter must start from an empty one
+        from sqlmodel import SQLModel
+        SQLModel.metadata.clear()
+    except ImportError:
+        pass
     try:
         return importlib.import_module(module)
     except Exception as e:  # a syntax error, a missing import, ...
@@ -62,7 +70,9 @@ def client_for(mod):
 
     if not hasattr(mod, "app"):
         raise Fail("there is no app in the file. Keep the line app = FastAPI().")
-    return TestClient(mod.app)
+    client = TestClient(mod.app)
+    client.__enter__()  # runs the app's lifespan (chapter 12 on: the database tables are created there)
+    return client
 
 
 def body(r):
@@ -498,6 +508,223 @@ def ch10_desk_header():
         raise Fail("with the right key, the item should be logged from the form fields.", "red scarf", show(body(r)))
     return "A header parameter: x_desk_key in Python, X-Desk-Key on the wire. FastAPI translated the underscores."
 
+
+# ---------------------------------------------------------------- Part 3: structure and data
+
+def ch11_pagination_dep():
+    mod = load("11-dependencies")
+    c = client_for(mod)
+    r = c.get("/reports?offset=1&limit=2")
+    expect(r, 200, "GET /reports?offset=1&limit=2")
+    want = {"reports": mod.REPORTS[1:3]}
+    if body(r) != want:
+        raise Fail("GET /reports should page like /items: from offset on, at most limit reports. Use your paginate "
+                   "dependency in both routes.", show(want), show(body(r)))
+    for path in ("/reports?limit=0", "/reports?limit=21", "/items?limit=0", "/reports?offset=-1"):
+        expect(c.get(path), 422, f"GET {path}")
+    r = c.get("/items?offset=2&limit=2")
+    if body(r) != {"items": list(mod.FOUND.values())[2:4]}:
+        raise Fail("GET /items?offset=2&limit=2 should still give items 3 and 4.", "items 3 and 4", show(body(r)))
+    if not callable(getattr(mod, "paginate", None)):
+        raise Fail("both routes page now, but there is no function called paginate: write the paging once, as a "
+                   "dependency, and use it with Depends in both.")
+    return "One dependency, two routes: the paging rules live in one place, and /docs lists them on both."
+
+
+def ch11_desk_dep():
+    mod = load("11-dependencies")
+    c = client_for(mod)
+    r = c.delete("/items/1")
+    if r.status_code == 204:
+        raise Fail("DELETE /items/1 without a desk key removed the item. Anyone could empty the shelf: add "
+                   "dependencies=[Depends(require_desk)] to the DELETE route.", "401", "204")
+    expect(r, 401, "DELETE /items/1 without X-Desk-Key")
+    key = next(iter(mod.DESK_KEYS))
+    expect(c.delete("/items/1", headers={"X-Desk-Key": key}), 204, "DELETE /items/1 with a desk key")
+    expect(c.post("/items", json={"title": "red scarf"}), 401, "POST /items without X-Desk-Key")
+    r = c.post("/items", json={"title": "red scarf"}, headers={"X-Desk-Key": "airport-desk-2"})
+    expect(r, 201, "POST /items with the Airport desk's key")
+    if body(r).get("logged_at") != "Airport":
+        raise Fail("an item logged with the Airport desk's key should say logged_at Airport: use the station the "
+                   "dependency gives back.", "Airport", show(body(r).get("logged_at")))
+    if not callable(getattr(mod, "require_desk", None)):
+        raise Fail("there is no function called require_desk: write the key check once, as a dependency.")
+    return "A dependency that guards and gives back a value: one check for every route that needs a desk."
+
+
+def ch12_create_found():
+    mod = load("12-database")
+    c = client_for(mod)
+    r = c.post("/items", json={"title": "red scarf", "station": "University"})
+    if r.status_code == 405:
+        raise Fail("there is no POST /items route yet.", "201", "405")
+    expect(r, 201, "POST /items")
+    got = body(r)
+    if not isinstance(got, dict) or not isinstance(got.get("id"), int):
+        raise Fail("POST /items should give back the saved item with the id the database gave it. Call "
+                   "session.refresh(db_item) after commit.", '{"id": 1, ...}', show(got))
+    want = {"id": got["id"], "title": "red scarf", "station": "University", "status": "held"}
+    if got != want:
+        raise Fail("POST /items should give back the saved row.", show(want), show(got))
+    expect(c.post("/items", json={"title": "ab", "station": "University"}), 422, "POST /items with a title of 2 characters")
+    import sqlite3
+    if not os.path.exists("lostdesk.db"):
+        raise Fail("there is no lostdesk.db file after a POST: the item was not saved to the database.")
+    rows = sqlite3.connect("lostdesk.db").execute("select title, station from item").fetchall()
+    if ("red scarf", "University") not in rows:
+        raise Fail("the item table in lostdesk.db does not have the scarf: add it to the session and commit.",
+                   "red scarf", show(rows))
+    return "A row in a real database file: it survives a restart, and SQLite chose the id."
+
+
+def ch12_read_found():
+    mod = load("12-database")
+    c = client_for(mod)
+    with mod.Session(mod.engine) as session:
+        row = mod.Item(title="black umbrella", station="Riverside")
+        session.add(row)
+        session.commit()
+        session.refresh(row)
+        rid = row.id
+    r = c.get(f"/items/{rid}")
+    if r.status_code == 404 and isinstance(body(r), dict) and body(r).get("detail") == "Not Found":
+        raise Fail("there is no GET /items/{item_id} route yet.", "200", "404")
+    expect(r, 200, f"GET /items/{rid}")
+    want = {"id": rid, "title": "black umbrella", "station": "Riverside", "status": "held"}
+    if body(r) != want:
+        raise Fail("GET /items/{id} should give back the row from the database.", show(want), show(body(r)))
+    expect(c.get("/items/999999"), 404, "GET /items/999999")
+    return "session.get by primary key, and a 404 when the row is not there: the database is now the shelf."
+
+
+def _seed(mod, items):
+    with mod.Session(mod.engine) as session:
+        for title, category, station in items:
+            session.add(mod.Item(title=title, category=category, station=station))
+        session.commit()
+
+
+SEED = [("black umbrella", "umbrella", "Riverside"), ("silver phone", "phone", "Tech Park"),
+        ("green umbrella", "umbrella", "Airport"), ("bunch of keys", "keys", "Riverside")]
+
+
+def ch13_filter_db():
+    mod = load("13-crud")
+    c = client_for(mod)
+    _seed(mod, SEED)
+    for path, want in (("/items?station=Riverside", ["black umbrella", "bunch of keys"]),
+                       ("/items?q=umbrella", ["black umbrella", "green umbrella"]),
+                       ("/items?q=umbrella&station=Airport", ["green umbrella"]),
+                       ("/items", [t for t, _, _ in SEED])):
+        r = c.get(path)
+        expect(r, 200, f"GET {path}")
+        got = [i.get("title") for i in body(r)] if isinstance(body(r), list) else body(r)
+        if got != want:
+            raise Fail(f"GET {path} should give back {', '.join(want)}. Add .where(...) to the query for each filter "
+                       "that was given.", show(want), show(got))
+    return "Filters in SQL: the database does the searching, with its indexes, however many rows there are."
+
+
+def ch13_update_db():
+    mod = load("13-crud")
+    c = client_for(mod)
+    _seed(mod, SEED)
+    r = c.patch("/items/2", json={"status": "returned"})
+    if r.status_code == 405:
+        raise Fail("there is no PATCH /items/{item_id} route yet.", "200", "405")
+    expect(r, 200, "PATCH /items/2")
+    want = {"id": 2, "title": "silver phone", "category": "phone", "station": "Tech Park", "status": "returned"}
+    if body(r) != want:
+        raise Fail("PATCH /items/2 with only a status should change only the status.", show(want), show(body(r)))
+    r = c.get("/items/2")
+    if body(r).get("status") != "returned":
+        raise Fail("after the PATCH, GET /items/2 still shows the old status: commit the change.", "returned", show(body(r)))
+    expect(c.patch("/items/2", json={"title": "ab"}), 422, "PATCH /items/2 with a title of 2 characters")
+    expect(c.patch("/items/999", json={"status": "returned"}), 404, "PATCH /items/999")
+    return "sqlmodel_update with exclude_unset, then commit: a partial update that the database keeps."
+
+
+def ch14_reports_router():
+    mod = load("14-bigger-app", "app.main")
+    c = client_for(mod)
+    try:
+        reports = importlib.import_module("app.routers.reports")
+    except ModuleNotFoundError:
+        raise Fail("there is no app/routers/reports.py yet. Move the report routes there, on an APIRouter.")
+    if not hasattr(reports, "router"):
+        raise Fail("app/routers/reports.py has no router. Create it with APIRouter(prefix=\"/reports\", tags=[\"reports\"]).")
+    paths = {getattr(r, "path", "") for r in reports.router.routes}
+    if not any(p.startswith("/reports") for p in paths):
+        raise Fail("the reports router has no routes under /reports. Give it the prefix /reports.", "/reports...", show(sorted(paths)))
+    spec = c.get("/openapi.json").json()["paths"]
+    tags = spec.get("/reports", {}).get("get", {}).get("tags")
+    if tags != ["reports"]:
+        raise Fail("GET /reports should be tagged reports in /docs, and only once: include the router in main.py and "
+                   "remove the old routes there.", '["reports"]', show(tags))
+    r = c.post("/reports", json={"title": "grey laptop bag", "station": "Tech Park", "contact": "98200 11111"})
+    expect(r, 201, "POST /reports")
+    if "contact" in body(r):
+        raise Fail("POST /reports shows the contact: keep the return type ReportPublic.")
+    expect(c.get(f"/reports/{body(r)['id']}"), 200, "GET /reports/{id}")
+    return "A router per subject, included with a prefix and a tag: main.py stays short however much Lostdesk grows."
+
+
+def ch14_app_metadata():
+    mod = load("14-bigger-app", "app.main")
+    c = client_for(mod)
+    info = c.get("/openapi.json").json()["info"]
+    if info.get("title") != "Lostdesk" or info.get("version") != "1.0.0":
+        raise Fail("the API's title and version in /docs should be Lostdesk and 1.0.0: pass title= and version= to "
+                   "FastAPI(...).", "Lostdesk 1.0.0", f"{info.get('title')} {info.get('version')}")
+    if not info.get("summary") and not info.get("description"):
+        raise Fail("give the app a one-line summary (summary=...) for the top of /docs.")
+    return "Metadata for the people who read /docs: a name, a version, and one line on what Lostdesk is."
+
+
+def _run_tests(variant):
+    """Runs the learner's tests in a copy of 15-testing whose main.py is the planted variant."""
+    import subprocess
+    src = os.path.join(W, "15-testing")
+    dst = os.path.join(tempfile.mkdtemp(prefix=f"lostdesk-tests-{variant}-"), "15-testing")
+    shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.db", ".pytest_cache"))
+    shutil.copy(os.path.join(HERE, "testing", variant, "main.py"), os.path.join(dst, "main.py"))
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "tests"], cwd=dst,
+                       capture_output=True, text=True, timeout=120)
+    return r.returncode, r.stdout + r.stderr, dst
+
+
+def ch15_override_db():
+    if not os.path.isdir(os.path.join(W, "15-testing", "tests")):
+        raise Fail("15-testing/tests/ is missing from your workspace.")
+    code, out, dst = _run_tests("good")
+    if code != 0:
+        print(out[-3000:])
+        last = [l for l in out.splitlines() if l.strip()][-1:] or ["see Output"]
+        raise Fail(f"your tests fail on the correct app ({last[0]}). Run python -m pytest -q in 15-testing and read the first failure.")
+    code, out, _ = _run_tests("nodb")  # the same app, but its real get_session refuses to work
+    if code != 0:
+        print(out[-3000:])
+        raise Fail("your tests still use the real database, lostdesk.db: we ran them on a copy of the app whose real "
+                   "database refuses to work, and they failed. Give the app an in-memory database in a fixture, with "
+                   "app.dependency_overrides[get_session], and use that fixture in every test.")
+    return "Tests on a throwaway database: fast, repeatable, and the real lostdesk.db never sees a test row."
+
+
+def ch15_write_tests():
+    if not os.path.isdir(os.path.join(W, "15-testing", "tests")):
+        raise Fail("15-testing/tests/ is missing from your workspace.")
+    code, out, _ = _run_tests("good")
+    if code != 0:
+        print(out[-3000:])
+        raise Fail("your tests fail on the correct app, so one of them expects the wrong answer. Run python -m pytest -q in 15-testing.")
+    for variant, what in (("bug201", "POST /items answers 200 instead of 201"),
+                          ("bugread", "GET /items/{id} gives back a different status from the one that was created"),
+                          ("bugfilter", "GET /items ignores station=")):
+        code, out, _ = _run_tests(variant)
+        if code == 0:
+            raise Fail(f"your tests all pass even when {what}. Add a test that would catch it.")
+    return "Your tests caught three planted bugs: a wrong status, a wrong read-back and a filter that does nothing."
+
 # ---------------------------------------------------------------- the table
 
 CHAPTERS = {
@@ -511,6 +738,11 @@ CHAPTERS = {
     "status-and-errors": [("created_201", ch8_created_201), ("claim_conflict", ch8_claim_conflict)],
     "updates": [("patch_item", ch9_patch_item), ("delete_item", ch9_delete_item)],
     "forms-and-files": [("desk_header", ch10_desk_header), ("upload_photo", ch10_upload_photo)],
+    "dependencies": [("pagination_dep", ch11_pagination_dep), ("desk_dep", ch11_desk_dep)],
+    "databases": [("create_found", ch12_create_found), ("read_found", ch12_read_found)],
+    "crud": [("filter_db", ch13_filter_db), ("update_db", ch13_update_db)],
+    "bigger-apps": [("reports_router", ch14_reports_router), ("app_metadata", ch14_app_metadata)],
+    "testing": [("override_db", ch15_override_db), ("write_tests", ch15_write_tests)],
 }
 
 

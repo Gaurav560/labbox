@@ -5195,7 +5195,64 @@ function FastapiPatchMerge() {
   );
 }
 
+function FastapiDependency() {
+  return (
+    <SketchSteps
+      title="DELETE /items/1, with a guard"
+      intro="Press Play to watch FastAPI run a dependency before the route."
+      label="FastAPI reads the route's dependencies, calls require_desk with the X-Desk-Key header, and either stops with 401 or calls the route; a dependency that gives back a value hands it to the route as a parameter"
+      steps={[
+        { label: "1. the request", says: "DELETE /items/1 arrives, with or without an X-Desk-Key header." },
+        { label: "2. dependencies first", says: "The route lists Depends(require_desk). FastAPI calls require_desk before delete_item." },
+        { label: "3. the dependency's own parameters", says: "require_desk asks for a header, so FastAPI reads X-Desk-Key for it, as for a route." },
+        { label: "4. no key: stop", says: "require_desk raises HTTPException(401). delete_item never runs; the item stays." },
+        { label: "5. a good key: carry on", says: "require_desk gives back the station. delete_item runs." },
+        { label: "6. values flow in", says: "A route that asks for desk: DeskDep receives that station as a parameter." },
+      ]}
+    />
+  );
+}
+
+function FastapiSession() {
+  return (
+    <SketchSteps
+      title="One request, one session"
+      intro="Press Play to follow get_session through a request."
+      label="FastAPI calls get_session, which opens a session and yields it; the route uses it to add, commit and read; after the response, the code after yield runs and the with block closes the session"
+      steps={[
+        { label: "1. the request arrives", says: "POST /items. The route asks for session: SessionDep." },
+        { label: "2. open", says: "FastAPI calls get_session. with Session(engine) opens a session: a conversation with the database." },
+        { label: "3. yield", says: "get_session pauses at yield and hands the session to the route." },
+        { label: "4. the route works", says: "session.add, session.commit: an INSERT is sent and saved. session.refresh reads the new id." },
+        { label: "5. the answer goes out", says: "The route gives back the item; FastAPI sends 201 and the JSON." },
+        { label: "6. close", says: "get_session carries on after yield; the with block ends and closes the session." },
+      ]}
+    />
+  );
+}
+
+function FastapiTestOverride() {
+  return (
+    <SketchSteps
+      title="A test that never touches lostdesk.db"
+      intro="Press Play to follow one test through the app."
+      label="The test calls the app through TestClient; the route asks for get_session; dependency_overrides swaps in the test's own session on an in-memory database; the answer comes back to the test's asserts"
+      steps={[
+        { label: "1. the fixture", says: "Before the test, a fixture makes an in-memory SQLite engine and its tables." },
+        { label: "2. the swap", says: "app.dependency_overrides[get_session] = get_test_session: every route asking for get_session gets the test's." },
+        { label: "3. the request", says: 'client.post("/items", ...) runs the app in-process: no server, no network.' },
+        { label: "4. the route", says: "create_item saves into the in-memory database. lostdesk.db is never opened." },
+        { label: "5. the asserts", says: "assert response.status_code == 201: the test passes or fails on what came back." },
+        { label: "6. clean up", says: "After the test, the overrides are cleared and the in-memory database disappears." },
+      ]}
+    />
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
+  "fastapi-dependency": FastapiDependency,
+  "fastapi-session": FastapiSession,
+  "fastapi-test-override": FastapiTestOverride,
   "fastapi-response-filter": FastapiResponseFilter,
   "fastapi-exception-handler": FastapiExceptionHandler,
   "fastapi-patch-merge": FastapiPatchMerge,

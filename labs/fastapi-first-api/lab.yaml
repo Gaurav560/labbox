@@ -314,3 +314,132 @@ chapters:
             gives: '{"item_id": 1, "filename": "umbrella.png", "saved_as": "photos/1.png", "size": 1000}'
           - call: "POST /items/1/photo (a text file)"
             gives: "415"
+  - id: dependencies
+    title: Dependencies
+    file: chapters/11-dependencies.md
+    minutes: 50
+    folder: 11-dependencies
+    part: Structure and data
+    tasks:
+      - id: pagination_dep
+        title: "paginate: one dependency for every list"
+        hints:
+          - "GET /items pages with offset and limit; GET /reports gives back everything. The paging should be written once."
+          - "A dependency is a plain function whose parameters FastAPI reads like a route's: put offset and limit there."
+          - "Give back both values together (a small model), and take it in each route with Annotated and Depends(paginate)."
+        examples:
+          - call: "GET /reports?offset=1&limit=2"
+            gives: "reports 2 and 3"
+          - call: "GET /reports?limit=0"
+            gives: "422"
+      - id: desk_dep
+        title: "require_desk: guard two routes"
+        hints:
+          - "DELETE /items/1 works without any key today; POST /items checks the key by hand."
+          - "Move the key check into a function require_desk that reads the header, raises 401, and gives back the station."
+          - "POST takes the station as a parameter with Depends; DELETE only needs the guard: dependencies= in its decorator."
+        examples:
+          - call: "DELETE /items/1 without X-Desk-Key"
+            gives: "401"
+          - call: "POST /items with the Airport key"
+            gives: '{"id": 7, "title": ..., "logged_at": "Airport"}'
+  - id: databases
+    title: A real database
+    file: chapters/12-database.md
+    minutes: 55
+    folder: 12-database
+    tasks:
+      - id: create_found
+        title: "POST /items: save a row"
+        hints:
+          - "There is no POST route yet. The table model Item and the input model ItemCreate are ready."
+          - "Item.model_validate(item) turns the input into a row; the session dependency gives you a session."
+          - "session.add, then session.commit, then session.refresh so the row gets its id; give it back with status 201."
+        examples:
+          - call: 'POST /items {"title": "red scarf", "station": "University"}'
+            gives: '201 {"id": 1, "title": "red scarf", "station": "University", "status": "held"}'
+      - id: read_found
+        title: "GET /items/{item_id}: read a row"
+        hints:
+          - "There is no route for one item yet."
+          - "session.get(Item, item_id) finds a row by its primary key, or gives None."
+          - "When it gives None, raise HTTPException with 404."
+        examples:
+          - call: "GET /items/1"
+            gives: '{"id": 1, ...}'
+          - call: "GET /items/999999"
+            gives: "404"
+  - id: crud
+    title: Create, read, update, delete
+    file: chapters/13-crud.md
+    minutes: 55
+    folder: 13-crud
+    tasks:
+      - id: filter_db
+        title: "filter in the database"
+        hints:
+          - "GET /items ignores station and q: the query is always select(Item)."
+          - "query.where(...) with a comparison on Item.station gives back a narrower query; store it, and only when station was given."
+          - "For q, col(Item.title).contains(q) becomes SQL's LIKE."
+        examples:
+          - call: "GET /items?station=Riverside"
+            gives: "the Riverside items"
+          - call: "GET /items?q=umbrella"
+            gives: "the umbrellas"
+      - id: update_db
+        title: "PATCH /items/{item_id} on a row"
+        hints:
+          - "There is no PATCH route yet; ItemUpdate has every field optional."
+          - "Find the row (find gives 404), then db_item.sqlmodel_update with the fields that were sent."
+          - "model_dump(exclude_unset=True), then session.add, commit, refresh, and give the row back."
+        examples:
+          - call: 'PATCH /items/2 {"status": "returned"}'
+            gives: "item 2, status returned"
+  - id: bigger-apps
+    title: Bigger applications
+    file: chapters/14-bigger-app.md
+    minutes: 50
+    folder: 14-bigger-app
+    tasks:
+      - id: reports_router
+        title: "a router for reports"
+        hints:
+          - "The report routes sit in app/main.py; the item routes already have their own file. Open app/routers/items.py."
+          - "Create app/routers/reports.py with router = APIRouter(prefix=..., tags=[...]) and the three routes on router."
+          - "In main.py, import it next to items, include it, and delete the old report routes there."
+        examples:
+          - call: "GET /reports"
+            gives: "tagged reports in /docs"
+      - id: app_metadata
+        title: "a name, a version and a summary"
+        hints:
+          - "The top of /docs says FastAPI 0.1.0: those are the defaults."
+          - "FastAPI(...) takes title, version and summary."
+          - "Keep lifespan=lifespan among the arguments."
+        examples:
+          - call: "GET /openapi.json"
+            gives: '"info": {"title": "Lostdesk", "version": "1.0.0", ...}'
+  - id: testing
+    title: Testing your API
+    file: chapters/15-testing.md
+    minutes: 55
+    folder: 15-testing
+    tasks:
+      - id: override_db
+        title: "a test database, not the real one"
+        hints:
+          - "Run the tests, then look: lostdesk.db appears. Tests that create items would write into it."
+          - "A pytest fixture can create an in-memory engine (sqlite:// with StaticPool) and its tables."
+          - "Point the app at it with app.dependency_overrides[get_session], yield a TestClient, then clear the overrides."
+        examples:
+          - call: "python -m pytest -q"
+            gives: "passed, and no rows in lostdesk.db"
+      - id: write_tests
+        title: "tests that catch three bugs"
+        hints:
+          - "The check runs your tests on the real app (all must pass) and on three copies with a bug planted in each."
+          - "Each rule needs a test that would fail if the rule broke: a status code, a read-back, a filter."
+          - "Compare the whole read-back answer with what POST gave you, and check exactly which titles a filter gives."
+        examples:
+          - call: "python -m pytest -q"
+            gives: "4 passed"

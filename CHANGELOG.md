@@ -1,5 +1,25 @@
 # Changelog
 
+## 28 November: FastAPI course, Part 3, "Structure and data" (chapters 11 to 15)
+
+- 11 Dependencies (`paginate` and the `require_desk` guard; Fowler's 2004 naming), 12 A real database (SQLite through
+  SQLModel 0.0.50: table model, engine, a `yield` session dependency, tables created in `lifespan`; the SQL itself
+  shown with `echo=True`), 13 Create, read, update, delete (a family of models, `where` filters in SQL, `sqlmodel_update`),
+  14 Bigger applications (an `app/` package with routers, relative imports, API metadata), 15 Testing your API (pytest
+  and TestClient, `dependency_overrides` with an in-memory database and `StaticPool`).
+- Real measurements: an index on `station` in a 200,000-row table took a lookup from 6.11 ms (`SCAN item`) to 0.187 ms
+  (`SEARCH ... USING COVERING INDEX`). SQLite's `LIKE` found `UMBRELLA` in "green umbrella" (and the lesson warns that
+  PostgreSQL's does not).
+- Slips captured, and two corrected from a first guess: a missing `commit` makes `refresh` fail with "is not persistent
+  within this Session" (not a silent null id); a router included while the old routes stay gives a "Duplicate Operation
+  ID" warning and untagged docs.
+- Checks: each task's app is imported fresh (the check clears SQLModel's shared table registry first); the testing
+  chapter runs the learner's tests on the real app, on three planted bugs (`tests/testing/`), and on a copy whose real
+  database refuses to work, which is how it proves the override (a first version searched the test file for the word
+  `dependency_overrides` and was fooled by the TODO comment).
+- Two photos (the IBM 350 disk, a crash test dummy), three playing diagrams (`fastapi-dependency`, `fastapi-session`,
+  `fastapi-test-override`), five sketchnotes.
+
 ## 28 November: FastAPI course, Part 2, "Models and responses" (chapters 6 to 10)
 
 - 6 Fields and nested models (Field rules, ISO 8601 dates, lists with a limit, a nested Location; a field_validator in
