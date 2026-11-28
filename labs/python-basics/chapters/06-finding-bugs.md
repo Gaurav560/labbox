@@ -1,10 +1,11 @@
 :::step{type=story title="A program that runs is not a program that is right"}
-In 1947, the team running the Harvard Mark II computer found it giving wrong answers. They searched, and inside
-one of its relays they found the cause: a real moth, stuck between the contacts. They taped it into the logbook
+In 1947, the team running the Harvard Mark II computer found it giving wrong answers. The Mark II did its sums
+with thousands of **relays**: small electrical switches that click open and shut. The team searched, and inside
+one of those relays they found the cause: a real moth, stuck between the contacts, so the switch could not close. They taped it into the logbook
 with the note "First actual case of bug being found." That page is now in the Smithsonian museum.
 
 :::photo{src="/lesson-images/python/first-computer-bug-1947.webp" alt="A page of the Harvard Mark II logbook from 9 September 1947, with a moth taped to it and the note First actual case of bug being found" credit="U.S. Naval History and Heritage Command" license="Public domain" source="https://commons.wikimedia.org/wiki/File:First_Computer_Bug,_1947.jpg"}
-The real page, 9 September 1947: the moth is still taped to it.
+The real logbook page, 9 September 1947: the moth is still taped to it. It is the most famous bug in history, and it was found the way you will find yours today: by looking closely at where the wrong answer came from.
 :::
 
 Engineers had called problems "bugs" long before that day, but the moth made the word famous. Today your bugs
@@ -105,7 +106,9 @@ def average(amounts):
 :::
 
 :::step{type=try title="Now the quiet kind" file="06-finding-bugs/spending.py" line="5-19"}
-Open `spending.py`. Two of Pocket's functions live here, and at the bottom, two lines that call them. Run it:
+Open `spending.py`. Two of Pocket's functions live here, and at the bottom, two lines that call them. (Those
+two lines sit under `if __name__ == "__main__":`, which means "only when this file is run directly, not when
+another file imports it". Chapter 18 explains it fully; for now, read it as "the part that runs".) Run it:
 
 ```bash run
 cd /workspace/06-finding-bugs && python3 spending.py
@@ -178,6 +181,10 @@ Fix `daily_total` in `spending.py`, so `daily_total([120, 80, 100])` gives `300`
 3. Remove your `print`, run it again, and see `300`.
 
 The empty list should still give `0`. Then press **Check**.
+
+The usual slips (we tried them): `range(0, len(amounts) - 1)` swaps one missing amount for another (it skips the
+last one: `200`); `range(len(amounts) + 1)` goes one position too far and crashes with
+`IndexError: list index out of range`. The positions of a list of 3 items are exactly 0, 1 and 2.
 :::
 
 :::step{type=concept title="The debugger: pause the program and look around"}
@@ -243,7 +250,8 @@ Fix `over_budget` in `spending.py`, so spending exactly the budget is **not** ov
 3. Fix the comparison, remove your debugging line, and run `python3 spending.py`: it should print `300` and
    `False`.
 
-Then press **Check**.
+Then press **Check**. The usual slip: turning the comparison round to `left >= 0`, which answers the opposite
+question ("is there anything left?"): ₹50 over then says `False`. Over budget means `left` is *below* zero.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -296,12 +304,13 @@ colleague too, but the duck never gets bored.
 program. Right there? The bug is after it. Wrong already? Before it. Halve again. Ten halvings narrow a
 thousand lines down to one.
 
-**Assertions.** `assert total >= 0, "total can never be negative"` stops the program with an
-`AssertionError` the moment something impossible happens, close to the cause instead of far away. In Part 3
-you will write real **tests** that check your functions automatically, so the same bug can never come back
-unnoticed.
+**Assertions.** `assert total >= 0, "total can never be negative"` stops the program with
+`AssertionError: total can never be negative` the moment something impossible happens, close to the cause
+instead of far away. In chapter 17 you will write real **tests** that check your functions automatically, so
+the same bug can never come back unnoticed.
 
-**Off-by-one errors** like your `range(1, ...)` are so common they have their own name, and their own joke:
+**Off-by-one errors** (a loop or a count that is one too many or one too few) like your `range(1, ...)` are
+so common they have their own name, and their own joke:
 "There are two hard things in programming: naming things, cache invalidation, and off-by-one errors."
 :::
 
@@ -313,7 +322,7 @@ You can now:
 - Make hidden values visible with `print` and `print(f"{name=}")`.
 - Pause a program with `breakpoint()` and inspect it with `p`, `n`, `c` and `q`.
 
-:::photo{src="/lesson-images/python/py-06-notes.webp" alt="Handwritten notes: errors versus bugs, reading tracebacks bottom up, print with x=, and breakpoint" ai="true"}
+:::photo{src="/lesson-images/python/py-06-sketch.webp" alt="Sketchnote: Finding bugs. An error stops the program with a traceback; a bug runs to the end and gives a wrong answer. Flow: know the right answer, run it and get a wrong answer, print the variable with total=, find the first wrong lap, fix that line. Remember: read a traceback from the bottom up; breakpoint() pauses, p shows a value, c goes on; range(1, len(a)) skips the first item, a[0]; remove your debugging prints when you are done." ai="true"}
 One page of notes for this chapter.
 :::
 
