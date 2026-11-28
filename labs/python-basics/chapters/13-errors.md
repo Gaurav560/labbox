@@ -17,7 +17,7 @@ the good values and reports the bad ones.
 When Python cannot carry on, it **raises an exception**: an object that describes what went wrong. If nobody
 handles it, the program stops and prints the traceback. You have met a whole family of them in this course:
 
-| Exception | Means | You met it in |
+| Exception | Means | Where |
 |---|---|---|
 | `SyntaxError` | the code is not valid Python | chapter 1 |
 | `NameError` | a name that does not exist | chapter 1 |
@@ -26,7 +26,7 @@ handles it, the program stops and prints the traceback. You have met a whole fam
 | `ZeroDivisionError` | dividing by zero | chapter 6 |
 | `IndexError` | a position that does not exist | chapter 7 |
 | `KeyError` | a dictionary key that does not exist | chapter 9 |
-| `FileNotFoundError` | a file that is not there | chapter 14 |
+| `FileNotFoundError` | a file that is not there | coming in chapter 14 |
 
 Each has a **name** (the kind of problem) and a **message** (the details). The name is what your code uses to
 decide what to do; the message is for the person reading it.
@@ -51,17 +51,20 @@ ValueError: could not convert string to float: 'abc'
 ```
 
 Two surprises worth noticing. `float(" 7 ")` happily ignores the spaces around a number. And `float("abc")`
-raises a `ValueError` whose message even quotes the bad text. Python's own messages are good; your job today is
+raises a `ValueError` whose message even quotes the bad text. What about the friend's `1,200` from the story? We
+tried it: `ValueError: could not convert string to float: '1,200'`. Python does not guess that the comma separates
+thousands. Python's own messages are good; your job today is
 to make yours just as helpful.
 :::
 
 :::step{type=concept title="raise: say exactly what is wrong"}
 Not refusing bad input can cost a spaceship. In 1999 NASA's **Mars Climate Orbiter** was lost because one program
-sent its numbers in pound-force seconds while another read them as newton seconds. No code checked, nothing
-raised an error, and the craft flew too close to Mars.
+on the ground produced its numbers in pound-force seconds (an American unit) while the navigation software read
+them as newton seconds (the metric unit), which differ by a factor of about 4.45. No code checked the units,
+nothing raised an error, and the craft flew too close to Mars and was destroyed.
 
 :::photo{src="/lesson-images/python/mars-climate-orbiter.webp" alt="An artist's drawing of the Mars Climate Orbiter spacecraft, with a gold body, a long solar panel and a dish antenna, above Mars" credit="NASA/JPL/Corby Waste" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Mars_Climate_Orbiter_2.jpg"}
-The Mars Climate Orbiter, lost in 1999 to an unchecked unit mix-up.
+An artist's drawing of the Mars Climate Orbiter. It was lost in 1999 because a wrong value was accepted quietly; a check that raised an error at the hand-over would have stopped the mistake where it began.
 :::
 
 Your functions can raise exceptions too, with `raise`, the kind of exception, and a message:
@@ -101,8 +104,9 @@ def to_quantity(text):
 
 1. `try:` runs the indented code and watches for exceptions.
 2. If `int(text)` raises a `ValueError`, Python jumps straight to the matching `except ValueError:` block.
-3. That block raises a new `ValueError` with a message in Pocket's words. `from None` hides the original error,
-   so the user sees one clean message instead of two tracebacks.
+3. That block raises a new `ValueError` with a message in Pocket's words. `from None` hides the original error.
+   Without it, we saw Python print both tracebacks, joined by the line "During handling of the above exception,
+   another exception occurred", which is accurate but confusing for a user.
 4. If nothing goes wrong, the `except` block never runs, and the number is returned.
 
 Your first task has exactly this shape.
@@ -120,6 +124,10 @@ cd /workspace/13-errors && python3 -c "from errors import to_number; print(to_nu
 ```
 
 Then press **Check**.
+
+The usual slips: returning `None` instead of raising (the caller then gets a quiet wrong value, chapter 6's
+whisper); a message that leaves out the bad text in single quotes, `'abc'` (the check looks for it in the message);
+or a bare `except:` with no exception name, which would also swallow bugs.
 :::
 
 :::step{type=concept title="try and except: handle it and carry on"}
@@ -188,7 +196,9 @@ Use your `to_number` inside a `try`, and catch the `ValueError` it raises.
 cd /workspace/13-errors && python3 -c "from errors import safe_sum; print(safe_sum(['10', 'x', '2.5', '']))"
 ```
 
-Then press **Check**.
+Then press **Check**. Notice the empty string `""` lands in the bad list: `float("")` raises
+`ValueError: could not convert string to float: ''`. The usual slip is starting the total at `0` instead of `0.0`,
+so `safe_sum([])` gives back `0`, a whole number, not `0.0`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -265,7 +275,7 @@ You can now:
 - Catch the errors you expect with `try` / `except`, and keep going.
 - Catch only what you expect, so real bugs still show up.
 
-:::photo{src="/lesson-images/python/py-13-notes.webp" alt="Handwritten notes about exceptions: try, except ValueError, raise ValueError, catch only what you expect" ai="true"}
+:::photo{src="/lesson-images/python/py-13-sketch.webp" alt="Sketchnote: Errors. raise stops the program with a clear message; try and except catch an error you expected, so the program goes on. Flow: try, float of abc, ValueError raised, except ValueError, note it and carry on. Remember: a good message names the bad value; catch only the errors you expect; except ValueError does not catch ZeroDivisionError; raising beats returning a wrong value quietly." ai="true"}
 One page of notes for this chapter.
 :::
 
