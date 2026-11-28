@@ -7,6 +7,21 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **JavaScript rewritten and FastAPI rebuilt as a full course (28 November, second night; owner: "javascript and Fast
+  API rewrite complete full standard").** JavaScript from zero: all 18 chapters rewritten and fact-checked, one commit
+  each on both branches, test-lab green. Three checks were fixed along the way (`tests/check.js`): `parse_age` now
+  accepts a RangeError for "-1" (the lesson teaches it), `fetch_all` says "promises, not prices" when raw promises come
+  back, and the capstone check catches an empty amount (`Number("")` is 0). FastAPI: the one-chapter snack-corner lab
+  is now a 21-chapter course, **Lostdesk** (a city metro's lost-property API), on FastAPI 0.165.0 with a new image
+  `labbox/fastapi-first-api:v2` (v1 stays for the live site until a deploy; `deploy/laptop/prod images fastapi-first-api`
+  after deploying). Chapter id `01-menu-api` and tasks `menu`/`price` were kept. Four parts, 42 tasks, 14 photos, 15
+  diagrams, 21 sketchnotes, every output captured in the image; lab valid, test-lab green, 296 fast backend tests.
+  The run command passes `--root-path /preview/fastapi-first-api/8000`, because `/docs` cannot load in the Preview
+  without it (Swagger UI asks the site root for `/openapi.json`). The Phase D tests now start the app from
+  `01-first-api/`. Not yet run: the full Postgres+Redis backend run and the browser tests (phase-d.spec.ts was edited
+  for the new chapter 1). REWRITE_LIST: 10 of 23. Sketchnotes from now on follow the owner's sketchnote rules
+  (COURSE_PRODUCTION section 9, memory `sketchnote-rules`); the Python and Java sketchnotes predate them and some show
+  example data. Next lab: the owner picks (Go from zero is next in the list).
 - **Python from zero and Java from zero rewritten (28 November night, owner: "do a complete rewrite of Java and
   Python while i go to sleep").** All 19 + 18 chapters, one commit each on both branches; both labs valid, test-lab
   green; REWRITE_LIST 8 of 23. Every output re-run on a lab machine, slips tried with the real messages, a new tall
