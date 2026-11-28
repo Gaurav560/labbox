@@ -17,13 +17,15 @@ Write `countWords`, which counts the words in messy text, and `cleanName`, which
 :::
 
 :::step{type=concept title="A string is a row of characters"}
-A **string** is a sequence of characters, each with a numbered place starting at **0**:
+A **string** is JavaScript's name for text: a sequence of characters, each with a numbered place (its **index**)
+starting at **0**. A **method** is a function that belongs to a value and is called with a dot: `s.slice(0, 4)` asks
+the string `s` for a piece of itself. Here is the everyday toolbox (we ran every line):
 
 | Code | Gives | For `"Neon Lanes"` |
 |---|---|---|
 | `s.length` | how many characters | `10` |
 | `s[0]` | the character at position 0 | `"N"` |
-| `s.at(-1)` | the last character | `"s"` |
+| `s.at(-1)` | counting from the end: -1 is the last | `"s"` |
 | `s.slice(0, 4)` | from 0 up to, not including, 4 | `"Neon"` |
 | `s.indexOf("L")` | the first position of `"L"`, or -1 | `5` |
 | `s.includes("Lane")` | does it appear inside? | `true` |
@@ -70,7 +72,8 @@ The everyday tools for messy text:
 "RIYA".toLowerCase()            // "riya"
 ```
 
-`/\s+/` is a small **regular expression**: "one or more spaces". You will see it often.
+`/\s+/` is a small **regular expression** (a pattern for matching text, written between two slashes): `\s` means
+"a space, tab or new line" and `+` means "one or more of them". You will see it often. (We ran all five lines.)
 
 :::picture{name="trim-edges" concept="Cleaning tools"}
 Trimming removes the spaces at both edges and keeps the gap between the words.
@@ -94,8 +97,8 @@ code("  neon   lanes 2 ")   // "NEON-LANES-2"
 2. Change each piece, here to upper case (`map` means "do this to each"; chapter 11 explains it).
 3. Join the pieces with `-`.
 
-And a trap: what does an **empty** text give? `"".split(/\s+/)` is `[""]`: one empty piece. If you count words by
-counting pieces, empty text has 1 word. Check for it first.
+And a trap: what does an **empty** text give? `"".split(/\s+/)` is `[""]`: one empty piece (we tried it). If you
+count words by counting pieces, empty text has 1 word. Check for it first.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -121,7 +124,11 @@ gives `0`.
 cd /workspace/07-strings && node words.js
 ```
 
-Then press **Check**.
+Before you start it prints `0 0 0` and the untouched name in square brackets. Then press **Check**.
+
+The usual slips, each one tried on a lab machine: `split(" ")` instead of `split(/\s+/)`, which gives 7 pieces for
+`"  lots   of   spaces  "` even after `trim()`, empty ones included; and forgetting the empty-text check, so `""`
+counts as 1 word.
 :::
 
 :::step{type=try title="Why one emoji is two characters long" file="07-strings/emoji.js" line="2-5"}
@@ -138,12 +145,15 @@ cd /workspace/07-strings && node emoji.js
 [ 'N', 'e', 'o', 'n', ' ', '\ud83c', '\udfb5' ]
 ```
 
-Inside, JavaScript stores text in pieces of 16 bits, a choice made in 1995 when 65,536 characters seemed like
-plenty. Emoji came later and did not fit, so each one is stored as **two** pieces, and `length` counts pieces, not
-pictures. The last line shows the two halves of 🎵, which mean nothing on their own.
+Every character has a number in **Unicode**, the world's shared list of characters. In 1995 that list fitted in
+65,536 numbers, so JavaScript stored text in pieces of 16 bits, enough for one character each. Unicode later grew past
+65,536 (emoji arrived in it in 2010), and a character beyond that limit is stored as **two** pieces. `length` counts
+pieces, not pictures. The last line shows the two halves of 🎵, which mean nothing on their own.
 
-The fix is the spread `[...text]`, which walks the text by real characters: `[..."🎵"].length` is `1`. Use it whenever
-emoji, or many scripts of the world, might appear.
+The fix is the spread `[...text]` (the three dots unpack the text into a list), which walks the text by whole Unicode
+characters: `[..."🎵"].length` is `1`. It is right for most emoji. It is still not what a person would count in two
+cases (we tried both): a thumbs-up with a skin tone, 👍🏽, is two Unicode characters, so it counts 2; and the Hindi
+word नमस्ते counts 6, while a reader sees 3 letter groups. The deep dive shows the tool for those.
 :::
 
 :::step{type=concept title="Capital first, the rest small"}
@@ -175,13 +185,17 @@ In `words.js`, make `cleanName(raw)` give back the name tidied: no spaces at the
 each word with a capital first letter and small letters after.
 
 `cleanName("  riya   SHARMA ")` gives `"Riya Sharma"`, `cleanName("ARJUN")` gives `"Arjun"`, and a name that is only
-spaces gives `""`.
+spaces gives `""`. Trim, check for empty, split on runs of spaces, fix each word, and join with single spaces.
 
 ```bash run
 cd /workspace/07-strings && node words.js
 ```
 
 Then press **Check**.
+
+The usual slip: skipping the empty check. A name of only spaces trims to `""`, splits into one empty piece, and that
+piece has no first letter: `p[0]` is `undefined`, and the call crashes with `TypeError: Cannot read properties of
+undefined (reading 'toUpperCase')` (we tried it).
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -228,8 +242,11 @@ it.
 **Multi-line text.** Backtick strings can span several lines, and `${...}` can hold any expression:
 `` `Total: ${minutes * 60} seconds` ``.
 
-**localeCompare.** `"é".localeCompare("f")` compares text the way a dictionary in that language would, not by code
-numbers. Chapter 8 shows why plain sorting gets this wrong.
+**localeCompare.** `<` compares text by Unicode numbers, so `"é" < "f"` is `false` (é is number 233, f is 102).
+`"é".localeCompare("f")` compares the way a dictionary would and gives `-1`: é comes first (we tried both).
+
+**Counting what people see.** `[...new Intl.Segmenter().segment("नमस्ते")].length` is `3`, and for 👍🏽 it is `1`:
+`Intl.Segmenter` splits text into the groups a reader sees.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -240,7 +257,7 @@ You can now:
 - Split with `/\s+/`, avoid the empty-text trap, and join pieces back together.
 - Explain why `"🎵".length` is 2, and count real characters with `[...text]`.
 
-:::photo{src="/lesson-images/javascript/js-07-notes.webp" alt="Handwritten notes about JavaScript strings: positions start at 0, strings never change, trim then split on runs of spaces, empty text gives one piece, one emoji has length 2, spread counts real characters" ai="true"}
+:::photo{src="/lesson-images/javascript/js-07-sketch.webp" alt="Sketchnote: Strings. A string is a row of characters, each with an index from 0; strings never change, every method gives back a new one. Flow: messy text, trim() the ends, split on runs of spaces, change each piece, join them back. Remember: store the result, s.trim() alone changes nothing; empty text splits into one empty piece, check first; length counts 16-bit pieces, one emoji can be 2; spreading the text into a list counts whole Unicode characters." ai="true"}
 One page of notes for this chapter.
 :::
 
