@@ -30,7 +30,7 @@ about arrays). The loop reads: "for each `int count` in `returned`, run the body
 2. It takes the next one, `9`, and runs the body again.
 3. It repeats until there are no values left, then carries on after the loop.
 
-Each pass is an **iteration**. The loop variable needs a type too (`int count`), because every value in the array
+Each pass is an **iteration** (from the Latin word for "again"). The loop variable needs a type too (`int count`), because every value in the array
 is an `int`.
 
 :::picture{name="running-track"}
@@ -121,7 +121,8 @@ Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out
 ```
 
 Position 3 does not exist in an array of length 3. That message, `Index ... out of bounds`, is one of the most
-common in Java. Now you know what it means.
+common in Java. Now you know what it means. (`returned.length` is the number of items in the array; for arrays
+it is written **without** brackets, unlike a string's `length()`.)
 :::
 
 :::step{type=predict title="Guess first"}
@@ -148,6 +149,9 @@ cd /workspace/05-loops && java Loops.java
 ```
 
 The first line it prints is `sumTo(5)`. Then press **Check**.
+
+The usual slip: `i < n` instead of `i <= n`. It leaves `n` itself out: we tried it, and `sumTo(5)` gave `10`, not
+15. "Up to and including n" is `<=`.
 :::
 
 :::step{type=concept title="Looping over the characters of a string"}
@@ -187,6 +191,10 @@ cd /workspace/05-loops && java Loops.java
 ```
 
 Then press **Check**.
+
+The usual slips: comparing a `char` with a string in double quotes, `c == "a"`, which `javac` refuses with
+`error: bad operand types for binary operator '=='` (we tried it; a `char` is written `'a'`); or forgetting
+`Character.toLowerCase`, so `AEIOU` counts as 0.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -245,7 +253,7 @@ System.out.println(months + " " + saved);    // 4 1200
 **Ctrl+C** in the terminal to stop it.
 
 **Streams.** In chapter 14 you will write many loops in a shorter style: `IntStream.rangeClosed(1, n).sum()` adds 1
-to n in one line. Knowing the loop first means you will understand what that line does.
+to n in one line (`rangeClosed` includes n; we checked `IntStream.rangeClosed(1, 5).sum()` is 15). Knowing the loop first means you will understand what that line does.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -256,7 +264,7 @@ You can now:
 - Explain `ArrayIndexOutOfBoundsException` and the off-by-one mistake that causes it.
 - Loop over a string's characters with `toCharArray()`, and repeat with `while`.
 
-:::photo{src="/lesson-images/java/java-05-notes.webp" alt="Handwritten notes about Java loops: for each, the counting for loop, total starts before the loop, index out of bounds means one too far" ai="true"}
+:::photo{src="/lesson-images/java/java-05-sketch.webp" alt="Sketchnote: Loops. A loop runs its body again and again, once for each item, or while a condition stays true. Flow: int total = 0, for i from 1 while i <= n, total = total + i, i++ and check again, return total. Remember: array positions start at 0; i < length stops in time, i <= length crashes; set up the answer before the loop; a char is written with single quotes, a String with double quotes." ai="true"}
 One page of notes for this chapter.
 :::
 
