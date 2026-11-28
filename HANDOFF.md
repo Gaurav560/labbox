@@ -7,6 +7,10 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Python from zero rewritten (28 November night, owner: "do a complete rewrite of Java and Python while i go to
+  sleep").** All 19 chapters, one commit each on both branches; lab valid, test-lab green. Same method as Spring
+  Boot (helpers now in `.authoring-scratch/py/`: `x.sh` runs a command on the lab machine, `finish.py` swaps the
+  sketchnote in, validates, logs and commits). Java from zero is next, the same night.
 - **Jarvis (28 November), steps 1 to 4 done, a redesign waiting for the owner.** Done and committed on both branches:
   step 1 realtime voice talk (OpenAI `gpt-realtime-2.1-mini`, WebRTC, budgets, Admin tab, Pro plan switch); step 2 offers
   when stuck; step 3 welcome on the dashboard and Pro memory notes (migration 0017); step 4 cheers, settings (tap, talk
