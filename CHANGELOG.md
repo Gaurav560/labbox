@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 16 rewritten (easy, a little detailed, checked)
+
+- Chapter 16, "Modules, packages and pip": the rounding note for `to_paise` pointed at the wrong case (`0.1 + 0.2`
+  gives 30 even with `int()`); it now teaches the case the check really tries, `0.29 * 100` is
+  `28.999999999999996`, so `int()` gives 28 and `round()` 29. `%A` explained; the statistics module's empty-list
+  error quoted (`no median for empty data`).
+- Checked on a lab machine: `tracker.py`, the `ModuleNotFoundError`, the marathon (26.22), every standard-library
+  answer, and the whole virtual environment story for real: `pip install requests` installed 2.34.2 into
+  `/tmp/.venv`, and after `deactivate` the normal Python could not import it. Slips added. New sketchnote page.
+
 ## 28 November: Python chapter 15 rewritten (easy, a little detailed, checked)
 
 - Chapter 15, "Classes and objects": the 5% sum written out; `__main__` in `<class '__main__.Item'>` explained;
