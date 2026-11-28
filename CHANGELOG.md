@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: JavaScript chapter 15 rewritten (easy, a little detailed, checked)
+
+- Chapter 15, "Async": every output re-run on a lab machine; the two download styles timed (901 ms and 300 ms), and
+  why the file prints `true true` instead. `setTimeout`, milliseconds and `Promise.resolve().then` explained before the
+  puzzle; the one-thread claim qualified (Node keeps helper threads for slow jobs; your JavaScript runs on one).
+- The `fetch_all` check told a learner who returned raw promises that the order was wrong (it showed `[{},{},{},{}]`);
+  it now says they gave back promises, not prices, and to await `Promise.all` (`tests/check.js`, tried).
+- Slips added and tried against the real check: no `Promise.all`, `await` inside a plain arrow (Node's confusing
+  `SyntaxError: missing ) after argument list`), never throwing in `retry`, and `i <= times` (3 tries). New sketchnote
+  page, a general summary of the chapter (redrawn once: "Promise.all runs tasks" blurred who starts the work).
+
 ## 28 November: JavaScript chapter 14 rewritten (easy, a little detailed, checked)
 
 - Chapter 14, "Classes": every output re-run on a lab machine. Method, getter (and why there is no setter for

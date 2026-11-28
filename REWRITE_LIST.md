@@ -18,7 +18,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
 | 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
 | 8 | java-basics | Java from zero | 18 | done (18 of 18) | 28 Nov |
-| 9 | javascript-basics | JavaScript from zero | 18 | in progress (14 of 18) |  |
+| 9 | javascript-basics | JavaScript from zero | 18 | in progress (15 of 18) |  |
 | 10 | go-basics | Go from zero | 18 | not started | |
 | 11 | rust-basics | Rust from zero | 28 | not started | |
 | 12 | redis-in-practice | Redis in practice | 17 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: JS ch 15 done: timings measured (901 vs 300 ms); fetch_all check message fixed for raw promises; slips tried against the check; sketchnote (redrawn once).
 - 28 Nov: JS ch 14 done: getter, strict-mode this and ** explained; private-field error quoted; slips tried (-700, 18.28); sketchnote.
 - 28 Nov: JS ch 13 done: parse_age check fixed (-1 may be TypeError or RangeError, as the lesson teaches); outputs re-run; slips tried; sketchnote (redrawn once).
 - 28 Nov: JS ch 12 done: the promised require.main explanation added; full JSON output; Date(0) explained; slips tried; sketchnote. Part 2 complete.
