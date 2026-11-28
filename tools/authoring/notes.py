@@ -5,7 +5,8 @@
 JOBS.json is a list of {name, lines}: name like "springai-07-notes", lines the five or six short lines the
 page must say. A job with "sketch" instead of "lines" draws a tall sketchnote page (owner, 25 November: "descriptive,
 easy to understand"): {"title", "subtitle", "box", "flow": [4 to 5 short steps], "list_title", "bullets": [3 to 4]},
-1024 x 1536. The doodle argument is ignored for sketch pages. Writes OUTDIR/<name>.webp (1536 x 1024, medium quality, saved as WebP quality 80: about 180 KB). Existing files are skipped, so to
+1024 x 1536. The doodle argument is ignored for sketch pages. A sketch page is a general summary of the whole
+chapter, never example data or invented values: COURSE_PRODUCTION.md section 9, "Sketchnote rules" (owner, 28 November). Writes OUTDIR/<name>.webp (1536 x 1024, medium quality, saved as WebP quality 80: about 180 KB). Existing files are skipped, so to
 redraw one, move it away first.
 
 Uses the image provider from backend/.env through labbox_cli.image_provider (OpenAI first). The owner approved
