@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: JavaScript chapter 10 rewritten (easy, a little detailed, checked)
+
+- Chapter 10, "Counting": every output re-run on a lab machine. Hollerith made exact (nearly 63 million people;
+  punched cards explained; 1880 by hand took about eight years, the 1890 first total about six weeks; merged in 1911,
+  renamed IBM in 1924). "has is fast however big the Set grows" is now measured: a million numbers, `includes` about
+  1.4 ms per question, `has` well under a thousandth of a millisecond, with why.
+- What happens without `?? 0` is now shown (`{ jelly: NaN }`, tried).
+- Slips added and tried: no lower-casing (`{ jelly: 2, Cookie: 1, JELLY: 1 }`), forgetting to sort
+  (`['toast', 'mint']`), and repeats (`['b', 'a', 'b']`, the check's second case). New sketchnote page, a general
+  summary of the chapter.
+
 ## 28 November: JavaScript chapter 9 rewritten (easy, a little detailed, checked)
 
 - Chapter 9, "Objects": every output re-run on a lab machine. The deep dive said the array form of destructuring was
