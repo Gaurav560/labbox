@@ -7,6 +7,9 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Chapter summaries (28 November, parked):** the owner rejected the AI note images (shortcuts, examples, cost: $60+
+  of OpenAI, nearly all images). Plan and options in ROADMAP B 2f; recommended: a plain-text "Chapter summary" in each
+  recap. Do nothing until the owner says go. Next up now: Jarvis (ROADMAP B 2e).
 - **JavaScript rewritten and FastAPI rebuilt as a full course (28 November, second night; owner: "javascript and Fast
   API rewrite complete full standard").** JavaScript from zero: all 18 chapters rewritten and fact-checked, one commit
   each on both branches, test-lab green. Three checks were fixed along the way (`tests/check.js`): `parse_age` now

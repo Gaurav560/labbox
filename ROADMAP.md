@@ -393,6 +393,31 @@ changeable in Admin, Jarvis. Pro is set by hand in Admin, Learners, until paymen
 - Known limits: a spoken reply cannot be filtered before it is heard (the rules and the tools keep solutions out);
   the browser reports usage, and the server caps the counted seconds by the wall clock and hangs up at a limit.
 
+### 2f. Chapter summaries instead of AI note images (owner, 28 November; parked, owner decides later)
+
+- **The problem (owner):** the AI-drawn notes and sketchnotes at the end of each chapter are "too much shortcut", use
+  examples the owner does not want, and do not read like a person wrote them. The owner wants only what the chapter
+  was about, in plain words any beginner can read. They also cost too much: the OpenAI usage page showed over $60 by
+  28 November, almost all of it about 830 gpt-image-2 images (404 in use, 342 replaced by redraws and rewrites, rejected
+  drafts, 42 cover candidates). Chat (gpt-4o-mini) cost $0.14 and Jarvis tests $0.11 in the dev records.
+- **Why the pages came out that way:** an image model only spells short text reliably, so every chapter was squeezed
+  into fragments; examples and code symbols filled the gaps.
+- **Options discussed:** (a) keep OpenAI images (costly, misspells, fragments); (b) a sketchnote drawn with code
+  (rough.js, like the lesson diagrams; free, exact text, both themes; sample built:
+  `.authoring-scratch/summary-plan/sketchnote-sample/index.html`); (c) **plain text on the lesson page** (owner's
+  idea): a "Chapter summary" at the end of the recap step, in the lesson's own font, optionally in a soft box: what the
+  chapter is about, the main idea, why it matters, what to remember, all in full sentences, every term explained, no
+  code symbols, no project names, no invented data. Recommended: (c). It costs nothing and allows full sentences.
+- **Sample text written (FastAPI chapter 7, Response models):** "What this chapter is about: A program that stores
+  information often keeps more than it should show... The main idea: You describe the shape of the answer in
+  advance... Why it matters... What to remember..." (in this session's chat; rewrite it from the chapter when work starts).
+- **Found and not fixed (owner said wait):** sketchnotes with example data: FastAPI ch 1, 7 ("Lostdesk"), 10
+  (X-Desk-Key), 11 (PageDep), 13 (select(Item)), 19 (LOSTDESK_), 21 (the claims flow); JavaScript ch 3 ("whole
+  paise"), ch 18 ("monthly report"); the Python and Java ones predate the rules. With option (c) they are all removed
+  instead of redrawn. 55 unused old notes images were already deleted (b4a27ac).
+- **Next, when the owner says go:** write one chapter's summary as plain text (FastAPI 7) for the owner to read on
+  :5173; if approved, every chapter, then delete the AI note images (about 47 MB) and stop image spend for notes.
+
 ### 3. More labs in the other tracks (after the AI track)
 
 **Left over from the batch 2 proposal:** FastAPI CRUD with Postgres, SQL traps.
