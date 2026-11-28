@@ -18,7 +18,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
 | 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
 | 8 | java-basics | Java from zero | 18 | done (18 of 18) | 28 Nov |
-| 9 | javascript-basics | JavaScript from zero | 18 | in progress (7 of 18) |  |
+| 9 | javascript-basics | JavaScript from zero | 18 | in progress (8 of 18) |  |
 | 10 | go-basics | Go from zero | 18 | not started | |
 | 11 | rust-basics | Rust from zero | 28 | not started | |
 | 12 | redis-in-practice | Redis in practice | 17 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: JS ch 8 done: 'sorts like a dictionary' corrected (Unicode order); arrow explained early; toSorted and holes tried; slips tried; sketchnote.
 - 28 Nov: JS ch 7 done: spread claim qualified (skin tone 2, Hindi 6 vs 3; Intl.Segmenter); wrong chapter-8 pointer replaced by a tried fact; slips tried; sketchnote.
 - 28 Nov: JS ch 6 done: moth story exact; REPL banner added; slips tried (NaN; four canAdd variants); sketchnote. Part 1 complete.
 - 28 Nov: JS ch 5 done: early array syntax explained; 'chapter 13 uses continue' corrected to 16; slips tried (10, 5, ReferenceError, AEIOU 0); sketchnote.
