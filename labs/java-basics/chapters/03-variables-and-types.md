@@ -6,8 +6,9 @@ Java says:
 -2147483648
 ```
 
-A huge **negative** number. Is Java broken? No: every `int` lives in a fixed-size box of 32 bits, and when the box
-is full it wraps around, like a car's odometer rolling over. By the end of this chapter you will know exactly why,
+A huge **negative** number. Is Java broken? No: every `int` lives in a fixed-size box of 32 **bits** (a bit is a
+single 0 or 1), and when the box is full it wraps around, the way a car's distance counter rolls over from 99999
+to 00000. By the end of this chapter you will know exactly why,
 and why programs that handle money care so much about types.
 
 Shelf counts books and adds up late fees, so today you learn how Java stores numbers and text.
@@ -50,7 +51,9 @@ The everyday types:
 | `String` | text, in double quotes | `String title = "The Hobbit";` |
 
 `String` has a capital S: it is a class (chapter 9 explains why), while the others are built-in **primitive**
-types. And as in maths class, `=` here means "store", not "equals": `stillOut = stillOut - 1;` is perfectly fine.
+types. **Primitive** means built into the language itself, not made from a class. And unlike in maths class,
+`=` here means "store", not "equals": `stillOut = stillOut - 1;` is perfectly fine (work out the right side,
+then store it).
 
 :::picture{name="labelled-jars"}
 A variable is a labelled jar: the label is the name, the jar's shape is the type, and only values of that shape fit.
@@ -86,8 +89,9 @@ and throws the fraction away. Not rounding: just cutting.
 | `(double) 7 / 2` | `3.5` | `(double)` turns 7 into 7.0 first |
 | `(int) 3.99` | `3` | `(int)` cuts a double down; it does not round |
 
-Writing a type in brackets before a value is a **cast**: "treat this as a double". Cast **before** dividing:
-`(double) (7 / 2)` is 3.0, because the division already happened between two ints and the .5 was already gone.
+Writing a type in brackets before a value is a **cast**: "treat this as a double". Cast **before** dividing,
+never after: `(double) (7 / 2)` is `3.0`, because the brackets make the division happen first, between two ints,
+and the .5 is already gone by the time the cast arrives.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -128,13 +132,19 @@ Your first task has this shape, with a percentage instead of an average.
 Open `Numbers.java` and make `percent(scored, total)` give back `scored` out of `total` as a percentage, rounded to
 one decimal. When `total` is 0, give back 0 (dividing by zero makes no sense).
 
-`percent(45, 60)` gives `75.0`, `percent(1, 3)` gives `33.3`, and `percent(7, 0)` gives `0.0`.
+`percent(45, 60)` gives `75.0`, `percent(1, 3)` gives `33.3`, and `percent(7, 0)` gives `0.0`. (The starter says
+`return 0;` in a method that promises a `double`: Java quietly widens the `0` to `0.0`, which is why it runs.)
 
 ```bash run
 cd /workspace/03-variables-and-types && java Numbers.java
 ```
 
 The first line it prints is `percent(45, 60)`. Then press **Check**.
+
+The usual slips (we tried them): `scored / total * 100` without a cast gives `0` (the integer division from the
+Guess step); and forgetting the zero check. That one is a surprise: `7.0 / 0` in Java is not an error but
+`Infinity`, and rounding Infinity gives the biggest `long` there is, so `percent(7, 0)` comes out as
+`9.223372036854776E17`. Check `total == 0` first.
 :::
 
 :::step{type=concept title="Boxes of a fixed size, and money"}
@@ -146,8 +156,8 @@ Back to the mystery from the start. An `int` is stored in exactly 32 bits, so it
 ```
 
 That is `Integer.MAX_VALUE`, and `Integer.MAX_VALUE + 1`. With no room left, the number wraps around to the most
-negative `int`. Java does not warn you; it is your job to pick a type big enough (`long` goes up to about 9
-quintillion).
+negative `int`. Java does not warn you; it is your job to pick a type big enough. A `long` has 64 bits and goes
+up to 9,223,372,036,854,775,807, about 9 quintillion (9 followed by 18 digits).
 
 Decimals have their own surprise: `0.1 + 0.2` is `0.30000000000000004` in Java, exactly as in Python, because a
 `double` stores numbers in binary, where 0.1 has no exact form.
@@ -215,6 +225,10 @@ cd /workspace/03-variables-and-types && java Numbers.java
 ```
 
 Then press **Check**.
+
+The usual slip: `"₹" + paise / 100 + "." + paise % 100`. It works for 1250, but for 5 paise it gives `₹0.5` (we
+tried it), because `5 % 100` is just `5`, one digit. That is exactly what `%02d` is for. (Another way that works:
+`String.format("₹%.2f", paise / 100.0)`, a double that is only used for showing.)
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -264,8 +278,8 @@ BigDecimal("0.2"))` is exactly `0.3`. It is slower and wordier, which is why who
 16, 32 and 64 bits), `float`, `double` (decimals), `char` and `boolean`. Everything else, including `String`, is an
 object, built from classes.
 
-**Overflow on purpose.** `Math.addExact(Integer.MAX_VALUE, 1)` throws an `ArithmeticException` instead of
-wrapping around, for code that must never get it silently wrong.
+**Overflow on purpose.** `Math.addExact(Integer.MAX_VALUE, 1)` throws `ArithmeticException: integer overflow`
+instead of wrapping around, for code that must never get it silently wrong.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -276,7 +290,7 @@ You can now:
 - Explain overflow and why money is stored as whole paise.
 - Join text and numbers with `+`, parse text with `Integer.parseInt`, and format with `String.format`.
 
-:::photo{src="/lesson-images/java/java-03-notes.webp" alt="Handwritten notes about Java types: 7 / 2 is 3, 7 / 2.0 is 3.5, cast before dividing, MAX_VALUE + 1 is negative, money in paise" ai="true"}
+:::photo{src="/lesson-images/java/java-03-sketch.webp" alt="Sketchnote: Variables and types. A variable has a name, a type and a value; the type never changes, and javac checks it before running. Flow: int onTime = 45, 45 / 60 is 0, cast to double then divide, 0.75 times 100, 75.0. Remember: int divided by int cuts the fraction off, 7 / 2 is 3; cast before dividing, never after; Integer.MAX_VALUE + 1 wraps around to a negative number; Shelf keeps money as whole paise, 1250 is 12.50 rupees." ai="true"}
 One page of notes for this chapter.
 :::
 

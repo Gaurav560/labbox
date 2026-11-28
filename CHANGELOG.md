@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Java chapter 3 rewritten (easy, a little detailed, checked)
+
+- Java chapter 3, "Variables and types": "as in maths class, `=` means store" said the opposite of what it meant;
+  now "unlike in maths class". The "cast before dividing" line used an after-the-division example as if it were
+  the advice; now said plainly. Bit, primitive and the `long` limit (9,223,372,036,854,775,807) explained; why the
+  starter's `return 0;` compiles in a `double` method.
+- Checked on a lab machine: `Today.java`, the type error, every division and cast, overflow, `0.1 + 0.2`, the `+`
+  puzzle, `parseInt` and its exception, both formats, `duration`, `BigDecimal`, `var`, `addExact`'s message (now
+  quoted). Slips found and taught: without the zero check, `percent(7, 0)` gives `9.223372036854776E17` (7.0 / 0 is
+  Infinity in Java); and `paise % 100` without padding shows 5 paise as `₹0.5`. New sketchnote page.
+
 ## 28 November: Java chapter 2 rewritten (easy, a little detailed, checked)
 
 - Java chapter 2, "Your first methods": the comparison with Python was half true ("each mistake would only show up
