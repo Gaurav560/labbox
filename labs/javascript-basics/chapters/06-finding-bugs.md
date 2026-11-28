@@ -1,6 +1,9 @@
 :::step{type=story title="A program that runs is not a program that is right"}
-In 1947, the team running the Harvard Mark II computer found it giving wrong answers. Inside one of its relays they
-found the cause: a real moth. They taped it into the logbook with the note "First actual case of bug being found."
+On 9 September 1947, the team running the Harvard Mark II, a room-sized computer built from thousands of **relays**
+(small switches that click open and shut), traced a problem to relay number 70. Inside it they found a real moth.
+They taped it into the logbook with the note "First actual case of bug being found." Engineers had already called
+faults "bugs" for decades (Thomas Edison wrote about them in the 1870s), which is exactly why a real one was funny
+enough to keep.
 
 :::photo{src="/lesson-images/python/first-computer-bug-1947.webp" alt="A page of the Harvard Mark II logbook from 9 September 1947, with a moth taped to it and the note First actual case of bug being found" credit="U.S. Naval History and Heritage Command" license="Public domain" source="https://commons.wikimedia.org/wiki/File:First_Computer_Bug,_1947.jpg"}
 The real page, 9 September 1947: the moth is still taped to it.
@@ -52,7 +55,8 @@ TypeError: Cannot read properties of undefined (reading 'toUpperCase')
 ```
 
 The morning playlist worked. The evening one, with no songs at all, crashed. This is a **stack trace**: the list of
-function calls that were waiting for an answer when things went wrong.
+function calls that were waiting for an answer when things went wrong. (Your terminal shows five more `node:internal`
+lines and the Node version after these; as in chapter 1, we cut them.)
 :::
 
 :::step{type=concept title="Read a stack trace from the top"}
@@ -78,7 +82,12 @@ if (titles.length === 0) {
 }
 ```
 
-Try it and run the file again: `Evening: NOTHING YET`.
+Try it and run the file again (we did):
+
+```text
+Morning: MONSOON DRIVE
+Evening: NOTHING YET
+```
 :::
 
 :::step{type=try title="Now the quiet kind" file="06-finding-bugs/playlist.js" line="3-18"}
@@ -141,6 +150,10 @@ Fix `totalLength` in `playlist.js`, so that `totalLength([200, 180, 240])` gives
 3. Remove your `console.log` and run it again: `620`.
 
 An empty list must still give `0`. Then press **Check**.
+
+The usual slip: fixing the start and also changing `<` to `<=`. Then the loop visits position 3, which does not
+exist, adds `undefined`, and the whole total becomes `NaN` (we tried it: even `[]` gives `NaN`). Start at 0, stop
+**before** the length.
 :::
 
 :::step{type=concept title="The REPL: ask a function a question"}
@@ -152,6 +165,8 @@ cd /workspace/06-finding-bugs && node
 ```
 
 ```text
+Welcome to Node.js v22.23.5.
+Type ".help" for more information.
 > const p = require("./playlist.js")
 undefined
 > p.totalLength([200, 180, 240])
@@ -181,6 +196,10 @@ limit, no more:
 3. Fix the comparison, remove your debugging line, and run `node playlist.js`: `620`, then `false`.
 
 Then press **Check**.
+
+There is more than one right answer here: `room > 0`, `room >= 1` and `count < limit` all say the same thing for
+whole numbers (we tried them). Pick the one that reads most clearly to you. The one that does not work is
+`count <= limit`: it is the same bug written the other way round, and `canAdd(10, 10)` stays `true`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -227,8 +246,8 @@ click: every variable, visible, without editing the file.
 **The debugger statement.** Write `debugger;` on a line, and when a debugger is attached (or the browser's developer
 tools are open), the program pauses right there.
 
-**console.table.** `console.table([{ title: "Neon Lanes", seconds: 198 }])` prints a neat table: perfect for lists of
-songs.
+**console.table.** `console.table([{ title: "Neon Lanes", seconds: 198 }])` prints a neat table, with a column for
+the position, `(index)`, and one for each field: perfect for lists of songs.
 
 **Off-by-one.** Starting at 1 instead of 0, or `>=` instead of `>`: the same two mistakes, in every language, every
 day. You have now fixed both.
@@ -242,7 +261,7 @@ You can now:
 - Make hidden values visible with labelled `console.log` lines.
 - Ask a function questions directly in the Node REPL, and leave with `.exit`.
 
-:::photo{src="/lesson-images/javascript/js-06-notes.webp" alt="Handwritten notes about finding bugs in JavaScript: read the stack trace from the top, find your own file, label your console.log, node with no file opens the REPL, .exit to leave, off by one" ai="true"}
+:::photo{src="/lesson-images/javascript/js-06-sketch.webp" alt="Sketchnote: Finding bugs. A loud bug stops the program with an error and a stack trace; a quiet bug runs and gives a wrong answer. Flow: see the wrong result, make values visible, find the first difference, fix one thing, run it again. Remember: read the error line, then the first at line in your file; skip the node:internal lines, Node's own machinery; label every console.log, then remove it; node with no file opens the REPL, .exit leaves." ai="true"}
 One page of notes for this chapter.
 :::
 

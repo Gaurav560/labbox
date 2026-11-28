@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: JavaScript chapter 6 rewritten (easy, a little detailed, checked)
+
+- Chapter 6, "Finding bugs": every output re-run on a lab machine, the REPL session too (it opens with
+  `Welcome to Node.js v22.23.5.` and a help line, which the lesson left out). The moth story made exact (relay 70,
+  9 September 1947, relays explained) and the joke explained: engineers had called faults bugs since Edison's time.
+- The empty-playlist fix now shows its real output. The cut `node:internal` lines are said to be cut.
+- Slips added and tried: `<=` with the start fix (`NaN`, even for `[]`); for `canAdd`, three right answers checked
+  (`room > 0`, `room >= 1`, `count < limit`) and the one that keeps the bug (`count <= limit`). `console.table`'s
+  `(index)` column explained. New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 5 rewritten (easy, a little detailed, checked)
 
 - Chapter 5, "Loops": every output re-run on a lab machine. The first step used a list, `seconds[i]` and `.length`
