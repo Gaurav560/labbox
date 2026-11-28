@@ -1,4 +1,4 @@
-# Handoff: where the work stands (27 November 2026)
+# Handoff: where the work stands (28 November 2026)
 
 Read this first when a session starts. `AGENTS.md` has the rules and how to run and test, `ROADMAP.md`
 the status of every lab and phase, `CHANGELOG.md` the history (newest first), `CONTENT_STANDARD.md` what a
@@ -7,6 +7,16 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
+- **Jarvis (28 November), steps 1 to 4 done, a redesign waiting for the owner.** Done and committed on both branches:
+  step 1 realtime voice talk (OpenAI `gpt-realtime-2.1-mini`, WebRTC, budgets, Admin tab, Pro plan switch); step 2 offers
+  when stuck; step 3 welcome on the dashboard and Pro memory notes (migration 0017); step 4 cheers, settings (tap, talk
+  first, off; profile-menu switch; migration 0018), "What Jarvis can see", forget; then a tone rewrite and a voice
+  audition (`tools/jarvis_voices.py`, clips in `.authoring-scratch/jarvis-voices/index.html`, $0.124). The owner then
+  asked for a new direction: Jarvis on every page, starting and stopping himself, leading most talk, far less than 20
+  minutes a day, and a Fish Audio or ElevenLabs voice. The full proposal and the three open questions are in ROADMAP
+  B 2e "Next". **Do not build it before the owner answers.** Never use a community "Jarvis" voice clone (it copies Paul
+  Bettany) or Marvel artwork; voice design and an original orb instead. No paid key for Fish or ElevenLabs yet (the
+  owner adds it to `backend/.env`). Total Jarvis OpenAI spend so far: about $0.20.
 - **Spring Boot rewrite done (owner, 28 November: "start spring boot rewrite").** All 31 chapters, one commit each on
   both branches; lab valid, test-lab green (every starter fails, every solution passes). What was corrected per chapter
   is in CHANGELOG. REWRITE_LIST: 6 of 23. Next: the owner's small tasks, then the next lab (owner picks; Python is next
