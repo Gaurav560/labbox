@@ -26,7 +26,7 @@ Read the first line from left to right:
 
 - `static` means the method belongs to the class itself, so you can call it without creating anything first.
   (Chapter 9 shows the other kind.)
-- `int` is the **return type**: this method gives back a whole number.
+- `int` is the **return type**: this method gives back a whole number (`int` is short for integer).
 - `twice` is the method's **name**.
 - `(int n)` lists the **parameters**: one input called `n`, which must be an `int`.
 - The **body** between `{ }` does the work, and `return n * 2;` hands the answer back.
@@ -112,6 +112,10 @@ Make `greet(name)` in `Greeter.java` give back `"Hello, <name>!"`.
 
 `greet("Asha")` gives `"Hello, Asha!"`, and `greet("Kabir")` gives `"Hello, Kabir!"`. Run `java Greeter.java` to
 see it, then press **Check**.
+
+The usual slips: forgetting the spaces inside the quotes (`"Hello," + name` gives `Hello,Asha`); or single
+quotes, `'Hello, '`. In Java single quotes are only for one character, so `javac` stops with
+`error: unclosed character literal` (we tried it). Text always goes in double quotes.
 :::
 
 :::step{type=concept title="Java checks the types before running"}
@@ -146,11 +150,14 @@ Bad3.java:4: error: method greet in class Bad3 cannot be applied to given types;
                            ^
   required: String
   found:    no arguments
+  reason: actual and formal argument lists differ in length
 ```
 
-`required: String`, `found: no arguments`: Java tells you exactly what it expected. In Python, each of these
-mistakes would only show up when that line ran, maybe months later, in front of a user. In Java, the program
-will not even start until they are fixed. That is the deal Java offers: a little more typing, a lot fewer
+`required: String`, `found: no arguments`: Java tells you exactly what it expected. ("Formal" arguments are the
+parameters in the method's first line; "actual" arguments are the ones in the call.) In Python, the missing
+argument would only show up when that line ran, maybe months later, in front of a user, and the other two
+mistakes would not show up at all: the function would quietly give back the wrong thing. In Java, the program
+will not even start until all three are fixed. That is the deal Java offers: a little more typing, a lot fewer
 surprises.
 :::
 
@@ -176,7 +183,8 @@ String b = shoutReturn("hello");
 System.out.println("b is " + b);    // b is HELLO!
 ```
 
-In Java you cannot even try `String a = shoutPrint("hello");`: `javac` refuses, because a `void` method has no value.
+In Java you cannot even try `String a = shoutPrint("hello");`: `javac` refuses with `error: incompatible types:
+void cannot be converted to String`, because a `void` method has no value.
 Almost every method you write will `return` its answer and let the caller decide what to do with it.
 :::
 
@@ -197,7 +205,8 @@ public static int shortestWord(String sentence) {
 }
 ```
 
-1. Start with a value no real word can beat: the biggest `int` there is.
+1. Start with a value no real word can beat: the biggest `int` there is, `Integer.MAX_VALUE`, which is
+   2,147,483,647.
 2. Compare each word's `length()` with the best so far.
 3. Keep it when it wins.
 
@@ -222,6 +231,10 @@ separated by spaces.
 
 It is the worked example turned around: start with the smallest possible best (0), and keep a word's length when
 it is **longer**. Run `java Greeter.java` to see it, then press **Check**.
+
+The usual slips: `w.length` without brackets. For a string, `length()` is a method, so `javac` says
+`error: cannot find symbol` and `symbol: variable length` (we tried it; arrays, in chapter 8, are the ones with a
+`length` without brackets). Or `sentence.length()` instead of `w.length()`, which measures the whole title.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -287,7 +300,7 @@ You can now:
 - Read Java's type errors: `incompatible types`, `missing return statement`, wrong arguments.
 - Tell `void` (shows, gives nothing back) from a method that returns a value.
 
-:::photo{src="/lesson-images/java/java-02-notes.webp" alt="Handwritten notes about Java methods: static int twice(int n), return gives the answer back, void gives nothing back, javac checks the types" ai="true"}
+:::photo{src="/lesson-images/java/java-02-sketch.webp" alt="Sketchnote: Your first methods. A method is a named piece of code; its first line says what goes in and what type comes back. Flow: static String greet(String name), greet of Asha calls it, name holds Asha, return the text, Hello Asha comes back. Remember: javac checks every type before the program runs; void means the method gives nothing back; return gives the answer to the code that called it; text goes in double quotes, one character in single quotes." ai="true"}
 One page of notes for this chapter.
 :::
 
