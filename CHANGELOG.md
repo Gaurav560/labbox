@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Python chapter 18 rewritten (easy, a little detailed, checked)
+
+- Chapter 18, "Running a program": argparse's third free gift shown (a wrong type, `--top two`, is refused with
+  its real message); the `$` in transcripts explained; the starter's `summary.py` said to print nothing yet; the
+  sort key for `(category, amount)` pairs named.
+- Checked on a lab machine: `args_demo.py`, the finished program's help page, `--top 2`, the default top 3,
+  `--top 10` (its last line, `: 350.00`, is chapter 14's row with no category, now said), the missing-file message
+  and exit code 1, argparse's exit code 2, a silent import, and a pipe. Slips added and tried: no `type=int` (the
+  slice's `TypeError` quoted), no `sys.exit(1)`, a `try` around everything, and top-level work (an import then
+  prints the usage error). New sketchnote page (redrawn once: dunder underscores, and a result box that showed one
+  of two lines). Part 3 complete.
+
 ## 28 November: Python chapter 17 rewritten (easy, a little detailed, checked)
 
 - Chapter 17, "Testing": Apollo 11 told exactly (the 1202 and 1201 alarms, the software dropping less important
