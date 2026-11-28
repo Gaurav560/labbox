@@ -16,7 +16,7 @@ Status: **6 of 23 labs done** (145 of 319 chapters).
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
-| 7 | python-basics | Python from zero | 19 | in progress (8 of 19) |  |
+| 7 | python-basics | Python from zero | 19 | in progress (9 of 19) |  |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
 | 10 | go-basics | Go from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Python ch 9 done: speed claim measured (0.020 s vs 0.026 s per million lookups); slips tried; sketchnote (redrawn once).
 - 28 Nov: Python ch 8 done: jukebox corrected; errors quoted; shallow copy shown; slips tried (incl. [-0:]); sketchnote.
 - 28 Nov: Python ch 7 done: upper and replace taught (the recap promised them); outputs re-run; slips tried; UTF-8 bytes counted; sketchnote (redrawn once).
 - 28 Nov: Python ch 6 done: relays explained; pdb session re-run line by line; slips tried; sketchnote. Part 1 complete.

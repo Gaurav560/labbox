@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Python chapter 9 rewritten (easy, a little detailed, checked)
+
+- Chapter 9, "Dictionaries": "hashable" pointed to where it is explained; how a `for` loop walks a string said
+  before the letter-counting task; the speed claim ("ten million keys as quickly as three") replaced by a
+  measurement on the lab machine: a million lookups took 0.020 s in a 3-key dictionary and 0.026 s in a
+  million-key one.
+- Checked on a lab machine: `prices.py` to its `KeyError`, `get`, `15 in`, the counting trace, the unhashable
+  error, and both tasks on the solution. Slips added and tried: `counts[ch] += 1` (`KeyError: 'H'`), no
+  `.lower()`, no `.isalpha()`, `= amount` (`{'food': 80, ...}`) and `+ 1` for totals. New sketchnote page (redrawn
+  once: its last box left a key out of the real result).
+
 ## 28 November: Python chapter 8 rewritten (easy, a little detailed, checked)
 
 - Chapter 8, "Lists": the jukebox said correctly (records in numbered slots, a coin and a number put a song in the
