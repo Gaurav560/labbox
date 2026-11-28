@@ -34,21 +34,21 @@ same hash code: false
 books in the set: 2
 ```
 
-The two books are **equal**: same ISBN, and the inherited `equals` compares exactly that. Yet a set, which keeps one
+The two books are **equal**: same ISBN, and the `equals` the previous developer wrote compares exactly that. Yet a set, which keeps one
 of each, holds **two**. The middle line is the clue. To see why it matters, you need to know how a `HashSet`
 finds anything at all.
 :::
 
 :::step{type=concept title="First the shelf, then the book"}
-This is the Long Room of Trinity College Library in Dublin, about 200,000 old books. Look at the end of each bay of
-shelves: every one carries letters, `aa`, `bb`, `cc`...
+This is the Long Room of Trinity College Library in Dublin, home to about 200,000 of its oldest books. Look at the
+end of each bookcase: a column of letters runs up it, `aa`, `bb`, `cc`..., one for each shelf.
 
 :::photo{src="/lesson-images/java/long-room-library.webp" alt="The Long Room of the Old Library at Trinity College Dublin: a long hall with a curved wooden ceiling, tall bookcases on both sides, each bay marked with letters, and marble busts along the aisle" credit="Diliff" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Long_Room_Interior,_Trinity_College_Dublin,_Ireland_-_Diliff.jpg"}
-The Long Room, Trinity College Dublin. Every bay of shelves has its own letters.
+The Long Room, Trinity College Dublin. Each bookcase is an address, and the letters running up its end name every shelf in it, so a librarian goes straight to the right place.
 :::
 
-A librarian looking for a book does not walk past 200,000 spines. The catalogue says which **bay**, and they only
-search there. A `HashSet` (and a `HashMap`, chapter 11) works the same way:
+A librarian looking for a book does not walk past 200,000 spines. The catalogue says which **bookcase and shelf**,
+and they only search there. Call that place a "bay". A `HashSet` (and a `HashMap`, chapter 11) works the same way:
 
 1. It asks the object for its `hashCode()`: a number that says which bay to look in.
 2. Only inside that bay does it compare with `equals`.
@@ -91,6 +91,10 @@ cd /workspace/18-capstone && javac -d out *.java && java -cp out Book
 ```
 
 When it is right, `same hash code: true` and `books in the set: 1`. Then press **Check**.
+
+The usual slips: building the hash code from the title as well as the ISBN (two copies with slightly different
+titles would then be equal but land in different bays: use exactly the field `equals` uses); or forgetting
+`@Override` and misspelling the name, `hashcode` with a small c, which quietly adds a new method that nobody calls.
 :::
 
 :::step{type=concept title="A plan before code"}
@@ -188,7 +192,7 @@ In `Report.java`, make `monthly(path)` give back a `MonthlyReport` with:
 | `badLines` | the line numbers of rows with an empty category or a bad amount; blank lines are skipped, not reported |
 
 For the five lines in "Guess first", it gives a total of `18120.0`, a count of `2`, an average of `9060.0` and bad
-lines `[3, 4]`. On the real file:
+lines `[3, 4]`. Right now the starter prints zeros, `null` and `[]`. On the real file:
 
 ```bash run
 cd /workspace/18-capstone && javac -d out *.java && java -cp out Report
@@ -200,7 +204,9 @@ rent 18000.0, food 2262.5
 bad lines [16, 24, 32]
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: counting line numbers yourself and forgetting the blank line 9. Every bad
+line after it then comes out one too small, `[15, 23, 31]`. The worked example's `i + 1` over `readAllLines`
+avoids it, because the blank line stays in the list.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -258,7 +264,7 @@ You can now:
 - Plan a multi-part method in plain words first, then build it from parts you know.
 - Write Java from your first `println` to packages, Maven, tests and a real report.
 
-:::photo{src="/lesson-images/java/java-18-notes.webp" alt="Handwritten notes for the Java capstone: equals and hashCode always together, hashCode picks the bay, equals picks the book, plan before code, line number is index plus one, run it small first, course complete" ai="true"}
+:::photo{src="/lesson-images/java/java-18-sketch.webp" alt="Sketchnote: The capstone. Equal objects must have the same hash code; hashCode picks the bay, equals picks the book. Flow: read every line, line number = i + 1, bad row note the line, good row add it up, one MonthlyReport. Remember: write equals, write hashCode, always together; run someone else's code small before changing it; plan in plain words, then write the code; report bad data, never drop it silently." ai="true"}
 One page of notes for this chapter.
 :::
 
