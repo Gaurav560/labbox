@@ -47,11 +47,12 @@ to the `catch` block that matches, runs it, and carries on. `7` was still read, 
 
 :::step{type=concept title="Where does the exception go?"}
 What happens when an exception goes all the way up with nobody to catch it? In 1996 the first **Ariane 5** rocket
-found out. A number too big for its slot raised an exception in the guidance software, nothing handled it, the
-guidance system shut down, and 37 seconds after launch the rocket broke apart.
+found out. In its guidance software, a decimal number was copied into a slot that could only hold small whole
+numbers; it was too big, and that raised an exception. Nothing handled it, the guidance system shut down, and
+about 37 seconds after launch the rocket broke apart.
 
 :::photo{src="/lesson-images/java/ariane-5.webp" alt="The white nose of an Ariane 5 rocket with its two side boosters, against a deep blue sky" credit="DiscoA340" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Ariane_5_on_Display_at_Le_Bourget.jpg"}
-An Ariane 5 at the Paris Air and Space Museum.
+An Ariane 5 at the Paris Air and Space Museum. The first one was lost to a single exception that nothing caught: the problem this chapter teaches you to handle.
 :::
 
 Press Play and follow the exception:
@@ -104,7 +105,8 @@ static int parseQuantity(String text) {
 2. The `catch` throws a **new** exception with a clear message, and passes `e` as the second argument: the cause.
 3. A number that parsed but makes no sense gets its own message.
 
-If nobody catches it, the stack trace shows **both**, the cause under the words `Caused by:`:
+If nobody catches it, the stack trace shows **both**, the cause under the words `Caused by:`. We ran it (the
+method in a file `Cause.java`, called from `main` on line 20):
 
 ```text
 Exception in thread "main" java.lang.IllegalArgumentException: not a quantity: "2.5"
@@ -112,6 +114,8 @@ Exception in thread "main" java.lang.IllegalArgumentException: not a quantity: "
 	at Cause.main(Cause.java:20)
 Caused by: java.lang.NumberFormatException: For input string: "2.5"
 ```
+
+(Below that, a few more `at java.base/...` lines show where inside Java's own `parseInt` it happened.)
 
 Nothing is lost: the caller reads your words, and whoever debugs it later still sees exactly what went wrong
 underneath.
@@ -155,7 +159,12 @@ message and one that takes a message and a cause.
 cd /workspace/13-exceptions && javac -d out *.java && java -cp out Ages
 ```
 
-Then press **Check**.
+Right now it prints `0`, `0` and `0.0 []`. When both tasks are done: `42`, then `refused: not a whole number:
+"twelve" (cause: java.lang.NumberFormatException: For input string: "twelve")` (your message may differ), then
+`12.5 [x, ]`. Then press **Check**.
+
+The usual slips: throwing the new exception without `e`, so the cause is lost (the check looks for it); checking
+the range before parsing (there is no number yet); or `catch (Exception e)`, which would also hide real bugs.
 :::
 
 :::step{type=concept title="Java's unusual idea: checked exceptions"}
@@ -200,7 +209,8 @@ The loop from `Catch.java` is the shape: try each value, and in the `catch`, rem
 cd /workspace/13-exceptions && javac -d out *.java && java -cp out Ages
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: `Integer.parseInt` instead of `Double.parseDouble`, so `2.5` lands in the
+bad list and the total is 10. Note the empty string `""` is bad too: `Double.parseDouble("")` throws `NumberFormatException: empty String`.
 :::
 
 :::step{type=concept title="finally: the clean-up that always runs" file="13-exceptions/Finally.java" line="5-26"}
@@ -283,8 +293,8 @@ bugs, silently. Catch the exact exception you expect, and do something useful wi
 **Several kinds at once.** `catch (NumberFormatException | NullPointerException e)` handles two kinds in one block.
 
 **The great debate.** Checked exceptions arrived with Java 1.0 in 1996. Many developers love that the compiler
-reminds them about missing files; others find the `throws` labels tiring, and every language designed since has
-left them out. Spring Boot mostly uses unchecked exceptions. Now you know both sides.
+reminds them about missing files; others find the `throws` labels tiring, and most popular languages designed
+since, like C# and Kotlin, left them out. Spring Boot mostly uses unchecked exceptions. Now you know both sides.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -295,7 +305,7 @@ You can now:
 - Tell checked exceptions (must be caught or declared with `throws`) from unchecked ones.
 - Use `finally` for clean-up that must always run.
 
-:::photo{src="/lesson-images/java/java-13-notes.webp" alt="Handwritten notes about Java exceptions: try and catch, carry on, throw new with a cause, checked must be caught or declared, unchecked usually a bug, finally always runs" ai="true"}
+:::photo{src="/lesson-images/java/java-13-sketch.webp" alt="Sketchnote: Exceptions. A line inside try throws, the matching catch runs, and the program carries on after it. Flow: try parseInt of twelve, NumberFormatException, catch it, throw your own with the cause, Caused by in the trace. Remember: checked exceptions must be caught or declared with throws; unchecked ones usually mean a bug in the code; finally always runs, even when try throws; catch the exact exception you expect, not Exception." ai="true"}
 One page of notes for this chapter.
 :::
 
