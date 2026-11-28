@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Python chapter 15 rewritten (easy, a little detailed, checked)
+
+- Chapter 15, "Classes and objects": the 5% sum written out; `__main__` in `<class '__main__.Item'>` explained;
+  `Item.with_tax(cake, 5)` tried (42.0, the same as `cake.with_tax(5)`); the Java pointer made exact (its chapter
+  10 teaches `extends`).
+- Checked on a lab machine: `shop.py`'s four lines, the shared `Bag` list (`['pen']`), the default object text,
+  the dataclass, and both tasks. Slips added with Python's real messages: `_init_` (`Expense() takes no
+  arguments`), a method without `self` (`takes 0 positional arguments but 1 was given`), `name = name`
+  (`AttributeError`), `max` without a key (`'>' not supported between instances`), `max` on an empty pocket. New
+  sketchnote page (redrawn once: `__init__` was drawn with what looked like single underscores, the very slip the
+  lesson warns about; it now says "dunder init").
+
 ## 28 November: Python chapter 14 rewritten (easy, a little detailed, checked)
 
 - Chapter 14, "Files": file object and path explained; the 46 lines of `expenses.csv` accounted for (header, 44

@@ -56,8 +56,9 @@ cake 42.0
 ```
 
 Line by line: `pen.name` and `pen.price` read the pen's own attributes. `cake.with_tax(5)` calls the method on the
-cake: 40 plus 5% is 42.0. Then `cake.price = 45` changed the cake, and the pen still costs 15: **each object keeps
-its own values**. The last line shows you have truly made a new type: Python calls it `Item`.
+cake: `40 * (100 + 5) / 100` is 42.0, 40 plus 5%. Then `cake.price = 45` changed the cake, and the pen still costs 15: **each object keeps
+its own values**. The last line shows you have truly made a new type: Python calls it `Item`. (`__main__` is the name Python
+gives the file you ran directly, so `__main__.Item` means "the Item class from the file being run".)
 :::
 
 :::step{type=concept title="What happens when you create an object"}
@@ -68,7 +69,7 @@ Python makes a new empty object, runs __init__ on it, and gives you the finished
 :::
 
 That also explains `self` in methods. When you write `cake.with_tax(5)`, Python turns it into
-`Item.with_tax(cake, 5)`: the object before the dot becomes `self`. So inside every method, `self` means "the
+`Item.with_tax(cake, 5)` (we tried both; each gives 42.0): the object before the dot becomes `self`. So inside every method, `self` means "the
 object this method was called on". You never pass `self` yourself; Python does it.
 :::
 
@@ -125,7 +126,16 @@ The amount uses the format you learned in chapter 3.
 cd /workspace/15-classes && python3 -c "from pocket import Expense; print(Expense('lunch', 120, 'food').label())"
 ```
 
-Then press **Check**.
+Then press **Check**. Delete the `pass` line when you write the class body; it was only holding the place.
+
+The usual slips, with Python's real messages (we tried each):
+
+- `_init_` with one underscore on each side: Python does not know that name, so it never runs, and
+  `Expense("lunch", 120)` fails with `TypeError: Expense() takes no arguments`.
+- A method without `self`, like `def label():`, fails when called: `TypeError: Expense.label() takes 0
+  positional arguments but 1 was given`. The "1" is the object Python passed in as `self`.
+- `name = name` instead of `self.name = name` in `__init__`: it stores nothing on the object, and `e.name`
+  later fails with `AttributeError: 'Expense' object has no attribute 'name'`.
 :::
 
 :::step{type=concept title="Objects that hold objects, and one trap to avoid"}
@@ -171,6 +181,11 @@ cd /workspace/15-classes && python3 -c "from pocket import Expense, Pocket; p = 
 ```
 
 Then press **Check**.
+
+The usual slips: `max(self.expenses)` without a key fails, because Python does not know how to compare two
+expenses: `TypeError: '>' not supported between instances of 'Expense' and 'Expense'` (give `max` a key, chapter
+11); calling `max` on an empty pocket raises `ValueError` (check first, return `None`); and the list in the class
+body, from the trap step.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -233,8 +248,8 @@ class Expense:
 ```
 
 **Inheritance.** One class can build on another: `class Refund(Expense):` starts with everything an `Expense`
-has, and adds or changes what is different. The Java course on LabBox goes deep into this; in Python it is used
-more sparingly.
+has, and adds or changes what is different. The Java course on LabBox teaches it in its chapter 10 (Java uses
+the word `extends`). Python programs tend to use it more sparingly.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -245,7 +260,7 @@ You can now:
 - Explain `self`: the object a method was called on.
 - Give each object its own list in `__init__`, never in the class body.
 
-:::photo{src="/lesson-images/python/py-15-notes.webp" alt="Handwritten notes about classes: class Expense, __init__ with self, self.name = name, one class and many objects" ai="true"}
+:::photo{src="/lesson-images/python/py-15-sketch.webp" alt="Sketchnote: Classes and objects. A class is a blueprint; each object built from it keeps its own values, called attributes. Flow: Expense of lunch and 120, a new empty object, dunder init runs, self.name = name, the finished object. Remember: self is the object the method was called on; your methods take self first and Python passes it in; each object keeps its own values; make each object's own list in dunder init." ai="true"}
 One page of notes for this chapter.
 :::
 
