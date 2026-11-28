@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 4 rewritten (easy, a little detailed, checked)
+
+- Java chapter 4, "Making decisions": the "predict a negative daysLate" question now has its tried answer (-2
+  prints "Returned on time"); the starter's `isLeapYear(2100)` prints `false` by accident (it returns `false` for
+  every year), now said, with a tip to try 2024; the 3,000-year line made exact, as in Python; the photo lead ties
+  1582 to today's task.
+- Checked on a lab machine: `Loan.java` both ways, the `=` error, the swapped `fineLevel` (`medium`),
+  `freeDelivery`, the switch, the ternary, the boolean lines, and both tasks. Slips added: `>`, invalid marks last,
+  `'A'` (javac's `char cannot be converted to String` quoted), the two half leap rules. New sketchnote page.
+
 ## 28 November: Java chapter 3 rewritten (easy, a little detailed, checked)
 
 - Java chapter 3, "Variables and types": "as in maths class, `=` means store" said the opposite of what it meant;

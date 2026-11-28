@@ -6,7 +6,7 @@ calendar has rules inside rules, and a program gets them right every time, but o
 down exactly.
 
 :::photo{src="/lesson-images/python/pope-gregory-xiii.webp" alt="A portrait of Pope Gregory XIII in red robes" credit="Unknown artist" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Pope_Gregory_XIII_portrait.jpg"}
-Pope Gregory XIII. His calendar reform of 1582 added the rule about years divisible by 100 and 400, and most of the world still uses it.
+Pope Gregory XIII. His calendar reform of 1582 added the rule about years divisible by 100 and 400, the exact rule you will write in Java today, and most of the world still uses his calendar for everyday dates.
 :::
 
 Programs are full of rules like this: *if* a book is late, charge a fine; *if* the member has too many books, say
@@ -99,7 +99,9 @@ Returned on time. Thank you!
 Shelf checked the loan.
 ```
 
-Same program, different path. What would a negative `daysLate` print? Predict, then try it.
+Same program, different path. What would a negative `daysLate` print? Predict, then try it. (We tried -2: it
+prints `Returned on time. Thank you!`, because -2 > 0 is false. A program only knows the rules you write; whether
+a negative number of days should even be possible is a question for the person writing it.)
 :::
 
 :::step{type=example title="Worked example: more than two paths"}
@@ -149,6 +151,10 @@ cd /workspace/04-decisions && java Decisions.java
 ```
 
 The first line it prints is `grade(80)`. Then press **Check**.
+
+The usual slips: `>` instead of `>=` (80 becomes a B); testing for invalid marks last (101 becomes an A); or
+`return 'A';` with single quotes, which `javac` refuses: `incompatible types: char cannot be converted to String`
+(we tried it). `'A'` is one `char`; `"A"` is a `String`.
 :::
 
 :::step{type=example title="Worked example: a whole rule in one line"}
@@ -181,7 +187,12 @@ In `Decisions.java`, make `isLeapYear(year)` give back `true` for leap years:
 cd /workspace/04-decisions && java Decisions.java
 ```
 
-The second line is `isLeapYear(2100)`. Then press **Check**.
+The second line is `isLeapYear(2100)`. Careful: the starter already prints `false` there, because it returns
+`false` for every year, which happens to be right for 2100. Change the year in `main` to 2024 while you work, to
+see your rule really answer `true`. Then press **Check**; it tries all the years above, plus 1600 and 2019.
+
+The usual slips: only `year % 4 == 0` (1900 and 2100 come out as leap years), or the 100 and 400 parts without the
+4 (2023 comes out as a leap year).
 :::
 
 :::step{type=concept title="switch: choosing by value"}
@@ -248,8 +259,8 @@ the time.
 silently puts it outside the `if`. Most teams always write the braces.
 
 **The calendar.** A year is about 365.2422 days. A leap day every 4 years gives 365.25, slightly too much. Skipping
-3 leap days every 400 years (1700, 1800, 1900, but not 2000) brings the average to 365.2425: right for about 3,000
-years.
+3 leap days every 400 years (1700, 1800, 1900, but not 2000) brings the average to 365.2425 days (400 years hold
+146,097 days). That is still a tiny bit long, so the calendar drifts by about one day in roughly 3,000 years.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -260,7 +271,7 @@ You can now:
 - Return a whole rule as one `boolean`, and pick by value with a `switch` expression.
 - Trust Java to reject `=` where a condition belongs.
 
-:::photo{src="/lesson-images/java/java-04-notes.webp" alt="Handwritten notes about Java decisions: if, else if, else; the first true wins; && || and !; switch with arrows; 2100 is not a leap year" ai="true"}
+:::photo{src="/lesson-images/java/java-04-sketch.webp" alt="Sketchnote: Making decisions. A condition is a question whose answer is true or false; if runs its block only when the answer is true. Flow: if marks > 100, true gives Invalid, else if marks >= 80, true gives A, else the next rule. Remember: Java stops at the first condition that is true; if (x = 3) does not compile, = stores and == compares; A in double quotes is a String, in single quotes a char; 2100 is not a leap year, 2000 was." ai="true"}
 One page of notes for this chapter.
 :::
 
