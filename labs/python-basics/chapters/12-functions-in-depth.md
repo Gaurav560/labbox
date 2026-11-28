@@ -29,8 +29,13 @@ The last call uses **named arguments** (also called keyword arguments): you say 
 so the order no longer matters. Named arguments make calls easier to read, especially for settings:
 `total(100, 50, discount=10)` says what 10 means; `total(100, 50, 10)` does not.
 
-Two rules: parameters with defaults come **after** those without, and in a call, named arguments come **after**
-the plain ones.
+Two rules, and what Python says when you break them (we tried both):
+
+- Parameters with defaults come **after** those without. `def g(a=1, b):` stops with
+  `SyntaxError: parameter without a default follows parameter with a default`.
+- In a call, named arguments come **after** the plain ones. `print(sep="-", "a")` stops with
+  `SyntaxError: positional argument follows keyword argument`. ("Positional" means given by position, the plain
+  kind; "keyword" is Python's word for named.)
 :::
 
 :::step{type=example title="Worked example: any number of arguments"}
@@ -75,7 +80,11 @@ rounded to 2 decimals, always a float.
 cd /workspace/12-functions-in-depth && python3 -c "from functions import total; print(total(100, 50, discount=10))"
 ```
 
-Then press **Check**.
+Then press **Check**. It also tries `total(10, discount=33)`, which is `6.7` (33% off 10 is 6.70).
+
+"Minus 10 percent" means multiply by `(1 - 10 / 100)`, which is 0.9. The usual slip is subtracting the number
+itself: `sum(prices) - discount` gives `140` for the example above, ten rupees off instead of ten percent. And
+because `discount / 100` is a float, the multiply version always gives back a float, even for `total()`.
 :::
 
 :::step{type=concept title="Where do names live?" file="12-functions-in-depth/scope.py" line="2-12"}
@@ -132,7 +141,8 @@ add_item("bread")    # ['mint', 'bread']   ... wait, what?
 ```
 
 The second customer got the first customer's mint! Here is why. A default value is created **once**, when Python
-reads the `def` line, not each time the function is called. So every call without a basket shares the **same**
+reads the `def` line, not each time the function is called. A value that can change in place, like a list, is
+called **mutable** (chapter 8), and that is why this trap is called "the mutable default". So every call without a basket shares the **same**
 list, and it keeps growing. It is chapter 8's "two names, one list", hidden inside a function.
 
 :::diagram{name="default-list"}
@@ -161,7 +171,10 @@ With the buggy `add_item`, what does a **third** call, `add_item("eggs")`, give 
 - [x] `['mint', 'bread', 'eggs']`
 - [ ] An error
 :::explain
-All three calls share the one default list made when `def` ran, so it keeps everything ever added to it.
+All three calls share the one default list made when `def` ran, so it keeps everything ever added to it. It
+gets stranger: we printed all three calls on one line, `print(add_item("mint"), add_item("bread"),
+add_item("eggs"))`, and saw `['mint', 'bread', 'eggs']` three times. All three answers are the same list, and by
+the time `print` shows them, it holds all three items.
 :::
 :::
 
@@ -178,6 +191,10 @@ cd /workspace/12-functions-in-depth && python3 -c "from functions import add_ite
 ```
 
 Then press **Check**.
+
+The usual slip: `if not basket:` instead of `if basket is None:`. It passes the first two lines, but a caller who
+passes their own **empty** basket loses it: `not []` is also `True`, so the function makes a new list, and we
+saw the caller's basket stay `[]`. `is None` asks exactly "was nothing given?".
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -244,7 +261,7 @@ You can now:
 - Explain local variables: names inside a function live and die with the call.
 - Avoid the mutable default trap with `None` and a fresh list inside the function.
 
-:::photo{src="/lesson-images/python/py-12-notes.webp" alt="Handwritten notes about functions in depth: star arguments, never a list as a default, and local names" ai="true"}
+:::photo{src="/lesson-images/python/py-12-sketch.webp" alt="Sketchnote: Functions in depth. A default value is made once, when def runs; a default list is shared by every call that leaves it out. Flow: def add_item(item, basket=None), if basket is None, basket = a new empty list, basket.append(item), a new basket each call. Remember: *prices collects any number of arguments in a tuple; after *prices, discount can only be given by name; names made inside a function are local; return a value instead of changing outside names." ai="true"}
 One page of notes for this chapter.
 :::
 
