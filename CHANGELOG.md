@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 9 rewritten (easy, a little detailed, checked)
+
+- Java chapter 9, "Classes and objects": the blueprint's photo lead says why it is here; "Dune's second borrow said
+  false" explained in full (the first says true, 1 copy became 0); where the private-access error came from; the
+  record example now points to `Where.java`, which the lesson quoted but never said to run.
+- Checked on a lab machine: `Book.java`, `Where.java`, the starter's `BankAccount` (`Asha has 0`, `1000 was taken
+  out`, now described) and the solution's, both `Point` answers, the private-access error, `Book@...`, and modern
+  Java's helpful `NullPointerException` message (quoted). Slips added: subtract-then-check, `>=` on the balance, a
+  deposit of 0, `Math.round(...) / 100` (gives 1, not 1.41). New sketchnote page.
+
 ## 28 November: Java chapter 8 rewritten (easy, a little detailed, checked)
 
 - Java chapter 8, "Arrays": the opening said the code after `@` "changes every time you run it"; we ran it three
