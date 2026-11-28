@@ -2,17 +2,20 @@
 Count how many times a shop's billing app says "Hello, ..." to a customer, or works out a total. Thousands of
 times a day. Do you think someone wrote those instructions out thousands of times?
 
-The idea is older than electric computers. In 1843 **Ada Lovelace** wrote out, step by step, how Charles Babbage's
-Analytical Engine could calculate a series of numbers called Bernoulli numbers: a recipe written down once, which the
-machine could follow again for every number in the series. It is now called the first published computer program.
-
-:::photo{src="/lesson-images/python/ada-lovelace.webp" alt="A watercolour portrait of Ada Lovelace in a purple and white dress with a dark lace shawl, holding a fan" credit="Alfred Edward Chalon" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg"}
-Ada Lovelace, around 1840.
-:::
-
 No. They wrote them **once**, gave them a name, and then used that name over and over. That named, reusable
 piece of a program is a **function**. Everything big in programming is made of small functions, the way a
 long book is made of sentences.
+
+The idea is older than electric computers. In 1843 **Ada Lovelace** published, step by step, how Charles
+Babbage's Analytical Engine, a mechanical calculating machine that was designed but never finished, could work
+out a series of numbers called Bernoulli numbers. She wrote the steps down once, and the machine was meant to
+repeat them for each number in the series. Her table of steps is often called the first published computer
+program.
+
+:::photo{src="/lesson-images/python/ada-lovelace.webp" alt="A watercolour portrait of Ada Lovelace in a purple and white dress with a dark lace shawl, holding a fan" credit="Alfred Edward Chalon" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg"}
+Ada Lovelace, around 1840, a few years before she wrote that program: one set of steps, written once and
+followed again and again, which is exactly what a function is.
+:::
 
 Today Pocket gets its first three functions: one to greet you, and two little helpers for its sums.
 
@@ -38,8 +41,9 @@ Every part has a job:
 - `double` is the function's **name**. You choose it, and you use it later to run the function.
 - `(x)` lists the **parameters**: the inputs the function expects. Here there is one, called `x`.
 - The `:` at the end says "the body comes next".
-- The **body** is every line below that is **indented** (pushed right by 4 spaces). Python knows which lines
-  belong to the function only by that indentation.
+- The **body** is every line below that is **indented**: pushed to the right, by 4 spaces by custom (the
+  editor adds them when you press Tab or Enter after the `:`). Python knows which lines belong to the function
+  only by that indentation; the first line that is not pushed right is outside it again.
 - `return x * 2` works out `x * 2` and **hands the answer back**. It is the function's result.
 
 Writing a `def` does not run anything. It only teaches Python a new word. The function runs when you **call**
@@ -80,8 +84,9 @@ Line by line:
 
 1. `def welcome(city):` teaches Python the function. Nothing is printed yet.
 2. `welcome("Pune")` calls it. Inside, `city` now holds `"Pune"`.
-3. `f"Welcome to {city}!"` is an **f-string**: a string with an `f` in front, where anything inside curly
-   braces `{ }` is replaced by its value. So it becomes `"Welcome to Pune!"`.
+3. `f"Welcome to {city}!"` is an **f-string** (f for "formatted"): a string with an `f` in front, where anything
+   inside curly braces `{ }` is replaced by its value. So it becomes `"Welcome to Pune!"`. Without the `f`, the
+   braces stay as they are and you get the text `Welcome to {city}!`.
 4. `return` hands that text back. It lands in `message`.
 5. `print(message)` shows `Welcome to Pune!`.
 
@@ -113,7 +118,8 @@ cd /workspace/02-functions && python3 -c "from greet import greet; print(greet('
 It prints `None`, as you guessed. Here is how that long command works:
 
 - `python3 -c "..."` runs the Python code inside the quotes, instead of a file.
-- `from greet import greet` means "from the file `greet.py`, bring in the function `greet`".
+- `from greet import greet` means "from the file `greet.py`, bring in the function `greet`". (The first `greet`
+  is the file name without `.py`; the second is the function inside it. Here they happen to be the same.)
 - `print(greet('Asha'))` calls it and prints what comes back.
 
 Keep this command handy: run it again after each change to see your function's answer.
@@ -127,7 +133,15 @@ Make `greet(name)` in `greet.py` give back `"Hello, <name>!"`.
 3. Mind the comma after Hello and the exclamation mark: the check compares the text exactly.
 
 So `greet("Asha")` gives `"Hello, Asha!"`, and `greet("Kabir")` gives `"Hello, Kabir!"`. Run the command from
-the last step to see it, then press **Check**.
+the last step to see it, then press **Check**. (The check also tries an empty name, `greet("")`, which should
+give `"Hello, !"`: no special case needed.)
+
+The usual slips (we tried them):
+
+- Forgetting the `f`: `return "Hello, {name}!"` gives back the text `Hello, {name}!`, braces and all.
+- Printing instead of returning: `print(f"Hello, {name}!")` shows `Hello, Asha!` in the terminal, but the
+  function gives back `None`, and the check says so.
+- Leaving `pass` in front of your `return` line is harmless, but delete it: it no longer has a job.
 
 :::why
 Returning the text (instead of printing it) lets other code use it: a web page, a message, or the checks that
@@ -154,8 +168,10 @@ print("a is", a)
 print("b is", b)
 ```
 
-Two functions that *look* like they do the same thing. (`word.upper()` makes the text capital letters, and `+`
-joins two strings.) One **prints** the result. The other **returns** it. What ends up in `a` and `b`?
+Two functions that *look* like they do the same thing. (`word.upper()` gives back a copy of the text in capital
+letters; chapter 7 explains the dot. `+` between two strings joins them.) One **prints** the result. The other
+**returns** it. What ends up in `a` and `b`? (`a = ...` stores a value under the name `a`; chapter 3 explains
+these names, called variables.)
 
 Run it and find out:
 
@@ -213,18 +229,23 @@ And one new operator for your next task. `%` gives the **remainder** after divid
 ```
 
 A remainder of `0` means "divides exactly". Can you see how that helps with even numbers?
+
+One detail we checked, because it differs between languages: in Python the remainder of a negative number
+divided by 2 is still `0` or `1`. `-4 % 2` is `0` and `-7 % 2` is `1` (in C or Java, `-7 % 2` is `-1`).
 :::
 
 :::step{type=task task=add title="Your turn: add two amounts"}
 Open `math_utils.py` and make `add(a, b)` give back the two numbers added together.
 
-For example, `add(2, 3)` gives `5`, and `add(-1, 1)` gives `0`. Check it in the terminal:
+For example, `add(2, 3)` gives `5`, and `add(-1, 1)` gives `0`. The body is one line: `return` and the sum.
+Check it in the terminal:
 
 ```bash run
 cd /workspace/02-functions && python3 -c "from math_utils import add; print(add(2, 3))"
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: `print(a + b)` instead of `return a + b`. The terminal shows `5`, then `None`
+(the second line is what the function gave back), and the check says the function returned `None`.
 :::
 
 :::step{type=task task=is_even title="Your turn: is it even?"}
@@ -235,6 +256,14 @@ for the remainder, and `==` to compare.
 
 `is_even(4)` gives `True`, `is_even(7)` gives `False`. And what about `0` and negative numbers like `-4`? Try
 them in the terminal before you press **Check**: the check tries them too.
+
+```bash run
+cd /workspace/02-functions && python3 -c "from math_utils import is_even; print(is_even(4), is_even(7), is_even(0), is_even(-4))"
+```
+
+The usual slips: returning the text `"True"` in quotes (that is a string, not the value `True`); or testing
+`== 1` and so answering the opposite question, "is it odd?". You do not need an `if` here: the comparison
+itself already gives back `True` or `False`.
 :::
 
 :::step{type=try title="When the call does not match" file="02-functions/greet.py" line="4"}
@@ -308,10 +337,11 @@ def welcome(city: str) -> str:
 ```
 
 `city: str` says "city should be a string", and `-> str` says "this gives back a string". These are **type
-hints**: notes for people and for tools that check your code. Python itself ignores them when it runs. You
-will use them more in Part 3.
+hints**: notes for people and for tools that check your code. Python itself does not check them when it runs:
+`welcome(42)` still runs. You will use them in chapter 15, for the parts of an expense.
 
-**Docstrings.** A string right under the `def` line describes the function. Tools show it as help:
+**Docstrings.** A string right under the `def` line describes the function. Three quotes `"""` let a string
+run over several lines. Tools show it as help, and so does Python: `help(double)` prints it.
 
 ```python
 def double(x):
@@ -332,8 +362,9 @@ You can now:
 - Tell `print` (shows it to a person) from `return` (gives it to the code), and know a function without
   `return` gives back `None`.
 - Build text with f-strings, compare with `==`, and find a remainder with `%`.
+- Read a `TypeError` that says a call is missing an argument.
 
-:::photo{src="/lesson-images/python/py-02-notes.webp" alt="Handwritten notes: def, return gives the answer back, print only shows it, no return gives None" ai="true"}
+:::photo{src="/lesson-images/python/py-02-sketch.webp" alt="Sketchnote: Your first functions. A function is a named piece of code; you call it with arguments, and return gives the answer back. Flow: def greet(name), indented body, return the answer, greet Asha calls it, Hello Asha comes back. Remember: print shows text to a person, return gives it to the code; no return gives back None; an f-string puts the value inside the text; n % 2 == 0 is True for even numbers." ai="true"}
 One page of notes for this chapter.
 :::
 
