@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: JavaScript chapter 4 rewritten (easy, a little detailed, checked)
+
+- Chapter 4, "Decisions": every output re-run on a lab machine. `truthy.js` used a list, a `for...of` loop and
+  `JSON.stringify` four chapters before they are taught, without a word; each is now explained in one line, with the
+  chapter that teaches it. Boolean, `>=` and the optional `else` explained at first use; `if (x = 0)` tried (it never
+  runs, and `x` becomes 0).
+- The calendar made exact: the year is about 365.2422 days (the lesson said 365.2425, which is the Gregorian rule's
+  average), the Julian calendar's 365.25, the ten days measured against the spring equinox, and the drift left today
+  (about a day in 3,000 years). The leap-year task had no run command; it has one now.
+- Slips added and tried: ranges in the wrong order (`grade(80)` gives `"C"`), no impossible-values test
+  (`grade(101)` gives `"A"`), and the leap rule without the 400 case (`true false false`). New sketchnote page, a
+  general summary of the chapter (redrawn once: "at least one" was lost).
+
 ## 28 November: JavaScript chapter 3 rewritten (easy, a little detailed, checked)
 
 - Chapter 3, "Values and types": every output re-run on a lab machine. The Patriot story made exact (25 February

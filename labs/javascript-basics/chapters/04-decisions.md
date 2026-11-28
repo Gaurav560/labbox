@@ -23,7 +23,9 @@ if (seconds > 300) {
 }
 ```
 
-Comparisons give `true` or `false`: `>`, `>=`, `<`, `<=`, `===` (equal) and `!==` (not equal).
+Comparisons give `true` or `false`, a **boolean** (the type with only those two values): `>` (more than), `>=` (more
+than or equal), `<`, `<=`, `===` (equal) and `!==` (not equal). The `else` part is optional: an `if` on its own simply
+does nothing when the answer is `false`.
 
 :::picture{name="fork-in-road" concept="if and else"}
 One question, and the answer picks the road.
@@ -70,11 +72,12 @@ JavaScript has two kinds of "equal":
 0 == ""      // true, surprisingly
 ```
 
-`==` tries to be helpful and converts values before comparing, which gives strange results. **Always use `===` and
-`!==`**: they compare without converting.
+`==` tries to be helpful and converts values before comparing, which gives strange results (we ran all four lines
+above). **Always use `===` and `!==`**: they compare without converting.
 
-A single `=` is not a comparison at all: it **stores** a value. `if (x = 5)` sets `x` to 5, and the `if` is always
-true.
+A single `=` is not a comparison at all: it **stores** a value. `if (x = 5)` sets `x` to 5, and the `if` sees the 5,
+which counts as true, so it always runs. With `if (x = 0)` it is the other way round: the `if` never runs, and `x` has
+quietly become 0 (we tried it).
 
 :::picture{name="number-vs-text" concept="Always ===, never =="}
 The printed symbols match, but the coin holds a number and the tag holds text.
@@ -115,11 +118,21 @@ and `"F"` below that. Marks below 0 or above 100 give `"Invalid"`.
 cd /workspace/04-decisions && node decisions.js
 ```
 
-Then press **Check**.
+Before you start, it prints a line of empty answers and `false false false`: the placeholders. Then press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- The ranges in the wrong order: asking `marks >= 40` first catches everything from 40 up, so `grade(80)` and
+  `grade(95)` both give `"C"`. Ask from the top down.
+- No impossible-values test: `grade(101)` gives `"A"` and `grade(-5)` gives `"F"`. Put the test first.
 :::
 
 :::step{type=try title="Truthy and falsy" file="04-decisions/truthy.js" line="2-9"}
-Now the question from the start. Open `truthy.js`: it puts six values into an `if`:
+Now the question from the start. Open `truthy.js`: it puts six values into an `if`. Two new things appear here, and
+both get their own chapter later: `[0, "", ...]` is a **list** of values in square brackets (chapter 8), and
+`for (const value of values)` runs the block once for each value in the list, calling it `value` each time (chapter 5).
+`JSON.stringify(value)` shows a value with its quotes, so you can see the difference between `""` and `"0"`
+(chapter 12):
 
 ```js
 const values = [0, "", "0", [], null, "hello"];
@@ -171,9 +184,12 @@ A circuit in series needs both switches closed. Parallel paths can light the bul
 :::
 
 :::step{type=concept title="A rule from 1582"}
-A year is about 365.2425 days long, not 365. The old calendar added a leap day every 4 years, which is slightly too
-many, and by 1582 the calendar had drifted ten days away from the seasons. Pope Gregory XIII fixed it with the rule we
-still use: skip the leap day in years divisible by 100, but keep it in years divisible by 400.
+The Earth goes round the Sun in about 365.2422 days, not 365. The old Julian calendar, from Julius Caesar's time,
+added a leap day every 4 years, which makes 365.25: slightly too long. The extra 11 minutes a year added up, and by
+1582 the spring equinox (the day of equal day and night) came about ten days earlier on the calendar than it had
+centuries before. Pope Gregory XIII fixed it with the rule we
+still use: skip the leap day in years divisible by 100, but keep it in years divisible by 400. That averages 365.2425
+days a year, close enough to drift only about one day in 3,000 years.
 
 :::photo{src="/lesson-images/python/pope-gregory-xiii.webp" alt="A portrait of Pope Gregory XIII in red robes" credit="Unknown artist" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Pope_Gregory_XIII_portrait.jpg"}
 Pope Gregory XIII, whose calendar we still use.
@@ -189,7 +205,15 @@ In `decisions.js`, make `isLeapYear(year)` follow it:
 
 `isLeapYear(2024)` is `true`, `isLeapYear(1900)` is `false`, and `isLeapYear(2000)` is `true`.
 
+```bash run
+cd /workspace/04-decisions && node decisions.js
+```
+
 Then press **Check**.
+
+The usual slip: writing only the first two rules, `year % 4 === 0 && year % 100 !== 0`. That gives `true false false`
+(we tried it): right for 2024 and 1900, wrong for 2000, because the 400 rule is missing. The year 2000 is exactly the
+case people forget.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -244,7 +268,7 @@ You can now:
 - Combine conditions with `&&`, `||` and `!`, and test "divisible by" with `%`.
 - List the falsy values, and know that `"0"` and `[]` are truthy.
 
-:::photo{src="/lesson-images/javascript/js-04-notes.webp" alt="Handwritten notes about decisions in JavaScript: if, else if, else, first true wins, always triple equals, and or not, falsy values false 0 empty null undefined NaN, an empty list is truthy" ai="true"}
+:::photo{src="/lesson-images/javascript/js-04-sketch.webp" alt="Sketchnote: Decisions. if runs its block when the condition is true; with else if, JavaScript asks from the top and the first true answer wins. Flow: impossible values first, then the biggest range, then the next one down, else catches the rest. Remember: compare with triple equals and not-equals, never double equals; one equals sign stores a value, it does not compare; and needs both, or needs at least one, not flips; falsy values are false, 0, empty text, null, undefined and NaN, all else is truthy." ai="true"}
 One page of notes for this chapter.
 :::
 
