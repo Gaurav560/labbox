@@ -1,6 +1,6 @@
 :::step{type=story title="What can ten days of work become?"}
-In May 1995, a programmer at Netscape was given ten days to make a small language for web pages. Ten days. He wrote it,
-it shipped in the Netscape browser, and today it runs on almost every website, on servers, in phone apps, and inside
+In May 1995, a programmer at Netscape, the company behind the most popular web browser of the time, was given about
+ten days to make a small language for web pages. Ten days. He wrote it, it shipped in the Netscape browser, and today it runs on almost every website, on servers, in phone apps, and inside
 the very editor you are looking at. That language is **JavaScript**, and you are going to write it today.
 
 Your project for this whole course is **Mixtape**, a small playlist app: songs, their lengths, shuffles and a
@@ -27,9 +27,11 @@ Netscape Navigator 2: the first browser that ran JavaScript.
 :::
 
 :::timeline
-- **1995** Brendan Eich writes the first version in ten days at Netscape.
+- **1995** In May, Brendan Eich writes the first version in about ten days at Netscape; in December it is named
+  JavaScript.
 - **1997** The first ECMAScript standard: the official name of the language's rules.
-- **2005** Gmail and Google Maps show what JavaScript web apps can do.
+- **2004 to 2005** Gmail (2004) and Google Maps (2005) show what JavaScript web apps can do: pages that update
+  without reloading.
 - **2009** Ryan Dahl creates **Node.js**: JavaScript outside the browser, on servers and laptops.
 - **2015** A big update adds classes, arrow functions, `let` and `const`, and promises.
 :::
@@ -50,8 +52,9 @@ console.log(3 * 4, "minutes of music");
 console.log("Done.");
 ```
 
-`console.log` means "print this on the console", the text area of the terminal. Now run it. In the terminal below,
-type this and press Enter:
+`console.log` means "print this on the console", the text area of the terminal. To run the file you need **Node**, a
+program that runs JavaScript outside a browser; it is already installed on your lab machine. In the **terminal** below
+(the panel where you type commands), type this and press Enter:
 
 ```bash run
 cd /workspace/01-hello-js && node first.js
@@ -64,9 +67,11 @@ Today's playlist has 3 songs.
 Done.
 ```
 
-**Node** is the program that runs JavaScript outside a browser. It read your file and ran the lines **from top to
-bottom**, one at a time. Look at line 3: `3 * 4` is not text, it is maths, so Node worked it out first and printed
-`12`. The comma puts a space between the two things it prints.
+`cd /workspace/01-hello-js` moved the terminal into this chapter's folder, and `&&` means "then, if that worked".
+Node read your file and ran the lines **from top to bottom**, one at a time. Line 1 of the file starts with `//`: it is
+a **comment**, a note for people, and Node skips it. Look at line 4: `3 * 4` has no quotes, so it is not text, it is
+maths (`*` means times), and Node worked it out first and printed `12`. The comma puts a space between the two things
+it prints.
 :::
 
 :::step{type=concept title="What node does with your file"}
@@ -113,8 +118,13 @@ TypeError: Cannot read properties of undefined (reading 'toUpperCase')
 `playlist[5]` gave `undefined`, JavaScript's word for "nothing here". And you cannot make nothing upper case.
 
 Read the error like a detective: the **file and line** (`crash.js:5`), a little `^` under the exact spot, and the
-**kind** of problem in one sentence. (The lines starting with `at` are the path Node took to get there; chapter 6
-reads them properly.)
+**kind** of problem in one sentence. The `5:30` after the file name means line 5, character 30: right where the `^`
+points.
+
+Your terminal shows a little more than this page: seven more lines starting with `at`, then a last line with Node's
+version, `Node.js v22.23.5`. Those `at` lines are Node's own steps inside its loader (their paths start with
+`node:internal`), not your code, so this course cuts them from every output it shows. Only the first `at` line names
+your file. Chapter 6 reads these lines properly.
 :::
 
 :::step{type=example title="Worked example: Mixtape counts down"}
@@ -155,6 +165,15 @@ cd /workspace/01-hello-js && node mixtape.js
 ```
 
 When it prints those two lines, press **Check**.
+
+The usual slips, each one tried on a lab machine:
+
+- Forgetting the quotes: `console.log(Hello! I am Mixtape.);` gives `SyntaxError: missing ) after argument list`.
+  Without quotes, Node reads `Hello` as a name, then cannot make sense of the `!` after it.
+- A capital C: `Console.log(...)` gives `ReferenceError: Console is not defined`. JavaScript treats capital and small
+  letters as different letters, so `Console` and `console` are two different names.
+- A word or full stop not quite right: the program runs, and the check shows what you printed next to what it wanted.
+  Compare them letter by letter.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -197,7 +216,8 @@ ReferenceError: consol is not defined
 ```
 
 This time line 2 **did** print: the grammar was fine, so the program started, and stopped at line 3. A
-**ReferenceError** means "I do not know that name": `consol` is not `console`.
+**ReferenceError** means "I do not know that name": `consol` is not `console`. (Both outputs are cut after the error
+line, as explained above.)
 :::
 
 :::step{type=task task=fix_first_errors title="Your turn: fix it until it runs" file="01-hello-js/fixme.js"}
@@ -210,6 +230,10 @@ Songs in the playlist: 12
 ```
 
 Then press **Check**.
+
+The usual slip: putting the `)` after the semicolon, `console.log("Mixtape is starting...";)`. That gives the same
+`SyntaxError: missing ) after argument list` (we tried it), because the `;` ends the line before the bracket is
+closed. The `)` comes first, then the `;`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -257,7 +281,8 @@ Every website you visit runs its JavaScript right there.
 why the same language now builds web pages, servers and command-line tools.
 
 **ECMAScript.** The official name of JavaScript's rules is ECMAScript, kept by a committee called TC39 with members
-from Google, Apple, Microsoft and Mozilla. A new version arrives every year, and old code keeps working.
+from Google, Apple, Microsoft and Mozilla. A new version has arrived every year since 2015, and code written years ago almost always keeps working: the
+committee avoids changes that would break existing websites.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -268,7 +293,7 @@ You can now:
 - Tell a SyntaxError (nothing runs) from errors while running, like a ReferenceError or a TypeError.
 - Read an error's file, line and message, and fix one mistake at a time.
 
-:::photo{src="/lesson-images/javascript/js-01-notes.webp" alt="Handwritten notes about a first JavaScript program: node file.js runs it, console.log prints a line, grammar is checked first, SyntaxError means nothing ran, ReferenceError means an unknown name" ai="true"}
+:::photo{src="/lesson-images/javascript/js-01-sketch.webp" alt="Sketchnote: Your first JavaScript program. Node runs JavaScript outside the browser; it checks the whole file's grammar first, then runs it from top to bottom. Flow: node file.js, check the grammar, run line by line, console.log prints, an error stops it there. Remember: SyntaxError, broken grammar, so nothing runs; ReferenceError, a name that does not exist; TypeError, a value cannot do what you asked; an error names the file and the line, fix one mistake at a time." ai="true"}
 One page of notes for this chapter.
 :::
 

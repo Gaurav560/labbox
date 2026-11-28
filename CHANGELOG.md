@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: JavaScript chapter 1 rewritten (easy, a little detailed, checked)
+
+- Chapter 1, "Your first JavaScript program": every output re-run on a lab machine (Node 22.23.5). The lesson said
+  `3 * 4` was on line 3; it is line 4 of the file (line 1 is a comment, now explained). The outputs were cut after the
+  first `at` line without saying so; the lesson now says what the terminal really shows (seven more `at` lines from
+  `node:internal` and `Node.js v22.23.5`) and why the course cuts them. `5:30` explained.
+- History made exact: about ten days in May 1995, named JavaScript in December; Gmail was 2004, Google Maps 2005 (the
+  timeline said both 2005); "old code keeps working" hedged to "almost always", with the reason.
+- Node, the terminal, `cd`, `&&`, comments and `*` explained where they first appear. Slips added and tried: missing
+  quotes and `Console.log` for the first task, the `)` after the `;` for the second. New sketchnote page, a general
+  summary of the chapter (owner's sketchnote rules, 28 November).
+
 ## 28 November: Java chapter 18 rewritten; the Java lab is done (18 of 18)
 
 - Java chapter 18, "Capstone": "the inherited `equals`" was ambiguous in a chapter about inheritance (it meant the
