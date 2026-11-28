@@ -338,7 +338,7 @@ What it takes, per course:
 
 ### 2e. Jarvis, each learner's realtime voice assistant (owner, 28 November)
 
-Steps 1 to 4 are done (see CHANGELOG, 28 November); his voice and tone are to be tuned later (owner). The owner's brief: an assistant for each learner, with context of
+Steps 1 to 4 are done (see CHANGELOG, 28 November). Tone rewritten and a voice audition run (28 November); the owner picks the voice by ear (`tools/jarvis_voices.py`), then `JARVIS_VOICE` is set. The film's voice is not copied: it is a real actor's, and India's courts protect voices against AI cloning. The owner's brief: an assistant for each learner, with context of
 everything about them, that notices when they sign up, log in, study or get stuck, and talks like a human. Realtime
 speech to speech only (OpenAI `gpt-realtime-2.1-mini` over WebRTC). Agreed limits: $1.50 a day, a hard stop at $40 a
 month (the OpenAI credit is $50), Pro 20 minutes a day, free learners one 3-minute trial (at most 10 a day); all

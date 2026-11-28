@@ -315,10 +315,10 @@ export default function Jarvis({ labId, chapterId, step }: { labId?: string; cha
       channel.onopen = () => {
         send({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text",
           text: reasonRef.current === "welcome" || reasonRef.current === "cheer"
-            ? "Follow the instructions under 'Why this conversation started'. Keep it short and warm."
+            ? "Follow the instructions under 'Why this conversation started', in your usual manner: brief and calm."
             : reasonRef.current
-            ? "The learner just accepted your offer of help with the task in front of them. In one short, kind sentence, say what you noticed, then ask what they have tried so far. You may use your tools to look at the task and their code."
-            : "The learner has just opened the conversation. Greet them by their first name in one or two short sentences, mention where they are or what they did last, and ask how you can help. Do not call any tool yet." }] } });
+            ? "The learner just accepted your offer of help with the task in front of them. In one short sentence, say plainly what you noticed, then ask what they have tried. You may use your tools to look at the task and their code."
+            : "The learner has just opened the conversation. One short sentence with their first name and where they are, then one short question. Do not call any tool yet." }] } });
         send({ type: "response.create" });
       };
       conn.onconnectionstatechange = () => { if (["failed", "closed"].includes(conn.connectionState) && sid.current != null) stop("The connection dropped."); };

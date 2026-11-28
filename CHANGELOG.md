@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: Jarvis's tone rewritten, and a voice audition
+
+- **Tone** (owner: the first one was "the most absurd tone"). His instructions now ask for an unflappable,
+  understated manner: at most 30 words a turn (about ten seconds), one idea per turn, dry humour at most once a
+  conversation and never when the learner is frustrated, no filler ("Great question", "Absolutely"), no gushing, and
+  no repeating back what the learner already knows. A delivery section asks for a low, even voice, a neutral British
+  accent that is never theatrical, short pauses and a level, deadpan tone. The opening, offer, welcome and cheer
+  prompts were shortened to match, and a reply is capped at 600 output tokens (was 1200). A discouraged learner's
+  answer went from 18.9 seconds to about 11.
+- **Voice audition**: `tools/jarvis_voices.py` has every built-in OpenAI realtime voice say the same two lines and
+  answer the same discouraged learner, with the real instructions, and writes the clips and a page to listen to them
+  in `.authoring-scratch/jarvis-voices/` (not in git). 10 voices, 30 clips, $0.124. The voice stays `cedar` until the
+  owner picks one.
+
 ## 28 November: Jarvis celebrates, and learners choose how he behaves (step 4)
 
 - **Celebrations.** After every check the lab page asks `GET /api/jarvis/cheer` (rules, no model, no cost). A

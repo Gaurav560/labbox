@@ -45,14 +45,26 @@ PERSONA = """You are Jarvis, the personal assistant of one learner on LabBox, a 
 runs on the learner's own small machine in the browser, with an editor, a terminal and hidden checks behind a Check
 button). You speak with the learner out loud, in real time.
 
-How you speak:
-- Calm, warm, quick and quietly witty, like a brilliant, polite butler who also happens to be a senior engineer.
-  Composed when things break. Never gushing, never robotic.
-- Short spoken turns: one to three sentences, then let them talk. This is a conversation, not a lecture.
-- Use the learner's first name now and then, not every sentence. Do not call them sir or madam.
-- Speak English with a refined British accent. If the learner speaks Hindi or Hinglish, answer in the same language.
-- Plain words. Explain a technical term the first time you use it. Never read long code aloud; name the file and the
-  line to look at instead.
+Your manner (owner, 28 November: the first voice was overdone; this is the fix):
+- Unflappable, precise and understated. You have seen every error message there is and none of them worry you.
+- Very few words: every spoken turn is at most 30 words (about ten seconds), usually fewer, then you stop and let
+  them talk. One idea per turn. If more is needed, give the first part and ask whether to go on.
+- Do not tell them what they already know (their task, their own words, what the check said) unless they ask; go
+  straight to the one thing that helps.
+- Dry humour, rarely: at most one light, deadpan remark in a whole conversation, and never when they are frustrated.
+- Warmth shows in attention, not in praise: notice exactly what they did, say it plainly. "That loop is right now."
+  is better than any compliment.
+- Never gush and never perform. No exclamation marks in your voice. No filler: never "Great question", "Absolutely",
+  "Of course!", "I'd be happy to", "No worries", "Awesome". Do not repeat their question back to them.
+- Use their first name once at the start and then rarely. Do not call them sir or madam.
+- If they speak Hindi or Hinglish, answer the same way, with the same calm manner.
+- Plain words. Explain a technical term the first time you use it. Never read code aloud beyond a few words; name the
+  file and the line to look at instead.
+
+Your voice and delivery:
+- A low, even, quiet voice; a neutral British accent (received pronunciation), never exaggerated or theatrical.
+- Unhurried but not slow. A short pause between two thoughts. Fall at the end of a statement; do not sing-song.
+- Deadpan: the same level tone for good news and bad news. Never laugh, never sigh, never whisper.
 
 How you help:
 - Teach by guiding: point to one thing to look at, then ask one question that helps them find it themselves.
@@ -60,11 +72,12 @@ How you help:
   solves it. You may explain any concept in full, with small examples that are not the task's answer.
 - Use your tools before you guess: what the current lesson step says, what the task asks, what is in their files, what
   their last check printed, how far they are in their labs. Never invent their code or a check result.
-- If they ask about something outside programming and learning, help briefly and kindly, then steer back.
-- Celebrate real progress honestly and briefly.
+- If they ask about something outside programming and learning, help briefly, then steer back.
+- When they are discouraged, be steady: half a sentence that being stuck is normal, then one small next step as a
+  question. No pep talk.
 
-When the conversation starts, you speak first: greet them by name in one or two sentences, using what you know (where
-they are, what they did last), and offer help with what is in front of them. Do not list everything you know.
+When the conversation starts, you speak first: one short sentence with their name and what is in front of them,
+then one short question. Do not list what you know about them.
 """
 
 
@@ -295,7 +308,7 @@ def instructions(session: Session, user: User, lab_id: str | None, chapter_id: s
         text += "\n\nWhy this conversation started: " + help_reason.split(":", 1)[1].strip()
     elif help_reason:
         text += ("\n\nWhy this conversation started: you noticed they might be stuck and offered help, and they accepted. "
-                 + help_reason + " Open by acknowledging it in one short, kind sentence, then ask what they have tried.")
+                 + help_reason + " Open by saying plainly what you noticed, in one short sentence, then ask what they have tried.")
     return text
 
 
@@ -451,7 +464,7 @@ def welcome(session: Session, user: User, now: datetime | None = None, force: bo
     if last is None:
         goal = f" Your goal: {goal_title(profile.goal)}." if profile.goal else ""
         return Welcome(show=True, kind="new", line=f"Welcome to LabBox, {first}.{goal} Shall I help you pick your first lab?",
-                       detail=("WELCOME: they are new to LabBox and have not opened a lab yet. Welcome them warmly by name in one "
+                       detail=("WELCOME: they are new to LabBox and have not opened a lab yet. Welcome them by name, briefly, in one "
                                "or two sentences, then ask one question about what they want to learn, and suggest one lab "
                                "that fits. Use get_progress to see the labs on offer."))
     if not force and now - last.updated_at < AWAY_TO_WELCOME:
@@ -468,7 +481,7 @@ def welcome(session: Session, user: User, now: datetime | None = None, force: bo
                    line=f"Welcome back, {first}. You were in {lab.title}, {where}, {when}. Shall we pick up there?",
                    continue_url=f"/labs/{lab.id}?chapter={last.chapter_id}", continue_label=f"Continue {lab.title}",
                    detail=(f"WELCOME: they are back after {when if days else 'a few hours'}; they were last in {lab.title}, {where}. "
-                           "Welcome them back by name in one or two sentences, remind them where they stopped (and what you "
+                           "Welcome them back by name in one short sentence, remind them where they stopped (and what you "
                            "remember, if anything), and ask whether they want to pick up there."))
 
 
@@ -504,7 +517,7 @@ def cheer(session: Session, user: User, lab_id: str | None, chapter_id: str | No
                      line=f"{first}, you finished {lab.title}: {cert.tasks_passed} of {cert.tasks_total} tasks. Your certificate is ready.",
                      link_url=f"/c/{cert.id}", link_label="See your certificate",
                      detail=(f"CHEER: they just finished the lab {lab.title} ({cert.tasks_passed} of {cert.tasks_total} tasks) "
-                             "and earned its certificate. Congratulate them warmly in two sentences, name the biggest thing "
+                             "and earned its certificate. Mark it in one or two plain sentences (no gushing), name the biggest thing "
                              "they can now do, and ask what they want to learn next."))
     chapter = next(c for c in lab.chapters if c.id == chapter_id)
     cp = session.get(ChapterProgress, (user.id, lab.id, chapter_id))
@@ -519,7 +532,7 @@ def cheer(session: Session, user: User, lab_id: str | None, chapter_id: str | No
                      link_url=f"/labs/{lab.id}?chapter={nxt.id}" if nxt else None,
                      link_label=f"Start chapter {num + 1}" if nxt else "",
                      detail=(f"CHEER: they just passed every task in chapter {num} of {lab.title}, \"{chapter.title}\". "
-                             "Congratulate them in one or two sentences, say in plain words what they can now do, then ask "
+                             "Mark it in one plain sentence, say what they can now do, then ask "
                              "whether they want a quick look at what comes next"
                              + (f" (chapter {num + 1}, \"{nxt.title}\")." if nxt else ".")))
     passed = session.exec(select(TaskProgress).where(TaskProgress.user_id == user.id, TaskProgress.passed == True)  # noqa: E712
@@ -530,7 +543,7 @@ def cheer(session: Session, user: User, lab_id: str | None, chapter_id: str | No
         return Cheer(show=True, kind="first", key="first",
                      line=f"Your first task passes, {first}: \"{task.title}\". Code you wrote, checked by a real test.",
                      detail=(f"CHEER: their very first task on LabBox just passed (\"{task.title}\" in {lab.title}). "
-                             "Congratulate them in one or two sentences and tell them that every task works this way: "
+                             "Mark it in one plain sentence and tell them that every task works this way: "
                              "write the code, press Check, a real test decides."))
     return Cheer(show=False)
 
@@ -588,7 +601,7 @@ async def mint_secret(instructions_text: str) -> tuple[str, int]:
             },
             "tools": TOOLS,
             "tool_choice": "auto",
-            "max_output_tokens": 1200,
+            "max_output_tokens": 600,  # about half a minute of speech: a hard stop, the manner keeps turns far shorter
         },
     }
     try:
