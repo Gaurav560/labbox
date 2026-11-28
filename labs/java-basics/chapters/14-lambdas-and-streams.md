@@ -2,8 +2,8 @@
 Before 2014, telling Java "sort these titles by their length" took six lines of ceremony: a whole unnamed class,
 an `@Override`, a method signature, all to say one small thing, `a.length() - b.length()`.
 
-Then Java 8 arrived with **lambdas**, and the same rule shrank to one line. It was the biggest change to the
-language since it was born, and it brought **streams** with it: a way to say "the overdue books, titles in
+Then Java 8 arrived, in 2014, with **lambdas**, and the same rule shrank to one line. It is often called the
+biggest change to the language since it was born, and it brought **streams** with it: a way to say "the overdue books, titles in
 capitals, sorted" almost exactly as you would say it in English.
 
 Today Shelf learns to talk like that.
@@ -40,7 +40,10 @@ cd /workspace/14-lambdas-and-streams && java OldAndNew.java
 [It, Emma, Dune, Ulysses]
 ```
 
-1. **2004 style**: an *anonymous class* that implements the `Comparator` interface (chapter 10) on the spot.
+1. **2004 style** (Java 5 added the `<String>` part that year): an *anonymous class*, a class with no name,
+   written and used in one place, that implements the `Comparator` interface (chapter 10) on the spot. A comparator's
+   `compare` gives back a negative number when `a` should come first, a positive one when `b` should, and 0 for a
+   tie; `a.length() - b.length()` does exactly that.
 2. **A lambda**: `(a, b) -> b.length() - a.length()` is the same `compare` method with everything obvious left out.
    This one sorts longest first.
 3. **A method reference**: `String::length` means "call `length()` on each one", and `Comparator.comparing` builds
@@ -152,7 +155,8 @@ one stream.
 cd /workspace/14-lambdas-and-streams && java Streams.java
 ```
 
-Then press **Check**.
+Right now it prints `[]` and the words in their original order. Then press **Check**. The usual slip: `m > 40`,
+which drops the 40 (the task says 40 **or more**).
 :::
 
 :::step{type=concept title="Lazy: nothing happens until you ask" file="14-lambdas-and-streams/Lazy.java" line="7-13"}
@@ -191,13 +195,18 @@ In `Streams.java`, make `sortByLength(words)` give back the words **shortest fir
 `kiwi` because d comes before k.
 
 `Comparator.comparing(String::length)` sorts by length; `.thenComparing(Comparator.naturalOrder())` adds the
-alphabetical tie rule.
+alphabetical tie rule. ("Natural order" for strings means alphabetical.)
 
 ```bash run
 cd /workspace/14-lambdas-and-streams && java Streams.java
 ```
 
 Then press **Check**.
+
+The usual slips (we tried them): the two rules the other way round, alphabetical first, which gives
+`[apple, banana, date, fig, kiwi]`: the length rule never gets a say, because no two words tie alphabetically. And
+`words.sort(...)` on the list itself: `main` passes a `List.of(...)`, which refuses changes, so it throws
+`UnsupportedOperationException`. Sort a stream, or a copy.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -259,7 +268,7 @@ You can now:
 - Sort with `Comparator.comparing` and give ties a rule with `thenComparing`.
 - Explain why streams never change their source, and why they are lazy.
 
-:::photo{src="/lesson-images/java/java-14-notes.webp" alt="Handwritten notes about lambdas and streams: a lambda is a method with no name, String::length, a stream is a conveyor belt, filter keeps, map turns, sorted then toList, the source never changes, lazy until a final step" ai="true"}
+:::photo{src="/lesson-images/java/java-14-sketch.webp" alt="Sketchnote: Lambdas and streams. A lambda is a method with no name; a stream passes items through steps and builds something new. Flow: books.stream(), filter by overdue, map to the title, sorted(), toList(). Remember: filter keeps items, map turns each item into a new value; a stream never changes the list it came from; streams are lazy, nothing runs until a final step; thenComparing gives ties a rule." ai="true"}
 One page of notes for this chapter.
 :::
 

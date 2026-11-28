@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 14 rewritten (easy, a little detailed, checked)
+
+- Java chapter 14, "Lambdas and streams": "the biggest change since it was born" is now "often called" it, with
+  the year (2014); "2004 style" explained (generics arrived in Java 5 that year); anonymous class and the meaning of
+  `compare`'s negative, positive and zero results explained; "natural order" defined.
+- Checked on a lab machine: `OldAndNew.java`, `Pipeline.java` (2954 pages), `Lazy.java` (only Dune checked), the
+  long-titles example, the guess, `orElse`, and both tasks (starter output now said). Slips added and tried: `> 40`,
+  the two sort rules reversed (`[apple, banana, date, fig, kiwi]`), sorting the given `List.of` (throws). New
+  sketchnote page.
+
 ## 28 November: Java chapter 13 rewritten (easy, a little detailed, checked)
 
 - Java chapter 13, "Exceptions": Ariane 5 told plainly (a decimal copied into a slot for small whole numbers, too
