@@ -3,8 +3,11 @@ Mixtape wants to know which song was played most. That means counting: one tally
 make a fine tally sheet, with the title as the label and the count as the value.
 
 Counting things is one of the oldest jobs computers were built for. For the 1890 US census, Herman Hollerith's
-**tabulating machine** counted 62 million people from punched cards, with a dial for each category: a tally, one per
-key. His company later became part of IBM.
+**tabulating machine** counted nearly 63 million people from **punched cards** (stiff cards with holes in set places,
+one card per person), with a dial for each category: a tally, one per key. The census of 1880, counted by hand, had
+taken about eight years; the first population total of 1890 came out in about six weeks (the full detail took
+longer, about two years). His company merged with others in 1911 into a firm
+renamed IBM in 1924.
 
 :::photo{src="/lesson-images/javascript/hollerith.webp" alt="A black and white photo of a man seated at a Hollerith tabulating machine, a desk with a wall of round counting dials" credit="U.S. Census Bureau" license="Public domain" source="https://commons.wikimedia.org/wiki/File:1902_Hollerith_electric_tabulating_machine.jpg"}
 A Hollerith tabulating machine, 1902: a dial per category, counting.
@@ -29,7 +32,8 @@ counts[key] = (counts[key] ?? 0) + 1;
 ```
 
 `counts[key] ?? 0` means "the count so far, or 0 if this key has never been seen" (chapter 4's `??`). The square
-brackets are needed because the key is in a variable.
+brackets are needed because the key is in a variable. Leave out the `?? 0` and the first count is `undefined + 1`,
+which is `NaN`: two plays of the same title gave `{ jelly: NaN }` when we tried it.
 
 :::picture{name="phone-book" code='counts[key]' concept="An object as a dictionary"}
 Look a value up by its name, like a number in a phone book.
@@ -91,7 +95,10 @@ it appears. Capitals should not matter.
 cd /workspace/10-counting && node counting.js
 ```
 
-Then press **Check**.
+Before you start it prints `{}` and `[]`: the placeholders. Then press **Check**.
+
+The usual slip: counting without lower-casing. That gives `{ jelly: 2, Cookie: 1, JELLY: 1 }` (we tried it): three
+keys where there should be two. The check spots the `JELLY` key and tells you.
 :::
 
 :::step{type=try title="A number key and a text key" file="10-counting/keys.js" line="2-10"}
@@ -134,7 +141,10 @@ guests.add("Kabir");
 [...guests]           // ["Asha", "Riya", "Kabir"]: back to an array
 ```
 
-`has` is fast however big the Set grows, which makes Sets perfect for "is it in there?" questions.
+`has` stays fast however big the Set grows, which makes Sets perfect for "is it in there?" questions. We measured
+it on the lab machine with a million numbers, looking for the last one: the array's `includes` took about 1.4 ms per
+question, because it walks the whole list; the Set's `has` took well under a thousandth of a millisecond, because a
+Set finds a value from the value itself, without walking. (Your numbers will differ; the gap will not.)
 
 :::picture{name="guest-list" concept="A Set: each value once"}
 Each guest is on the list once, however many times their name is written down.
@@ -165,6 +175,10 @@ cd /workspace/10-counting && node counting.js
 ```
 
 Then press **Check**.
+
+The usual slips, each one tried on a lab machine: forgetting to sort, which gives `['toast', 'mint']`, the order of
+the first list; and forgetting "each once". The check also tries `["b", "a", "b"]` and `["b", "b", "a"]`, where
+keeping the shared items of the first list gives `['b', 'a', 'b']`. Make the answer a Set too, then sort.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -220,7 +234,7 @@ You can now:
 - Use a Set to keep each value once and answer "is it in there?" quickly.
 - Use a Map when keys are not text, with `set`, `get`, `has` and `size`.
 
-:::photo{src="/lesson-images/javascript/js-10-notes.webp" alt="Handwritten notes about counting in JavaScript: counts of key equals counts of key or 0 plus 1, object keys are always text, a Set keeps each value once, has is fast, a Map keeps number keys as numbers" ai="true"}
+:::photo{src="/lesson-images/javascript/js-10-sketch.webp" alt="Sketchnote: Counting with objects, Sets and Maps. To count, read the count so far (or 0), add one, and store it back under the key. Flow: take the next item, make the key the same case, counts of key or 0, add 1 and store it, next item. Remember: object keys are always text, 1 and the text 1 are one key; a Map keeps keys as they are, numbers as numbers; a Set keeps each value once, has() stays fast; spreading a Set into square brackets turns it back into an array." ai="true"}
 One page of notes for this chapter.
 :::
 
