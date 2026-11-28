@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Java chapter 11 rewritten (easy, a little detailed, checked)
+
+- Java chapter 11, "Collections": two claims tested and corrected. "`get` takes about the same time with 10 books
+  or 10 million" became a measurement: a million lookups took about 1 ms in a 10-key map and 8 ms in a
+  million-key map (slower, nowhere near a million times). "Removing inside a for-each loop throws
+  ConcurrentModificationException" is only sometimes true: removing the first item threw it, but removing the
+  second-to-last item stopped the loop silently, and `[1, -2, -3]` ended as `[1, -3]`; now taught.
+- Checked on a lab machine: `Desk.java`, `RemoveTrap.java`, the sort-a-copy example, the donations map, the starter
+  and solution of both tasks, the `add(42)` error. Slips added and tried: sorting the given `List.of` (it throws
+  `UnsupportedOperationException`), `subList` past the end (`toIndex = 5`), counting before lowering. New sketchnote
+  page.
+
 ## 28 November: Java chapter 10 rewritten (easy, a little detailed, checked)
 
 - Java chapter 10, "Interfaces": "in Java 21 it cannot find them" now shows the real error from `java Shapes.java`

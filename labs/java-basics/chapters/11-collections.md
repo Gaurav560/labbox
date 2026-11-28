@@ -25,7 +25,7 @@ System.out.println(queue + " " + queue.size() + " " + queue.get(0));
 ```
 
 - `List<String>` reads "a list of strings". The type inside the **angle brackets** says what the list holds, and
-  Java checks it: `queue.add(42)` will not compile.
+  Java checks it: `queue.add(42)` will not compile (`error: no suitable method found for add(int)`).
 - `new ArrayList<>()` makes an empty list. The empty `<>` (the "diamond") means "the same type as on the left".
 - `add` puts a value at the end, `remove` takes one out, `size()` counts, `get(i)` reads position i (from 0,
   as always).
@@ -111,6 +111,11 @@ cd /workspace/11-collections && java ListTools.java
 ```
 
 Then press **Check**.
+
+The usual slips (we tried them): sorting `numbers` itself. Here that does not just change the caller's list, it
+crashes: `main` passes a `List.of(...)`, which refuses changes, so the sort throws
+`java.lang.UnsupportedOperationException` (see Go deeper). And `subList(0, n)` with `n` bigger than the list throws
+`IndexOutOfBoundsException: toIndex = 5`; that is what `Math.min` is for.
 :::
 
 :::step{type=concept title="HashMap and HashSet: find it by name" file="11-collections/Desk.java" line="18-25"}
@@ -136,7 +141,10 @@ A **set** is a bag that keeps one of each. `new HashSet<>(List.of("Asha", "Riya"
 names, which is line three: `2 true`.
 
 Why "Hash"? A `HashMap` does not search through every key. It turns the key into a number (its **hash code**) that
-says where to look, so `get` takes about the same time with 10 books or 10 million.
+says where to look. We timed it on the lab machine, after letting Java warm up: a million `get` calls took about
+1 ms in a map of 10 keys, and about 8 ms in a map of a million keys. A bit slower (a big map no longer fits in the
+processor's small, fast memory), but nowhere near a million times slower, which is what reading every key would
+cost.
 :::
 
 :::step{type=example title="Worked example: copies per title"}
@@ -185,7 +193,8 @@ and no words give an empty map.
 cd /workspace/11-collections && java WordCounter.java
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: counting before lowering, so `Jelly`, `JELLY` and `jelly` become three keys.
+Lower the word first, then use it as the key everywhere.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -232,8 +241,10 @@ A missing key gives `null`. Use `getOrDefault` or `containsKey` when that matter
 **Order.** A `HashMap` or `HashSet` keeps no particular order. `LinkedHashMap` keeps the order you added things in;
 `TreeMap` keeps keys sorted.
 
-**Changing while looping.** Removing from a list inside a `for (x : list)` loop throws a
-`ConcurrentModificationException`. Use `list.removeIf(x -> x < 0)` instead (chapter 14 explains the arrow).
+**Changing while looping.** Removing from a list inside a `for (x : list)` loop is a bug, and a sneaky one. We
+tried three lists. Removing the first item threw `ConcurrentModificationException`. But removing the
+second-to-last item made the loop stop early with **no error**: `[1, -2, -3]`, meant to lose both negatives, quietly
+ended as `[1, -3]`. Use `list.removeIf(x -> x < 0)` instead (chapter 14 explains the arrow).
 
 **The interfaces.** `List`, `Set` and `Map` are interfaces (chapter 10), and `ArrayList`, `HashSet` and `HashMap` are
 classes that implement them. That is why you write `List<String> queue = new ArrayList<>()`: the rest of the
@@ -248,7 +259,7 @@ You can now:
 - Sort a copy, never the caller's list, and take a safe `subList`.
 - Look things up with `HashMap` (`put`, `get`, `getOrDefault`) and keep one of each with `HashSet`.
 
-:::photo{src="/lesson-images/java/java-11-notes.webp" alt="Handwritten notes about Java collections: ArrayList grows, List of Integer not int, remove(1) means position 1, sort a copy, HashMap put and get, HashSet keeps one of each" ai="true"}
+:::photo{src="/lesson-images/java/java-11-sketch.webp" alt="Sketchnote: Collections. ArrayList grows as you add; HashMap finds a value by its key; HashSet keeps one of each. Flow: a Map of String to Integer called counts, lower the word, getOrDefault(word, 0), plus 1 and put it back, cookie=1 and jelly=3. Remember: collections hold objects, List of Integer not List of int; remove(1) on a list of numbers removes position 1; sort a copy, never the list you were given; a missing key gives null from get." ai="true"}
 One page of notes for this chapter.
 :::
 
