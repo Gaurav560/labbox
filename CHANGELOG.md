@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: JavaScript chapter 5 rewritten (easy, a little detailed, checked)
+
+- Chapter 5, "Loops": every output re-run on a lab machine. The first step used a list, `seconds[i]` and `.length`
+  (chapter 8) without a word, and showed the "Up next" lines from a loop it had not shown yet; both now explained.
+  Why `let i` and not `const i` explained. The deep dive said chapter 13 uses `continue`; it is chapter 16.
+- Slips added and tried: `i < n` (`sumTo(5)` gives 10), resetting the total inside the loop (5), creating it inside
+  the loop (`ReferenceError: total is not defined`, with why), and no `toLowerCase()` (`"AEIOU"` gives 0 while
+  `"Hello World"` still looks right). The `<=` quick check now shows the real `undefined`. Gauss's 5050 told, hedged
+  as a story. New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 4 rewritten (easy, a little detailed, checked)
 
 - Chapter 4, "Decisions": every output re-run on a lab machine. `truthy.js` used a list, a `for...of` loop and
