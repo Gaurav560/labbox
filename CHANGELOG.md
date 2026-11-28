@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 17 rewritten (easy, a little detailed, checked)
+
+- Chapter 17, "Testing": Apollo 11 told exactly (the 1202 and 1201 alarms, the software dropping less important
+  jobs and keeping the landing running) and the photo lead links the listings to today's habit; `python3 -m
+  pytest` explained; an empty test file's `no tests ran` named.
+- Checked on a lab machine (pytest 8.3.3): both passing tests, the planted `455` failure block line by line, the
+  starter's empty test files, the `km_to_miles` answers. Slips added and tried: tests on small amounts only
+  (they catch the one-decimal bug, `₹5.0`, but not the missing comma), names not starting with `test_`, and
+  boundary tests at 120 and 900 only (the broken versions differ only at 500 and 501). New sketchnote page.
+
 ## 28 November: Python chapter 16 rewritten (easy, a little detailed, checked)
 
 - Chapter 16, "Modules, packages and pip": the rounding note for `to_paise` pointed at the wrong case (`0.1 + 0.2`
