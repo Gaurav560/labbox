@@ -8,7 +8,7 @@ labelled with where it goes, so any crane and any ship can handle any cargo. Pac
 is the box they travel in.
 
 :::photo{src="/lesson-images/java/container-ship.webp" alt="A large blue container ship loaded with stacked shipping containers, beside cranes at a port" credit="Petar Milošević" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:MAERSK_HANOI_Container_Ship_(Port_Koper_SIKOP,_2023).jpg"}
-A container ship at the port of Koper: standard boxes, labelled, ready for any crane.
+A container ship at the port of Koper. Every box has the same shape and a label saying where it goes, so any crane can move any box: the idea behind packages (the label) and jars (the box).
 :::
 
 The answer has three parts, and every professional Java project uses all three:
@@ -69,13 +69,19 @@ cd /workspace/16-packages-and-maven && mvn -o -q package
 [ERROR] /workspace/16-packages-and-maven/src/main/java/shelf/App.java:[8,9] cannot find symbol
   symbol:   class Catalog
   location: class shelf.App
+[ERROR] /workspace/16-packages-and-maven/src/main/java/shelf/App.java:[8,31] cannot find symbol
+  symbol:   class Catalog
+  location: class shelf.App
 ```
+
+(Line 8 has `Catalog` twice, `Catalog catalog = new Catalog();`, so it is reported at columns 9 and 31. More
+lines follow, ending with Maven's advice on how to see more detail.)
 
 Read it the way chapter 1 taught: file `App.java`, line 4, column 21, `package shelf.catalog does not exist`. `App`
 imports `shelf.catalog.Catalog`, but `Catalog.java` sits loose in `src/main/java/` with no package at all.
 
-`-o` means **offline**: LabBox machines have no internet, and everything Maven needs is already stored on this
-machine. `-q` (quiet) shows only problems.
+`-o` means **offline**: do not go to the internet. Everything this project needs is already stored on this lab
+machine, so the build is quick and works even without a connection. `-q` (quiet) shows only problems.
 :::
 
 :::step{type=example title="Worked example: moving a class into a package"}
@@ -113,11 +119,15 @@ Then build again:
 cd /workspace/16-packages-and-maven && mvn -o -q package && ls target
 ```
 
-No `ERROR` lines, and `target` now holds `shelf.jar` and a `classes` folder. Then press **Check**.
+No `ERROR` lines, and `target` now holds `shelf.jar` and a `classes` folder (plus a few folders Maven uses for
+its own bookkeeping). Then press **Check**.
+
+The usual slips: moving the file but forgetting the `package` line (Maven still reports
+`package shelf.catalog does not exist`), or the line without the move. Both halves are needed.
 :::
 
 :::step{type=concept title="Maven: one command, a standard layout"}
-Before Maven (2004), every Java project had its own home-made build script, and every new developer spent their
+Before Maven (its 1.0 came out in 2004), every Java project had its own home-made build script, and every new developer spent their
 first week learning it. Maven's idea was **convention**: put your files where everyone puts them, and one command
 builds anything.
 
@@ -130,7 +140,7 @@ builds anything.
 
 `pom.xml` stands for Project Object Model. Its `<dependencies>` section is Maven's superpower: write a library's
 name and version, and Maven downloads it, and everything it needs, from **Maven Central**, a public store of
-millions of Java libraries. Spring Boot projects are Maven projects exactly like this one.
+hundreds of thousands of Java libraries, in millions of versions. Spring Boot projects are Maven projects exactly like this one.
 
 `mvn package` runs a fixed series of **phases** in order: compile the code, run the tests, then package the result
 into a jar. (The name Maven is Yiddish for "one who knows".)
@@ -206,7 +216,9 @@ prints
 Shelf 1.0: 2 books
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: `App` or `App.java` in `<mainClass>`. With `App`, `java -jar` says
+`Error: Could not find or load main class App` (we tried it). Java needs the full name, package
+and all, with no `.java`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -267,7 +279,7 @@ You can now:
 - Look inside a jar with `jar tf`, and run classes by their full name.
 - Make a jar runnable with `java -jar` by naming its main class.
 
-:::photo{src="/lesson-images/java/java-16-notes.webp" alt="Handwritten notes about packages and Maven: package shelf.catalog lives in shelf/catalog, import by full name, mvn -o -q package, src/main/java, target can be deleted, mainClass for java -jar" ai="true"}
+:::photo{src="/lesson-images/java/java-16-sketch.webp" alt="Sketchnote: Packages and Maven. A package is a class's address; the folders must spell it, shelf.catalog lives in shelf/catalog. Flow: package shelf.catalog;, src/main/java/shelf/catalog, mvn -o -q package, target/shelf.jar, java -jar target/shelf.jar. Remember: import uses the full name, shelf.catalog.Catalog; pom.xml describes the project to Maven; target can be deleted, Maven makes it again; mainClass needs the full name, shelf.App." ai="true"}
 One page of notes for this chapter.
 :::
 

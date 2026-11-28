@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Java chapter 16 rewritten (easy, a little detailed, checked)
+
+- Java chapter 16, "Packages, jars and Maven": "`-o` means offline: LabBox machines have no internet" was wrong (the
+  lab machine reached Maven Central, HTTP 200); `-o` is now explained as "do not go online; everything is already
+  stored here". The build error has three lines, not two (line 8 names `Catalog` twice, columns 9 and 31); "millions
+  of Java libraries" made "hundreds of thousands of libraries, in millions of versions"; Maven's date given as its
+  1.0 in 2004; the container photo's lead ties the label and the box to packages and jars.
+- Checked on a lab machine: the failing build, the fix (moved and given its `package` line), `target`'s contents,
+  `jar tf` line by line, `java -cp target/classes shelf.App`, the `no main manifest attribute` error, and the
+  runnable jar. Slips added and tried: half the package fix, `<mainClass>App</mainClass>` (`Could not find or load
+  main class App`). New sketchnote page.
+
 ## 28 November: Java chapter 15 rewritten (easy, a little detailed, checked)
 
 - Java chapter 15, "Files and a command-line program": the punched-card photo's "a few hundred thousand cards per
