@@ -351,11 +351,16 @@ const CHAPTERS = {
     fs.writeFileSync(blank, "date,category,amount\n\n2026-03-02,food,10\n2026-03-02,food,x\n");
     const empty = "empty.csv";
     fs.writeFileSync(empty, "date,category,amount\n");
+    // An empty amount is bad too, though Number("") is 0 (chapter 13's trap; the real file's line 16). Added 28 November.
+    const gap = "gap.csv";
+    fs.writeFileSync(gap, "date,category,amount\n2026-03-02,food,10\n2026-03-03,food,\n");
     if (cases("monthly_report", m, "monthlyReport", [
       [[five], { total: 18120, count: 2, average: 9060, perCategory: { food: 120, rent: 18000 }, badLines: [3, 4] }],
       [[blank], { total: 10, count: 1, average: 10, perCategory: { food: 10 }, badLines: [4] }],
       [[empty], { total: 0, count: 0, average: 0, perCategory: {}, badLines: [] }],
-    ], (a, got) => a[0] === blank && got && same(got.badLines, [3]) ? "Line numbers count the blank line too: use the line's place in the file (index + 1)." : a[0] === empty ? "No rows: the average is 0, not NaN." : "")) pass("monthly_report");
+      [[gap], { total: 10, count: 1, average: 10, perCategory: { food: 10 }, badLines: [3] }],
+    ], (a, got) => a[0] === blank && got && same(got.badLines, [3]) ? "Line numbers count the blank line too: use the line's place in the file (index + 1)." : a[0] === empty ? "No rows: the average is 0, not NaN." :
+      a[0] === gap ? "A row with an empty amount is a bad line too, even though Number(\"\") gives 0 (chapter 13)." : "")) pass("monthly_report");
   }],
 };
 

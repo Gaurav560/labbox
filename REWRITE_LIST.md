@@ -18,7 +18,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
 | 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
 | 8 | java-basics | Java from zero | 18 | done (18 of 18) | 28 Nov |
-| 9 | javascript-basics | JavaScript from zero | 18 | in progress (17 of 18) |  |
+| 9 | javascript-basics | JavaScript from zero | 18 | done (18 of 18) | 28 Nov |
 | 10 | go-basics | Go from zero | 18 | not started | |
 | 11 | rust-basics | Rust from zero | 28 | not started | |
 | 12 | redis-in-practice | Redis in practice | 17 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: JS ch 18 done: check now catches the empty-amount row (Number('') is 0); pipeline explained; 41 rows accounted for; slips tried; sketchnote. JAVASCRIPT LAB DONE (18 of 18).
 - 28 Nov: JS ch 17 done: real spec report shown (TAP when piped explained); slips tried (% precedence, assert.throws without arrow); sketchnote. Part 3 complete.
 - 28 Nov: JS ch 16 done: 'only in browsers' made exact; 9-of-8 lines explained; stderr tried; slips tried against the check; sketchnote.
 - 28 Nov: JS ch 15 done: timings measured (901 vs 300 ms); fetch_all check message fixed for raw promises; slips tried against the check; sketchnote (redrawn once).
