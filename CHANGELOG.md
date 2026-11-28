@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Python chapter 11 rewritten (easy, a little detailed, checked)
+
+- Chapter 11, "Sorting and comprehensions": the card sorter said plainly (it read one chosen column and dropped the
+  card in one of thirteen pockets), its photo lead ties the pockets to `key`, and data cards are told apart from
+  the loom's pattern cards.
+- Checked on a lab machine: `spends.py`'s six lines, every key, lambda, tuple-key and comprehension answer, and
+  the generator `sum` (1320). A finding now taught: `key=amount, reverse=True` gives the right order for `WEEK`
+  only by luck (a stable sort keeps books before lunch); on the check's second list it answers toast, bun. Also
+  tried and taught: reversing a `(amount, name)` key flips the names too. Slips for `large_expenses` (whole
+  dictionaries, `>=`). New sketchnote page.
+
 ## 28 November: Python chapter 10 rewritten (easy, a little detailed, checked)
 
 - Chapter 10, "Tuples and sets": the speed table re-measured with the question stated (the numbers 0 to 99,999,
