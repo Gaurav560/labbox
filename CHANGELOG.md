@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Python chapter 19 rewritten; the Python lab is done (19 of 19)
+
+- Chapter 19, "Capstone: the monthly report": the deep dive promised "Python in practice (the next course on
+  LabBox)", which does not exist; it now names real courses (Python collections, the Python AI courses, FastAPI).
+  The three inherited bugs are named after the task's examples; the 41 good rows of 44 are accounted for (lines
+  16, 24, 32, and line 32 is the no-category row learners met in chapters 14 and 18).
+- Checked on a lab machine: both `over_budget` failures (the `KeyError` at line 9, then `None`), the five-line
+  file's whole report, and the real month (`41 30086.0 733.8 [16, 24, 32]`). A sneaky slip found and taught:
+  `enumerate(reader, start=2)` gives `[15, 23, 31]`, because `DictReader` silently skips the blank line 9;
+  `reader.line_num` gives the real lines. New sketchnote page.
+- The whole lab: validate passes; test-lab green (every starter fails, every solution passes).
+
 ## 28 November: Python chapter 18 rewritten (easy, a little detailed, checked)
 
 - Chapter 18, "Running a program": argparse's third free gift shown (a wrong type, `--top two`, is refused with

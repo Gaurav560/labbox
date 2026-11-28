@@ -16,7 +16,7 @@ Status: **6 of 23 labs done** (145 of 319 chapters).
 | 4 | langgraph | LangGraph | 24 | done (24 of 24) | 26 Nov |
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
-| 7 | python-basics | Python from zero | 19 | in progress (18 of 19) |  |
+| 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
 | 8 | java-basics | Java from zero | 18 | not started | |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
 | 10 | go-basics | Go from zero | 18 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Python ch 19 done: a promised non-existent course replaced by real ones; the enumerate line-number slip found ([15, 23, 31]); sketchnote. PYTHON LAB DONE (19 of 19); validate passes; test-lab green.
 - 28 Nov: Python ch 18 done: argparse outputs and exit codes re-run; slips tried; sketchnote (redrawn once). Part 3 complete.
 - 28 Nov: Python ch 17 done: Apollo 11 alarms made exact; pytest output re-run; slips (which amounts catch which planted bug); sketchnote.
 - 28 Nov: Python ch 16 done: to_paise rounding pointed at the real trap (0.29); pip and venv tried on the machine; slips; sketchnote.
