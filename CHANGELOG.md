@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 10 rewritten (easy, a little detailed, checked)
+
+- Chapter 10, "Tuples and sets": the speed table re-measured with the question stated (the numbers 0 to 99,999,
+  `99_999 in ...` asked 1,000 times: 0.025 ms for the set, 827 ms for the list, over 30,000 times), with a note
+  that times vary while the gap stays; "a set may print in a different order each run" qualified to sets of
+  strings (three runs, three orders; small numbers kept theirs); `min([])`'s real message quoted.
+- Checked on a lab machine: `receipt_line.py`, `visits.py`, every type and set answer, `a, b = b, a`, and both
+  tasks. Slips added and tried: `min` before the empty check, a bare `None` (Python's unpack error quoted), the
+  pair reversed, a set or an unsorted list returned. New sketchnote page.
+
 ## 28 November: Python chapter 9 rewritten (easy, a little detailed, checked)
 
 - Chapter 9, "Dictionaries": "hashable" pointed to where it is explained; how a `for` loop walks a string said
