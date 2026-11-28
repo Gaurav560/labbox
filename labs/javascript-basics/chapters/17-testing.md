@@ -43,24 +43,32 @@ cd /workspace/17-testing && node --test
 ```
 
 ```text
-✔ a whole minute (0.511414ms)
-✔ skip moves to the next song (0.504916ms)
-✖ after the last song, back to the first (0.540481ms)
+✔ a whole minute (0.505114ms)
+✔ skip moves to the next song (0.489455ms)
+✖ after the last song, back to the first (0.511973ms)
 ℹ tests 3
+ℹ suites 0
 ℹ pass 2
 ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 165.138921
 
 ✖ failing tests:
 
 test at skip.test.js:10:1
-✖ after the last song, back to the first (0.540481ms)
+✖ after the last song, back to the first (0.511973ms)
   AssertionError [ERR_ASSERTION]: the playlist should wrap around
 
   3 !== 0
+
+      at TestContext.<anonymous> (/workspace/17-testing/skip.test.js:11:10)
 ```
 
-(Your timings will differ, and Node prints a few more lines.) `node --test` finds every file ending in `.test.js` and
-runs it. A failing test is called **red**. Read the report like a sentence: the test "after the last song, back to the
+Your timings will differ. Below this, Node prints six more `at` lines from its own test runner and a short block that
+repeats `actual: 3` and `expected: 0`; we cut them, as in chapter 1. `node --test` finds every file ending in
+`.test.js` and runs it: here, `duration.test.js` (the "whole minute" test) and `skip.test.js`. A failing test is called **red**. Read the report like a sentence: the test "after the last song, back to the
 first", in `skip.test.js` at line 10, failed; its message says why; it got `3` where it expected `0`.
 :::
 
@@ -73,6 +81,10 @@ cd /workspace/17-testing && node --test
 ```
 
 When every line starts with `✔`, the run is **green**. Then press **Check**.
+
+The usual slip: `return index + 1 % count;` without brackets. `%` is done before `+`, like `*`, so that is
+`index + (1 % count)`, which is `index + 1` again: `nextIndex(2, 3)` still gives `3` (we tried it), and the test stays
+red. The brackets decide what the remainder is taken of.
 :::
 
 :::step{type=concept title="Inside a test"}
@@ -163,7 +175,14 @@ would make at least one test fail. Work out each expected answer from the rules 
 cd /workspace/17-testing && node --test
 ```
 
-All green on the real code? Then press **Check**, and LabBox will try your tests against the broken copies.
+All green on the real code? Then press **Check**, and LabBox will try your tests against the broken copies. If a
+broken copy slips through, the check describes what it got wrong, so you know which rule needs a test.
+
+The usual slip, tried on a lab machine: `assert.throws(formatDuration(-1), RangeError)` without the arrow. Then
+`formatDuration(-1)` runs **before** `assert.throws` is even called, throws on the spot, and the test fails on the
+correct code: `✖ negative throws` with `seconds cannot be negative: -1`. The check then says your tests fail on the
+correct `formatDuration`. Write `assert.throws(() => formatDuration(-1), RangeError)`, so `assert.throws` makes the
+call and catches it.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -205,6 +224,10 @@ Tests only prove what they check. That is why good tests target the edges, and w
 
 **Watch mode.** `node --test --watch` reruns the tests every time you save a file: red and green as you type.
 
+**TAP.** Send the output into another program (`node --test | head`) and Node switches to an older, plainer format
+called TAP, with `ok 1 - ...` and `not ok 3 - ...` lines, made for programs to read. `--test-reporter=spec` keeps the
+friendly one (we saw both on the lab machine).
+
 **Coverage.** `node --test --experimental-test-coverage` shows which lines your tests ran. A line no test runs is a
 line nobody has checked.
 
@@ -220,7 +243,7 @@ You can now:
 - Choose inputs at the edges of each rule, one rule per test.
 - Explain why passing tests are not enough, and how mutation testing checks the tests themselves.
 
-:::photo{src="/lesson-images/javascript/js-17-notes.webp" alt="Handwritten notes about testing with node:test: node --test finds .test.js files, test with a name, assert.equal actual then expected, assert.throws, red then green, test the edges, break the code to test the tests" ai="true"}
+:::photo{src="/lesson-images/javascript/js-17-sketch.webp" alt="Sketchnote: Testing with node:test. A test calls your code with known inputs and fails the moment an answer changes; tests only prove what they check. Flow: write a test, run node --test, red: read the report, fix the code, green: all pass. Remember: assert.equal takes actual first, then expected; assert.throws needs an arrow around the call, with RangeError as the kind; test the edges, one rule per test; break the code on purpose, a good test goes red." ai="true"}
 One page of notes for this chapter.
 :::
 
