@@ -1,5 +1,18 @@
 # Changelog
 
+## 28 November: JavaScript chapter 3 rewritten (easy, a little detailed, checked)
+
+- Chapter 3, "Values and types": every output re-run on a lab machine. The Patriot story made exact (25 February
+  1991, Dhahran; a tenth stored in 24 binary digits; 0.34 s after about 100 hours; the Scud hit an army barracks, 28
+  soldiers died); the caption no longer calls it a "decimal rounding error", and the lesson says the Patriot's numbers
+  were not JavaScript's kind, only the same root. "Your laptop's chip does it" replaced by the real reason (IEEE 754,
+  the same in Python and Java). Binary explained at first use.
+- "Fixing typeof null would break millions of websites" replaced by the fact (a proposal to fix it was turned down).
+  The jars picture's caption now says JavaScript calls both 17 and 12.50 `number`. New tried facts: `Number("abc")` is
+  `NaN` but `Number("")` is `0`; `9007199254740993` prints `9007199254740992`.
+- Slips added and tried: `Math.round` without the tenths (33), `toFixed(1)` giving text, no zero guard (Infinity), and
+  `"₹" + paise / 100` (`"₹12.5"`). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 2 rewritten (easy, a little detailed, checked)
 
 - Chapter 2, "Functions": every output re-run on a lab machine. The "square tiles" picture on the step about

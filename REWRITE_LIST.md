@@ -18,7 +18,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
 | 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
 | 8 | java-basics | Java from zero | 18 | done (18 of 18) | 28 Nov |
-| 9 | javascript-basics | JavaScript from zero | 18 | in progress (2 of 18) |  |
+| 9 | javascript-basics | JavaScript from zero | 18 | in progress (3 of 18) |  |
 | 10 | go-basics | Go from zero | 18 | not started | |
 | 11 | rust-basics | Rust from zero | 28 | not started | |
 | 12 | redis-in-practice | Redis in practice | 17 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: JS ch 3 done: Patriot made exact; IEEE 754 named; Number('') is 0 and the BigInt edge tried; slips tried; sketchnote.
 - 28 Nov: JS ch 2 done: unrelated square-tiles picture replaced by a real call table; hello.js's last lines explained; slips tried (902); sketchnote.
 - 28 Nov: JS ch 1 done: line number fixed (3 * 4 is line 4); cut outputs explained; Gmail 2004 corrected; slips tried; sketchnote (new rules).
 - 28 Nov: Java ch 18 done: 'inherited equals' wording fixed; the Long Room checked against its photo; slips; sketchnote. JAVA LAB DONE (18 of 18); validate passes; test-lab green.
