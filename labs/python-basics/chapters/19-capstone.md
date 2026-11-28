@@ -52,7 +52,9 @@ Fix `over_budget(totals, budgets)` in `budget.py`. There are **three** bugs. Whe
 - Spending **exactly** the budget is not over: `over_budget({"food": 400}, {"food": 400})` gives `[]`.
 - The result is always a sorted list.
 
-Then press **Check**. If it fails, the message names the bug that is still there.
+So the three bugs are: a crash on a category with no spending, the wrong comparison at the boundary, and the
+wrong value returned. Fix all three; after each fix, run both commands above again. Then press **Check**. If it
+fails, the message names the bug that is still there.
 :::
 
 :::step{type=concept title="The contract for monthly_report"}
@@ -126,8 +128,16 @@ month:
 cd /workspace/19-capstone && python3 -c "from report import monthly_report; r = monthly_report('expenses.csv'); print(r['count'], r['total'], r['average'], r['bad_lines'])"
 ```
 
-For `expenses.csv` it should print `41 30086.0 733.8 [16, 24, 32]`. The check also tries a file with a blank line
-in the middle (line numbers must still match the file) and a file with only the header.
+For `expenses.csv` it should print `41 30086.0 733.8 [16, 24, 32]`: 41 good rows out of 44, because line 16 has
+no amount, line 24 says `abc`, and line 32 has no category (the row that showed up as `''` in chapters 14 and 18;
+the contract now calls it bad). The check also tries a file with a blank line in the middle (line numbers must
+still match the file) and a file with only the header.
+
+The usual slip, and it is a sneaky one: counting lines yourself with `enumerate(reader, start=2)`. It looks right,
+but `expenses.csv` has a blank line (line 9), which `DictReader` skips without telling you, so every count after it
+is one too small. We tried it: `[15, 23, 31]` instead of `[16, 24, 32]`. `reader.line_num` counts the lines the
+file really has. Other slips: forgetting `.strip()` on the category, so a category of only spaces counts as good;
+or calling `max` on an empty list for a header-only file.
 
 Then press **Check**. When both tasks pass, you have finished Python from zero.
 :::
@@ -175,11 +185,13 @@ sorted list.
 You can now write real Python programs: read data, clean it, analyse it, test it and run it as a tool. Here is
 where people go next:
 
-- **Python in practice** (the next course on LabBox) takes Pocket's skills to bigger, real-world programs.
+- **More Python on LabBox:** the short *Python collections* course goes deeper into lists, dictionaries and
+  sets, and the AI courses (*RAG and vector databases*, *LangChain*, *LangGraph*) are written in Python.
 - **Data:** `pandas` turns this whole chapter into a few lines (`pd.read_csv("expenses.csv").groupby("category")`)
   and `matplotlib` draws charts of it. Everything you learned about lists, dictionaries and files is what those
   libraries are built on.
-- **Web:** the FastAPI course on LabBox turns functions like yours into a web API other programs can call.
+- **Web:** the short *FastAPI: your first API* course on LabBox turns functions like yours into a web API other
+  programs can call.
 - **Automation:** small scripts that rename files, fill spreadsheets or check websites: the everyday superpower
   that makes Python so loved.
 
@@ -195,7 +207,7 @@ You have finished **Python from zero**. You can now:
 - Handle real-world mess: exceptions, files, CSV data, and bad rows reported instead of crashing.
 - Organise code into functions, classes and modules; prove it works with tests; and ship it as a command-line tool.
 
-:::photo{src="/lesson-images/python/py-19-notes.webp" alt="Handwritten notes: Pocket is done! read, clean, count, report; test the edges; read errors bottom up; keep functions small" ai="true"}
+:::photo{src="/lesson-images/python/py-19-sketch.webp" alt="Sketchnote: The monthly report. Read the file, skip the bad rows and remember their line numbers, then sum, count and group what is left. Flow: csv.DictReader, reader.line_num, bad row note the line, good row keep it, total, biggest and per category. Remember: read code you did not write as carefully as your own; fix every bug, not just the first one; report bad data, never drop it silently; make it work, check it, then make it better." ai="true"}
 The last page of your notebook.
 :::
 
