@@ -262,7 +262,8 @@ const CHAPTERS = {
       };
       const started = Date.now();
       const got = await m.fetchAll(["cookie", "bun", "samosa", "poha"], fetchPrice);
-      if (!same(got, [30, 15, 30, 20])) fail("fetch_all", "The prices must come back in the order of the items. Promise.all keeps that order for you.", show([30, 15, 30, 20]), show(got));
+      if (Array.isArray(got) && got.some((p) => p instanceof Promise)) fail("fetch_all", "fetchAll gave back an array of promises (receipts), not prices. Wrap the array in Promise.all and await it.", show([30, 15, 30, 20]), "[Promise, Promise, Promise, Promise]");
+      else if (!same(got, [30, 15, 30, 20])) fail("fetch_all", "The prices must come back in the order of the items. Promise.all keeps that order for you.", show([30, 15, 30, 20]), show(got));
       else if (most < 4) fail("fetch_all", `The fetches ran one after another (${Date.now() - started} ms). Start them all, then await them together.`, "4 at once", `${most} at once`);
       else pass("fetch_all");
     } catch (e) {

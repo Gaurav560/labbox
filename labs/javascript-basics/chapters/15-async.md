@@ -8,7 +8,9 @@ Promise.resolve().then(() => console.log("3. promise"));
 console.log("4. end");
 ```
 
-A timer of **zero** milliseconds should run straight away, surely? Run it in a minute and see. The real order tells
+`setTimeout(f, ms)` asks JavaScript to run the function `f` after `ms` **milliseconds** (thousandths of a second).
+`Promise.resolve().then(f)` asks it to run `f` once a promise, an already-finished one here, is ready; promises get
+their own steps below. A timer of **zero** milliseconds should run straight away, surely? Run it in a minute and see. The real order tells
 you exactly how JavaScript works underneath: one worker, a queue of jobs, and a strict rule about who goes next.
 
 Mixtape needs this. Downloading a song takes time, and a music app that froze every time it waited for the network
@@ -49,7 +51,8 @@ The call stack runs your code to the end; then all promise jobs run; then one ti
 So "later" in JavaScript means: "when the current code has finished, and it is my turn in the queue". A 0 ms timer
 means "as soon as possible after that", not "now". And promise jobs always jump ahead of timers. This whole system is
 called the **event loop**, and it is why one thread can serve thousands of downloads at once: while it waits for the
-network, it is free to do other work.
+network, it is free to do other work. (Node itself keeps a few helper threads for slow jobs such as reading files,
+but your JavaScript runs on the one.)
 :::
 
 :::step{type=concept title="A promise is a receipt"}
@@ -125,7 +128,8 @@ true true
 ```
 
 `oneByOne` awaits each download before starting the next: at least 900 ms. `allAtOnce` starts all three first, then
-waits once with `Promise.all`: under 450 ms, about as long as the slowest one. And `Promise.all` gives back the
+waits once with `Promise.all`: under 450 ms, about as long as the slowest one. We timed both on the lab machine:
+901 ms and 300 ms. The file prints `true true` rather than the times because times wobble a little from run to run. And `Promise.all` gives back the
 values **in the order you asked**, whichever finished first.
 :::
 
@@ -160,7 +164,16 @@ every fetch at once, and still give back the prices **in the items' order**.
 cd /workspace/15-async && node prices.js
 ```
 
-Then press **Check**: it measures how many fetches run at the same time.
+It prints `[ 30, 15, 20 ]` (each price is the item name's length times 5, a stand-in for a real price list), slowly
+before your change and quickly after. Then press **Check**: it measures how many fetches run at the same time.
+
+The usual slips, each one tried on a lab machine:
+
+- `return items.map(fetchPrice);` with no `Promise.all`: you give back an array of receipts,
+  `[ Promise { <pending> }, ... ]`, not prices. The check says exactly that.
+- `items.map(item => await fetchPrice(item))`: `await` inside an arrow that is not `async`. Node refuses the whole
+  file with a confusing message, `SyntaxError: missing ) after argument list`, pointing at the `await`. Here you do
+  not need `await` inside at all: let `map` collect the promises, and await `Promise.all` once.
 :::
 
 :::step{type=concept title="Retrying a flaky task"}
@@ -208,6 +221,13 @@ cd /workspace/15-async && node prices.js
 ```
 
 Then press **Check**.
+
+The usual slips, each one tried with the real check:
+
+- Catching every failure and never throwing: when all tries fail, the loop ends and the function gives back
+  `undefined`. The check says `when every try fails, retry should throw`. Keep the last error in a variable, and
+  `throw` it after the loop.
+- `i <= times`: one try too many, and the check says `retry(task, 2) tried 3 times; it should try exactly 2`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -253,7 +273,7 @@ first success.
 
 **Top-level await.** In ES modules (`.mjs`), `await` works at the top of a file, outside any function.
 
-**Callbacks.** Before promises (2015), async code passed functions to call later: `readFile(path, (error, text) => {
+**Callbacks.** Before promises came into the language (2015), async code passed functions to call later: `readFile(path, (error, text) => {
 ... })`. Nest a few, and you get the famous "callback pyramid". Promises and `await` were invented to flatten it.
 :::
 
@@ -265,7 +285,7 @@ You can now:
 - Run many tasks at once with `Promise.all`, getting results in your order.
 - Retry a flaky task with `await` inside `try`/`catch` in a loop.
 
-:::photo{src="/lesson-images/javascript/js-15-notes.webp" alt="Handwritten notes about async JavaScript: one worker and a queue, your code first then promises then timers, a promise is a receipt, await gives the value, forgot await gives Promise pending, Promise.all keeps the order" ai="true"}
+:::photo{src="/lesson-images/javascript/js-15-sketch.webp" alt="Sketchnote: Async, promises and await. JavaScript runs on one worker; it finishes the current code, then runs promise jobs, then the next timer: the event loop. Flow: start the work, get a promise at once, do other things, await gives the value, or throws its error. Remember: await only works inside an async function; forgot await, you hold a pending Promise; start them all, then await Promise.all, results in your order; a 0 ms timer still waits for the current code." ai="true"}
 One page of notes for this chapter.
 :::
 
