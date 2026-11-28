@@ -6,7 +6,7 @@ real code and data, still pictures with real numbers, new notes pages. The rules
 After each lab: stop, tell the owner, do the owner's small tasks, then the next lab. What was wrong and fixed in each
 chapter is in `CHANGELOG.md`.
 
-Status: **8 of 23 labs done** (182 of 319 chapters).
+Status: **10 of 23 labs done** (221 of 339 chapters; FastAPI grew from 1 chapter to 21).
 
 | # | Lab | Title | Chapters | Status | Done on |
 |---|---|---|---|---|---|
@@ -30,7 +30,7 @@ Status: **8 of 23 labs done** (182 of 319 chapters).
 | 18 | javascript-inside-out | JavaScript inside out (short) | 2 | not started | |
 | 19 | postgres-transactions-and-locks | Postgres: transactions and locks (short) | 2 | not started | |
 | 20 | rate-limiter | System design: a rate limiter (short) | 2 | not started | |
-| 21 | fastapi-first-api | FastAPI (full course: Lostdesk) | 21 | in progress (15 of 21) | |
+| 21 | fastapi-first-api | FastAPI (full course: Lostdesk) | 21 | done (21 of 21) | 28 Nov |
 | 22 | express-api | Express: an order tracking API (short) | 1 | not started | |
 | 23 | postgres-indexing-incident | Postgres: the slow checkout (short) | 1 | not started | |
 
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: FastAPI Part 4 done (ch 16 to 21): security, roles, async and background, middleware and settings, SSE, capstone. FASTAPI COURSE DONE (21 chapters, 42 tasks); test-lab green; 296 fast backend tests.
 - 28 Nov: FastAPI Part 3 done (ch 11 to 15): dependencies, SQLModel, CRUD, routers, testing with planted bugs; index measured (6.11 vs 0.187 ms); test-lab green.
 - 28 Nov: FastAPI Part 2 done (ch 6 to 10): models, response models, 409 handler, PATCH/DELETE, headers and uploads; slips captured; test-lab green.
 - 28 Nov: FastAPI Part 1 done (ch 1 to 5, 10 tasks): new course Lostdesk on FastAPI 0.165.0, image v2; /docs needs --root-path in the Preview (found, taught); test-lab green.

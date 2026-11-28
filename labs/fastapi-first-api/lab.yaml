@@ -10,7 +10,7 @@ language: python
 track: frameworks
 tags: [python, fastapi]
 level: beginner
-estimated_minutes: 225
+estimated_minutes: 1050
 story:
   company: Lostdesk
   character: { name: Lostdesk, role: "The lost-property API of a city metro" }
@@ -443,3 +443,156 @@ chapters:
         examples:
           - call: "python -m pytest -q"
             gives: "4 passed"
+  - id: security
+    title: Passwords and tokens
+    file: chapters/16-security.md
+    minutes: 55
+    folder: 16-security
+    part: Production
+    tasks:
+      - id: hash_passwords
+        title: "hash passwords, check them, sign staff in"
+        hints:
+          - "Right now hash_password gives back the password itself, so STAFF stores every password as plain text."
+          - "password_hash, made with PasswordHash.recommended(), has hash and verify methods."
+          - "authenticate looks the user up, verifies the password against hashed_password, and checks DUMMY_HASH for unknown names."
+        examples:
+          - call: "hash_password(...)"
+            gives: "$argon2id$v=19$..."
+      - id: login_token
+        title: "POST /token: a signed token"
+        hints:
+          - "There is no /token route yet. The login form arrives as form fields named username and password."
+          - "A parameter typed Annotated[OAuth2PasswordRequestForm, Depends()] reads that form."
+          - "On success give back Token(access_token=create_access_token(...), token_type=\"bearer\"); otherwise 401 with WWW-Authenticate: Bearer."
+        examples:
+          - call: "POST /token username=meera password=..."
+            gives: '{"access_token": "eyJ...", "token_type": "bearer"}'
+          - call: "POST /token with a wrong password"
+            gives: "401"
+  - id: current-user
+    title: Protecting routes
+    file: chapters/17-current-user.md
+    minutes: 50
+    folder: 17-current-user
+    tasks:
+      - id: current_user
+        title: "get_current_user: check the token"
+        hints:
+          - "Today get_current_user gives back Meera whatever the token says."
+          - "jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]) checks the signature and the expiry, and gives back the claims."
+          - "It raises InvalidTokenError for any bad token: catch it and raise a 401 with WWW-Authenticate: Bearer. Then look up the sub."
+        examples:
+          - call: "GET /me with Arjun's token"
+            gives: '{"username": "arjun", ..., "role": "supervisor"}'
+          - call: "GET /me with an expired token"
+            gives: "401"
+      - id: supervisor_only
+        title: "403 for anyone but a supervisor"
+        hints:
+          - "A clerk can delete items today."
+          - "require_supervisor already receives the current user; check its role."
+          - "Raise HTTPException with status 403 for other roles, and add the dependency to the DELETE route's decorator."
+        examples:
+          - call: "DELETE /items/1 as Meera (clerk)"
+            gives: "403"
+          - call: "DELETE /items/1 as Arjun (supervisor)"
+            gives: "204"
+  - id: async-and-background
+    title: Async and background tasks
+    file: chapters/18-background.md
+    minutes: 50
+    folder: 18-background
+    tasks:
+      - id: notify_background
+        title: "send the text message after the answer"
+        hints:
+          - "POST /items/1/match/1 takes 1.5 seconds: the text message is sent before the answer."
+          - "Add a parameter of type BackgroundTasks to the route."
+          - "Call its add_task with send_text_message and the same two arguments, instead of calling send_text_message."
+        examples:
+          - call: "POST /items/1/match/1"
+            gives: '{"item_id": 1, "report_id": 1, "notice": "queued"}, at once'
+      - id: parallel_search
+        title: "two searches at the same time"
+        hints:
+          - "GET /search waits for one search, then the other: about 0.8 seconds."
+          - "asyncio.gather takes several awaitables and waits for all of them at once."
+          - "reports, logs = await asyncio.gather(..., ...) keeps the order you gave."
+        examples:
+          - call: "GET /search?q=laptop"
+            gives: "in about 0.4 s"
+  - id: middleware-and-settings
+    title: Middleware, CORS and settings
+    file: chapters/19-settings.md
+    minutes: 50
+    folder: 19-settings
+    tasks:
+      - id: timing_header
+        title: "X-Process-Time on every response"
+        hints:
+          - "No response says how long it took. Something must wrap every request."
+          - "An async function decorated with the app's middleware decorator (for http) receives the request and call_next."
+          - "Note time.perf_counter() before and after await call_next(request), and set the header on the response."
+        examples:
+          - call: "GET /items"
+            gives: "X-Process-Time: 0.42 ms"
+      - id: settings_env
+        title: "settings from environment variables"
+        hints:
+          - "The three values are written into the code; changing one means changing the code."
+          - "A class that inherits from BaseSettings reads each field from an environment variable of the same name."
+          - "SettingsConfigDict(env_prefix=\"LOSTDESK_\") as model_config adds the prefix; then use settings.app_name and the rest."
+        examples:
+          - call: "LOSTDESK_MAX_PHOTO_MB=5, then GET /info"
+            gives: '{"app_name": "Lostdesk", "max_photo_mb": 5}'
+  - id: live-updates
+    title: Live updates with Server-Sent Events
+    file: chapters/20-live.md
+    minutes: 45
+    folder: 20-live
+    tasks:
+      - id: sse_feed
+        title: "GET /items/feed: a stream of found items"
+        hints:
+          - "There is no feed yet. A Server-Sent Events route gives EventSourceResponse as its response_class."
+          - "Make the function async def and yield instead of return: each yield is one event."
+          - "Yield a ServerSentEvent(data=item) for each item whose id is greater than since."
+        examples:
+          - call: "GET /items/feed?since=2"
+            gives: 'data: {"id": 3, ...}'
+      - id: sse_resume
+        title: "named events, with ids, and Last-Event-ID"
+        hints:
+          - "A browser that loses the stream reconnects and sends the last id it saw in the Last-Event-ID header."
+          - "ServerSentEvent takes event= and id= (the id as text)."
+          - "Read the header with a parameter last_event_id and Header(); use it when since was not given."
+        examples:
+          - call: "GET /items/feed with Last-Event-ID: 2"
+            gives: "event: found, id: 3"
+  - id: capstone
+    title: "Capstone: claims, and going live"
+    file: chapters/21-capstone.md
+    minutes: 60
+    folder: 21-capstone
+    tasks:
+      - id: claim_flow
+        title: "POST /claims: an item meets its report"
+        hints:
+          - "There is no /claims POST route. Read the item and the report with session.get first."
+          - "404 when either is missing; 409 when the item is not held or the report is not open."
+          - "Change both statuses, make a Claim, add all three to the session and commit once; refresh the claim."
+        examples:
+          - call: 'POST /claims {"item_id": 1, "report_id": 1}'
+            gives: '201 {"id": 1, "item_id": 1, "report_id": 1, "collected_on": null}'
+          - call: "the same claim again"
+            gives: "409"
+      - id: collect_item
+        title: "POST /claims/{claim_id}/collect: the owner collects"
+        hints:
+          - "The owner came to the desk. Find the claim, or 404."
+          - "A claim with collected_on already set gives 409."
+          - "Set the item to returned and collected_on to date.today(), save both, give back the claim."
+        examples:
+          - call: "POST /claims/1/collect"
+            gives: '{"id": 1, ..., "collected_on": "2026-11-28"}'

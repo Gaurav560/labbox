@@ -63,8 +63,20 @@ nodes:
     requires: [spring-transactions, spring-testing, spring-ops, spring-services]
     chapters: [spring-boot-first-api/30-capstone]
   - id: fastapi-first
-    title: FastAPI, a first API
-    chapters: [fastapi-first-api/01-menu-api]
+    title: "FastAPI: first steps"
+    chapters: [fastapi-first-api/01-menu-api, fastapi-first-api/http-basics, fastapi-first-api/path-and-query, fastapi-first-api/validation, fastapi-first-api/request-body]
+  - id: fastapi-models
+    title: "FastAPI: models and responses"
+    requires: [fastapi-first]
+    chapters: [fastapi-first-api/fields-and-nested, fastapi-first-api/response-models, fastapi-first-api/status-and-errors, fastapi-first-api/updates, fastapi-first-api/forms-and-files]
+  - id: fastapi-data
+    title: "FastAPI: structure and data"
+    requires: [fastapi-models]
+    chapters: [fastapi-first-api/dependencies, fastapi-first-api/databases, fastapi-first-api/crud, fastapi-first-api/bigger-apps, fastapi-first-api/testing]
+  - id: fastapi-production
+    title: "FastAPI: production"
+    requires: [fastapi-data]
+    chapters: [fastapi-first-api/security, fastapi-first-api/current-user, fastapi-first-api/async-and-background, fastapi-first-api/middleware-and-settings, fastapi-first-api/live-updates, fastapi-first-api/capstone]
   - id: express-first
     title: Express, an orders API
     chapters: [express-api/01-orders-api]
