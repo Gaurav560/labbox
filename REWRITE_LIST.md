@@ -6,7 +6,7 @@ real code and data, still pictures with real numbers, new notes pages. The rules
 After each lab: stop, tell the owner, do the owner's small tasks, then the next lab. What was wrong and fixed in each
 chapter is in `CHANGELOG.md`.
 
-Status: **7 of 23 labs done** (164 of 319 chapters).
+Status: **8 of 23 labs done** (182 of 319 chapters).
 
 | # | Lab | Title | Chapters | Status | Done on |
 |---|---|---|---|---|---|

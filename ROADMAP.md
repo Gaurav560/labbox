@@ -71,8 +71,8 @@ tasks a chapter. Photos count real photos only (not the notes pages).
 | forward-deployed-engineer | Forward Deployed Engineer | ai | 22 | 44 | 17 | Claimdesk, a motor insurer's claims assistant (Python, FastAPI, MCP; real model outputs through the gateway) | 20 | full (27 Nov, new course) |
 | rust-basics | Rust from zero | languages | 28 | 56 | 21.7 | Windwatch, a wind farm's turbine monitor (Rust 1.100) | 21 | full (24 Nov) |
 | spring-boot-first-api | Spring Boot | frameworks | 31 | 61 | 20 | the Shop API | 12 | full, the template (21 Nov); rewritten and fact-checked 28 Nov |
-| python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov) |
-| java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov) |
+| python-basics | Python from zero | languages | 19 | 39 | 13.5 | Pocket, a money tracker | 14 | full (22 Nov); rewritten and fact-checked 28 Nov |
+| java-basics | Java from zero | languages | 18 | 36 | 13.5 | Shelf, a library app | 12 | full (22 Nov); rewritten and fact-checked 28 Nov |
 | javascript-basics | JavaScript from zero | languages | 18 | 36 | 13 | Mixtape, a playlist app | 10 | full (22 Nov) |
 | go-basics | Go from zero | languages | 18 | 36 | 13.5 | Parcel, a parcel tracker | 11 | full (22 Nov) |
 | redis-in-practice | Redis in practice | databases | 17 | 39 | 13 | Basket, 10-minute grocery delivery in Pune | 15 | full (22 Nov) |

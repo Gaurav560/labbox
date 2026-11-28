@@ -7,10 +7,16 @@ update it at the end of every session. Earlier, longer versions of it are in git
 
 ## Resume here
 
-- **Python from zero rewritten (28 November night, owner: "do a complete rewrite of Java and Python while i go to
-  sleep").** All 19 chapters, one commit each on both branches; lab valid, test-lab green. Same method as Spring
-  Boot (helpers now in `.authoring-scratch/py/`: `x.sh` runs a command on the lab machine, `finish.py` swaps the
-  sketchnote in, validates, logs and commits). Java from zero is next, the same night.
+- **Python from zero and Java from zero rewritten (28 November night, owner: "do a complete rewrite of Java and
+  Python while i go to sleep").** All 19 + 18 chapters, one commit each on both branches; both labs valid, test-lab
+  green; REWRITE_LIST 8 of 23. Every output re-run on a lab machine, slips tried with the real messages, a new tall
+  sketchnote per chapter (redrawn when a qualifier was lost). What was wrong and fixed is in CHANGELOG, chapter by
+  chapter; the bigger finds: Python ch 14 and 18 had a no-category row nobody explained; Java ch 8's "the code after @
+  changes every run" and ch 16's "LabBox machines have no internet" were false; Java ch 11's remove-in-loop does not
+  always throw. Helpers: `.authoring-scratch/py/x.sh` (run on the lab machine; `LAB=java-basics` for Java) and
+  `finish.py` (swap the sketchnote in, validate, log, commit both branches). Found, not changed: in Java ch 17's
+  folder `mvn -o package` fails (jar plugin 3.4.1 not stored offline); no task needs it. Next lab: the owner picks
+  (JavaScript is next in the list).
 - **Jarvis (28 November), steps 1 to 4 done, a redesign waiting for the owner.** Done and committed on both branches:
   step 1 realtime voice talk (OpenAI `gpt-realtime-2.1-mini`, WebRTC, budgets, Admin tab, Pro plan switch); step 2 offers
   when stuck; step 3 welcome on the dashboard and Pro memory notes (migration 0017); step 4 cheers, settings (tap, talk
