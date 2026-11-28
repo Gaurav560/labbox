@@ -354,7 +354,7 @@ You can now:
 - Take a value from the path with `{item_id}` and a type hint, and let FastAPI convert it or answer 422.
 - Answer "not found" properly with `HTTPException(status_code=404)`, and tell 200, 404, 422 and 500 apart.
 
-:::photo{src="/lesson-images/fastapi/fa-01-sketch.webp" alt="Sketchnote: Your first API. An API answers requests from programs; FastAPI turns a Python function into a route and its answer into JSON. Flow: a request arrives, FastAPI finds the route, checks the inputs, your function runs, a JSON response goes back. Remember: a decorator like app.get with a path attaches a function to a path; a type hint makes FastAPI convert the value or answer 422; raise HTTPException with 404 for not found; /docs is built from your code." ai="true"}
+:::photo{src="/lesson-images/fastapi/fa-01-sketch.webp" alt="Sketchnote: Your first API. An API answers requests from programs. FastAPI turns a Python function into a route and its answer into JSON. Flow: a request arrives, FastAPI finds the route, it checks the inputs, your function runs, a JSON response goes back. Remember: @app.get(/items) attaches a function to a path; A type hint makes FastAPI convert the value, or answer 422; raise HTTPException(status_code=404) for not found; /docs is built from your code." ai="true"}
 One page of notes for this chapter.
 :::
 

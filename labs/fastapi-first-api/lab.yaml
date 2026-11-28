@@ -183,3 +183,134 @@ chapters:
         examples:
           - call: 'POST /reports {"title": "grey laptop bag", ...}'
             gives: '{"id": 1, ..., "details": null}'
+  - id: fields-and-nested
+    title: Fields and nested models
+    file: chapters/06-models.md
+    minutes: 50
+    folder: 06-models
+    part: Models and responses
+    tasks:
+      - id: item_fields
+        title: "title rules, a date and a list of tags"
+        hints:
+          - "Today a title of one letter and an item with no date are both accepted. The rules go into the model."
+          - "Field(min_length=3, max_length=60) as the title's default sets its rules; a field typed date makes a real date required."
+          - "tags: list[str] with Field(default=[], max_length=5): an empty list when not sent, at most five."
+        examples:
+          - call: 'POST /items {"title": "ab", ...}'
+            gives: "422"
+          - call: 'POST /items {..., "found_on": "2026-11-27"}'
+            gives: '{"id": 2, ..., "found_on": "2026-11-27", "tags": []}'
+      - id: nested_location
+        title: "a Location model inside the item"
+        hints:
+          - "line and station belong together: write them as their own small model."
+          - "class Location(BaseModel) with line: Line and station with Field(min_length=2, max_length=40)."
+          - "In FoundItemIn, remove line and station and add one field, location, whose type is your new model. The JSON then nests."
+        examples:
+          - call: 'POST /items {"location": {"line": "blue", "station": "University"}, ...}'
+            gives: "200"
+          - call: 'POST /items {"line": "blue", "station": "University", ...}'
+            gives: "422"
+  - id: response-models
+    title: Response models
+    file: chapters/07-responses.md
+    minutes: 45
+    folder: 07-responses
+    tasks:
+      - id: public_report
+        title: "GET /reports/{report_id} without the contact"
+        hints:
+          - "Open /reports/1 in the Preview: the passenger's phone number is there for anyone to read."
+          - "ReportPublic, at the top of the file, has every field except contact."
+          - "Declare the function's return type as ReportPublic, and FastAPI keeps only those fields."
+        examples:
+          - call: "GET /reports/1"
+            gives: '{"id": 1, "title": "grey laptop bag", ..., "status": "open"}'
+            note: "no contact"
+      - id: report_list_public
+        title: "GET /reports: a list of public reports"
+        hints:
+          - "The list route shows every contact too."
+          - "A return type can be a list of models."
+          - "Declare the return type as list[ReportPublic]."
+        examples:
+          - call: "GET /reports"
+            gives: "[{...}, {...}]"
+            note: "no contacts"
+  - id: status-and-errors
+    title: Status codes and errors
+    file: chapters/08-errors.md
+    minutes: 50
+    folder: 08-errors
+    tasks:
+      - id: created_201
+        title: "201 Created for a new item"
+        hints:
+          - "POST /items works, but answers 200 OK, which does not say that something new now exists."
+          - "The decorator takes a status_code argument."
+          - "status.HTTP_201_CREATED is 201, with a name that says what it means."
+        examples:
+          - call: 'POST /items {"title": "red scarf", ...}'
+            gives: "201"
+      - id: claim_conflict
+        title: "409 when an item is already claimed"
+        hints:
+          - "Claim item 1 twice in /docs: both claims succeed, and the first owner loses it."
+          - "When item claimed_by is not None, raise AlreadyClaimed(item_id, item claimed_by)."
+          - "Then register a handler function for that exception with the app's exception_handler decorator; it returns a JSONResponse with status 409."
+        examples:
+          - call: "POST /items/1/claim, twice"
+            gives: '409 {"detail": "Item 1 is already claimed", "claimed_by_report": 12}'
+  - id: updates
+    title: "Updating: PUT, PATCH and DELETE"
+    file: chapters/09-updates.md
+    minutes: 45
+    folder: 09-updates
+    tasks:
+      - id: patch_item
+        title: "PATCH /items/{item_id}: change only what was sent"
+        hints:
+          - "PUT replaces the whole item. Moving an umbrella to another shelf should not need its title and line again."
+          - "ItemUpdate has every field optional. Take it as the body of a @app.patch route."
+          - "changes.model_dump(mode=\"json\", exclude_unset=True) holds only what was sent; update the stored dict with it."
+        examples:
+          - call: 'PATCH /items/2 {"shelf": "B-12"}'
+            gives: "item 2 with shelf B-12, everything else as before"
+      - id: delete_item
+        title: "DELETE /items/{item_id}: 204 No Content"
+        hints:
+          - "There is no DELETE route yet, so DELETE /items/1 gives 405."
+          - "Use find(item_id) for the 404, then remove the key from FOUND with del."
+          - "Give the decorator status_code 204 and answer with an empty Response(status_code=204)."
+        examples:
+          - call: "DELETE /items/1"
+            gives: "204"
+          - call: "GET /items/1 afterwards"
+            gives: "404"
+  - id: forms-and-files
+    title: Headers, forms and files
+    file: chapters/10-files.md
+    minutes: 50
+    folder: 10-files
+    tasks:
+      - id: desk_header
+        title: "X-Desk-Key: only staff log items"
+        hints:
+          - "POST /items accepts anyone today."
+          - "A parameter x_desk_key with Annotated[str | None, Header()] = None reads the X-Desk-Key header."
+          - "When it is not DESK_KEY, raise HTTPException with status 401."
+        examples:
+          - call: "POST /items without X-Desk-Key"
+            gives: "401"
+      - id: upload_photo
+        title: "POST /items/{item_id}/photo: a checked upload"
+        hints:
+          - "A parameter photo: UploadFile receives an uploaded file; it needs an async def route to await photo.read()."
+          - "photo.content_type says what kind of file it claims to be; PHOTO_TYPES maps the allowed ones to an extension."
+          - "len(data) is the size in bytes. Save with Path.write_bytes under photos/, named by the item id."
+        examples:
+          - call: "POST /items/1/photo (a small PNG)"
+            gives: '{"item_id": 1, "filename": "umbrella.png", "saved_as": "photos/1.png", "size": 1000}'
+          - call: "POST /items/1/photo (a text file)"
+            gives: "415"

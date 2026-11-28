@@ -1,5 +1,21 @@
 # Changelog
 
+## 28 November: FastAPI course, Part 2, "Models and responses" (chapters 6 to 10)
+
+- 6 Fields and nested models (Field rules, ISO 8601 dates, lists with a limit, a nested Location; a field_validator in
+  the deep dive), 7 Response models (the return type as a filter: a passenger's contact is stored but never shown;
+  `ResponseValidationError` captured), 8 Status codes and errors (201 Created; your own exception `AlreadyClaimed`
+  and a handler that answers 409), 9 PUT, PATCH and DELETE (`exclude_unset`, 204 No Content), 10 Headers, forms and
+  files (`X-Desk-Key`, web forms, a checked `UploadFile`; the folder ships a real 77-byte PNG to send with `curl -F`).
+- Every output captured in the course image, the slips included: a plain `model_dump()` wiping three fields, an
+  unhandled exception's `main.AlreadyClaimed: (1, 12)` and its 500, `list` vs one model as a return type (500), a
+  header parameter named `desk_key` reading the wrong header, `await` outside `async def`, a 204 route returning a
+  dictionary (FastAPI still sends an empty body).
+- Four photos (a semaphore signal, the Rokko Liner's instant frost glass, a Library of Congress card drawer, a Civil
+  War era stamped envelope), three playing diagrams (`fastapi-response-filter`, `fastapi-exception-handler`,
+  `fastapi-patch-merge`), five sketchnotes (one redrawn: "by default" was lost). Sketchnote alt texts for the whole
+  course are now generated from the sketch data, so they always match the page.
+
 ## 28 November: FastAPI becomes a full course; Part 1, "First steps" (chapters 1 to 5)
 
 - The one-chapter "FastAPI: your first API" (Ravi's Snack Corner) is being rebuilt as a full course, at the owner's

@@ -266,7 +266,7 @@ You can now:
 - Tell the status families apart: 2xx worked, 4xx the client's mistake, 5xx the server's.
 - Write routes whose answers are worked out from the data on every request, like `/health` and `/stations`.
 
-:::photo{src="/lesson-images/fastapi/fa-02-sketch.webp" alt="Sketchnote: How a request travels. HTTP is plain text: a request has a method, a path, headers and maybe a body; a response has a status code, headers and a body. Flow: method and path, request headers, the server runs the route, status line, headers and JSON body. Remember: GET reads, POST creates, PUT and PATCH change, DELETE removes; 2xx worked, 4xx the client's mistake, 5xx the server's; 405 means the path exists but not for that method; work answers out from the data, never write them down." ai="true"}
+:::photo{src="/lesson-images/fastapi/fa-02-sketch.webp" alt="Sketchnote: How a request travels. HTTP is plain text. A request has a method, a path, headers and maybe a body; a response has a status code, headers and a body. Flow: method and path, request headers, the server runs the route, status line, headers and JSON body. Remember: GET reads, POST creates, PUT and PATCH change, DELETE removes; 2xx worked, 4xx the client's mistake, 5xx the server's; 405: the path exists, but not for that method; Work answers out from the data; never write them down." ai="true"}
 One page of notes for this chapter.
 :::
 

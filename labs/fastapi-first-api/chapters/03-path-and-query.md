@@ -224,7 +224,7 @@ You can now:
 - Combine filters one after another, and apply a limit last.
 - Restrict a value to a fixed list with an Enum, use `.value` for its text, and get the 422 for free.
 
-:::photo{src="/lesson-images/fastapi/fa-03-sketch.webp" alt="Sketchnote: Path and query parameters. The path names a thing; the query string after the question mark narrows, sorts or pages a list. Flow: request URL, path parameters from the curly braces, query parameters from the other function arguments, FastAPI converts each type, your function filters the list. Remember: a default makes a parameter optional, no default makes it required; undeclared query parameters are ignored; an Enum type allows only its values and gives 422 for others; fixed paths go before paths with parameters." ai="true"}
+:::photo{src="/lesson-images/fastapi/fa-03-sketch.webp" alt="Sketchnote: Path and query parameters. The path names a thing. The query string, after the ?, narrows, sorts or pages a list of things. Flow: the URL, path values from  , other parameters from the query, FastAPI converts each type, your function filters. Remember: A default makes a parameter optional; no default, required; Query parameters you did not declare are ignored; An Enum type allows only its values; others get 422; Write fixed paths before paths with parameters." ai="true"}
 One page of notes for this chapter.
 :::
 

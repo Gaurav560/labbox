@@ -250,7 +250,7 @@ You can now:
 - Read the 422s for bodies: `missing`, `enum`, `string_type`, `json_invalid`, with `loc` starting at `"body"`.
 - Store what arrives with an id and `model_dump(mode="json")`, and give back what was stored.
 
-:::photo{src="/lesson-images/fastapi/fa-05-sketch.webp" alt="Sketchnote: Request bodies. Data to create something travels in the body of a POST request as JSON, and a Pydantic model describes and checks it. Flow: JSON body arrives, parsed into a dictionary, checked against the model, defaults fill the gaps, your function gets an object. Remember: a parameter whose type is a model comes from the body; fields without a default are required; model_dump turns the object back into a dictionary; the next id is one more than the biggest so far." ai="true"}
+:::photo{src="/lesson-images/fastapi/fa-05-sketch.webp" alt="Sketchnote: Request bodies. Data to create something travels in the body of a POST request as JSON. A Pydantic model describes it and checks it. Flow: JSON body arrives, parsed into a dictionary, checked against the model, defaults fill the gaps, your function gets an object. Remember: A parameter whose type is a model comes from the body; Fields without a default are required; model_dump() turns the object back into a dictionary; The next id is one more than the biggest so far." ai="true"}
 One page of notes for this chapter.
 :::
 
