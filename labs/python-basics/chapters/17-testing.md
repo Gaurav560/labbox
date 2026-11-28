@@ -5,12 +5,13 @@ their own code, every day, for one reason: code changes. Someone fixes a bug in 
 another. Clicking through everything by hand after each change is slow, boring and easy to get wrong. Tests run in
 a second, every time.
 
-**Margaret Hamilton** led the MIT team that wrote the software flying the Apollo missions. Testing and error checking
-were central to her team's work, and during the Apollo 11 landing in 1969, that software handled a flood of alarms
-without falling over. Next to her: the program, printed out.
+**Margaret Hamilton** led the MIT team that wrote the on-board software flying the Apollo missions. Testing and
+error checking were central to her team's work. During the Apollo 11 landing in 1969 the guidance computer was
+overloaded and raised its "1202" and "1201" alarms; the software dropped its less important jobs, kept the
+landing jobs running, and the landing went on.
 
 :::photo{src="/lesson-images/python/margaret-hamilton.webp" alt="Margaret Hamilton in 1969, smiling and standing next to a stack of printed program listings as tall as she is" credit="Adam Cuerden (restoration)" license="Public domain" source="https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg"}
-Margaret Hamilton with the Apollo guidance software, 1969.
+Margaret Hamilton in 1969, next to printed listings of the Apollo guidance software, about as tall as she is. Code that people's lives depended on was checked, tested and checked again: the habit this chapter starts.
 :::
 
 Today you switch sides. You write the tests, and LabBox checks whether **your** tests are good enough to catch real
@@ -45,6 +46,10 @@ The tool that runs tests is **pytest** (already installed in your lab). It follo
 - it looks for files whose names start with `test_`,
 - inside them, it runs every function whose name starts with `test_`,
 - a test **passes** if it finishes, and **fails** if an assert (or anything else) goes wrong.
+
+`python3 -m pytest` means "run the pytest module with this Python", which always finds the pytest installed for
+it. A test file with no test functions in it yet says `no tests ran`: that is what `test_money.py` says before
+your task.
 
 Name each test after what it proves, like `test_whole_rupees`: when one fails, the name tells you what broke.
 :::
@@ -144,6 +149,11 @@ cd /workspace/17-testing && python3 -m pytest -v test_money.py
 ```
 
 When they pass, press **Check**: it tells you if a planted bug slipped through.
+
+The usual slips: testing only small amounts like `5`. That catches the one-decimal bug (it shows `₹5.0`), but
+not the missing comma, because 5 has no thousands. One test needs an amount of 1,000 or more, like `1234.56`,
+which the comma-less version shows as `₹1234.56`. And a function whose name does not start with `test_` is
+silently skipped by pytest.
 :::
 
 :::step{type=concept title="Edges: where the bugs live"}
@@ -177,7 +187,9 @@ Your tests must pass on the correct `budget.py`, and fail on both broken version
 cd /workspace/17-testing && python3 -m pytest -v test_budget.py
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: tests at 120 and 900 only. Both broken versions agree with the correct one
+there, so the check reports that a planted bug slipped through. The two broken versions differ from the correct
+one only at 500 and 501.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -254,7 +266,7 @@ You can now:
 - Choose test cases that matter: normal, edge, and every promise the function makes.
 - Put tests right on the boundaries, where bugs like `>=` instead of `>` hide.
 
-:::photo{src="/lesson-images/python/py-17-notes.webp" alt="Handwritten notes about testing: def test_add, assert add(2, 3) == 5, python3 -m pytest, a good test fails on a bug" ai="true"}
+:::photo{src="/lesson-images/python/py-17-sketch.webp" alt="Sketchnote: Testing. A test is a function that calls your code and asserts the answer; a good test fails when the code breaks. Flow: def test_on_budget, assert over_budget(500, 500) is False, python3 -m pytest -v, PASSED or FAILED, fix and run again. Remember: pytest runs functions whose names start with test_; test right on the boundary, 500 and 501; work out expected answers by hand, not by running the code; a test that never fails proves nothing." ai="true"}
 One page of notes for this chapter.
 :::
 
