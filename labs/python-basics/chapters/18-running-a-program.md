@@ -55,8 +55,10 @@ print(args.km, args.unit)
 4. `parse_args()` reads `sys.argv`, checks everything, and gives back `args`, with one attribute per argument:
    `args.km` and `args.unit`.
 
-And you get two things for free. A missing argument gives a short usage message and stops the program. And
-`--help` prints a help page, written by argparse from your description.
+And you get three things for free. A missing argument gives a short usage message and stops the program. A
+value of the wrong type is refused too: `--top two` stops with `error: argument --top: invalid int value: 'two'`
+(we tried it on the finished program). And `--help` prints a help page, written by argparse from your
+description.
 :::
 
 :::step{type=try title="A tool that writes its own help page" file="18-running-a-program/summary.py" line="1-9"}
@@ -87,8 +89,9 @@ shopping: 4095.00
 fun: 3250.00
 ```
 
-Without `--top`, it shows the top 3. Open `summary.py` now: it already imports what it needs, including your
-chapter 14 `read_totals` (a finished copy is in this folder as `file_tools.py`).
+Without `--top`, it shows the top 3. (`$` here stands for the terminal's prompt: the line after it is what was
+typed.) Open `summary.py` now: it already imports what it needs, including your chapter 14 `read_totals` (a
+finished copy is in this folder as `file_tools.py`). Right now it only imports, so running it prints nothing.
 :::
 
 :::step{type=task task=summary_top title="Your turn: the top categories"}
@@ -103,7 +106,15 @@ cd /workspace/18-running-a-program && python3 summary.py expenses.csv --top 2
 ```
 
 It must print exactly `rent: 18000.00` and `shopping: 4095.00`. Chapter 11 has the tool for "biggest first", and
-`totals.items()` gives you the pairs to sort. Then press **Check**.
+`totals.items()` gives you the pairs to sort: each pair is a `(category, amount)` tuple, so the key is
+`lambda pair: pair[1]`. Then a slice keeps the first `args.top` of them. Then press **Check**.
+
+The usual slips: leaving out `type=int`, so `args.top` is the text `"2"`, and the slice fails with
+`TypeError: slice indices must be integers or None or have an __index__ method` (we tried it); sorting the
+categories by name instead of by amount; or printing `18000.0` without `:.2f`.
+
+Try `--top 10` too: the last line is `: 350.00`, chapter 14's row with no category, still here. The capstone
+deals with it.
 :::
 
 :::step{type=concept title="Exit codes, and errors that do not scare people"}
@@ -163,6 +174,11 @@ cd /workspace/18-running-a-program && python3 summary.py missing.csv; echo "exit
 
 The first line should say `File not found: missing.csv`, the exit code should be 1, and the import should print
 nothing. Then press **Check**.
+
+The usual slips: printing the message but forgetting `sys.exit(1)`, so the exit code is still 0 and other tools
+think it worked; putting the `try` around the whole program, so the error message hides other bugs too (catch
+only `FileNotFoundError`, around the `read_totals` call); or leaving the work at the top level, so the import
+prints the usage message.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -223,7 +239,7 @@ You can now:
 - Explain exit codes, and check one with `echo $?`.
 - Keep a module quiet on import with `if __name__ == "__main__":`.
 
-:::photo{src="/lesson-images/python/py-18-notes.webp" alt="Handwritten notes about command-line programs: python3 summary.py data.csv --top 3, argparse, if __name__ == __main__, exit code 1" ai="true"}
+:::photo{src="/lesson-images/python/py-18-sketch.webp" alt="Sketchnote: Running a program. Arguments are the words typed after the program's name; argparse reads them, checks them and writes --help. Flow: python3 summary.py expenses.csv --top 2, parse_args(), read_totals(path), sort and keep the top 2, two lines, rent and shopping. Remember: exit code 0 means success, any other number means trouble; errors go to sys.stderr, in one clear line; sys.exit(1) stops with a failure code; do the work in main(), called only when the file is run." ai="true"}
 One page of notes for this chapter.
 :::
 
