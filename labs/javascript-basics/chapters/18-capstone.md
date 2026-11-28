@@ -32,9 +32,13 @@ cd /workspace/18-capstone && wc -l expenses.csv && cut -d, -f2 expenses.csv | so
       1 category
 ```
 
-46 lines. `cut -d, -f2` takes the second column, the category, and `uniq -c` counts each one. The two blank
-categories are one blank line and one row with no category; `category` is the header. Your report should find 41 good
-rows.
+46 lines. `cut -d, -f2` takes the second column (`-d,` means "columns are separated by commas", `-f2` means "field
+2"), the category. `sort` puts equal ones next to each other, `uniq -c` counts each run, and the last `sort -rn`
+puts the biggest count first. The `|` between them, a **pipe**, passes each tool's output to the next.
+
+The two blank categories are one blank line (line 9) and one row with no category (line 32); `category` is the
+header. Two more problems hide in the amounts, where this count cannot see them: line 16 has no amount at all, and
+line 24's amount is `abc`. So: 46 lines, minus the header, the blank line and 3 bad rows, leaves 41 good rows.
 :::
 
 :::step{type=concept title="A plan before code"}
@@ -105,7 +109,27 @@ look low.
 Open `report.js` and make `readTotals(path)` give back an object of each category to its total, rounded to two
 decimals. Skip the header, blank lines, rows with no category, and amounts that are not numbers.
 
-On `expenses.csv`, `readTotals("expenses.csv").rent` is `18000`. Then press **Check**.
+On `expenses.csv`, `readTotals("expenses.csv").rent` is `18000`. The file's own run only prints the report, so ask for
+the totals directly:
+
+```bash run
+cd /workspace/18-capstone && node -e 'console.log(require("./report.js").readTotals("expenses.csv"))'
+```
+
+A finished `readTotals` prints (we ran one):
+
+```text
+{
+  rent: 18000,
+  fun: 3250,
+  travel: 930.5,
+  food: 2262.5,
+  bills: 1548,
+  shopping: 4095
+}
+```
+
+`node -e` runs the JavaScript written after it, without a file. Then press **Check**.
 :::
 
 :::step{type=task task=monthly_report title="Your turn: the monthly report"}
@@ -132,7 +156,17 @@ rent 18000, food 2262.5
 bad lines [16,24,32]
 ```
 
-Then press **Check**.
+Before you start it prints `total 0, 0 rows, average 0`, `rent undefined, food undefined` and `bad lines []`. Then
+press **Check**.
+
+The usual slips, each one tried against the real check:
+
+- Testing the amount with `Number.isNaN` alone. Line 16's empty amount becomes `Number("")`, which is `0`, so it
+  counts as a good row: the report says `42 rows, average 716.33` and `bad lines [24,32]`. Chapter 13's trap, in real
+  data. The check has a small file with exactly this row.
+- Removing the blank lines first (with `filter`) and numbering what is left. Every line after the blank one comes out
+  one too small, and the check tells you that line numbers count the blank line too.
+- No guard for an empty file: `0 / 0` makes the average `NaN`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -174,12 +208,12 @@ A minute with `wc` and `uniq -c` shows the shape and the mess, so the code handl
 :::step{type=deep-dive title="Go deeper: where JavaScript goes from here"}
 You now know the JavaScript that real code is made of. The natural next steps:
 
-- **Servers.** LabBox's **Express** course builds a real web API with Node: routes, JSON, errors and tests, all
-  things you have met here.
+- **Servers.** LabBox's **Express** lab builds a small order-tracking web API with Node: routes that answer with
+  JSON, made of the functions and objects you know.
 - **The browser.** The DOM lets JavaScript change a web page: `document.querySelector("button").addEventListener(...)`.
   Frameworks like React build on exactly the functions, objects and arrays you know.
 - **TypeScript.** JavaScript with types checked before it runs, catching chapter 2's `NaN min` before it ever happens.
-  Most large JavaScript projects use it today.
+  Many large JavaScript projects use it today.
 
 And it all started with ten days of work at Netscape in 1995.
 :::
@@ -192,7 +226,7 @@ You can now:
 - Combine files, loops, objects, array methods and error handling into one real program.
 - Write JavaScript from your first `console.log` to modules, async code, command-line tools and tests.
 
-:::photo{src="/lesson-images/javascript/js-18-notes.webp" alt="Handwritten notes for the JavaScript capstone: look at the data first, a plan in words, line number is index plus 1, blank lines still count, report the bad lines, average 0 when there are no rows, course complete" ai="true"}
+:::photo{src="/lesson-images/javascript/js-18-sketch.webp" alt="Sketchnote: Capstone, the monthly report. Look at the data first, plan in plain words, then build: read, check, keep the good rows, report the bad lines. Flow: size up the file, read lines with their numbers, sort good rows from bad, total, count and average, report the bad lines. Remember: the line number is the index plus 1, blank lines count; an empty amount is bad, though Number of empty text is 0; no good rows means the average is 0, not NaN; report broken rows instead of hiding them." ai="true"}
 One page of notes for this chapter.
 :::
 

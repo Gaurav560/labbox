@@ -1,5 +1,19 @@
 # Changelog
 
+## 28 November: JavaScript chapter 18 rewritten (easy, a little detailed, checked); the JavaScript lab is done
+
+- Chapter 18, "Capstone": every output re-run on a lab machine. The terminal pipeline (`cut -d, -f2`, `sort`,
+  `uniq -c`, `sort -rn`, the pipe) explained piece by piece; the 41 good rows now accounted for line by line (the
+  header, blank line 9, and bad lines 16, 24 and 32, two of which the category count cannot see). The `read_totals`
+  task had no way to see its result; it now has a `node -e` command and the real output.
+- The `monthly_report` check missed chapter 13's own trap: an empty amount (`Number("")` is 0), the real file's line
+  16. A report built with `Number.isNaN` alone passed the check while printing `42 rows` and `bad lines [24,32]`. The
+  check now has a small file with exactly that row (`tests/check.js`, tried: the solution passes, the slip fails with
+  a message that names it).
+- Slips added and tried against the real check: the empty amount, numbering after filtering blank lines, and no guard
+  for an empty file. The Express pointer made exact (a lab, an order-tracking API); "most large projects use
+  TypeScript" softened to "many". New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 17 rewritten (easy, a little detailed, checked)
 
 - Chapter 17, "Testing": the test run re-run on a lab machine. The red report in the lesson had lost four summary
