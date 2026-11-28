@@ -102,11 +102,18 @@ Give Pocket a module of its own for money:
 1. Create a new file `money.py` in the `16-modules` folder (the **New file** button above the file list, or
    `touch money.py` in the terminal).
 2. Move `format_price(amount)` into it, and add `to_paise(amount)`, which gives back the amount in whole paise
-   as an `int`: `to_paise(45.5)` gives `4550`. (Rounding matters: `to_paise(0.1 + 0.2)` must give `30`.)
+   as an `int`: `to_paise(45.5)` gives `4550`. Rounding matters, and the check tries the case that bites:
+   `0.29 * 100` is really `28.999999999999996` (chapter 3's tiny leftovers), so `int(0.29 * 100)` cuts it down
+   to `28`. `round(0.29 * 100)` gives the right `29`, and `round` with no second argument already gives back an
+   `int`.
 3. In `tracker.py`, delete its own `format_price` and import both functions from `money` instead, and use
    `to_paise` for the paise.
 
 `python3 tracker.py` must print exactly the three lines above. Then press **Check**.
+
+The usual slips: keeping the old `format_price` in `tracker.py` as well (the check asks you to delete it, so
+there is one definition); naming the file `money.py.py` or putting it in another folder (then
+`ModuleNotFoundError: No module named 'money'`); or `int(...)` in `to_paise`.
 :::
 
 :::step{type=concept title="The standard library: batteries included"}
@@ -117,7 +124,7 @@ included". A few you will use again and again:
 |---|---|---|---|
 | `statistics` | averages and spread | `statistics.median([120, 45, 900])` | `120` |
 | `math` | maths functions | `math.sqrt(16)` | `4.0` |
-| `datetime` | dates and times | `date(2026, 11, 22).strftime("%A")` | `'Sunday'` |
+| `datetime` | dates and times | `date(2026, 11, 22).strftime("%A")` (`%A` means "the weekday's name") | `'Sunday'` |
 | `random` | random choices | `random.choice(["jelly", "cookie"])` | either one |
 | `csv`, `json` | data files | chapter 14 | |
 | `pathlib` | file paths | chapter 14 | |
@@ -132,7 +139,8 @@ it is.
 
 :::step{type=task task=median_spend title="Your turn: the median spend"}
 Open `stats_tools.py` and make `median_spend(amounts)` give back the median of the amounts, using the `statistics`
-module, or `None` for an empty list (the statistics module raises an error for an empty list).
+module, or `None` for an empty list. The statistics module refuses an empty list: we tried it, and it raised
+`statistics.StatisticsError: no median for empty data`. So check for an empty list first.
 
 `median_spend([120, 45, 900])` gives `120`, `median_spend([1, 2, 3, 4])` gives `2.5`, and `median_spend([])` gives
 `None`.
@@ -173,7 +181,9 @@ Here is the proof that it really is private. After installing `requests` inside 
 ModuleNotFoundError: No module named 'requests'
 ```
 
-Try it yourself in the terminal: your lab machine is connected to the internet, so `pip install requests` works.
+Try it yourself in the terminal: your lab machine can reach PyPI, so `pip install requests` works. (We did it on
+the lab machine: it installed requests 2.34.2 into `/tmp/.venv` in a few seconds, and after `deactivate` the
+normal Python said `No module named 'requests'`, exactly as above.)
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -235,7 +245,7 @@ You can now:
 - Reach for the standard library first: `statistics`, `math`, `datetime`, `random`, `csv`, `json`, `pathlib`.
 - Create a virtual environment, install packages into it with pip, and know why each project gets its own.
 
-:::photo{src="/lesson-images/python/py-16-notes.webp" alt="Handwritten notes about modules: import statistics, from money import format_price, python3 -m venv .venv, pip install requests" ai="true"}
+:::photo{src="/lesson-images/python/py-16-sketch.webp" alt="Sketchnote: Modules and pip. Every Python file is a module; import runs it once and lets you use its functions. Flow: import money, already loaded, your script's folder, the standard library, installed packages. Remember: from money import to_paise brings in one name; look in the standard library before writing a tool; a virtual environment keeps each project's packages apart; round(0.29 * 100) is 29, int() would give 28." ai="true"}
 One page of notes for this chapter.
 :::
 
