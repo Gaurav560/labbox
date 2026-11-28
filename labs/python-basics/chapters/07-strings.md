@@ -58,8 +58,9 @@ Six characters have the positions 0 to 5. Position 6 does not exist, so Python s
 :::
 
 :::step{type=try title="Tidy a receipt line, one method at a time" file="07-strings/receipt.py" line="2-9"}
-Strings come with built-in tools called **methods**. You call a method with a dot after the string:
-`line.strip()`. Open `receipt.py` and run it:
+Strings come with built-in tools called **methods**: functions that belong to a value and work on it. You call
+a method with a dot after the value: `line.strip()` means "strip, applied to `line`". Open `receipt.py` and run
+it:
 
 ```bash run
 cd /workspace/07-strings && python3 receipt.py
@@ -82,6 +83,10 @@ Paneer Roll X2
 | `.lower()` | all small letters | `paneer roll x2` |
 | `.title()` | a capital at the start of each word | `Paneer Roll X2` |
 | `.split()` | cuts into a list of words | `['PANEER', 'roll', 'x2']` |
+
+Two more you will use, not in the file: `.upper()` makes all capital letters (`"paneer roll".upper()` is
+`'PANEER ROLL'`), and `.replace(old, new)` swaps every `old` piece for `new` (`"paneer roll x2".replace("x2",
+"(2)")` is `'paneer roll (2)'`).
 
 And `len` says the line was 20 characters, and only 14 without the spaces around it. Six invisible spaces:
 exactly the kind of thing that makes a computer say "user not found".
@@ -149,7 +154,11 @@ string gives `0`.
 cd /workspace/07-strings && python3 -c "from text_tools import count_words; print(count_words('  lots   of   spaces  '))"
 ```
 
-Then press **Check**.
+Then press **Check**. It also tries tabs and new lines (`"one\ttwo\nthree"` is 3 words; `\t` and `\n` are how
+Python writes a tab and a new line inside a string).
+
+The usual slip: `split(" ")` instead of `split()`. With the spaces above it counts 11 pieces, empty ones
+included, and the check says it counted too many.
 :::
 
 :::step{type=concept title="split and join: taking text apart and putting it back"}
@@ -183,12 +192,17 @@ up: no spaces at the ends, exactly one space between words, and each word starti
 that is only spaces gives `""`.
 
 Think of it as three moves: take the words apart, glue them back with single spaces, then fix the capitals.
+Each move is a method you have met, and you can chain them on one line.
 
 ```bash run
 cd /workspace/07-strings && python3 -c "from text_tools import clean_name; print(repr(clean_name('  riya   SHARMA ')))"
 ```
 
 Then press **Check**.
+
+The usual slips (we tried them): `.title()` alone fixes the capitals but keeps the spaces, `'  Riya   Sharma '`;
+`.strip().title()` still keeps the three spaces in the middle, `'Riya   Sharma'` (the check spots the double
+space); and `.capitalize()` only capitalises the very first letter of the whole string: `'Riya sharma'`.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -234,7 +248,7 @@ letters. The **Rosetta Stone** carries one decree in three scripts (Egyptian hie
 that is how hieroglyphs were finally read. A single Python string could hold all three.
 
 :::photo{src="/lesson-images/python/rosetta-stone.webp" alt="The Rosetta Stone, a dark grey stone slab covered in three bands of carved writing, in the British Museum" credit="Hans Hillewaert" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:Rosetta_Stone.JPG"}
-The Rosetta Stone, British Museum: one text, three scripts.
+The Rosetta Stone, British Museum: one decree from 196 BC, carved in three scripts. Because the Greek could be read, scholars could work out the hieroglyphs. Different scripts holding the same meaning is exactly the problem Unicode solves for computers.
 :::
 
 Try it with a Hindi word:
@@ -251,8 +265,9 @@ The Hindi word for lentils, दाल (dal), is 3 characters to Python: द, the
 joins its letter, so it *looks* like two letters, but Python counts what is stored. Emojis, Tamil, Chinese,
 Arabic: they are all just characters to Python.
 
-On disk and on the network, text has to become bytes, and the usual way is **UTF-8**, which uses one byte for
-English letters and two to four for others. You will see `encoding="utf-8"` when you open files in chapter 14:
+On disk and on the network, text has to become **bytes** (the small numbers, 0 to 255, that computers store),
+and the usual way is **UTF-8**, which uses one byte for English letters and two to four for others.
+`len("rice".encode("utf-8"))` is `4`, but `len("दाल".encode("utf-8"))` is `9`: three characters, three bytes each. You will see `encoding="utf-8"` when you open files in chapter 14:
 that is the reason.
 :::
 
@@ -264,7 +279,7 @@ You can now:
 - Take text apart with `split()` and put it together with `"glue".join(...)`.
 - Ask `in` questions, compare text without caring about capitals, and line up columns with f-strings.
 
-:::photo{src="/lesson-images/python/py-07-notes.webp" alt="Handwritten notes about Python strings: indexing, slicing and methods" ai="true"}
+:::photo{src="/lesson-images/python/py-07-sketch.webp" alt="Sketchnote: Strings. A string is a row of characters, each with an index from 0; strings never change, methods give back new ones. Flow: messy riya SHARMA, split() into words, riya and SHARMA, join with one space, title() gives Riya Sharma. Remember: word[0] is the first character, word[-1] the last; split() with no argument ignores extra spaces; name.strip() alone changes nothing, store it; roll in Paneer Roll is False because capitals matter." ai="true"}
 One page of notes for this chapter.
 :::
 

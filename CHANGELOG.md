@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Python chapter 7 rewritten (easy, a little detailed, checked)
+
+- Chapter 7, "Strings": the recap promised `upper` and `replace`, which the chapter never taught; both are now
+  taught with tried examples. "Method", `\t` and `\n`, and bytes explained where they appear; the Rosetta Stone's
+  lead says what it is (a decree of 196 BC, three scripts) and why it belongs here; UTF-8 shown on real counts
+  (`rice` is 4 bytes, दाल is 9).
+- Checked on a lab machine: `receipt.py`'s six lines, every index and slice, both `split` results (11 pieces),
+  every `join`, `in`, the column format, both errors, and the Hindi example. Slips added and tried: `split(" ")`
+  for `count_words`; `.title()` alone, `.strip().title()` and `.capitalize()` for `clean_name`. New sketchnote page
+  (redrawn once: doubled quotes in the first box).
+
 ## 28 November: Python chapter 6 rewritten (easy, a little detailed, checked)
 
 - Chapter 6, "Finding bugs": relays explained (the Mark II's switches, why the moth stopped one closing); the
