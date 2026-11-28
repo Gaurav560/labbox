@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 5 rewritten (easy, a little detailed, checked)
+
+- Chapter 5, "Loops": the Jacquard loom said plainly (patented by Joseph-Marie Jacquard in 1804, what a punched
+  card is, one card per row, the chain going round again), and the photo lead says what the hanging chain is and
+  why it is a loop; "iteration" explained; the double indentation inside the task named.
+- Checked on a lab machine: `week.py`, the reset-inside-the-loop puzzle (80), `range` answers, the index example,
+  the `while` savings (4 months, 1200), the built-ins, `KeyboardInterrupt` on Ctrl+C. Slips added and tried:
+  `>=` (answers 3), a `return` inside the loop (answers 0), and `else: return None` inside the loop, which makes
+  `first_negative([120, -50, 80, -20])` give `None`. New sketchnote page.
+
 ## 28 November: Python chapter 4 rewritten (easy, a little detailed, checked)
 
 - Chapter 4, "Making decisions": Unicode named and the numbers given (`Z` is 90, `a` is 97) for why capitals sort

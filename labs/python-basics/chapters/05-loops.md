@@ -1,11 +1,13 @@
 :::step{type=story title="How would you add up a thousand amounts?"}
 Pocket has a month of your spending: maybe 90 amounts. Next year, a thousand. How would you add them up?
 
-Machines have repeated instructions for over two hundred years. A **Jacquard loom** (1804) reads a chain of punched
-cards, one card per row of cloth, and weaves the same pattern again and again: a loop, made of wood and string.
+Machines have repeated instructions for over two hundred years. A **Jacquard loom** (patented in 1804 by
+Joseph-Marie Jacquard in France) weaves patterned cloth by reading **punched cards**: stiff cards with holes in
+them, joined into a long chain. Each card controls one row of the cloth: where there is a hole, a thread is lifted.
+To weave the same pattern again, the chain of cards simply goes round again: a loop, made of wood and string.
 
 :::photo{src="/lesson-images/python/jacquard-loom.webp" alt="A Jacquard loom in a museum, with a long chain of punched cards hanging beside the threads" credit="Stephencdickson" license="CC BY-SA 4.0" source="https://commons.wikimedia.org/wiki/File:A_Jacquard_loom_showing_information_punchcards,_National_Museum_of_Scotland.jpg"}
-A Jacquard loom and its punched cards, National Museum of Scotland.
+A Jacquard loom at the National Museum of Scotland. The long chain hanging beside the threads is the punched cards: one card per row, read one after another, which is exactly what a loop does with the items of a list.
 :::
 
 You could write `total = a1 + a2 + a3 + ...` with a thousand names. Nobody does that, because nobody needs to.
@@ -39,7 +41,7 @@ Here is exactly what Python does:
 3. It goes back to the top, takes the next item, `450`, stores it in `amount`, and runs the body again.
 4. It repeats until there are no items left, then continues after the loop.
 
-Each pass through the body is called an **iteration**. You choose the name of the loop variable; `amount` reads
+Each pass through the body is called an **iteration** (from the Latin word for "again"). You choose the name of the loop variable; `amount` reads
 well here, because each item *is* an amount. The `:` and the indented body work exactly as they do for `if`
 and functions.
 
@@ -139,14 +141,19 @@ limit. The limit itself does not count.
 list gives `0`.
 
 1. Before the loop, start a counter at `0`.
-2. Inside, add 1 when an amount is greater than the limit (an `if` inside the loop).
-3. After the loop, return the counter.
+2. Inside, add 1 when an amount is greater than the limit (an `if` inside the loop, so its body is indented
+   twice: 8 spaces).
+3. After the loop, return the counter: the `return` lines up with `for`.
 
 ```bash run
 cd /workspace/05-loops && python3 -c "from loops import count_above; print(count_above([350, 720, 400, 900], 400))"
 ```
 
-Then press **Check**.
+Then press **Check**. The check also tries negative numbers: `count_above([-5, -1, 3], -2)` is `2`.
+
+The usual slips (we tried them): `>=` instead of `>`, which counts the 400 too and answers `3`; and the
+`return` indented inside the loop, which ends the function after the very first lap. With the list above that
+answers `0`, because the first amount, 350, is not over 400.
 :::
 
 :::step{type=concept title="range: counting without a list"}
@@ -213,13 +220,17 @@ In Pocket, a refund is a negative amount: money coming back to you. In `loops.py
 `first_negative(amounts)` give back the **first** amount below zero, or `None` when there is none.
 
 `first_negative([120, -50, 80, -20])` gives `-50`, and `first_negative([1, 2, 3])` gives `None`. Is `0` a
-refund? It is not below zero, so no.
+refund? It is not below zero, so no. Decimals work the same: in `[0.0, -0.5, -3]` the first refund is `-0.5`.
 
 ```bash run
 cd /workspace/05-loops && python3 -c "from loops import first_negative; print(first_negative([120, -50, 80, -20]))"
 ```
 
 Then press **Check**.
+
+The most common slip here: an `else: return None` inside the loop, next to the `if`. Then the function gives up
+on the very first amount that is not a refund. We tried it: `[120, -50, 80, -20]` gives `None`, because 120
+was not negative. "There is nothing to find" is only true **after** the whole loop.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -279,7 +290,7 @@ of this lap and goes straight to the next one.
 
 **The loop that never ends.** If a `while` condition never becomes false (say you forgot
 `savings = savings + 300`), the loop runs forever. Press **Ctrl+C** in the terminal to stop it. Python stops
-the program and reports `KeyboardInterrupt`: nothing is broken, you simply interrupted it.
+the program and its last line says `KeyboardInterrupt`: nothing is broken, you simply interrupted it.
 
 **Python already has some loops built in.** `sum(amounts)` adds a list, `max(amounts)` finds the biggest and
 `min(amounts)` the smallest. They are loops too, written once by the Python team. Knowing how to write them
@@ -294,7 +305,7 @@ You can now:
 - Count with `range`, knowing positions start at 0 and `range(n)` stops before `n`.
 - Stop a search early with `return`, and return `None` when there is nothing to find.
 
-:::photo{src="/lesson-images/python/py-05-notes.webp" alt="Handwritten notes: a for loop with a running total, before, inside and after, and range(3)" ai="true"}
+:::photo{src="/lesson-images/python/py-05-sketch.webp" alt="Sketchnote: Loops. A for loop runs its indented body once for each item in a list, in order, until the list runs out. Flow: total = 0 before, for amount in week, total = total + amount, next item again, return total after. Remember: set up the answer before the loop, not inside it; range(3) gives 0, 1, 2 and stops before 3; list positions start at 0, week[0] is the first item; return inside a loop ends the whole function at once." ai="true"}
 One page of notes for this chapter.
 :::
 
