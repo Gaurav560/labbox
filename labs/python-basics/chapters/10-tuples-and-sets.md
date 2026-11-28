@@ -68,8 +68,9 @@ print(first, last)     # Asha Meera
 3. For an empty list there is no first or last, so it returns `(None, None)`: still two values, so the caller's
    unpacking still works.
 
-Python also has `min(...)` and `max(...)` built in: `min([72, 45, 90])` is `45` and `max(...)` is `90`. They raise
-an error on an empty list, which is why an empty check comes first.
+Python also has `min(...)` and `max(...)` built in: `min([72, 45, 90])` is `45` and `max(...)` is `90`. On an
+empty list they stop with `ValueError: min() iterable argument is empty`, which is why an empty check comes
+first.
 
 A neat bonus of unpacking: swapping two variables needs no temporary variable. `a, b = b, a` swaps them.
 :::
@@ -85,6 +86,10 @@ cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import min_max;
 ```
 
 Then press **Check**.
+
+The usual slips: calling `min` and `max` before the empty check (the `ValueError` above); returning `None`
+alone for an empty list, which breaks the caller's `low, high = ...` with
+`TypeError: cannot unpack non-iterable NoneType object`; or returning `(max, min)` the wrong way round.
 :::
 
 :::step{type=concept title="Sets: each thing once, and instant questions" file="10-tuples-and-sets/visits.py" line="2-9"}
@@ -99,8 +104,9 @@ set(["pen", "pen"])    # {'pen'}
 Three things make sets special:
 
 - **No duplicates.** Turning a list into a set removes repeats.
-- **No order.** A set has no first item and no positions. Python may even print the same set in a different
-  order each time the program runs, so when you want a predictable order, wrap it in `sorted(...)`.
+- **No order.** A set has no first item and no positions. A set of strings may even print in a different order
+  each time the program runs (we ran `print({"Asha", "Ravi", "Meera"})` three times and got three orders), so
+  when you want a predictable order, wrap it in `sorted(...)`.
 - **Set maths.** Sets understand "both", "either" and "only":
 
 | Code | Means | Monday and Tuesday visitors |
@@ -158,27 +164,31 @@ lists, each once.
 `common_items(["bread", "cookie", "mint"], ["mint", "bread", "jelly"])` gives `["bread", "mint"]`, and
 `common_items([1, 2, 2, 3], [2, 2, 4])` gives `[2]`.
 
-Three moves: turn both into sets, keep what is in both, and give back a sorted list.
+Three moves: turn both into sets, keep what is in both, and give back a sorted list. (`sorted` accepts a set
+and always gives back a list.)
 
 ```bash run
 cd /workspace/10-tuples-and-sets && python3 -c "from sets_tuples import common_items; print(common_items(['bread', 'cookie', 'mint'], ['mint', 'bread', 'jelly']))"
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slips: returning the set itself (the check wants a sorted list), or
+`list(...)` without `sorted`, which gives the right items in an unpredictable order.
 :::
 
 :::step{type=concept title="Why sets are so fast"}
 Remember chapter 8's warning, that `in` on a list checks the items one by one? A set does not search: like a
 dictionary's keys (chapter 9), it uses each item's **hash** to jump straight to where the item would be. Here is
-the difference, measured on the lab machine: looking up one number a thousand times, in a collection of 100,000
-numbers:
+the difference, measured on the lab machine: the numbers 0 to 99,999 in a list and in a set, and the question
+`99_999 in ...` asked 1,000 times. (`99_999` is how Python lets you write 99,999 with a separator.) That number
+is the last one, so the list must check all 100,000 items every time:
 
 | Collection | Time for 1,000 lookups |
 |---|---|
-| a set | about 0.015 milliseconds |
-| a list | about 421 milliseconds |
+| a set | 0.025 milliseconds |
+| a list | 827 milliseconds |
 
-That is roughly **28,000 times faster**. For three items you will never notice. For a list of every customer, every
+That is over **30,000 times faster**. The exact times change from run to run and machine to machine; the
+enormous gap does not. For three items you will never notice. For a list of every customer, every
 order, every word in a book, it is the difference between instant and painfully slow.
 
 So the rule of thumb: when the main question is "is this thing in my collection?", use a set.
@@ -245,7 +255,7 @@ You can now:
 - Remove duplicates and ask "both / either / only" with sets and `& | -`.
 - Choose a set when the main question is "is it in there?", because it is thousands of times faster than a list.
 
-:::photo{src="/lesson-images/python/py-10-notes.webp" alt="Handwritten notes about tuples and sets: a fixed tuple, unpacking, a set removing duplicates, and items in both" ai="true"}
+:::photo{src="/lesson-images/python/py-10-sketch.webp" alt="Sketchnote: Tuples and sets. A tuple is a fixed group of values that never changes; a set holds each item once, with no order. Flow: Monday visitors, set(monday), and set(tuesday), sorted, both days Meera and Ravi. Remember: low, high = min_max(nums) unpacks a tuple; a and b in both, a or b in either, a minus b only in a; a set has no order, use sorted() to show it; in on a set is fast, on a long list it is slow." ai="true"}
 One page of notes for this chapter.
 :::
 
