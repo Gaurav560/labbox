@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 6 rewritten (easy, a little detailed, checked)
+
+- Chapter 6, "Finding bugs": relays explained (the Mark II's switches, why the moth stopped one closing); the
+  photo lead links the 1947 page to today's method; `if __name__ == "__main__":` in `spending.py` named and pointed
+  to chapter 18; "off-by-one" defined; "Part 3" made "chapter 17" for tests.
+- Checked on a lab machine: `report.py`'s traceback, `spending.py`'s `180` and `True`, the whole pdb session line
+  by line (pause at line 10, `1`, `80`, `0`, `(2, 80)`, `180`), the `bdb.BdbQuit` ending, `f"{left=}"` and the
+  assertion message. Slips added and tried: `range(0, len - 1)` (200), `range(len + 1)` (`IndexError`), and
+  `left >= 0`. New sketchnote page.
+
 ## 28 November: Python chapter 5 rewritten (easy, a little detailed, checked)
 
 - Chapter 5, "Loops": the Jacquard loom said plainly (patented by Joseph-Marie Jacquard in 1804, what a punched
