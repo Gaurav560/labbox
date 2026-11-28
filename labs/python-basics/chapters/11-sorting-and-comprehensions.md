@@ -16,12 +16,13 @@ biggest first.
 You know `sorted(amounts)` and `reverse=True` from chapter 8. Python sorts numbers by size and strings
 alphabetically. But what if you want words by their **length**?
 
-Sorting by one chosen value is older than Python. This **IBM card sorter** dropped each punched card into one of
-thirteen pockets according to a single column, hundreds of cards a minute. To sort by a different thing, you chose
-a different column: exactly what `key` does.
+Sorting by one chosen value is older than Python. An **IBM card sorter** read one chosen column of each punched
+card (cards like the loom's in chapter 5, but holding data, such as a customer's number, instead of a weaving pattern) and dropped the card into one of thirteen pockets, one per
+possible mark in that column, hundreds of cards a minute. To sort by a different thing, the operator chose a
+different column: exactly what `key` does.
 
 :::photo{src="/lesson-images/python/card-sorter.webp" alt="An IBM 82 punched card sorter: a long grey machine with a row of open pockets for sorted cards" credit="leighklotz" license="CC BY 2.0" source="https://commons.wikimedia.org/wiki/File:IBM_82_Card_Sorter.jpg"}
-An IBM 82 card sorter, Computer History Museum.
+An IBM 82 card sorter at the Computer History Museum. The row of open pockets along the front is where the cards landed, sorted by the one column the operator picked, the way key picks the one thing Python compares.
 :::
 
 ```python
@@ -151,7 +152,11 @@ list comprehension.
 cd /workspace/11-sorting-and-comprehensions && python3 -c "from sorting import large_expenses, WEEK; print(large_expenses(WEEK, 500))"
 ```
 
-Then press **Check**.
+Then press **Check**. It also tries a limit of `120`: books and lunch cost exactly 120, which is not *greater*, so
+the answer is `["rent", "phone"]`.
+
+The usual slips: keeping the whole dictionaries instead of their names (`[e for e in ...]` instead of
+`[e["name"] for e in ...]`); or `>=`, which lets the 120s in.
 :::
 
 :::step{type=task task=by_amount title="Your turn: biggest first"}
@@ -167,6 +172,15 @@ cd /workspace/11-sorting-and-comprehensions && python3 -c "from sorting import b
 ```
 
 Then press **Check**.
+
+Two slips worth seeing (we tried both):
+
+- `key=lambda e: (e["amount"], e["name"])` with `reverse=True` reverses **both** rules, so the names come out
+  backwards: `['rent', 'phone', 'lunch', 'books', 'bus']`. Use the minus sign on the amount only.
+- `key=lambda e: e["amount"]` with `reverse=True` gives the right answer for `WEEK`, by luck: Python keeps
+  equal items in their original order (see Go deeper), and books happens to come before lunch in `WEEK`. The
+  check also sorts a list where toast comes before bun, and there this version answers toast, bun. A rule you
+  need must be in the key.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -221,8 +235,9 @@ them as they come, so no list is ever stored. For very large data, that saves me
 conditions, nested loops, or a comment to explain it, go back to a plain `for` loop: code is read far more often
 than it is written, and a clear loop beats a clever line.
 
-**Stable sorting.** Python's sort is *stable*: items that compare equal keep their original order. That is why
-you can sort by name first and then by amount, and the names stay alphabetical within each amount.
+**Stable sorting.** Python's sort is *stable*: items that compare equal keep their original order, even with
+`reverse=True`. That is why you can sort by name first and then by amount, and the names stay alphabetical
+within each amount. It is also why the amount-only sort above looked right for `WEEK`.
 :::
 
 :::step{type=recap title="What you can do now"}
@@ -233,7 +248,7 @@ You can now:
 - Turn a filter-and-collect loop into one line: `[expr for x in items if condition]`.
 - Know when a plain loop is clearer than a clever comprehension.
 
-:::photo{src="/lesson-images/python/py-11-notes.webp" alt="Handwritten notes about sorting and comprehensions: sorted with reverse and key, and two list comprehensions" ai="true"}
+:::photo{src="/lesson-images/python/py-11-sketch.webp" alt="Sketchnote: Sorting and comprehensions. key= tells sorted what to compare; a list comprehension builds a new list in one line. Flow: for a in amounts, if a > 100, keep a * 2, collect it, a new list. Remember: sorted(words, key=len) sorts by length; lambda e: e[amount] is a tiny function; a tuple key sorts by two rules, minus amount then name; if a loop gets complicated, keep the plain for loop." ai="true"}
 One page of notes for this chapter.
 :::
 
