@@ -25,7 +25,9 @@ with open("diary.txt", "w") as f:
     f.write("jelly 15\n")
 ```
 
-`open(path, mode)` gives back a file object, here named `f`. The **mode** says what you want to do:
+`open(path, mode)` gives back a **file object**, here named `f`: Python's handle on the open file, with methods
+like `write` and `read`. A **path** is the file's name, with the folders leading to it if it is not in the current
+folder. The **mode** says what you want to do:
 
 | Mode | Means | If the file exists | If it does not |
 |---|---|---|---|
@@ -109,7 +111,10 @@ those two lines. `save_lines("empty.txt", [])` gives `0` and leaves an empty fil
 cd /workspace/14-files && python3 -c "from file_tools import save_lines; print(save_lines('report.txt', ['food: 200.00', 'travel: 40.50']))" && cat report.txt
 ```
 
-Then press **Check**.
+(`cat report.txt` prints the file, so you see exactly what landed in it.) Then press **Check**.
+
+The usual slips: forgetting `"\n"`, so the file holds one long line, `food: 200.00travel: 40.50`; opening with
+`"a"`, so running it twice doubles the lines; or returning nothing, so the caller gets `None` instead of the count.
 :::
 
 :::step{type=concept title="CSV: a table in a text file" file="14-files/expenses.csv" line="1-6"}
@@ -161,9 +166,10 @@ cd /workspace/14-files && python3 -c "import csv; rows = list(csv.DictReader(ope
 {'date': '2026-03-01', 'category': 'rent', 'amount': '18000'}
 ```
 
-44 rows, each a dictionary of text values. Now scroll through the file in the editor and look closely: real data is
-never perfect. Find the row where the amount is **empty**, and the one where it says **abc**. Your next function
-must survive both, exactly like `safe_sum` in chapter 13.
+44 rows, each a dictionary of text values. (The file has 46 lines: the header, 44 rows, and one empty line,
+which `DictReader` skips by itself.) Now scroll through the file in the editor and look closely: real data is
+never perfect. Find the row where the amount is **empty** (line 16), and the one where it says **abc** (line 24).
+Your next function must survive both, exactly like `safe_sum` in chapter 13.
 :::
 
 :::step{type=task task=read_totals title="Your turn: totals from a real file"}
@@ -180,6 +186,20 @@ cd /workspace/14-files && python3 -c "from file_tools import read_totals; print(
 ```
 
 Then press **Check**.
+
+In your answer you will also see a strange category, `'': 350.0`. Line 32 of the file, `2026-03-15,,350`, has an
+amount but **no category**, so its category is the empty string. For this task that is fine: the row is added up
+under `''`, and the check does not mind. Deciding what a program *should* do with a row like that is part of the
+capstone in chapter 19.
+
+The usual slips: splitting lines by hand (the check also reads a file where the category is `"snacks, jelly"`, in
+quotes); and forgetting to round. Totals of decimals pick up chapter 3's tiny leftovers: we added 0.1, 0.2 and 0.3
+and got `0.6000000000000001`.
+
+Which errors to catch? In this file both bad amounts are text (`""` and `"abc"`), so `float(...)` raises
+`ValueError`. A row cut short, like `2026-03-20,food` with no amount column at all, gives `None` for the amount,
+and `float(None)` raises a different one: `TypeError: float() argument must be a string or a real number, not
+'NoneType'`. Catching `(TypeError, ValueError)` handles both.
 :::
 
 :::step{type=predict title="Quick check (1 of 3)"}
@@ -243,7 +263,7 @@ You can now:
 - Read CSV files properly with `csv.DictReader`, getting each row as a dictionary of text values.
 - Survive messy real data by skipping rows that are not valid.
 
-:::photo{src="/lesson-images/python/py-14-notes.webp" alt="Handwritten notes about files: with open, the r w and a modes, csv.DictReader, and with closes the file" ai="true"}
+:::photo{src="/lesson-images/python/py-14-sketch.webp" alt="Sketchnote: Files. Variables vanish when a program ends; a file on disk keeps its data until you change it. Flow: with open(path, newline), csv.DictReader(f), each row a dictionary, float of the amount, skip rows that fail. Remember: w empties the file first, a adds to the end; write() adds no new line, write the newline yourself; with closes the file, even after an error; amounts arrive as text, convert them with float()." ai="true"}
 One page of notes for this chapter.
 :::
 

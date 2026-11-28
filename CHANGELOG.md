@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Python chapter 14 rewritten (easy, a little detailed, checked)
+
+- Chapter 14, "Files": file object and path explained; the 46 lines of `expenses.csv` accounted for (header, 44
+  rows, one empty line `DictReader` skips) and the two bad rows given their line numbers. A finding now taught:
+  line 32, `2026-03-15,,350`, has no category, so every learner's answer shows `'': 350.0`; the lesson says why
+  and points to chapter 19, which decides what to do with such rows.
+- Checked on a lab machine: `diary.py` run twice (still 3 lines), the row count and first row, `split` against
+  `csv.reader` on a quoted comma, both tasks, and the bytes written by `save_lines`. Slips added and tried: no
+  `"\n"`, mode `"a"`, no return; hand-splitting, no rounding (0.1 + 0.2 + 0.3), and why the solution also catches
+  `TypeError` (a short row gives `None`; the real message quoted). New sketchnote page (redrawn once: "every value is
+  text" lost the `None` case).
+
 ## 28 November: Python chapter 13 rewritten (easy, a little detailed, checked)
 
 - Chapter 13, "Errors": the exceptions table no longer says learners "met" `FileNotFoundError` in a chapter still to
