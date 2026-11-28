@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Python chapter 13 rewritten (easy, a little detailed, checked)
+
+- Chapter 13, "Errors": the exceptions table no longer says learners "met" `FileNotFoundError` in a chapter still to
+  come; the Mars Climate Orbiter told exactly (ground software in pound-force seconds, navigation reading newton
+  seconds, a factor of about 4.45) and its photo lead ties it to raising at the hand-over; what `from None` hides
+  shown (we saw both tracebacks and the "During handling..." line without it).
+- Checked on a lab machine: `float(" 7 ")`, the `abc`, empty and `1,200` errors (the story's comma now answered),
+  `parse_age`, the skipping loop, `else` and `finally`, and both tasks. Slips added: returning `None`, a message
+  without the bad text (the check looks for `'abc'`), a bare `except:`, a total starting at `0`. New sketchnote page.
+
 ## 28 November: Python chapter 12 rewritten (easy, a little detailed, checked)
 
 - Chapter 12, "Functions in depth": both ordering rules now show Python's real messages (tried); "positional",
