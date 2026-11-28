@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: Java chapter 2 rewritten (easy, a little detailed, checked)
+
+- Java chapter 2, "Your first methods": the comparison with Python was half true ("each mistake would only show up
+  when that line ran"); now exact: in Python a missing argument shows up when the line runs, and a wrong return
+  type or a missing return do not show up at all. "Formal" and "actual" arguments, `int` and `Integer.MAX_VALUE`
+  (2,147,483,647) explained; the third error's `reason:` line restored.
+- Checked on a lab machine: the starter's `null` and `0`, all three type errors, the `void` assignment error (now
+  quoted), `shoutReturn`, overloading (`8`, `haha`), the shortest-word trace (3), and the solution. Slips added
+  with javac's real messages: single quotes (`unclosed character literal`), `w.length` without brackets
+  (`cannot find symbol ... variable length`), missing spaces, measuring the whole title. New sketchnote page.
+
 ## 28 November: Java chapter 1 rewritten (easy, a little detailed, checked)
 
 - Java chapter 1, "Your first program": compile, bytecode, JVM, folder, `&&`, LTS and steward explained where they
