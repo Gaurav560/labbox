@@ -15,7 +15,7 @@ the area of any mix of shapes.
 :::
 
 :::step{type=concept title="A promise, written down" file="10-interfaces/Loans.java" line="5-8"}
-Open `Loans.java`. At the top:
+Open `Loans.java`. Near the top (inside the class `Loans`, so the whole example fits in one file):
 
 ```java
 interface Lendable {
@@ -78,8 +78,17 @@ Your task lives in four files, one type each, which is how real Java projects ar
 | `Circle.java` | a circle, `implements Shape` |
 | `Shapes.java` | `totalArea`, and a `main` with the library's floor plan |
 
-`java Shapes.java` runs one file, and that file uses three others, so in Java 21 it cannot find them. The fix is
-the two-step you met in chapter 1: **compile** all the files with `javac`, then **run** the class with the `main`:
+`java Shapes.java` runs one file, and that file uses three others, so in Java 21 it cannot find them. We tried it:
+
+```text
+Shapes.java:7: error: cannot find symbol
+    public static double totalArea(List<Shape> shapes) {
+                                        ^
+  symbol:   class Shape
+```
+
+(Java 22 and later can launch a program of several source files this way; your lab runs Java 21.) The fix is the
+two-step you met in chapter 1: **compile** all the files with `javac`, then **run** the class with the `main`:
 
 ```bash run
 cd /workspace/10-interfaces && javac -d out *.java && java -cp out Shapes
@@ -109,10 +118,11 @@ public class Square implements Shape {
 }
 ```
 
-1. `implements Shape` is the signature on the promise. Leave `area()` out, and `javac` refuses: "Square is not
-   abstract and does not override abstract method area()".
-2. `@Override` tells Java "this method keeps a promise". Misspell it as `aera()`, and you get a compile error instead
-   of a silent second method that nobody calls.
+1. `implements Shape` is the signature on the promise. Leave `area()` out, and `javac` refuses: `Square is not
+   abstract and does not override abstract method area() in Shape`.
+2. `@Override` tells Java "this method keeps a promise". Misspell it as `aera()`, and you get a compile error,
+   `method does not override or implement a method from a supertype`, instead of a silent second method that
+   nobody calls. (We tried both: misspelling the method gives both errors at once.)
 3. The method must be `public`: interface methods always are.
 :::
 
@@ -120,13 +130,15 @@ public class Square implements Shape {
 Open `Rect.java` and `Circle.java` and make each `area()` give the right answer:
 
 - a rectangle: width times height, so `new Rect(3, 4).area()` gives `12.0`;
-- a circle: pi times the radius squared, with `Math.PI`, so `new Circle(2).area()` gives about `12.566`.
+- a circle: pi times the radius squared, with `Math.PI`, so `new Circle(2).area()` gives about `12.566`
+  (exactly, Java prints `12.566370614359172`).
 
 ```bash run
 cd /workspace/10-interfaces && javac -d out *.java && java -cp out Shapes
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: `radius * 2 * Math.PI`, which is the distance around the circle, not its
+area. Squaring is `radius * radius`.
 :::
 
 :::step{type=predict title="Guess first"}
@@ -147,14 +159,17 @@ The variable's type is `Shape`, but the object is a `Circle`, and Java always ru
 In `Shapes.java`, make `totalArea(shapes)` add up the areas of any list of shapes, rounded to two decimals (chapter
 3's `Math.round(x * 100) / 100.0`). An empty list gives `0.0`.
 
-A list with `new Rect(3, 4)` and `new Circle(1)` gives `15.14`. With both tasks done, the floor plan in `main` (a
-reading room of 8 by 5 metres and a round corner with radius 2) prints `Library floor: 52.57 square metres`.
+A list with `new Rect(3, 4)` and `new Circle(1)` gives `15.14` (12 + 3.14159...). With both tasks done, the floor
+plan in `main` (a reading room of 8 by 5 metres, 40 square metres, and a round corner with radius 2, 12.566...)
+prints `Library floor: 52.57 square metres`.
 
 ```bash run
 cd /workspace/10-interfaces && javac -d out *.java && java -cp out Shapes
 ```
 
-Then press **Check**.
+Then press **Check**. The usual slip: rounding each area inside the loop and not the total. Adding rounded decimals
+brings back chapter 3's tiny leftovers: we tried four shapes that way and got `27.990000000000002`. Add everything
+first, then round once, at the end.
 :::
 
 :::step{type=concept title="The other way to share: extends" file="10-interfaces/Members.java" line="3-28"}
@@ -253,7 +268,7 @@ You can now:
 - Compile a program of several files with `javac -d out *.java` and run it with `java -cp out`.
 - Share code with `extends` and `super`, and say why interfaces usually come first.
 
-:::photo{src="/lesson-images/java/java-10-notes.webp" alt="Handwritten notes about Java interfaces: an interface is a promise, implements and @Override, one list many kinds, javac -d out then java -cp out, extends one class, implements many" ai="true"}
+:::photo{src="/lesson-images/java/java-10-sketch.webp" alt="Sketchnote: Interfaces. An interface lists methods, usually without bodies; each class that implements it writes its own version. Flow: interface Shape, Rect implements Shape, Circle implements Shape, a List of Shape called floor, s.area() for each. Remember: Java runs the method of the real object; @Override turns a misspelt method into a compile error; javac -d out *.java, then java -cp out Shapes; extends one class, implements many interfaces." ai="true"}
 One page of notes for this chapter.
 :::
 

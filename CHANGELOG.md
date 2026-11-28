@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: Java chapter 10 rewritten (easy, a little detailed, checked)
+
+- Java chapter 10, "Interfaces": "in Java 21 it cannot find them" now shows the real error from `java Shapes.java`
+  and notes that Java 22 and later can launch several source files; both javac messages for a misspelt `aera()`
+  quoted exactly; where the 52.57 comes from (40 + 12.566...); `Lendable` said to sit inside `Loans`.
+- Checked on a lab machine: `Loans.java`, `Members.java`, the starter's `0.0` floor, the solution's `52.57`,
+  `15.14`, `Circle(2)` (12.566370614359172). Slips added and tried: the circle's distance-around formula, and
+  rounding each area but not the total (`27.990000000000002`). New sketchnote page (redrawn once: "without bodies"
+  needed "usually", since default methods have bodies).
+
 ## 28 November: Java chapter 9 rewritten (easy, a little detailed, checked)
 
 - Java chapter 9, "Classes and objects": the blueprint's photo lead says why it is here; "Dune's second borrow said
