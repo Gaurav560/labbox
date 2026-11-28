@@ -1,5 +1,16 @@
 # Changelog
 
+## 28 November: JavaScript chapter 16 rewritten (easy, a little detailed, checked)
+
+- Chapter 16, "Files and the command line": every output re-run on a lab machine, with the finished tool's three
+  cases (exit 0, 1 and 2) shown. "For its first fourteen years JavaScript lived only inside browsers" made exact
+  (Netscape's server ran it from 1996); V8 named. Why `readme-demo.js` counts 9 lines for an 8-line file (the empty
+  piece after the last new line) explained; `\n` and `continue` explained where they appear.
+- The standard-error claim tried (with `>`, the error stayed on screen and the file was empty). The task now says to
+  rethrow errors other than ENOENT, as chapter 13 advised.
+- Slips added and tried against the real check: `Number.isNaN` lets `-5` through, and `File not found` printed with
+  `console.log` (`got exit code 1 and ""`). New sketchnote page, a general summary of the chapter.
+
 ## 28 November: JavaScript chapter 15 rewritten (easy, a little detailed, checked)
 
 - Chapter 15, "Async": every output re-run on a lab machine; the two download styles timed (901 ms and 300 ms), and
