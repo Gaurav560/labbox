@@ -17,7 +17,7 @@ Status: **7 of 23 labs done** (164 of 319 chapters).
 | 5 | spring-ai | Spring AI | 20 | done (20 of 20) | 26 Nov |
 | 6 | spring-boot-first-api | Spring Boot | 31 | done (31 of 31) | 28 Nov |
 | 7 | python-basics | Python from zero | 19 | done (19 of 19) | 28 Nov |
-| 8 | java-basics | Java from zero | 18 | in progress (17 of 18) |  |
+| 8 | java-basics | Java from zero | 18 | done (18 of 18) | 28 Nov |
 | 9 | javascript-basics | JavaScript from zero | 18 | not started | |
 | 10 | go-basics | Go from zero | 18 | not started | |
 | 11 | rust-basics | Rust from zero | 28 | not started | |
@@ -41,6 +41,7 @@ The order above is a suggestion (AI labs first, as LabBox is marketed as AI labs
 Updated as work happens (owner, 26 November: "keep noting what we are doing"). One line per finished chapter, per
 finding that changed code or content, and per small task. Details of each chapter are in `CHANGELOG.md`.
 
+- 28 Nov: Java ch 18 done: 'inherited equals' wording fixed; the Long Room checked against its photo; slips; sketchnote. JAVA LAB DONE (18 of 18); validate passes; test-lab green.
 - 28 Nov: Java ch 17 done: backwards assertEquals report shown; Hubble made exact; claims hedged; slips; sketchnote. Part 3 complete. (Found: mvn -o package fails here, jar plugin not cached; no task needs it.)
 - 28 Nov: Java ch 16 done: 'no internet' claim corrected (machine reached Maven Central); third build error added; slips tried; sketchnote.
 - 28 Nov: Java ch 15 done: an unverifiable photo detail removed; outputs and exit codes re-run; slips; sketchnote.

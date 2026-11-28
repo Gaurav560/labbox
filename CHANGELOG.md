@@ -1,5 +1,17 @@
 # Changelog
 
+## 28 November: Java chapter 18 rewritten; the Java lab is done (18 of 18)
+
+- Java chapter 18, "Capstone": "the inherited `equals`" was ambiguous in a chapter about inheritance (it meant the
+  previous developer's `equals`; the inherited method is `hashCode`); reworded. The Long Room's letters checked
+  against the photo: they run up each bookcase, one per shelf, and the analogy now says so; the photo lead says why
+  the library is here.
+- Checked on a lab machine: the starter's Book (`same hash code: false`, 2 in the set) and the fixed one, the
+  starter's empty report and the solution's (`total 30086.0, 41 rows, average 733.8`, `bad lines [16, 24, 32]`), and
+  the `wc` and `cut | sort | uniq -c` counts. Slips added: a hash code from more fields than `equals` uses, a
+  misspelt `hashcode`, and line numbers counted past the blank line 9 (`[15, 23, 31]`). New sketchnote page.
+- The whole lab: validate passes; test-lab green (every starter fails, every solution passes).
+
 ## 28 November: Java chapter 17 rewritten (easy, a little detailed, checked)
 
 - Java chapter 17, "Testing with JUnit": "almost every Java project on Earth uses it" made "the most used testing
