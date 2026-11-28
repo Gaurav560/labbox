@@ -1,5 +1,15 @@
 # Changelog
 
+## 28 November: JavaScript chapter 17 rewritten (easy, a little detailed, checked)
+
+- Chapter 17, "Testing": the test run re-run on a lab machine. The red report in the lesson had lost four summary
+  lines and the stack line; it now shows the real spec output, says what is cut (six `at` lines and the
+  actual/expected block), and names the two test files `node --test` found. Found on the way: piped into another
+  program, Node switches to the TAP format; the deep dive now explains it.
+- Slips added and tried: `index + 1 % count` (still 3: `%` goes before `+`), and `assert.throws(formatDuration(-1),
+  RangeError)` without the arrow (the test fails on the correct code, and why). New sketchnote page, a general summary
+  of the chapter.
+
 ## 28 November: JavaScript chapter 16 rewritten (easy, a little detailed, checked)
 
 - Chapter 16, "Files and the command line": every output re-run on a lab machine, with the finished tool's three
